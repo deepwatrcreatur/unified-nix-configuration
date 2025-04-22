@@ -1,28 +1,24 @@
-I am combining nix configurations for different machines that were in separate repositories
-
-Here is the basic structure:
-
 .
 ├── flake.nix
 ├── flake.lock
 ├── hosts/
-│   ├── common.nix             # Settings shared by both hosts
+│   ├── common.nix # Settings shared by both hosts
 │   ├── inference1/
-│   │   ├── default.nix         
-│   │   ├── hardware-configuration.nix 
-│   │   └── home.nix             
+│   │   ├── default.nix
+│   │   ├── hardware-configuration.nix
+│   │   └── home.nix
 │   └── homeserver/
-│       ├── default.nix          # homeserver specific system settings
-│       └── lxc-container.nix   
-├── modules/                  
+│       ├── default.nix # homeserver specific system settings
+│       └── lxc-container.nix
+├── modules/
 │   └── nixos/
-│       └── homeAssistant.nix  
-├── secrets/                   # Encrypted secrets
-│   ├── secrets.yaml           # Default sops file
-│   ├── reolink-secrets.yaml   # inclined to keep these in other cloud storage
+│       └── homeAssistant.nix
+├── secrets/ # Encrypted secrets
+│   ├── secrets.yaml # Default sops file
+│   ├── reolink-secrets.yaml # inclined to keep these in other cloud storage
 │   ├── influxdb-secrets.yaml
-│   └── age-key.txt            # NOT committed to Git
-├── dotfiles/                  
+│   └── age-key.txt # NOT committed to Git
+├── dotfiles/
 │   ├── .bashrc
 │   ├── .inputrc
 │   ├── .gitconfig
