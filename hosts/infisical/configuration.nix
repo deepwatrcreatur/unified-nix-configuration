@@ -16,12 +16,15 @@
   networking.nameservers = [ "10.10.10.1"];
 
   # Enable SSH for management
-  services.openssh.enable = true;
-
+  services.openssh = {
+    enable = true;
+    settings.PermitRootLogin = "yes";           # Allow root login
+    settings.PasswordAuthentication = true;     # Allow password authentication
+  };
   # Create a user for SSH (replace with your username and SSH key)
   users.users.deepwatrcreatur = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "docker" ];
+    extraGroups = [ "wheel" ];
     #openssh.authorizedKeys.keys = [
     #  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI...yourkey"
     #];
@@ -51,7 +54,7 @@
     git
     gh
     podman
-    docker-compose
+    podman-compose
   ];
 
   # Minimal systemd services
