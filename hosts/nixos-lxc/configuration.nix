@@ -2,40 +2,63 @@
 
 {
   imports = [
-    # Include the default lxc configuration.
     "${modulesPath}/virtualisation/lxc-container.nix"
-
   ];
 
-  environment.shells = with pkgs; [ bashInteractive ];
-  environment.systemPackages = with pkgs; [ busybox coreutils ];
-  system.activationScripts.binBashSymlink.text = ''
-    ln -sf /run/current-system/sw/bin/bash /bin/bash
-    ln -sf /run/current-system/sw/bin/bash /bin/sh
-  '';
-  environment.extraInit = ''
-    export PATH=/run/current-system/sw/bin:/usr/bin:/bin
+  system.activationScripts.binShSymlink.text = ''
+    ln -sf ${pkgs.bashInteractive}/bin/sh /bin/sh
   '';
 
-  #networking.hostName = "nixos-lxc";
-  networking = {
-    hostName = "nixos-lxc";
-    dhcpcd.enable = false;
-    useDHCP = false;
-    useHostResolvConf = false;
+  # Set your hostname
+  networking.hostName = "nixos-lxc";
+
+  # Set a static IP (adjust interface and addresses as needed)
+  networking.interfaces.eth0.ipv4.addresses = [{
+    address = "10.10.11.50";
+    prefixLength = 16;
+  }];
+  networking.defaultGateway = "10.10.10.1";
+  networking.nameservers = [ "10.10.10.1"];
+
+  # Enable SSH for management
+  services.openssh = {
+    enable = true;
+    settings.PermitRootLogin = "yes";           # Allow root login
+    settings.PasswordAuthentication = true;     # Allow password authentication
+  };
+  # Create a user for SSH (replace with your username and SSH key)
+  users.users.deepwatrcreatur = {
+    isNormalUser = true;
+    extraGroups = [ "wheel" ];
+    #openssh.authorizedKeys.keys = [
+    #  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI...yourkey"
+    #];
   };
 
-  systemd.network = {
+  # Allow passwordless sudo for wheel group (optional)
+  security.sudo.wheelNeedsPassword = false;
+
+  # (Optional) Enable Avahi for .local hostname discovery
+  services.avahi = {
     enable = true;
-    networks."50-eth0" = {
-      matchConfig.Name = "eth0";
-      networkConfig = {
-        DHCP = "ipv4";
-        IPv6AcceptRA = true;
-      };
-      linkConfig.RequiredForOnline = "routable";
+    publish = {
+      enable = true;
+      addresses = true;
+      workstation = true;
     };
   };
 
-  system.stateVersion = "25.05"; # Did you read the comment?
+  # Minimal system packages
+  environment.systemPackages = with pkgs; [
+    bashInteractive
+    nano
+    neovim
+    helix
+    curl
+    git
+    gh
+  ];
+
+  # Minimal systemd services
+  system.stateVersion = "25.05"; # Set to your NixOS version
 }
