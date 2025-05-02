@@ -1,6 +1,9 @@
-{ config, pkgs, ... }:
+{ modulesPath, pkgs, ... }:
 
 {
+  imports = [
+    "${modulesPath}/virtualisation/lxc-container.nix"
+  ];
   # Set your hostname
   networking.hostName = "infisical";
 
@@ -28,7 +31,7 @@
   security.sudo.wheelNeedsPassword = false;
 
   # Enable Docker
-  virtualisation.docker.enable = true;
+  virtualisation.podman.enable = true;
 
   # (Optional) Enable Avahi for .local hostname discovery
   services.avahi = {
@@ -43,12 +46,15 @@
   # Minimal system packages
   environment.systemPackages = with pkgs; [
     neovim
+    helix
     curl
     git
+    gh
+    podman
     docker-compose
   ];
 
   # Minimal systemd services
-  system.stateVersion = "24.11"; # Set to your NixOS version
+  system.stateVersion = "25.05"; # Set to your NixOS version
 }
 
