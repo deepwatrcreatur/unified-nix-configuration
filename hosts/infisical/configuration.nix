@@ -4,7 +4,17 @@
   imports = [
     "${modulesPath}/virtualisation/lxc-container.nix"
   ];
-  # Set your hostname
+
+  system.activationScripts.zzzBinShWrapper.text = ''
+    rm -f /bin/sh
+    cat > /bin/sh <<'EOF'
+  #!/run/current-system/sw/bin/bash
+  export PATH=/run/current-system/sw/bin:/usr/bin:/bin
+  exec /run/current-system/sw/bin/bash "$@"
+  EOF
+    chmod +x /bin/sh
+  '';
+
   networking.hostName = "infisical";
 
   # Set a static IP (adjust interface and addresses as needed)
@@ -33,9 +43,6 @@
   # Allow passwordless sudo for wheel group (optional)
   security.sudo.wheelNeedsPassword = false;
 
-  # Enable Docker
-  virtualisation.podman.enable = true;
-
   # (Optional) Enable Avahi for .local hostname discovery
   services.avahi = {
     enable = true;
@@ -48,6 +55,8 @@
 
   # Minimal system packages
   environment.systemPackages = with pkgs; [
+    bashInteractive
+    nano
     neovim
     helix
     curl
@@ -60,4 +69,3 @@
   # Minimal systemd services
   system.stateVersion = "25.05"; # Set to your NixOS version
 }
-
