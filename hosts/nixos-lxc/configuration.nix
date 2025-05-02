@@ -5,7 +5,7 @@
     "${modulesPath}/virtualisation/lxc-container.nix"
   ];
 
-  system.activationScripts.binShWrapper.text = ''
+  system.activationScripts.zzzBinShWrapper.text = ''
     rm -f /bin/sh
     cat > /bin/sh <<'EOF'
   #!/run/current-system/sw/bin/bash
