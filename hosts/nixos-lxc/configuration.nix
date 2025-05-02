@@ -5,11 +5,15 @@
     "${modulesPath}/virtualisation/lxc-container.nix"
   ];
 
-  system.activationScripts.binShSymlink.text = ''
-    ln -sf ${pkgs.bashInteractive}/bin/sh /bin/sh
+  system.activationScripts.binShWrapper.text = ''
+    cat > /bin/sh <<'EOF'
+  #!/run/current-system/sw/bin/bash
+  export PATH=/run/current-system/sw/bin:/usr/bin:/bin
+  exec /run/current-system/sw/bin/bash "$@"
+  EOF
+    chmod +x /bin/sh
   '';
 
-  # Set your hostname
   networking.hostName = "nixos-lxc";
 
   # Set a static IP (adjust interface and addresses as needed)
