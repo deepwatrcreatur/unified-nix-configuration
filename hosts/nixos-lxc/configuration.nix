@@ -6,6 +6,7 @@
   ];
 
   system.activationScripts.binShWrapper.text = ''
+    rm -f /bin/sh
     cat > /bin/sh <<'EOF'
   #!/run/current-system/sw/bin/bash
   export PATH=/run/current-system/sw/bin:/usr/bin:/bin
