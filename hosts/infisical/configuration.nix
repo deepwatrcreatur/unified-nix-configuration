@@ -17,20 +17,21 @@
   '';
 
   nixpkgs.config.allowUnfree = true;
+   
+  networking = {
+    hostName = "infisical";
 
-  networking.hostName = "infisical";
+    interfaces.eth0.ipv4.addresses = [{
+      address = "10.10.11.50";
+      prefixLength = 16;
+    }];
+    defaultGateway = "10.10.10.1";
+    nameservers = [ "10.10.10.1" ];
 
-  networking.interfaces.eth0.ipv4.addresses = [{
-    address = "10.10.11.50";
-    prefixLength = 16;
-  }];
-  networking.defaultGateway = "10.10.10.1";
-  networking.nameservers = [ "10.10.10.1" ];
-
-  networking.firewall = {
-    enable = true; # or false to disable
-    allowedTCPPorts = [ 22 8080 ]; # add any ports you want open
-  # allowedUDPPorts = [ ... ];
+    firewall = {
+      enable = true; # Default is true, but explicit is good
+      allowedTCPPorts = [ 22 8080 ]; # SSH and Infisical web
+    };
   };
 
   services.openssh = {
@@ -42,7 +43,6 @@
   services.mongodb = {
     enable = true;
     bind_ip = "127.0.0.1";
-    # port = 27017;
   };
 
   users.users.deepwatrcreatur = {
