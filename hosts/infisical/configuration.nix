@@ -5,6 +5,7 @@
     "${modulesPath}/virtualisation/lxc-container.nix"
   ];
 
+  # Ensure /bin/sh is bash
   system.activationScripts.zzzBinShWrapper.text = ''
     rm -f /bin/sh
     cat > /bin/sh <<'EOF'
@@ -14,43 +15,40 @@
   EOF
     chmod +x /bin/sh
   '';
+
   nixpkgs.config.allowUnfree = true;
+
   networking.hostName = "infisical";
 
-  # Set a static IP (adjust interface and addresses as needed)
   networking.interfaces.eth0.ipv4.addresses = [{
     address = "10.10.11.50";
     prefixLength = 16;
   }];
   networking.defaultGateway = "10.10.10.1";
-  networking.nameservers = [ "10.10.10.1"];
+  networking.nameservers = [ "10.10.10.1" ];
 
-  # Enable SSH for management
   services.openssh = {
     enable = true;
-    settings.PermitRootLogin = "yes";           # Allow root login
-    settings.PasswordAuthentication = true;     # Allow password authentication
+    settings.PermitRootLogin = "yes";
+    settings.PasswordAuthentication = true;
   };
 
   services.mongodb = {
     enable = true;
-    bind_ip = "127.0.0.1"; # Only listen on localhost for security
-    #port = 27017;
+    bind_ip = "127.0.0.1";
+    # port = 27017;
   };
 
-  # Create a user for SSH (replace with your username and SSH key)
   users.users.deepwatrcreatur = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
-    #openssh.authorizedKeys.keys = [
-    #  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI...yourkey"
-    #];
+    # openssh.authorizedKeys.keys = [
+    #   "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI...yourkey"
+    # ];
   };
 
-  # Allow passwordless sudo for wheel group (optional)
   security.sudo.wheelNeedsPassword = false;
 
-  # (Optional) Enable Avahi for .local hostname discovery
   services.avahi = {
     enable = true;
     publish = {
@@ -60,7 +58,6 @@
     };
   };
 
-  # Minimal system packages
   environment.systemPackages = with pkgs; [
     bashInteractive
     nano
@@ -73,6 +70,6 @@
     podman-compose
   ];
 
-  # Minimal systemd services
-  system.stateVersion = "25.05"; # Set to your NixOS version
+  # Set to the latest stable NixOS version you are using!
+  system.stateVersion = "24.11";
 }
