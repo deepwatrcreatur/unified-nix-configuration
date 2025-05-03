@@ -27,6 +27,12 @@
   networking.defaultGateway = "10.10.10.1";
   networking.nameservers = [ "10.10.10.1" ];
 
+  networking.firewall = {
+    enable = true; # or false to disable
+    allowedTCPPorts = [ 22 8080 ]; # add any ports you want open
+  # allowedUDPPorts = [ ... ];
+  };
+
   services.openssh = {
     enable = true;
     settings.PermitRootLogin = "yes";
