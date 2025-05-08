@@ -1,5 +1,7 @@
 I am combining nix configurations for different machines that were in separate repositories. Here is the planned structure:
+# 🗂️ Project Structure
 
+```text
 .
 ├── flake.nix
 ├── hosts/
