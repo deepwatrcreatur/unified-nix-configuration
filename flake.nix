@@ -41,10 +41,7 @@
         hostSpecificUserModule
         # Common settings for this user across all systems
         ./users/${user}/common.nix
-        # Common settings for all standalone Home Manager configurations (optional)
         # ./hosts/common-home-manager.nix
-        # Secrets module for Home Manager (if needed and sops-nix is used)
-        # sops-nix.homeManagerModules.sops # If you manage user secrets this way
       ];
 
     in
@@ -68,8 +65,6 @@
                 users.root = import ./users/root/homeserver.nix; # If managing root's HM
               };
             }
-            # Import your custom NixOS modules from ./modules/nixos/ if needed
-            # e.g., ./modules/nixos/homeAssistant.nix
           ];
         };
 
@@ -79,7 +74,6 @@
           modules = [
             ./hosts/inference1/default.nix
             ./hosts/common-nixos.nix
-            # sops-nix.nixosModules.sops # If inference1 uses sops-nix
             home-manager.nixosModules.home-manager
             {
               home-manager = {
@@ -91,7 +85,6 @@
             }
           ];
         };
-        # Add other NixOS VMs/containers here
       };
 
       # --- nix-darwin Configurations ---
@@ -112,7 +105,6 @@
                 users.deepwatrcreatur = import ./users/deepwatrcreatur/macminim4.nix;
               };
             }
-            # Import custom darwin modules from ./modules/darwin/ if needed
           ];
         };
       };
@@ -124,17 +116,6 @@
           extraSpecialArgs = commonSpecialArgs;
           modules = mkHomeManagerConfig "x86_64-linux" "deepwatrcreatur" ./users/deepwatrcreatur/pve-strix.nix;
         };
-
-        # If you wanted to manage deepwatrcreatur's HM on macminim4 this way too (alternative to integrating with darwinSystem)
-        # "deepwatrcreatur@macminim4-standalone" = home-manager.lib.homeManagerConfiguration {
-        #   pkgs = nixpkgs.legacyPackages.aarch64-darwin;
-        #   extraSpecialArgs = commonSpecialArgs;
-        #   modules = mkHomeManagerConfig "aarch64-darwin" "deepwatrcreatur" ./users/deepwatrcreatur/macminim4.nix;
-        # };
       };
-
-      # You can also expose packages, devShells, overlays, etc.
-      # Example:
-      # packages.x86_64-linux.my-custom-package = pkgs.callPackage ./pkgs/my-custom-package {};
     };
 }
