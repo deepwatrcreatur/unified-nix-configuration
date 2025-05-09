@@ -4,7 +4,7 @@
 {
   imports = [
     ../modules/home-manager/fish-shared.nix
-    ../modules/home-manager/git.nix
+    ./git.nix
    ];
   
   home.username = "root";
@@ -19,7 +19,7 @@
     
   # Copy .terminfo files into place
   home.file.".terminfo" = {
-    source = ./terminfo; # Place your terminfo files in home/terminfo/
+    source = ../../modules/home-manager/terminfo; # Place your terminfo files in home/terminfo/
     recursive = true;
   };
 
