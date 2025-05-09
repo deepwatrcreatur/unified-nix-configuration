@@ -3,8 +3,8 @@
 { config, pkgs, lib, ... }:
 {
   imports = [
-    ../modules/home/fish-shared.nix
-    ../modules/home/git.nix
+    ../modules/home-manager/fish-shared.nix
+    ../modules/home-manager/git.nix
    ];
   
   home.username = "root";
