@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }:
 {
   imports = [
-   ../modules/home-manager/fish-shared.nix
+   #../modules/home-manager/fish-shared.nix
    ./git.nix
   ];
 
@@ -27,7 +27,6 @@
     glow
     mix2nix
     lsd
-    fish
   ];
 
   home.file.".terminfo" = {
