@@ -1,28 +1,9 @@
+# flake.nix (snippet)
 {
   description = "Multi-system Nix configurations (NixOS, nix-darwin, Home Manager)";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable"; # Or your preferred channel
-
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    nix-darwin = {
-      url = "github:LnL7/nix-darwin";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    sops-nix = { # If you use sops-nix
-      url = "github:Mic92/sops-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # agenix = { # If you use agenix
-    #   url = "github:ryantm/agenix";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
+    # ... (your existing inputs) ...
   };
 
   outputs = { self, nixpkgs, home-manager, nix-darwin, sops-nix, ... }@inputs:
@@ -53,16 +34,15 @@
                 useUserPackages = true;
                 extraSpecialArgs = commonSpecialArgs;
                 users.deepwatrcreatur = {
-                  # Import user's common and host-specific modules
                   imports = [
-                    ./users/deepwatrcreatur/common.nix
-                    ./users/deepwatrcreatur/homeserver.nix
+                    ./users/deepwatrcreatur/common.nix # Direct import of common.nix
+                    ./users/deepwatrcreatur/hosts/homeserver.nix # Host-specific overrides
                   ];
                 };
                  users.root = { # If managing root's HM
                    imports = [
                      ./users/root/common.nix
-                     ./users/root/homeserver.nix
+                     ./users/root/hosts/homeserver.nix # Assuming root also has host-specific
                    ];
                  };
               };
@@ -70,7 +50,6 @@
           ];
         };
 
-        # Assuming you have an inference1 host defined similarly
         inference1 = lib.nixosSystem {
           system = "x86_64-linux"; # Or aarch64-linux if applicable
           specialArgs = commonSpecialArgs;
@@ -85,8 +64,8 @@
                 extraSpecialArgs = commonSpecialArgs;
                 users.deepwatrcreatur = {
                   imports = [
-                    ./users/deepwatrcreatur/common.nix
-                    ./users/deepwatrcreatur/inference1.nix
+                    ./users/deepwatrcreatur/common.nix # Direct import of common.nix
+                    ./users/deepwatrcreatur/hosts/inference1.nix # Host-specific overrides
                   ];
                 };
               };
@@ -111,10 +90,9 @@
                 useUserPackages = true;
                 extraSpecialArgs = commonSpecialArgs;
                 users.deepwatrcreatur = {
-                  # Import user's common and host-specific modules
                   imports = [
-                    ./users/deepwatrcreatur/common.nix # Common settings for the user
-                    ./users/deepwatrcreatur/macminim4.nix # Host-specific settings for the user on macminim4
+                    ./users/deepwatrcreatur/common.nix # Direct import of common.nix
+                    ./users/deepwatrcreatur/hosts/macminim4.nix # Host-specific overrides
                   ];
                 };
               };
@@ -124,16 +102,13 @@
       };
 
       # --- Standalone Home Manager Configurations ---
-      # Keep this section if you use Home Manager on non-NixOS/darwin systems
       homeConfigurations = {
         "deepwatrcreatur@pve-strix" = home-manager.lib.homeManagerConfiguration {
           pkgs = nixpkgs.legacyPackages.x86_64-linux; # System of pve-strix
           extraSpecialArgs = commonSpecialArgs;
           modules = [
-            ./users/deepwatrcreatur/common.nix
-            ./users/deepwatrcreatur/pve-strix.nix
-            # You could also add a common Home Manager module here if needed
-            # ./hosts/common-home-manager.nix
+            ./users/deepwatrcreatur/common.nix # Direct import of common.nix
+            ./users/deepwatrcreatur/hosts/pve-strix.nix # Host-specific overrides
           ];
         };
       };
