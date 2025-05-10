@@ -10,7 +10,6 @@
 
   home.packages = with pkgs; [
     fzf
-    grc
     bat
     tmux
     starship
@@ -31,9 +30,8 @@
     fish
   ];
 
-  # Copy .terminfo files into place
   home.file.".terminfo" = {
-    source = ../../modules/home-manager/terminfo; # Place your terminfo files in home/terminfo/
+    source = ../../modules/home-manager/terminfo; 
     recursive = true;
   };
 
