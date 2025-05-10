@@ -2,7 +2,7 @@
 {
   imports = [
    #../modules/home-manager/fish-shared.nix
-   ./git.nix
+   #./git.nix
   ];
 
   home.username = "deepwatrcreatur";
@@ -11,7 +11,6 @@
   home.packages = with pkgs; [
     fzf
     bat
-    tmux
     starship
     fastfetch
     neovim
@@ -35,7 +34,7 @@
   };
 
   programs.starship.enable = true;
-  programs.tmux.enable = true;
+  #programs.tmux.enable = true;
   programs.home-manager.enable = true;
 
   home.sessionPath = [
@@ -46,6 +45,6 @@
     RUSTUP_HOME = "$HOME/.rustup";
     CARGO_HOME = "$HOME/.cargo";
 
-  programs.mako.enable = lib.mkIf pkgs.stdenv.isLinux true;
+  #programs.mako.enable = lib.mkIf pkgs.stdenv.isLinux true;
   };
 }
