@@ -6,7 +6,17 @@
     enable = true;
     userName = "Anwer Khan";
     userEmail = "deepwatrcreatur@gmail.com";
-    # Add more git config here if needed
+
+    extraConfig = {
+      init.defaultBranch = "main";
+      core.editor = "hx";
+    };
+
+    aliases = {
+      co = "checkout";
+      br = "branch";
+      ci = "commit";
+      st = "status";
+    };   
   };
 }
-
