@@ -35,15 +35,6 @@
         # You can add other shared values here, e.g., username = "deepwatrcreatur";
       };
 
-      # Helper to build Home Manager configurations for different systems
-      mkHomeManagerConfig = system: user: hostSpecificUserModule: [
-        # User-specific settings for this host
-        hostSpecificUserModule
-        # Common settings for this user across all systems
-        ./users/${user}/common.nix
-        # ./hosts/common-home-manager.nix
-      ];
-
     in
     {
       # --- NixOS Configurations ---
@@ -61,13 +52,25 @@
                 useGlobalPkgs = true;
                 useUserPackages = true;
                 extraSpecialArgs = commonSpecialArgs;
-                users.deepwatrcreatur = import ./users/deepwatrcreatur/homeserver.nix;
-                users.root = import ./users/root/homeserver.nix; # If managing root's HM
+                users.deepwatrcreatur = {
+                  # Import user's common and host-specific modules
+                  imports = [
+                    ./users/deepwatrcreatur/common.nix
+                    ./users/deepwatrcreatur/homeserver.nix
+                  ];
+                };
+                 users.root = { # If managing root's HM
+                   imports = [
+                     ./users/root/common.nix
+                     ./users/root/homeserver.nix
+                   ];
+                 };
               };
             }
           ];
         };
 
+        # Assuming you have an inference1 host defined similarly
         inference1 = lib.nixosSystem {
           system = "x86_64-linux"; # Or aarch64-linux if applicable
           specialArgs = commonSpecialArgs;
@@ -80,7 +83,12 @@
                 useGlobalPkgs = true;
                 useUserPackages = true;
                 extraSpecialArgs = commonSpecialArgs;
-                users.deepwatrcreatur = import ./users/deepwatrcreatur/inference1.nix;
+                users.deepwatrcreatur = {
+                  imports = [
+                    ./users/deepwatrcreatur/common.nix
+                    ./users/deepwatrcreatur/inference1.nix
+                  ];
+                };
               };
             }
           ];
@@ -102,7 +110,13 @@
                 useGlobalPkgs = true; # Or false, depending on preference
                 useUserPackages = true;
                 extraSpecialArgs = commonSpecialArgs;
-                users.deepwatrcreatur = import ./users/deepwatrcreatur/macminim4.nix;
+                users.deepwatrcreatur = {
+                  # Import user's common and host-specific modules
+                  imports = [
+                    ./users/deepwatrcreatur/common.nix # Common settings for the user
+                    ./users/deepwatrcreatur/macminim4.nix # Host-specific settings for the user on macminim4
+                  ];
+                };
               };
             }
           ];
@@ -110,11 +124,17 @@
       };
 
       # --- Standalone Home Manager Configurations ---
+      # Keep this section if you use Home Manager on non-NixOS/darwin systems
       homeConfigurations = {
         "deepwatrcreatur@pve-strix" = home-manager.lib.homeManagerConfiguration {
           pkgs = nixpkgs.legacyPackages.x86_64-linux; # System of pve-strix
           extraSpecialArgs = commonSpecialArgs;
-          modules = mkHomeManagerConfig "x86_64-linux" "deepwatrcreatur" ./users/deepwatrcreatur/pve-strix.nix;
+          modules = [
+            ./users/deepwatrcreatur/common.nix
+            ./users/deepwatrcreatur/pve-strix.nix
+            # You could also add a common Home Manager module here if needed
+            # ./hosts/common-home-manager.nix
+          ];
         };
       };
     };
