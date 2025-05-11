@@ -80,8 +80,8 @@
           system = "aarch64-darwin"; # Or "x86_64-darwin"
           specialArgs = commonSpecialArgs;
           modules = [
-            #./hosts/macminim4/default.nix
-            #./hosts/common-darwin.nix # Optional: common settings for all darwin hosts
+            ./hosts/macminim4/default.nix
+            ./hosts/common-darwin.nix # Optional: common settings for all darwin hosts
             # sops-nix.darwinModules.sops # If macminim4 uses sops-nix for system secrets
             #home-manager.darwinModules.home-manager
             #{
