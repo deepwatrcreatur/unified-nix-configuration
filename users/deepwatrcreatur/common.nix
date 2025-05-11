@@ -1,8 +1,8 @@
 { config, pkgs, lib, ... }:
 {
   imports = [
-   #../modules/home-manager/fish-shared.nix
-   #./git.nix
+   ../modules/home-manager/fish-shared.nix
+   ./git.nix
   ];
 
   home.username = "deepwatrcreatur";
