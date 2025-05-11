@@ -86,7 +86,7 @@
             home-manager.darwinModules.home-manager
             {
               home-manager = {
-                #useGlobalPkgs = true; # Or false, depending on preference
+                useGlobalPkgs = true; # Or false, depending on preference
                 useUserPackages = false;
                 #extraSpecialArgs = commonSpecialArgs;
                 users.deepwatrcreatur = {
