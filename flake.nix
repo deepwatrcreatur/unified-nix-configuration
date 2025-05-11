@@ -87,7 +87,7 @@
             {
               home-manager = {
                 #useGlobalPkgs = true; # Or false, depending on preference
-                useUserPackages = true;
+                useUserPackages = false;
                 #extraSpecialArgs = commonSpecialArgs;
                 users.deepwatrcreatur = {
                   imports = [
