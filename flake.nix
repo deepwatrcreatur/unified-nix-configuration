@@ -12,7 +12,7 @@
 
       # Common arguments to pass to NixOS, darwin, and Home Manager modules
       commonSpecialArgs = {
-        inherit inputs lib;
+        inherit inputs;
         # You can add other shared values here, e.g., username = "deepwatrcreatur";
       };
 
