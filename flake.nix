@@ -88,7 +88,7 @@
               home-manager = {
                 useGlobalPkgs = true; # Or false, depending on preference
                 useUserPackages = false;
-                #extraSpecialArgs = commonSpecialArgs;
+                extraSpecialArgs = commonSpecialArgs;
                 users.deepwatrcreatur = {
                   imports = [
                     ./users/deepwatrcreatur/common.nix # Direct import of common.nix
