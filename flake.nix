@@ -87,12 +87,12 @@
             {
               home-manager = {
                 #useGlobalPkgs = true; # Or false, depending on preference
-                #useUserPackages = true;
+                useUserPackages = true;
                 #extraSpecialArgs = commonSpecialArgs;
                 users.deepwatrcreatur = {
                   imports = [
-            #        #./users/deepwatrcreatur/common.nix # Direct import of common.nix
-            #        #./users/deepwatrcreatur/hosts/macminim4.nix # Host-specific overrides
+                    ./users/deepwatrcreatur/common.nix # Direct import of common.nix
+                    ./users/deepwatrcreatur/hosts/macminim4.nix # Host-specific overrides
                   ];
                 };
               };
