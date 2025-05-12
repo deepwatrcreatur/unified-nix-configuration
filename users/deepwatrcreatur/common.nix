@@ -1,7 +1,6 @@
 { config, pkgs, lib, ... }:
 {
   imports = [
-   ../../modules/home-manager/fish-shared.nix
   ../../modules/home-manager/common-home.nix
    ./git.nix
   ];
@@ -22,15 +21,6 @@
     glow
     mix2nix
   ];
-
-  home.file.".terminfo" = {
-    source = ../../modules/home-manager/terminfo; 
-    recursive = true;
-  };
-
-  programs.starship.enable = true;
-  #programs.tmux.enable = true;
-  programs.home-manager.enable = true;
 
   home.sessionPath = [
     "$HOME/.cargo/bin"
