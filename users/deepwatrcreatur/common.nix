@@ -10,11 +10,6 @@
   home.stateVersion = "24.11";
 
   home.packages = with pkgs; [
-    fzf
-    bat
-    starship
-    fastfetch
-    neovim
     python3
     go
     gh
@@ -26,7 +21,6 @@
     stow
     glow
     mix2nix
-    lsd
   ];
 
   home.file.".terminfo" = {
