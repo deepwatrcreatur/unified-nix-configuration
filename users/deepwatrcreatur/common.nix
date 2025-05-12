@@ -2,6 +2,7 @@
 {
   imports = [
    ../../modules/home-manager/fish-shared.nix
+  ../../modules/home-manager/common-home.nix
    ./git.nix
   ];
 
