@@ -4,7 +4,7 @@
 {
   imports = [
     ../../modules/home-manager/common-home.nix
-    ./git.nix
+    ../../users/deepwatrcreatur/git.nix
    ];
   
   home.username = "root";
