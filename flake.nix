@@ -3,7 +3,7 @@
 
   inputs = {
     flake-parts.url = "github:hercules-ci/flake-parts";
-    nixpkgs.url = "github:NixOS/nixpkgs/24.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/24.11";
     nix-darwin.url = "github:LnL7/nix-darwin";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.url = "github:nix-community/home-manager";
@@ -13,14 +13,15 @@
   };
 
   outputs = inputs@{ flake-parts, ... }:
-    flake-parts.lib.mkFlake {
-      inherit inputs;
+    flake-parts.lib.mkFlake { inherit inputs; } {
+      # Define supported systems for perSystem outputs
       systems = [ "aarch64-darwin" "x86_64-linux" ];
-    } {
+
       flake = {
-        # Top-level system configs go here!
+        # nix-darwin configuration for macminim4
         darwinConfigurations.macminim4 = inputs.nix-darwin.lib.darwinSystem {
           system = "aarch64-darwin";
+          specialArgs = { inherit inputs; };
           modules = [
             ./hosts/macminim4/default.nix
             ./hosts/common-darwin.nix
@@ -29,6 +30,7 @@
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = false;
+                extraSpecialArgs = { inherit inputs; };
                 users.deepwatrcreatur = {
                   imports = [
                     ./users/deepwatrcreatur/common.nix
@@ -40,8 +42,10 @@
           ];
         };
 
+        # NixOS configuration for homeserver
         nixosConfigurations.homeserver = inputs.nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
+          specialArgs = { inherit inputs; };
           modules = [
             ./hosts/homeserver/default.nix
             ./hosts/common-nixos.nix
@@ -51,6 +55,7 @@
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
+                extraSpecialArgs = { inherit inputs; };
                 users.deepwatrcreatur = {
                   imports = [
                     ./users/deepwatrcreatur/common.nix
@@ -69,9 +74,10 @@
         };
       };
 
-      perSystem = { config, pkgs, ... }: {
-        homeConfigurations."deepwatrcreatur@pve-strix" = inputs.home-manager.lib.homeManagerConfiguration {
-          pkgs = pkgs;
+      # Per-system outputs (e.g., for home-manager standalone configs)
+      perSystem =')),
+        .homeConfigurations."deepwatrcreatur@pve-strix" = inputs.home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
           modules = [
             ./users/deepwatrcreatur/common.nix
             ./users/deepwatrcreatur/hosts/pve-strix.nix
@@ -80,4 +86,3 @@
       };
     };
 }
-
