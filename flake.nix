@@ -1,116 +1,29 @@
-# flake.nix (snippet)
 {
   description = "Multi-system Nix configurations (NixOS, nix-darwin, Home Manager)";
 
   inputs = {
-    # ... (your existing inputs) ...
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nix-darwin.url = "github:LnL7/nix-darwin";
+    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager.url = "github:nix-community/home-manager";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+    # ...other inputs...
   };
 
-  outputs = { self, nixpkgs, home-manager, nix-darwin, sops-nix, ... }@inputs:
-    let
-      lib = nixpkgs.lib;
+  outputs = inputs@{ flake-parts, ... }:
+    flake-parts.lib.mkFlake { inherit inputs; } {
+      imports = [
+        ./flake-parts/hosts/macminim4.nix
+        ./flake-parts/hosts/homeserver.nix
+        ./flake-parts/hosts/inference1.nix
+        ./flake-parts/users/deepwatrcreatur.nix
+        ./flake-parts/users/root.nix
+        # ...add more as you modularize...
+      ];
 
-      # Common arguments to pass to NixOS, darwin, and Home Manager modules
-      commonSpecialArgs = {
-        inherit inputs;
-        # You can add other shared values here, e.g., username = "deepwatrcreatur";
-      };
-
-    in
-    {
-      # --- NixOS Configurations ---
-      nixosConfigurations = {
-        homeserver = lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = commonSpecialArgs;
-          modules = [
-            ./hosts/homeserver/default.nix
-            ./hosts/common-nixos.nix # Common settings for all NixOS hosts
-            sops-nix.nixosModules.sops # If homeserver uses sops-nix
-            home-manager.nixosModules.home-manager
-            {
-              home-manager = {
-                useGlobalPkgs = true;
-                useUserPackages = true;
-                extraSpecialArgs = commonSpecialArgs;
-                users.deepwatrcreatur = {
-                  imports = [
-                    ./users/deepwatrcreatur/common.nix # Direct import of common.nix
-                    ./users/deepwatrcreatur/hosts/homeserver.nix # Host-specific overrides
-                  ];
-                };
-                 users.root = { # If managing root's HM
-                   imports = [
-                     ./users/root/common.nix
-                     ./users/root/hosts/homeserver.nix # Assuming root also has host-specific
-                   ];
-                 };
-              };
-            }
-          ];
-        };
-
-        inference1 = lib.nixosSystem {
-          system = "x86_64-linux"; # Or aarch64-linux if applicable
-          specialArgs = commonSpecialArgs;
-          modules = [
-            ./hosts/inference1/default.nix
-            ./hosts/common-nixos.nix
-            home-manager.nixosModules.home-manager
-            {
-              home-manager = {
-                useGlobalPkgs = true;
-                useUserPackages = true;
-                extraSpecialArgs = commonSpecialArgs;
-                users.deepwatrcreatur = {
-                  imports = [
-                    ./users/deepwatrcreatur/common.nix # Direct import of common.nix
-                    ./users/deepwatrcreatur/hosts/inference1.nix # Host-specific overrides
-                  ];
-                };
-              };
-            }
-          ];
-        };
-      };
-
-      # --- nix-darwin Configurations ---
-      darwinConfigurations = {
-        macminim4 = nix-darwin.lib.darwinSystem {
-          system = "aarch64-darwin"; # Or "x86_64-darwin"
-          specialArgs = commonSpecialArgs;
-          modules = [
-            ./hosts/macminim4/default.nix
-            ./hosts/common-darwin.nix # Optional: common settings for all darwin hosts
-            # sops-nix.darwinModules.sops # If macminim4 uses sops-nix for system secrets
-            home-manager.darwinModules.home-manager
-            {
-              home-manager = {
-                useGlobalPkgs = true; # Or false, depending on preference
-                useUserPackages = false;
-                extraSpecialArgs = commonSpecialArgs;
-                users.deepwatrcreatur = {
-                  imports = [
-                    ./users/deepwatrcreatur/common.nix # Direct import of common.nix
-                    ./users/deepwatrcreatur/hosts/macminim4.nix # Host-specific overrides
-                  ];
-                };
-              };
-            }
-          ];
-        };
-      };
-
-      # --- Standalone Home Manager Configurations ---
-      homeConfigurations = {
-        "deepwatrcreatur@pve-strix" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.x86_64-linux; # System of pve-strix
-          extraSpecialArgs = commonSpecialArgs;
-          modules = [
-            ./users/deepwatrcreatur/common.nix # Direct import of common.nix
-            ./users/deepwatrcreatur/hosts/pve-strix.nix # Host-specific overrides
-          ];
-        };
-      };
+      # Optionally, you can define shared options, overlays, etc. here
     };
 }
