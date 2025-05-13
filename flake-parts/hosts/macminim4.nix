@@ -15,8 +15,8 @@
           extraSpecialArgs = { };
           users.deepwatrcreatur = {
             imports = [
-              ../../users/deepwatrcreatur/common.nix
-              ../../users/deepwatrcreatur/hosts/macminim4.nix
+              #../../users/deepwatrcreatur/common.nix
+              #../../users/deepwatrcreatur/hosts/macminim4.nix
             ];
           };
         };
