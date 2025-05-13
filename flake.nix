@@ -10,7 +10,6 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
-    # ...other inputs...
   };
 
   outputs = inputs@{ flake-parts, ... }:
@@ -18,12 +17,10 @@
       imports = [
         ./flake-parts/hosts/macminim4.nix
         ./flake-parts/hosts/homeserver.nix
-        ./flake-parts/hosts/inference1.nix
+        #./flake-parts/hosts/inference1.nix
         ./flake-parts/users/deepwatrcreatur.nix
         ./flake-parts/users/root.nix
-        # ...add more as you modularize...
       ];
 
-      # Optionally, you can define shared options, overlays, etc. here
     };
 }
