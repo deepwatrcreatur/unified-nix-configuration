@@ -1,12 +1,15 @@
 {
-  description = "Minimal flake-parts Darwin/NixOS config (no perSystem)";
+  description = "Multi-system Nix configurations (NixOS, nix-darwin, Home Manager)";
 
   inputs = {
     flake-parts.url = "github:hercules-ci/flake-parts";
-    nixpkgs.url = "github:NixOS/nixpkgs/24.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/24.05";
     nix-darwin.url = "github:LnL7/nix-darwin";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
-    # Add other inputs as needed (home-manager, sops-nix, etc.)
+    home-manager.url = "github:nix-community/home-manager";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = inputs@{ flake-parts, ... }:
@@ -14,11 +17,67 @@
       inherit inputs;
       systems = [ "aarch64-darwin" "x86_64-linux" ];
     } {
-      imports = [
-        ./flake-parts/hosts/macminim4.nix
-        ./flake-parts/hosts/homeserver.nix
-        # ./flake-parts/hosts/inference1.nix
-        # (add more as needed)
-      ];
-  };
+      flake = {
+        # Top-level system configs go here!
+        darwinConfigurations.macminim4 = inputs.nix-darwin.lib.darwinSystem {
+          system = "aarch64-darwin";
+          modules = [
+            ./hosts/macminim4/default.nix
+            ./hosts/common-darwin.nix
+            inputs.home-manager.darwinModules.home-manager
+            {
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = false;
+                users.deepwatrcreatur = {
+                  imports = [
+                    ./users/deepwatrcreatur/common.nix
+                    ./users/deepwatrcreatur/hosts/macminim4.nix
+                  ];
+                };
+              };
+            }
+          ];
+        };
+
+        nixosConfigurations.homeserver = inputs.nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            ./hosts/homeserver/default.nix
+            ./hosts/common-nixos.nix
+            inputs.sops-nix.nixosModules.sops
+            inputs.home-manager.nixosModules.home-manager
+            {
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                users.deepwatrcreatur = {
+                  imports = [
+                    ./users/deepwatrcreatur/common.nix
+                    ./users/deepwatrcreatur/hosts/homeserver.nix
+                  ];
+                };
+                users.root = {
+                  imports = [
+                    ./users/root/common.nix
+                    ./users/root/hosts/homeserver.nix
+                  ];
+                };
+              };
+            }
+          ];
+        };
+      };
+
+      perSystem = { config, pkgs, ... }: {
+        homeConfigurations."deepwatrcreatur@pve-strix" = inputs.home-manager.lib.homeManagerConfiguration {
+          pkgs = pkgs;
+          modules = [
+            ./users/deepwatrcreatur/common.nix
+            ./users/deepwatrcreatur/hosts/pve-strix.nix
+          ];
+        };
+      };
+    };
 }
+
