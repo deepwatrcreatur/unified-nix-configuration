@@ -75,8 +75,8 @@
       };
 
       # Per-system outputs (e.g., for home-manager standalone configs)
-      perSystem =')),
-        .homeConfigurations."deepwatrcreatur@pve-strix" = inputs.home-manager.lib.homeManagerConfiguration {
+      perSystem = { config, pkgs, system, ... }: {
+        homeConfigurations."deepwatrcreatur@pve-strix" = inputs.home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
           modules = [
             ./users/deepwatrcreatur/common.nix
