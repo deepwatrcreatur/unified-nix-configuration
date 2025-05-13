@@ -5,7 +5,7 @@
     # Standalone Home Manager config (optional, for non-NixOS/darwin)
     homeConfigurations."deepwatrcreatur@pve-strix" = inputs.home-manager.lib.homeManagerConfiguration {
       pkgs = pkgs;
-      extraSpecialArgs = { inherit inputs; };
+      extraSpecialArgs = { };
       modules = [
         ./../../users/deepwatrcreatur/common.nix
         ./../../users/deepwatrcreatur/hosts/pve-strix.nix

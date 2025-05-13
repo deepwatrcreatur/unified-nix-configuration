@@ -4,7 +4,7 @@
   perSystem = { config, pkgs, ... }: {
     homeConfigurations."root@pve-strix" = inputs.home-manager.lib.homeManagerConfiguration {
       pkgs = pkgs;
-      extraSpecialArgs = { inherit inputs; };
+      extraSpecialArgs = { };
       modules = [
         ../../users/root/common.nix
         # ...other host-specific modules...
