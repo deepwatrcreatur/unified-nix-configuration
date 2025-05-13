@@ -5,7 +5,7 @@
     specialArgs = { inherit inputs; };
     modules = [
       ../../hosts/macminim4/default.nix
-      ../../hosts/common-darwin.nix
+      #../../hosts/common-darwin.nix
       # sops-nix if needed
       inputs.home-manager.darwinModules.home-manager
       {
