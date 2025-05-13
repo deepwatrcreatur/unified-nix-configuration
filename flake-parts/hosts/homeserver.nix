@@ -1,6 +1,6 @@
 { inputs, ... }:
 {
-  systems.nixosConfigurations.homeserver = {
+  flake.nixosConfigurations.homeserver = {
     system = "x86_64-linux";
     specialArgs = { inherit inputs; };
     modules = [
