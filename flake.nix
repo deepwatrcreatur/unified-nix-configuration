@@ -80,7 +80,7 @@
           inherit pkgs;
           modules = [
             ./users/deepwatrcreatur/common.nix
-            ./users/deepwatrcreatur/hosts/pve-strix.nix
+            #./users/deepwatrcreatur/hosts/pve-strix.nix
           ];
         };
       };
