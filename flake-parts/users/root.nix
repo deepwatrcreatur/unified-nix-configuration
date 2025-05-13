@@ -1,17 +1,15 @@
-
-# home/deepwatrcreatur.nix
-{ config, pkgs, lib, ... }:
+{ inputs, ... }:
 {
-  imports = [
-    ../../modules/home-manager/common-home.nix
-    ../../users/deepwatrcreatur/git.nix
-   ];
-  
-  home.username = "root";
-  home.homeDirectory = "/root";
-  home.stateVersion = "24.11";
-
-  home.packages = with pkgs; [
-  ];
-    
+  # Only for standalone Home Manager configs, if you want them
+  perSystem = { config, pkgs, ... }: {
+    homeConfigurations."root@pve-strix" = inputs.home-manager.lib.homeManagerConfiguration {
+      pkgs = pkgs;
+      extraSpecialArgs = { inherit inputs; };
+      modules = [
+        ../../users/root/common.nix
+        # ...other host-specific modules...
+      ];
+    };
+  };
 }
+
