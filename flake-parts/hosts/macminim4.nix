@@ -12,7 +12,7 @@
         home-manager = {
           useGlobalPkgs = true;
           useUserPackages = false;
-          extraSpecialArgs = { inherit inputs; };
+          extraSpecialArgs = { };
           users.deepwatrcreatur = {
             imports = [
               ../../users/deepwatrcreatur/common.nix
