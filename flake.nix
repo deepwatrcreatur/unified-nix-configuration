@@ -13,7 +13,7 @@
     flake-parts.lib.mkFlake { inherit inputs; } {
       imports = [
         ./flake-parts/hosts/macminim4.nix
-        # ./flake-parts/hosts/homeserver.nix
+        ./flake-parts/hosts/homeserver.nix
         # ./flake-parts/hosts/inference1.nix
         # (add more as needed)
       ];
