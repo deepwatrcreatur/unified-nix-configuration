@@ -98,14 +98,15 @@
       };
 
       # Per-system outputs (e.g., for home-manager standalone configs)
-      perSystem = { config, pkgs, system, ... }: {
-        homeConfigurations."deepwatrcreatur@pve-strix" = inputs.home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
-          modules = [
-            ./users/deepwatrcreatur/common.nix
-            #./users/deepwatrcreatur/hosts/pve-strix.nix
-          ];
-        };
-      };
-    };
+      perSystem = { config, pkgs, system, ... }:
+        if pkgs.stdenv.isLinux then {
+          homeConfigurations."deepwatrcreatur@pve-strix" = inputs.home-manager.lib.homeManagerConfiguration {
+            inherit pkgs;
+            modules = [
+              ./users/deepwatrcreatur/common.nix
+              #./users/deepwatrcreatur/hosts/pve-strix.nix
+            ];
+          };
+        } else {};
+  };
 }
