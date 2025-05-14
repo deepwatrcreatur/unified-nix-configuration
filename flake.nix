@@ -98,15 +98,15 @@
       };
 
       # Per-system outputs (e.g., for home-manager standalone configs)
-      perSystem = { pkgs, ... }:
-        if pkgs.stdenv.isLinux then {
-          homeConfigurations."deepwatrcreatur@homeserver" = inputs.home-manager.lib.homeManagerConfiguration {
-            pkgs = pkgs;
-            modules = [
+      #perSystem = { pkgs, ... }:
+      #  if pkgs.stdenv.isLinux then {
+      #    homeConfigurations."deepwatrcreatur@homeserver" = inputs.home-manager.lib.homeManagerConfiguration       #  {
+      #      pkgs = pkgs;
+      #      modules = [
               #./users/deepwatrcreatur/common.nix
               #./users/deepwatrcreatur/common-linux.nix
-            ];
-          };
-        } else {};
+      #      ];
+      #    };
+      #  } else {};
   };
 }
