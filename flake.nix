@@ -35,7 +35,7 @@
                   imports = [
                     ./users/deepwatrcreatur/common.nix
                     ./users/deepwatrcreatur/hosts/macminim4.nix
-                    ./modules/home-manager/common-home/nix
+                    ./modules/home-manager/common-home.nix
                   ];
                 };
               };
