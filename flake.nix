@@ -98,7 +98,7 @@
       };
 
       # Per-system outputs (e.g., for home-manager standalone configs)
-      perSystem = { config, pkgs, ... }:
+      perSystem = { pkgs, ... }:
         if pkgs.stdenv.isLinux then {
           homeConfigurations."deepwatrcreatur@pve-strix" = inputs.home-manager.lib.homeManagerConfiguration {
             pkgs = pkgs;
