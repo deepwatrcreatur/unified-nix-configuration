@@ -12,15 +12,16 @@ in
 {
   perSystem = { config, pkgs, system, ... }: {
     homeConfigurations =
-      pkgs.lib.mkIf (system == "x86_64-linux") (
-        pkgs.lib.genAttrs standaloneHosts (host: 
+      pkgs.lib.mkIf (pkgs.stdenv.isLinux) (
+        pkgs.lib.genAttrs standaloneHosts (host:
           inputs.home-manager.lib.homeManagerConfiguration {
             pkgs = pkgs;
-            modules = [
-              ../../users/deepwatrcreatur/common.nix
-              ../../users/deepwatrcreatur/common-linux.nix
-              ../../users/deepwatrcreatur/hosts/${host}.nix
-            ];
+            modules =
+              [
+                ../../users/deepwatrcreatur/common.nix
+                ../../users/deepwatrcreatur/hosts/${host}.nix
+              ]
+              ++ (if pkgs.stdenv.isLinux then [ ../../users/deepwatrcreatur/common-linux.nix ] else []);
           }
         )
       );
