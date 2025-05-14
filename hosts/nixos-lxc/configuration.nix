@@ -65,5 +65,5 @@
   ];
 
   # Minimal systemd services
-  system.stateVersion = "25.05"; # Set to your NixOS version
+  system.stateVersion = "24.11"; # Set to your NixOS version
 }
