@@ -42,6 +42,29 @@
           ];
         };
 
+       nixosConfigurations.ansible-lxc = inputs.nixpkgs.lib.nixosSystem {
+         system = "x86_64-linux";
+         specialArgs = { inherit inputs; };
+         modules = [
+           ./hosts/nixos-lxc/ansible/default.nix
+           ./hosts/common-nixos.nix
+           inputs.sops-nix.nixosModules.sops
+           inputs.home-manager.nixosModules.home-manager
+           {
+             home-manager = {
+               useGlobalPkgs = true;
+               useUserPackages = true;
+               extraSpecialArgs = { inherit inputs; };
+               users.ansible = {
+                 imports = [
+                   # user-specific modules
+                 ];
+                };
+              };
+            }
+          ];
+        };
+
         # NixOS configuration for homeserver
         nixosConfigurations.homeserver = inputs.nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
