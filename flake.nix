@@ -21,7 +21,7 @@
         # nix-darwin configuration for macminim4
         darwinConfigurations.macminim4 = inputs.nix-darwin.lib.darwinSystem {
           system = "aarch64-darwin";
-          specialArgs = { inherit inputs; };
+          specialArgs = { };
           modules = [
             ./hosts/macminim4/default.nix
             ./hosts/common-darwin.nix
@@ -30,7 +30,7 @@
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = false;
-                extraSpecialArgs = { inherit inputs; };
+                extraSpecialArgs = {  };
                 users.deepwatrcreatur = {
                   imports = [
                     ./users/deepwatrcreatur/common.nix
@@ -44,7 +44,7 @@
 
        nixosConfigurations.ansible-lxc = inputs.nixpkgs.lib.nixosSystem {
          system = "x86_64-linux";
-         specialArgs = { inherit inputs; };
+         specialArgs = { };
          modules = [
            ./hosts/nixos-lxc/ansible/default.nix
            ./hosts/common-nixos.nix
@@ -54,7 +54,7 @@
              home-manager = {
                useGlobalPkgs = true;
                useUserPackages = true;
-               extraSpecialArgs = { inherit inputs; };
+               extraSpecialArgs = {  };
                users.ansible = {
                  imports = [
                    # user-specific modules
@@ -68,7 +68,7 @@
         # NixOS configuration for homeserver
         nixosConfigurations.homeserver = inputs.nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-          specialArgs = { inherit inputs; };
+          specialArgs = {  };
           modules = [
             ./hosts/homeserver/default.nix
             ./hosts/common-nixos.nix
@@ -78,7 +78,7 @@
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
-                extraSpecialArgs = { inherit inputs; };
+                extraSpecialArgs = {  };
                 users.deepwatrcreatur = {
                   imports = [
                     ./users/deepwatrcreatur/common.nix
