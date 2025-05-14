@@ -7,6 +7,7 @@
           pkgs = pkgs;
           modules = [
             ../../users/deepwatrcreatur/common.nix
+            ../../users/deepwatrcreatur/common-linux.nix
             ../../users/deepwatrcreatur/hosts/pve-strix.nix
           ];
         };
