@@ -101,7 +101,6 @@
       perSystem = { config, pkgs, ... }:
         if pkgs.stdenv.isLinux then {
           homeConfigurations."deepwatrcreatur@pve-strix" = inputs.home-manager.lib.homeManagerConfiguration {
-            inherit pkgs;
             modules = [
               ./users/deepwatrcreatur/common.nix
               #./users/deepwatrcreatur/hosts/pve-strix.nix
