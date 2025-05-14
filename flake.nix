@@ -42,7 +42,7 @@
           ];
         };
 
-       nixosConfigurations.ansible-lxc = inputs.nixpkgs.lib.nixosSystem {
+       nixosConfigurations.ansible = inputs.nixpkgs.lib.nixosSystem {
          system = "x86_64-linux";
          specialArgs = { };
          modules = [
@@ -100,7 +100,7 @@
       # Per-system outputs (e.g., for home-manager standalone configs)
       perSystem = { pkgs, ... }:
         if pkgs.stdenv.isLinux then {
-          homeConfigurations."deepwatrcreatur@pve-strix" = inputs.home-manager.lib.homeManagerConfiguration {
+          homeConfigurations."deepwatrcreatur@homeserver" = inputs.home-manager.lib.homeManagerConfiguration {
             pkgs = pkgs;
             modules = [
               #./users/deepwatrcreatur/common.nix
