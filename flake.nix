@@ -101,9 +101,10 @@
       perSystem = { config, pkgs, ... }:
         if pkgs.stdenv.isLinux then {
           homeConfigurations."deepwatrcreatur@pve-strix" = inputs.home-manager.lib.homeManagerConfiguration {
+            pkgs = pkgs;
             modules = [
               ./users/deepwatrcreatur/common.nix
-              #./users/deepwatrcreatur/hosts/pve-strix.nix
+              ./users/deepwatrcreatur/common-linux.nix
             ];
           };
         } else {};
