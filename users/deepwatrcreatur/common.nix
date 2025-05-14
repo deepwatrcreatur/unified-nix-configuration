@@ -1,10 +1,6 @@
+
 { config, pkgs, ... }:
 {
-  imports = [
-  ../../modules/home-manager/common-home.nix
-   ./git.nix
-  ];
-
   home.username = "deepwatrcreatur";
   home.stateVersion = "24.11";
 
@@ -25,11 +21,9 @@
   home.sessionPath = [
     "$HOME/.cargo/bin"
     "/run/current-system/sw/bin"
-     ];
+  ];
   home.sessionVariables = {
     RUSTUP_HOME = "$HOME/.rustup";
     CARGO_HOME = "$HOME/.cargo";
-
-  #programs.mako.enable = lib.mkIf pkgs.stdenv.isLinux true;
   };
 }
