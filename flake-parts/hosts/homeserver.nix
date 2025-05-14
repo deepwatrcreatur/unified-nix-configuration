@@ -2,7 +2,7 @@
 {
   flake.nixosConfigurations.homeserver = {
     system = "x86_64-linux";
-    specialArgs = { inherit inputs; };
+    specialArgs = { };
     modules = [
       ../../hosts/homeserver/default.nix
       ../../hosts/common-nixos.nix
