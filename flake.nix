@@ -2,7 +2,6 @@
   description = "Multi-system Nix configurations (NixOS, nix-darwin, Home Manager)";
 
   inputs = {
-    flake-parts.url = "github:hercules-ci/flake-parts/c621e8422220273271f52058f618c94e405bb0f5";
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nix-darwin.url = "github:LnL7/nix-darwin/master";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
@@ -12,104 +11,110 @@
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ flake-parts, ... }:
-    flake-parts.lib.mkFlake { inherit inputs; } {
-      # Define supported systems for perSystem outputs
-      systems = [ "aarch64-darwin" "x86_64-linux" ];
-
-      flake = {
-        # nix-darwin configuration for macminim4
-        darwinConfigurations.macminim4 = inputs.nix-darwin.lib.darwinSystem {
-          system = "aarch64-darwin";
-          specialArgs = { };
-          modules = [
-            ./hosts/macminim4/default.nix
-            ./hosts/common-darwin.nix
-            inputs.home-manager.darwinModules.home-manager
-            {
-              home-manager = {
-                useGlobalPkgs = true;
-                useUserPackages = false;
-                extraSpecialArgs = {  };
-                users.deepwatrcreatur = {
-                  imports = [
-                    ./users/deepwatrcreatur/common.nix
-                    ./users/deepwatrcreatur/hosts/macminim4.nix
-                    ./modules/home-manager/common-home.nix
-                  ];
-                };
-              };
-            }
-          ];
-        };
-
-       nixosConfigurations.ansible = inputs.nixpkgs.lib.nixosSystem {
-         system = "x86_64-linux";
-         specialArgs = { };
-         modules = [
-           ./hosts/nixos-lxc/ansible/default.nix
-           ./hosts/common-nixos.nix
-           inputs.sops-nix.nixosModules.sops
-           inputs.home-manager.nixosModules.home-manager
-           {
-             home-manager = {
-               useGlobalPkgs = true;
-               useUserPackages = true;
-               extraSpecialArgs = {  };
-               users.ansible = {
-                 imports = [
-                   # user-specific modules
-                 ];
-                };
-              };
-            }
-          ];
-        };
-
-        # NixOS configuration for homeserver
-        nixosConfigurations.homeserver = inputs.nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = {  };
-          modules = [
-            ./hosts/homeserver/default.nix
-            ./hosts/common-nixos.nix
-            inputs.sops-nix.nixosModules.sops
-            inputs.home-manager.nixosModules.home-manager
-            {
-              home-manager = {
-                useGlobalPkgs = true;
-                useUserPackages = true;
-                extraSpecialArgs = {  };
-                users.deepwatrcreatur = {
-                  imports = [
-                    ./users/deepwatrcreatur/common.nix
-                    ./users/deepwatrcreatur/hosts/homeserver.nix
-                  ];
-                };
-                users.root = {
-                  imports = [
-                    ./users/root/common.nix
-                    ./users/root/hosts/homeserver.nix
-                  ];
-                };
-              };
-            }
-          ];
-        };
+  outputs = inputs@{ nixpkgs, home-manager, nix-darwin, sops-nix, ... }:
+  let
+    pkgsForSystem = system: import nixpkgs {
+      inherit system;
+      config.allowUnfree = true; 
+    };
+  in
+  {
+    # Define nix-darwin configurations directly
+    darwinConfigurations.macminim4 = nix-darwin.lib.darwinSystem {
+      system = "aarch64-darwin";
+      specialArgs = {
+        # Pass inputs or other variables as specialArgs if needed
+        inherit inputs;
       };
+      modules = [
+        ./hosts/macminim4/default.nix
+        ./hosts/common-darwin.nix
+        # Import Home Manager as a nix-darwin module
+        home-manager.darwinModules.home-manager
+        {
+          # Configure Home Manager for the deepwatrcreatur user on macminim4
+          home-manager.users.deepwatrcreatur = {
+            imports = [
+              ./users/deepwatrcreatur/common.nix
+              ./users/deepwatrcreatur/hosts/macminim4.nix
+              ./modules/home-manager/common-home.nix
+            ];
+            home.stateVersion = 24.11;
+            programs.home-manager.enable = true;
+          };
+        }
+        # Make sure the system user's shell is set correctly here
+        {
+          users.users.deepwatrcreatur = {
+            name = "deepwatrcreatur";
+            # uid = 1000; # Optional: specify UID
+            shell = pkgsForSystem "aarch64-darwin".fish; # Set login shell using pkgs for this system
+          };
+        }
+      ];
+    };
 
-      # Per-system outputs (e.g., for home-manager standalone configs)
-      perSystem = { pkgs, ... }:
-        #if pkgs.stdenv.isLinux then {
-      #    homeConfigurations."deepwatrcreatur@homeserver" = inputs.home-manager.lib.homeManagerConfiguration       #  {
-      #      pkgs = pkgs;
-      #      modules = [
-              #./users/deepwatrcreatur/common.nix
-              #./users/deepwatrcreatur/common-linux.nix
-      #      ];
-      #    };
-      #  } else
-       {};
-      
+    # Define NixOS configurations directly
+    nixosConfigurations.ansible = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      specialArgs = { inherit inputs; };
+      modules = [
+        ./hosts/nixos-lxc/ansible/default.nix
+        ./hosts/common-nixos.nix
+        sops-nix.nixosModules.sops
+        # Import Home Manager as a NixOS module
+        home-manager.nixosModules.home-manager
+        {
+          # Configure Home Manager for the ansible user on ansible
+          home-manager.users.ansible = {
+            imports = [
+              ./users/ansible/common.nix 
+              # ./users/ansible/hosts/ansible.nix 
+              modules/home-manager/common-home.nix 
+            ];
+            home.stateVersion = 24.11;
+            programs.home-manager.enable = true;
+          };
+          # home-manager.useGlobalPkgs = true; # or false depending on setup
+          # home-manager.useUserPackages = true;
+        }
+      ];
+    };
+
+    nixosConfigurations.homeserver = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      specialArgs = { inherit inputs; };
+      modules = [
+        ./hosts/homeserver/default.nix
+        ./hosts/common-nixos.nix
+        sops-nix.nixosModules.sops
+        # Import Home Manager as a NixOS module
+        home-manager.nixosModules.home-manager
+        {
+          # Configure Home Manager for deepwatrcreatur on homeserver
+          home-manager.users.deepwatrcreatur = {
+            imports = [
+              ./users/deepwatrcreatur/common.nix
+              ./users/deepwatrcreatur/hosts/homeserver.nix
+              ./modules/home-manager/common-home.nix
+            ];
+            home.stateVersion = 24.11;
+            programs.home-manager.enable = true;
+          };
+          # Configure Home Manager for root on homeserver (less common, but possible)
+          home-manager.users.root = {
+            imports = [
+              ./users/root/common.nix
+              ./users/root/hosts/homeserver.nix
+              # modules/home-manager/common-home.nix # Root probably doesn't need this
+            ];
+             home.stateVersion = 24.11;
+             programs.home-manager.enable = true;
+          };
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+        }
+      ];
+    };
   };
 }
