@@ -30,7 +30,7 @@
         ./hosts/macminim4/default.nix
         ./hosts/common-darwin.nix
         # Import Home Manager as a nix-darwin module
-        home-manager.darwinModules.home-manager
+        inputs.home-manager.darwinModules.home-manager
         {
           # Configure Home Manager for the deepwatrcreatur user on macminim4
           home-manager.users.deepwatrcreatur = {
@@ -44,13 +44,12 @@
           };
         }
         # Make sure the system user's shell is set correctly here
-        {
-          users.users.deepwatrcreatur = {
-            name = "deepwatrcreatur";
-            # uid = 1000; # Optional: specify UID
-            shell = pkgsForSystem "aarch64-darwin".fish; # Set login shell using pkgs for this system
-          };
-        }
+        ({ pkgs, ... }: {
+            users.users.deepwatrcreatur = {
+              name = "deepwatrcreatur";
+              shell = pkgs.fish;          
+            };
+        })
       ];
     };
 
