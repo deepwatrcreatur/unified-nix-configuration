@@ -39,7 +39,7 @@
               ./users/deepwatrcreatur/hosts/macminim4.nix
               ./modules/home-manager/common-home.nix
             ];
-            home.stateVersion = 24.11;
+            home.stateVersion = "24.11";
             programs.home-manager.enable = true;
           };
         }
@@ -72,7 +72,7 @@
               # ./users/ansible/hosts/ansible.nix 
               modules/home-manager/common-home.nix 
             ];
-            home.stateVersion = 24.11;
+            home.stateVersion = "24.11";
             programs.home-manager.enable = true;
           };
           # home-manager.useGlobalPkgs = true; # or false depending on setup
@@ -98,7 +98,7 @@
               ./users/deepwatrcreatur/hosts/homeserver.nix
               ./modules/home-manager/common-home.nix
             ];
-            home.stateVersion = 24.11;
+            home.stateVersion = "24.11";
             programs.home-manager.enable = true;
           };
           # Configure Home Manager for root on homeserver (less common, but possible)
@@ -108,7 +108,7 @@
               ./users/root/hosts/homeserver.nix
               # modules/home-manager/common-home.nix # Root probably doesn't need this
             ];
-             home.stateVersion = 24.11;
+             home.stateVersion = "24.11";
              programs.home-manager.enable = true;
           };
           home-manager.useGlobalPkgs = true;
