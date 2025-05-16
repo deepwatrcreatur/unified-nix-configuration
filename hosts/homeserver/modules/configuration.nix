@@ -144,7 +144,7 @@
   };
 
   sops.secrets.influxdb_password = {
-    sopsFile = builtins.path { path = /home/deepwatrcreatur/homeserver/secrets/influxdb-secrets.yaml; };
+    sopsFile = builtins.path { path = /etc/nixos/secrets/influxdb-secrets.yaml; };
     owner = "influxdb2";
   };
 
