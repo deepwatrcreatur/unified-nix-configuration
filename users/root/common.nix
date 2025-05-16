@@ -2,7 +2,7 @@
 # home/deepwatrcreatur.nix
 { config, pkgs, lib, ... }:
 {
-  imports = [ ../modules/home/fish-shared.nix ];
+  imports = [ ../../modules/home-manager/fish-shared.nix ];
   
   home.username = "root";
   home.homeDirectory = "/root";
