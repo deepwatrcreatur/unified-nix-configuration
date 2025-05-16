@@ -59,7 +59,7 @@
     age
     oh-my-posh
     tmux
-    ceph-client
+    #ceph-client
     nmap
     helix
     bat
