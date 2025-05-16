@@ -1,5 +1,3 @@
-
-# home/deepwatrcreatur.nix
 { config, pkgs, lib, ... }:
 {
   imports = [ ../../modules/home-manager/fish-shared.nix ];
@@ -11,12 +9,10 @@
   home.packages = with pkgs; [
     lsd
     fish
-    # ...other packages you want...
   ];
     
-  # Copy .terminfo files into place
   home.file.".terminfo" = {
-    source = ./terminfo; # Place your terminfo files in home/terminfo/
+    source = ../../modules/home-manager/terminfo;
     recursive = true;
   };
 
