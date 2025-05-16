@@ -155,26 +155,6 @@
               };
             };
 
-            # Ensure system users are defined at the system level if not already
-            # from homeserver/modules/configuration.nix or another imported module
-            users.users.deepwatrcreatur = {
-              isNormalUser = true;
-              description = "Anwer Khan";
-              home = "/home/deepwatrcreatur";
-              extraGroups = [ "networkmanager" "wheel" "docker"]; # Add or merge groups
-            };
-            # Define the hass user required by sops config
-            users.users.hass = {
-               isSystemUser = true; 
-               group = "hass";
-               uid = 1000;
-               gid = 1000;
-            };
-            users.groups.hass = {}; 
-
-            # users.users.influxdb2 = { isSystemUser = true; ... };
-            # users.groups.influxdb2 = {};
-
             systemd.services."home-assistant".wants = [ "sops-nix.service" ];
             systemd.services."home-assistant".after = [ "sops-nix.service" ];
 
