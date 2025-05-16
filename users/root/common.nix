@@ -1,15 +1,24 @@
-{ inputs, ... }:
-{
-  # Only for standalone Home Manager configs, if you want them
-  #perSystem = { config, pkgs, ... }: {
-  #  homeConfigurations."root@pve-strix" = inputs.home-manager.lib.homeManagerConfiguration {
-  #    pkgs = pkgs;
-  #    extraSpecialArgs = { };
-  #    modules = [
-  #      ../../users/root/common.nix
-        # ...other host-specific modules...
-  #    ];
-  #  };
-  #};
-}
 
+# home/deepwatrcreatur.nix
+{ config, pkgs, lib, ... }:
+{
+  imports = [ ../modules/home/fish-shared.nix ];
+  
+  home.username = "root";
+  home.homeDirectory = "/root";
+  home.stateVersion = "24.11";
+
+  home.packages = with pkgs; [
+    lsd
+    fish
+    # ...other packages you want...
+  ];
+    
+  # Copy .terminfo files into place
+  home.file.".terminfo" = {
+    source = ./terminfo; # Place your terminfo files in home/terminfo/
+    recursive = true;
+  };
+
+  programs.home-manager.enable = true;
+}

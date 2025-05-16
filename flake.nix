@@ -149,7 +149,7 @@
               users.root = { 
                  imports = [
                     ./users/root/common.nix 
-                    ./users/root/hosts/homeserver.nix 
+                    #./users/root/hosts/homeserver.nix 
                  ];
                  # home.stateVersion = "..."; 
               };
