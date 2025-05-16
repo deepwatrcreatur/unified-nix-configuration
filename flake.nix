@@ -110,13 +110,13 @@
 
           ({ config, pkgs, lib, ... }: { 
             sops.secrets.REOLINK_CAMERA_PASSWORD = {
-              sopsFile = "$(inputs.self)/secrets/reolink-secrets.yaml";
+              sopsFile = "${inputs.self}/secrets/reolink-secrets.yaml";
               owner = "hass";
               group = "hass";
               mode = "0440";
             };
             sops.validateSopsFiles = false; # Consider enabling this once comfortable
-            sops.age.keyFile = "$(inputs.self)/secrets/age-key.txt";
+            sops.age.keyFile = "${inputs.self}/secrets/age-key.txt";
             users.users.hass.extraGroups = [ "keys" ];
 
             sops.secrets.influxdb_password = {
