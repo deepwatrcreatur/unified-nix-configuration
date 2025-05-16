@@ -110,18 +110,18 @@
 
           ({ config, pkgs, lib, ... }: { 
             sops.secrets.REOLINK_CAMERA_PASSWORD = {
-              sopsFile = "/etc/nixos/secrets/reolink-secrets.yaml";
+              sopsFile = "./secrets/reolink-secrets.yaml";
               owner = "hass";
               group = "hass";
               mode = "0440";
             };
             sops.validateSopsFiles = false; # Consider enabling this once comfortable
-            sops.age.keyFile = "/etc/nixos/secrets/age-key.txt"; # Hardcoded path
-            users.users.hass.extraGroups = [ "keys" ]; # Ensure 'hass' user is defined elsewhere or here
+            sops.age.keyFile = "./secrets/age-key.txt";
+            users.users.hass.extraGroups = [ "keys" ];
 
             sops.secrets.influxdb_password = {
-              sopsFile = builtins.path { path = /home/deepwatrcreatur/homeserver/secrets/influxdb-secrets.yaml; }; # Hardcoded path
-              owner = "influxdb2"; # Ensure 'influxdb2' user is defined elsewhere or here
+              sopsFile = builtins.path { path = ./secrets/influxdb-secrets.yaml; }; 
+              owner = "influxdb2"; 
             };
 
 
@@ -130,7 +130,7 @@
               # depending on sops-nix version and service startup order.
               # LoadCredential is a standard way but seems mkForce null is used here?
               # Re-evaluate how this secret is passed if issues arise.
-              LoadCredential = lib.mkForce null; # Original homeserver config had this
+              LoadCredential = lib.mkForce null; 
               EnvironmentFile = config.sops.secrets.REOLINK_CAMERA_PASSWORD.path;
             };
 
