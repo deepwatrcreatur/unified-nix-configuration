@@ -179,7 +179,6 @@
     };
   };
 
-  services.openssh.enable = true;
   services.openssh.settings.PermitRootLogin = "yes";
 
   # networking.firewall.allowedTCPPorts = [ 5201 8086 8581 9000 ]; # Default Homebridge port
@@ -192,10 +191,6 @@
   }];
 
   boot.initrd.systemd.fido2.enable = false;
-
-  time.timeZone = "America/Toronto";
-
-  programs.fish.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.deepwatrcreatur = {
