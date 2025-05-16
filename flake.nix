@@ -116,7 +116,7 @@
               mode = "0440";
             };
             sops.validateSopsFiles = false; # Consider enabling this once comfortable
-            sops.age.keyFile = "${inputs.self}/secrets/age-key.txt";
+            sops.age.keyFile = "/etc/nixos/secrets/age-key.txt";
             users.users.hass.extraGroups = [ "keys" ];
 
             sops.secrets.influxdb_password = {
