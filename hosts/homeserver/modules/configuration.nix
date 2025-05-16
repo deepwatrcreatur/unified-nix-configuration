@@ -2,6 +2,10 @@
 
 
 {
+  imports = [
+    "${modulesPath}/virtualisation/lxc-container.nix"
+  ];
+
   # Use the default nixpkgs channel instead of redefining it
   nixpkgs.config.allowUnfree = true;
 
@@ -140,7 +144,7 @@
   };
 
   sops.secrets.influxdb_password = {
-    sopsFile = ../secrets/influxdb-secrets.yaml;
+    sopsFile = builtins.path { path = /home/deepwatrcreatur/homeserver/secrets/influxdb-secrets.yaml; };
     owner = "influxdb2";
   };
 
@@ -191,6 +195,8 @@
 
   time.timeZone = "America/Toronto";
 
+  programs.fish.enable = true;
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.deepwatrcreatur = {
     isNormalUser = true;
@@ -204,6 +210,6 @@
   i18n.defaultLocale = "en_US.UTF-8";
   i18n.supportedLocales = [ "en_US.UTF-8/UTF-8" ]; # Optional, ensures generation
     
-  system.stateVersion = "24.11";
+  system.stateVersion = "25.05";
 }
 
