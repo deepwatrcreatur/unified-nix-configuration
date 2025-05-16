@@ -25,21 +25,21 @@
       "cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="
       #"cache.deepwatercreature.com-1:n7+NSSNvxLJBRpjB8ai2zsVtK1L9mnFtEnulbd4/lUY="
     ];
-    distributedBuilds = true;
-    buildMachines = [
-      {
-        hostName = "cache.deepwatercreature.com";
-        system = "x86_64-linux";  # Adjust if different (check with `uname -m` on cache server)
-        maxJobs = 8;  # Match CPU cores or adjust
-        speedFactor = 2;  # Priority over other builders
-        supportedFeatures = [ "nixos-test" "benchmark" "big-parallel" "kvm" ];
-        sshUser = "deepwatrcreatur";  # Non-root user on cache server
-        sshKey = "/root/.ssh/id_ed25519";  # Root-owned key for nix-daemon
-      }
-    ];
-    settings = {
-      trusted-users = [ "root" "@wheel" ];  # Client-side trust
-    };
+    #distributedBuilds = true;
+    #buildMachines = [
+    #  {
+    #    hostName = "cache.deepwatercreature.com";
+    #    system = "x86_64-linux";  # Adjust if different (check with `uname -m` on cache server)
+    #    maxJobs = 8;  # Match CPU cores or adjust
+    #    speedFactor = 2;  # Priority over other builders
+    #    supportedFeatures = [ "nixos-test" "benchmark" "big-parallel" "kvm" ];
+    #    sshUser = "deepwatrcreatur";  # Non-root user on cache server
+    #    sshKey = "/root/.ssh/id_ed25519";  # Root-owned key for nix-daemon
+    #  }
+    #];
+    #settings = {
+    #  trusted-users = [ "root" "@wheel" ];  # Client-side trust
+    #};
   };
 
   security.sudo.wheelNeedsPassword = false;
