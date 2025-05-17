@@ -1,9 +1,9 @@
 { pkgs, ... }:
 
 {
-  # Ensure ghostty is installed
-  home.packages = [
-    pkgs.ghostty
+  # the darwin nix package is marked as broken
+  home.packages = lib.optionals pkgs.stdenv.isLinux [
+    pkgs.ghostty 
   ];
 
   # Manage the ghostty configuration file
