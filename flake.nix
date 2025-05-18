@@ -55,9 +55,6 @@
         ({ pkgs, ... }: { # Accepts pkgs
           users.users.deepwatrcreatur = {
             name = "deepwatrcreatur";
-            # uid = 1000; # Optional: specify UID for consistency
-            # ... other system user settings like groups, isNormalUser, home
-            isNormalUser = true; # Ensure this is set here or in common-darwin/macminim4/default.nix
             home = "/Users/deepwatrcreatur"; # Ensure this is set correctly
             shell = pkgs.fish; # Use pkgs provided to this module
           };
