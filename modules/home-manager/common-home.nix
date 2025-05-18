@@ -2,6 +2,7 @@
 { config, pkgs, lib, ... }:
 {
   imports = [
+    ./nushell
     ./helix.nix
     ./fish-shared.nix
   ];
