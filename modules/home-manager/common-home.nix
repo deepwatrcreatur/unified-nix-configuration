@@ -17,7 +17,7 @@
     neovim
     gh
     git
-    jj
+    jujutsu
     lazygit
     lazyjj
     nil
