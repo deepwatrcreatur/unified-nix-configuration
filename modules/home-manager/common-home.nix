@@ -3,7 +3,7 @@
 {
   imports = [
     ./nushell
-    ./helix.nix
+    ./helix
     ./fish-shared.nix
   ];
 
@@ -20,9 +20,6 @@
     jujutsu
     lazygit
     lazyjj
-    nil
-    nixd
-    nixpkgs-fmt
     python3
     glow
   ];
