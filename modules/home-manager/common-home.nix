@@ -8,11 +8,23 @@
   ];
 
   home.packages = with pkgs; [
+    fish
+    nushell
     lsd
     bat
     fzf
     fastfetch
-    neovim    
+    neovim
+    gh
+    git
+    jj
+    lazygit
+    lazyjj
+    nil
+    nixd
+    nixpkgs-fmt
+    python3
+    glow
   ];
 
   # Copy .terminfo files into place
@@ -21,6 +33,5 @@
     recursive = true;
   };
 
-  programs.starship.enable = true;
   programs.home-manager.enable = true;
 }
