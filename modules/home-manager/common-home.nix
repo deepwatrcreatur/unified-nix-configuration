@@ -5,6 +5,7 @@
     ./nushell
     ./helix
     ./fish-shared.nix
+    ./jujutsu
   ];
 
   home.packages = with pkgs; [
@@ -17,7 +18,6 @@
     neovim
     gh
     git
-    jujutsu
     lazygit
     lazyjj
     python3
