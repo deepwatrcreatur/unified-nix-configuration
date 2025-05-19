@@ -75,9 +75,7 @@
           # Configure Home Manager for the ansible user on ansible
           home-manager.users.ansible = {
             imports = [
-              # ./users/ansible/common.nix # Example
               # ./users/ansible/hosts/ansible.nix # Example
-              # ./modules/home-manager/common-home.nix # Example if ansible user uses fish/starship
             ];
             # home.stateVersion = "...";
             # programs.home-manager.enable = true; # Not needed here
@@ -145,7 +143,8 @@
               };
               users.root = { 
                  imports = [
-                    ./users/root/common.nix 
+                    ./users/root/common.nix
+                    ./modules/home-manager/common-home.nix
                     #./users/root/hosts/homeserver.nix 
                  ];
                  # home.stateVersion = "..."; 

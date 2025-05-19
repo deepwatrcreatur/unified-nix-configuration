@@ -5,16 +5,10 @@
   home.stateVersion = "24.11";
 
   home.packages = with pkgs; [
-    python3
     go
-    gh
     rustup
-    nil
-    nixd
-    nixpkgs-fmt
     chezmoi
     stow
-    glow
     mix2nix
   ];
 
