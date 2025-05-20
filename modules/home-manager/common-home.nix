@@ -6,6 +6,7 @@
     ./helix
     ./fish-shared.nix
     ./jujutsu
+    ./starship.nix
   ];
 
   home.packages = with pkgs; [
