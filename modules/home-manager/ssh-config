@@ -1,0 +1,30 @@
+Host *
+	IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+
+Host pve-strix
+    HostName 10.10.11.57
+    user root
+
+Host opnsense
+    Hostname opnsense.deepwatercreature.com
+    user root
+
+Host pve-tomahawk
+    Hostname 10.10.11.55
+    user root
+
+Host casaos
+    Hostname casaos.deepwatercreature.com
+    user deepwatrcreatur
+
+Host cache
+    Hostname cache.deepwatercreature.com
+    user deepwatrcreatur
+
+Host homeserver
+    Hostname homeserver.deepwatercreature.com
+    user deepwatrcreatur
+
+Host infisical
+    Hostname infisical.deepwatercreature.com
+    user deepwatrcreatur
