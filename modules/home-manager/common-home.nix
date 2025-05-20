@@ -31,5 +31,7 @@
     recursive = true;
   };
 
+  home.file.".ssh/config".source = ./modules/home-manager/ssh-config;
+  
   programs.home-manager.enable = true;
 }
