@@ -90,6 +90,11 @@
   virtualisation.oci-containers.backend = "podman";
 
   # Containers
+  systemd.tmpfiles.rules = [
+    # create directory that homebridge will need, so that build is reproducible
+    # d = directory, 0755 = permissions, 1000 = UID, 1000 = GID, - = no age, - = no argument
+    "d /var/lib/homebridge/volumes/homebridge 0755 1000 1000 - -"
+] ;
   virtualisation.oci-containers.containers."homebridge-homebridge" = {
     image = "homebridge/homebridge:latest";
     volumes = [
