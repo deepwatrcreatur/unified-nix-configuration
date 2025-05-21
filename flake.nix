@@ -105,7 +105,7 @@
 
           ({ config, pkgs, lib, ... }: { 
             sops.secrets.REOLINK_CAMERA_PASSWORD = {
-              sopsFile = "${inputs.self}/secrets/reolink-secrets.yaml";
+              sopsFile = "${inputs.self}/hosts/homeserver/secrets/reolink-secrets.yaml";
               owner = "hass";
               group = "hass";
               mode = "0440";
@@ -115,7 +115,7 @@
             users.users.hass.extraGroups = [ "keys" ];
 
             sops.secrets.influxdb_password = {
-              sopsFile = builtins.path { path = ./secrets/influxdb-secrets.yaml; }; 
+              sopsFile = builtins.path { path = ./hosts/homeserver/secrets/influxdb-secrets.yaml; }; 
               owner = "influxdb2"; 
             };
 
