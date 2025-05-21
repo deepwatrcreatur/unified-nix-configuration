@@ -51,7 +51,6 @@
     yazi
     htop
     btop
-    git
     gitAndTools.gh
     wget
     curl
@@ -61,7 +60,6 @@
     tmux
     #ceph-client
     nmap
-    helix
     bat
     sops
     nix-inspect
@@ -69,12 +67,9 @@
     docker
     nodejs_20
     rsync
-    yt-dlp
     elixir
     erlang
     docker-compose
-    fish
-    lazygit
   ];
 
   # Runtime

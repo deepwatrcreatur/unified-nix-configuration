@@ -7,14 +7,12 @@
   home.stateVersion = "24.11";
 
   home.packages = with pkgs; [
-    lsd
-    fish
   ];
     
-  home.file.".terminfo" = {
-    source = ../../modules/home-manager/terminfo;
-    recursive = true;
-  };
+  #home.file.".terminfo" = {
+  #  source = ../../modules/home-manager/terminfo;
+  #  recursive = true;
+  #};
 
   programs.home-manager.enable = true;
 }
