@@ -3,15 +3,18 @@
 {
   imports = [
     "${modulesPath}/virtualisation/lxc-container.nix"
-    ./nix-settings.nix
+    ../../../modules/nixos/nix-settings.nix
+    ../../../modules/nixos/networking.nix
+    ../../../modules/nixos/locale.nix
+    ../../../modules/nixos/services/iperf3.nix
     ./packages.nix
     ./podman.nix
-    ./services.nix
-    ./networking.nix
+    ./influxdb.nix
     ./users.nix
-    ./locale.nix
   ];
 
+  networking.hostName = "homeserver"
+  
   nixpkgs.config.allowUnfree = true;
 
   security.sudo.wheelNeedsPassword = false;
