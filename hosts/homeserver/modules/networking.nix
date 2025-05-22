@@ -1,0 +1,26 @@
+{ config, lib, pkgs, ... }:
+
+{
+  networking = {
+    dhcpcd.enable = false;
+    useDHCP = false;
+    useHostResolvConf = false;
+    hostName = "homeserver";
+  };
+
+  systemd.network = {
+    enable = true;
+    networks."50-eth0" = {
+      matchConfig.Name = "eth0";
+      networkConfig = {
+        DHCP = "yes";
+        IPv6AcceptRA = true;
+      };
+      linkConfig.RequiredForOnline = "routable";
+    };
+  };
+
+  services.openssh.settings.PermitRootLogin = "yes";
+
+  networking.firewall.enable = false;
+}
