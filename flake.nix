@@ -45,11 +45,14 @@
               ./modules/home-manager/common-home.nix
             ];
           };
-          users.users.deepwatrcreatur = {
-            name = "deepwatrcreatur";
-            home = "/Users/deepwatrcreatur";
-            shell = pkgs.fish;
-          };
+          # Fix: Add pkgs to the module's arguments
+          ({ pkgs, ... }: {
+            users.users.deepwatrcreatur = {
+              name = "deepwatrcreatur";
+              home = "/Users/deepwatrcreatur";
+              shell = pkgs.fish;
+            };
+          })
         }
       ];
     };
