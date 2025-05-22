@@ -13,7 +13,7 @@
     ./users.nix
   ];
 
-  networking.hostName = "homeserver"
+  networking.hostName = "homeserver";
   
   nixpkgs.config.allowUnfree = true;
 
