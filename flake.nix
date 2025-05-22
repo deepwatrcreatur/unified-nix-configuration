@@ -37,7 +37,7 @@
         ./hosts/macminim4/default.nix
         ./hosts/common-darwin.nix
         home-manager.darwinModules.home-manager
-        {
+        ({ pkgs, ... }: {
           home-manager.users.deepwatrcreatur = {
             imports = [
               ./users/deepwatrcreatur/common.nix
@@ -45,15 +45,12 @@
               ./modules/home-manager/common-home.nix
             ];
           };
-          # Fix: Add pkgs to the module's arguments
-          ({ pkgs, ... }: {
-            users.users.deepwatrcreatur = {
-              name = "deepwatrcreatur";
-              home = "/Users/deepwatrcreatur";
-              shell = pkgs.fish;
-            };
-          })
-        }
+          users.users.deepwatrcreatur = {
+            name = "deepwatrcreatur";
+            home = "/Users/deepwatrcreatur";
+            shell = pkgs.fish;
+          };
+        })
       ];
     };
 
