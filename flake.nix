@@ -16,9 +16,8 @@
 
   outputs = inputs@{ nixpkgs, home-manager, nix-darwin, sops-nix, ... }:
   let
-    # Helper to import modules from a directory (optional, can list manually)
-    # Keep the logic from your homeserver flake's `importModules` helper
-    lib = nixpkgs.lib; # Get lib here
+    # Helper to import modules from a directory
+    lib = nixpkgs.lib;
     importModules = path:
       let
         dirContents = builtins.readDir path;
@@ -37,28 +36,21 @@
       modules = [
         ./hosts/macminim4/default.nix
         ./hosts/common-darwin.nix
-        home-manager.darwinModules.home-manager # Import HM module for darwin
+        home-manager.darwinModules.home-manager
         {
           home-manager.users.deepwatrcreatur = {
             imports = [
               ./users/deepwatrcreatur/common.nix
               ./users/deepwatrcreatur/hosts/macminim4.nix
-              ./modules/home-manager/common-home.nix 
+              ./modules/home-manager/common-home.nix
             ];
-            # home.stateVersion = "24.11"; 
           };
-          # Use global pkgs and user packages configuration as needed
-          # home-manager.useGlobalPkgs = true;
-          # home-manager.useUserPackages = false;
-        }
-        # Inline module to set the system user's shell at the nix-darwin level
-        ({ pkgs, ... }: { # Accepts pkgs
           users.users.deepwatrcreatur = {
             name = "deepwatrcreatur";
-            home = "/Users/deepwatrcreatur"; # Ensure this is set correctly
-            shell = pkgs.fish; # Use pkgs provided to this module
+            home = "/Users/deepwatrcreatur";
+            shell = pkgs.fish;
           };
-        })
+        }
       ];
     };
 
@@ -70,92 +62,51 @@
         ./hosts/nixos-lxc/ansible/default.nix
         ./hosts/common-nixos.nix
         sops-nix.nixosModules.sops
-        home-manager.nixosModules.home-manager # Import HM module for nixos
+        home-manager.nixosModules.home-manager
         {
-          # Configure Home Manager for the ansible user on ansible
           home-manager.users.ansible = {
             imports = [
-              # ./users/ansible/hosts/ansible.nix # Example
+              # ./users/ansible/hosts/ansible.nix
             ];
-            # home.stateVersion = "...";
-            # programs.home-manager.enable = true; # Not needed here
           };
-           # Use global pkgs and user packages configuration as needed
-           # home-manager.useGlobalPkgs = true;
-           # home-manager.useUserPackages = true;
         }
-        # Ensure the system user is defined at the system level if not already
-        # ({ pkgs, ... }: { users.users.ansible.isNormalUser = true; ... })
       ];
     };
 
     nixosConfigurations.homeserver = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-      specialArgs = { inherit inputs; }; 
+      specialArgs = { inherit inputs; };
       modules =
         [
-          sops-nix.nixosModules.sops        
-          home-manager.nixosModules.home-manager 
-          ./hosts/common-nixos.nix          
-          #./hosts/homeserver/default.nix    
+          sops-nix.nixosModules.sops
+          home-manager.nixosModules.home-manager
+          ./hosts/common-nixos.nix
         ]
-        ++ (importModules ./hosts/homeserver/modules) 
+        ++ (importModules ./hosts/homeserver/modules)
         ++ [
-          ./hosts/homeserver/homeserver-homeassistant.nix 
-
-          ({ config, pkgs, lib, ... }: { 
-            sops.secrets.REOLINK_CAMERA_PASSWORD = {
-              sopsFile = "${inputs.self}/hosts/homeserver/secrets/reolink-secrets.yaml";
-              owner = "hass";
-              group = "hass";
-              mode = "0440";
-            };
-            sops.validateSopsFiles = false; # Consider enabling this once comfortable
+          ({ config, pkgs, lib, ... }: {
             sops.age.keyFile = "/etc/nixos/secrets/age-key.txt";
-            users.users.hass.extraGroups = [ "keys" ];
+            sops.validateSopsFiles = false;
 
-            sops.secrets.influxdb_password = {
-              sopsFile = builtins.path { path = ./hosts/homeserver/secrets/influxdb-secrets.yaml; }; 
-              owner = "influxdb2"; 
-            };
-
-
-            systemd.services."home-assistant".serviceConfig = {
-              # Note: EnvironmentFile loading a sops secret path might be tricky
-              # depending on sops-nix version and service startup order.
-              # LoadCredential is a standard way but seems mkForce null is used here?
-              # Re-evaluate how this secret is passed if issues arise.
-              LoadCredential = lib.mkForce null; 
-              EnvironmentFile = config.sops.secrets.REOLINK_CAMERA_PASSWORD.path;
-            };
-
-            # Home Manager configuration for homeserver users
             home-manager = {
-              useGlobalPkgs = true; # As per original config
-              useUserPackages = true; # As per original config
-              users.deepwatrcreatur = { # Configure deepwatrcreatur user on homeserver
-                 imports = [
-                    ./users/deepwatrcreatur/common.nix # Import common HM settings
-                    ./users/deepwatrcreatur/hosts/homeserver.nix # Import homeserver-specific user settings (merge ../homeserver/users/deepwatrcreatur.nix here)
-                    ./modules/home-manager/common-home.nix # Make sure this is imported if the user needs fish/starship etc.
-                 ];
-                 # home.stateVersion = "...";
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              users.deepwatrcreatur = {
+                imports = [
+                  ./users/deepwatrcreatur/common.nix
+                  ./users/deepwatrcreatur/hosts/homeserver.nix
+                  ./modules/home-manager/common-home.nix
+                ];
               };
-              users.root = { 
-                 imports = [
-                    ./users/root/common.nix
-                    ./modules/home-manager/common-home.nix
-                    #./users/root/hosts/homeserver.nix 
-                 ];
-                 # home.stateVersion = "..."; 
+              users.root = {
+                imports = [
+                  ./users/root/common.nix
+                  ./modules/home-manager/common-home.nix
+                ];
               };
             };
-
-            systemd.services."home-assistant".wants = [ "sops-nix.service" ];
-            systemd.services."home-assistant".after = [ "sops-nix.service" ];
-
-          }) 
-        ]; 
+          })
+        ];
     };
   };
 }
