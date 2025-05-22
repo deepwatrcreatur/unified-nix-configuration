@@ -5,7 +5,6 @@
     dhcpcd.enable = false;
     useDHCP = false;
     useHostResolvConf = false;
-    hostName = "homeserver";
   };
 
   systemd.network = {
