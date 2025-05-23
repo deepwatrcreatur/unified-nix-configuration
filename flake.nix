@@ -33,7 +33,6 @@
     darwinConfigurations.macminim4 = nix-darwin.lib.darwinSystem {
       system = "aarch64-darwin";
       specialArgs = { inherit inputs; };
-      hmLib = home-manager.lib; # Pass home-manager's library
       modules = [
         ./hosts/macminim4
         home-manager.darwinModules.home-manager
