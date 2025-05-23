@@ -1,5 +1,5 @@
 # modules/nix-darwin/nix-mount.nix
-{ config, lib, pkgs, hmLib, ... }:
+{ config, lib, pkgs, inputs, ... }:
 let
   cfg = config.custom.nix-mount;
 in
@@ -52,7 +52,7 @@ in
       };
 
       # Post-activation script to fix permissions
-      home.activation.fixLaunchAgentPermissions = hmLib.dag.entryAfter ["writeBoundary"] ''
+      home.activation.fixLaunchAgentPermissions = inputs.home-manager.lib.dag.entryAfter ["writeBoundary"] ''
         ${pkgs.coreutils}/bin/chmod 644 /Users/${config.system.primaryUser}/Library/LaunchAgents/com.nix.mount.plist
         ${pkgs.coreutils}/bin/chown ${config.system.primaryUser}:staff /Users/${config.system.primaryUser}/Library/LaunchAgents/com.nix.mount.plist
       '';
