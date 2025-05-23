@@ -2,6 +2,32 @@
 { config, lib, pkgs, ... }:
 let
   cfg = config.custom.nix-mount;
+  fixPermissionsScript = pkgs.writeFile {
+    name = "fix-launch-agent-permissions.sh";
+    text = ''
+      #!/bin/sh
+      LOG="/tmp/nix-darwin-fixLaunchAgentPermissions.log"
+      echo "$(date): Starting fixLaunchAgentPermissions" >> "$LOG"
+      PLIST="/Users/${config.system.primaryUser}/Library/LaunchAgents/com.nix.mount.plist"
+      sleep 5  # Increased delay to ensure plist creation
+      if [ -f "$PLIST" ]; then
+        echo "$(date): Found $PLIST, setting permissions" >> "$LOG"
+        sudo ${pkgs.coreutils}/bin/chmod 644 "$PLIST" 2>> "$LOG" || {
+          echo "$(date): Failed to chmod $PLIST" >> "$LOG"
+          exit 1
+        }
+        sudo ${pkgs.coreutils}/bin/chown ${config.system.primaryUser}:staff "$PLIST" 2>> "$LOG" || {
+          echo "$(date): Failed to chown $PLIST" >> "$LOG"
+          exit 1
+        }
+        echo "$(date): Successfully set permissions on $PLIST" >> "$LOG"
+      else
+        echo "$(date): Error: $PLIST not found after 5 seconds" >> "$LOG"
+        exit 1
+      fi
+    '';
+    executable = true;
+  };
 in
 {
   options.custom.nix-mount = {
@@ -38,26 +64,7 @@ in
     };
 
     system.activationScripts.fixLaunchAgentPermissions.text = ''
-      #!/bin/sh
-      LOG="/tmp/nix-darwin-fixLaunchAgentPermissions.log"
-      echo "$(date): Starting fixLaunchAgentPermissions" >> "$LOG"
-      PLIST="/Users/${config.system.primaryUser}/Library/LaunchAgents/com.nix.mount.plist"
-      sleep 2  # Brief delay to ensure plist creation
-      if [ -f "$PLIST" ]; then
-        echo "$(date): Found $PLIST, setting permissions" >> "$LOG"
-        ${pkgs.coreutils}/bin/chmod 644 "$PLIST" 2>> "$LOG" || {
-          echo "$(date): Failed to chmod $PLIST" >> "$LOG"
-          exit 1
-        }
-        ${pkgs.coreutils}/bin/chown ${config.system.primaryUser}:staff "$PLIST" 2>> "$LOG" || {
-          echo "$(date): Failed to chown $PLIST" >> "$LOG"
-          exit 1
-        }
-        echo "$(date): Successfully set permissions on $PLIST" >> "$LOG"
-      else
-        echo "$(date): Error: $PLIST not found" >> "$LOG"
-        exit 1
-      fi
+      ${fixPermissionsScript}
     '';
   };
 }
