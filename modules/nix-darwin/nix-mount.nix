@@ -1,5 +1,5 @@
 # modules/nix-darwin/nix-mount.nix
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 let
   cfg = config.custom.nix-mount;
 in
@@ -13,19 +13,17 @@ in
   };
 
   config = {
-    # Define launchd.user.agents for activation
-    launchd.user.agents.nix-mount = {
-      serviceConfig = {
-        ProgramArguments = [
-          "/bin/sh"
-          "-c"
-          "/usr/sbin/diskutil mount -mountPoint /nix ${cfg.uuid}"
-        ];
-        Label = "com.nix.mount";
-        RunAtLoad = true;
-        KeepAlive = false;
-      };
-    };
+    # Assertions to catch misconfigurations
+    assertions = [
+      {
+        assertion = config.system.primaryUser != "";
+        message = "system.primaryUser must be set for nix-mount launch agent";
+      }
+      {
+        assertion = cfg.uuid != "";
+        message = "custom.nix-mount.uuid must be set for nix-mount launch agent";
+      }
+    ];
 
     # Use home-manager to manage the plist file for the primary user
     home-manager.users.${config.system.primaryUser} = {
@@ -52,6 +50,12 @@ in
           </plist>
         '';
       };
+
+      # Post-activation script to fix permissions
+      home.activation.fixLaunchAgentPermissions = lib.hm.dag.entryAfter ["writeBoundary"] ''
+        ${pkgs.coreutils}/bin/chmod 644 /Users/${config.system.primaryUser}/Library/LaunchAgents/com.nix.mount.plist
+        ${pkgs.coreutils}/bin/chown ${config.system.primaryUser}:staff /Users/${config.system.primaryUser}/Library/LaunchAgents/com.nix.mount.plist
+      '';
     };
   };
 }
