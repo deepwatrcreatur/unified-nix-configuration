@@ -4,6 +4,7 @@
   imports = [
     ../../modules/system/packages.nix
     ../../modules/nix-darwin
+    ../../modules/nix-darwin/nix-mount.nix
     ./nix-store-uuid.nix
   ];
 
