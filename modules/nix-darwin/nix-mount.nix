@@ -62,7 +62,8 @@ in
 
     # Activation script runs standalone script
     system.activationScripts.fixLaunchDaemonPermissions.text = ''
-      /bin/sh /run/current-system/sw/etc/fix-nix-mount-plist.sh >> /tmp/nix-darwin-fixLaunchDaemonPermissions.log 2>&1
-    '';
-  };
+      chmod +x /run/current-system/sw/etc/fix-nix-mount-plist.sh
+      /bin/sh /run/current-system/sw/etc/fix-nix-mount-plist.sh >> /tmp/nix-     darwin-fixLaunchDaemonPermissions.log 2>&1
+   '';
+ };
 }
