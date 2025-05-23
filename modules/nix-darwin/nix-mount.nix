@@ -36,16 +36,21 @@ in
       };
     };
 
-    system.activationScripts.fixLaunchDaemonPermissions.text = ''
+    environment.etc."fix-nix-mount-plist.sh".text = ''
+      #!/bin/sh
       LOG="/tmp/nix-darwin-activation.log"
-      echo "$(date): Starting fixLaunchDaemonPermissions" >> "$LOG"
+      echo "$(date): Running fix-nix-mount-plist.sh" >> "$LOG"
       PLIST="/Library/LaunchDaemons/com.nix.mount.plist"
       # Wait up to 5 seconds for plist to appear
       for i in {1..5}; do
         if [ -f "$PLIST" ]; then
           echo "$(date): Found $PLIST, setting permissions" >> "$LOG"
-          /bin/chmod u+w "$PLIST" 2>> "$LOG" || {
-            echo "$(date): Failed to chmod u+w $PLIST" >> "$LOG"
+          /bin/chmod 644 "$PLIST" 2>> "$LOG" || {
+            echo "$(date): Failed to chmod 644 $PLIST" >> "$LOG"
+            exit 1
+          }
+          /bin/chown root:wheel "$PLIST" 2>> "$LOG" || {
+            echo "$(date): Failed to chown $PLIST" >> "$LOG"
             exit 1
           }
           echo "$(date): Successfully set permissions on $PLIST" >> "$LOG"
@@ -56,6 +61,19 @@ in
       done
       echo "$(date): Error: $PLIST not found after 5 seconds" >> "$LOG"
       exit 1
+    '';
+
+    system.activationScripts.fixLaunchDaemonPermissions.text = ''
+      LOG="/tmp/nix-darwin-activation.log"
+      echo "$(date): Starting fixLaunchDaemonPermissions" >> "$LOG"
+      /bin/chmod +x /run/current-system/sw/etc/fix-nix-mount-plist.sh 2>> "$LOG" || {
+        echo "$(date): Failed to chmod +x fix-nix-mount-plist.sh" >> "$LOG"
+        exit 1
+      }
+      /bin/sh /run/current-system/sw/etc/fix-nix-mount-plist.sh >> "$LOG" 2>&1 || {
+        echo "$(date): Failed to run fix-nix-mount-plist.sh" >> "$LOG"
+        exit 1
+      }
     '';
   };
 }
