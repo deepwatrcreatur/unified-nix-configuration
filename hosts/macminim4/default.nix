@@ -14,7 +14,11 @@
   programs.fish.enable = true;
 
   services.tailscale.enable = true;
-
+  
+  # Define the primary user for user-specific settings
+  # required to enable some recently-added functionality: show all extensions
+  system.primaryUser = "deepwatrcreatur";
+  
   users.users.deepwatrcreatur = {
     name = "deepwatrcreatur";
     home = "/Users/deepwatrcreatur";
