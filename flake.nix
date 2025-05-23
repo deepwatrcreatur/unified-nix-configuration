@@ -35,7 +35,6 @@
       specialArgs = { inherit inputs; };
       modules = [
         ./hosts/macminim4
-        ./modules/nix-darwin
         home-manager.darwinModules.home-manager
         ({ pkgs, ... }: {
           home-manager.users.deepwatrcreatur = {
