@@ -17,16 +17,17 @@ in
       nix
     '';
 
-    launchd.agents.nix-mount = {
-      enable = true;
-      ProgramArguments = [
-        "/bin/sh"
-        "-c"
-        "/usr/sbin/diskutil mount -mountPoint /nix ${cfg.uuid}"
-      ];
-      Label = "com.nix.mount";
-      RunAtLoad = true;
-      KeepAlive = false;
+    launchd.user.agents.nix-mount = {
+      serviceConfig = {
+        ProgramArguments = [
+          "/bin/sh"
+          "-c"
+          "/usr/sbin/diskutil mount -mountPoint /nix ${cfg.uuid}"
+        ];
+        Label = "com.nix.mount";
+        RunAtLoad = true;
+        KeepAlive = false;
+      };
     };
   };
 }
