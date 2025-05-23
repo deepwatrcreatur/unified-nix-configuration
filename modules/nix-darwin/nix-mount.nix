@@ -58,7 +58,6 @@ in
           exit 1
         fi
       '';
-      mode = "0755";
     };
 
     # Activation script runs standalone script
