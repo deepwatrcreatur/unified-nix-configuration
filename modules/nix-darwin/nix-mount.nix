@@ -15,6 +15,7 @@ in
   config = {
     environment.etc."synthetic.conf".text = ''
       nix
+      run     private/var/run
     '';
 
     launchd.user.agents.nix-mount = {
