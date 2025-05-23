@@ -4,11 +4,13 @@ let
   cfg = config.custom.nix-mount;
 
   # Create an executable script in the Nix store
-  fixNixMountPlistScript = pkgs.writeFile {
-    name = "fix-nix-mount-plist.sh";
+  fixNixMountPlistScript = pkgs.runCommand "fix-nix-mount-plist.sh" {
     src = ./fix-nix-mount-plist.sh;
-    mode = "0755"; # Ensure executable permissions
-  };
+  } ''
+    mkdir -p $out
+    cp $src $out/fix-nix-mount-plist.sh
+    chmod +x $out/fix-nix-mount-plist.sh
+  '';
 in
 {
   options.custom.nix-mount = {
@@ -43,7 +45,7 @@ in
       };
     };
 
-    environment.etc."fix-nix-mount-plist.sh".source = fixNixMountPlistScript;
+    environment.etc."fix-nix-mount-plist.sh".source = "${fixNixMountPlistScript}/fix-nix-mount-plist.sh";
 
     system.activationScripts.fixLaunchDaemonPermissions.text = ''
       /bin/sh /run/current-system/sw/etc/fix-nix-mount-plist.sh
