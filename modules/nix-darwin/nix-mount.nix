@@ -13,10 +13,10 @@ in
   };
 
   config = {
-    environment.etc."synthetic.conf".text = ''
-      run     private/var/run
-      nix
-    '';
+    #environment.etc."synthetic.conf".text = ''
+    #  run     private/var/run
+    #  nix
+    #'';
 
     launchd.user.agents.nix-mount = {
       serviceConfig = {
