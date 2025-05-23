@@ -33,29 +33,26 @@ in
       };
     };
 
-    system.activationScripts.fixLaunchDaemonPermissions = {
-      text = ''
-        # Log to a file for debugging
-        LOG="/tmp/nix-darwin-fixLaunchDaemonPermissions.log"
-        echo "$(date): Starting fixLaunchDaemonPermissions" >> "$LOG"
-        PLIST="/Library/LaunchDaemons/com.nix.mount.plist"
-        if [ -f "$PLIST" ]; then
-          echo "$(date): Found $PLIST, setting permissions" >> "$LOG"
-          ${pkgs.coreutils}/bin/chmod 644 "$PLIST" || {
-            echo "$(date): Failed to chmod $PLIST" >> "$LOG"
-            exit 1
-          }
-          ${pkgs.coreutils}/bin/chown root:wheel "$PLIST" || {
-            echo "$(date): Failed to chown $PLIST" >> "$LOG"
-            exit 1
-          }
-          echo "$(date): Successfully set permissions on $PLIST" >> "$LOG"
-        else
-          echo "$(date): Error: $PLIST not found" >> "$LOG"
+    system.activationScripts.fixLaunchDaemonPermissions.text = ''
+      # Log to a system-wide location
+      LOG="/var/log/nix-darwin-fixLaunchDaemonPermissions.log"
+      echo "$(date): Starting fixLaunchDaemonPermissions" >> "$LOG"
+      PLIST="/Library/LaunchDaemons/com.nix.mount.plist"
+      if [ -f "$PLIST" ]; then
+        echo "$(date): Found $PLIST, setting permissions" >> "$LOG"
+        ${pkgs.coreutils}/bin/chmod 644 "$PLIST" 2>> "$LOG" || {
+          echo "$(date): Failed to chmod $PLIST" >> "$LOG"
           exit 1
-        fi
-      '';
-      deps = [ "launchd" ]; # Run after launchd services are set up
-    };
+        }
+        ${pkgs.coreutils}/bin/chown root:wheel "$PLIST" 2>> "$LOG" || {
+          echo "$(date): Failed to chown $PLIST" >> "$LOG"
+          exit 1
+        }
+        echo "$(date): Successfully set permissions on $PLIST" >> "$LOG"
+      else
+        echo "$(date): Error: $PLIST not found" >> "$LOG"
+        exit 1
+      fi
+    '';
   };
 }
