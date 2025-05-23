@@ -37,28 +37,27 @@ in
       };
     };
 
-    system.activationScripts.fixLaunchAgentPermissions = {
-      text = ''
-        LOG="/Users/${config.system.primaryUser}/nix-darwin-fixLaunchAgentPermissions.log"
-        echo "$(date): Starting fixLaunchAgentPermissions" >> "$LOG"
-        PLIST="/Users/${config.system.primaryUser}/Library/LaunchAgents/com.nix.mount.plist"
-        if [ -f "$PLIST" ]; then
-          echo "$(date): Found $PLIST, setting permissions" >> "$LOG"
-          ${pkgs.coreutils}/bin/chmod 644 "$PLIST" 2>> "$LOG" || {
-            echo "$(date): Failed to chmod $PLIST" >> "$LOG"
-            exit 1
-          }
-          ${pkgs.coreutils}/bin/chown ${config.system.primaryUser}:staff "$PLIST" 2>> "$LOG" || {
-            echo "$(date): Failed to chown $PLIST" >> "$LOG"
-            exit 1
-          }
-          echo "$(date): Successfully set permissions on $PLIST" >> "$LOG"
-        else
-          echo "$(date): Error: $PLIST not found" >> "$LOG"
+    system.activationScripts.fixLaunchAgentPermissions.text = ''
+      #!/bin/sh
+      LOG="/tmp/nix-darwin-fixLaunchAgentPermissions.log"
+      echo "$(date): Starting fixLaunchAgentPermissions" >> "$LOG"
+      PLIST="/Users/${config.system.primaryUser}/Library/LaunchAgents/com.nix.mount.plist"
+      sleep 2  # Brief delay to ensure plist creation
+      if [ -f "$PLIST" ]; then
+        echo "$(date): Found $PLIST, setting permissions" >> "$LOG"
+        ${pkgs.coreutils}/bin/chmod 644 "$PLIST" 2>> "$LOG" || {
+          echo "$(date): Failed to chmod $PLIST" >> "$LOG"
           exit 1
-        fi
-      '';
-      deps = [ "launchd" "users" "systemsetup" "multi-user" ]; # Ensure late execution
-    };
+        }
+        ${pkgs.coreutils}/bin/chown ${config.system.primaryUser}:staff "$PLIST" 2>> "$LOG" || {
+          echo "$(date): Failed to chown $PLIST" >> "$LOG"
+          exit 1
+        }
+        echo "$(date): Successfully set permissions on $PLIST" >> "$LOG"
+      else
+        echo "$(date): Error: $PLIST not found" >> "$LOG"
+        exit 1
+      fi
+    '';
   };
 }
