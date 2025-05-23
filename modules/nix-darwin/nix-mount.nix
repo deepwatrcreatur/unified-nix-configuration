@@ -1,5 +1,5 @@
 # modules/nix-darwin/nix-mount.nix
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, hmLib, ... }:
 let
   cfg = config.custom.nix-mount;
 in
@@ -17,7 +17,7 @@ in
     assertions = [
       {
         assertion = config.system.primaryUser != "";
-        message = "system.primaryUser must be set for nix-mount launch agent";
+        message = "system.primaryUser must be set for ni`x-mount launch agent";
       }
       {
         assertion = cfg.uuid != "";
@@ -52,7 +52,7 @@ in
       };
 
       # Post-activation script to fix permissions
-      home.activation.fixLaunchAgentPermissions = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      home.activation.fixLaunchAgentPermissions = hmLib.dag.entryAfter ["writeBoundary"] ''
         ${pkgs.coreutils}/bin/chmod 644 /Users/${config.system.primaryUser}/Library/LaunchAgents/com.nix.mount.plist
         ${pkgs.coreutils}/bin/chown ${config.system.primaryUser}:staff /Users/${config.system.primaryUser}/Library/LaunchAgents/com.nix.mount.plist
       '';
