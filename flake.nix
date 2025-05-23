@@ -34,7 +34,7 @@
       system = "aarch64-darwin";
       specialArgs = { inherit inputs; };
       modules = [
-        ./hosts/macminim4/default
+        ./hosts/macminim4
         ./modules/nix-darwin
         home-manager.darwinModules.home-manager
         ({ pkgs, ... }: {
