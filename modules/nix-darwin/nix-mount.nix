@@ -38,8 +38,15 @@ in
     };
 
     system.activationScripts.fixLaunchAgentPermissions.text = ''
-      /bin/chmod 644 /Users/${config.system.primaryUser}/Library/LaunchAgents/com.nix.mount.plist
-      /bin/chown ${config.system.primaryUser}:staff /Users/${config.system.primaryUser}/Library/LaunchAgents/com.nix.mount.plist
+      # Wait briefly to ensure plist is created
+      sleep 1
+      PLIST="/Users/${config.system.primaryUser}/Library/LaunchAgents/com.nix.mount.plist"
+      if [ -f "$PLIST" ]; then
+        ${pkgs.coreutils}/bin/chmod 644 "$PLIST" || echo "Failed to chmod $PLIST"
+        ${pkgs.coreutils}/bin/chown ${config.system.primaryUser}:staff "$PLIST" || echo "Failed to chown $PLIST"
+      else
+        echo "Error: $PLIST not found during activation"
+      fi
     '';
   };
 }
