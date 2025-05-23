@@ -25,45 +25,37 @@ in
         ProgramArguments = [
           "/bin/sh"
           "-c"
-          # Retry mounting every 5 seconds for up to 60 seconds
-          ''for i in {1..12}; do /usr/sbin/diskutil mount -mountPoint /nix ${cfg.uuid} && exit 0; /bin/sleep 5; done; exit 1''
+          # Initial 5-second delay, retry every 5 seconds for 60 seconds
+          ''/bin/sleep 5; for i in {1..12}; do /usr/sbin/diskutil mount -mountPoint /nix ${cfg.uuid} && exit 0; /bin/sleep 5; done; exit 1''
         ];
         Label = "com.nix.mount";
         RunAtLoad = true;
         KeepAlive = false;
-        # Log errors to diagnose failures
         StandardErrorPath = "/tmp/nix-mount-error.log";
+        StandardOutPath = "/tmp/nix-mount-out.log";
       };
     };
 
-    # Standalone script for permissions
-    environment.etc."fix-nix-mount-plist.sh" = {
-      text = ''
-        #!/bin/sh
-        LOG="/tmp/nix-darwin-fixLaunchDaemonPermissions.log"
-        echo "$(date): Running fix-nix-mount-plist.sh" >> "$LOG"
-        PLIST="/Library/LaunchDaemons/com.nix.mount.plist"
+    system.activationScripts.fixLaunchDaemonPermissions.text = ''
+      LOG="/tmp/nix-darwin-activation.log"
+      echo "$(date): Starting fixLaunchDaemonPermissions" >> "$LOG"
+      PLIST="/Library/LaunchDaemons/com.nix.mount.plist"
+      # Wait up to 5 seconds for plist to appear
+      for i in {1..5}; do
         if [ -f "$PLIST" ]; then
-          /bin/chmod 644 "$PLIST" 2>> "$LOG" || {
-            echo "$(date): Failed to chmod $PLIST" >> "$LOG"
-            exit 1
-          }
-          /bin/chown root:wheel "$PLIST" 2>> "$LOG" || {
-            echo "$(date): Failed to chown $PLIST" >> "$LOG"
+          echo "$(date): Found $PLIST, setting permissions" >> "$LOG"
+          /bin/chmod u+w "$PLIST" 2>> "$LOG" || {
+            echo "$(date): Failed to chmod u+w $PLIST" >> "$LOG"
             exit 1
           }
           echo "$(date): Successfully set permissions on $PLIST" >> "$LOG"
-        else
-          echo "$(date): Error: $PLIST not found" >> "$LOG"
-          exit 1
+          exit 0
         fi
-      '';
-    };
-
-    # Activation script runs standalone script
-    system.activationScripts.fixLaunchDaemonPermissions.text = ''
-      chmod +x /run/current-system/sw/etc/fix-nix-mount-plist.sh
-      /bin/sh /run/current-system/sw/etc/fix-nix-mount-plist.sh >> /tmp/nix-     darwin-fixLaunchDaemonPermissions.log 2>&1
-   '';
- };
+        echo "$(date): Waiting for $PLIST ($i/5)" >> "$LOG"
+        sleep 1
+      done
+      echo "$(date): Error: $PLIST not found after 5 seconds" >> "$LOG"
+      exit 1
+    '';
+  };
 }
