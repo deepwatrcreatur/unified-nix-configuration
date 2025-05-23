@@ -34,8 +34,8 @@
       system = "aarch64-darwin";
       specialArgs = { inherit inputs; };
       modules = [
-        ./hosts/macminim4/default.nix
-        ./hosts/common-darwin.nix
+        ./hosts/macminim4/default
+        ./modules/nix-darwin
         home-manager.darwinModules.home-manager
         ({ pkgs, ... }: {
           home-manager.users.deepwatrcreatur = {
