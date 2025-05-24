@@ -23,6 +23,7 @@
     lazyjj
     python3
     glow
+    just
   ];
 
   # Copy .terminfo files into place
