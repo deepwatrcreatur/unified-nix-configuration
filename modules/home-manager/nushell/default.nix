@@ -1,9 +1,10 @@
-{ config, ... }:
+# modules/home-manager/nushell/default.nix
+{ config, pkgs, ... }:
 
 {
   programs.nushell = {
     enable = true;
-    configFile.text = builtins.readFile ./config.nu;
-    envFile.text = builtins.readFile ./env.nu;    
+    configFile.source = ./config.nu;
+    envFile.source = ./env.nu;
   };
 }
