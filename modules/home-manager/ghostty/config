@@ -14,8 +14,8 @@ font-feature                   = dlig
 font-feature                   = ss05
 
 font-thicken                   = false
-font-size                      = 14
-window-inherit-font-size       = true
+font-size                      = 30
+window-inherit-font-size       = false
 
 # Look and Feel
 adjust-cursor-thickness        = 3
