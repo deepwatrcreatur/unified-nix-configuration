@@ -9,11 +9,15 @@
 
   nix.enable = false; # Required for Determinate Nix Installer
 
-  programs.fish.enable = true;
-  programs.fish.shellAliases = {
-    update = "darwin-rebuild switch --flake /Volumes/Work/unified-nix-configuration/#${config.networking.hostName}";
+  programs.fish = {
+    enable = true;
+    shellInit = ""; # Explicitly empty to avoid null
+    interactiveShellInit = ""; # Explicitly empty to avoid null
+    shellAliases = {
+      update = "darwin-rebuild switch --flake /Volumes/Work/unified-nix-configuration#${config.networking.hostName}";
+    };
   };
-  
+    
   services.tailscale.enable = true;
   
   # Define the primary user for user-specific settings
