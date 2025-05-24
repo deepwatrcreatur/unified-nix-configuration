@@ -9,6 +9,8 @@
 
   nix.enable = false; # Required for Determinate Nix Installer
 
+  nix.flakeDirectory = "/Volumes/Work/unified-nix-configuration";
+
   programs.fish.enable = true;
 
   services.tailscale.enable = true;
