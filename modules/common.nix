@@ -3,6 +3,7 @@
   imports = [
     # Import user definitions (if common across hosts)
     ../users/common.nix
+    ./just.nix
   ];
 
   # Basic System Settings
@@ -23,7 +24,7 @@
   services.openssh = {
     enable = true;
     settings.PasswordAuthentication = true; # Recommended: use key-based auth
-    settings.KbdInteractiveAuthentication = truee;
+    settings.KbdInteractiveAuthentication = true;
   };
 
   # Nix settings

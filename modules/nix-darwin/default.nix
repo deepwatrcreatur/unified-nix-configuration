@@ -1,4 +1,4 @@
-# hosts/common-darwin.nix
+# modules/nix-darwin/common-darwin.nix
 { config, pkgs, lib, ... }:
 
 {

@@ -13,7 +13,7 @@
       la = "lsd -a";
       lla = "lsd -la";
       ".." = "cd ..";
-      update = "darwin-rebuild switch --flake ${config.home.homeDirectory}/unified-nix-configuration/#$(hostname)";
+      update = "just update";
     };
     plugins = [
       { name = "fzf"; src = pkgs.fishPlugins.fzf; }
