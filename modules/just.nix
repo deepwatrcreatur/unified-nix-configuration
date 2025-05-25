@@ -12,11 +12,6 @@ in
       default = true;
       description = "Enable the just command runner and install it system-wide.";
     };
-    extraJustfile = lib.mkOption {
-      type = lib.types.lines;
-      default = "";
-      description = "Additional content to append to /etc/justfile.";
-    };
   };
 
   # Configuration
@@ -24,11 +19,5 @@ in
     # Install just
     environment.systemPackages = [ pkgs.just ];
 
-    # Default justfile (can be overridden by host-specific configs)
-    environment.etc."justfile".text = ''
-      # Default justfile for shared commands
-      # Add shared recipes here
-      ${cfg.extraJustfile}
-    '';
   };
 }
