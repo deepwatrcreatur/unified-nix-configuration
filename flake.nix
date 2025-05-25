@@ -34,6 +34,7 @@
       system = "aarch64-darwin";
       specialArgs = { inherit inputs; };
       modules = [
+        ./modules/nix-settings.nix
         ./hosts/macminim4
         home-manager.darwinModules.home-manager
         ({ pkgs, ... }: {
@@ -59,6 +60,7 @@
       system = "x86_64-linux";
       specialArgs = { inherit inputs; };
       modules = [
+        ./modules/nix-settings.nix
         ./hosts/nixos-lxc/ansible
         ./hosts/nixos
         sops-nix.nixosModules.sops
@@ -80,6 +82,7 @@
         [
           sops-nix.nixosModules.sops
           home-manager.nixosModules.home-manager
+          ./modules/nix-settings.nix
           ./hosts/nixos
         ]
         ++ (importModules ./hosts/homeserver/modules)

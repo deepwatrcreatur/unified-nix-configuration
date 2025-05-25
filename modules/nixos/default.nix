@@ -3,7 +3,7 @@
 
 {
   imports = [
-    ../default.nix
+    ./nix-gc.nix
   ];
 }
 
