@@ -2,7 +2,7 @@
 { config, pkgs, ... }:
 {
   imports = [
-    ./rust.nix
+    
   ];
 
   home.username = "deepwatrcreatur";
