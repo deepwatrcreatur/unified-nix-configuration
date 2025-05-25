@@ -20,7 +20,4 @@
       st = "status";
     };
   };
-
-  # If this is a NixOS module, not Home Manager:
-  environment.systemPackages = with pkgs; [ gh ];
 }
