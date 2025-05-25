@@ -1,4 +1,3 @@
-# modules/git.nix
 { config, pkgs, lib, ... }:
 
 {
@@ -10,6 +9,8 @@
     extraConfig = {
       init.defaultBranch = "main";
       core.editor = "hx";
+      'credential "https://github.com"'.helper = "!gh auth git-credential";
+      'credential "https://gist.github.com"'.helper = "!gh auth git-credential";
     };
 
     aliases = {
@@ -17,6 +18,9 @@
       br = "branch";
       ci = "commit";
       st = "status";
-    };   
+    };
   };
+
+  # Ensure gh is installed
+  environment.systemPackages = with pkgs; [ gh ];
 }
