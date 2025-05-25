@@ -9,8 +9,8 @@
     extraConfig = {
       init.defaultBranch = "main";
       core.editor = "hx";
-      'credential "https://github.com"'.helper = "!gh auth git-credential";
-      'credential "https://gist.github.com"'.helper = "!gh auth git-credential";
+      "credential \"https://github.com\"".helper = "!gh auth git-credential";
+      "credential \"https://gist.github.com\"".helper = "!gh auth git-credential";
     };
 
     aliases = {
@@ -21,6 +21,6 @@
     };
   };
 
-  # Ensure gh is installed
+  # If this is a NixOS module, not Home Manager:
   environment.systemPackages = with pkgs; [ gh ];
 }
