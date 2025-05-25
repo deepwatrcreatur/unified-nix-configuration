@@ -2,7 +2,7 @@
 { config, pkgs, ... }:
 {
   imports = [
-    
+    ../../modules/git.nix    
   ];
 
   home.username = "deepwatrcreatur";
