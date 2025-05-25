@@ -39,9 +39,9 @@
         ({ pkgs, ... }: {
           home-manager.users.deepwatrcreatur = {
             imports = [
-              ./users/deepwatrcreatur/common.nix
+              ./users/deepwatrcreatur
               ./users/deepwatrcreatur/hosts/macminim4.nix
-              ./modules/home-manager/common-home.nix
+              ./modules/home-manager
             ];
             programs.nushell.enable = true;
           };
@@ -59,8 +59,8 @@
       system = "x86_64-linux";
       specialArgs = { inherit inputs; };
       modules = [
-        ./hosts/nixos-lxc/ansible/default.nix
-        ./hosts/common-nixos.nix
+        ./hosts/nixos-lxc/ansible
+        ./hosts/nixos
         sops-nix.nixosModules.sops
         home-manager.nixosModules.home-manager
         {
@@ -80,7 +80,7 @@
         [
           sops-nix.nixosModules.sops
           home-manager.nixosModules.home-manager
-          ./hosts/common-nixos.nix
+          ./hosts/nixos
         ]
         ++ (importModules ./hosts/homeserver/modules)
         ++ [
@@ -93,15 +93,15 @@
               useUserPackages = true;
               users.deepwatrcreatur = {
                 imports = [
-                  ./users/deepwatrcreatur/common.nix
+                  ./users/deepwatrcreatur
                   ./users/deepwatrcreatur/hosts/homeserver.nix
-                  ./modules/home-manager/common-home.nix
+                  ./modules/home-manager
                 ];
               };
               users.root = {
                 imports = [
-                  ./users/root/common.nix
-                  ./modules/home-manager/common-home.nix
+                  ./users/root
+                  ./modules/home-manager
                 ];
               };
             };
