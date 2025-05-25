@@ -3,7 +3,6 @@
   imports = [
     ../../modules/home-manager/fish-shared.nix
     ../../modules/home-manager/starship.nix
-    ../../modules/home-manager/nh.nix
     ];
   
   home.username = "root";
