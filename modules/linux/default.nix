@@ -12,7 +12,5 @@ let
   moduleImports = lib.mapAttrsToList (name: _: import (commonDir + "/${name}")) modules;
 
 in {
-  imports = [
-    moduleImports
-  ];
+  imports = moduleImports;
 }
