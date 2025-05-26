@@ -1,10 +1,11 @@
-# hosts/macminim4/just.nix
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, ... }:
 
 {
-  # Override the default justfile for macminim4
-  environment.etc."justfile".text = ''
-    update:
-      darwin-rebuild switch --flake /Volumes/Work/unified-nix-configuration#macminim4
-  '';
+  # Ensure just and nh are installed for the user
+  home-manager.users.deepwatrcreatur = {
+    home.packages = [ pkgs.just inputs.nh.packages.aarch64-darwin.default ];
+
+    # Reference the external justfile in the same directory
+    home.file.".justfile".source = ./justfile;
+  };
 }
