@@ -4,7 +4,7 @@
   imports = [
     "${modulesPath}/virtualisation/lxc-container.nix"
     ../../../modules/nixos/networking.nix
-    ../../../modules/nixos/locale.nix
+    ../../../modules/nixos
     ../../../modules/nixos/services/iperf3.nix
     ./packages.nix
     ./podman.nix
