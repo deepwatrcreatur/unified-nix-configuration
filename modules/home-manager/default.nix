@@ -15,10 +15,8 @@
     lsd
     bat
     fzf
-    fastfetch
     neovim
     gh
-    git
     lazygit
     lazyjj
     python3

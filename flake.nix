@@ -42,6 +42,7 @@
             imports = [
               ./users/deepwatrcreatur
               ./users/deepwatrcreatur/hosts/macminim4.nix
+              ./modules
               ./modules/home-manager
             ];
           };
@@ -67,6 +68,7 @@
         {
           home-manager.users.ansible = {
             imports = [
+              ./modules
               # ./users/ansible/hosts/ansible.nix
             ];
           };
@@ -81,7 +83,7 @@
         [
           sops-nix.nixosModules.sops
           home-manager.nixosModules.home-manager
-          ./modules/nix-settings.nix
+          ./modules
           ./hosts/nixos
         ]
         ++ (importModules ./hosts/homeserver/modules)
