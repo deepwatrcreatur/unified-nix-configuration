@@ -4,7 +4,6 @@
   nix = {
     settings = {
       # Automatically optimize the Nix store after each build
-      auto-optimise-store = true;
 
       experimental-features = [ "nix-command" "flakes" ];
 
