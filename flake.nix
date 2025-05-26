@@ -44,7 +44,6 @@
               ./users/deepwatrcreatur/hosts/macminim4.nix
               ./modules/home-manager
             ];
-            programs.nushell.enable = true;
           };
           users.users.deepwatrcreatur = {
             name = "deepwatrcreatur";
