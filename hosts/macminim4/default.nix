@@ -4,6 +4,7 @@
   imports = [
     ../../modules/nix-darwin
     ./nix-store-uuid.nix
+    ./just.nix
   ];
 
   nix.enable = false; # Required for Determinate Nix Installer
