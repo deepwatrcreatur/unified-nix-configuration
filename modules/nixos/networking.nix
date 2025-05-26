@@ -19,7 +19,5 @@
     };
   };
 
-  services.openssh.settings.PermitRootLogin = "yes";
-
   networking.firewall.enable = false;
 }
