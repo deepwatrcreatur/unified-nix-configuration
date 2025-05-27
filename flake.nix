@@ -30,19 +30,16 @@
   in
   {
     homeConfigurations = {
-        # Add this block for Proxmox root user
-        proxmox-root = home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
-          modules = [
-            ./users/root/hosts/proxmox.nix
-            ./modules/home-manager
-          ];
-          # Optionally, set username/home path if not root
-          # username = "root";
-          # homeDirectory = "/root";
-        };
+      # Add this block for Proxmox root user
+      proxmox-root = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        modules = [
+          ./users/root/hosts/proxmox.nix
+          ./modules/home-manager
+        ];
       };
     };
+    
       
     # nix-darwin configuration for macminim4
     darwinConfigurations.macminim4 = nix-darwin.lib.darwinSystem {
