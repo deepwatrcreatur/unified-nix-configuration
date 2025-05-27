@@ -29,17 +29,22 @@
 
   in
   {
-    homeConfigurations = {
-      # Add this block for Proxmox root user
-      proxmox-root = home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
-        modules = [
-          ./users/root/hosts/proxmox.nix
-          ./modules/home-manager
-        ];
+    let
+      system = "x86_64-linux";
+      pkgs = nixpkgs.legacyPackages.${system};
+    in
+    {
+      homeConfigurations = {
+        # Add this block for Proxmox root user
+        proxmox-root = home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+          modules = [
+            ./users/root/hosts/proxmox.nix
+            ./modules/home-manager
+          ];
+        };
       };
     };
-    
       
     # nix-darwin configuration for macminim4
     darwinConfigurations.macminim4 = nix-darwin.lib.darwinSystem {
