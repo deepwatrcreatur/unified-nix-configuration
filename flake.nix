@@ -29,15 +29,11 @@
 
   in
   {
-    let
-      system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
-    in
     {
       homeConfigurations = {
         # Add this block for Proxmox root user
         proxmox-root = home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
+          pkgs = nixpkgs.legacyPackages."x86_64-linux";
           modules = [
             ./users/root/hosts/proxmox.nix
             ./modules/home-manager
