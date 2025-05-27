@@ -1,12 +1,10 @@
-# ~/.config/home-manager/home.nix
+# users/root/hosts/proxmox.nix
 { config, pkgs, lib, ... }:
 
 {
   imports = [
     ../../root
   ];
-
-  home.stateVersion = "24.05";
 
   # Set the username and home directory for Home Manager
   home.username = "root";
@@ -16,19 +14,11 @@
   home.packages = [
     pkgs.htop
     pkgs.btop
-    pkgs.bat
-    pkgs.gh
-    pkgs.git
-    pkgs.helix
     pkgs.rsync
     pkgs.iperf3
-    pkgs.lazygit
-    pkgs.lsd
-    pkgs.starship
   ];
 
   # Configure programs
-
   programs.bash.enable = true; 
 
   programs.fish = {

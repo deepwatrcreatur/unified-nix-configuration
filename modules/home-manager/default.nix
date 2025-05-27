@@ -1,4 +1,4 @@
-# modules/home-manager/common-home.nix
+# modules/home-manager/default.nix
 { config, pkgs, lib, ... }:
 {
   imports = [
