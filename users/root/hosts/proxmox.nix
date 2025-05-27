@@ -3,7 +3,7 @@
 
 {
   imports = [
-    ./git.nix
+    ../../root
   ];
 
   home.stateVersion = "24.05";
@@ -29,7 +29,7 @@
 
   # Configure programs
 
-  programs.bash.enable = true; # Example: enable bash integration
+  programs.bash.enable = true; 
 
   programs.fish = {
     enable = true;
