@@ -28,17 +28,15 @@
       lib.mapAttrsToList (name: _: path + "/${name}") nixFiles;
 
   in
-  {
-    {
-      homeConfigurations = {
-        # Add this block for Proxmox root user
-        proxmox-root = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages."x86_64-linux";
-          modules = [
-            ./users/root/hosts/proxmox.nix
-            ./modules/home-manager
-          ];
-        };
+  {    
+    homeConfigurations = {
+      # Add this block for Proxmox root user
+      proxmox-root = home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs.legacyPackages."x86_64-linux";
+        modules = [
+          ./users/root/hosts/proxmox.nix
+          ./modules/home-manager
+        ];
       };
     };
       
