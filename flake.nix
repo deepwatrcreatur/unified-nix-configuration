@@ -34,7 +34,7 @@
       proxmox-root = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages."x86_64-linux";
         modules = [
-          ./users/root/hosts/proxmox.nix
+          ./users/root/hosts/proxmox
           ./modules/home-manager
         ];
       };
