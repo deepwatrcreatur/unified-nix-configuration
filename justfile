@@ -1,0 +1,8 @@
+# users/root/hosts/justfile
+
+update:
+  home-manager switch --flake /root/unified-nix-configuration#proxmox-root
+
+nh-update:
+  nh home switch /root/unified-nix-configuration#proxmox-root
+

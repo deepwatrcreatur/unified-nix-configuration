@@ -10,6 +10,14 @@
   ];
 
   home.packages = with pkgs; [
+    wget
+    curl
+    fastfetch
+    nmap
+    htop
+    btop
+    rsync
+    iperf3
     fish
     nushell
     lsd
