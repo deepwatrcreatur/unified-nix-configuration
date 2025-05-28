@@ -6,6 +6,7 @@
     ../.. # default config for root
     ./proxmox-fish-extra.nix
     ./proxmox-justfile.nix
+    ./nh.nix
   ];
 
   # Set the username and home directory for Home Manager
