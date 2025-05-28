@@ -3,7 +3,7 @@
 
 {
   imports = [
-    ../../root
+    ../../ # default config for root
     ./proxmox-fish-extra.nix
     ./proxmox-justfile.nix
   ];
