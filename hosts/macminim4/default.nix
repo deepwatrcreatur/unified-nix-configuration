@@ -26,14 +26,14 @@
       wvous-tl-corner = 2; # Mission Control
       #wvous-br-corner = 5; # Screen Saver
     };
-    #menuExtras = {
-    #  clock = {
-    #    IsAnalog = false; # Use digital clock
-    #    Show24Hour = false; # Use 24-hour clock
-    #    ShowDate = true; # Show date in menu bar
-    #    ShowDayOfWeek = true; # Show day of week
-    #  };
-    #};
+    menuExtras = {
+      clock = {
+        IsAnalog = false; # Use digital clock
+        Show24Hour = false; # Use 24-hour clock
+        ShowDate = true; # Show date in menu bar
+        ShowDayOfWeek = true; # Show day of week
+      };
+    };
     #finder = {
     #  AppleShowAllExtensions = true;
     #  ShowPathbar = true;
