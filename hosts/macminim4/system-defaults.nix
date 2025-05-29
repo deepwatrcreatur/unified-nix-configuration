@@ -48,7 +48,7 @@
       type = "png"; # Screenshot format: "png", "jpg", "tiff", etc.
     };
     screensaver = {
-      askForPassword = never; 
+      askForPassword = true; 
     };
     LaunchServices = {
       LSQuarantine = false;
