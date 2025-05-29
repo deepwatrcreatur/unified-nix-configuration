@@ -26,21 +26,21 @@
       wvous-tl-corner = 2; # Mission Control
       #wvous-br-corner = 5; # Screen Saver
     };
-    menuExtras = {
-      clock = {
-        IsAnalog = false; # Use digital clock
-        Show24Hour = false; # Use 24-hour clock
-        ShowDate = true; # Show date in menu bar
-        ShowDayOfWeek = true; # Show day of week
-      };
-    };
-    #finder = {
-    #  AppleShowAllExtensions = true;
-    #  ShowPathbar = true;
-    #  ShowStatusBar = true; # Show status bar in Finder
-    #  CreateDesktop = true;
-    #  FXEnableExtensionChangeWarning = true; # Disable warning when changing file extensions
+    #menuExtras = {
+    #  clock = {
+    #    IsAnalog = false; # Use digital clock
+    #    Show24Hour = false; # Use 24-hour clock
+    #    ShowDate = true; # Show date in menu bar
+    #    ShowDayOfWeek = true; # Show day of week
+    #  };
     #};
+    finder = {
+      AppleShowAllExtensions = true;
+      ShowPathbar = true;
+      ShowStatusBar = true; # Show status bar in Finder
+      CreateDesktop = true;
+      FXEnableExtensionChangeWarning = true; # Disable warning when changing file extensions
+    };
     #trackpad = {
     #  Clicking = true;
     #  TrackpadThreeFingerDrag = true;
