@@ -68,7 +68,6 @@
     };
     SoftwareUpdate = {
       AutomaticallyInstallMacOSUpdates = false; # Disable automatic macOS updates
-      AutomaticCheckEnabled = true; # Check for updates automatically
       AutomaticDownload = false; # Don’t auto-download updates
     };
   };
