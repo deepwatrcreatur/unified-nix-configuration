@@ -53,11 +53,11 @@
       AppleShowScrollBars = "Always"; # Always show scroll bars ("Automatic" or "WhenScrolling")
       NSDocumentSaveNewDocumentsToCloud = false; # Save documents locally by default
     };
-    #screencapture = {
-    #  location = "~/Pictures/Screenshots";
-    #  disable-shadow = true;
-    #  type = "png"; # Screenshot format: "png", "jpg", "tiff", etc.
-    #};
+    screencapture = {
+      location = "~/Pictures/Screenshots";
+      disable-shadow = true;
+      type = "png"; # Screenshot format: "png", "jpg", "tiff", etc.
+    };
     screensaver = {
       askForPassword = false; # As requested previously
     };
