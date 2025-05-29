@@ -66,10 +66,6 @@
       SHOWFULLNAME = true; # Show full names instead of usernames at login
       # LoginwindowText = "Welcome to My Mac"; # Custom login screen message
     };
-    SoftwareUpdate = {
-      AutomaticallyInstallMacOSUpdates = false; # Disable automatic macOS updates
-      AutomaticDownload = false; # Don’t auto-download updates
-    };
   };
 
   # Define the primary user for user-specific settings
