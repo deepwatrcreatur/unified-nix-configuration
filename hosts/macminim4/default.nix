@@ -16,7 +16,7 @@
   system.defaults = {
     dock = {
       orientation = "right"; # Dock position: "bottom", "left", or "right"
-      autohide = true;
+      autohide = false;
       minimize-to-application = false; # Minimize windows into their app icon
       # mineffect = "genie"; # Minimize effect: "genie", "scale", or "suck"
       show-recents = true;
@@ -41,10 +41,10 @@
       CreateDesktop = true;
       FXEnableExtensionChangeWarning = true; # Disable warning when changing file extensions
     };
-    #trackpad = {
-    #  Clicking = true;
-    #  TrackpadThreeFingerDrag = true;
-    #};
+    trackpad = {
+      Clicking = true;
+      TrackpadThreeFingerDrag = true;
+    };
     #NSGlobalDomain = {
     #  AppleInterfaceStyle = "Dark";
     #  KeyRepeat = 2;
