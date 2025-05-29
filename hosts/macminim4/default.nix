@@ -23,4 +23,5 @@
     home = "/Users/deepwatrcreatur";
   };
 
+  system.stateVersion = 6;
 }
