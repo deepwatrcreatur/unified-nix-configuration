@@ -62,6 +62,10 @@
 
   # Activation script for unsupported settings
   system.activationScripts.postActivation.text = ''
+    # Disable screensaver password prompt
+    /usr/bin/defaults -currentHost write com.apple.screensaver askForPassword -bool false
+    /usr/bin/defaults -currentHost write com.apple.screensaver askForPasswordDelay -int 0
+
     # Disable automatic software updates
     /usr/bin/defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticCheckEnabled -bool false
     /usr/bin/defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticallyInstallMacOSUpdates -bool false
