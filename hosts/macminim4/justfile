@@ -3,4 +3,4 @@ update:
   darwin-rebuild switch --flake /Volumes/Work/unified-nix-configuration#macminim4
 
 nh-update:
-  nh darwin switch /Volumes/Work/unified-nix-configuration#macminim4
+  nh darwin switch /Volumes/Work/unified-nix-configuration
