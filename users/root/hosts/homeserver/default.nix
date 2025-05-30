@@ -4,7 +4,6 @@
 {
   imports = [
     ../.. # default config for root
-    ./homeserver-fish-extra.nix
     ./homeserver-justfile.nix
     ./nh.nix
   ];
