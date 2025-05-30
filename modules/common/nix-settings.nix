@@ -1,6 +1,8 @@
 { config, lib, pkgs, ... }:
 
 {
+  nixpkgs.config.allowUnfree = true;
+
   nix = {
     settings = {
       # Automatically optimize the Nix store after each build
