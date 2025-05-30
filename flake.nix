@@ -96,31 +96,7 @@
           ./modules
           ./hosts/nixos
         ]
-        ++ (importModules ./hosts/homeserver/modules)
-        ++ [
-          ({ config, pkgs, lib, ... }: {
-            sops.age.keyFile = "/etc/nixos/secrets/age-key.txt";
-            sops.validateSopsFiles = false;
-
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              users.deepwatrcreatur = {
-                imports = [
-                  ./users/deepwatrcreatur
-                  ./users/deepwatrcreatur/hosts/homeserver.nix
-                  ./modules/home-manager
-                ];
-              };
-              users.root = {
-                imports = [
-                  ./users/root
-                  ./modules/home-manager
-                ];
-              };
-            };
-          })
-        ];
+        ++ (importModules ./hosts/homeserver/modules);
     };
   };
 }
