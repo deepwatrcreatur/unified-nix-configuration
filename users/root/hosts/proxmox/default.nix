@@ -10,7 +10,7 @@
   ];
 
   # Add packages to base config for root user
-  home.packages = (config.home.packages or []) ++ [
+  home.packages = lib.mkAfter [
     # host-specific packages
   ];
 
