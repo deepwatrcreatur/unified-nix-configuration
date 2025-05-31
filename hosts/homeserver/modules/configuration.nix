@@ -16,6 +16,8 @@
   
   nixpkgs.config.allowUnfree = true;
 
+  users.users.root.shell = pkgs.nushell;
+
   security.sudo.wheelNeedsPassword = false;
 
   systemd.mounts = [{
