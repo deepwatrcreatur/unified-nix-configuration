@@ -14,8 +14,6 @@
 
   networking.hostName = "homeserver";
   
-  nixpkgs.config.allowUnfree = true;
-
   security.sudo.wheelNeedsPassword = false;
 
   systemd.mounts = [{
