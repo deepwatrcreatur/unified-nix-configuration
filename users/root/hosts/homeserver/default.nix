@@ -1,4 +1,4 @@
-# users/root/hosts/proxmox.nix
+# users/root/hosts/homeserver/default.nix
 { config, pkgs, lib, ... }:
 
 {
