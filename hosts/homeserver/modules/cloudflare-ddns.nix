@@ -19,7 +19,7 @@ in
     ];
   };
   sops.secrets.API_KEY = {
-    sopsFile = "/etc/nixos/secrets/cloudflare-secrets.yaml"; # Absolute path
+    sopsFile = "../secrets/cloudflare-secrets.yaml";
     format = "yaml";
   };
 }
