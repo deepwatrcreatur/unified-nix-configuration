@@ -96,7 +96,10 @@
           ./modules
           ./hosts/nixos
         ]
-        ++ (importModules ./hosts/homeserver/modules);
+        ++ (importModules ./hosts/homeserver/modules)
+        ++ (if builtins.pathExists /etc/nixos/local-secrets.nix
+          then [ /etc/nixos/local-secrets.nix ]
+          else []);
     };
-  };
+  }; 
 }
