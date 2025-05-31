@@ -19,7 +19,7 @@ in
     ];
   };
   sops.secrets.API_KEY = {
-    sopsFile = "../secrets/cloudflare-secrets.yaml";
+    sopsFile = ./../secrets/cloudflare-secrets.yaml;
     format = "yaml";
   };
 }
