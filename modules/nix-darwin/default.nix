@@ -5,7 +5,9 @@
   imports = [
     ./nix-mount.nix
   ];
-  
+
+  nixpkgs.config.allowUnfree = true;
+
   system.defaults.finder.AppleShowAllExtensions = true;
   
   environment.systemPackages = with pkgs; [
