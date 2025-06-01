@@ -2,7 +2,7 @@
 { pkgs, ... }:
 
 {
-  ome.activation = {
+  home.activation = {
     installRustTools = {
       text = ''
         # Ensure ~/.cargo/bin exists
