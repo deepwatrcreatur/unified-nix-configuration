@@ -1,8 +1,8 @@
 # modules/home-manager/cargo-binstall.nix
-{ pkgs, config, ... }:
+{ pkgs, config, lib, ... }:
 
 {
-  home.packages = config.home.packages ++ [
+  home.packages = lib.mkAfter [
     pkgs.cargo
     pkgs.cargo-binstall
   ];
