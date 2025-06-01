@@ -3,7 +3,6 @@
 {
   imports = [
     ../../../modules/home-manager/ghostty
-    ../rust.nix
   ];
 
   home.packages = with pkgs; [
