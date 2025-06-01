@@ -1,10 +1,10 @@
 # modules/home-manager/cargo-binstall.nix
-{ pkgs, ... }:
+{ pkgs, lib, ... }: # Make sure 'lib' is available here
 
 let
-  # Use pkgs.makeWrapper to create a wrapper for the cargo binary.
-  # This is more robust for creating executable symlinks.
-  myCargo = pkgs.makeWrapper "${pkgs.rustc}/bin/cargo" "$out/bin/cargo" {};
+  # Use lib.makeWrapper to create a wrapper for the cargo binary.
+  # This is the most robust way to ensure it's a function.
+  myCargo = lib.makeWrapper "${pkgs.rustc}/bin/cargo" "$out/bin/cargo" {};
 
 in
 {
