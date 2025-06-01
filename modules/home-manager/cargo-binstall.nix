@@ -1,10 +1,8 @@
 # modules/home-manager/cargo-binstall.nix
-{ pkgs, lib, ... }: # Make sure 'lib' is available here
+{ pkgs, ... }: # Remove 'lib' from arguments if not used elsewhere
 
 let
-  # Use lib.makeWrapper to create a wrapper for the cargo binary.
-  # This is the most robust way to ensure it's a function.
-  myCargo = lib.makeWrapper "${pkgs.rustc}/bin/cargo" "$out/bin/cargo" {};
+  myCargo = pkgs.makeWrapper "${pkgs.rustc}/bin/cargo" "$out/bin/cargo" {};
 
 in
 {
