@@ -3,7 +3,7 @@
 
 {
   home.activation = {
-    installRustTools.text = lib.mkIf pkgs.stdenv.isLinux ''
+    installRustTools.text = ''
       # Ensure ~/.cargo/bin exists
       mkdir -p "$HOME/.cargo/bin"
 
