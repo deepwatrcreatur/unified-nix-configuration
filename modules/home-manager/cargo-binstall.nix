@@ -2,12 +2,9 @@
 { pkgs, ... }:
 
 let
-  # Create a derivation that provides a 'cargo' binary which points to
-  # the cargo from pkgs.rustc. This ensures 'cargo' is in your path directly.
-  myCargo = pkgs.runCommand "my-cargo-bin" {} ''
-    mkdir -p $out/bin
-    ln -s ${pkgs.rustc}/bin/cargo $out/bin/cargo
-  '';
+  # Use pkgs.makeWrapper to create a wrapper for the cargo binary.
+  # This is more robust for creating executable symlinks.
+  myCargo = pkgs.makeWrapper "${pkgs.rustc}/bin/cargo" "$out/bin/cargo" {};
 
 in
 {
