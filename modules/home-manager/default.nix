@@ -8,6 +8,7 @@
     ./jujutsu
     ./starship.nix
     ./cargo-binstall.nix
+    ./yazelix.nix
   ];
 
   home.packages = with pkgs; [
