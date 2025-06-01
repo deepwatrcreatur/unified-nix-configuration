@@ -1,21 +1,9 @@
 # modules/home-manager/cargo-binstall.nix
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 
-let
-  myCargo = pkgs.stdenv.mkDerivation {
-    name = "cargo-wrapped";
-    buildInputs = [ pkgs.makeWrapper ];
-    phases = [ "installPhase" ];
-    installPhase = ''
-      mkdir -p $out/bin
-      cp ${pkgs.rustc}/bin/cargo $out/bin/cargo
-      wrapProgram $out/bin/cargo --prefix PATH : $out/bin
-    '';
-  };
-in
 {
-  home.packages = [
-    myCargo
+  home.packages = config.home.packages ++ [
+    pkgs.cargo
     pkgs.cargo-binstall
   ];
 
