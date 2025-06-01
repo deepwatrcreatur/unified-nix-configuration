@@ -1,13 +1,21 @@
 # modules/home-manager/cargo-binstall.nix
-{ pkgs, ... }: # Remove 'lib' from arguments if not used elsewhere
+{ pkgs, ... }:
 
 let
-  myCargo = pkgs.makeWrapper "${pkgs.rustc}/bin/cargo" "$out/bin/cargo" {};
-
+  myCargo = pkgs.stdenv.mkDerivation {
+    name = "cargo-wrapped";
+    buildInputs = [ pkgs.makeWrapper ];
+    phases = [ "installPhase" ];
+    installPhase = ''
+      mkdir -p $out/bin
+      cp ${pkgs.rustc}/bin/cargo $out/bin/cargo
+      wrapProgram $out/bin/cargo --prefix PATH : $out/bin
+    '';
+  };
 in
 {
   home.packages = [
-    myCargo # This now explicitly provides the `cargo` command
+    myCargo
     pkgs.cargo-binstall
   ];
 
