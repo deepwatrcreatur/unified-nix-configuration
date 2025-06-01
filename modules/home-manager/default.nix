@@ -7,6 +7,7 @@
     ./fish-shared.nix
     ./jujutsu
     ./starship.nix
+    ./cargo-binstall.nix
   ];
 
   home.packages = with pkgs; [
