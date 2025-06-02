@@ -1,9 +1,8 @@
 
 {
-  theme = "my_theme"; # Updated from "ao"
+  theme = "ao";
 
   editor = {
-    # --- Settings from your original Nix config (kept if not overridden) ---
     cursor-shape = {
       insert = "bar";
       normal = "block";
@@ -42,7 +41,6 @@
       };
     };
 
-    # --- Settings from new TOML config (or merged) ---
     line-number = "relative"; # New
     cursorline = true; # New
     bufferline = "multiple"; # Same as original, kept
@@ -61,7 +59,7 @@
       goto-reference-include-declaration = false; # New
     };
 
-    statusline = { # Overridden by new config
+    statusline = {
       left = [
         "mode"
         "spinner"
@@ -85,25 +83,24 @@
       };
     };
 
-    "indent-guides" = { # Merged
-      render = true; # Same as original, kept
-      character = "╎"; # Kept from original
-      skip-levels = 1; # Kept from original
+    "indent-guides" = { 
+      render = true; 
+      character = "╎"; 
+      skip-levels = 1; 
     };
 
-    "soft-wrap" = { # Merged
-      enable = true; # Same as original, kept
-      max-wrap = 25; # Kept from original
-      max-indent-retain = 0; # Kept from original
-      wrap-indicator = ""; # Kept from original
+    "soft-wrap" = {
+      enable = true;
+      max-wrap = 25;
+      max-indent-retain = 0;
+      wrap-indicator = "";
     };
 
-    "inline-diagnostics" = { # Merged (no change)
+    "inline-diagnostics" = { 
       cursor-line = "warning";
     };
   };
 
-  # --- New keys section from TOML config ---
   keys = {
     normal = {
       H = ":buffer-previous";
