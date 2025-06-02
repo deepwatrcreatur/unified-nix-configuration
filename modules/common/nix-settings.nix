@@ -9,8 +9,6 @@
 
       experimental-features = [ "nix-command" "flakes" ];
 
-      nixpkgs.config.allowUnfree = true;
-
       download-buffer-size = 1048576000;
 
       # Optional: Garbage collection settings
