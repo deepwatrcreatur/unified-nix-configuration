@@ -31,7 +31,9 @@
   {
     # --- Packages Output ---
     packages = import ./flake-modules/packages.nix {
-      inherit inputs flakeLib;
+      inherit inputs;
+      lib = flakeLib.lib; # Pass the 'lib' attribute from flakeLib
+      overlaysList = flakeLib.allOverlays; # Pass 'allOverlays' from flakeLib as 'overlaysList'
     };
 
     # --- Home Manager Configurations (Standalone) ---
