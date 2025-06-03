@@ -23,6 +23,9 @@ forAllSystems (system:
   {
     # custom helix package
     helix-from-src = pkgs.helix-from-src;
-    # can add other common packages you want expose here
+
+    default = pkgs.helix-from-src; # Or simply 'self.helix-from-src' to refer to it within the set
+
+    # can add other common packages to expose here
   }
 )
