@@ -39,6 +39,7 @@ in
     # Build dependencies
     nativeBuildInputs = with super; [
       pkg-config
+      git
     ];
     # Runtime dependencies (especially for different platforms)
     buildInputs = with super; []
