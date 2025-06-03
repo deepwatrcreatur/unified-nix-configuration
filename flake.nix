@@ -36,7 +36,7 @@
 
     # --- Home Manager Configurations (Standalone) ---
     homeConfigurations = {
-      proxmox-root = home-manager.lib.homeManagerConfiguration {
+      proxmox-root = inputs.home-manager.lib.homeManagerConfiguration {
         pkgs = import inputs.nixpkgs {
           system = "x86_64-linux";
           config = inputs.nixpkgs.config;
