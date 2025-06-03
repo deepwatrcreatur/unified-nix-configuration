@@ -47,7 +47,7 @@ in
 
     #allow network access during build
     __impure = true;
-
+    GIT_SSL_CAINFO = "${super.cacert}/etc/ssl/certs/ca-bundle.crt";
 
     meta = with super.lib; {
       description = "Helix editor compiled from source (for command expansion)";
