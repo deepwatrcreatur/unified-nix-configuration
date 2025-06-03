@@ -43,7 +43,10 @@ in
     ];
     # Runtime dependencies (especially for different platforms)
     buildInputs = with super; []
-      ++ super.lib.optionals stdenv.isDarwin [ libiconv darwin.apple_sdk.frameworks.SystemConfiguration ];
+      ++ super.lib.optionals stdenv.isDarwiin [ libiconv darwin.apple_sdk.frameworks.SystemConfiguration ];
+
+    #allow network access during build
+    __impure = true;
 
 
     meta = with super.lib; {
