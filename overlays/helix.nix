@@ -24,7 +24,7 @@ in
       # Nix will fail and output the correct sha256. Update it here.
       # For example, use a dummy like: "0000000000000000000000000000000000000000000000000000"
       # or super.lib.fakeSha256
-      sha256 = super.lib.fakeSha256;
+      sha256 = "KWpXXXciUDJp2DitQWT8MNzhECBuHA2SRPz51t0bZG0=";
       fetchSubmodules = true; # Helix uses submodules for tree-sitter grammars
     };
 
