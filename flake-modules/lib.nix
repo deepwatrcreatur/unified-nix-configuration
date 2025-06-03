@@ -35,12 +35,9 @@ in
   # Expose nixpkgs.lib for use in other flake modules and flake.nix itself
   lib = nixpkgsLib;
 
-  # Expose helper functions
-  inherit importModules;
-
   # Expose the combined list of overlays
-  inherit allOverlays;
-
+  inherit importModules allOverlays nixpkgsConfig;
+  
   # Centralize the list of supported systems
   supportedSystems = [ "x86_64-linux" "aarch64-darwin" ];
 }
