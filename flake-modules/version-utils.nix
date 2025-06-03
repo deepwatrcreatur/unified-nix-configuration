@@ -18,7 +18,7 @@
       # Format date from "YYYY-MM-DDTHH:mm:ssZ" to "YYYYMMDD"
       # 1. Take the first 10 chars: "YYYY-MM-DD"
       # 2. Remove the hyphens: "YYYYMMDD"
-      formattedDate = lib.strings.remove ["-"] (builtins.substring 0 10 commitDateIso);
+      formattedDate = lib.replaceStrings ["-"] [""] (builtins.substring 0 10 commitDateIso);
 
       # Get short commit hash (first 7 chars)
       shortCommitHash = lib.substring 0 7 commitHash;
