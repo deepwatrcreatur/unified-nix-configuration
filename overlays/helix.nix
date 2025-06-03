@@ -11,9 +11,6 @@ in
 {
   helix-from-src = super.rustPlatform.buildRustPackage rec {
     pname = "helix-from-src";
-    # The version will be dynamically set based on git information
-    # For example: "20250603-abcdefg"
-    version = "${super.lib.substring 0 8 src.revDate}-${super.lib.substring 0 7 src.rev}";
 
     src = super.fetchFromGitHub {
       owner = "helix-editor";
