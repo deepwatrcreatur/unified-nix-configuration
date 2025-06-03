@@ -23,6 +23,13 @@ let
     helixOverlay 
   ];
 
+  # --- Centralized Nixpkgs Configuration ---
+  nixpkgsConfig = {
+    allowUnfree = true;
+    # can add other global nixpkgs config options here if needed
+    # e.g., permittedInsecurePackages = [ "some-package-1.2.3" ];
+  };
+  
 in
 {
   # Expose nixpkgs.lib for use in other flake modules and flake.nix itself

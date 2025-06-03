@@ -34,6 +34,7 @@
       inherit inputs;
       lib = flakeLib.lib; # Pass the 'lib' attribute from flakeLib
       overlaysList = flakeLib.allOverlays; # Pass 'allOverlays' from flakeLib as 'overlaysList'
+      nixpkgsConfig = flakeLib.nixpkgsConfig; # Pass the config
     };
 
     # --- Home Manager Configurations (Standalone) ---
@@ -41,7 +42,7 @@
       proxmox-root = inputs.home-manager.lib.homeManagerConfiguration {
         pkgs = import inputs.nixpkgs {
           system = "x86_64-linux";
-          config = inputs.nixpkgs.config;
+          config = flakeLib.nixpkgsConfig;
           overlays = flakeLib.allOverlays; # Use shared overlays
         };
         extraSpecialArgs = commonSpecialArgs; # Pass inputs and flakeLib
@@ -57,7 +58,10 @@
       system = "aarch64-darwin";
       specialArgs = commonSpecialArgs; # Pass inputs and flakeLib
       modules = [
-        { nixpkgs.overlays = flakeLib.allOverlays; }
+        {
+          nixpkgs.overlays = flakeLib.allOverlays;
+          nixpkgs.config = flakeLib.nixpkgsConfig; # Apply system-wide config
+         }
 
         ./modules
         ./hosts/macminim4
@@ -86,7 +90,10 @@
         system = "x86_64-linux";
         specialArgs = commonSpecialArgs; # Pass inputs and flakeLib
         modules = [
-          { nixpkgs.overlays = flakeLib.allOverlays; }
+          {
+             nixpkgs.overlays = flakeLib.allOverlays;
+             nixpkgs.config = flakeLib.nixpkgsConfig; # Apply system-wide config
+          }
 
           ./modules/nix-settings.nix
           ./hosts/nixos-lxc/ansible
