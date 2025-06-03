@@ -1,7 +1,14 @@
 # overlays/helix.nix
 # This function takes `self` (the final package set after all overlays)
 # and `super` (the package set before this overlay is applied).
-self: super: {
+self: super:
+let
+  # Import the version utility.
+  # The path is relative from this overlays/helix.nix file.
+  # It needs access to `super.lib` (which is nixpkgs.lib).
+  versionUtils = import ../flake-modules/version-utils.nix { lib = super.lib; };
+in
+{
   helix-from-src = super.rustPlatform.buildRustPackage rec {
     pname = "helix-from-src";
     # The version will be dynamically set based on git information
@@ -20,10 +27,13 @@ self: super: {
       # Nix will fail and output the correct sha256. Update it here.
       # For example, use a dummy like: "0000000000000000000000000000000000000000000000000000"
       # or super.lib.fakeSha256
-      sha256 = "PUT_CORRECT_SHA256_HERE";
+      sha256 = super.lib.fakeSha256;
       fetchSubmodules = true; # Helix uses submodules for tree-sitter grammars
     };
 
+    # Use the imported utility function to generate the version
+    version = versionUtils.generateVersionFromGitSource src;
+    
     cargoLock = {
       # Helix commits its Cargo.lock file, so we can use it directly.
       lockFile = src + "/Cargo.lock";
