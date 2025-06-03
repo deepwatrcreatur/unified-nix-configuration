@@ -1,7 +1,7 @@
 # flake-modules/packages.nix
 # This file will return the attribute set for the `packages` output.
 # It needs access to `inputs` (for nixpkgs and lib) and your `overlays`.
-{ inputs, lib, overlaysList }:
+{ inputs, lib, overlaysList, nixpkgsConfig }:
 
 let
   # Define the systems to generate packages for
