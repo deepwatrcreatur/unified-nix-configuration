@@ -7,7 +7,12 @@
     settings = {
       # Automatically optimize the Nix store after each build
 
-      experimental-features = [ "nix-command" "flakes" ];
+      experimental-features = [
+        "nix-command"
+        "flakes"
+        "impure-derivations"
+        "ca-derivations"
+      ];
 
       download-buffer-size = 1048576000;
 
