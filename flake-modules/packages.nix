@@ -16,7 +16,7 @@ forAllSystems (system:
   let
     pkgs = import inputs.nixpkgs {
       inherit system;
-      config = inputs.nixpkgs.config; # Good practice
+      config = nixpkgsConfig; # apply centralized config 
       overlays = overlaysList;       # Apply the provided list of overlays
     };
   in
