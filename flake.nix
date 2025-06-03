@@ -1,3 +1,4 @@
+# flake.nix
 {
   description = "Multi-system Nix configurations (NixOS, nix-darwin, Home Manager)";
 
@@ -14,93 +15,109 @@
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ nixpkgs, home-manager, nix-darwin, sops-nix, ... }:
+  outputs = inputs@{ ... }: # '@' captures all inputs into the 'inputs' attrset
   let
-    # Helper to import modules from a directory
-    lib = nixpkgs.lib;
-    importModules = path:
-      let
-        dirContents = builtins.readDir path;
-        nixFiles = lib.filterAttrs (name: type:
-          type == "regular" && lib.strings.hasSuffix ".nix" name
-        ) dirContents;
-      in
-      lib.mapAttrsToList (name: _: path + "/${name}") nixFiles;
+    # Import our custom library from flake-modules
+    flakeLib = import ./flake-modules/lib.nix { inherit inputs; };
+
+    # Convenience alias for nixpkgs.lib from our flakeLib
+    lib = flakeLib.lib;
+
+    # Common specialArgs for NixOS and Darwin systems
+    # Ensures modules within those systems can access flake inputs and our flakeLib
+    commonSpecialArgs = { inherit inputs flakeLib; };
 
   in
-  {    
+  {
+    # --- Packages Output ---
+    packages = import ./flake-modules/packages.nix {
+      inherit inputs flakeLib;
+    };
+
+    # --- Home Manager Configurations (Standalone) ---
     homeConfigurations = {
-      # Add this block for Proxmox root user
       proxmox-root = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages."x86_64-linux";
+        pkgs = import inputs.nixpkgs {
+          system = "x86_64-linux";
+          config = inputs.nixpkgs.config;
+          overlays = flakeLib.allOverlays; # Use shared overlays
+        };
+        extraSpecialArgs = commonSpecialArgs; # Pass inputs and flakeLib
         modules = [
           ./users/root/hosts/proxmox
-          ./modules/home-manager
+          ./modules/home-manager # General home-manager modules
         ];
       };
     };
-      
-    # nix-darwin configuration for macminim4
-    darwinConfigurations.macminim4 = nix-darwin.lib.darwinSystem {
+
+    # --- Darwin Configurations ---
+    darwinConfigurations.macminim4 = inputs.nix-darwin.lib.darwinSystem {
       system = "aarch64-darwin";
-      specialArgs = { inherit inputs; };
+      specialArgs = commonSpecialArgs; # Pass inputs and flakeLib
       modules = [
+        { nixpkgs.overlays = flakeLib.allOverlays; }
+
         ./modules
         ./hosts/macminim4
-        home-manager.darwinModules.home-manager
-        ({ pkgs, ... }: {
+
+        inputs.home-manager.darwinModules.home-manager
+        ({ pkgs, ... }: { # pkgs here will have the overlays applied
           home-manager.users.deepwatrcreatur = {
             imports = [
-              ./users/deepwatrcreatur
+              ./users/deepwatrcreatur 
               ./users/deepwatrcreatur/hosts/macminim4.nix
               ./modules/home-manager
             ];
           };
+          # System-level user definition
           users.users.deepwatrcreatur = {
             name = "deepwatrcreatur";
             home = "/Users/deepwatrcreatur";
-            shell = pkgs.fish;
+            shell = pkgs.fish; # pkgs.fish will come from the overlaid pkgs
           };
         })
       ];
     };
 
-    # NixOS configuration for ansible
-    nixosConfigurations.ansible = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      specialArgs = { inherit inputs; };
-      modules = [
-        ./modules/nix-settings.nix
-        ./hosts/nixos-lxc/ansible
-        ./hosts/nixos
-        sops-nix.nixosModules.sops
-        home-manager.nixosModules.home-manager
-        {
-          home-manager.users.ansible = {
-            imports = [
-              ./modules
-              # ./users/ansible/hosts/ansible.nix
-            ];
-          };
-        }
-      ];
-    };
+    nixosConfigurations = {
+      ansible = inputs.nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = commonSpecialArgs; # Pass inputs and flakeLib
+        modules = [
+          { nixpkgs.overlays = flakeLib.allOverlays; }
 
-    nixosConfigurations.homeserver = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      specialArgs = { inherit inputs; };
-      modules =
-        [
-          sops-nix.nixosModules.sops
-          home-manager.nixosModules.home-manager
-          ./modules
-          ./hosts/nixos
+          ./modules/nix-settings.nix
+          ./hosts/nixos-lxc/ansible
+          ./hosts/nixos 
+
+          inputs.sops-nix.nixosModules.sops
+          inputs.home-manager.nixosModules.home-manager
+          { # pkgs here will have the overlays applied
+            home-manager.users.ansible = {
+              imports = [
+                ./modules 
+              ];
+            };
+          }
+        ];
+      };
+
+      homeserver = inputs.nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = commonSpecialArgs;
+        modules = [
+          { nixpkgs.overlays = flakeLib.allOverlays; }
+          inputs.sops-nix.nixosModules.sops
+          inputs.home-manager.nixosModules.home-manager
+          ./modules # Common system modules
+          ./hosts/nixos # Common NixOS modules
         ]
-        ++ (importModules ./hosts/homeserver/modules)
+        # Use the importModules helper from flakeLib
+        ++ (flakeLib.importModules ./hosts/homeserver/modules)
         ++ (if builtins.pathExists /etc/nixos/local-secrets.nix
           then [ /etc/nixos/local-secrets.nix ]
-          else [])
-        ;
+          else []);
+      };
     };
-  }; 
+  };
 }
