@@ -1,5 +1,5 @@
 
-// flake-modules/version-utils.nix
+# flake-modules/version-utils.nix
 # This file provides utility functions, e.g., for generating version strings from Git sources.
 
 { lib }: # Takes nixpkgs.lib as an argument
