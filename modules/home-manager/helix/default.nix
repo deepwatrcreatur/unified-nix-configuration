@@ -5,7 +5,7 @@
   programs.helix = {
     enable = true;
     # Use the custom-built package from the overlay
-    package = pkgs.helix-from-src;
+    package = pkgs.helix-wrapped-for-hm;
     # package = pkgs.helix;
     defaultEditor = true;
     extraPackages = with pkgs; [ 
