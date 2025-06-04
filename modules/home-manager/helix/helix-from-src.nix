@@ -15,7 +15,7 @@ in
   programs.helix.enable = lib.mkForce false;
 
   home.packages = with pkgs; [
-    helix-from-source-impure
+    #helix-from-source-impure
     nil
     nixd
     nixpkgs-fmt
