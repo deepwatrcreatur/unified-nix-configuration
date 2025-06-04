@@ -3,18 +3,19 @@
 
 let
   helixSettingsNix = import ./settings.nix;
-  helixLanguagesNix = import ./languages.nix { inherit pkgs; }; 
+  helixLanguagesNix = import ./languages.nix { inherit pkgs; };
 
-  # Helper for TOML generation
-  tomlFormat = pkgs.formats.toml {}; # Get the TOML format generator
+  tomlFormat = pkgs.formats.toml {};
 
+  # Generate the TOML files as derivations
+  configTomlDrv = tomlFormat.generate "config.toml" helixSettingsNix;
+  languagesTomlDrv = tomlFormat.generate "languages.toml" helixLanguagesNix;
 in
 {
-  #    in case programs.helix.enable = true elsewhere for this user
-  programs.helix.enable = lib.mkForce false; # Force disable the standard module
+  programs.helix.enable = lib.mkForce false;
 
   home.packages = with pkgs; [
-    helix-from-source-impure 
+    helix-from-source-impure
     nil
     nixd
     nixpkgs-fmt
@@ -22,13 +23,13 @@ in
   ];
 
   xdg.configFile."helix/config.toml" = {
-    # generate "filename" <attrset>
-    text = tomlFormat.generate "config.toml" helixSettingsNix;
-    # Ensure helixSettingsNix returns an attribute set suitable for TOML.
+    # Read the content of the file produced by the derivation
+    text = builtins.readFile configTomlDrv;
   };
 
   xdg.configFile."helix/languages.toml" = {
-    text = tomlFormat.generate "languages.toml" helixLanguagesNix;
+    # Read the content of the file produced by the derivation
+    text = builtins.readFile languagesTomlDrv;
   };
 
   home.sessionVariables = {
