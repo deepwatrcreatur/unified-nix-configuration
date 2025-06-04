@@ -1,4 +1,3 @@
-
 # modules/home-manager/helix/helix-from-src.nix
 { config, pkgs, lib, ... }:
 
@@ -9,13 +8,8 @@ let
 
   configTomlDrv = tomlFormat.generate "config.toml" helixSettingsNix;
   languagesTomlDrv = tomlFormat.generate "languages.toml" helixLanguagesNix;
-
-  # Get the path to your impurely built Helix.
-  # pkgs.helix-from-source-impure will resolve to the store path of your custom build.
-  customHelixPath = "${pkgs.helix-from-source-impure}/bin";
 in
 {
-  # Force disable the standard programs.helix module.
   programs.helix.enable = lib.mkForce false;
 
   home.packages = with pkgs; [
@@ -33,38 +27,20 @@ in
     text = builtins.readFile languagesTomlDrv;
   };
 
-  # Set as default editor.
   home.sessionVariables = {
     EDITOR = "hx";
     VISUAL = "hx";
   };
 
-  # Manually add custom Helix to the PATH.
-  # needs to be done for each shell
+  # --- New PATH Management using symlink ---
+  # Ensure ~/.local/bin is in PATH 
+  home.path = [ "$HOME/.local/bin" ]; 
 
-  # For Fish shell:
-  programs.fish.interactiveShellInit = ''
-    # Add custom Helix to PATH if it's not already there
-    if not string match -q -- "*/${customHelixPath}/*" $PATH
-      set -gx PATH "${customHelixPath}" $PATH
-    end
-  '';
-  # in non-interactive fish sessions (e.g., for scripts):
-  programs.fish.loginShellInit = ''
-    if not string match -q -- "*/${customHelixPath}/*" $PATH
-      set -gx PATH "${customHelixPath}" $PATH
-    end
-  '';
-
-
-  programs.bash.initExtra = ''
-    export PATH="${customHelixPath}:$PATH"
-  '';
-  programs.zsh.initExtra = ''
-    export PATH="${customHelixPath}:$PATH"
-  '';
-
-  programs.nushell.extraConfig = ''
-    let-env PATH = ($env.PATH | prepend '${customHelixPath}')
-  '';
+  # Create a symlink to custom hx binary
+  home.symlink.".local/bin/hx" = {
+    # target is the path to the hx binary from impure build
+    target = "${pkgs.helix-from-source-impure}/bin/hx";
+    # creates a symlink at ~/.local/bin/hx pointing to the store path.
+    # The derivation that creates this symlink is pure.
+  };
 }
