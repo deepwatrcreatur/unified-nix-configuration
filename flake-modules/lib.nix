@@ -20,7 +20,7 @@ let
   # List of all overlays to be applied consistently across systems/packages
   
   allOverlays = [
-    #helixOverlay 
+    helixOverlay 
   ];
 
   # --- Centralized Nixpkgs Configuration ---
