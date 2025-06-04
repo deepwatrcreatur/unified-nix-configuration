@@ -3,7 +3,8 @@
 {
   imports = [
     ./nushell
-    ./helix
+    #./helix
+    ./helix/helix-from-src.nix
     ./fish-shared.nix
     ./jujutsu
     ./starship.nix
