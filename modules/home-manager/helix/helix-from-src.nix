@@ -32,15 +32,37 @@ in
     VISUAL = "hx";
   };
 
-  # --- New PATH Management using symlink ---
-  # Ensure ~/.local/bin is in PATH 
-  home.path = [ "$HOME/.local/bin" ]; 
-
-  # Create a symlink to custom hx binary
-  home.symlink.".local/bin/hx" = {
-    # target is the path to the hx binary from impure build
+  # --- Corrected Symlink Creation ---
+  # Create a symlink at ~/.local/bin/hx
+  home.file.".local/bin/hx" = {
+    # The 'target' attribute specifies that this is a symlink
+    # and its value is the path the symlink should point to.
     target = "${pkgs.helix-from-source-impure}/bin/hx";
-    # creates a symlink at ~/.local/bin/hx pointing to the store path.
-    # The derivation that creates this symlink is pure.
+    # Optional: force = true; # to overwrite if something else exists there, use with caution.
   };
+
+  # Ensure ~/.local/bin is in PATH for Fish (and other shells if used)
+  # This merges with any existing interactiveShellInit.
+  programs.fish.interactiveShellInit = lib.mkMerge [
+    (lib.mkIf (config.programs.fish.enable) ''
+      # Add ~/.local/bin to PATH if it exists and isn't already there
+      if test -d "$HOME/.local/bin"
+        if not string match -q -- "*$HOME/.local/bin*" $PATH # Simple check
+          set -gx PATH "$HOME/.local/bin" $PATH
+        end
+      end
+    '')
+    config.programs.fish.interactiveShellInit
+  ];
+
+  programs.fish.loginShellInit = lib.mkMerge [
+    (lib.mkIf (config.programs.fish.enable) ''
+      if test -d "$HOME/.local/bin"
+        if not string match -q -- "*$HOME/.local/bin*" $PATH
+          set -gx PATH "$HOME/.local/bin" $PATH
+        end
+      end
+    '')
+    config.programs.fish.loginShellInit
+  ];
 }
