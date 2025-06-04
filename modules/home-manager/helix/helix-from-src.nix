@@ -8,7 +8,7 @@ let
   languagesTomlDrv = tomlFormat.generate "languages.toml" helixLanguagesNix;
 in
 {
-  programs.helix.enable = lib.mkForce false; // Disable standard module
+  programs.helix.enable = lib.mkForce false; # Disable standard module
 
   # ONLY manage config files.
   xdg.configFile."helix/config.toml" = {
