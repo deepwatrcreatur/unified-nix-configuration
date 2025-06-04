@@ -8,6 +8,9 @@ let
 
   configTomlDrv = tomlFormat.generate "config.toml" helixSettingsNix;
   languagesTomlDrv = tomlFormat.generate "languages.toml" helixLanguagesNix;
+
+  # The impure Helix package from your overlay
+  helixImpurePkg = pkgs.helix-from-source-impure;
 in
 {
   programs.helix.enable = lib.mkForce false;
@@ -32,36 +35,49 @@ in
     VISUAL = "hx";
   };
 
-  # --- Corrected Symlink Creation ---
-  # Create a symlink at ~/.local/bin/hx
-  home.file.".local/bin/hx" = {
-    # The 'target' attribute specifies that this is a symlink
-    # and its value is the path the symlink should point to.
-    target = "${pkgs.helix-from-source-impure}/bin/hx";
-    # Optional: force = true; # to overwrite if something else exists there, use with caution.
-  };
+  # --- PATH Management using an Activation Script ---
+  home.activation.createHelixSymlink = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    # This script runs during 'home-manager switch' after packages are built.
+    # Target directory for the symlink
+    HELIX_SYMLINK_DIR="$HOME/.local/bin"
+    # Name of the symlink
+    HELIX_SYMLINK_NAME="hx"
+    # Full path to the symlink
+    HELIX_SYMLINK_PATH="$HELIX_SYMLINK_DIR/$HELIX_SYMLINK_NAME"
+
+    # Path to the actual hx binary from your impure build.
+    # Nix will substitute the store path of helixImpurePkg here.
+    ACTUAL_HX_PATH="${helixImpurePkg}/bin/hx"
+
+    # Ensure the target directory exists
+    mkdir -p "$HELIX_SYMLINK_DIR"
+
+    # Create or update the symlink
+    # Use -f to force overwrite if it exists, -s for symbolic
+    ln -sf "$ACTUAL_HX_PATH" "$HELIX_SYMLINK_PATH"
+
+    # Optional: Print a message
+    echo "Activation: Symlink for custom Helix created/updated at $HELIX_SYMLINK_PATH"
+  '';
 
   # Ensure ~/.local/bin is in PATH for Fish (and other shells if used)
-  # This merges with any existing interactiveShellInit.
   programs.fish.interactiveShellInit = lib.mkMerge [
     (lib.mkIf (config.programs.fish.enable) ''
-      # Add ~/.local/bin to PATH if it exists and isn't already there
-      if test -d "$HOME/.local/bin"
-        if not string match -q -- "*$HOME/.local/bin*" $PATH # Simple check
-          set -gx PATH "$HOME/.local/bin" $PATH
-        end
-      end
+      if test -d "$HOME/.local/bin"; then
+        if not string match -q -- "*$HOME/.local/bin*" $PATH;
+          set -gx PATH "$HOME/.local/bin" $PATH;
+        end;
+      end;
     '')
     config.programs.fish.interactiveShellInit
   ];
-
   programs.fish.loginShellInit = lib.mkMerge [
     (lib.mkIf (config.programs.fish.enable) ''
-      if test -d "$HOME/.local/bin"
-        if not string match -q -- "*$HOME/.local/bin*" $PATH
-          set -gx PATH "$HOME/.local/bin" $PATH
-        end
-      end
+      if test -d "$HOME/.local/bin"; then
+        if not string match -q -- "*$HOME/.local/bin*" $PATH;
+          set -gx PATH "$HOME/.local/bin" $PATH;
+        end;
+      end;
     '')
     config.programs.fish.loginShellInit
   ];
