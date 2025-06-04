@@ -9,7 +9,6 @@ let
   configTomlDrv = tomlFormat.generate "config.toml" helixSettingsNix;
   languagesTomlDrv = tomlFormat.generate "languages.toml" helixLanguagesNix;
 
-  # The impure Helix package from your overlay
   helixImpurePkg = pkgs.helix-from-source-impure;
 in
 {
@@ -30,55 +29,48 @@ in
     text = builtins.readFile languagesTomlDrv;
   };
 
+  # EDITOR and VISUAL are already set in your fish-shared.nix's shellInit.
+  # If you want to ensure 'hx' is used and potentially override other settings,
+  # you can keep this, or rely on fish-shared.nix.
+  # For consistency, if fish-shared.nix sets them, you might not need them here.
+  # However, home.sessionVariables is more general than just Fish.
   home.sessionVariables = {
     EDITOR = "hx";
     VISUAL = "hx";
   };
 
-  # --- PATH Management using an Activation Script ---
   home.activation.createHelixSymlink = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    # This script runs during 'home-manager switch' after packages are built.
-    # Target directory for the symlink
     HELIX_SYMLINK_DIR="$HOME/.local/bin"
-    # Name of the symlink
     HELIX_SYMLINK_NAME="hx"
-    # Full path to the symlink
     HELIX_SYMLINK_PATH="$HELIX_SYMLINK_DIR/$HELIX_SYMLINK_NAME"
-
-    # Path to the actual hx binary from your impure build.
-    # Nix will substitute the store path of helixImpurePkg here.
     ACTUAL_HX_PATH="${helixImpurePkg}/bin/hx"
-
-    # Ensure the target directory exists
     mkdir -p "$HELIX_SYMLINK_DIR"
-
-    # Create or update the symlink
-    # Use -f to force overwrite if it exists, -s for symbolic
     ln -sf "$ACTUAL_HX_PATH" "$HELIX_SYMLINK_PATH"
-
-    # Optional: Print a message
     echo "Activation: Symlink for custom Helix created/updated at $HELIX_SYMLINK_PATH"
   '';
 
-  # Ensure ~/.local/bin is in PATH for Fish (and other shells if used)
-  programs.fish.interactiveShellInit = lib.mkMerge [
-    (lib.mkIf (config.programs.fish.enable) ''
-      if test -d "$HOME/.local/bin"; then
-        if not string match -q -- "*$HOME/.local/bin*" $PATH;
-          set -gx PATH "$HOME/.local/bin" $PATH;
-        end;
+  # Add to Fish's initialization scripts.
+  # Home Manager will concatenate these strings with those from fish-shared.nix.
+  programs.fish.interactiveShellInit = lib.mkIf (config.programs.fish.enable) ''
+
+    # --- Helix Custom PATH (from helix-from-src.nix) ---
+    # Add ~/.local/bin to PATH if it exists and isn't already there
+    # This ensures the symlink created by home.activation is found.
+    if test -d "$HOME/.local/bin"; then
+      if not string match -q -- "*$HOME/.local/bin*" $PATH; # Check if already in PATH
+        set -gx PATH "$HOME/.local/bin" $PATH;
       end;
-    '')
-    config.programs.fish.interactiveShellInit
-  ];
-  programs.fish.loginShellInit = lib.mkMerge [
-    (lib.mkIf (config.programs.fish.enable) ''
-      if test -d "$HOME/.local/bin"; then
-        if not string match -q -- "*$HOME/.local/bin*" $PATH;
-          set -gx PATH "$HOME/.local/bin" $PATH;
-        end;
+    end;
+  '';
+
+  programs.fish.loginShellInit = lib.mkIf (config.programs.fish.enable) ''
+
+    # --- Helix Custom PATH (from helix-from-src.nix) ---
+    # Add ~/.local/bin to PATH if it exists and isn't already there
+    if test -d "$HOME/.local/bin"; then
+      if not string match -q -- "*$HOME/.local/bin*" $PATH; # Check if already in PATH
+        set -gx PATH "$HOME/.local/bin" $PATH;
       end;
-    '')
-    config.programs.fish.loginShellInit
-  ];
+    end;
+  '';
 }
