@@ -15,7 +15,7 @@ let
     nixpkgsLib.mapAttrsToList (name: _: path + "/${name}") nixFiles;
 
   # --- Overlays ---
-  helixOverlay = import ../overlays/helix.nix;
+  # helixOverlay = import ../overlays/helix.nix;
 
   # List of all overlays to be applied consistently across systems/packages
   
