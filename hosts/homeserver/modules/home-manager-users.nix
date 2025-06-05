@@ -3,7 +3,7 @@
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
-    extraSpecialArgs = { inherit inputs lib; };
+    #extraSpecialArgs = { inherit inputs lib; };
     
     users.deepwatrcreatur = {
       imports = [
