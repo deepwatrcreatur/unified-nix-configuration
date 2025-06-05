@@ -5,8 +5,14 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
-    home-manager.url = "github:nix-community/home-manager"; 
+    nix-darwin.url = "github:LnL7/nix-darwin/master";
+    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+
+    home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
+    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
 
     helix.url = "github:helix-editor/helix";
     helix.inputs.nixpkgs.follows = "nixpkgs";
@@ -29,12 +35,14 @@
     # SpecialArgs specifically for HOME MANAGER modules.
     # We only pass 'inputs'. Home Manager will provide its own 'lib' and 'config.lib'.
     homeManagerModuleArgs = { inherit inputs; };
-# Helper to import all .nix files from a directory as module paths.
+
+    # Helper to import all .nix files from a directory as module paths
     importAllModulesInDir = dir:
       let
         items = builtins.readDir dir;
-        isNixFile = name: type: type == "regular" && lib.hasSuffix ".nix" name;
-        nixFileNames = lib.attrNames (lib.filterAttrs isNixFile items);
+        # Use nixpkgsLib here
+        isNixFile = name: type: type == "regular" && nixpkgsLib.hasSuffix ".nix" name;
+        nixFileNames = nixpkgsLib.attrNames (nixpkgsLib.filterAttrs isNixFile items);
       in
         map (fileName: dir + "/${fileName}") nixFileNames;
   in
@@ -43,15 +51,14 @@
     homeConfigurations = {
       proxmox-root = inputs.home-manager.lib.homeManagerConfiguration {
         pkgs = import inputs.nixpkgs {
-          system = "x86_64-linux"; 
+          system = "x86_64-linux";
           config = commonNixpkgsConfig;
           overlays = commonOverlays;
         };
-        # Use the carefully crafted args for Home Manager modules
         extraSpecialArgs = homeManagerModuleArgs;
         modules = [
-          ./users/root/hosts/proxmox 
-          ./modules/home-manager     
+          ./users/root/hosts/proxmox
+          ./modules/home-manager
         ];
       };
     };
@@ -59,7 +66,7 @@
     # --- Darwin Configurations ---
     darwinConfigurations.macminim4 = inputs.nix-darwin.lib.darwinSystem {
       system = "aarch64-darwin";
-      specialArgs = systemSpecialArgs; # For Darwin system modules
+      specialArgs = systemSpecialArgs;
       modules = [
         {
           nixpkgs.overlays = commonOverlays;
@@ -67,9 +74,8 @@
         }
         ./modules
         ./hosts/macminim4
-        inputs.home-manager.darwinModules.home-manager # The HM darwin module
-        # Anonymous module to configure HM user and pass correct extraSpecialArgs
-        ({ pkgs, config, lib, inputs, ... }: {
+        inputs.home-manager.darwinModules.home-manager
+        ({ pkgs, config, lib, inputs, ... }: { # These are Darwin module args
           home-manager.users.deepwatrcreatur = {
             imports = [
               ./users/deepwatrcreatur
@@ -82,7 +88,7 @@
           users.users.deepwatrcreatur = {
             name = "deepwatrcreatur";
             home = "/Users/deepwatrcreatur";
-            shell = pkgs.fish;
+            shell = pkgs.fish; 
           };
         })
       ];
@@ -92,14 +98,21 @@
     nixosConfigurations = {
       ansible = inputs.nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        specialArgs = systemSpecialArgs; # For NixOS system modules
+        specialArgs = systemSpecialArgs;
         modules = [
-          # ... other NixOS modules ...
+          # You might want commonNixpkgsConfig and commonOverlays here too
+          {
+            nixpkgs.overlays = commonOverlays;
+            nixpkgs.config = commonNixpkgsConfig;
+          }
+          # ./modules/nix-settings.nix 
+          # ./hosts/nixos-lxc/ansible  
+          # ./hosts/nixos
+          inputs.sops-nix.nixosModules.sops
           inputs.home-manager.nixosModules.home-manager
-          # Anonymous module to configure HM user and pass correct extraSpecialArgs
           ({ config, lib, inputs, ... }: { # These are NixOS module args
             home-manager.users.ansible = {
-              imports = [ ./modules ];
+              imports = [ ./modules ]; 
             };
             home-manager.extraSpecialArgs = homeManagerModuleArgs;
           })
@@ -108,13 +121,21 @@
 
       homeserver = inputs.nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        specialArgs = systemSpecialArgs; # For NixOS system modules
-        modules = [
+        specialArgs = systemSpecialArgs;
+        modules = 
+          {
+            nixpkgs.overlays = commonOverlays;
+            nixpkgs.config = commonNixpkgsConfig;
+          }
           inputs.sops-nix.nixosModules.sops
           inputs.home-manager.nixosModules.home-manager
           ./modules
           ./hosts/nixos
-          (importAllModulesInDir ./hosts/homeserver/modules) 
+          (importAllModulesInDir ./hosts/homeserver/modules)
+          # Optional local secrets from original flake
+          ++ (if builtins.pathExists /etc/nixos/local-secrets.nix
+            then [ /etc/nixos/local-secrets.nix ]
+          else [])
         ];
       };
     };
