@@ -4,8 +4,6 @@
     enable = true;
     shellInit = ''
       set -gx PATH $HOME/.nix-profile/bin $PATH
-      set -gx EDITOR hx
-      set -gx VISUAL hx
     '';
     shellAliases = {
       ls = "lsd";
