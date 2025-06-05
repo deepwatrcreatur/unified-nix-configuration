@@ -1,8 +1,10 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, inputs, ... }:
 {
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
+    extraSpecialArgs = { inherit inputs lib; };
+    
     users.deepwatrcreatur = {
       imports = [
         ../../../users/deepwatrcreatur
@@ -10,6 +12,7 @@
         ../../../modules/home-manager
       ];
     };
+
     users.root = {
       imports = [
         ../../../users/root/hosts/homeserver/default.nix
