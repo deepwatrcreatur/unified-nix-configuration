@@ -13,6 +13,8 @@
 
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+
+    helix.url = "github:helix-editor/helix";
   };
 
   outputs = inputs@{ ... }: # '@' captures all inputs into the 'inputs' attrset
@@ -70,7 +72,7 @@
         ({ pkgs, ... }: { # pkgs here will have the overlays applied
           home-manager.users.deepwatrcreatur = {
             imports = [
-              ./users/deepwatrcreatur 
+              ./users/deepwatrcreatur
               ./users/deepwatrcreatur/hosts/macminim4.nix
               ./modules/home-manager
             ];
@@ -97,14 +99,14 @@
 
           ./modules/nix-settings.nix
           ./hosts/nixos-lxc/ansible
-          ./hosts/nixos 
+          ./hosts/nixos
 
           inputs.sops-nix.nixosModules.sops
           inputs.home-manager.nixosModules.home-manager
           { # pkgs here will have the overlays applied
             home-manager.users.ansible = {
               imports = [
-                ./modules 
+                ./modules
               ];
             };
           }
