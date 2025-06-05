@@ -14,7 +14,7 @@
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
 
-    helix.url = "github:helix-editor/helix/master";
+    helix.url = "github:helix-editor/helix/2d14294b874207258057992f78010f80f03231a2";
     helix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
