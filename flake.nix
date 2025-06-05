@@ -122,7 +122,7 @@
       homeserver = inputs.nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = systemSpecialArgs;
-        modules = 
+        modules = [
           {
             nixpkgs.overlays = commonOverlays;
             nixpkgs.config = commonNixpkgsConfig;
@@ -131,12 +131,12 @@
           inputs.home-manager.nixosModules.home-manager
           ./modules
           ./hosts/nixos
-          (importAllModulesInDir ./hosts/homeserver/modules)
-          # Optional local secrets from original flake
-          ++ (if builtins.pathExists /etc/nixos/local-secrets.nix
+        ]
+        ++(importAllModulesInDir ./hosts/homeserver/modules)
+        # Optional local secrets from original flake
+        ++ (if builtins.pathExists /etc/nixos/local-secrets.nix
             then [ /etc/nixos/local-secrets.nix ]
-          else [])
-        ];
+          else []);
       };
     };
   };
