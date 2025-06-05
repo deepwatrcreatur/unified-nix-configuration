@@ -1,20 +1,20 @@
+
 # modules/home-manager/helix-config.nix
-{ config, pkgs, lib, ... }: 
+{ config, pkgs, lib, inputs, ... }: # Ensure 'inputs' is here
 
 {
   programs.helix = {
     enable = true;
-    # Use the custom-built package from the overlay
-    package = pkgs.helix-from-src;
-    # package = pkgs.helix;
-    defaultEditor = true;
-    extraPackages = with pkgs; [ 
+    # Use the package from the Helix flake input
+    package = inputs.helix.packages.${pkgs.system}.helix;
+    defaultEditor = true; 
+    extraPackages = with pkgs; [
       nil
       nixd
       nixpkgs-fmt
       elixir-ls
     ];
-    settings = import ./settings.nix; 
+    settings = import ./settings.nix;
     languages = import ./languages.nix { inherit pkgs; };
   };
 }
