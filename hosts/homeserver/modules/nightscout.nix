@@ -12,10 +12,7 @@ in
     format = "dotenv"; # Exposes YAML keys as environment variables
   };
 
-  virtualisation.oci-containers.volumes."mongo-data" = {
-  };
-
-  # 3. Define the containers
+  # 2. Define the containers
   virtualisation.oci-containers.containers = {
     # The MongoDB database container
     mongo = {
@@ -38,8 +35,7 @@ in
       environment = {
         # The hostname 'mongo' is automatically resolvable because NixOS
         # places both containers on the same internal network.
-        MONGO_CONNECTION =
-          "mongodb://nightscout:anwerkhan@mongo:27017/admin";
+        MONGO_CONNECTION = "mongodb://nightscout:anwerkhan@mongo:27017/admin";
         INSECURE_USE_HTTP = "true";
         # Add other non-secret Nightscout variables here if needed
         DISPLAY_UNITS = "mmol";
@@ -50,6 +46,6 @@ in
     };
   };
 
-  # 4. Open the firewall port for Nightscout
+  # 3. Open the firewall port for Nightscout
   networking.firewall.allowedTCPPorts = [ 1337 ];
 }
