@@ -3,15 +3,15 @@
 
 {
   # 1. Define the secrets file using sops-nix
-  sops.secrets."nightscout/mongo_user" = {
+  sops.secrets."mongo_user" = {
     sopsFile = ./../secrets/nightscout-secrets.yaml;
     format = "yaml";
   };
-  sops.secrets."nightscout/mongo_password" = {
+  sops.secrets."mongo_password" = {
     sopsFile = ./../secrets/nightscout-secrets.yaml;
     format = "yaml";
   };
-  sops.secrets."nightscout/api_secret" = {
+  sops.secrets."api_secret" = {
     sopsFile = ./../secrets/nightscout-secrets.yaml;
     format = "yaml";
   };
@@ -26,8 +26,8 @@
       volumes = [ "mongo-data:/data/db" ];
       # Use SOPS secrets directly in environment variables
       environment = {
-        MONGO_INITDB_ROOT_USERNAME = config.sops.secrets."nightscout/mongo_user".path;
-        MONGO_INITDB_ROOT_PASSWORD = config.sops.secrets."nightscout/mongo_password".path;
+        MONGO_INITDB_ROOT_USERNAME = config.sops.secrets."mongo_user".path;
+        MONGO_INITDB_ROOT_PASSWORD = config.sops.secrets."mongo_password".path;
       };
     };
 
@@ -39,8 +39,8 @@
       # Use SOPS secrets directly in environment variables
       environment = {
         # Reference the mongo container by its name; NixOS handles networking
-        MONGO_CONNECTION = "mongodb://${config.sops.secrets."nightscout/mongo_user".path}:${config.sops.secrets."nightscout/mongo_password".path}@mongo:27017/admin";
-        API_SECRET = config.sops.secrets."nightscout/api_secret".path;
+        MONGO_CONNECTION = "mongodb://${config.sops.secrets."mongo_user".path}:${config.sops.secrets."mongo_password".path}@mongo:27017/admin";
+        API_SECRET = config.sops.secrets."api_secret".path;
         INSECURE_USE_HTTP = "true";
         DISPLAY_UNITS = "mmol";
       };
