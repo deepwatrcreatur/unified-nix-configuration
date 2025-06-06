@@ -1,15 +1,19 @@
 # modules/nightscout.nix
 { config, pkgs, lib, ... }:
 
-let
-  # Define a reference to our sops-encrypted environment file
-  nightscoutEnvFile = config.sops.secrets."nightscout_env".path;
-in
 {
   # 1. Define the secrets file using sops-nix
-  sops.secrets."nightscout_env" = {
+  sops.secrets."nightscout/mongo_user" = {
     sopsFile = ./../secrets/nightscout-secrets.yaml;
-    format = "dotenv"; # Exposes YAML keys as environment variables
+    format = "yaml";
+  };
+  sops.secrets."nightscout/mongo_password" = {
+    sopsFile = ./../secrets/nightscout-secrets.yaml;
+    format = "yaml";
+  };
+  sops.secrets."nightscout/api_secret" = {
+    sopsFile = ./../secrets/nightscout-secrets.yaml;
+    format = "yaml";
   };
 
   # 2. Define the containers
@@ -20,8 +24,11 @@ in
       autoStart = true;
       # Mount the persistent volume to the container's data directory
       volumes = [ "mongo-data:/data/db" ];
-      # Securely pass the MONGO_USER and MONGO_PASSWORD from our sops file
-      environmentFile = nightscoutEnvFile;
+      # Use SOPS secrets directly in environment variables
+      environment = {
+        MONGO_INITDB_ROOT_USERNAME = config.sops.secrets."nightscout/mongo_user".path;
+        MONGO_INITDB_ROOT_PASSWORD = config.sops.secrets."nightscout/mongo_password".path;
+      };
     };
 
     # The Nightscout application container
@@ -29,19 +36,15 @@ in
       image = "nightscout/cgm-remote-monitor:latest";
       autoStart = true;
       ports = [ "1337:1337" ];
-      # Securely pass API_SECRET and database credentials from our sops file
-      environmentFile = nightscoutEnvFile;
-      # Add any non-secret environment variables here
+      # Use SOPS secrets directly in environment variables
       environment = {
-        # The hostname 'mongo' is automatically resolvable because NixOS
-        # places both containers on the same internal network.
-        MONGO_CONNECTION = "mongodb://nightscout:anwerkhan@mongo:27017/admin";
+        # Reference the mongo container by its name; NixOS handles networking
+        MONGO_CONNECTION = "mongodb://${config.sops.secrets."nightscout/mongo_user".path}:${config.sops.secrets."nightscout/mongo_password".path}@mongo:27017/admin";
+        API_SECRET = config.sops.secrets."nightscout/api_secret".path;
         INSECURE_USE_HTTP = "true";
-        # Add other non-secret Nightscout variables here if needed
         DISPLAY_UNITS = "mmol";
       };
-      # This is the declarative equivalent of `depends_on`.
-      # It ensures the mongo container is started before nightscout.
+      # Optional: Ensure mongo starts before nightscout (may not be needed)
       extraOptions = [ "--requires=mongo.service" ];
     };
   };
