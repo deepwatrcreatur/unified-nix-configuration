@@ -71,4 +71,21 @@
 
   # 4. Systemd service overrides for Podman containers
   systemd.services."podman-mongo" = {
-    wants = [ "sops-nix.service" "podman
+    wants = [ "sops-nix.service" "podman-network-nightscout-network.service" ];
+    after = [ "sops-nix.service" "podman-network-nightscout-network.service" ];
+    serviceConfig = {
+      User = "root";
+    };
+  };
+
+  systemd.services."podman-nightscout" = {
+    wants = [ "sops-nix.service" "podman-mongo.service" "podman-network-nightscout-network.service" ];
+    after = [ "sops-nix.service" "podman-mongo.service" "podman-network-nightscout-network.service" ];
+    serviceConfig = {
+      User = "root";
+    };
+  };
+
+  # 5. Open the firewall port for Nightscout
+  networking.firewall.allowedTCPPorts = [ 1337 ];
+}
