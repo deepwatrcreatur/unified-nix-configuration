@@ -6,7 +6,7 @@
   sops.secrets."MONGO_USER" = {
     sopsFile = ./../secrets/nightscout-secrets.yaml;
     format = "yaml";
-    owner = "root"; # Ensure root can access for systemd service
+    owner = "root";
     group = "root";
     mode = "0400";
   };
@@ -33,13 +33,12 @@
       mongo = {
         image = "mongo:4.4";
         autoStart = true;
-        # Mount the persistent volume to the container's data directory
         volumes = [ "mongo-data:/data/db" ];
-        # Use SOPS secrets via environment file in systemd service
         environment = {
-          MONGO_INITDB_ROOT_USERNAME = "$(MONGO_USER)";
-          MONGO_INITDB_ROOT_PASSWORD = "$(MONGO_PASSWORD)";
+          MONGO_INITDB_ROOT_USERNAME_FILE = config.sops.secrets."MONGO_USER".path;
+          MONGO_INITDB_ROOT_PASSWORD_FILE = config.sops.secrets."MONGO_PASSWORD".path;
         };
+        extraOptions = [ "--network=nightscout-network" ];
       };
 
       # The Nightscout application container
@@ -47,41 +46,39 @@
         image = "nightscout/cgm-remote-monitor:latest";
         autoStart = true;
         ports = [ "1337:1337" ];
-        # Use environment variables for secrets
         environment = {
-          # Reference the mongo container by its name
-          MONGO_CONNECTION = "mongodb://$(MONGO_USER):$(MONGO_PASSWORD)@mongo:27017/nightscout?authSource=admin";
-          API_SECRET = "$(API_SECRET)";
+          MONGO_CONNECTION = "mongodb://$(cat ${config.sops.secrets."MONGO_USER".path}):$(cat ${config.sops.secrets."MONGO_PASSWORD".path})@mongo:27017/nightscout?authSource=admin";
+          API_SECRET_FILE = config.sops.secrets."API_SECRET".path;
           INSECURE_USE_HTTP = "true";
           DISPLAY_UNITS = "mmol/L";
         };
+        extraOptions = [ "--network=nightscout-network" ];
       };
     };
   };
 
-  # 3. Systemd service overrides for Podman containers
-  systemd.services."podman-mongo" = {
-    wants = [ "sops-nix.service" ];
-    after = [ "sops-nix.service" ];
+  # 3. Create a Podman network for the containers
+  systemd.services.podman-network-nightscout-network = {
+    description = "Podman network for Nightscout and MongoDB";
+    wantedBy = [ "multi-user.target" ];
     serviceConfig = {
-      EnvironmentFile = "/run/secrets/nightscout_env";
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = "${pkgs.podman}/bin/podman network create nightscout-network";
+      ExecStop = "${pkgs.podman}/bin/podman network rm nightscout-network";
     };
+  };
+
+  # 4. Systemd service overrides for Podman containers
+  systemd.services."podman-mongo" = {
+    wants = [ "sops-nix.service" "podman-network-nightscout-network.service" ];
+    after = [ "sops-nix.service" "podman-network-nightscout-network.service" ];
   };
 
   systemd.services."podman-nightscout" = {
-    wants = [ "sops-nix.service" "podman-mongo.service" ];
-    after = [ "sops-nix.service" "podman-mongo.service" ];
-    serviceConfig = {
-      EnvironmentFile = "/run/secrets/nightscout_env";
-    };
+    wants = [ "sops-nix.service" "podman-mongo.service" "podman-network-nightscout-network.service" ];
+    after = [ "sops-nix.service" "podman-mongo.service" "podman-network-nightscout-network.service" ];
   };
-
-  # 4. Create an environment file for secrets
-  environment.etc."secrets/nightscout_env".text = ''
-    MONGO_USER=$(cat ${config.sops.secrets."MONGO_USER".path})
-    MONGO_PASSWORD=$(cat ${config.sops.secrets."MONGO_PASSWORD".path})
-    API_SECRET=$(cat ${config.sops.secrets."API_SECRET".path})
-  '';
 
   # 5. Open the firewall port for Nightscout
   networking.firewall.allowedTCPPorts = [ 1337 ];
