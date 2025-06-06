@@ -8,21 +8,21 @@
     format = "yaml";
     owner = "root";
     group = "root";
-    mode = "0440"; # Allow read access for root and group
+    mode = "0444"; # Ensure readable by Podman
   };
   sops.secrets."MONGO_PASSWORD" = {
     sopsFile = ./../secrets/nightscout-secrets.yaml;
     format = "yaml";
     owner = "root";
     group = "root";
-    mode = "0440";
+    mode = "0444";
   };
   sops.secrets."API_SECRET" = {
     sopsFile = ./../secrets/nightscout-secrets.yaml;
     format = "yaml";
     owner = "root";
     group = "root";
-    mode = "0440";
+    mode = "0444";
   };
 
   # 2. Define the containers
@@ -35,8 +35,8 @@
         autoStart = true;
         volumes = [ "mongo-data:/data/db" ];
         environment = {
-          MONGO_INITDB_ROOT_USERNAME_FILE = config.sops.secrets."MONGO_USER".path;
-          MONGO_INITDB_ROOT_PASSWORD_FILE = config.sops.secrets."MONGO_PASSWORD".path;
+          MONGO_INITDB_ROOT_USERNAME = "$(MONGO_USER)";
+          MONGO_INITDB_ROOT_PASSWORD = "$(MONGO_PASSWORD)";
         };
         extraOptions = [ "--network=nightscout-network" "--log-driver=journald" ];
       };
@@ -75,10 +75,7 @@
     after = [ "sops-nix.service" "podman-network-nightscout-network.service" ];
     serviceConfig = {
       EnvironmentFile = "/run/secrets/nightscout_env";
-      Restart = "on-failure";
-      RestartSec = 5;
-      # Run Podman as root to ensure access to secret files
-      User = "root";
+      User = "root"; # Ensure access to secret files
     };
   };
 
@@ -87,9 +84,6 @@
     after = [ "sops-nix.service" "podman-mongo.service" "podman-network-nightscout-network.service" ];
     serviceConfig = {
       EnvironmentFile = "/run/secrets/nightscout_env";
-      Restart = "on-failure";
-      RestartSec = 5;
-      # Run Podman as root to ensure access to secret files
       User = "root";
     };
   };
