@@ -41,7 +41,6 @@
       NSNavPanelExpandedStateForSaveMode = true; # Expand save dialogs by default
       AppleShowScrollBars = "Always"; # Always show scroll bars ("Automatic" or "WhenScrolling")
       NSDocumentSaveNewDocumentsToCloud = false; # Save documents locally by default
-      MultipleSessionEnabled = false; # Disable fast user switching menu
     };
     screencapture = {
       location = "~/Pictures/Screenshots";
@@ -63,6 +62,9 @@
 
   # Activation script for unsupported settings
   system.activationScripts.postActivation.text = ''
+    # Disable Fast User Switching menu item
+    /usr/bin/defaults write .GlobalPreferences MultipleSessionEnabled -bool false
+
     # Disable screensaver password prompt
     /usr/bin/defaults -currentHost write com.apple.screensaver askForPassword -bool false
     /usr/bin/defaults -currentHost write com.apple.screensaver askForPasswordDelay -int 0
