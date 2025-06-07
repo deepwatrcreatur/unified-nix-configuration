@@ -41,8 +41,6 @@
       NSNavPanelExpandedStateForSaveMode = true; # Expand save dialogs by default
       AppleShowScrollBars = "Always"; # Always show scroll bars ("Automatic" or "WhenScrolling")
       NSDocumentSaveNewDocumentsToCloud = false; # Save documents locally by default
-    };
-    global = {
       MultipleSessionEnabled = false; # Disable fast user switching menu
     };
     screencapture = {
