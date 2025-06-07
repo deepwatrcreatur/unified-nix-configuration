@@ -6,6 +6,7 @@
   ];
 
   home.packages = with pkgs; [
+    megacmd
     ffmpeg
     yt-dlp
     virt-viewer
