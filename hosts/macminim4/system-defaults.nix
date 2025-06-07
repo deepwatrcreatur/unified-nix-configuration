@@ -1,7 +1,14 @@
 { config, pkgs, ... }:
 
 {
-
+  # Use managedPreferences for system-wide settings that affect all users.
+  system.managedPreferences = {
+    ".GlobalPreferences" = {
+      # This disables Fast User Switching system-wide
+      MultipleSessionEnabled = false;
+    };
+  };
+  
   system.defaults = {
     dock = {
       orientation = "right"; # Dock position: "bottom", "left", or "right"
@@ -63,7 +70,7 @@
   # Activation script for unsupported settings
   system.activationScripts.postActivation.text = ''
     # Disable Fast User Switching menu item
-    /usr/bin/defaults write /Library/Preferences/.GlobalPreferences.plist MultipleSessionEnabled -bool false
+    #/usr/bin/defaults write /Library/Preferences/.GlobalPreferences.plist MultipleSessionEnabled -bool false
     
     # Disable screensaver password prompt
     /usr/bin/defaults -currentHost write com.apple.screensaver askForPassword -bool false
