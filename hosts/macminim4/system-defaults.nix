@@ -42,7 +42,7 @@
       AppleShowScrollBars = "Always"; # Always show scroll bars ("Automatic" or "WhenScrolling")
       NSDocumentSaveNewDocumentsToCloud = false; # Save documents locally by default
     };
-    domains.".GlobalPreferences" = {
+    global = {
       MultipleSessionEnabled = false; # Disable fast user switching menu
     };
     screencapture = {
