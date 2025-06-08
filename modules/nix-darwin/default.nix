@@ -4,6 +4,7 @@
 {
   imports = [
     ./nix-mount.nix
+    ./homebrew.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
