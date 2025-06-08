@@ -8,8 +8,7 @@
     enable = true;
 
     taps = [
-      "homebrew/services"
-      "homebrew/cask-nerd-fonts"
+      "nerd-fonts/tap"
       "romkatv/powerlevel10k"
       "gabe565/tap"
     ];
