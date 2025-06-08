@@ -2,6 +2,7 @@
 { config, pkgs, lib, ... }:
 {
   imports = [
+    ./env # shell environment settings
     ./nushell
     ./helix
     ./fish-shared.nix

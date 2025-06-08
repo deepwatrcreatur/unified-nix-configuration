@@ -7,6 +7,7 @@
     ./proxmox-fish-extra.nix
     ./proxmox-justfile.nix
     ./nh.nix
+    ../../../../modules/home-manager/env/standalone-hm.nix
   ];
 
   # Add packages to base config for root user

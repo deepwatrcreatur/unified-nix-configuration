@@ -12,5 +12,8 @@ let
   moduleImports = lib.mapAttrsToList (name: _: import (commonDir + "/${name}")) modules;
 
 in {
-  imports = moduleImports;
+  imports = moduleImports ++ [
+    # add standalone home manager for linux hosts t
+    ../home-manager/env/standalone-hm.nix   
+  ];
 }
