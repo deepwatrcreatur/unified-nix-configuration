@@ -2,8 +2,7 @@
 
 { config, pkgs, lib, ... }:
 {
-  home.sessionVariables = {
-    PATH = [
+  home.sessionPath = [
       # Add the Homebrew binary path for Apple Silicon.
       "/opt/homebrew/bin"
 
@@ -11,7 +10,6 @@
       # Using ${config.home.profileDirectory} is more robust than a hardcoded path.
       "${config.home.profileDirectory}/bin"
     ];
-  };
 
   programs.fish = {
     enable = true;
