@@ -1,10 +1,21 @@
-# modules/home-manager/nushell/default.nix
 { config, pkgs, ... }:
 
 {
   programs.nushell = {
     enable = true;
-    configFile.source = ./config.nu;
-    envFile.source = ./env.nu;
+
+  aliases = {
+      update = "just update";
+      ls = "lsd";
+      ll = "lsd -l";
+      la = "lsd -a";
+      lla = "lsd -la";
+      # The alias ".." must be quoted because it's not a valid identifier.
+      ".." = "cd ..";
+    };
+  };
+
+  programs.starship = {
+    enableNushellIntegration = true; # This is the key for Nushell!
   };
 }
