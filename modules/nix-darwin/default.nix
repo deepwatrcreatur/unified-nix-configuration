@@ -5,7 +5,7 @@
   imports = [
     ./nix-mount.nix
     ./homebrew.nix
-    ../home-manager/env/standalone-hm.nix
+    ../home-manager/env/darwin.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
