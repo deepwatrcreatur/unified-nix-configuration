@@ -4,7 +4,7 @@
   programs.nushell = {
     enable = true;
 
-  aliases = {
+  shellAliases = {
       update = "just update";
       ls = "lsd";
       ll = "lsd -l";
