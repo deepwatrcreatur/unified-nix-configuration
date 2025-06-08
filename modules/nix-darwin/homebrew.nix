@@ -8,7 +8,6 @@
     enable = true;
 
     taps = [
-      "nerd-fonts/tap"
       "romkatv/powerlevel10k"
       "gabe565/tap"
     ];
