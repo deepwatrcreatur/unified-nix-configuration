@@ -80,7 +80,6 @@
             imports = [
               ./users/deepwatrcreatur
               ./users/deepwatrcreatur/hosts/macminim4.nix
-              ./modules/home-manager
             ];
           };
           home-manager.extraSpecialArgs = homeManagerModuleArgs;

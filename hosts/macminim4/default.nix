@@ -23,6 +23,12 @@
     name = "deepwatrcreatur";
     home = "/Users/deepwatrcreatur";
   };
+  
+  home-manager.users.deepwatrcreatur = {
+    imports = [
+      ../../modules/home-manager
+    ];
+  };
 
   system.stateVersion = 6;
 }
