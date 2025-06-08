@@ -4,5 +4,5 @@
 
 {
   # This is critical for non-NixOS systems to find Nix packages.
-  sessionPath = [ "${builtins.getEnv "HOME"}/.nix-profile/bin" ];
+  home.sessionPath = [ "${builtins.getEnv "HOME"}/.nix-profile/bin" ];
 }
