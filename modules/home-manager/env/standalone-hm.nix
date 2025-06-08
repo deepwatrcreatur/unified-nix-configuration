@@ -4,5 +4,4 @@
 
 {
   # This is critical for non-NixOS systems to find Nix packages.
-  home.sessionPath = [ "${config.home.profileDirectory}/bin" ];
-}
+  home.sessionPath = [ "${config.home.homeDirectory}/.nix-profile/bin" ];}
