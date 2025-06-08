@@ -1,10 +1,21 @@
+# modules/home-manager/fish-shared.nix
+
 { config, pkgs, lib, ... }:
 {
+  home.sessionVariables = {
+    PATH = [
+      # Add the Homebrew binary path for Apple Silicon.
+      "/opt/homebrew/bin"
+
+      # Add the user's Nix profile path.
+      # Using ${config.home.profileDirectory} is more robust than a hardcoded path.
+      "${config.home.profileDirectory}/bin"
+    ];
+  };
+
   programs.fish = {
     enable = true;
-    shellInit = ''
-      set -gx PATH $HOME/.nix-profile/bin $PATH
-    '';
+
     shellAliases = {
       ls = "lsd";
       ll = "lsd -l";
@@ -14,6 +25,7 @@
       update = "just --justfile ~/.justfile update";
       nh-update = "just --justfile ~/.justfile nh-update";
     };
+
     plugins = [
       { name = "fzf"; src = pkgs.fishPlugins.fzf; }
       { name = "z"; src = pkgs.fishPlugins.z; }
@@ -22,6 +34,8 @@
       { name = "grc"; src = pkgs.fishPlugins.grc; }
       { name = "bobthefish"; src = pkgs.fishPlugins.bobthefish; }
     ];
+
+    # This block is what makes the home.sessionVariables work!
     interactiveShellInit = ''
       if test -e $HOME/.nix-profile/etc/profile.d/hm-session-vars.fish
         source $HOME/.nix-profile/etc/profile.d/hm-session-vars.fish
@@ -34,4 +48,3 @@
     '';
   };
 }
-
