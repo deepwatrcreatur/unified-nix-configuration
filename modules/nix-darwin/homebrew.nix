@@ -8,8 +8,9 @@
     enable = true;
 
     taps = [
+      "homebrew/services"
+      "homebrew/cask-nerd-fonts"
       "romkatv/powerlevel10k"
-      "homebrew/cask-fonts"
       "gabe565/tap"
     ];
 
@@ -23,7 +24,6 @@
     # Casks (GUI Apps)
     casks = [
       "visual-studio-code"
-      "font-fira-code-nerd-font"
       "font-fira-code"
     ];
   };
