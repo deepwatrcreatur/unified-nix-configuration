@@ -3,10 +3,10 @@
 {
   imports = [
     ../../../modules/home-manager/ghostty
+    ../xbar.nix
   ];
 
   home.packages = with pkgs; [
-    xbar
     rclone
     megacmd
     ffmpeg
