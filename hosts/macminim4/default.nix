@@ -6,6 +6,7 @@
     ./system-defaults.nix
     ./nix-store-uuid.nix
     ./just.nix
+    ./homebrew.nix
   ];
 
   nix.enable = false; # Required for Determinate Nix Installer
