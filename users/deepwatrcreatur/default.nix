@@ -14,8 +14,4 @@
     stow
     mix2nix
   ];
-
-  home.sessionPath = [
-    "/run/current-system/sw/bin"
-  ];
 }
