@@ -36,4 +36,10 @@
       set -g theme_display_git_untracked yes
     '';
   };
+  
+  home.sessionPath = [
+    # Add the user's Nix profile path.
+    # Using ${config.home.profileDirectory} is more robust than a hardcoded path.
+    "${config.home.profileDirectory}/bin"Add commentMore actions
+  ];
 }
