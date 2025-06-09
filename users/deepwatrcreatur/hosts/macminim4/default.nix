@@ -2,9 +2,9 @@
 
 {
   imports = [
-    ../../../modules/home-manager/ghostty
+    ../../../../modules/home-manager/ghostty
     ./homebrew.nix
-    ../xbar.nix
+    ../../xbar.nix
   ];
 
   home.packages = with pkgs; [
