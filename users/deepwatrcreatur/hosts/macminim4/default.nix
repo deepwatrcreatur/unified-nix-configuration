@@ -3,6 +3,7 @@
 {
   imports = [
     ../../../modules/home-manager/ghostty
+    ./homebrew.nix
     ../xbar.nix
   ];
 

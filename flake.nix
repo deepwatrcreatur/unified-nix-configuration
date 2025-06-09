@@ -79,7 +79,7 @@
           home-manager.users.deepwatrcreatur = {
             imports = [
               ./users/deepwatrcreatur
-              ./users/deepwatrcreatur/hosts/macminim4.nix
+              ./users/deepwatrcreatur/hosts/macminim4
             ];
           };
           home-manager.extraSpecialArgs = homeManagerModuleArgs;
