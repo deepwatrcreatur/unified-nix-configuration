@@ -8,6 +8,5 @@ in
 lib.mkIf (mainUser != null) {
   home-manager.users.${mainUser.name}.home.sessionPath = [
     "${mainUser.home}/.nix-profile/bin"
-    "/opt/homebrew/bin"
   ];
 }

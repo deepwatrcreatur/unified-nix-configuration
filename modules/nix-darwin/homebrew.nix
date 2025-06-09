@@ -25,4 +25,8 @@
       "font-fira-code"
     ];
   };
+  home.sessionPath = [
+    # Add the Homebrew binary path for Apple Silicon.
+    "/opt/homebrew/bin"
+  ];
 }
