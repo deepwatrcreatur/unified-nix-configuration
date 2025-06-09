@@ -4,7 +4,6 @@
 {
   imports = [
     ./nix-mount.nix
-    ./homebrew.nix
     ../home-manager/env/darwin.nix
   ];
 
