@@ -36,12 +36,4 @@
       set -g theme_display_git_untracked yes
     '';
   };
-   home.sessionPath = [
-      # Add the Homebrew binary path for Apple Silicon.Add commentMore actions
-      "/opt/homebrew/bin"
-
-      # Add the user's Nix profile path.
-      # Using ${config.home.profileDirectory} is more robust than a hardcoded path.
-      "${config.home.profileDirectory}/bin"
-    ];  
 }
