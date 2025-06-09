@@ -1,21 +1,28 @@
-# hosts/macminim4/homebrew.nix
+# modules/homebrew.nix
+#
+# Contains Homebrew configuration shared across ALL macOS hosts.
 { config, pkgs, ... }:
 
 {
   homebrew = {
-    # Formulas (CLI tools)
-    brews = [
-      "aom"
-      "atomicparsley"
-      "cmake"
-      "leptonica"
-      "mise"
-      "msgpack"
+    enable = true;
+
+    taps = [
+      "romkatv/powerlevel10k"
+      "gabe565/tap"
     ];
 
-    # Casks (GUI apps)
+    # Formulas i.e. CLI tools
+    brews = [
+      "fish"
+      "cmake"
+      "powerlevel10k"
+    ];
+
+    # Casks (GUI Apps)
     casks = [
-      "phantomjs"
+      "visual-studio-code"
+      "font-fira-code"
     ];
   };
 }
