@@ -16,7 +16,6 @@
     # Casks (GUI apps)
     casks = [
       "phantomjs"
-      "nightscout-menu-bar"
     ];
   };
 }
