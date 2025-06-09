@@ -1,30 +1,20 @@
-# hosts/macminim4/homebrew.nix
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
-  homebrew = {
-    enable = true;
-
-    taps = [
-      "romkatv/powerlevel10k"
-      "gabe565/tap"
-    ];
-
-    # Formulas i.e. CLI tools
-    brews = [
-      "fish"
-      "cmake"
-      "powerlevel10k"
-    ];
-
-    # Casks (GUI Apps)
-    casks = [
-      "visual-studio-code"
-      "font-fira-code"
-    ];
-  };
-  home.sessionPath = [
-    "/opt/homebrew/bin"
+  imports = [
+    ../../../../modules/home-manager/ghostty
+    ../../xbar.nix
   ];
-}
 
+  home.packages = with pkgs; [
+    ripgrep
+    jq
+    yq    
+    rclone
+    megacmd
+    ffmpeg
+    yt-dlp
+    virt-viewer
+  ];
+
+}
