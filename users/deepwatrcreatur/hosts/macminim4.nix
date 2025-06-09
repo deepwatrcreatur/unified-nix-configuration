@@ -7,6 +7,9 @@
   ];
 
   home.packages = with pkgs; [
+    ripgrep
+    jq
+    yq    
     rclone
     megacmd
     ffmpeg
