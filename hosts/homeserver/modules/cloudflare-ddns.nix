@@ -18,8 +18,4 @@ in
       "-v" "${apiKeyFile}:/run/secrets/API_KEY:ro"
     ];
   };
-  sops.secrets.API_KEY = {
-    sopsFile = ./../secrets/cloudflare-secrets.yaml;
-    format = "yaml";
-  };
 }
