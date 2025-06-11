@@ -19,14 +19,6 @@ in
   # This block applies the configuration only if you enable the service.
   config = lib.mkIf cfg.enable {
 
-    # This tells NixOS that this module depends on the 'API_KEY' secret.
-    # It ensures the secret is available when the module is evaluated.
-    sops.secrets.API_KEY = {
-      # This path should point to your existing encrypted secrets file.
-      # Adjust the path if yours is located elsewhere.
-      sopsFile = ../../secrets/cloudflare-secrets.yaml;
-    };
-
     # This defines the Zoraxy container itself.
     virtualisation.oci-containers.containers.zoraxy = {
       image = "tobychui/zoraxy:latest";

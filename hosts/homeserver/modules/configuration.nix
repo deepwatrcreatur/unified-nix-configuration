@@ -10,6 +10,7 @@
     ./podman.nix
     ./influxdb.nix
     ./users.nix
+    ./sops.nix
     ./nginxproxymanager.nix
     ./zoraxy.nix
   ];
