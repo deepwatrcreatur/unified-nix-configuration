@@ -1,10 +1,10 @@
-# ./modules/nixos/services/caddy.nix
+# /etc/nixos/modules/services/caddy.nix
 { config, lib, pkgs, ... }:
 
 let
   cfg = config.services.caddy-proxy;
-  # This assumes your secret is named 'API_KEY' in your sops file.
-  cloudflareApiKeyFile = config.sops.secrets.API_KEY.path;
+  # This gets the path to the decrypted file containing our Caddy secret.
+  caddyEnvFile = config.sops.secrets.caddy_cloudflare_token.path;
 in
 {
   options.services.caddy-proxy = {
@@ -13,43 +13,48 @@ in
 
   config = lib.mkIf cfg.enable {
 
-    sops.secrets.API_KEY = {
-      sopsFile = ../../secrets/cloudflare-secrets.yaml; # Adjust path if needed
+    # Define the new secret for Caddy.
+    sops.secrets.caddy_cloudflare_token = {
+      # Point it to the new encrypted file.
+      # The path is relative to the location of your flake.nix, which is /etc/nixos/
+      sopsFile = ./secrets/caddy-cloudflare.yaml;
+      # The format is now 'dotenv' which sops-nix understands.
+      # It will convert the YAML into a KEY=VALUE file.
+      format = "dotenv";
     };
 
-    # This defines the Caddy container.
     virtualisation.oci-containers.containers.caddy = {
-      # We will build our own Caddy with the Cloudflare plugin.
-      # This is the most reliable method.
-      image = "caddy-with-cloudflare"; # A custom name for our local image
+      image = "caddy-with-cloudflare"; # The name of our custom-built image
       build = {
-        # The context is the directory containing the Dockerfile.
-        # We will create this file next.
+        # The directory containing the Dockerfile for our custom build
         context = /var/lib/caddy-build;
       };
       autoStart = true;
       ports = [ "80:80" "443:443" ];
       volumes = [
-        # Mount the Caddyfile and data directories.
         "/var/lib/caddy/Caddyfile:/etc/caddy/Caddyfile"
         "/var/lib/caddy/data:/data"
       ];
+      # Use extraOptions to pass the decrypted .env file to the container.
+      # This is the most reliable method for podman.
+      extraOptions = [ "--env-file=${caddyEnvFile}" ];
     };
 
-    # This creates the build directory and the Caddyfile on the host.
+    # This block uses systemd-tmpfiles to create all necessary files and
+    # directories for the Caddy service before it starts.
     systemd.tmpfiles.rules = [
+      # Create directories for Caddy's data and config
       "d /var/lib/caddy 0755 root root - -"
       "d /var/lib/caddy/data 0755 root root - -"
-      "f /var/lib/caddy/Caddyfile 0644 root root - \"nightscout.deepwatercreature.com {\n\treverse_proxy 10.10.11.77:1337\n\ttls {\n\t\tdns cloudflare {env.CLOUDFLARE_API_TOKEN}\n\t}\n}\""
+      
+      # Create the Caddyfile with the correct configuration
+      "f /var/lib/caddy/Caddyfile 0644 root root - \"glucose.deepwatercreature.com {\n\treverse_proxy 10.10.11.77:1337\n\ttls {\n\t\tdns cloudflare {env.CLOUDFLARE_API_TOKEN}\n\t}\n}\""
+      
+      # Create the build directory for our custom Dockerfile
       "d /var/lib/caddy-build 0755 root root - -"
+      
+      # Create the Dockerfile to build Caddy with the Cloudflare plugin
       "f /var/lib/caddy-build/Dockerfile 0644 root root - \"FROM caddy:2.8.4-builder AS builder\nRUN xcaddy build --with github.com/caddyserver/dns.cloudflare\nFROM caddy:2.8.4\nCOPY --from=builder /usr/bin/caddy /usr/bin/caddy\""
     ];
-
-    # This passes the decrypted API key as an environment variable to the container.
-    # This is a workaround for a bug where extraOptions might not work as expected.
-    environment.sops.secrets.CLOUDFLARE_API_TOKEN = {
-      path = cloudflareApiKeyFile;
-    };
-    systemd.services.podman-caddy.serviceConfig.EnvironmentFile = config.environment.sops.secrets.CLOUDFLARE_API_TOKEN.path;
   };
 }
