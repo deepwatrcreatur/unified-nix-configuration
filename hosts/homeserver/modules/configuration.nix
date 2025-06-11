@@ -10,6 +10,7 @@
     ./podman.nix
     ./influxdb.nix
     ./users.nix
+    ./nginxproxymanager.nix
   ];
 
   networking.hostName = "homeserver";
