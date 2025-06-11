@@ -16,7 +16,9 @@
   ];
 
   networking.hostName = "homeserver";
-  
+
+  services.caddy-proxy.enable = true;  
+
   security.sudo.wheelNeedsPassword = false;
 
   systemd.mounts = [{
