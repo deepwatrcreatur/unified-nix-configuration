@@ -130,7 +130,6 @@
           inputs.home-manager.nixosModules.home-manager
           ./modules
           ./hosts/nixos
-          ./hosts/homeserver/modules/nginxproxymanager.nix
         ]
         ++(importAllModulesInDir ./hosts/homeserver/modules)
         # Optional local secrets from original flake
