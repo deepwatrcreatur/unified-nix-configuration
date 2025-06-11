@@ -18,13 +18,6 @@ in
   # It is guaranteed to run AFTER the 'options' block has been evaluated.
   config = lib.mkIf cfg.enable {
 
-    # This makes the API_KEY secret available to this module.
-    sops.secrets.API_KEY = {
-      # Assuming the path is relative to the flake root.
-      # You might need to adjust this path based on your structure.
-      sopsFile = ./secrets/cloudflare-secrets.yaml; 
-    };
-
     virtualisation.oci-containers.containers."nginx-proxy-manager" = {
       image = "jc21/nginx-proxy-manager:latest";
       autoStart = true;
