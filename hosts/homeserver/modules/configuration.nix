@@ -6,13 +6,13 @@
     ../../../modules/nixos/networking.nix
     ../../../modules/nixos
     ../../../modules/nixos/services/iperf3.nix
-    ./packages.nix
-    ./podman.nix
-    ./influxdb.nix
-    ./users.nix
+    #./packages.nix
+    #./podman.nix
+    #./influxdb.nix
+    #./users.nix
     ./sops.nix
-    ./nginxproxymanager.nix
-    ./zoraxy.nix
+    #./nginxproxymanager.nix
+    #./zoraxy.nix
   ];
 
   networking.hostName = "homeserver";
