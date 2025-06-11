@@ -16,9 +16,8 @@
   ];
 
   networking.hostName = "homeserver";
-
-  # Enable the Zoraxy service
-  services.zoraxy.enable = true;
+  
+  services.nginx-proxy-manager.enable = true;
 
   security.sudo.wheelNeedsPassword = false;
 
