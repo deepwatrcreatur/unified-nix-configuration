@@ -11,6 +11,7 @@
     ./influxdb.nix
     ./users.nix
     ./nginxproxymanager.nix
+    ./zoraxy.nix
   ];
 
   networking.hostName = "homeserver";
