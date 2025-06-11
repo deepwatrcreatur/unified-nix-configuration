@@ -17,8 +17,6 @@
 
   networking.hostName = "homeserver";
   
-  services.nginx-proxy-manager.enable = true;
-
   security.sudo.wheelNeedsPassword = false;
 
   systemd.mounts = [{
