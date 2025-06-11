@@ -1,31 +1,30 @@
-# hosts/homeserver/modules/nginxproxymanager.nix
+# ./modules/nixos/services/nginxproxymanager.nix
 { config, lib, pkgs, ... }:
 
 let
-  # This makes the code cleaner. We'll refer to the enabled status.
+  # This makes the code cleaner. We'll refer to the options block.
   cfg = config.services.nginx-proxy-manager;
-
-  # Get the path to the decrypted Cloudflare API key from your existing sops config.
-  # This assumes your cloudflare-secrets.yaml has a key named 'api_key'.
-  # If the key is named differently (e.g., 'global_api_key'), change it here.
-  cloudflareApiKeyFile = config.sops.secrets.cloudflare_api_key.path;
 in
 {
-  # Define the options for this module so you can enable/disable it easily.
+  # This 'options' block defines the configuration interface for this module.
   options.services.nginx-proxy-manager = {
     enable = lib.mkEnableOption "Enable Nginx Proxy Manager";
+    
+    # We can add more options here in the future if needed,
+    # like package version, data directory, etc.
   };
 
-  # This block only applies if you set services.nginx-proxy-manager.enable = true;
+  # This 'config' block applies the settings if the module is enabled.
+  # It is guaranteed to run AFTER the 'options' block has been evaluated.
   config = lib.mkIf cfg.enable {
 
-    # We need to define the sops secret here so this module knows about it.
-    # This doesn't redefine it, just makes it accessible.
-    sops.secrets.cloudflare_api_key = {
-      sopsFile = ../../secrets/cloudflare-secrets.yaml; # Adjust path if needed
+    # This makes the API_KEY secret available to this module.
+    sops.secrets.API_KEY = {
+      # Assuming the path is relative to the flake root.
+      # You might need to adjust this path based on your structure.
+      sopsFile = ./secrets/cloudflare-secrets.yaml; 
     };
 
-    # Define the Nginx Proxy Manager container.
     virtualisation.oci-containers.containers."nginx-proxy-manager" = {
       image = "jc21/nginx-proxy-manager:latest";
       autoStart = true;
@@ -35,17 +34,16 @@ in
         "81:81"
       ];
       volumes = [
-        # Standard NPM data and letsencrypt volumes
         "/var/lib/nginx-proxy-manager/data:/data"
         "/var/lib/nginx-proxy-manager/letsencrypt:/etc/letsencrypt"
-        # Mount the decrypted Cloudflare API key file into the container
-        # so NPM can use it for the DNS challenge.
-        "${cloudflareApiKeyFile}:/secrets/cloudflare_api_key:ro"
+      ];
+      extraOptions = [
+        # Use the path to the decrypted secret file.
+        "--volume=${config.sops.secrets.API_KEY.path}:/secrets/cloudflare_api_key:ro"
       ];
     };
 
-    # Ensure the data directories exist with the correct permissions.
-    # This is good practice for services running as non-root.
+    # Ensure the data directories exist.
     systemd.tmpfiles.rules = [
       "d /var/lib/nginx-proxy-manager 0755 root root - -"
       "d /var/lib/nginx-proxy-manager/data 0755 root root - -"
