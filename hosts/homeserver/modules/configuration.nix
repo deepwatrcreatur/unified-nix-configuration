@@ -15,7 +15,10 @@
   ];
 
   networking.hostName = "homeserver";
-  
+
+  # Enable the Zoraxy service
+  services.zoraxy.enable = true;
+
   security.sudo.wheelNeedsPassword = false;
 
   systemd.mounts = [{
