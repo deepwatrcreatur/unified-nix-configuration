@@ -2,23 +2,19 @@
 { config, lib, pkgs, ... }:
 
 let
-  # This makes the code cleaner. We'll refer to the options block.
   cfg = config.services.nginx-proxy-manager;
 in
 {
-  # This 'options' block defines the configuration interface for this module.
   options.services.nginx-proxy-manager = {
     enable = lib.mkEnableOption "Enable Nginx Proxy Manager";
-    
-    # We can add more options here in the future if needed,
-    # like package version, data directory, etc.
   };
 
-  # This 'config' block applies the settings if the module is enabled.
-  # It is guaranteed to run AFTER the 'options' block has been evaluated.
   config = lib.mkIf cfg.enable {
+    # This module does not depend on SOPS, as NPM handles secrets
+    # via its web interface, which is simpler for this use case.
 
     virtualisation.oci-containers.containers."nginx-proxy-manager" = {
+      # Use the official, public NPM image
       image = "jc21/nginx-proxy-manager:latest";
       autoStart = true;
       ports = [
@@ -30,13 +26,8 @@ in
         "/var/lib/nginx-proxy-manager/data:/data"
         "/var/lib/nginx-proxy-manager/letsencrypt:/etc/letsencrypt"
       ];
-      extraOptions = [
-        # Use the path to the decrypted secret file.
-        "--volume=${config.sops.secrets.API_KEY.path}:/secrets/cloudflare_api_key:ro"
-      ];
     };
 
-    # Ensure the data directories exist.
     systemd.tmpfiles.rules = [
       "d /var/lib/nginx-proxy-manager 0755 root root - -"
       "d /var/lib/nginx-proxy-manager/data 0755 root root - -"
