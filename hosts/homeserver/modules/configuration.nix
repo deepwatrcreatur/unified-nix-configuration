@@ -17,7 +17,7 @@
 
   networking.hostName = "homeserver";
 
-  services.caddy-proxy.enable = true;  
+  services.npm-proxy.enable = true;  
 
   security.sudo.wheelNeedsPassword = false;
 
