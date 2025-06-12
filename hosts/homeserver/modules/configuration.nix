@@ -17,7 +17,7 @@
 
   networking.hostName = "homeserver";
 
-  services.npm-proxy.enable = true;  
+  services.nginx-proxy-manager.enable = true;  
 
   security.sudo.wheelNeedsPassword = false;
 
