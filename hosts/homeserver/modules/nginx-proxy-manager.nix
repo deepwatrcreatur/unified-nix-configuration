@@ -1,35 +1,37 @@
-# /etc/nixos/modules/services/npm.nix
+# ./modules/nixos/services/nginx-proxy-manager.nix
 { config, lib, pkgs, ... }:
 
 let
-  cfg = config.services.npm-proxy;
-  # Path to the environment file containing the Cloudflare token
-  npmEnvFile = config.sops.secrets.npm_cloudflare_token.path;
+  cfg = config.services.nginx-proxy-manager;
 in
 {
-  options.services.npm-proxy = {
+  options.services.nginx-proxy-manager = {
     enable = lib.mkEnableOption "Enable Nginx Proxy Manager";
   };
 
   config = lib.mkIf cfg.enable {
-    # 1. Configure sops-nix to decrypt your secret
-    #    This secret will be placed in a file and passed to NPM.
-    sops.secrets.npm_cloudflare_token = {
-      sopsFile = ../../secrets/npm-cloudflare.yaml;
-      format = "dotenv";
+    # This module does not depend on SOPS, as NPM handles secrets
+    # via its web interface, which is simpler for this use case.
+
+    virtualisation.oci-containers.containers."nginx-proxy-manager" = {
+      # Use the official, public NPM image
+      image = "jc21/nginx-proxy-manager:latest";
+      autoStart = true;
+      ports = [
+        "80:80"
+        "443:443"
+        "81:81"
+      ];
+      volumes = [
+        "/var/lib/nginx-proxy-manager/data:/data"
+        "/var/lib/nginx-proxy-manager/letsencrypt:/etc/letsencrypt"
+      ];
     };
 
-    # 2. Enable and configure the Nginx Proxy Manager service
-    services.nginx-proxy-manager = {
-      enable = true;
-      # The module handles opening ports 80 and 443 automatically.
-      # It also opens port 81 for the admin interface.
-      #
-      # We pass the decrypted secrets file to the service.
-      # NPM will read this file for environment variables.
-      environmentFile = npmEnvFile;
-    };
-
-    networking.firewall.allowedTCPPorts = [ 80 443 81 ];
+    systemd.tmpfiles.rules = [
+      "d /var/lib/nginx-proxy-manager 0755 root root - -"
+      "d /var/lib/nginx-proxy-manager/data 0755 root root - -"
+      "d /var/lib/nginx-proxy-manager/letsencrypt 0755 root root - -"
+    ];
   };
 }
