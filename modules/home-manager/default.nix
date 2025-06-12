@@ -33,6 +33,7 @@
     python3
     glow
     just
+    ripgrep
   ];
 
   # Copy .terminfo files into place
