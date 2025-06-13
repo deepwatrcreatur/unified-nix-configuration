@@ -1,6 +1,11 @@
 { config, pkgs, lib, ... }:
 
 {
+  # Extend environment.systemPackages to include gitAndTools.delta
+  environment.systemPackages = with pkgs; [
+    gitAndTools.delta
+  ];
+  
   programs.git = {
     enable = true;
     userName = "Anwer Khan";
@@ -20,6 +25,11 @@
       "diff.python".command = "git diff --color-words";
       "diff.bash".command = "git diff --color-words";
       "diff.nix".command = "git diff --color-words";
+
+      core.pager = "delta";
+      interactive.diffFilter = "delta --color-only";
+      delta.navigate = true; # Enable navigation in large diffs
+      delta.syntax-theme = "Dracula"; 
     };
 
     aliases = {
