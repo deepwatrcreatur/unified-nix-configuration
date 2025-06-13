@@ -1,4 +1,4 @@
-# users/root/hosts/homeserver/default.nix
+# users/deepwatrcreatur/hosts/homeserver/default.nix
 { config, pkgs, lib, ... }:
 
 {
