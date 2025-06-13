@@ -6,6 +6,7 @@
 
   shellAliases = {
       update = "just update";
+      nh-update = "just nh-update";
       ls = "lsd";
       ll = "lsd -l";
       la = "lsd -a";

@@ -2,6 +2,3 @@
 
 update:
   nixos-rebuild switch --flake /home/deepwatrcreatur/unified-nix-configuration
-
-nh-update:
-  nh os switch /home/deepwatrcreatur/unified-nix-configuration
