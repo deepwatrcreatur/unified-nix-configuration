@@ -28,6 +28,12 @@
       "*.ex diff=elixir"
       "*.exs diff=elixir"
       "*.rs diff=rust"
+      "*.md diff=markdown"         
+      "*.json diff=json" 
+      "*.py diff=python" 
+      "*.sh diff=bash" 
+      "*.nix diff=nix"
+      "*.lock -diff"
     ];
   };
 }
