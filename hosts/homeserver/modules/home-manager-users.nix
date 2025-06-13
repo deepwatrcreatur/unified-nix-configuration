@@ -1,4 +1,11 @@
 { config, pkgs, lib, inputs, ... }:
+
+let
+  # Define shared packages to extend home.packages
+  sharedPackages = with pkgs; [
+    links2
+  ];
+in
 {
   home-manager = {
     useGlobalPkgs = true;
@@ -11,6 +18,9 @@
         ../../../users/deepwatrcreatur/hosts/homeserver
         ../../../modules/home-manager
       ];
+      home.packages = (config.home.packages or []) ++ sharedPackages ++ [
+
+      ];
     };
 
     users.root = {
@@ -18,6 +28,9 @@
         ../../../users/root
         ../../../users/root/hosts/homeserver
         ../../../modules/home-manager
+      ];
+      home.packages = (config.home.packages or []) ++ sharedPackages ++ [
+        
       ];
     };
   };
