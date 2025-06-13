@@ -2,7 +2,7 @@
 
 {
   # Extend environment.systemPackages to include gitAndTools.delta
-  environment.systemPackages = with pkgs; [
+  home.packages = with pkgs; [
     gitAndTools.delta
   ];
   
