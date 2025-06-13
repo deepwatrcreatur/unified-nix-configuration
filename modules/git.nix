@@ -15,6 +15,11 @@
       # Define diff drivers
       "diff.elixir".command = "git diff --color-words";
       "diff.rust".command = "git diff --color-words";
+      "diff.markdown".command = "git diff --color-words";
+      "diff.json".command = "git diff --color-words";
+      "diff.python".command = "git diff --color-words";
+      "diff.bash".command = "git diff --color-words";
+      "diff.nix".command = "git diff --color-words";
     };
 
     aliases = {
