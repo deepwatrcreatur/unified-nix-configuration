@@ -27,6 +27,7 @@ in
         "/var/lib/nginx-proxy-manager/letsencrypt:/etc/letsencrypt"
       ];
     };
+    extraOptions = [ "--network=host" ];
 
     systemd.tmpfiles.rules = [
       "d /var/lib/nginx-proxy-manager 0755 root root - -"
