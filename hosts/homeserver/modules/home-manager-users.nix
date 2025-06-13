@@ -8,14 +8,15 @@
     users.deepwatrcreatur = {
       imports = [
         ../../../users/deepwatrcreatur
-        ../../../users/deepwatrcreatur/hosts/homeserver.nix
+        ../../../users/deepwatrcreatur/hosts/homeserver
         ../../../modules/home-manager
       ];
     };
 
     users.root = {
       imports = [
-        ../../../users/root/hosts/homeserver/default.nix
+        ../../../users/root
+        ../../../users/root/hosts/homeserver
         ../../../modules/home-manager
       ];
     };
