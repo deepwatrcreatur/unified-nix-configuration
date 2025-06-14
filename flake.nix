@@ -78,8 +78,8 @@
         ({ pkgs, config, lib, inputs, ... }: { # These are Darwin module args
           home-manager.users.deepwatrcreatur = {
             modules = [
-              #./modules/home-manager/sops-deepwatrcreatur.nix
-              #{ my.sops.enable = true; }
+              ./modules/home-manager/sops-deepwatrcreatur.nix
+              { my.sops.enable = true; }
             
               ./users/deepwatrcreatur
               ./users/deepwatrcreatur/hosts/macminim4
