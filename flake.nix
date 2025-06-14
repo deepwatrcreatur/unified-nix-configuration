@@ -85,7 +85,7 @@
               ./users/deepwatrcreatur/hosts/macminim4
             ];
           };
-          home-manager.extraSpecialArgs = homeManagerModuleArgs;
+          # home-manager.extraSpecialArgs = homeManagerModuleArgs;
 
           users.users.deepwatrcreatur = {
             name = "deepwatrcreatur";
