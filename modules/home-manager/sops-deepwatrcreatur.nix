@@ -14,9 +14,10 @@ in
   config = {
     home.packages = [ pkgs.sops ];
 
-    home.file."${config.xdg.configHome}/sops/.sops.yaml".source = "${sopsSecretsDir}/.sops.yaml";
-    home.file."${config.xdg.configHome}/sops/.sops.yaml".mode = "0400";
+    home.file."${config.xdg.configHome}/sops/.sops.yaml" = {
+      source = "${sopsSecretsDir}/.sops.yaml";
     };
+  };
 
     # Uncomment and configure your sops.secrets entries as needed
     # sops.secrets."git-signing-key" = {
