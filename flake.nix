@@ -77,9 +77,8 @@
         inputs.home-manager.darwinModules.home-manager
         ({ pkgs, config, lib, inputs, ... }: { # These are Darwin module args
           home-manager.users.deepwatrcreatur = {
-            home.stateVersion = "24.11";
             
-            modules = [
+            imports = [
               ./modules/home-manager/sops-deepwatrcreatur.nix
               { my.sops.enable = true; }
             
