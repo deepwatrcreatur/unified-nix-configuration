@@ -25,5 +25,4 @@ in
     #   path = "${config.xdg.configHome}/git/gpg-signing-key.asc";
     #   mode = "0600";
     # };
-  };
 }
