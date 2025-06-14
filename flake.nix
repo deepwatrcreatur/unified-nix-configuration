@@ -77,6 +77,8 @@
         inputs.home-manager.darwinModules.home-manager
         ({ pkgs, config, lib, inputs, ... }: { # These are Darwin module args
           home-manager.users.deepwatrcreatur = {
+            home.stateVersion = "24.11";
+            
             modules = [
               ./modules/home-manager/sops-deepwatrcreatur.nix
               { my.sops.enable = true; }
@@ -85,7 +87,7 @@
               ./users/deepwatrcreatur/hosts/macminim4
             ];
           };
-          # home-manager.extraSpecialArgs = homeManagerModuleArgs;
+          home-manager.extraSpecialArgs = homeManagerModuleArgs;
 
           users.users.deepwatrcreatur = {
             name = "deepwatrcreatur";
