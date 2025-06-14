@@ -1,30 +1,24 @@
 # modules/home-manager/sops-deepwatrcreatur.nix
-# This module configures sops for deepwatrcreatur within Home Manager.
+# This module unconditionally configures sops for deepwatrcreatur within Home Manager.
 { config, lib, pkgs, inputs, ... }: # Module arguments
 
-# The `let` binding for local variables must wrap the entire expression
-# that uses those variables. In this case, it's the module's attribute set.
 let
   sopsSecretsDir = toString (builtins.path { path = ./../../secrets; });
 in
+{ # This is the single top-level attribute set for the module
 
-# The `lib.mkIf` wraps the *entire module definition* (the attribute set).
-lib.mkIf config.my.sops.enable { # <--- This is the single top-level expression
+  # This module implicitly enables sops features when imported.
+  # No custom option like `my.sops.enable` needed if it's always on.
 
-  # Options declaration
-  options = {
-    my.sops.enable = lib.mkEnableOption "Sops integration for home-manager user";
-  };
-
-  # Imports
+  # Imports must be declared here.
   imports = [ inputs.sops-nix.homeManagerModules.sops ];
 
-  # The 'config' attribute
+  # Config must be declared here.
   config = {
     home.packages = [ pkgs.sops ];
 
     home.file."${config.xdg.configHome}/sops/.sops.yaml" = {
-      source = "${sopsSecretsDir}/.sops.yaml"; # This variable is now in scope
+      source = "${sopsSecretsDir}/.sops.yaml";
       mode = "0400";
     };
 
