@@ -1,5 +1,5 @@
 # modules/home-manager/sops-deepwatrcreatur.nix
-{ config, pkgs, inputs, ... }: # Add 'inputs' here if your flake passes it
+{ config, pkgs, lib, inputs, ... }: # Add 'inputs' here if your flake passes it
 
 let
   # Path to your shared secrets directory relative to the flake root
