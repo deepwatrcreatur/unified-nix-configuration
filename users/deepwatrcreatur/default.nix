@@ -2,7 +2,8 @@
 { config, pkgs, ... }:
 {
   imports = [
-    ../../modules/git.nix    
+    ../../modules/git.nix
+    ./sops.nix
   ];
 
   home.username = "deepwatrcreatur";
