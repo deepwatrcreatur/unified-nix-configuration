@@ -4,7 +4,6 @@
   imports = [
     ../../../../modules/home-manager/ghostty
     ../../xbar.nix
-    ../../sops.nix
   ];
 
   home.packages = with pkgs; [
