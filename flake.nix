@@ -80,7 +80,6 @@
             
             imports = [
               ./modules/home-manager/sops-deepwatrcreatur.nix
-              { my.sops.enable = true; }
             
               ./users/deepwatrcreatur
               ./users/deepwatrcreatur/hosts/macminim4

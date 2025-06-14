@@ -7,9 +7,6 @@ let
 in
 { # This is the single top-level attribute set for the module
 
-  # This module implicitly enables sops features when imported.
-  # No custom option like `my.sops.enable` needed if it's always on.
-
   # Imports must be declared here.
   imports = [ inputs.sops-nix.homeManagerModules.sops ];
 
