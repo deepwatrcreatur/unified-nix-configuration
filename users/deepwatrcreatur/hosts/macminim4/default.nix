@@ -25,6 +25,4 @@
    # Using ${config.home.profileDirectory} is more robust than a hardcoded path.
    "${config.home.profileDirectory}/bin"
   ];
-
-  home.stateVersion = "24.11";
 }
