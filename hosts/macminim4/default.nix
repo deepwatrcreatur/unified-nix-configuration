@@ -29,6 +29,4 @@
       ../../modules/home-manager
     ];
   };
-
-  system.stateVersion = 6;
 }

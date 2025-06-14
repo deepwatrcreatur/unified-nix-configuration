@@ -17,7 +17,6 @@
     tmux
     nmap
     bat
-    sops
     nix-inspect
     compose2nix
     docker
