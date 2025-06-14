@@ -1,5 +1,5 @@
 # users/deepwatrcreatur/sops.nix
-{ config, lib, pkgs, inputs, ... }: # Add 'inputs' here if your flake passes it
+{ config, lib, pkgs, ... }: # Add 'inputs' here if your flake passes it
 
 let
   # Path to your shared secrets directory relative to the flake root
