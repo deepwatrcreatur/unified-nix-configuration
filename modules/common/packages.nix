@@ -2,6 +2,5 @@
 
   environment.systemPackages = with pkgs; [
      graphite-cli
-     sops
   ];
 }
