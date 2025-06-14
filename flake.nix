@@ -77,9 +77,11 @@
         inputs.home-manager.darwinModules.home-manager
         ({ pkgs, config, lib, inputs, ... }: { # These are Darwin module args
           home-manager.users.deepwatrcreatur = {
-            imports = [
+            modules = [
+              ./modules/home-manager/sops-deepwatrcreatur.nix
+              { my.sops.enable = true; }
+            
               ./users/deepwatrcreatur
-              ./users/deepwatrcreatur/sops.nix
               ./users/deepwatrcreatur/hosts/macminim4
             ];
           };
@@ -110,7 +112,7 @@
           # ./hosts/nixos
           inputs.sops-nix.nixosModules.sops
           inputs.home-manager.nixosModules.home-manager
-          ({ config, lib, inputs, ... }: { # These are NixOS module args
+          ({ config, lib, inputs, ... }: { 
             home-manager.users.ansible = {
               imports = [ ./modules ]; 
             };
