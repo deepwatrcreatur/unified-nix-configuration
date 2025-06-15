@@ -1,9 +1,7 @@
 { config, pkgs, lib, ... }:
 {
   imports = [
-    ../../modules/home-manager/fish-shared.nix
-    ../../modules/home-manager/starship.nix
-    ../../modules/git.nix
+    ../../modules/home-manager/git.nix
     ];
   
   home.username = "root";
