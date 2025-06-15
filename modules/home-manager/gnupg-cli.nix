@@ -1,5 +1,5 @@
 # modules/home-manager/gnupg-cli.nix
-{ config, pkgs, lib, inputs ... }:
+{ config, pkgs, lib, inputs, ... }:
 
 {
   imports = [ inputs.home-manager.modules.programs.gnupg ];
