@@ -23,13 +23,6 @@ in
       home.packages = (config.home.packages or []) ++ sharedPackages ++ [
       ];
 
-      # ADD THE PROGRAMS.GNUPG CONFIG DIRECTLY HERE FOR DEEPWATRCREATUR:
-      programs.gpg = {
-        enable = true;
-        pinentry.enable = true;
-        # Use the CLI pinentry for Homeserver (LXC/headless)
-        pinentry.program = "${pkgs.pinentry-curses}/bin/pinentry-curses";
-      };
     };
 
     users.root = {
@@ -41,14 +34,6 @@ in
       home.packages = (config.home.packages or []) ++ sharedPackages ++ [
 
       ];
-
-      # ADD THE PROGRAMS.GNUPG CONFIG DIRECTLY HERE FOR ROOT (if root needs GPG):
-      # Root generally doesn't need interactive GPG, but if you do:
-      programs.gpg = {
-        enable = true;
-        pinentry.enable = true;
-        pinentry.program = "${pkgs.pinentry-curses}/bin/pinentry-curses"; # Root on LXC
-      };
     };
   };
 }
