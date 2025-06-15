@@ -24,7 +24,7 @@ in
       ];
 
       # ADD THE PROGRAMS.GNUPG CONFIG DIRECTLY HERE FOR DEEPWATRCREATUR:
-      programs.gnupg = {
+      programs.gpg = {
         enable = true;
         pinentry.enable = true;
         # Use the CLI pinentry for Homeserver (LXC/headless)
@@ -44,7 +44,7 @@ in
 
       # ADD THE PROGRAMS.GNUPG CONFIG DIRECTLY HERE FOR ROOT (if root needs GPG):
       # Root generally doesn't need interactive GPG, but if you do:
-      programs.gnupg = {
+      programs.gpg = {
         enable = true;
         pinentry.enable = true;
         pinentry.program = "${pkgs.pinentry-curses}/bin/pinentry-curses"; # Root on LXC
