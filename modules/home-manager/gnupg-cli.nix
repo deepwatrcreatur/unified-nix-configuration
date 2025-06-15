@@ -1,7 +1,9 @@
 # modules/home-manager/gnupg-cli.nix
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs ... }:
 
 {
+  imports = [ inputs.home-manager.modules.programs.gnupg ];
+  
   programs.gnupg = {
     enable = true;
     pinentry.enable = true;
