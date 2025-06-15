@@ -43,7 +43,7 @@
       ci = "commit";
       st = "status";
       # Git alias for mergigraf
-      graph = "mergigraf"; 
+      graph = "mergiraf"; 
     };
 
     attributes = [
