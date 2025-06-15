@@ -5,6 +5,6 @@
   programs.gnupg = {
     enable = true;
     pinentry.enable = true;
-    pinentry.program = "${pkgs.pinentry-mac}/bin/pinentry-mac";
+    pinentry.program = "${pkgs.pinentry-mac}/bin/pinentry_mac";
   };
 }
