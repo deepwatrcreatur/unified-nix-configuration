@@ -3,6 +3,7 @@
 {
   imports = [
     ../../../../modules/home-manager/ghostty
+    ../../../../modules/home-manager/gnupg-mac.nix
     ../../xbar.nix
   ];
 
