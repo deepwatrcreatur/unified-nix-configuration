@@ -3,6 +3,7 @@
 let
   # Define shared packages to extend home.packages
   sharedPackages = with pkgs; [
+    gnupg
     links2
   ];
 in
@@ -20,7 +21,6 @@ in
                                      # Ensure this (or anything it imports) doesn't try to load gnupg again.
       ];
       home.packages = (config.home.packages or []) ++ sharedPackages ++ [
-
       ];
 
       # ADD THE PROGRAMS.GNUPG CONFIG DIRECTLY HERE FOR DEEPWATRCREATUR:
