@@ -2,8 +2,6 @@
 { config, pkgs, lib, inputs, ... }:
 
 {
-  imports = [ inputs.home-manager.modules.programs.gpg ]; # <--- FIX THIS PATH ACCURATELY
-
   programs.gpg = {
     enable = true;
     agent = {
