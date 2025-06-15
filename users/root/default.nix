@@ -9,6 +9,7 @@
   home.stateVersion = "24.11";
 
   home.packages = with pkgs; [
+    gnupg
   ];
 
   programs.home-manager.enable = true;

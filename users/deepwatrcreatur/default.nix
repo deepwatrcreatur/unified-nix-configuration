@@ -12,5 +12,6 @@
     chezmoi
     stow
     mix2nix
+    gnupg
   ];
 }
