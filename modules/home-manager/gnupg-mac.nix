@@ -1,5 +1,5 @@
 # modules/home-manager/gnupg-mac.nix
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, ... }:
 
 {
   imports = [ inputs.home-manager.modules.programs.gnupg ];
