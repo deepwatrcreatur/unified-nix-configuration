@@ -3,7 +3,7 @@
 let
   # Define shared packages to extend home.packages
   sharedPackages = with pkgs; [
-    gnupg
+    pinentry-curses
     links2
   ];
 in
@@ -18,11 +18,16 @@ in
         ../../../users/deepwatrcreatur
         ../../../users/deepwatrcreatur/hosts/homeserver
         ../../../modules/home-manager # This might import other HM modules for deepwatrcreatur
-                                     # Ensure this (or anything it imports) doesn't try to load gnupg again.
+                                     # Ensure this (or anything it imports) doesn't try to load gnupgain.
       ];
-      home.packages = (config.home.packages or []) ++ sharedPackages ++ [
+      home.packages = (config.home.packages or []) ++ sharedPackages ++ [        
       ];
-
+      home.file.".gnupg/gpg-agent.conf".text = ''
+        pinentry-program ${pkgs.pinentry-curses}/bin/pinentry-curses
+        # default-cache-ttl 10800
+        # max-cache-ttl 10800
+        enable-ssh-support
+      '';
     };
 
     users.root = {
@@ -32,8 +37,10 @@ in
         ../../../modules/home-manager # Ensure this doesn't try to load gnupg
       ];
       home.packages = (config.home.packages or []) ++ sharedPackages ++ [
-
       ];
+      home.file.".gnupg/gpg-agent.conf".text = ''
+        pinentry-program ${pkgs.pinentry-curses}/bin/pinentry-curses
+      '';
     };
   };
 }
