@@ -6,7 +6,6 @@
     ../.. # default config for root
     ./homeserver-justfile.nix
     ./nh.nix
-    ../../../../modules/home-manager/gnupg-cli.nix
   ];
 
   # Set the username and home directory for Home Manager
