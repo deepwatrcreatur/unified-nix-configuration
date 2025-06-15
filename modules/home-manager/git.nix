@@ -3,7 +3,7 @@
 {
   home.packages = with pkgs; [
     gitAndTools.delta
-    mergigraf
+    mergiraf
   ];
 
   programs.git = {
