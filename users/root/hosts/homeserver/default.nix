@@ -6,6 +6,8 @@
     ../.. # default config for root
     ./homeserver-justfile.nix
     ./nh.nix
+    ../../../../modules/home-manager/git.nix
+    ../../../../modules/home-manager/gpg-cli.nix
   ];
 
   # Set the username and home directory for Home Manager
