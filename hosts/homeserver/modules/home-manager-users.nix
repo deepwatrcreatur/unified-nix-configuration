@@ -38,9 +38,6 @@ in
       ];
       home.packages = (config.home.packages or []) ++ sharedPackages ++ [
       ];
-      home.file.".gnupg/gpg-agent.conf".text = ''
-        pinentry-program ${pkgs.pinentry-curses}/bin/pinentry-curses
-      '';
     };
   };
 }
