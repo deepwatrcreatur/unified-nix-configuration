@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }:
 {
   imports = [
-    ../../modules/home-manager/git.nix
+    #../../modules/home-manager/git.nix
     ];
   
   home.username = "root";
