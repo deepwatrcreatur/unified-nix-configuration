@@ -2,6 +2,8 @@
 { config, pkgs, lib, ... }:
 
 {
+  imports = [ inputs.home-manager.modules.programs.gnupg ];
+
   programs.gnupg = {
     enable = true;
     pinentry.enable = true;
