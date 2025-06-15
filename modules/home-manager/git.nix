@@ -1,13 +1,6 @@
 # modules/home-manager/git.nix
 { config, pkgs, lib, inputs, ... }:
 {
-  programs.gnupg = {
-    enable = true;
-    # Add advanced GnuPG options here later if needed
-    # agent.enable = true;
-    # agent.pinentryFlavor = "mac";
-  };
-
   home.packages = with pkgs; [
     gitAndTools.delta
     mergigraf
