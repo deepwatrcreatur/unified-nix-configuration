@@ -2,7 +2,7 @@
 { config, pkgs, lib, inputs, ... }:
 
 {
-  imports = [ inputs.home-manager.modules.programs.gpg ];
+  #imports = [ inputs.home-manager.modules.programs.gpg ];
 
   programs.gpg = {
     enable = true;
