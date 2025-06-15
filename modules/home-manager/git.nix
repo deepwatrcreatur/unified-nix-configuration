@@ -1,11 +1,18 @@
+# modules/home-manager/git.nix
 { config, pkgs, lib, inputs, ... }:
-
 {
-  # Extend environment.systemPackages to include gitAndTools.delta
+  programs.gnupg = {
+    enable = true;
+    # Add advanced GnuPG options here later if needed
+    # agent.enable = true;
+    # agent.pinentryFlavor = "mac";
+  };
+
   home.packages = with pkgs; [
     gitAndTools.delta
+    mergigraf
   ];
-  
+
   programs.git = {
     enable = true;
     userName = "Anwer Khan";
@@ -14,8 +21,13 @@
     extraConfig = {
       init.defaultBranch = "main";
       core.editor = "hx";
+      
+      # GitHub credential helpers - YES, these belong here!
       "credential \"https://github.com\"".helper = "!gh auth git-credential";
       "credential \"https://gist.github.com\"".helper = "!gh auth git-credential";
+
+      commit.gpgsign = true;
+      user.signingkey = "509F26F6826F84F8"; # Your actual GPG key ID
 
       # Define diff drivers
       "diff.elixir".command = "git diff --color-words";
@@ -28,8 +40,8 @@
 
       core.pager = "delta";
       interactive.diffFilter = "delta --color-only";
-      delta.navigate = true; # Enable navigation in large diffs
-      delta.syntax-theme = "Dracula"; 
+      delta.navigate = true;
+      delta.syntax-theme = "Dracula";
     };
 
     aliases = {
@@ -37,16 +49,18 @@
       br = "branch";
       ci = "commit";
       st = "status";
+      # Git alias for mergigraf
+      graph = "mergigraf"; 
     };
 
     attributes = [
       "*.ex diff=elixir"
       "*.exs diff=elixir"
       "*.rs diff=rust"
-      "*.md diff=markdown"         
-      "*.json diff=json" 
-      "*.py diff=python" 
-      "*.sh diff=bash" 
+      "*.md diff=markdown"
+      "*.json diff=json"
+      "*.py diff=python"
+      "*.sh diff=bash"
       "*.nix diff=nix"
       "*.lock -diff"
     ];
