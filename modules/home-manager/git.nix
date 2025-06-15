@@ -20,7 +20,7 @@
       "credential \"https://gist.github.com\"".helper = "!gh auth git-credential";
 
       commit.gpgsign = true;
-      user.signingkey = "509F26F6826F84F8"; # Your actual GPG key ID
+      user.signingkey = "EF1502C27653693B"; # Your actual GPG key ID
 
       # Define diff drivers
       "diff.elixir".command = "git diff --color-words";
