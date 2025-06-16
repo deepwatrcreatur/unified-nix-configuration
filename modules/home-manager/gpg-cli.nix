@@ -2,13 +2,18 @@
 { config, pkgs, lib, inputs, ... }:
 
 {
+  # This enables the gpg command-line tool
   programs.gpg = {
     enable = true;
-    agent = {
-      enable = true;
-      pinentryPackage = pkgs.pinentry-curses; # Correct pinentry for CLI Linux
-      # defaultCacheTtl = 3600*3;
-      # enableSshSupport = true;
-    };
+  };
+
+  # This configures the gpg-agent service
+  services.gpg-agent = {
+    enable = true;
+    enableSshSupport = true;
+    # Use the package directly, not a string reference
+    pinentryPackage = pkgs.pinentry-ncurses;
+    # defaultCacheTtl = 10800; # 3 hours
+    # maxCacheTtl = 10800;   # 3 hours
   };
 }
