@@ -32,7 +32,7 @@ in
       services.gpg-agent = {
         enable = true;
         enableSshSupport = true;
-        pinentryFlavor = "curses";
+        pinentryPackage = "pkgs.pinentry-ncurses";
         # defaultCacheTtl = 10800;
         # maxCacheTtl = 10800;
       };
