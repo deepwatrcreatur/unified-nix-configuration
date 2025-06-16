@@ -2,7 +2,7 @@
 {
   imports = [
     ../../modules/home-manager/git.nix
-    ../../modules/home-manager/renaame.nix
+    ../../modules/home-manager/rename.nix
   ];
 
   home.username = "deepwatrcreatur";
