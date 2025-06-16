@@ -3,7 +3,7 @@
 {
   # Install the Perl-based rename package
   home.packages = with pkgs; [
-    perlPackages.FileRename # Perl-based rename command (prename)
+    perlPackages."File-Rename" # Perl-based rename command (prename)
   ];
 
   # Add shell aliases for safer usage
