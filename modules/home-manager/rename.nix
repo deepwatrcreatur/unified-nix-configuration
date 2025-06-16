@@ -3,7 +3,7 @@
 {
   # Install the Perl-based rename package
   home.packages = with pkgs; [
-    prename # Perl-based rename command (prename)
+    rename
   ];
 
   # Add shell aliases for safer usage
