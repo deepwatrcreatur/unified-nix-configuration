@@ -22,20 +22,6 @@ in
       ];
       home.packages = (config.home.packages or []) ++ sharedPackages ++ [        
       ];
-      #home.file.".gnupg/gpg-agent.conf".text = ''
-      #  pinentry-program ${pkgs.pinentry-curses}/bin/pinentry-curses
-        # default-cache-ttl 10800
-        # max-cache-ttl 10800
-      #  enable-ssh-support
-      #'';
-      # The idiomatic Home-Manager way
-      services.gpg-agent = {
-        enable = true;
-        enableSshSupport = true;
-        pinentryPackage = "pkgs.pinentry-ncurses";
-        # defaultCacheTtl = 10800;
-        # maxCacheTtl = 10800;
-      };
     };
 
     users.root = {
