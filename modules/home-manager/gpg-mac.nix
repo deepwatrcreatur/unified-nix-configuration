@@ -1,20 +1,16 @@
-# modules/home-manager/gnupg-mac.nix
+# modules/home-manager/gpg-mac.nix
 { config, pkgs, lib, inputs, ... }:
 
 {
-  #imports = [ inputs.home-manager.modules.programs.gpg ];
+  programs.gpg.enable = true;
 
-  programs.gpg = {
+  services.gpg-agent = {
     enable = true;
-    # settings = {
-    #   utf8-strings = true;
-    #   fixed-list-mode = true;
-    #   keyid-format = "0xlong";
-    # };
+    pinentryPackage = pkgs.pinentry_mac;
+    # For macOS, you often need to enable SSH support in the agent
+    # if you use GPG keys for SSH authentication.
+    enableSshSupport = true;
   };
-  home.packages = with pkgs; [ gnupg pinentry_mac ];
 
-  home.file.".gnupg/gpg-agent.conf".text = ''
-    pinentry-program ${pkgs.pinentry_mac}/bin/pinentry-mac
-  '';
+  #home.packages = [ pkgs.pinentry_mac ];
 }
