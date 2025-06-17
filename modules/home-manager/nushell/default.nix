@@ -4,13 +4,9 @@
 {
   programs.nushell = {
     enable = true;
-
-    # This is the key addition:
-    # It adds the GPG_TTY setting to Nushell's environment config.
-    envConfig = ''
-      # Set GPG_TTY for GPG signing in the terminal
-      $env.GPG_TTY = (tty)
-    '';
+    environmentVariables = {
+      GPG_TTY = "(tty)";
+    };
 
     shellAliases = {
       update = "just update";
