@@ -1,10 +1,18 @@
+# modules/home-manager/nushell/default.nix
 { config, pkgs, ... }:
 
 {
   programs.nushell = {
     enable = true;
 
-  shellAliases = {
+    # This is the key addition:
+    # It adds the GPG_TTY setting to Nushell's environment config.
+    envConfig = ''
+      # Set GPG_TTY for GPG signing in the terminal
+      $env.GPG_TTY = (tty)
+    '';
+
+    shellAliases = {
       update = "just update";
       nh-update = "just nh-update";
       ls = "lsd";
@@ -16,7 +24,8 @@
     };
   };
 
+  # This part remains the same, ensuring Starship is used for the prompt.
   programs.starship = {
-    enableNushellIntegration = true; # This is the key for Nushell!
+    enableNushellIntegration = true;
   };
 }
