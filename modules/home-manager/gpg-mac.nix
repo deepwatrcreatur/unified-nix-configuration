@@ -6,7 +6,7 @@
 
   services.gpg-agent = {
     enable = true;
-    pinentryPackage = pkgs.pinentry_mac;
+    pinentry.package = pkgs.pinentry_mac;
     # For macOS, you often need to enable SSH support in the agent
     # if you use GPG keys for SSH authentication.
     enableSshSupport = true;
