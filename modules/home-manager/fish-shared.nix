@@ -15,25 +15,22 @@
       nh-update = "just --justfile ~/.justfile nh-update";
     };
 
+    # The bobthefish plugin has been removed from this list
     plugins = [
       { name = "fzf"; src = pkgs.fishPlugins.fzf; }
       { name = "z"; src = pkgs.fishPlugins.z; }
       { name = "puffer"; src = pkgs.fishPlugins.puffer; }
       { name = "autopair"; src = pkgs.fishPlugins.autopair; }
       { name = "grc"; src = pkgs.fishPlugins.grc; }
-      { name = "bobthefish"; src = pkgs.fishPlugins.bobthefish; }
     ];
 
-    # This block is what makes the home.sessionVariables work!
+    # This block is now much cleaner!
     interactiveShellInit = ''
       if test -e $HOME/.nix-profile/etc/profile.d/hm-session-vars.fish
         source $HOME/.nix-profile/etc/profile.d/hm-session-vars.fish
       end
-      set -g theme_color_scheme solarized
-      set -g theme_powerline_fonts no
-      set -g theme_project_dir_length 1
-      set -g theme_show_exit_status yes
-      set -g theme_display_git_untracked yes
+      # We still keep this here as it's a general shell setting
+      set -gx GPG_TTY (tty)
     '';
   };
 }
