@@ -4,6 +4,8 @@
   imports = [
     ../../../../modules/home-manager/ghostty
     ../../../../modules/home-manager/gpg-mac.nix
+    ../../../../modules/home-manager/fish-macos.nix
+    ../../../../modules/home-manager/nushell/nushell-macos.nix
     ../../xbar.nix
   ];
 
