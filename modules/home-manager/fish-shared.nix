@@ -15,7 +15,6 @@
       nh-update = "just --justfile ~/.justfile nh-update";
     };
 
-    # The bobthefish plugin has been removed from this list
     plugins = [
       { name = "fzf"; src = pkgs.fishPlugins.fzf; }
       { name = "z"; src = pkgs.fishPlugins.z; }
@@ -24,12 +23,8 @@
       { name = "grc"; src = pkgs.fishPlugins.grc; }
     ];
 
-    # This block is now much cleaner!
     interactiveShellInit = ''
-      if test -e $HOME/.nix-profile/etc/profile.d/hm-session-vars.fish
-        source $HOME/.nix-profile/etc/profile.d/hm-session-vars.fish
-      end
-      # We still keep this here as it's a general shell setting
+      # Set GPG_TTY for all systems
       set -gx GPG_TTY (tty)
     '';
   };
