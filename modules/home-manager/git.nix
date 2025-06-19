@@ -4,6 +4,9 @@
   home.packages = with pkgs; [
     gitAndTools.delta
     mergiraf
+    gh
+    lazygit
+    lazyjj
   ];
 
   programs.git = {

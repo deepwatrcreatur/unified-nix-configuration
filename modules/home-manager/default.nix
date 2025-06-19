@@ -15,6 +15,7 @@
   home.packages = with pkgs; [
     wget
     curl
+    xh
     fastfetch
     nmap
     htop
@@ -27,9 +28,6 @@
     bat
     fzf
     neovim
-    gh
-    lazygit
-    lazyjj
     python3
     glow
     just
