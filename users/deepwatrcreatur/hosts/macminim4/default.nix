@@ -14,7 +14,6 @@
     jq
     yq
     nh
-    rclone
     megacmd
     ffmpeg
     yt-dlp
