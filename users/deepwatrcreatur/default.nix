@@ -3,6 +3,7 @@
   imports = [
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/rename.nix
+    ./sops.nix
   ];
 
   home.username = "deepwatrcreatur";
