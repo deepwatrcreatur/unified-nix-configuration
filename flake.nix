@@ -79,8 +79,6 @@
           home-manager.users.deepwatrcreatur = {
             
             imports = [
-              ./modules/home-manager/sops-deepwatrcreatur.nix
-            
               ./users/deepwatrcreatur
               ./users/deepwatrcreatur/hosts/macminim4
             ];
