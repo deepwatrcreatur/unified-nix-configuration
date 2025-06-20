@@ -17,7 +17,6 @@ in
     home.file."${config.xdg.configHome}/sops/.sops.yaml" = {
       source = "${sopsSecretsDir}/sops.yaml";
     };
-  };
 
   # Configure SOPS with age key
   sops = {
@@ -31,4 +30,5 @@ in
     #   path = "${config.xdg.configHome}/git/gpg-signing-key.asc";
     #   mode = "0600";
     # };
+  };
 }
