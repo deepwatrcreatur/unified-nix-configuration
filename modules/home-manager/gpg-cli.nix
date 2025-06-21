@@ -12,7 +12,7 @@
     enable = true;
     enableSshSupport = true;
     # Use the package directly, not a string reference
-    pinentryPackage = pkgs.pinentry-curses;
+    pinentry.package = pkgs.pinentry-curses;
     # defaultCacheTtl = 10800; # 3 hours
     # maxCacheTtl = 10800;   # 3 hours
   };
