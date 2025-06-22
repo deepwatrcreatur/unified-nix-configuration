@@ -8,7 +8,7 @@
     ./nh.nix
     ../../../../modules/home-manager/git.nix
     ../../../../modules/home-manager/gpg-cli.nix
-    ../../../../modules/home-manager/rclone.nix
+    #../../../../modules/home-manager/rclone.nix
   ];
 
   # Set the username and home directory for Home Manager
