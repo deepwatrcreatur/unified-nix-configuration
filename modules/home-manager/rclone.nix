@@ -55,7 +55,7 @@
 
   # Configure SOPS secret for rclone.conf
   sops.secrets.rclone_conf = {
-    sopsFile = "${toString (builtins.path { path = ./secrets; })}/rclone.conf";
+    sopsFile = "${toString (builtins.path { path = ../../secrets; })}/rclone.conf";
     path = "${config.home.homeDirectory}/users/deepwatrcreatur/secrets/rclone.conf";
     mode = "0600"; # Restrict permissions
   };
