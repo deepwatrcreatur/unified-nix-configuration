@@ -1,4 +1,4 @@
-{ config, lib, pkgs, inputs, ... }:
+{ config, lib, pkgs, inputs, sopsLib, ... }:
 
 {
   # Import SOPS Home Manager module
@@ -52,11 +52,9 @@
     # Include everything else (catch-all)
     + **
   '';
- 
-  xdg.configFile."rclone/rclone.conf" = {
-    source = lib.sops.readText ../../secrets/rclone.conf;
-
-    # Set permissions if needed (rclone usually needs 0o600 for security)
-    mode = "0600";
-  };
+  home.file.".config/rclone/rclone.conf" = {
+    source = sopsLib.readText ../../secrets/rclone.conf;
+    # Ensure it's not executable, just in case (though 0600 implies this)
+    executable = false;
+  }; 
 }

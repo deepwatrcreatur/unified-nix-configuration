@@ -15,8 +15,14 @@ in
 
     users.deepwatrcreatur = {
       imports = [
-        ../../../users/deepwatrcreatur
-        ../../../users/deepwatrcreatur/hosts/homeserver
+        (import ./users/deepwatrcreatur {
+          inherit pkgs inputs lib; 
+          sopsLib = config.lib.sops;
+        })
+        (import ./users/deepwatrcreatur/hosts/macminim4 {
+          inherit pkgs inputs lib;
+          sopsLib = config.lib.sops; 
+        })
         ../../../modules/home-manager # This might import other HM modules for deepwatrcreatur
                                      # Ensure this (or anything it imports) doesn't try to load gnupgain.
       ];
@@ -26,8 +32,7 @@ in
 
     users.root = {
       imports = [
-        ../../../users/root
-        ../../../users/root/hosts/homeserver
+
         ../../../modules/home-manager # Ensure this doesn't try to load gnupg
       ];
       home.packages = (config.home.packages or []) ++ sharedPackages ++ [
