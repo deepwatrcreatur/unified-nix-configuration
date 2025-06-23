@@ -1,15 +1,13 @@
 { config, lib, pkgs, inputs, ... }:
 
 {
-  # Import SOPS Home Manager module
   imports = [ inputs.sops-nix.homeManagerModules.sops ];
 
   home.packages = [
     pkgs.rclone
-    pkgs.sops # Ensure sops is available for decryption
+    pkgs.sops
   ];
 
-  # Write rclone filter file to ~/.config/rclone/rclone-filter.txt
   home.file.".config/rclone/rclone-filter.txt".text = ''
     # Exclude common macOS system files
     - .DS_Store
@@ -56,5 +54,5 @@
   #  source = sopsLib.readText ../../secrets/rclone.conf;
     # Ensure it's not executable, just in case (though 0600 implies this)
   #  executable = false;
-  #}; 
+  #};
 }
