@@ -52,11 +52,11 @@
     # Include everything else (catch-all)
     + **
   '';
+ 
+  xdg.configFile."rclone/rclone.conf" = {
+    source = lib.sops.readText ../../secrets/rclone.conf;
 
-  # Configure SOPS secret for rclone.conf
-  sops.secrets.rclone_conf = {
-    sopsFile = "${toString (builtins.path { path = ../../secrets; })}/rclone.conf";
-    path = "${config.home.homeDirectory}/users/deepwatrcreatur/secrets/rclone.conf";
-    mode = "0600"; # Restrict permissions
+    # Set permissions if needed (rclone usually needs 0o600 for security)
+    mode = "0600";
   };
 }
