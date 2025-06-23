@@ -1,5 +1,5 @@
 # users/deepwatrcreatur/hosts/homeserver/default.nix
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, sopsLib, ... }:
 
 {
   imports = [
