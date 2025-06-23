@@ -52,9 +52,9 @@
     # Include everything else (catch-all)
     + **
   '';
-  home.file.".config/rclone/rclone.conf" = {
-    source = sopsLib.readText ../../secrets/rclone.conf;
+  #home.file.".config/rclone/rclone.conf" = {
+  #  source = sopsLib.readText ../../secrets/rclone.conf;
     # Ensure it's not executable, just in case (though 0600 implies this)
-    executable = false;
-  }; 
+  #  executable = false;
+  #}; 
 }
