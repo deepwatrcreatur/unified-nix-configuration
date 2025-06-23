@@ -1,4 +1,4 @@
-{ config, lib, pkgs, inputs, sopsLib, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
 {
   # Import SOPS Home Manager module
