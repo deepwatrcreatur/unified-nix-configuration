@@ -26,7 +26,7 @@ in
 
     users.root = {
       imports = [
-
+       ../../../users/root
         ../../../modules/home-manager # Ensure this doesn't try to load gnupg
       ];
       home.packages = (config.home.packages or []) ++ sharedPackages ++ [
