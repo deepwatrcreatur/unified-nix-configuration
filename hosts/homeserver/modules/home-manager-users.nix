@@ -15,11 +15,11 @@ in
 
     users.deepwatrcreatur = {
       imports = [
-        (import ./users/deepwatrcreatur {
+        (import ../../../users/deepwatrcreatur {
           inherit pkgs inputs lib; 
           sopsLib = config.lib.sops;
         })
-        (import ./users/deepwatrcreatur/hosts/macminim4 {
+        (import ../../../users/deepwatrcreatur/hosts/macminim4 {
           inherit pkgs inputs lib;
           sopsLib = config.lib.sops; 
         })
