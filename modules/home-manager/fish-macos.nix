@@ -42,10 +42,4 @@
       end
     '';
   };
-
-  home.sessionVariables = {
-    EDITOR = "hx";
-    VISUAL = "hx";
-    GNUPGHOME = "/Users/deepwatrcreatur/.gnupg";
-  };
 }
