@@ -31,15 +31,4 @@ with lib;
       description = "Enable zoxide integration for nushell.";
     };
   };
-
-  # Use Home Manager's built-in zoxide module
-  config = mkIf config.programs.zoxide.enable {
-    programs.zoxide = {
-      enable = true;
-      enableBashIntegration = config.programs.zoxide.enableBashIntegration;
-      enableZshIntegration = config.programs.zoxide.enableZshIntegration;
-      enableFishIntegration = config.programs.zoxide.enableFishIntegration;
-      enableNushellIntegration = config.programs.zoxide.enableNushellIntegration;
-    };
-  };
 }
