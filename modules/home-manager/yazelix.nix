@@ -11,7 +11,6 @@
         zellij \
         yazi-cli \
         yazi-fm \
-        zoxide \
         --force --no-confirm || true
 
       "${pkgs.cargo-binstall}/bin/cargo-binstall" \
