@@ -3,8 +3,8 @@
   imports = [
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/rename.nix
-    ../../modules/home-manager/zoxide.nix
-    ];
+    #../../modules/home-manager/zoxide.nix
+  ];
   
   home.username = "root";
   home.homeDirectory = "/root";
