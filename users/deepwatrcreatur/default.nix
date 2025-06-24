@@ -3,6 +3,7 @@
   imports = [
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/rename.nix
+    ../../modules/home-manager/zoxide.nix
     ./sops.nix
   ];
 
