@@ -37,11 +37,4 @@
       }
     '';
   };
-
-  # Prevent Home Manager from overriding PATH
-  home.sessionVariables = {
-    EDITOR = "hx";
-    VISUAL = "hx";
-    GNUPGHOME = "/Users/deepwatrcreatur/.gnupg";
-  };
 }
