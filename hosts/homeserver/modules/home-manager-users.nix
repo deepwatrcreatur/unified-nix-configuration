@@ -16,7 +16,7 @@ in
     users.deepwatrcreatur = {
       imports = [
         ../../../users/deepwatrcreatur 
-        ../../../users/deepwatrcreatur/hosts/macminim4 
+        ../../../users/deepwatrcreatur/hosts/homeserver
         ../../../modules/home-manager
                                      
       ];
