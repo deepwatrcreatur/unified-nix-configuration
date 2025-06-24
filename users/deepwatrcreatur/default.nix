@@ -3,7 +3,7 @@
   imports = [
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/rename.nix
-    ../../modules/home-manager/zoxide.nix
+    #../../modules/home-manager/zoxide.nix
     ./sops.nix
   ];
 
@@ -16,4 +16,12 @@
     stow
     mix2nix
   ];
+
+  programs.zoxide = {
+    enable = true;
+    enableBashIntegration = true;
+    enableZshIntegration = true;
+    enableFishIntegration = true;
+    enableNushellIntegration = true;
+  };
 }
