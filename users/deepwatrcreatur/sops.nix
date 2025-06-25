@@ -16,6 +16,7 @@ in
 
     home.file."${config.xdg.configHome}/sops/.sops.yaml" = {
       source = "${sopsSecretsDir}/sops.yaml";
+      force = true; # Ensure it’s a regular file, not a symlink
     };
 
   # Configure SOPS with age key
