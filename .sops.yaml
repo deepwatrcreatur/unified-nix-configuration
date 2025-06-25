@@ -1,5 +1,20 @@
-# .sops.yaml
+# users/deepwatrcreatur/secrets/sops.yaml
 creation_rules:
-  - path_regex: hosts/homeserver/secrets/.*\.yaml$
-    age: >-
-      age1cm4ycnj209axdeyp4asf9dwf35nus05e3ektpq8catxnqvc4aspsjr5kna
+  - path_regex: users/deepwatrcreatur/secrets/.*\.yaml$
+    age: "age17mn5lnlh2mgttp950wc7a2nl9kphewa4jj8e0uhlv3svx68a54vqyngcyr"
+  - path_regex: users/deepwatrcreatur/secrets/.*\.yaml\.enc$
+    age: "age17mn5lnlh2mgttp950wc7a2nl9kphewa4jj8e0uhlv3svx68a54vqyngcyr"
+  - path_regex: users/deepwatrcreatur/secrets/.*\.conf$
+    age: "age17mn5lnlh2mgttp950wc7a2nl9kphewa4jj8e0uhlv3svx68a54vqyngcyr"
+  - path_regex: secrets/.*\.yaml$
+    age: "age17mn5lnlh2mgttp950wc7a2nl9kphewa4jj8e0uhlv3svx68a54vqyngcyr"
+  - path_regex: secrets/.*\.yaml\.enc$
+    age: "age17mn5lnlh2mgttp950wc7a2nl9kphewa4jj8e0uhlv3svx68a54vqyngcyr"
+  - path_regex: secrets/.*\.conf$
+    age: "age17mn5lnlh2mgttp950wc7a2nl9kphewa4jj8e0uhlv3svx68a54vqyngcyr"
+  - path_regex: secrets/.*\.pem$
+    age: "age17mn5lnlh2mgttp950wc7a2nl9kphewa4jj8e0uhlv3svx68a54vqyngcyr"
+  - path_regex: secrets/.*\.txt$
+    age: "age17mn5lnlh2mgttp950wc7a2nl9kphewa4jj8e0uhlv3svx68a54vqyngcyr"
+  - path_regex: users/deepwatrcreatur/secrets/.*\.txt$
+    age: "age17mn5lnlh2mgttp950wc7a2nl9kphewa4jj8e0uhlv3svx68a54vqyngcyr"
