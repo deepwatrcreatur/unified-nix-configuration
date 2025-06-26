@@ -4,7 +4,6 @@
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/rename.nix
     ../../modules/home-manager/zoxide.nix
-    ../../modules/home-manager/gemini-cli.nix
     ./sops.nix
   ];
 
@@ -17,4 +16,9 @@
     stow
     mix2nix
   ];
+   home.activation = ''
+      echo "Installing Google Gemini CLI globally..."
+      npm install -g @google/gemini-cli
+      echo "Google Gemini CLI installed."
+    '';
 }
