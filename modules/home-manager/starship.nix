@@ -2,18 +2,19 @@
 { config, ... }:
 
 {
-  programs.starship = {                         # prompt theme engine
+  programs.starship = {
     enable = true;
     enableFishIntegration = true;
     settings = {
       add_newline = false;
       command_timeout = 1300;
       scan_timeout = 50;
-      format= ''$username$hostname$directory$character'';
-      right_format= ''$nix_shell$shell$git_branch$git_commit$git_state$git_status'';
-      fill = {
-        symbol = " ";
-      };
+      # Simplified format: combine left and right, no fill
+      format = "$username$hostname$directory$nix_shell$shell$git_branch$git_commit$git_state$git_status$character";
+      # Remove right_format to avoid alignment issues
+      right_format = "";
+      # Remove fill module to prevent dynamic spacing
+      # line_break remains disabled
       line_break = {
         disabled = true;
       };
@@ -105,12 +106,12 @@
         stashed = "📦";
         ahead = "⬆$count";
         behind = "⬇$count";
-	      up_to_date = "";
+        up_to_date = "";
         diverged = "↕";
         conflicted = "🚫";
         deleted = "✘";
         renamed = "»";
-        modified = "🖍️"; # 🖊🖋️🖍️
+        modified = "🖍️";
         staged = "+";
         untracked = "?";
         typechanged = "";
