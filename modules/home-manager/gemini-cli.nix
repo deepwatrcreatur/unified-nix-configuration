@@ -18,7 +18,7 @@
     home.activation = {
       installGeminiCli = ''
         echo "Installing Google Gemini CLI globally..."
-        ${pkgs.nodejs}/bin/npm install -g @google/gemini-cli
+        npm install -g @google/gemini-cli
         echo "Google Gemini CLI installed."
       '';
     };
