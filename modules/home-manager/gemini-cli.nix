@@ -4,7 +4,7 @@
 {
   options.myModules.geminiCli.enable = lib.mkOption {
     type = lib.types.bool;
-    default = false;
+    default = true;
     description = "Whether to install the Google Gemini CLI globally.";
   };
 
