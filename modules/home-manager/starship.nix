@@ -6,18 +6,21 @@
     enable = true;
     enableFishIntegration = true;
     settings = {
-      add_newline = false;
+      # Remove add_newline = false; as line_break handles it
       command_timeout = 1300;
       scan_timeout = 50;
-      # Simplified format: combine left and right, no fill
-      format = "$username$hostname$directory$nix_shell$shell$git_branch$git_commit$git_state$git_status$character";
-      # Remove right_format to avoid alignment issues
-      right_format = "";
-      # Remove fill module to prevent dynamic spacing
-      # line_break remains disabled
+
+      # Main format for the left side of the prompt
+      format = "$username$hostname$directory$nix_shell$shell$git_branch$git_commit$git_state$line_break$character";
+
+      # Right format for modules on the far right
+      right_format = "$git_status";
+
+      # Enable line_break to move the command prompt to a new line
       line_break = {
-        disabled = true;
+        disabled = false; # Set to false to enable line breaks
       };
+
       username = {
         disabled = false;
         format = "[$user]($style) ";
