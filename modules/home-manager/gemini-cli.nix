@@ -1,16 +1,16 @@
 # modules/cli/gemini-cli.nix
-{ config, pkgs, ... }: # This still takes these args, which are useful for options
+{ config, pkgs, lib, ... }: # Make sure 'lib' is also available as an argument
 
 {
-  # This option block is fine here
-  options.myModules.geminiCli.enable = pkgs.lib.mkOption {
-    type = pkgs.lib.types.bool;
+  options.myModules.geminiCli.enable = lib.mkOption {
+    type = lib.types.bool;
     default = false;
     description = "Whether to install the Google Gemini CLI globally.";
   };
 
-  # Use lib.mkIf to conditionally include the configuration when enabled
-  config = pkgs.lib.mkIf config.myModules.geminiCli.enable {
+  # Apply lib.mkIf directly to the 'home' attribute,
+  # or to the parts of 'config' that are conditional.
+  config = lib.mkIf config.myModules.geminiCli.enable {
     home.packages = with pkgs; [
       nodejs # Ensure Node.js and npm are available
     ];
