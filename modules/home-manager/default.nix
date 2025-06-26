@@ -13,7 +13,7 @@
   ];
 
   home.packages = with pkgs; [
-    nodesjs
+    nodejs
     wget
     curl
     xh
