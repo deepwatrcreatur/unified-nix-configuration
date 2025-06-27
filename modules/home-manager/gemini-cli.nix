@@ -24,25 +24,48 @@
     # Option 2: Install via npm (default approach)
     home.activation = lib.mkIf (!config.myModules.geminiCli.useNixPackage) {
       installGeminiCli = lib.hm.dag.entryAfter ["writeBoundary"] ''
-        echo "Attempting to install Google Gemini CLI globally..."
+        echo "Installing Google Gemini CLI via npm..."
         
         # Ensure directories exist
-        $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.npm-global
+        $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.npm-global/bin
+        $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.npm-global/lib
         $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.npm-cache
         
-        # Set npm configuration explicitly for this installation
-        export NPM_CONFIG_PREFIX="${config.home.homeDirectory}/.npm-global"
-        export NPM_CONFIG_CACHE="${config.home.homeDirectory}/.npm-cache"
-        
-        # Use npm with explicit configuration (don't use DRY_RUN_CMD for npm install)
-        if ${pkgs.nodejs}/bin/npm install -g @google/gemini-cli --prefix="${config.home.homeDirectory}/.npm-global" &> "${config.home.homeDirectory}/.cache/gemini-cli-install.log"; then
-          echo "Google Gemini CLI installation successful."
-          # Make the binary executable
-          chmod +x "${config.home.homeDirectory}/.npm-global/bin/gemini" 2>/dev/null || true
+        # Only proceed if not in dry-run mode
+        if [[ -z "$DRY_RUN_CMD" ]]; then
+          # Set npm configuration explicitly for this installation
+          export NPM_CONFIG_PREFIX="${config.home.homeDirectory}/.npm-global"
+          export NPM_CONFIG_CACHE="${config.home.homeDirectory}/.npm-cache"
+          
+          # Ensure node is in PATH for post-install scripts
+          export PATH="${pkgs.nodejs}/bin:$PATH"
+          
+          # Check if already installed and up to date
+          if [[ -x "${config.home.homeDirectory}/.npm-global/bin/gemini" ]]; then
+            echo "Gemini CLI is already installed and executable."
+          else
+            echo "Installing @google/gemini-cli..."
+            
+            # Use npm with explicit configuration
+            if ${pkgs.nodejs}/bin/npm install -g @google/gemini-cli \
+                --prefix="${config.home.homeDirectory}/.npm-global" \
+                --cache="${config.home.homeDirectory}/.npm-cache" \
+                &> "${config.home.homeDirectory}/.cache/gemini-cli-install.log"; then
+              
+              echo "Google Gemini CLI installation successful."
+              
+              # Ensure the binary is executable
+              if [[ -f "${config.home.homeDirectory}/.npm-global/bin/gemini" ]]; then
+                chmod +x "${config.home.homeDirectory}/.npm-global/bin/gemini"
+                echo "Made gemini binary executable."
+              fi
+            else
+              echo "Google Gemini CLI installation failed. Check ${config.home.homeDirectory}/.cache/gemini-cli-install.log for details."
+              echo "Continuing with other activations..."
+            fi
+          fi
         else
-          echo "Google Gemini CLI installation failed. Check ${config.home.homeDirectory}/.cache/gemini-cli-install.log for details."
-          # Don't exit 1 in activation scripts as it can break home-manager
-          echo "Continuing with other activations..."
+          echo "Dry run mode - would install @google/gemini-cli"
         fi
       '';
     };
