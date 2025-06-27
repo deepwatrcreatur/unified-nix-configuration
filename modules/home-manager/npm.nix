@@ -13,9 +13,13 @@
       nodejs # Essential for npm
     ];
 
-    programs.npm = {
+    programs.nodejs = {
       enable = true;
-      prefix = "$HOME/.npm-global"; # Ensure global packages go to a writable location
+      npm = {
+        npmrc = ''
+          prefix=$HOME/.npm-global
+        '';
+      };
     };
 
     # Optionally, ensure the global bin directory is in PATH.
