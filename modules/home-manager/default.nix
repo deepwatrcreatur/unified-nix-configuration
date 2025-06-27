@@ -10,10 +10,11 @@
     ./starship.nix
     ./cargo-binstall.nix
     ./yazelix.nix
+    ./npm.nix
+    ./gemini-cli.nix
   ];
 
   home.packages = with pkgs; [
-    nodejs
     wget
     curl
     xh
