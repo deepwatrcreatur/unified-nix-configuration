@@ -27,18 +27,20 @@
         echo "Attempting to install Google Gemini CLI globally..."
         
         # Ensure directories exist
-        $DRY_RUN_CMD mkdir -p $HOME/.npm-global
-        $DRY_RUN_CMD mkdir -p $HOME/.npm-cache
+        $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.npm-global
+        $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.npm-cache
         
         # Set npm configuration explicitly for this installation
-        export NPM_CONFIG_PREFIX="$HOME/.npm-global"
-        export NPM_CONFIG_CACHE="$HOME/.npm-cache"
+        export NPM_CONFIG_PREFIX="${config.home.homeDirectory}/.npm-global"
+        export NPM_CONFIG_CACHE="${config.home.homeDirectory}/.npm-cache"
         
-        # Use npm with explicit configuration
-        if $DRY_RUN_CMD ${pkgs.nodejs}/bin/npm install -g @google/gemini-cli --prefix="$HOME/.npm-global" &> "$HOME/.cache/gemini-cli-install.log"; then
+        # Use npm with explicit configuration (don't use DRY_RUN_CMD for npm install)
+        if ${pkgs.nodejs}/bin/npm install -g @google/gemini-cli --prefix="${config.home.homeDirectory}/.npm-global" &> "${config.home.homeDirectory}/.cache/gemini-cli-install.log"; then
           echo "Google Gemini CLI installation successful."
+          # Make the binary executable
+          chmod +x "${config.home.homeDirectory}/.npm-global/bin/gemini" 2>/dev/null || true
         else
-          echo "Google Gemini CLI installation failed. Check $HOME/.cache/gemini-cli-install.log for details."
+          echo "Google Gemini CLI installation failed. Check ${config.home.homeDirectory}/.cache/gemini-cli-install.log for details."
           # Don't exit 1 in activation scripts as it can break home-manager
           echo "Continuing with other activations..."
         fi
