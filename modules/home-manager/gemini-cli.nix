@@ -10,7 +10,7 @@ let
       sha256 = "sha256-QA65tcuOxxyKORREtUEoggAdf6Ou3/ORGtD4FFEQ/KA=";
     };
     
-    nativeBuildInputs = with pkgs; [ nodejs npm ];
+    nativeBuildInputs = with pkgs; [ nodejs ];
     
     buildPhase = ''
       npm install --production --no-package-lock
