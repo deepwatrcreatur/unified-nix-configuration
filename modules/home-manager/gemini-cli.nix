@@ -30,7 +30,8 @@
     };
     
     # Set up sops secret for Gemini CLI credentials
-    sops.secrets."oath_creds" = {
+    sops.secrets."oatuh_creds" = {
+      sopsFile = ../../secrets/oauth_creds.json.enc;
       path = "${config.home.homeDirectory}/.gemini/oauth_creds.json";
       mode = "0600";
     };
