@@ -1,3 +1,4 @@
+# modules/home-manager/gemini-cli.nix
 { config, pkgs, lib, ... }:
 
 {
@@ -15,12 +16,12 @@
       if [[ -z "$DRY_RUN_CMD" ]]; then
         if ! command -v gemini &> /dev/null; then
           echo "Installing @google/gemini-cli..."
-          # Use the npm from nixpkgs nodejs
-          ${pkgs.nodejs}/bin/npm install -g @google/gemini-cli
+          # Set PATH explicitly to include nodejs for npm's postinstall scripts
+          PATH="${pkgs.nodejs}/bin:$PATH" ${pkgs.nodejs}/bin/npm install -g @google/gemini-cli
         fi
       fi
     '';
-    
+
     # Ensure .gemini directory exists (sops will place oauth_creds.json here)
     home.file.".gemini/.keep".text = "";
   };
