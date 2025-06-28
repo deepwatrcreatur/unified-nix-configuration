@@ -5,6 +5,7 @@
     ../../modules/home-manager/rename.nix
     ../../modules/home-manager/zoxide.nix
     ../../modules/home-manager/gemini-cli.nix
+    ./sops.nix
   ];
   
   home.username = "root";
