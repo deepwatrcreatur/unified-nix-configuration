@@ -16,8 +16,8 @@
     home.file.".npmrc".text = ''
       prefix=$HOME/.npm-global
       cache=$HOME/.npm-cache
-      init-author-name=Your Name
-      init-author-email=your.email@example.com
+      init-author-name=Anwer Khan
+      init-author-email=deepwatrcreatur@gmail.com
       init-license=MIT
     '';
 
@@ -26,6 +26,22 @@
       "$HOME/.npm-global/bin"
     ];
 
+    programs.fish.shellInit = lib.mkIf config.programs.fish.enable ''
+      fish_add_path $HOME/.npm-global/bin
+    '';
+  
+    programs.zsh.initExtra = lib.mkIf config.programs.zsh.enable ''
+      export PATH="$HOME/.npm-global/bin:$PATH"
+    '';
+  
+    programs.bash.bashrcExtra = lib.mkIf config.programs.bash.enable ''
+      export PATH="$HOME/.npm-global/bin:$PATH"
+    '';
+
+    programs.nushell.extraConfig = lib.mkIf config.programs.nushell.enable ''
+      $env.PATH = ($env.PATH | split row (char esep) | prepend $"($env.HOME)/.npm-global/bin")
+    '';
+  
     # Create the npm global directory if it doesn't exist
     home.activation.createNpmGlobalDir = lib.hm.dag.entryAfter ["writeBoundary"] ''
       $DRY_RUN_CMD mkdir -p $HOME/.npm-global
