@@ -23,12 +23,12 @@ in
     sops = {
       age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
 
-      #secrets."oauth_creds" = {
-      #  sopsFile = "${sopsSecretsDir}/oauth_creds.json.enc";
-      #  key = "data";
-      #  path = "${config.home.homeDirectory}/.gemini/oauth_creds.json";
-      #  mode = "0600";
-      #};
+      secrets."oauth_creds" = {
+        sopsFile = "${sopsSecretsDir}/oauth_creds.json.enc";
+        format = "binary";
+        path = "${config.home.homeDirectory}/.gemini/oauth_creds.json";
+        mode = "0600";
+      };
     };
 
   };

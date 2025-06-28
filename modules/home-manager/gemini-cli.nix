@@ -28,14 +28,7 @@
     home.sessionVariables = {
       NPM_CONFIG_PREFIX = "$HOME/.npm-global";
     };
-    
-    # Set up sops secret for Gemini CLI credentials
-    sops.secrets."oauth_creds" = {
-      sopsFile = ../../secrets/oauth_creds.json.enc;
-      path = "${config.home.homeDirectory}/.gemini/oauth_creds.json";
-      mode = "0600";
-    };
-    
+  
     # Ensure .gemini directory exists
     home.file.".gemini/.keep".text = "";
   };
