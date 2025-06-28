@@ -14,8 +14,8 @@
 
     # Create npm configuration file
     home.file.".npmrc".text = ''
-      prefix=$HOME/.npm-global
-      cache=$HOME/.npm-cache
+      prefix=${config.home.homeDirectory}/.npm-global
+      cache=${config.home.homeDirectory}/.npm-cache
       init-author-name=Anwer Khan
       init-author-email=deepwatrcreatur@gmail.com
       init-license=MIT
@@ -44,8 +44,8 @@
   
     # Create the npm global directory if it doesn't exist
     home.activation.createNpmGlobalDir = lib.hm.dag.entryAfter ["writeBoundary"] ''
-      $DRY_RUN_CMD mkdir -p $HOME/.npm-global
-      $DRY_RUN_CMD mkdir -p $HOME/.npm-cache
+      $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.npm-global
+      $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.npm-cache
     '';
   };
 }
