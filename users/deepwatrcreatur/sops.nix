@@ -3,7 +3,7 @@
 { config, lib, pkgs, inputs, ... }: # Module arguments
 
 let
-  sopsSecretsDir = toString (builtins.path { path = ../secrets; });
+  sopsSecretsDir = toString (builtins.path { path = ./secrets; });
 in
 { # This is the single top-level attribute set for the module
 
