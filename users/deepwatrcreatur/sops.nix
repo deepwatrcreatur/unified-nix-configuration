@@ -22,6 +22,7 @@ in
   # Configure SOPS with age key
   sops = {
     age.keyFile = "${config.home.homeDirectory}/.config/sops/keys/age/keys/personal-age-key";
+    defaultSopsFile = "${sopsSecretsDir}/sops.yaml";
   };
 
     # Uncomment and configure your sops.secrets entries as needed
