@@ -1,9 +1,9 @@
-# modules/home-manager/sops-deepwatrcreatur.nix
+# users/deepwatrcreatur/sops.nix
 # This module unconditionally configures sops for deepwatrcreatur within Home Manager.
 { config, lib, pkgs, inputs, ... }: # Module arguments
 
 let
-  sopsSecretsDir = toString (builtins.path { path = ./secrets; });
+  sopsSecretsDir = toString (builtins.path { path = ../secrets; });
 in
 { # This is the single top-level attribute set for the module
 
@@ -19,18 +19,17 @@ in
       force = true; # Ensure it’s a regular file, not a symlink
     };
 
-  # Configure SOPS with age key
-  sops = {
-    age.keyFile = "${config.home.homeDirectory}/.config/sops/keys/age/keys/personal-age-key";
-    defaultSopsFile = "${sopsSecretsDir}/sops.yaml";
-  };
+    # Configure SOPS with age key
+    sops = {
+      age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
 
-    # Uncomment and configure your sops.secrets entries as needed
-    # sops.secrets."git-signing-key" = {
-    #   sopsFile = "${sopsSecretsDir}/user-secrets/deepwatrcreatur-git-keys.yaml.enc";
-    #   key = "gpg_signing_key";
-    #   path = "${config.xdg.configHome}/git/gpg-signing-key.asc";
-    #   mode = "0600";
-    # };
+      secrets."oauth_creds" = {
+        sopsFile = "${sopsSecretsDir}/oauth_creds.json.enc";
+        key = "data";
+        path = "${config.home.homeDirectory}/.gemini/oauth_creds.json";
+        mode = "0600";
+      };
+    };
+
   };
 }
