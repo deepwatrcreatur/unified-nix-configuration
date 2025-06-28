@@ -4,31 +4,7 @@
 {
   programs.fish = {
     enable = true;
-
     interactiveShellInit = lib.mkAfter ''
-      set -gx PATH
-      set -gx PATH /opt/homebrew/bin /opt/homebrew/opt/mise/bin $PATH
-
-      # Add macOS system paths
-      set -gx PATH /usr/bin /bin /usr/sbin /sbin /usr/local/bin
-
-      # Add Nix paths (system and user)
-      if test -d /run/current-system/sw/bin
-        set -gx PATH /run/current-system/sw/bin $PATH
-      end
-      if test -d /nix/var/nix/profiles/default/bin
-        set -gx PATH /nix/var/nix/profiles/default/bin $PATH
-      end
-      if test -d /Users/deepwatrcreatur/.nix-profile/bin
-        set -gx PATH /Users/deepwatrcreatur/.nix-profile/bin $PATH
-      end
-
-      # Add other user-specific paths
-      set -gx PATH /Users/deepwatrcreatur/.cargo/bin /usr/local/MacGPG2/bin /Applications/Ghostty.app/Contents/MacOS $PATH
-
-      # Add Cryptex paths (macOS-specific)
-      set -gx PATH /System/Cryptexes/App/usr/bin /var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin /var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin /var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin $PATH
-
       # Environment variables (from hm-session-vars.sh)
       set -gx EDITOR hx
       set -gx VISUAL hx
@@ -42,4 +18,31 @@
       end
     '';
   };
+
+  home.sessionPath = [
+    "/opt/homebrew/bin"
+    "/opt/homebrew/opt/mise/bin" # Consider if this is still relevant with Nix/home-manager
+    
+    "/usr/bin"
+    "/bin"
+    "/usr/sbin"
+    "/sbin"
+    "/usr/local/bin"
+
+    "/run/current-system/sw/bin" # System-wide Nix path
+    "/nix/var/nix/profiles/default/bin" # Default Nix profile path
+
+    "$HOME/.cargo/bin"
+    "/usr/local/MacGPG2/bin"
+    "/Applications/Ghostty.app/Contents/MacOS"
+
+    # Cryptex paths (macOS-specific)
+    "/System/Cryptexes/App/usr/bin"
+    "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin"
+    "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin"
+    "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin"
+
+    "$HOME/.npm-global/bin"
+  ];
+
 }
