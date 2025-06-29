@@ -31,24 +31,27 @@
     "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin"
   ];
 
-  programs.nushell = {
-    enable = true;
-    configFile.source = pkgs.writeTextFile {
+  home.file = lib.mkIf (pkgs.stdenv.isDarwin) {
+    "Library/Application Support/nushell/config.nu".source = pkgs.writeTextFile {
       name = "nushell-config";
       text = ''
         $env.GNUPGHOME = "${config.home.homeDirectory}/.gnupg"
 
         if ($env.SSH_AUTH_SOCK | is-empty) and ("/opt/homebrew/bin/gpgconf" | path exists) {
-          $env.SSH_AUTH_SOCK = ("/opt/homebrew/bin/gpgconf" --list-dirs agent-ssh-socket | str trim)
+          $env.SSH_AUTH_SOCK = (^/opt/homebrew/bin/gpgconf --list-dirs agent-ssh-socket | str trim)
         } else if ($env.SSH_AUTH_SOCK | is-empty) and ("/run/current-system/sw/bin/gpgconf" | path exists) {
-          $env.SSH_AUTH_SOCK = ("/run/current-system/sw/bin/gpgconf" --list-dirs agent-ssh-socket | str trim)
+          $env.SSH_AUTH_SOCK = (^/run/current-system/sw/bin/gpgconf --list-dirs agent-ssh-socket | str trim)
         }
       '';
     };
-    envFile.source = pkgs.writeTextFile {
+    "Library/Application Support/nushell/env.nu".source = pkgs.writeTextFile {
       name = "nushell-env";
       text = "";
     };
+  };
+
+  programs.nushell = {
+    enable = true;
   };
 
   programs.fish = {
@@ -59,7 +62,7 @@
       if test -z "$SSH_AUTH_SOCK" -a -x /opt/homebrew/bin/gpgconf
         set -gx SSH_AUTH_SOCK (/opt/homebrew/bin/gpgconf --list-dirs agent-ssh-socket | str trim)
       else if test -z "$SSH_AUTH_SOCK" -a -x /run/current-system/sw/bin/gpgconf
-        set -gx SSH_AUTH_SOCK (/opt/homebrew/bin/gpgconf --list-dirs agent-ssh-socket | str trim)
+        set -gx SSH_AUTH_SOCK (/run/current-system/sw/bin/gpgconf --list-dirs agent-ssh-socket | str trim)
       end
     '';
   };
