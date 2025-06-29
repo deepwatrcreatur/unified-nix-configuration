@@ -1,3 +1,5 @@
+# modules/home-manager/rclone.nix
+
 { config, lib, pkgs, inputs, ... }:
 
 {
@@ -8,7 +10,7 @@
     pkgs.sops
   ];
 
-  home.file.".config/rclone/rclone-filter.txt".text = ''
+  xdg.configFile."rclone/rclone-filter.txt".text = ''
     # Exclude common macOS system files
     - .DS_Store
     - .AppleDouble
@@ -50,9 +52,9 @@
     # Include everything else (catch-all)
     + **
   '';
+
   #home.file.".config/rclone/rclone.conf" = {
   #  source = sopsLib.readText ../../secrets/rclone.conf;
-    # Ensure it's not executable, just in case (though 0600 implies this)
   #  executable = false;
   #};
 }
