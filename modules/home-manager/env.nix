@@ -36,11 +36,7 @@
       mkdir -p $out
       ln -sfn /Users/${config.home.username}/Library/Application\ Support $out
     '');
-  };
-
-  programs.nushell = {
-    enable = true;
-    configFile.source = lib.mkIf (pkgs.stdenv.isDarwin) (pkgs.writeTextFile {
+    ".config/nushell/config.nu".source = lib.mkIf (pkgs.stdenv.isDarwin) (pkgs.writeTextFile {
       name = "nushell-config";
       text = ''
         $env.GNUPGHOME = "${config.home.homeDirectory}/.gnupg"
@@ -51,13 +47,15 @@
           $env.SSH_AUTH_SOCK = ("/run/current-system/sw/bin/gpgconf" --list-dirs agent-ssh-socket | str trim)
         }
       '';
-      destination = "${config.home.homeDirectory}/.config/nushell/config.nu";
     });
-    envFile.source = lib.mkIf (pkgs.stdenv.isDarwin) (pkgs.writeTextFile {
+    ".config/nushell/env.nu".source = lib.mkIf (pkgs.stdenv.isDarwin) (pkgs.writeTextFile {
       name = "nushell-env";
       text = "";
-      destination = "${config.home.homeDirectory}/.config/nushell/env.nu";
     });
+  };
+
+  programs.nushell = {
+    enable = true;
   };
 
   programs.fish = {
