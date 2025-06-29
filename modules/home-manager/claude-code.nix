@@ -2,7 +2,7 @@
 { config, pkgs, lib, ... }:
 
 {
-  options.myModules.claudeClode = {
+  options.myModules.claudeCode = {
     enable = lib.mkOption {
       type = lib.types.bool;
       default = true;
