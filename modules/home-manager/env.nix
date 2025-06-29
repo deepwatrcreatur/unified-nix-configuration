@@ -13,7 +13,7 @@
     "${config.home.homeDirectory}/.nix-profile/bin"
     "${config.home.homeDirectory}/.cargo/bin"
     "${config.home.homeDirectory}/.npm-global/bin"
-  ] ++ lib.option two systems (pkgs.stdenv.isDarwin) [
+  ] ++ lib.optionals (pkgs.stdenv.isDarwin) [
     "/opt/homebrew/bin"
     "/opt/homebrew/opt/mise/bin"
     "/usr/bin"
