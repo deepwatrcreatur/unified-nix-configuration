@@ -31,13 +31,6 @@
     "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin"
   ];
 
-  home.file = lib.mkIf (pkgs.stdenv.isDarwin) {
-    ".config".source = lib.mkForce (pkgs.runCommand "config-dir" {} ''
-      mkdir -p $out
-      ln -sfn /Users/${config.home.username}/Library/Application\ Support $out
-    '');
-  };
-
   programs.nushell = {
     enable = true;
     configFile.source = pkgs.writeTextFile {
