@@ -31,28 +31,49 @@
     "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin"
   ];
 
+  home.file = lib.mkIf (pkgs.stdenv.isDarwin) {
+    ".config".source = lib.mkForce (pkgs.runCommand "config-dir" {} ''
+      mkdir -p $out
+      ln -sfn /Users/${config.home.username}/Library/Application\ Support $out
+    '');
+  };
+
   programs.nushell = {
     enable = true;
-    configFile.text = lib.mkIf (pkgs.stdenv.isDarwin) ''
-      let-env GNUPGHOME = "${config.home.homeDirectory}/.gnupg"
+    configFile.source = lib.mkIf (pkgs.stdenv.isDarwin) (pkgs.writeFile {
+      name = "nushell-config";
+      text = ''
+        $env.GNUPGHOME = "${config.home.homeDirectory}/.gnupg"
 
-      if ($env.SSH_AUTH_SOCK | is-empty) and ("/opt/homebrew/bin/gpgconf" | path exists) {
-        let-env SSH_AUTH_SOCK = ("/opt/homebrew/bin/gpgconf" --list-dirs agent-ssh-socket | str trim)
-      } else if ($env.SSH_AUTH_SOCK | is-empty) and ("/run/current-system/sw/bin/gpgconf" | path exists) {
-        let-env SSH_AUTH_SOCK = ("/run/current-system/sw/bin/gpgconf" --list-dirs agent-ssh-socket | str trim)
-      }
-    '';
+        if ($env.SSH_AUTH_SOCK | is-empty) and ("/opt/homebrew/bin/gpgconf" | path exists) {
+          $env.SSH_AUTH_SOCK = ("/opt/homebrew/bin/gpgconf" --list-dirs agent-ssh-socket | str trim)
+        } else if ($env.SSH_AUTH_SOCK | is-empty) and ("/run/current-system/sw/bin/gpgconf" | path exists) {
+          $env.SSH_AUTH_SOCK = ("/run/current-system/sw/bin/gpgconf" --list-dirs agent-ssh-socket | str trim)
+        }
+      '';
+      destination = "${config.home.homeDirectory}/.config/nushell/config.nu";
+    });
+    envFile.source = lib.mkIf (pkgs.stdenv.isDarwin) (pkgs.writeFile {
+      name = "nushell-env";
+      text = "";
+      destination = "${config.home.homeDirectory}/.config/nushell/env.nu";
+    });
   };
 
   programs.fish = {
     enable = true;
+    configFile.source = lib.mkIf (pkgs.stdenv.isDarwin) (pkgs.writeFile {
+      name = "fish-config";
+      text = "";
+      destination = "${config.home.homeDirectory}/.config/fish/config.fish";
+    });
     interactiveShellInit = lib.mkIf (pkgs.stdenv.isDarwin) ''
       set -gx GNUPGHOME ${config.home.homeDirectory}/.gnupg
 
       if test -z "$SSH_AUTH_SOCK" -a -x /opt/homebrew/bin/gpgconf
         set -gx SSH_AUTH_SOCK (/opt/homebrew/bin/gpgconf --list-dirs agent-ssh-socket | string trim)
       else if test -z "$SSH_AUTH_SOCK" -a -x /run/current-system/sw/bin/gpgconf
-        set -gx SSH_AUTH_SOCK (/run/current-system/sw/bin/gpgconf --list-dirs agent-ssh-socket | string trim)
+        set -gx SSH_AUTH_SOCK (/opt/homebrew/bin/gpgconf --list-dirs agent-ssh-socket | string trim)
       end
     '';
   };
