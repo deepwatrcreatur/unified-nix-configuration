@@ -2,15 +2,16 @@
 { config, pkgs, lib, ... }:
 {
   imports = [
-    ./env # shell environment settings
-    ./nushell
+    ./env.nix # shell environment settings
+    ./nushell.nix
     ./helix
-    ./fish-shared.nix
+    ./fish.nix
     ./jujutsu
     ./starship.nix
     ./cargo-binstall.nix
     ./yazelix.nix
     ./npm.nix
+    ./shell-aliases.nix
   ];
 
   home.packages = with pkgs; [
