@@ -40,7 +40,7 @@
 
   programs.nushell = {
     enable = true;
-    configFile.source = lib.mkIf (pkgs.stdenv.isDarwin) (pkgs.writeFile {
+    configFile.source = lib.mkIf (pkgs.stdenv.isDarwin) (pkgs.writeTextFile {
       name = "nushell-config";
       text = ''
         $env.GNUPGHOME = "${config.home.homeDirectory}/.gnupg"
@@ -53,7 +53,7 @@
       '';
       destination = "${config.home.homeDirectory}/.config/nushell/config.nu";
     });
-    envFile.source = lib.mkIf (pkgs.stdenv.isDarwin) (pkgs.writeFile {
+    envFile.source = lib.mkIf (pkgs.stdenv.isDarwin) (pkgs.writeTextFile {
       name = "nushell-env";
       text = "";
       destination = "${config.home.homeDirectory}/.config/nushell/env.nu";
@@ -62,7 +62,7 @@
 
   programs.fish = {
     enable = true;
-    configFile.source = lib.mkIf (pkgs.stdenv.isDarwin) (pkgs.writeFile {
+    configFile.source = lib.mkIf (pkgs.stdenv.isDarwin) (pkgs.writeTextFile {
       name = "fish-config";
       text = "";
       destination = "${config.home.homeDirectory}/.config/fish/config.fish";
@@ -71,9 +71,9 @@
       set -gx GNUPGHOME ${config.home.homeDirectory}/.gnupg
 
       if test -z "$SSH_AUTH_SOCK" -a -x /opt/homebrew/bin/gpgconf
-        set -gx SSH_AUTH_SOCK (/opt/homebrew/bin/gpgconf --list-dirs agent-ssh-socket | string trim)
+        set -gx SSH_AUTH_SOCK (/opt/homebrew/bin/gpgconf --list-dirs agent-ssh-socket | str trim)
       else if test -z "$SSH_AUTH_SOCK" -a -x /run/current-system/sw/bin/gpgconf
-        set -gx SSH_AUTH_SOCK (/opt/homebrew/bin/gpgconf --list-dirs agent-ssh-socket | string trim)
+        set -gx SSH_AUTH_SOCK (/opt/homebrew/bin/gpgconf --list-dirs agent-ssh-socket | str trim)
       end
     '';
   };
