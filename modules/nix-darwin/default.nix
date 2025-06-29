@@ -4,7 +4,6 @@
 {
   imports = [
     ./nix-mount.nix
-    ../home-manager/env/darwin.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
