@@ -5,6 +5,7 @@
     ../../modules/home-manager/rename.nix
     ../../modules/home-manager/zoxide.nix
     ../../modules/home-manager/gemini-cli.nix
+    ../../modules/home-manager/claude-code.nix
     ../../modules/home-manager/npm.nix
     ./sops.nix
   ];
