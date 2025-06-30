@@ -7,6 +7,7 @@
     ../../modules/home-manager/gemini-cli.nix
     ../../modules/home-manager/claude-code.nix
     ../../modules/home-manager/npm.nix
+    ../../modules/home-manager/bitwarden-cli.nix
     ./sops.nix
   ];
 
