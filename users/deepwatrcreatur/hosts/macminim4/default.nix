@@ -9,6 +9,7 @@
   ];
 
   home.packages = with pkgs; [
+    bitwarden
     ripgrep
     jq
     yq
