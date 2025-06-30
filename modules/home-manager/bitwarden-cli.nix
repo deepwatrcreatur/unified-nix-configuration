@@ -10,6 +10,7 @@
   sops = {
     secrets."BW_SESSION" = {
       sopsFile = ../../users/deepwatrcreatur/secrets/bitwarden.yaml.enc;
+      format = "yaml";
     };
   };
 
