@@ -12,6 +12,7 @@
     ./yazelix.nix
     ./npm.nix
     ./shell-aliases.nix
+    ./bitwarden-cli.nix
   ];
 
   home.packages = with pkgs; [
