@@ -37,19 +37,27 @@ in
 
     # Configure BW_SESSION environment variable for all shells
     programs.bash.initExtra = lib.mkIf (secretPath != null) ''
-      export BW_SESSION="$(cat ${secretPath})"
+      if [[ -f "${secretPath}" ]]; then
+        export BW_SESSION="$(cat ${secretPath})"
+      fi
     '';
 
     programs.zsh.initExtra = lib.mkIf (secretPath != null) ''
-      export BW_SESSION="$(cat ${secretPath})"
+      if [[ -f "${secretPath}" ]]; then
+        export BW_SESSION="$(cat ${secretPath})"
+      fi
     '';
 
     programs.fish.interactiveShellInit = lib.mkIf (secretPath != null) ''
-      set -gx BW_SESSION (cat ${secretPath})
+      if test -f ${secretPath}
+        set -gx BW_SESSION (cat ${secretPath})
+      end
     '';
 
     programs.nushell.extraConfig = lib.mkIf (secretPath != null) ''
-      $env.BW_SESSION = (open ${secretPath} | str trim)
+      if (${secretPath} | path exists) {
+        $env.BW_SESSION = (open ${secretPath} | str trim)
+      }
     '';
   });
 }
