@@ -13,7 +13,6 @@
   
   programs.bitwarden-cli = {
     enable = true;
-    sessionSecretPath = config.sops.secrets.BW_SESSION.path;
   };
 
   home.username = "deepwatrcreatur";
