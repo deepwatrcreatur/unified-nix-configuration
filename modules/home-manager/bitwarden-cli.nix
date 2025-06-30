@@ -6,14 +6,4 @@
   home.packages = lib.optionals pkgs.stdenv.isLinux (with pkgs; [
     bitwarden-cli
   ]);
-
-  sops = {
-    secrets."BW_SESSION" = {
-      sopsFile = ../../users/deepwatrcreatur/secrets/bitwarden.yaml;
-    };
-  };
-
-  home.sessionVariables = {
-    BW_SESSION = "$(cat ${config.sops.secrets.BW_SESSION.path})";
-  };
 }
