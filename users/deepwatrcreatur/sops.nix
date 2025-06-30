@@ -43,7 +43,7 @@ in
     programs.nushell = {
       enable = true;
       environmentVariables = {
-        BW_SESSION = ''$(cat ${config.sops.secrets.BW_SESSION.path} | tr -d '\n')'';
+        BW_SESSION = "$(cat ${config.sops.secrets.BW_SESSION.path})";
       };
     };
   };
