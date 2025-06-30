@@ -24,6 +24,7 @@
     btop
     rsync
     iperf3
+    yamllint
     fish
     nushell
     lsd
