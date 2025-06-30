@@ -1,24 +1,40 @@
 # modules/home-manager/bitwarden-cli.nix
-{ config, pkgs, lib, inputs, bwSessionSecretPath ? null, ... }:
+{ config, pkgs, lib, inputs, ... }:
+let
+  cfg = config.programs.bitwarden-cli;
+in
 {
-  home.packages = lib.optionals pkgs.stdenv.isLinux (with pkgs; [
-    bitwarden-cli
-  ]);
+  options.programs.bitwarden-cli = {
+    enable = lib.mkEnableOption "Bitwarden CLI";
+    
+    sessionSecretPath = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "Path to the BW_SESSION secret file";
+      example = "\${config.sops.secrets.BW_SESSION.path}";
+    };
+  };
 
-  # Only configure environment if secret path is provided
-  programs.bash.initExtra = lib.mkIf (bwSessionSecretPath != null) ''
-    export BW_SESSION="$(cat ${bwSessionSecretPath})"
-  '';
+  config = lib.mkIf cfg.enable {
+    home.packages = lib.optionals pkgs.stdenv.isLinux (with pkgs; [
+      bitwarden-cli
+    ]);
 
-  programs.zsh.initExtra = lib.mkIf (bwSessionSecretPath != null) ''
-    export BW_SESSION="$(cat ${bwSessionSecretPath})"
-  '';
+    # Configure BW_SESSION environment variable for all shells
+    programs.bash.initExtra = lib.mkIf (cfg.sessionSecretPath != null) ''
+      export BW_SESSION="$(cat ${cfg.sessionSecretPath})"
+    '';
 
-  programs.fish.interactiveShellInit = lib.mkIf (bwSessionSecretPath != null) ''
-    set -gx BW_SESSION (cat ${bwSessionSecretPath})
-  '';
+    programs.zsh.initExtra = lib.mkIf (cfg.sessionSecretPath != null) ''
+      export BW_SESSION="$(cat ${cfg.sessionSecretPath})"
+    '';
 
-  programs.nushell.extraConfig = lib.mkIf (bwSessionSecretPath != null) ''
-    $env.BW_SESSION = (open ${bwSessionSecretPath} | str trim)
-  '';
+    programs.fish.interactiveShellInit = lib.mkIf (cfg.sessionSecretPath != null) ''
+      set -gx BW_SESSION (cat ${cfg.sessionSecretPath})
+    '';
+
+    programs.nushell.extraConfig = lib.mkIf (cfg.sessionSecretPath != null) ''
+      $env.BW_SESSION = (open ${cfg.sessionSecretPath} | str trim)
+    '';
+  };
 }
