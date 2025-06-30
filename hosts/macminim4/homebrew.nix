@@ -1,4 +1,4 @@
-# modules/homebrew.nix
+# hosts/macminim4/homebrew.nix
 #
 # Contains Homebrew configuration shared across ALL macOS hosts.
 { config, pkgs, ... }:
@@ -17,6 +17,7 @@
       "fish"
       "cmake"
       "powerlevel10k"
+      "bitwarden-cli"
     ];
 
     # Casks (GUI Apps)
