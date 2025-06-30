@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, inputs, ... }:
 {
   imports = [
     ../../modules/home-manager/git.nix
@@ -7,8 +7,11 @@
     ../../modules/home-manager/gemini-cli.nix
     ../../modules/home-manager/claude-code.nix
     ../../modules/home-manager/npm.nix
-    ../../modules/home-manager/bitwarden-cli.nix
     ./sops.nix
+    ({ ... }: import ../../modules/home-manager/bitwarden-cli.nix {
+      inherit config pkgs lib inputs;
+      bwSessionSecretPath = config.sops.secrets.BW_SESSION.path;
+    })
   ];
 
   home.username = "deepwatrcreatur";
