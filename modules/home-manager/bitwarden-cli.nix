@@ -3,9 +3,9 @@
 { config, pkgs, lib, inputs, ... }:
 
 {
-  home.packages = with pkgs; [
+  home.packages = lib.optionals pkgs.stdenv.isLinux (with pkgs; [
     bitwarden-cli
-  ];
+  ]);
 
   sops = {
     secrets."BW_SESSION" = {
