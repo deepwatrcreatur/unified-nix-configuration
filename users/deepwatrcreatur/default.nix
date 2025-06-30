@@ -1,6 +1,7 @@
 { config, pkgs, lib, inputs, ... }:
 {
   imports = [
+    ./sops.nix  
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/rename.nix
     ../../modules/home-manager/zoxide.nix
@@ -8,7 +9,6 @@
     ../../modules/home-manager/claude-code.nix
     ../../modules/home-manager/npm.nix
     ../../modules/home-manager/bitwarden-cli.nix
-    ./sops.nix  
   ];
   
   programs.bitwarden-cli = {
