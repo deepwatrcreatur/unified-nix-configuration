@@ -29,22 +29,6 @@ in
         path = "${config.home.homeDirectory}/.gemini/oauth_creds.json";
         mode = "0600";
       };
-      
-      secrets."BW_SESSION" = {
-        sopsFile = "${sopsSecretsDir}/bitwarden.yaml";
-        format = "yaml";
-      };
-    };
-
-    home.sessionVariables = {
-      BW_SESSION = "$(cat ${config.sops.secrets.BW_SESSION.path})";
-    };
-    
-    programs.nushell = {
-      enable = true;
-      environmentVariables = {
-        BW_SESSION = "$(cat ${config.sops.secrets.BW_SESSION.path})";
-      };
     };
   };
 }
