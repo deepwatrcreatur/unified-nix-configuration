@@ -7,12 +7,14 @@
     ../../modules/home-manager/gemini-cli.nix
     ../../modules/home-manager/claude-code.nix
     ../../modules/home-manager/npm.nix
-    ./sops.nix
-    ({ ... }: import ../../modules/home-manager/bitwarden-cli.nix {
-      inherit config pkgs lib inputs;
-      bwSessionSecretPath = config.sops.secrets.BW_SESSION.path;
-    })
+    ../../modules/home-manager/bitwarden-cli.nix
+    ./sops.nix  
   ];
+  
+  programs.bitwarden-cli = {
+    enable = true;
+    sessionSecretPath = config.sops.secrets.BW_SESSION.path;
+  };
 
   home.username = "deepwatrcreatur";
   home.stateVersion = "24.11";
