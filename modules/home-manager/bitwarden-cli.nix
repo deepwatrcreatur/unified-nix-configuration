@@ -15,6 +15,6 @@
   };
 
   home.sessionVariables = {
-    BW_SESSION = "$(cat ${config.sops.secrets.BW_SESSION.path})";
+    BW_SESSION = "$(cat ${config.sops.secrets.BW_SESSION.path}| tr -d '\n')";
   };
 }
