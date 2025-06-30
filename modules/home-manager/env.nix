@@ -7,6 +7,7 @@
     EDITOR = "hx";
     VISUAL = "hx";
     GPG_TTY = "(tty)";
+    BW_SESSION = "$(cat ${config.sops.secrets.BW_SESSION.path})";
   };
 
   home.sessionPath = [

@@ -29,6 +29,9 @@ in
         path = "${config.home.homeDirectory}/.gemini/oauth_creds.json";
         mode = "0600";
       };
+      secrets."BW_SESSION" = {
+        sopsFile = ./secrets/bitwarden.yaml.enc;
+      };
     };
 
   };
