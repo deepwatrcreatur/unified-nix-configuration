@@ -39,5 +39,12 @@ in
     home.sessionVariables = {
       BW_SESSION = "$(cat ${config.sops.secrets.BW_SESSION.path})";
     };
+    
+    programs.nushell = {
+      enable = true;
+      environmentVariables = {
+        BW_SESSION = ''$(cat ${config.sops.secrets.BW_SESSION.path} | tr -d '\n')'';
+      };
+    };
   };
 }
