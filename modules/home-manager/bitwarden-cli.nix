@@ -9,12 +9,11 @@
 
   sops = {
     secrets."BW_SESSION" = {
-      sopsFile = ../../users/deepwatrcreatur/secrets/bitwarden.yaml.enc;
-      format = "yaml";
+      sopsFile = ../../users/deepwatrcreatur/secrets/bitwarden.yaml;
     };
   };
 
   home.sessionVariables = {
-    BW_SESSION = "$(cat ${config.sops.secrets.BW_SESSION.path}| tr -d '\n')";
+    BW_SESSION = "$(cat ${config.sops.secrets.BW_SESSION.path})";
   };
 }
