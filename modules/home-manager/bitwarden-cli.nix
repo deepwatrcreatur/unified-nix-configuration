@@ -13,28 +13,43 @@ in
       description = "Path to the BW_SESSION secret file";
       example = "\${config.sops.secrets.BW_SESSION.path}";
     };
+
+    autoDetectSopsSecret = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Automatically use sops BW_SESSION secret if available";
+    };
   };
 
-  config = lib.mkIf cfg.enable {
+  config = lib.mkIf cfg.enable (let
+    # Auto-detect sops secret path if enabled and available
+    secretPath = 
+      if cfg.sessionSecretPath != null then
+        cfg.sessionSecretPath
+      else if cfg.autoDetectSopsSecret && (config.sops.secrets ? BW_SESSION) then
+        config.sops.secrets.BW_SESSION.path
+      else
+        null;
+  in {
     home.packages = lib.optionals pkgs.stdenv.isLinux (with pkgs; [
       bitwarden-cli
     ]);
 
     # Configure BW_SESSION environment variable for all shells
-    programs.bash.initExtra = lib.mkIf (cfg.sessionSecretPath != null) ''
-      export BW_SESSION="$(cat ${cfg.sessionSecretPath})"
+    programs.bash.initExtra = lib.mkIf (secretPath != null) ''
+      export BW_SESSION="$(cat ${secretPath})"
     '';
 
-    programs.zsh.initExtra = lib.mkIf (cfg.sessionSecretPath != null) ''
-      export BW_SESSION="$(cat ${cfg.sessionSecretPath})"
+    programs.zsh.initExtra = lib.mkIf (secretPath != null) ''
+      export BW_SESSION="$(cat ${secretPath})"
     '';
 
-    programs.fish.interactiveShellInit = lib.mkIf (cfg.sessionSecretPath != null) ''
-      set -gx BW_SESSION (cat ${cfg.sessionSecretPath})
+    programs.fish.interactiveShellInit = lib.mkIf (secretPath != null) ''
+      set -gx BW_SESSION (cat ${secretPath})
     '';
 
-    programs.nushell.extraConfig = lib.mkIf (cfg.sessionSecretPath != null) ''
-      $env.BW_SESSION = (open ${cfg.sessionSecretPath} | str trim)
+    programs.nushell.extraConfig = lib.mkIf (secretPath != null) ''
+      $env.BW_SESSION = (open ${secretPath} | str trim)
     '';
-  };
+  });
 }
