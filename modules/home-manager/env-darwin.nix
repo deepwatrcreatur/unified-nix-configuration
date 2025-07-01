@@ -40,7 +40,6 @@
       $env.PATH = ($env.PATH | split row (char esep) | prepend [
         "${config.home.homeDirectory}/.nix-profile/bin"
         "${config.home.homeDirectory}/.cargo/bin"
-        "${config.home.homeDirectory}/.npm-global/bin"
         "/opt/homebrew/bin"
         "/opt/homebrew/opt/mise/bin"
         "/usr/bin"
