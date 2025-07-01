@@ -39,7 +39,6 @@
       # Set up PATH with all required directories
       $env.PATH = ($env.PATH | split row (char esep) | prepend [
         "${config.home.homeDirectory}/.nix-profile/bin"
-        "${config.home.homeDirectory}/.cargo/bin"
         "/opt/homebrew/bin"
         "/opt/homebrew/opt/mise/bin"
         "/usr/bin"
@@ -52,9 +51,6 @@
         "/usr/local/MacGPG2/bin"
         "/Applications/Ghostty.app/Contents/MacOS"
         "/System/Cryptexes/App/usr/bin"
-        "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin"
-        "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin"
-        "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin"
       ] | uniq)
     '';
   };

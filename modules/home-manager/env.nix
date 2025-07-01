@@ -7,7 +7,6 @@
   };
   home.sessionPath = [
     "${config.home.homeDirectory}/.nix-profile/bin"
-    "${config.home.homeDirectory}/.cargo/bin"
   ];
   programs.nushell = {
     enable = true;
