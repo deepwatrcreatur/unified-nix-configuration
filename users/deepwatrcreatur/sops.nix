@@ -1,9 +1,14 @@
 # users/deepwatrcreatur/sops.nix
 # This module unconditionally configures sops for deepwatrcreatur within Home Manager.
-{ config, lib, pkgs, inputs, ... }: # Module arguments
+{ config, pkgs, lib, inputs, ... }: # Module arguments
 
 let
   sopsSecretsDir = toString (builtins.path { path = ./secrets; });
+
+  # Determine the target path for data.json based on the system
+  bitwardenDataJsonPath = if pkgs.stdenv.isDarwin
+    then "${config.home.homeDirectory}/Library/Application Support/Bitwarden CLI/data.json"
+    else "${config.xdg.configHome}/Bitwarden CLI/data.json";
 in
 { # This is the single top-level attribute set for the module
 
@@ -29,10 +34,17 @@ in
         path = "${config.home.homeDirectory}/.gemini/oauth_creds.json";
         mode = "0600";
       };
-      
-      secrets."BW_SESSION" = { 
+
+      secrets."BW_SESSION" = {
         sopsFile = "${sopsSecretsDir}/bitwarden.yaml";
         format = "yaml";
+      };
+
+      secrets."bitwarden_data_json" = {
+        sopsFile = "${sopsSecretsDir}/data.json.enc";
+        format = "binary";
+        path = bitwardenDataJsonPath;
+        mode = "0600";
       };
     };
   };
