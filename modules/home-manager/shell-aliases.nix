@@ -9,10 +9,9 @@
     la = "lsd -a";
     lla = "lsd -la";
     ".." = "cd ..";
-    update = "just update";
-    nh-update = "just nh-update";
+    update = "just --justfile ~/.justfile update";
+    nh-update = "just --justfile ~/.justfile nh-update";
   } // lib.optionalAttrs (pkgs.stdenv.isDarwin) {
-    brew = "/opt/homebrew/bin/brew";
     xcode = "open -a Xcode";
   };
 }
