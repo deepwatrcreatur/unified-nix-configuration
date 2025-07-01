@@ -24,16 +24,21 @@
     btop
     rsync
     iperf3
+    nmap
     yamllint
     fish
     lsd
     bat
     fzf
+    yazi
+    tmux
     neovim
     python3
     glow
     just
     ripgrep
+    age
+    nodejs_20
   ];
 
   # Copy .terminfo files into place
