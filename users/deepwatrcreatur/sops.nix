@@ -6,9 +6,9 @@ let
   sopsSecretsDir = toString (builtins.path { path = ./secrets; });
 
   # Determine the target path for data.json based on the system
-  bitwardenDataJsonPath = if pkgs.stdenv.isDarwin
-    then "${config.home.homeDirectory}/Library/Application Support/Bitwarden CLI/data.json"
-    else "${config.xdg.configHome}/Bitwarden CLI/data.json";
+  #bitwardenDataJsonPath = if pkgs.stdenv.isDarwin  
+  #  then "${config.home.homeDirectory}/Library/Application Support/Bitwarden CLI/data.json"
+  #  else "${config.xdg.configHome}/Bitwarden CLI/data.json";
 in
 { # This is the single top-level attribute set for the module
 
@@ -43,7 +43,8 @@ in
       secrets."bitwarden_data_json" = {
         sopsFile = "${sopsSecretsDir}/data.json.enc";
         format = "binary";
-        path = bitwardenDataJsonPath;
+        #path = bitwardenDataJsonPath;
+        path = "${config.home.homeDirectory}/.config/Bitwarden CLI/data.json";
         mode = "0600";
       };
     };
