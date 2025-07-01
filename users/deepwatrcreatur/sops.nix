@@ -41,8 +41,8 @@ in
       };
 
       secrets."bitwarden_data_json" = {
-        sopsFile = "${sopsSecretsDir}/data.json.enc";
-        format = "binary";
+        sopsFile = "${sopsSecretsDir}/data.json";
+        format = "json";
         path = bitwardenDataJsonPath;
         mode = "0600";
       };
