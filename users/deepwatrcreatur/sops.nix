@@ -25,6 +25,9 @@ in
     };
 
     # Configure SOPS with age key
+    # Create the Bitwarden CLI directory
+    home.file."${config.xdg.configHome}/Bitwarden CLI/.keep".text = "";
+
     sops = {
       age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
 
@@ -43,8 +46,7 @@ in
       secrets."bitwarden_data_json" = {
         sopsFile = "${sopsSecretsDir}/data.json.enc";
         format = "binary";
-        #path = bitwardenDataJsonPath;
-        path = "${config.home.homeDirectory}/.config/Bitwarden CLI/data.json";
+        path = "${config.xdg.configHome}/Bitwarden CLI/data.json";
         mode = "0600";
       };
     };
