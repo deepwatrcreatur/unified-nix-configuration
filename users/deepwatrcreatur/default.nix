@@ -10,6 +10,7 @@
     ../../modules/home-manager/npm.nix
     ../../modules/home-manager/env.nix
     ../../modules/home-manager/bitwarden-cli.nix
+    ../../modules/home-manager/rclone.nix
   ];
   
   programs.bitwarden-cli = {
