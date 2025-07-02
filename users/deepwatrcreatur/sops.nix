@@ -42,10 +42,9 @@ in
         sopsFile = "${sopsSecretsDir}/bitwarden.yaml";
         format = "yaml";
       };
-
       secrets."bitwarden_data_json" = {
         sopsFile = "${sopsSecretsDir}/data.json.enc";
-        format = "json";
+        format = "binary";
         path = "${config.xdg.configHome}/Bitwarden CLI/data.json";
         mode = "0600";
       };
