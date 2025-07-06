@@ -1,7 +1,8 @@
 { config, pkgs, lib, inputs, ... }:
 {
   imports = [
-    ./sops.nix  
+    ./sops.nix
+    ./rbw.nix
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/rename.nix
     ../../modules/home-manager/zoxide.nix
