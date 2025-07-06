@@ -6,6 +6,7 @@
     ../.. # default config for root
     ./homeserver-justfile.nix
     ./nh.nix
+    ./rbw.nix
     ../../../../modules/home-manager/git.nix
     ../../../../modules/home-manager/gpg-cli.nix
     #../../../../modules/home-manager/rclone.nix
