@@ -8,6 +8,7 @@
     ../../../../modules/home-manager/env-darwin.nix
     ../../../../modules/home-manager/env.nix
     ../../xbar.nix
+    ../../rbw.nix
   ];
 
   home.packages = with pkgs; [
