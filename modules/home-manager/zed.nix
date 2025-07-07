@@ -67,8 +67,4 @@
 
   # Symlink Zed CLI to ~/.local/bin/zed for easier terminal access
   home.file.".local/bin/zed".source = "${pkgs.zed-editor}/bin/zed";
-
- # Ensure ~/.config/zed is writable by Zed for dynamic updates
-  home.file.".config/zed".recursive = true;
-  home.file.".config/zed".source = lib.mkForce null; # Let Zed manage its config directory
 }
