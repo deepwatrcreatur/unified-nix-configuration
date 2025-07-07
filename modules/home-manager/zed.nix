@@ -63,11 +63,12 @@
   };
 
   # Ensure Vulkan support for Zed (required for GPU acceleration)
-  nixGL.vulkan.enable = true;
+  # nixGL.vulkan.enable = true; Not applicable on macos
 
   # Symlink Zed CLI to ~/.local/bin/zed for easier terminal access
   home.file.".local/bin/zed".source = "${pkgs.zed-editor}/bin/zed";
 
-  # Optional: Ensure ~/.zed_server is read-only to restrict client-managed binaries
-  home.file.".zed_server".recursive = false;
+ # Ensure ~/.config/zed is writable by Zed for dynamic updates
+  home.file.".config/zed".recursive = true;
+  home.file.".config/zed".source = lib.mkForce null; # Let Zed manage its config directory
 }
