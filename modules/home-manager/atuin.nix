@@ -23,28 +23,24 @@ in
 
     # Configure the shell to use Atuin
     programs.bash = {
-      enable = true;
       initExtra = ''
         eval "$(${cfg.package}/bin/atuin init bash)"
       '';
     };
 
     programs.zsh = {
-      enable = true;
       initExtra = ''
         eval "$(${cfg.package}/bin/atuin init zsh)"
       '';
     };
 
     programs.fish = {
-      enable = true;
       initExtra = ''
         atuin init fish | source
       '';
     };
 
     programs.nushell = {
-      enable = true;
       extraConfig = ''
         atuin init nu | source
       '';
