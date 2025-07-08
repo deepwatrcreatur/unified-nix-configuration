@@ -35,7 +35,7 @@ in
     };
 
     programs.fish = {
-      initExtra = ''
+      shellInit = lib.mkAfter ''
         atuin init fish | source
       '';
     };
