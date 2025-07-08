@@ -19,13 +19,6 @@
     enable = true;
   };
 
-  programs.bash.enable = true;
-  programs.zsh.enable = true;
-  programs.fish.enable = true;
-  programs.nushell.enable = true;
-
-  programs.atuin.enable = true;
-  
   home.username = "deepwatrcreatur";
   home.stateVersion = "24.11";
 
