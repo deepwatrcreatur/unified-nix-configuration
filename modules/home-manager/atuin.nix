@@ -7,10 +7,9 @@ in
   options.programs.atuin = {
     enable = lib.mkEnableOption "Atuin, a modern shell history replacement.";
 
-    package = lib.mkPackageOption pkgs "atuin" {
-      description = "The Atuin package to use.";
-    };
+    package = lib.mkPackageOption pkgs "atuin" {};
 
+    description = "The Atuin package to use.";
     # extraConfig = lib.mkOption {
     #   type = lib.types.lines;
     #   default = "";
