@@ -3,7 +3,6 @@
   imports = [
     ./sops.nix
     ./rbw.nix
-    ../../modules/home-manager/atuin.nix
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/rename.nix
     ../../modules/home-manager/zoxide.nix
@@ -13,6 +12,7 @@
     ../../modules/home-manager/env.nix
     ../../modules/home-manager/bitwarden-cli.nix
     ../../modules/home-manager/rclone.nix
+    ../../modules/home-manager/atuin.nix
   ];
   
   programs.bitwarden-cli = {
