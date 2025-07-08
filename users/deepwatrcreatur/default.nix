@@ -3,6 +3,7 @@
   imports = [
     ./sops.nix
     ./rbw.nix
+    ../../modules/home-manager/atuin.nix
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/rename.nix
     ../../modules/home-manager/zoxide.nix
