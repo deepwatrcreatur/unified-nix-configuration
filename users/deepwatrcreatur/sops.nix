@@ -44,7 +44,7 @@ in
       };
       secrets."bitwarden_data_json" = {
         sopsFile = "${sopsSecretsDir}/data.json.enc";
-        format = "binary";
+        format = "json";
         path = "${config.xdg.configHome}/Bitwarden CLI/data.json";
         mode = "0600";
       };
