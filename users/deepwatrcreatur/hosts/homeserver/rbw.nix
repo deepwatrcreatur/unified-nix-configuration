@@ -1,4 +1,4 @@
 { config, pkgs, ... }:
 {
-  programs.rbw.settings.pinentry = pkgs.pinentry_mac; # macOS-specific pinentry
+  programs.rbw.settings.pinentry = pkgs.pinentry-curses; # macOS-specific pinentry
 }
