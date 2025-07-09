@@ -41,6 +41,8 @@ in
       secrets."BW_SESSION" = {
         sopsFile = "${sopsSecretsDir}/bitwarden.yaml";
         format = "yaml";
+        path = "${config.xdg.configHome}/sops/BW_SESSION";
+        mode = "0600";
       };
       secrets."bitwarden_data_json" = {
         sopsFile = "${sopsSecretsDir}/data.json.enc";
