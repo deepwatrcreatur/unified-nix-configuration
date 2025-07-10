@@ -13,10 +13,6 @@
     atuin init fish | source
   '';
   programs.nushell.extraConfig = ''
-    let atuin_init = (atuin init nu | complete | get stdout)
-    let config_dir = ($env.HOME | path join ".config" "nushell")
-    mkdir ($config_dir | path join "generated")
-    $atuin_init | save --force ($config_dir | path join "generated" "atuin.nu")
-    source ($config_dir | path join "generated" "atuin.nu")
+    overlay use (atuin init nu | lines | str join "\n" | $"module atuin_init { ($in) }")
   ''; 
 }
