@@ -13,6 +13,8 @@
     atuin init fish | source
   '';
   programs.nushell.extraConfig = ''
-    source (atuin init nu | complete | get stdout) 
+    let atuin_init = (atuin init nu | complete | get stdout)
+    $atuin_init | save --force /tmp/atuin_init.nu
+    source /tmp/atuin_init.nu
   ''; 
 }
