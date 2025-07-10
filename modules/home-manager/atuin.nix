@@ -13,9 +13,6 @@
     atuin init fish | source
   '';
   programs.nushell.extraConfig = ''
-    (atuin init nu) | save --force /tmp/atuin_init.nu
-    if ("/tmp/atuin_init.nu" | path exists) {
-      source /tmp/atuin_init.nu
-    }
+    atuin init nu | nu --stdin
   ''; 
 }
