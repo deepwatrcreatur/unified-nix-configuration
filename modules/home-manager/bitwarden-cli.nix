@@ -55,9 +55,9 @@ in
     '';
  
     programs.nushell.extraConfig = lib.mkIf (secretPath != null) ''
-      if ("${secretPath}" | path exists) {
-        $env.BW_SESSION = (open "${secretPath}" | str trim)
-      }
+      let atuin_init = (atuin init nu | complete | get stdout)
+      $atuin_init | save --force /tmp/atuin_init.nu
+      source /tmp/atuin_init.nu
     '';
   });
 }
