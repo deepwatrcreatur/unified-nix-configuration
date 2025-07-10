@@ -53,10 +53,10 @@ in
         set -gx BW_SESSION (cat ${secretPath})
       end
     '';
-
+ 
     programs.nushell.extraConfig = lib.mkIf (secretPath != null) ''
-      if (${secretPath} | path exists) {
-        $env.BW_SESSION = (open ${secretPath} | str trim)
+      if ("${secretPath}" | path exists) {
+        $env.BW_SESSION = (open "${secretPath}" | str trim)
       }
     '';
   });
