@@ -13,6 +13,9 @@
     atuin init fish | source
   '';
   programs.nushell.extraConfig = ''
-    overlay use (atuin init nu | lines | str join "\n" | $"module atuin_init { ($in) }")
+    (atuin init nu) | save --force /tmp/atuin_init.nu
+    if ("/tmp/atuin_init.nu" | path exists) {
+      source /tmp/atuin_init.nu
+    }
   ''; 
 }
