@@ -16,6 +16,9 @@
 
     helix.url = "github:helix-editor/helix/master";
     helix.inputs.nixpkgs.follows = "nixpkgs";
+
+    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
+    determinate.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = inputs@{ ... }:
@@ -130,6 +133,7 @@
           }
           inputs.sops-nix.nixosModules.sops
           inputs.home-manager.nixosModules.home-manager
+          inputs.determinate.nixosModules.default
           ./modules
           ./hosts/nixos
         ]
