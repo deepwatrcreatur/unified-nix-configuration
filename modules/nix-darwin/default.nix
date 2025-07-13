@@ -11,6 +11,7 @@
   system.defaults.finder.AppleShowAllExtensions = true;
   
   environment.systemPackages = with pkgs; [
+    watch
   ];
 
 }
