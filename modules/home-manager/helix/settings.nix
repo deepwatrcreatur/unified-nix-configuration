@@ -1,4 +1,3 @@
-
 {
   theme = "ao";
 
@@ -41,22 +40,22 @@
       };
     };
 
-    line-number = "relative"; # New
-    cursorline = true; # New
-    bufferline = "multiple"; # Same as original, kept
-    scrolloff = 8; # New
-    color-modes = true; # Same as original, kept
-    true-color = true; # New
-    undercurl = true; # New
-    jump-label-alphabet = "hatesincludorkmjfxwypgvb"; # New
-    end-of-line-diagnostics = "hint"; # Same as original, kept
-    rulers = [ 80 120 ]; # New
+    line-number = "relative";
+    cursorline = true;
+    bufferline = "multiple";
+    scrolloff = 8;
+    color-modes = true;
+    true-color = true;
+    undercurl = true;
+    jump-label-alphabet = "hatesincludorkmjfxwypgvb";
+    end-of-line-diagnostics = "hint";
+    rulers = [ 80 120 ];
 
     lsp = {
-      display-messages = true; # Kept from original
-      display-inlay-hints = true; # Same as original, kept
-      display-progress-messages = true; # Same as original, kept
-      goto-reference-include-declaration = false; # New
+      display-messages = true;
+      display-inlay-hints = true;
+      display-progress-messages = true;
+      goto-reference-include-declaration = false;
     };
 
     statusline = {
@@ -83,10 +82,10 @@
       };
     };
 
-    "indent-guides" = { 
-      render = true; 
-      character = "╎"; 
-      skip-levels = 1; 
+    "indent-guides" = {
+      render = true;
+      character = "╎";
+      skip-levels = 1;
     };
 
     "soft-wrap" = {
@@ -96,8 +95,14 @@
       wrap-indicator = "";
     };
 
-    "inline-diagnostics" = { 
+    "inline-diagnostics" = {
       cursor-line = "warning";
+    };
+
+    file-types = {
+      nix = {
+        soft-wrap.enable = false;
+      };
     };
   };
 
@@ -131,27 +136,26 @@
         };
       };
 
-      space = { # 'space' key as a prefix
-        space = "file_picker"; # maps 'space' then 'space'
-        e = [ # maps 'space' then 'e' (Yazi)
+      space = {
+        space = "file_picker";
+        e = [
           ":sh rm -f /tmp/unique-file"
           ":insert-output yazi %{buffer_name} --chooser-file=/tmp/unique-file"
-          # Using \u001b for \x1b escape codes
           ":insert-output echo \"\u001b[?1049h\u001b[?2004h\" > /dev/tty"
           ":open %sh{cat /tmp/unique-file}"
           ":redraw"
           ":set mouse false"
           ":set mouse true"
         ];
-        g = [ # maps 'space' then 'g' (Lazygit)
+        g = [
           ":write-all"
           ":insert-output lazygit >/dev/tty"
           ":redraw"
           ":set mouse false"
-          ":set mouse true"
+          ":set mouse true'-"
           ":reload-all"
         ];
-        k = [ # maps 'space' then 'k' (k9s)
+        k = [
           ":write-all"
           ":insert-output k9s >/dev/tty"
           ":redraw"
@@ -161,8 +165,8 @@
         ];
       };
 
-      backspace = { # 'backspace' key as a prefix
-        backspace = "suspend"; # maps 'backspace' then 'backspace'
+      backspace = {
+        backspace = "suspend";
       };
     };
 
