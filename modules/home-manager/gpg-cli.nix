@@ -15,5 +15,11 @@
     pinentry.package = pkgs.pinentry-curses;
     # defaultCacheTtl = 10800; # 3 hours
     # maxCacheTtl = 10800;   # 3 hours
+    enableBashIntegration = true;
+    enableZshIntegration = true;
+    enableNushellIntegration = true;
+    enableFishIntegration = true;
+    # extraConfig = "allow-loopback-pinentry";
   };
 }
+
