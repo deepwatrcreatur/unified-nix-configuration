@@ -104,7 +104,6 @@ in
       mergiraf
       gh
       lazygit
-      uninspired
     ] ++ lib.optionals config.programs.git.gui.enable [ meld ];
 
     programs.git = {
