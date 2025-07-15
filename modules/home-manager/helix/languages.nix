@@ -7,6 +7,7 @@
       auto-format = true;
       formatter = { command = "${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt"; args = [ "-" ]; };
       language-servers = [ "nil" "nixd" ];
+      soft-wrap.enable = false;
     }
     {
       name = "elixir";
