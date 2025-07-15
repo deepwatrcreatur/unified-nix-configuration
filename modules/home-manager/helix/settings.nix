@@ -98,12 +98,6 @@
     "inline-diagnostics" = {
       cursor-line = "warning";
     };
-
-    file-types = {
-      nix = {
-        soft-wrap.enable = false;
-      };
-    };
   };
 
   keys = {
@@ -140,7 +134,9 @@
         space = "file_picker";
         e = [
           ":sh rm -f /tmp/unique-file"
-          ":insert-output yazi %{buffer_name} --chooser-file=/tmp/unique-file"
+          ":insert-output yazi %{
+
+buffer_name} --chooser-file=/tmp/unique-file"
           ":insert-output echo \"\u001b[?1049h\u001b[?2004h\" > /dev/tty"
           ":open %sh{cat /tmp/unique-file}"
           ":redraw"
@@ -152,7 +148,7 @@
           ":insert-output lazygit >/dev/tty"
           ":redraw"
           ":set mouse false"
-          ":set mouse true'-"
+          ":set mouse true"
           ":reload-all"
         ];
         k = [
