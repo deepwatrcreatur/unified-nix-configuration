@@ -12,6 +12,7 @@
     ./yazelix.nix
     ./npm.nix
     ./eza.nix 
+    ./fzf.nix
     ./shell-aliases.nix
    ];
 
@@ -27,7 +28,6 @@
     iperf3
     nmap
     yamllint
-    fish
     lsd
     bat
     tmux
