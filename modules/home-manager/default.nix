@@ -11,8 +11,9 @@
     ./cargo-binstall.nix
     ./yazelix.nix
     ./npm.nix
+    ./eza.nix 
     ./shell-aliases.nix
-  ];
+   ];
 
   home.packages = with pkgs; [
     wget
@@ -29,13 +30,10 @@
     fish
     lsd
     bat
-    fzf
-    yazi
     tmux
     neovim
     python3
     glow
-    just
     ripgrep
     age
     nodejs_20
