@@ -266,7 +266,6 @@ in
       ];
 
       lfs.enable = true;
-      delta.enable = true;
     };
 
     programs.bash.shellAliases = shellAliases;
