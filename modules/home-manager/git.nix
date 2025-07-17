@@ -36,7 +36,7 @@ let
     "gdtd" = "git difftool -g --dir-diff";
     "gdca" = "git diff --cached";
     "gdcw" = "git diff --cached --word-diff";
-    "gdct" = "git describe --tags $(git rev-list --tags --max-count=1)";
+    "gdct" = "git describe --tags (^git rev-list --tags --max-count=1)"; 
     "gds" = "git diff --staged";
     "gdt" = "git diff-tree --no-commit-id --name-only -r";
     "gdw" = "git diff --word-diff";
