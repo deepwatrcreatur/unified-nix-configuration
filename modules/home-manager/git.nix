@@ -26,7 +26,7 @@ let
     "gcb" = "git checkout -b";
     "gcl" = "git clone --recurse-submodules";
     "gclean" = "git clean -id";
-    "gpristine" = "git reset --hard && git clean -dffx";
+    "gpristine" = "git reset --hard; git clean -dffx";
     "gco" = "git checkout";
     "gcount" = "git shortlog -sn";
     "gcp" = "git cherry-pick";
@@ -53,7 +53,7 @@ let
     "gma" = "git merge --abort";
     "gp" = "git push";
     "gpa" = "git push --all";
-    "gpoat" = "git push origin --all && git push origin --tags";
+    "gpoat" = "git push origin --all; git push origin --tags";
     "gpu" = "git push upstream";
     "gpv" = "git push -v";
     "gr" = "git remote";
@@ -189,7 +189,7 @@ in
         gcb = "checkout -b";
         gcl = "clone --recurse-submodules";
         gclean = "clean -id";
-        gpristine = "!git reset --hard && git clean -dffx";
+        gpristine = "!git reset --hard; git clean -dffx";
         gco = "checkout";
         gcount = "shortlog -sn";
         gcp = "cherry-pick";
@@ -217,7 +217,7 @@ in
         gp = "push";
         gpa = "push --all";
         "gpf!" = "push --force-with-lease";
-        gpoat = "!git push origin --all && git push origin --tags";
+        gpoat = "!git push origin --all; git push origin --tags";
         gpu = "push upstream";
         gpv = "push -v";
         gr = "remote";
