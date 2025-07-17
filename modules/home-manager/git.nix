@@ -179,12 +179,12 @@ in
         gbsr = "bisect reset";
         gbss = "bisect start";
         gc = "commit -v";
-        "gc!" = "commit -v --amend";
-        "gcn!" = "commit -v --no-edit --amend";
+        gcamend = "commit -v --amend";
+        gcnoedit = "commit -v --no-edit --amend";
         gca = "commit -v -a";
-        "gca!" = "commit -v -a --amend";
-        "gcan!" = "commit -v -a --no-edit --amend";
-        "gcans!" = "commit -v -a -s --no-edit --amend";
+        gcaamend = "commit -v -a --amend";
+        gcanoedit = "commit -v -a --no-edit --amend";
+        gcansign = "commit -v -a -s --no-edit --amend";
         gcas = "commit -a -s";
         gcb = "checkout -b";
         gcl = "clone --recurse-submodules";
@@ -216,7 +216,7 @@ in
         gma = "merge --abort";
         gp = "push";
         gpa = "push --all";
-        "gpf!" = "push --force-with-lease";
+        gpforce = "push --force-with-lease";
         gpoat = "!git push origin --all; git push origin --tags";
         gpu = "push upstream";
         gpv = "push -v";
