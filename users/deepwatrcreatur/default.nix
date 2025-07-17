@@ -7,7 +7,6 @@
     ../../modules/home-manager/rename.nix
     ../../modules/home-manager/zoxide.nix
     ../../modules/home-manager/gemini-cli.nix
-    ../../modules/home-manager/claude-code.nix
     ../../modules/home-manager/npm.nix
     ../../modules/home-manager/env.nix
     ../../modules/home-manager/bitwarden-cli.nix
