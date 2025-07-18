@@ -14,6 +14,7 @@
     ./eza.nix 
     ./fzf.nix
     ./shell-aliases.nix
+    ./sshs.nix
    ];
 
   home.packages = with pkgs; [
