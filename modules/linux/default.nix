@@ -14,6 +14,6 @@ let
 in {
   imports = moduleImports ++ [
     # add standalone home manager for linux hosts t
-    ../home-manager/env/standalone-hm.nix   
+    #../home-manager/env/standalone-hm.nix   
   ];
 }
