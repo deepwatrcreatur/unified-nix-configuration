@@ -3,6 +3,7 @@
 {
   imports = [
     ../../modules/nix-darwin
+    ../../modules/nix-darwin/security.nix
     ./system-defaults.nix
     ./nix-store-uuid.nix
     ./just.nix
