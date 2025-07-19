@@ -65,8 +65,8 @@
     /usr/bin/defaults write /Library/Preferences/.GlobalPreferences.plist MultipleSessionEnabled -bool false
     
     # Disable screensaver password prompt
-    /usr/bin/defaults -currentHost write com.apple.screensaver askForPassword -bool false
-    /usr/bin/defaults -currentHost write com.apple.screensaver askForPasswordDelay -int 0
+    #/usr/bin/defaults -currentHost write com.apple.screensaver askForPassword -bool false
+    #/usr/bin/defaults -currentHost write com.apple.screensaver askForPasswordDelay -int 0
 
     # Disable automatic software updates
     /usr/bin/defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticCheckEnabled -bool false
