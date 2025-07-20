@@ -143,6 +143,22 @@
             then [ /etc/nixos/local-secrets.nix ]
           else []);
       };
+      nixos_lxc = inputs.nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = systemSpecialArgs;
+        modules = [
+          {
+            nixpkgs.overlays = commonOverlays;
+            nixpkgs.config = commonNixpkgsConfig;
+          }
+          inputs.sops-nix.nixosModules.sops
+          inputs.home-manager.nixosModules.home-manager
+          inputs.determinate.nixosModules.default
+          ./modules
+          ./hosts/nixos
+        ]
+        ++(importAllModulesInDir ./hosts/nixos_lxc/modules)
+      };
     };
   };
 }
