@@ -10,8 +10,6 @@
 
   networking.hostName = "nixos_lxc";
 
-  services.nginx-proxy-manager.enable = true;  
-
   security.sudo.wheelNeedsPassword = false;
 
   systemd.mounts = [{
