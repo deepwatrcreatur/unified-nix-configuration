@@ -2,7 +2,6 @@
 {
   home.sessionPath = [
     "/opt/homebrew/bin"
-    "/opt/homebrew/opt/mise/bin"
     "/usr/bin"
     "/bin"
     "/usr/sbin"
