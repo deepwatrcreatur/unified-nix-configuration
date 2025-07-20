@@ -6,7 +6,11 @@
 {
   homebrew = {
     enable = true;
-
+    onActivation = {
+      autoUpdate = true; # Auto-update Homebrew during rebuild
+      cleanup = "zap";   # Remove unlisted casks/formulae
+    };
+    
     taps = [
       "romkatv/powerlevel10k"
       "gabe565/tap"
