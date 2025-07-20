@@ -24,6 +24,7 @@
     casks = [
       "visual-studio-code"
       "font-fira-code"
+      "rustdesk"
     ];
   };
 }
