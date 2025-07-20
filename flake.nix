@@ -157,7 +157,7 @@
           ./modules
           ./hosts/nixos
         ]
-        ++(importAllModulesInDir ./hosts/nixos_lxc/modules)
+        ++(importAllModulesInDir ./hosts/nixos_lxc/modules);
       };
     };
   };
