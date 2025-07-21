@@ -14,6 +14,7 @@
     taps = [
       "romkatv/powerlevel10k"
       "gabe565/tap"
+      "sst/tap"
     ];
 
     # Formulas i.e. CLI tools
@@ -22,6 +23,7 @@
       "cmake"
       "powerlevel10k"
       "bitwarden-cli"
+      "opencode"
     ];
 
     # Casks (GUI Apps)
