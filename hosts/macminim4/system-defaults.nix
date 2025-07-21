@@ -58,11 +58,6 @@
       # LoginwindowText = "Welcome to My Mac"; # Custom login screen message
     #};
   };
-  CustomSystemPreferences = {
-      "com.apple.security.authorization" = {
-        AutoUnlock = true;
-      };
-  };
   
   # Activation script for unsupported settings
   system.activationScripts.postActivation.text = ''
