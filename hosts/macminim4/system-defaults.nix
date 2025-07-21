@@ -58,7 +58,12 @@
       # LoginwindowText = "Welcome to My Mac"; # Custom login screen message
     #};
   };
-
+  CustomUserPreferences = {
+      "com.apple.security.authorization" = {
+        AutoUnlock = true;
+      };
+  };
+  
   # Activation script for unsupported settings
   system.activationScripts.postActivation.text = ''
     # Disable Fast User Switching menu item
