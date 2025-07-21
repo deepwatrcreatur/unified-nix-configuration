@@ -31,6 +31,7 @@
       "visual-studio-code"
       "font-fira-code"
       "rustdesk"
+      "zen-browser"
     ];
   };
 }
