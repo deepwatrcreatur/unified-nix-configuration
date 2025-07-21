@@ -58,7 +58,7 @@
       # LoginwindowText = "Welcome to My Mac"; # Custom login screen message
     #};
   };
-  CustomUserPreferences = {
+  CustomSystemPreferences = {
       "com.apple.security.authorization" = {
         AutoUnlock = true;
       };
