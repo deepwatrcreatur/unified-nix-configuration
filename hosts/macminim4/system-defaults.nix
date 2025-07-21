@@ -78,6 +78,7 @@
     /usr/bin/defaults write com.apple.menuextra.clock Show24Hour -bool true
     /usr/bin/defaults write com.apple.menuextra.clock ShowDate -int 1
     /usr/bin/defaults write com.apple.menuextra.clock ShowDayOfWeek -bool true
+    /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
     /usr/bin/killall SystemUIServer
   '';
 }
