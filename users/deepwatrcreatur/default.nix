@@ -27,7 +27,11 @@
     stow
     mix2nix
   ];
-  
+
+  home.file.".gnupg/public-key.asc" = {
+    source = "./gpg-public-key.asc";
+  };
+      
   # Import GPG keys during activation
   home.activation.importGpgKeys = lib.hm.dag.entryAfter ["writeBoundary"] ''
     echo "Creating ~/.gnupg directory"
