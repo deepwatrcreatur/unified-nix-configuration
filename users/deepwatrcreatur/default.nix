@@ -29,9 +29,13 @@
   ];
 
   home.file.".gnupg/public-key.asc" = {
-    source = "./gpg-public-key.asc";
+    source = toString ./gpg-public-key.asc; # Use absolute path
+    onChange = ''
+      echo "Placed $HOME/.gnupg/public-key.asc from ${toString ./gpg-public-key.asc}"
+      ls -l $HOME/.gnupg/public-key.asc
+    '';
   };
-      
+        
   # Import GPG keys during activation
   home.activation.importGpgKeys = lib.hm.dag.entryAfter ["writeBoundary"] ''
     echo "Creating ~/.gnupg directory"
