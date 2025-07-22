@@ -28,7 +28,7 @@ in
     # Create the Bitwarden CLI directory
     home.file."${config.xdg.configHome}/Bitwarden CLI/.keep".text = "";
 
-    home.file."${config.home.homeDirectory}.gnupg/public-key.asc" = {
+    home.file.".gnupg/public-key.asc" = {
       source = "${sopsSecretsDir}/gpg-public-key.asc";
     };
     
