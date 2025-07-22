@@ -27,4 +27,13 @@
     stow
     mix2nix
   ];
+
+  # Import GPG keys during activation
+  home.activation.importGpgKeys = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    $DRY_RUN_CMD mkdir -p $HOME/.gnupg
+    $DRY_RUN_CMD chmod 700 $HOME/.gnupg
+    $DRY_RUN_CMD ${pkgs.gnupg}/bin/gpg --import $HOME/.gnupg/public-key.asc || true
+    $DRY_RUN_CMD ${pkgs.gnupg}/bin/gpg --import $HOME/.gnupg/private-key.asc || true
+    $DRY_RUN_CMD echo "A116F3E1C37D5592D940BF05EF1502C27653693B:6:" | ${pkgs.gnupg}/bin/gpg --import-ownertrust || true
+  '';
 }
