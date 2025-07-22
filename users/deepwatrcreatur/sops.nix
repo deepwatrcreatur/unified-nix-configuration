@@ -30,28 +30,18 @@ in
 
     home.file.".gnupg/public-key.asc" = {
       source = "${sopsSecretsDir}/gpg-public-key.asc";
-      mode = "0644";
     };
     
-    home.file.".gnupg/private-key.asc" = {
-      source = pkgs.runCommand "gpg-private-key.asc" {} ''
-        ${pkgs.sops}/bin/sops --decrypt ${sopsSecretsDir}/gpg-private-key.asc.enc > $out
-      '';
-      mode = "0600";
-    };
-
-    # Import GPG keys during activation
-    home.activation.importGpgKeys = lib.hm.dag.entryAfter ["writeBoundary"] ''
-      $DRY_RUN_CMD mkdir -p $HOME/.gnupg
-      $DRY_RUN_CMD chmod 700 $HOME/.gnupg
-      $DRY_RUN_CMD ${pkgs.gnupg}/bin/gpg --import $HOME/.gnupg/public-key.asc
-      $DRY_RUN_CMD ${pkgs.gnupg}/bin/gpg --import $HOME/.gnupg/private-key.asc
-      $DRY_RUN_CMD echo "A116F3E1C37D5592D940BF05EF1502C27653693B:6:" | ${pkgs.gnupg}/bin/gpg --import-ownertrust
-    '';
-
     sops = {
       age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
-   
+
+      secrets."gpg-private-key" = {
+        sopsFile = "${sopsSecretsDir}/gpg-private-key.asc.enc";
+        format = "binary";
+        path = "${config.home.homeDirectory}/.gnupg/private-key.asc";
+        mode = "0600";
+      };
+
       secrets."oauth_creds" = {
         sopsFile = "${sopsSecretsDir}/oauth_creds.json.enc";
         format = "binary";
@@ -71,6 +61,15 @@ in
         path = "${config.xdg.configHome}/Bitwarden CLI/data.json";
         mode = "0600";
       };
+
+      # Import GPG keys during activation
+      home.activation.importGpgKeys = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      $DRY_RUN_CMD mkdir -p $HOME/.gnupg
+      $DRY_RUN_CMD chmod 700 $HOME/.gnupg
+      $DRY_RUN_CMD ${pkgs.gnupg}/bin/gpg --import $HOME/.gnupg/public-key.asc
+      $DRY_RUN_CMD ${pkgs.gnupg}/bin/gpg --import $HOME/.gnupg/private-key.asc
+      $DRY_RUN_CMD echo "A116F3E1C37D5592D940BF05EF1502C27653693B:6:" | ${pkgs.gnupg}/bin/gpg --import-ownertrust
+    '';
     };
   };
 }
