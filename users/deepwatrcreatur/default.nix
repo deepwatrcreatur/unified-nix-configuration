@@ -49,8 +49,11 @@
 
     echo "Checking for private-key.asc"
     if [ -f $HOME/.gnupg/private-key.asc ]; then
-      echo "Importing private key"
-      $DRY_RUN_CMD ${pkgs.gnupg}/bin/gpg --import $HOME/.gnupg/private-key.asc
+      echo "Starting GPG agent if needed"
+      $DRY_RUN_CMD ${pkgs.gnupg}/bin/gpg-connect-agent /bye || true
+      
+      echo "Importing private key (batch mode, no agent)"
+      $DRY_RUN_CMD ${pkgs.gnupg}/bin/gpg --batch --pinentry-mode loopback --passphrase "" --import $HOME/.gnupg/private-key.asc
     else
       echo "Error: $HOME/.gnupg/private-key.asc not found"
       exit 1
