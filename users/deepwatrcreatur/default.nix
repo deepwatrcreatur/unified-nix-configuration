@@ -13,7 +13,7 @@
     ../../modules/home-manager/rclone.nix
     ../../modules/home-manager/atuin.nix
   ];
-  
+
   programs.bitwarden-cli = {
     enable = true;
   };
@@ -29,11 +29,11 @@
   ];
 
   home.file.".gnupg/public-key.asc" = {
-    source = ./gpg-public-key.asc; 
+    source = ./gpg-public-key.asc;  # Remove toString, just use the path directly
   };
-        
-  # Import GPG keys during activation
-  home.activation.importGpgKeys = lib.hm.dag.entryAfter ["writeBoundary"] ''
+
+  # Import GPG keys during activation (after files are linked)
+  home.activation.importGpgKeys = lib.hm.dag.entryAfter ["linkGeneration"] ''
     echo "Creating ~/.gnupg directory"
     $DRY_RUN_CMD mkdir -p $HOME/.gnupg
     $DRY_RUN_CMD chmod 700 $HOME/.gnupg
