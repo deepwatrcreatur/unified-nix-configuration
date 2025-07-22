@@ -32,8 +32,8 @@
     source = ./gpg-public-key.asc;  # Remove toString, just use the path directly
   };
 
-  # Import GPG keys during activation (after files are linked)
-  home.activation.importGpgKeys = lib.hm.dag.entryAfter ["linkGeneration"] ''
+  # Import GPG keys during activation (after files are linked and sops secrets are available)
+  home.activation.importGpgKeys = lib.hm.dag.entryAfter ["linkGeneration" "setupSecrets"] ''
     echo "Creating ~/.gnupg directory"
     $DRY_RUN_CMD mkdir -p $HOME/.gnupg
     $DRY_RUN_CMD chmod 700 $HOME/.gnupg
