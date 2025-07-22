@@ -27,13 +27,32 @@
     stow
     mix2nix
   ];
-
+  
   # Import GPG keys during activation
   home.activation.importGpgKeys = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    echo "Creating ~/.gnupg directory"
     $DRY_RUN_CMD mkdir -p $HOME/.gnupg
     $DRY_RUN_CMD chmod 700 $HOME/.gnupg
-    $DRY_RUN_CMD ${pkgs.gnupg}/bin/gpg --import $HOME/.gnupg/public-key.asc || true
-    $DRY_RUN_CMD ${pkgs.gnupg}/bin/gpg --import $HOME/.gnupg/private-key.asc || true
-    $DRY_RUN_CMD echo "A116F3E1C37D5592D940BF05EF1502C27653693B:6:" | ${pkgs.gnupg}/bin/gpg --import-ownertrust || true
+
+    echo "Checking for public-key.asc"
+    if [ -f $HOME/.gnupg/public-key.asc ]; then
+      echo "Importing public key"
+      $DRY_RUN_CMD ${pkgs.gnupg}/bin/gpg --import $HOME/.gnupg/public-key.asc
+    else
+      echo "Error: $HOME/.gnupg/public-key.asc not found"
+      exit 1
+    fi
+
+    echo "Checking for private-key.asc"
+    if [ -f $HOME/.gnupg/private-key.asc ]; then
+      echo "Importing private key"
+      $DRY_RUN_CMD ${pkgs.gnupg}/bin/gpg --import $HOME/.gnupg/private-key.asc
+    else
+      echo "Error: $HOME/.gnupg/private-key.asc not found"
+      exit 1
+    fi
+
+    echo "Setting trust for EF1502C27653693B"
+    $DRY_RUN_CMD echo "A116F3E1C37D5592D940BF05EF1502C27653693B:6:" | ${pkgs.gnupg}/bin/gpg --import-ownertrust
   '';
 }
