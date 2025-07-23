@@ -55,8 +55,14 @@
       echo "Importing private key (batch mode, no agent)"
       $DRY_RUN_CMD ${pkgs.gnupg}/bin/gpg --batch --pinentry-mode loopback --passphrase "" --import $HOME/.gnupg/private-key.asc
     else
-      echo "Error: $HOME/.gnupg/private-key.asc not found"
-      exit 1
+      # Check if we're on macOS and make it a warning instead of error
+      if [[ "$OSTYPE" == "darwin"* ]]; then
+        echo "Warning: $HOME/.gnupg/private-key.asc not found on macOS - skipping private key import"
+        echo "Note: sops-nix age key file discovery issue on macOS"
+      else
+        echo "Error: $HOME/.gnupg/private-key.asc not found"
+        exit 1
+      fi
     fi
 
     echo "Setting trust for EF1502C27653693B"
