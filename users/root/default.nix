@@ -3,6 +3,7 @@
   imports = [
     ../../modules/home-manager/rename.nix
     ../../modules/home-manager/zoxide.nix
+    ../../modules/home-manager/atuin.nix
   ];
   
   home.username = "root";
