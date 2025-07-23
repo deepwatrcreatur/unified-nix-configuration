@@ -29,7 +29,7 @@
     iperf3
     nmap
     yamllint
-    file:
+    file
     lsd
     bat
     tmux
