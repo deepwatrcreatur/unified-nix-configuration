@@ -38,7 +38,6 @@
     glow
     ripgrep
     age
-    nodejs_20
   ];
 
   # Copy .terminfo files into place
