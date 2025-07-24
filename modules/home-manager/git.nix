@@ -145,6 +145,7 @@ in
         merge.conflictstyle = "diff3";
         merge.tool = "vimdiff";
         pull.rebase = true;
+        push.autoSetupRemote = true;
         rebase.autoStash = true;
         rebase.autoSquash = true;
         rerere.enabled = true;
