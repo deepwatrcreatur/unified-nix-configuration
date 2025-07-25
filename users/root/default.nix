@@ -6,7 +6,6 @@
     ../../modules/home-manager/atuin.nix
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/gpg-cli.nix
-    ../../modules/home-manager/secrets-activation.nix
   ];
   
   home.username = "root";
