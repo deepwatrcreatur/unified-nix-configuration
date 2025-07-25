@@ -11,6 +11,7 @@
     ../../modules/home-manager/bitwarden-cli.nix
     ../../modules/home-manager/rclone.nix
     ../../modules/home-manager/atuin.nix
+    ../../modules/home-manager/secrets-activation.nix
   ];
 
   programs.bitwarden-cli = {
