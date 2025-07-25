@@ -10,6 +10,7 @@
     #../../../../modules/home-manager/env/standalone-hm.nix
     ../../../../modules/home-manager/gpg-cli.nix
     ../../../../modules/home-manager/git.nix
+    ../../../../modules/home-manager/secrets-activation.nix
   ];
 
   # Add packages to base config for root user
