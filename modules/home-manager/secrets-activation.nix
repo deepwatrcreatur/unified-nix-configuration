@@ -68,19 +68,22 @@ in
       fi
 
       echo "Using secrets from: ${cfg.secretsPath}"
-
       ${optionalString cfg.enableGpgKeyDecryption ''
-        # Decrypt GPG private key with explicit environment variable
+        # Decrypt GPG private key
         if [ -f "${cfg.secretsPath}/gpg-private-key.asc.enc" ]; then
           echo "Decrypting GPG private key..."
-          if SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" ${pkgs.sops}/bin/sops -d "${cfg.secretsPath}/gpg-private-key.asc.enc" > $HOME/.gnupg/private-key.asc 2>&1; then
-            $DRY_RUN_CMD chmod 600 $HOME/.gnupg/private-key.asc
-            echo "GPG private key decrypted successfully"
+          if [ -n "$DRY_RUN_CMD" ]; then
+            echo "DRY RUN: Would decrypt GPG private key"
           else
-            echo "Warning: Failed to decrypt GPG private key"
-            echo "Debug: SOPS error output:"
-            SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" ${pkgs.sops}/bin/sops -d "${cfg.secretsPath}/gpg-private-key.asc.enc" 2>&1 || true
-            ${optionalString (!cfg.continueOnError) "exit 1"}
+            if SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" ${pkgs.sops}/bin/sops -d "${cfg.secretsPath}/gpg-private-key.asc.enc" > $HOME/.gnupg/private-key.asc 2>&1; then
+              chmod 600 $HOME/.gnupg/private-key.asc
+              echo "GPG private key decrypted successfully"
+            else
+              echo "Warning: Failed to decrypt GPG private key"
+              echo "Debug: SOPS error output:"
+              SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" ${pkgs.sops}/bin/sops -d "${cfg.secretsPath}/gpg-private-key.asc.enc" 2>&1 || true
+              ${optionalString (!cfg.continueOnError) "exit 1"}
+            fi
           fi
         else
           echo "Warning: GPG private key not found at ${cfg.secretsPath}/gpg-private-key.asc.enc"
