@@ -91,39 +91,47 @@ in
       ''}
 
       ${optionalString cfg.enableBitwardenDecryption ''
-        # Decrypt Bitwarden session with explicit environment variable
-        if [ -f "${cfg.secretsPath}/bitwarden.yaml" ]; then
-          echo "Decrypting Bitwarden session..."
-          if $DRY_RUN_CMD SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" ${pkgs.sops}/bin/sops -d --extract '["BW_SESSION"]' "${cfg.secretsPath}/bitwarden.yaml" > $HOME/.config/sops/BW_SESSION 2>&1; then
-            $DRY_RUN_CMD chmod 600 $HOME/.config/sops/BW_SESSION
-            echo "Bitwarden session decrypted successfully"
-          else
-            echo "Warning: Failed to decrypt Bitwarden session"
-            echo "Debug: SOPS error output:"
-            $DRY_RUN_CMD SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" ${pkgs.sops}/bin/sops -d --extract '["BW_SESSION"]' "${cfg.secretsPath}/bitwarden.yaml" 2>&1 || true
-            ${optionalString (!cfg.continueOnError) "exit 1"}
-          fi
-        else
-          echo "Warning: Bitwarden secrets not found at ${cfg.secretsPath}/bitwarden.yaml"
-        fi
+      # Decrypt Bitwarden session
+      if [ -f "${cfg.secretsPath}/bitwarden.yaml" ]; then
+       echo "Decrypting Bitwarden session..."
+       if [ -n "$DRY_RUN_CMD" ]; then
+         echo "DRY RUN: Would decrypt Bitwarden session"
+       else
+         if SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" ${pkgs.sops}/bin/sops -d --extract '["BW_SESSION"]' "${cfg.secretsPath}/bitwarden.yaml" > $HOME/.config/sops/BW_SESSION 2>&1; then
+           chmod 600 $HOME/.config/sops/BW_SESSION
+           echo "Bitwarden session decrypted successfully"
+         else
+           echo "Warning: Failed to decrypt Bitwarden session"
+           echo "Debug: SOPS error output:"
+           SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" ${pkgs.sops}/bin/sops -d --extract '["BW_SESSION"]' "${cfg.secretsPath}/bitwarden.yaml" 2>&1 || true
+           ${optionalString (!cfg.continueOnError) "exit 1"}
+         fi
+       fi
+     else
+       echo "Warning: Bitwarden secrets not found at ${cfg.secretsPath}/bitwarden.yaml"
+     fi
 
-        # Decrypt Bitwarden data.json with explicit environment variable
-        if [ -f "${cfg.secretsPath}/data.json.enc" ]; then
-          echo "Decrypting Bitwarden data.json..."
-          if $DRY_RUN_CMD SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" ${pkgs.sops}/bin/sops -d "${cfg.secretsPath}/data.json.enc" > "$HOME/.config/Bitwarden CLI/data.json" 2>&1; then
-            $DRY_RUN_CMD chmod 600 "$HOME/.config/Bitwarden CLI/data.json"
-            echo "Bitwarden data.json decrypted successfully"
-          else
-            echo "Warning: Failed to decrypt Bitwarden data.json"
-            echo "Debug: SOPS error output:"
-            $DRY_RUN_CMD SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" ${pkgs.sops}/bin/sops -d "${cfg.secretsPath}/data.json.enc" 2>&1 || true
-            ${optionalString (!cfg.continueOnError) "exit 1"}
-          fi
-        else
-          echo "Warning: Bitwarden data.json not found at ${cfg.secretsPath}/data.json.enc"
-        fi
-      ''}
-
+     # Decrypt Bitwarden data.json
+     if [ -f "${cfg.secretsPath}/data.json.enc" ]; then
+       echo "Decrypting Bitwarden data.json..."
+       if [ -n "$DRY_RUN_CMD" ]; then
+         echo "DRY RUN: Would decrypt Bitwarden data.json"
+       else
+         if SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" ${pkgs.sops}/bin/sops -d "${cfg.secretsPath}/data.json.enc" > "$HOME/.config/Bitwarden CLI/data.json" 2>&1; then
+           chmod 600 "$HOME/.config/Bitwarden CLI/data.json"
+           echo "Bitwarden data.json decrypted successfully"
+         else
+           echo "Warning: Failed to decrypt Bitwarden data.json"
+           echo "Debug: SOPS error output:"
+           SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" ${pkgs.sops}/bin/sops -d "${cfg.secretsPath}/data.json.enc" 2>&1 || true
+           ${optionalString (!cfg.continueOnError) "exit 1"}
+         fi
+       fi
+     else
+       echo "Warning: Bitwarden data.json not found at ${cfg.secretsPath}/data.json.enc"
+     fi
+   ''}
+      
       # Import GPG keys
       echo "Importing GPG keys..."
 
