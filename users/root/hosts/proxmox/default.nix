@@ -20,5 +20,22 @@
 
   # Configure programs
   programs.bash.enable = true; 
- 
+  
+  # Configure secrets activation
+  services.secrets-activation = {
+    enable = true;
+    secretsPath = toString ./secrets;
+    continueOnError = true;  # Be more forgiving for root
+    enableBitwardenDecryption = true;
+    enableGpgKeyDecryption = true;
+  };
+  
+  home.file.".gnupg/public-key.asc" = {
+    source = ./gpg-public-key.asc;
+  };
+  home.file.".config/sops/.sops.yaml" = {
+    source = "${toString ./secrets}/sops.yaml";
+    force = true;
+  };
+  home.file.".config/Bitwarden CLI/.keep".text = "";
 }
