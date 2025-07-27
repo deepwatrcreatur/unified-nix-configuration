@@ -14,8 +14,7 @@
   ];
 
   # Add packages to base config for root user
-  home.packages = lib.mkAfter [
-    # host-specific packages
+  home.packages = with pkgs [
   ];
 
   # Configure programs
@@ -38,4 +37,5 @@
     force = true;
   };
   home.file.".config/Bitwarden CLI/.keep".text = "";
+
 }
