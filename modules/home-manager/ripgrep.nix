@@ -157,50 +157,50 @@ in
       RIPGREP_CONFIG_PATH = "${config.home.homeDirectory}/.ripgreprc";
     };
 
-    # Shell aliases
-    programs.bash.shellAliases = mkIf (cfg.enableBashIntegration && cfg.aliases != {}) cfg.aliases;
-    programs.zsh.shellAliases = mkIf (cfg.enableZshIntegration && cfg.aliases != {}) cfg.aliases;
-    programs.fish.shellAliases = mkIf (cfg.enableFishIntegration && cfg.aliases != {}) cfg.aliases;
+    # Shell aliases (combine custom and default)
+    programs.bash.shellAliases = mkIf cfg.enableBashIntegration (
+      if cfg.aliases != {} then cfg.aliases else {
+        rgf = "rg --files";
+        rgi = "rg --no-ignore";
+        rgh = "rg --hidden";
+        rgz = "rg --search-zip";
+        rgt = "rg --type-list";
+        rgp = "rg --pretty";
+      }
+    );
 
-    # Nushell aliases
-    programs.nushell.shellAliases = mkIf (cfg.enableNushellIntegration && cfg.aliases != {}) cfg.aliases;
+    programs.zsh.shellAliases = mkIf cfg.enableZshIntegration (
+      if cfg.aliases != {} then cfg.aliases else {
+        rgf = "rg --files";
+        rgi = "rg --no-ignore";
+        rgh = "rg --hidden";
+        rgz = "rg --search-zip";
+        rgt = "rg --type-list";
+        rgp = "rg --pretty";
+      }
+    );
 
-    # Useful default aliases if none specified
-    programs.bash.shellAliases = mkIf (cfg.enableBashIntegration && cfg.aliases == {}) {
-      rgf = "rg --files";
-      rgi = "rg --no-ignore";
-      rgh = "rg --hidden";
-      rgz = "rg --search-zip";
-      rgt = "rg --type-list";
-      rgp = "rg --pretty";
-    };
+    programs.fish.shellAliases = mkIf cfg.enableFishIntegration (
+      if cfg.aliases != {} then cfg.aliases else {
+        rgf = "rg --files";
+        rgi = "rg --no-ignore";
+        rgh = "rg --hidden";
+        rgz = "rg --search-zip";
+        rgt = "rg --type-list";
+        rgp = "rg --pretty";
+      }
+    );
 
-    programs.zsh.shellAliases = mkIf (cfg.enableZshIntegration && cfg.aliases == {}) {
-      rgf = "rg --files";
-      rgi = "rg --no-ignore";
-      rgh = "rg --hidden";
-      rgz = "rg --search-zip";
-      rgt = "rg --type-list";
-      rgp = "rg --pretty";
-    };
-
-    programs.fish.shellAliases = mkIf (cfg.enableFishIntegration && cfg.aliases == {}) {
-      rgf = "rg --files";
-      rgi = "rg --no-ignore";
-      rgh = "rg --hidden";
-      rgz = "rg --search-zip";
-      rgt = "rg --type-list";
-      rgp = "rg --pretty";
-    };
-
-    programs.nushell.shellAliases = mkIf (cfg.enableNushellIntegration && cfg.aliases == {}) {
-      rgf = "rg --files";
-      rgi = "rg --no-ignore";
-      rgh = "rg --hidden";
-      rgz = "rg --search-zip";
-      rgt = "rg --type-list";
-      rgp = "rg --pretty";
-    };
+    programs.nushell.shellAliases = mkIf cfg.enableNushellIntegration (
+      if cfg.aliases != {} then cfg.aliases else {
+        rgf = "rg --files";
+        rgi = "rg --no-ignore";
+        rgh = "rg --hidden";
+        rgz = "rg --search-zip";
+        rgt = "rg --type-list";
+        rgp = "rg --pretty";
+      }
+    );
 
     # Shell functions for enhanced functionality
     programs.bash.initExtra = mkIf cfg.enableBashIntegration ''
