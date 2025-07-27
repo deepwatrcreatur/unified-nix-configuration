@@ -13,7 +13,7 @@
     ./npm.nix
     ./eza.nix 
     ./fzf.nix
-    ./ripgrep.nix
+    ./ripgrep-enhanced.nix
     ./shell-aliases.nix
     ./sshs.nix
    ];
