@@ -37,7 +37,6 @@
     neovim
     python3
     glow
-    ripgrep
     age
   ];
 
