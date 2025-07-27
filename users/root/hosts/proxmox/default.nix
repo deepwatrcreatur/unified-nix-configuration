@@ -14,11 +14,11 @@
   ];
 
   # Add packages to base config for root user
-  home.packages = with pkgs [
-  ];
+  home.packages = with pkgs; [
+      ];
 
   # Configure programs
-  programs.bash.enable = true; 
+  programs.bash.enable = true;
   
   # Configure secrets activation
   services.secrets-activation = {
