@@ -15,7 +15,6 @@
   home.packages = with pkgs; [
     cot 
     bitwarden
-    ripgrep
     jq
     yq
     nh
