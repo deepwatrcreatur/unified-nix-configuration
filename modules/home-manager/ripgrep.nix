@@ -143,15 +143,14 @@ in
       '';
     };
 
-    # Create global ignore file
-    home.file.".rgignore" = mkIf (cfg.createIgnoreFile && cfg.ignoreFile == null) {
-      text = concatStringsSep "\n" cfg.ignorePatterns;
-    };
-
-    # Use custom ignore file if specified
-    home.file.".rgignore" = mkIf (cfg.ignoreFile != null) {
-      source = cfg.ignoreFile;
-    };
+    # Create or use global ignore file
+    home.file.".rgignore" = mkIf (cfg.createIgnoreFile || cfg.ignoreFile != null) (
+      if cfg.ignoreFile != null then {
+        source = cfg.ignoreFile;
+      } else {
+        text = concatStringsSep "\n" cfg.ignorePatterns;
+      }
+    );
 
     # Environment variable to use the config file
     home.sessionVariables = mkIf (cfg.arguments != [] || cfg.typeDefinitions != {}) {
