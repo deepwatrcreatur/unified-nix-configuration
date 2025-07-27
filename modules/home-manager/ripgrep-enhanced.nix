@@ -3,10 +3,10 @@
 with lib;
 
 let
-  cfg = config.programs.ripgrep;
+  cfg = config.programs.ripgrep-enhanced;
 in
 {
-  options.programs.ripgrep = {
+  options.programs.ripgrep-enhanced = {
     enable = mkEnableOption "ripgrep with enhanced configuration";
 
     package = mkOption {
