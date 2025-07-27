@@ -7,7 +7,9 @@ let
 in
 {
   options.programs.ripgrep-enhanced = {
-    enable = mkEnableOption "ripgrep with enhanced configuration";
+    enable = mkEnableOption "ripgrep with enhanced configuration" // {
+      default = true;
+    };
 
     package = mkOption {
       type = types.package;
@@ -104,25 +106,25 @@ in
 
     enableBashIntegration = mkOption {
       type = types.bool;
-      default = true;
+      default = config.programs.bash.enable or true;
       description = "Whether to enable Bash integration.";
     };
 
     enableZshIntegration = mkOption {
       type = types.bool;
-      default = true;
+      default = config.programs.zsh.enable or false;
       description = "Whether to enable Zsh integration.";
     };
 
     enableFishIntegration = mkOption {
       type = types.bool;
-      default = true;
+      default = config.programs.fish.enable or false;
       description = "Whether to enable Fish integration.";
     };
 
     enableNushellIntegration = mkOption {
       type = types.bool;
-      default = true;
+      default = config.programs.nushell.enable or false;
       description = "Whether to enable Nushell integration.";
     };
   };
