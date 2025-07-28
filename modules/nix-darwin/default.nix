@@ -7,8 +7,6 @@
   
   nixpkgs.config.allowUnfree = true;
   
-  system.defaults.finder.AppleShowAllExtensions = true;
-  
   environment.systemPackages = with pkgs; [
     watch
   ];
@@ -25,9 +23,34 @@
     };
   };
   
+  system.defaults = {
+    finder = {
+      AppleShowAllExtensions = true;
+      ShowPathbar = true;
+      ShowStatusBar = true;
+      FXEnableExtensionChangeWarning = true;
+    };
+    NSGlobalDomain = {
+      NSNavPanelExpandedStateForSaveMode = true; # Expand save dialogs by default
+      NSDocumentSaveNewDocumentsToCloud = false; # Save documents locally by default
+    };
+    LaunchServices = {
+      LSQuarantine = false;
+    };
+  };
+  
   # Also set via system activation script as a fallback
   system.activationScripts.extraActivation.text = ''
     # Set file descriptor limits
     launchctl limit maxfiles 65536 200000 2>/dev/null || true
   '';
+
+  # Activation script for unsupported settings
+  system.activationScripts.postActivation.text = ''
+    # Disable automatic software updates
+    /usr/bin/defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticCheckEnabled -bool false
+    /usr/bin/defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticallyInstallMacOSUpdates -bool false
+    /usr/bin/defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticDownload -bool false
+  '';
 }
+

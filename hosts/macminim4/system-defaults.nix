@@ -23,11 +23,7 @@
     #  };
     #};
     finder = {
-      AppleShowAllExtensions = true;
-      ShowPathbar = true;
-      ShowStatusBar = true; # Show status bar in Finder
       CreateDesktop = true;
-      FXEnableExtensionChangeWarning = true; # Disable warning when changing file extensions
     };
     trackpad = {
       Clicking = true;
@@ -37,9 +33,7 @@
       AppleInterfaceStyle = "Dark";
       KeyRepeat = 2;
       InitialKeyRepeat = 15;
-      NSNavPanelExpandedStateForSaveMode = true; # Expand save dialogs by default
       AppleShowScrollBars = "Always"; # Always show scroll bars ("Automatic" or "WhenScrolling")
-      NSDocumentSaveNewDocumentsToCloud = false; # Save documents locally by default
       "com.apple.swipescrolldirection" = true;
     };
     screencapture = {
@@ -49,9 +43,6 @@
     };
     screensaver = {
       # askForPassword = true; 
-    };
-    LaunchServices = {
-      LSQuarantine = false;
     };
     #loginwindow = {
     #  GuestEnabled = false; # Disable guest account
@@ -68,11 +59,6 @@
     # Disable screensaver password prompt
     #/usr/bin/defaults -currentHost write com.apple.screensaver askForPassword -bool false
     #/usr/bin/defaults -currentHost write com.apple.screensaver askForPasswordDelay -int 0
-
-    # Disable automatic software updates
-    /usr/bin/defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticCheckEnabled -bool false
-    /usr/bin/defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticallyInstallMacOSUpdates -bool false
-    /usr/bin/defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticDownload -bool false
 
     # Configure menu bar clock
     /usr/bin/defaults write com.apple.menuextra.clock IsAnalog -bool false
