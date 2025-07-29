@@ -28,8 +28,8 @@ in
 
     enableDesktopEntry = mkOption {
       type = types.bool;
-      default = true;
-      description = "Create desktop entry for yazelix";
+      default = false;
+      description = "Create desktop entry for yazelix (Linux only)";
     };
 
     keymap = mkOption {
@@ -83,8 +83,6 @@ in
       unar
       jq
       miller
-    ];
-    
     # Shell aliases and functions for yazelix integration
     programs.bash.shellAliases = mkIf cfg.enableShellIntegration {
       yazelix = "zellij -l yazelix";
@@ -125,7 +123,7 @@ in
             { run = ''helix "$@"''; block = true; for = "unix"; }
           ];
           open = [
-            { run = ''xdg-open "$@"''; desc = "Open"; for = "linux"; }
+            { run = ''${if pkgs.stdenv.isLinux then "xdg-open" else "open"} "$@"''; desc = "Open"; }
           ];
         };
         open = {
@@ -207,8 +205,8 @@ in
       }
     ];
 
-    # Desktop entry for yazelix
-    xdg.desktopEntries.yazelix = mkIf cfg.enableDesktopEntry {
+    # Desktop entry for yazelix (Linux only)
+    xdg.desktopEntries.yazelix = mkIf (cfg.enableDesktopEntry && pkgs.stdenv.isLinux) {
       name = "Yazelix";
       comment = "Integrated file manager and editor";
       exec = "zellij -l yazelix";
