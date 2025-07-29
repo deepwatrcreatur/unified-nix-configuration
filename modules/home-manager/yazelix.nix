@@ -83,8 +83,6 @@ in
       unar
       jq
       miller
-    ];
-    
     # Shell aliases and functions for yazelix integration
     programs.bash.shellAliases = mkIf cfg.enableShellIntegration {
       yazelix = "zellij -l yazelix";
@@ -215,6 +213,12 @@ in
       icon = "folder";
       terminal = true;
       categories = [ "Development" "FileManager" ];
+    };
+
+    # Environment variables
+    home.sessionVariables = {
+      EDITOR = "helix";
+      VISUAL = "helix";
     };
 
     # Install additional tools via cargo-binstall if needed
