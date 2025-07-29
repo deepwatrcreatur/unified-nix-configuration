@@ -68,7 +68,6 @@ in
     home.packages = with pkgs; [
       cfg.package
       zellij
-      helix
       # Additional tools that enhance the yazelix experience
       fd
       ripgrep
