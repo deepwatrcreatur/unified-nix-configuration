@@ -83,6 +83,8 @@ in
       unar
       jq
       miller
+    ];
+    
     # Shell aliases and functions for yazelix integration
     programs.bash.shellAliases = mkIf cfg.enableShellIntegration {
       yazelix = "zellij -l yazelix";
