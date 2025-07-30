@@ -68,7 +68,6 @@ in
     home.packages = with pkgs; [
       cfg.package
       zellij
-      helix
       # Additional tools that enhance the yazelix experience
       fd
       ripgrep
@@ -188,7 +187,7 @@ in
                 }
                 pane split_direction="horizontal" {
                   pane {
-                    command "helix"
+                    command "hx"
                     args "."
                   }
                   pane size="30%" {
