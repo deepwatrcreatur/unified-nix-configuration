@@ -310,11 +310,7 @@ in
         let results = (rg --color=always --line-number --no-heading --smart-case $pattern ...$args | complete)
         if ($results.exit_code == 0) {
           $results.stdout
-          | fzf --ansi
-              --color 'hl:-1:underline,hl+:-1:underline:reverse'
-              --delimiter ':'
-              --preview 'bat --color=always {1} --highlight-line {2}'
-              --preview-window 'up,60%,border-bottom,+{2}+3/3,~3'
+          | ^fzf --ansi --color "hl:-1:underline,hl+:-1:underline:reverse" --delimiter ":" --preview "bat --color=always {1} --highlight-line {2}" --preview-window "up,60%,border-bottom,+{2}+3/3,~3"
         } else {
           print $"No matches found for pattern: ($pattern)"
         }
