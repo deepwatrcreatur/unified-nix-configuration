@@ -100,6 +100,11 @@ in
       yz = "yazi";
     };
 
+    programs.nushell.shellAliases = mkIf cfg.enableShellIntegration {
+      yazelix = "zellij -l yazelix";
+      yz = "yazi";
+    };
+    
     # Yazi configuration
     programs.yazi = {
       enable = true;
