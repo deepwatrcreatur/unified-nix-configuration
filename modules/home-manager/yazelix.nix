@@ -213,12 +213,6 @@ in
       categories = [ "Development" "FileManager" ];
     };
 
-    # Environment variables
-    home.sessionVariables = {
-      EDITOR = "hx";
-      VISUAL = "hx";
-    };
-
     # Install additional tools via cargo-binstall if needed
     home.activation.installYazelixTools = lib.hm.dag.entryAfter ["writeBoundary"] ''
       # Ensure ~/.cargo/bin exists
