@@ -306,21 +306,20 @@ in
         }
       }
 
-      # Interactive ripgrep with fzf (if available)
       def rgfzf [pattern: string, ...args] {
         let results = (rg --color=always --line-number --no-heading --smart-case $pattern ...$args | complete)
         if ($results.exit_code == 0) {
           $results.stdout
           | fzf --ansi
-              --color "hl:-1:underline,hl+:-1:underline:reverse"
-              --delimiter ":"
-              --preview "bat --color=always {1} --highlight-line {2}"
-              --preview-window "up,60%,border-bottom,+{2}+3/3,~3"
+              --color 'hl:-1:underline,hl+:-1:underline:reverse'
+              --delimiter ':'
+              --preview 'bat --color=always {1} --highlight-line {2}'
+              --preview-window 'up,60%,border-bottom,+{2}+3/3,~3'
         } else {
           print $"No matches found for pattern: ($pattern)"
         }
       }
-
+      
       # Search and get file statistics
       def rgstats [pattern: string, ...args] {
         rg --stats $pattern ...$args | lines | parse "{key}: {value}" | where key != "" and value != ""
