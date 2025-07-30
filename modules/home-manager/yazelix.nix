@@ -68,6 +68,7 @@ in
     home.packages = with pkgs; [
       cfg.package
       zellij
+      helix
       # Additional tools that enhance the yazelix experience
       fd
       ripgrep
@@ -82,8 +83,6 @@ in
       unar
       jq
       miller
-    ];
-  
     # Shell aliases and functions for yazelix integration
     programs.bash.shellAliases = mkIf cfg.enableShellIntegration {
       yazelix = "zellij -l yazelix";
@@ -109,7 +108,7 @@ in
       enableFishIntegration = cfg.enableShellIntegration;
       
       settings = recursiveUpdate {
-        manager = {
+        mgr = {
           show_hidden = false;
           show_symlink = true;
           scrolloff = 5;
@@ -121,7 +120,7 @@ in
         };
         opener = {
           edit = [
-            { run = ''helix "$@"''; block = true; for = "unix"; }
+            { run = ''hx "$@"''; block = true; for = "unix"; }
           ];
           open = [
             { run = ''${if pkgs.stdenv.isLinux then "xdg-open" else "open"} "$@"''; desc = "Open"; }
@@ -140,7 +139,7 @@ in
       } cfg.settings;
 
       keymap = mkIf (cfg.keymap != "") {
-        manager.prepend_keymap = [
+        mgr.prepend_keymap = [
           { on = [ "g" "h" ]; run = "cd ~"; desc = "Go to home directory"; }
           { on = [ "g" "c" ]; run = "cd ~/.config"; desc = "Go to config directory"; }
           { on = [ "g" "d" ]; run = "cd ~/Downloads"; desc = "Go to downloads"; }
@@ -156,9 +155,7 @@ in
 
       initLua = ''
         -- Custom yazelix init.lua
-        require("full-border"):setup()
-        require("git"):setup()
-        
+        -- Only require plugins if they exist
         ${cfg.initLua}
       '';
     };
@@ -214,6 +211,12 @@ in
       icon = "folder";
       terminal = true;
       categories = [ "Development" "FileManager" ];
+    };
+
+    # Environment variables
+    home.sessionVariables = {
+      EDITOR = "hx";
+      VISUAL = "hx";
     };
 
     # Install additional tools via cargo-binstall if needed
