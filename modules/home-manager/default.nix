@@ -19,6 +19,7 @@
    ];
 
   home.packages = with pkgs; [
+    comma
     wget
     curl
     xh
@@ -28,7 +29,6 @@
     btop
     rsync
     iperf3
-    nmap
     yamllint
     file
     lsd
