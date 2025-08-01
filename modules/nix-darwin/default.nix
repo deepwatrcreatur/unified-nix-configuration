@@ -4,6 +4,7 @@
   imports = [
     ./nix-mount.nix
     ./dock.nix
+    ./finder.nix
   ];
   
   nixpkgs.config.allowUnfree = true;
@@ -25,12 +26,6 @@
   };
   
   system.defaults = {
-    finder = {
-      AppleShowAllExtensions = true;
-      ShowPathbar = true;
-      ShowStatusBar = true;
-      FXEnableExtensionChangeWarning = true;
-    };
     NSGlobalDomain = {
       NSNavPanelExpandedStateForSaveMode = true; # Expand save dialogs by default
       NSDocumentSaveNewDocumentsToCloud = false; # Save documents locally by default
