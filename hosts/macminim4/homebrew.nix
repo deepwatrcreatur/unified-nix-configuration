@@ -30,6 +30,7 @@
     casks = [
       "visual-studio-code"
       "font-fira-code"
+      "ghostty"
       "rustdesk"
       "zen-browser"
     ];
