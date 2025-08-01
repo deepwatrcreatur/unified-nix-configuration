@@ -1,4 +1,9 @@
-{ config, ... }: {
+{ config, lib, ... }: 
+let
+  user = config.home-manager.users.${config.system.primaryUser};
+  hasZenBrowser = user ? programs.zen-browser.package;
+in
+{
   system.defaults.dock = {
     minimize-to-application = false;
     orientation = "left";
@@ -17,9 +22,9 @@
 
     enable-spring-load-actions-on-all-items = true;
 
-    persistent-apps = [
-      { app = "${config.home-manager.users.${config.system.primaryUser}
-          .programs.zen-browser.package}/Applications/Zen Browser.app"; }
+    persistent-apps = lib.optionals hasZenBrowser [
+      { app = "${user.programs.zen-browser.package}/Applications/Zen Browser.app"; }
+    ] ++ [
       { app = "/Applications/Ghostty.app"; }
     ];
   };
