@@ -5,6 +5,7 @@
     ./nix-mount.nix
     ./dock.nix
     ./finder.nix
+    ./hammerspoon.nix
   ];
   
   nixpkgs.config.allowUnfree = true;
