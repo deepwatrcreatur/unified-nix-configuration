@@ -3,6 +3,7 @@
 {
   imports = [
     ./nix-mount.nix
+    ./dock.nix
   ];
   
   nixpkgs.config.allowUnfree = true;
