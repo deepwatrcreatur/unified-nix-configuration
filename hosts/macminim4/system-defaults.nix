@@ -2,26 +2,6 @@
 
 {
   system.defaults = {
-    dock = {
-      orientation = "right"; # Dock position: "bottom", "left", or "right"
-      autohide = false;
-      minimize-to-application = false; # Minimize windows into their app icon
-      # mineffect = "genie"; # Minimize effect: "genie", "scale", or "suck"
-      show-recents = true;
-      tilesize = 48;
-      largesize = 64; # Size of magnified icons
-      magnification = true; # Enable magnification when hovering over Dock icons
-      wvous-tl-corner = 2; # Mission Control
-      #wvous-br-corner = 5; # Screen Saver
-    };
-    #menuExtras = {
-    #  clock = {
-    #    IsAnalog = false; # Use digital clock
-    #    Show24Hour = false; # Use 24-hour clock
-    #    ShowDate = true; # Show date in menu bar
-    #    ShowDayOfWeek = true; # Show day of week
-    #  };
-    #};
     finder = {
       CreateDesktop = true;
     };

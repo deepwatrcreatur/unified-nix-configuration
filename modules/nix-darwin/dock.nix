@@ -1,15 +1,19 @@
 { config, ... }: {
   system.defaults.dock = {
+    minimize-to-application = false;
+    orientation = "left";
+    
     autohide   = true;
     showhidden = true; # Translucent.
-
+    
     mouse-over-hilite-stack = true;
 
-    show-recents = false;
+    show-recents = true;
     mru-spaces   = false;
 
     tilesize      = 48;
-    magnification = false;
+    largesize     = 64;
+    magnification = true;
 
     enable-spring-load-actions-on-all-items = true;
 
