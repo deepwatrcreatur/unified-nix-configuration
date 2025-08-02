@@ -18,8 +18,6 @@
     determinate.inputs.nixpkgs.follows = "nixpkgs";
 
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
-    nix-homebrew.inputs.nixpkgs.follows = "nixpkgs";
-    nix-homebrew.inputs.nix-darwin.follows = "nix-darwin";
 
     homebrew-core = {
       url = "github:homebrew/homebrew-core";
@@ -80,7 +78,7 @@
     # --- Darwin Configurations ---
     darwinConfigurations.macminim4 = inputs.nix-darwin.lib.darwinSystem {
       system = "aarch64-darwin";
-      specialArgs = systemSpecialArgs {
+      specialArgs = systemSpecialArgs // {
         inherit (inputs) nix-homebrew homebrew-core homebrew-cask;
       };
       modules = [
