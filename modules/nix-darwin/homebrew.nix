@@ -30,10 +30,6 @@ in {
         autoUpdate = true;
         cleanup = "zap";
       };
-      taps = [
-        "romkatv/powerlevel10k"
-        "gabe565/tap"
-      ] ++ config.homebrew.hostSpecific.taps;
       brews = [
         "fish"
         "cmake"

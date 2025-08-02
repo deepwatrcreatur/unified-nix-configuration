@@ -28,6 +28,21 @@
       url = "github:homebrew/homebrew-cask";
       flake = false;
     };
+
+    tap-romkatv-powerlevel10k = {
+      url = "github:romkatv/homebrew-powerlevel10k";
+      flake = false;
+    };
+  
+    tap-gabe565 = {
+      url = "github:gabe565/homebrew-tap";
+      flake = false;
+    };
+  
+    tap-sst = {
+      url = "github:sst/homebrew-tap";
+      flake = false;
+    };
   };
 
   outputs = inputs@{ ... }:
