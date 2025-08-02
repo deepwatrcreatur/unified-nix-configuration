@@ -1,37 +1,20 @@
 # hosts/macminim4/homebrew.nix
-#
-# Contains Homebrew configuration shared across ALL macOS hosts.
-{ config, pkgs, ... }:
+{ nix-homebrew, homebrew-core, homebrew-cask, ... }: {
+  imports = [ 
+    (import ../../modules/nix-darwin/homebrew.nix {
+      inherit nix-homebrew homebrew-core homebrew-cask;
+    })
+  ];
 
-{
-  homebrew = {
-    enable = true;
-    onActivation = {
-      autoUpdate = true; # Auto-update Homebrew during rebuild
-      cleanup = "zap";   # Remove unlisted casks/formulae
-    };
-    
+  homebrew.hostSpecific = {
     taps = [
-      "romkatv/powerlevel10k"
-      "gabe565/tap"
       "sst/tap"
     ];
-
-    # Formulas i.e. CLI tools
     brews = [
-      "fish"
-      "cmake"
-      "powerlevel10k"
-      "bitwarden-cli"
       "opencode"
     ];
-
-    # Casks (GUI Apps)
     casks = [
       "visual-studio-code"
-      "font-fira-code"
-      "ghostty"
-      "rustdesk"
       "zen-browser"
     ];
   };
