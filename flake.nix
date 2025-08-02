@@ -16,6 +16,10 @@
 
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
     determinate.inputs.nixpkgs.follows = "nixpkgs";
+
+    nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
+    nix-homebrew.inputs.nixpkgs.follows = "nixpkgs";
+    nix-homebrew.inputs.nix-darwin.follows = "nix-darwin";
   };
 
   outputs = inputs@{ ... }:
