@@ -1,8 +1,10 @@
-{ nix-homebrew, homebrew-core, homebrew-cask, config, lib, ... }: let
-  inherit (lib) enabled mkOption types;
+# modules/nix-darwin/homebrew.nix
+{ nix-homebrew, homebrew-core, homebrew-cask, config, lib, ... }: 
+let
+  inherit (lib) mkOption types;
 in {
   imports = [ nix-homebrew.darwinModules.nix-homebrew ];
-
+  
   options.homebrew.hostSpecific = {
     taps = mkOption {
       type = types.listOf types.str;
@@ -10,7 +12,7 @@ in {
       description = "Additional host-specific taps";
     };
     brews = mkOption {
-      type = types.listOf types.str; 
+      type = types.listOf types.str;
       default = [];
       description = "Host-specific CLI tools";
     };
@@ -20,33 +22,31 @@ in {
       description = "Host-specific GUI applications";
     };
   };
-
+  
   config = {
-    homebrew = enabled {
+    homebrew = {
+      enable = true;
       onActivation = {
         autoUpdate = true;
         cleanup = "zap";
       };
-      
       taps = [
         "romkatv/powerlevel10k"
-        "gabe565/tap" 
+        "gabe565/tap"
       ] ++ config.homebrew.hostSpecific.taps;
-      
       brews = [
         "fish"
-        "cmake" 
+        "cmake"
         "powerlevel10k"
         "bitwarden-cli"
       ] ++ config.homebrew.hostSpecific.brews;
-      
       casks = [
         "font-fira-code"
         "ghostty"
         "rustdesk"
       ] ++ config.homebrew.hostSpecific.casks;
     };
-
+    
     nix-homebrew = {
       enable = true;
       user = "deepwatrcreatur";
