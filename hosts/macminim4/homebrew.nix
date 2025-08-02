@@ -1,9 +1,7 @@
 # hosts/macminim4/homebrew.nix
-{ nix-homebrew, homebrew-core, homebrew-cask, ... }: {
+{ ... }: {
   imports = [ 
-    (import ../../modules/nix-darwin/homebrew.nix {
-      inherit nix-homebrew homebrew-core homebrew-cask;
-    })
+    import ../../modules/nix-darwin/homebrew.nix 
   ];
 
   homebrew.hostSpecific = {
