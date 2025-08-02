@@ -1,7 +1,7 @@
 # hosts/macminim4/homebrew.nix
 { ... }: {
   imports = [ 
-    import ../../modules/nix-darwin/homebrew.nix 
+    ../../modules/nix-darwin/homebrew.nix 
   ];
 
   homebrew.hostSpecific = {
