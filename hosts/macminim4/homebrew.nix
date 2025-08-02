@@ -5,9 +5,6 @@
   ];
 
   homebrew.hostSpecific = {
-    taps = [
-      "sst/tap"
-    ];
     brews = [
       "opencode"
     ];
