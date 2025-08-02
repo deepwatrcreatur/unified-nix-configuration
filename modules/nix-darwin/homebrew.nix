@@ -49,7 +49,7 @@ in {
 
     nix-homebrew = {
       enable = true;
-      user = config.system.primaryUser;
+      user = "deepwatrcreatur";
       taps."homebrew/homebrew-core" = homebrew-core;
       taps."homebrew/homebrew-cask" = homebrew-cask;
       mutableTaps = false;
