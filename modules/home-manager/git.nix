@@ -26,7 +26,6 @@ let
     "gcb" = "git checkout -b";
     "gcl" = "git clone --recurse-submodules";
     "gclean" = "git clean -id";
-    "gpristine" = "git reset --hard && git clean -dffx";  # Fixed for nushell
     "gco" = "git checkout";
     "gcount" = "git shortlog -sn";
     "gcp" = "git cherry-pick";
@@ -85,13 +84,19 @@ let
     "gdct" = "git describe --tags (git rev-list --tags --max-count=1 | complete | get stdout | str trim)";
     "gignored" = "git ls-files -v | lines | where ($it | str starts-with '[[:lower:]]')";
     "gpoat" = "git push origin --all; git push origin --tags";
+    "gpristine" = "git reset --hard; git clean -dffx";
   };
 
   # Convert shellAliases to Nushell alias commands with proper external command syntax
+  # Filter out aliases that need special handling in nushell
+  filteredShellAliases = lib.filterAttrs (name: value: 
+    !lib.hasAttr name nushellSpecialAliases
+  ) shellAliases;
+  
   nushellAliases = lib.concatStringsSep "\n" (
     (lib.mapAttrsToList (name: value: 
       "alias ${name} = ^${value}"
-    ) shellAliases) ++
+    ) filteredShellAliases) ++
     (lib.mapAttrsToList (name: value: 
       "alias ${name} = ${value}"
     ) nushellSpecialAliases)
@@ -172,7 +177,6 @@ in
         ci = "commit";
         st = "status";
         graph = "mergiraf";
-        # ... (keeping your existing git aliases)
       };
 
       attributes = [
