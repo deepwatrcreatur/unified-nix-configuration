@@ -89,19 +89,59 @@ let
   };
 
   # Convert shellAliases to Nushell alias commands with proper external command syntax
-  # Filter out aliases that need special handling in nushell
+  # Filter out aliases that contain dangerous multi-command syntax
   filteredShellAliases = lib.filterAttrs (name: value: 
-    !lib.hasAttr name nushellSpecialAliases
+    # Only include simple single-command aliases - exclude anything with:
+    !lib.hasInfix ";" value &&   # No semicolons
+    !lib.hasInfix "&&" value &&  # No double ampersands  
+    !lib.hasInfix "|" value &&   # No pipes
+    !lib.hasInfix "(" value      # No subcommands
   ) shellAliases;
+  
+  # Simple, safe single-command aliases for nushell
+  nushellSafeAliases = {
+    "gdct" = "git describe --tags";
+    "gignored" = "git ls-files -v";
+  };
+
+  # Create nushell functions for complex multi-command operations
+  nushellFunctions = ''
+    # Multi-command git functions (safe - only execute when called)
+    def gpoat [] {
+      print "Pushing all branches and tags..."
+      git push origin --all
+      git push origin --tags
+      print "Done!"
+    }
+    
+    def gpristine [] {
+      print "⚠️  WARNING: This will delete ALL untracked files and reset to HEAD!"
+      print "This action cannot be undone. Are you sure? (y/N)"
+      let confirm = (input)
+      if ($confirm | str downcase) == "y" {
+        print "Resetting and cleaning..."
+        git reset --hard
+        git clean -dffx
+        print "Repository reset to pristine state."
+      } else {
+        print "Cancelled - no changes made."
+      }
+    }
+
+    # Enhanced git status with nushell formatting
+    def gstatus [] {
+      git status --porcelain | lines | parse "{status} {file}" | where status != ""
+    }
+  '';
   
   nushellAliases = lib.concatStringsSep "\n" (
     (lib.mapAttrsToList (name: value: 
       "alias ${name} = ^${value}"
     ) filteredShellAliases) ++
     (lib.mapAttrsToList (name: value: 
-      "alias ${name} = ^${value}"  # ADD ^ prefix here too!
-    ) nushellSpecialAliases)
-  );
+      "alias ${name} = ^${value}"
+    ) nushellSafeAliases)
+  ) + "\n\n" + nushellFunctions;
 in
 {
   options.programs.git.gui = {
@@ -178,7 +218,6 @@ in
         ci = "commit";
         st = "status";
         graph = "mergiraf";
-        # ... (keeping your existing git aliases)
       };
 
       attributes = [
