@@ -13,8 +13,4 @@
       rename-apply = "^rename";
     };
   };
-
-  programs.starship = {
-    enableNushellIntegration = true;
-  };
 }
