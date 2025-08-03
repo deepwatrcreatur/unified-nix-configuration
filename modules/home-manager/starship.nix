@@ -11,14 +11,15 @@
       command_timeout = 1000;
       scan_timeout = 30;
       
-      # Classic shell format with bars
-      format = "┌─$directory$git_branch$git_status$nix_shell$line_break└─$character";
+      # Classic shell format with comprehensive info and right side
+      format = "┌─[$directory][$git_branch$git_status][$nix_shell]$line_break└─$character";
+      right_format = "$cmd_duration$time";
       
-      # Directory with classic path display
+      # Directory with brackets around path
       directory = {
         truncation_length = 3;
         truncate_to_repo = true;
-        format = "$path";
+        format = "[$path]($style)";
         style = "bold cyan";
       };
       
@@ -60,6 +61,11 @@
         success_symbol = "[>](bold green)";
         error_symbol = "[>](bold red)";
         vicmd_symbol = "[<](bold yellow)";
+      };
+      
+      # Line break for two-line prompt
+      line_break = {
+        disabled = false;
       };
       
       # Clean up - disable extras
