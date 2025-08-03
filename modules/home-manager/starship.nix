@@ -4,7 +4,10 @@
 {
   programs.starship = {
     enable = true;
+    enableBashIntegration = true; 
+    enableZshIntegration = true;     
     enableFishIntegration = true;
+    enableNushellIntegration = true; 
     settings = {
       # Remove add_newline = false; as line_break handles it
       command_timeout = 1300;
