@@ -11,31 +11,32 @@
       command_timeout = 1000;
       scan_timeout = 30;
       
-      # Classic shell format with comprehensive info and right side
-      format = "┌─[$directory][$git_branch$git_status][$nix_shell]$line_break└─$character";
+      # Classic shell format with proper spacing
+      format = "┌─$directory$git_branch$git_status$nix_shell$line_break└─$character";
       right_format = "$cmd_duration$time";
       
-      # Directory with brackets around path
+      # Directory with bars around path
       directory = {
         truncation_length = 3;
         truncate_to_repo = true;
-        format = "[$path]($style)";
+        format = "[$path]($style) ";
         style = "bold cyan";
+        truncation_symbol = "…/";
       };
       
-      # Git branch with classic formatting
+      # Git branch with bars
       git_branch = {
-        format = " on [$symbol$branch]($style)";
-        symbol = "";
+        format = "on [$symbol$branch]($style)";
+        symbol = " ";
         style = "bold purple";
       };
       
-      # Classic git status with + and ? symbols
+      # Classic git status with + and ? symbols  
       git_status = {
-        format = "[$all_status$ahead_behind]($style)";
-        style = "bold red";
+        format = "[$all_status$ahead_behind]($style) ";
+        style = "bold yellow";
         conflicted = "=";
-        up_to_date = "";
+        up_to_date = "✓";
         untracked = "?";
         ahead = "↑\${count}";
         diverged = "↑\${ahead_count}↓\${behind_count}";
@@ -47,9 +48,9 @@
         deleted = "✘";
       };
       
-      # Nix shell indicator
+      # Nix shell indicator with bars
       nix_shell = {
-        format = " via [$symbol$name]($style)";
+        format = "via [$symbol$name]($style) ";
         symbol = "❄️ ";
         style = "bold blue";
         impure_msg = "impure";
@@ -68,16 +69,29 @@
         disabled = false;
       };
       
-      # Clean up - disable extras
+      # Enable command duration and time on right side
+      cmd_duration = {
+        format = "⏱ [$duration]($style) ";
+        style = "yellow";
+        min_time = 1000;
+        show_milliseconds = false;
+      };
+      
+      time = {
+        disabled = false;
+        format = "[$time]($style)";
+        style = "bold white";
+        time_format = "%H:%M:%S";
+      };
+      
+      # Disable unwanted modules
       shell.disabled = true;
       username.disabled = true;
       hostname = {
         ssh_only = true;
-        format = "at [$hostname]($style) ";
+        format = "[$hostname]($style) ";
         style = "bold green";
       };
-      cmd_duration.disabled = true;
-      time.disabled = true;
     };
   };
 }
