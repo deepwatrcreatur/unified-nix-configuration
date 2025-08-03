@@ -11,8 +11,8 @@
       command_timeout = 1000;
       scan_timeout = 30;
       
-      # Boxed format with double bars
-      format = "╭─[$directory$git_branch$git_status$nix_shell]─╮\n╰─$character";
+      # Classic shell format with bars
+      format = "┌─$directory$git_branch$git_status$nix_shell$line_break└─$character";
       
       # Directory with classic path display
       directory = {
@@ -22,17 +22,17 @@
         style = "bold cyan";
       };
       
-      # Git branch 
+      # Git branch with classic formatting
       git_branch = {
-        format = " [$symbol$branch]($style)";
+        format = " on [$symbol$branch]($style)";
         symbol = "";
         style = "bold purple";
       };
       
-      # Classic git status symbols
+      # Classic git status with + and ? symbols
       git_status = {
-        format = " [$all_status$ahead_behind]($style)";
-        style = "bold yellow";
+        format = "[$all_status$ahead_behind]($style)";
+        style = "bold red";
         conflicted = "=";
         up_to_date = "";
         untracked = "?";
@@ -43,27 +43,33 @@
         modified = "!";
         staged = "+";
         renamed = "»";
-        deleted = "x";
+        deleted = "✘";
       };
       
-      # Nix shell
+      # Nix shell indicator
       nix_shell = {
-        format = " [$symbol]($style)";
-        symbol = "❄️";
+        format = " via [$symbol$name]($style)";
+        symbol = "❄️ ";
         style = "bold blue";
+        impure_msg = "impure";
+        pure_msg = "pure";
       };
       
-      # Arrow prompt
+      # Classic prompt character
       character = {
-        success_symbol = "[→](bold green)";
-        error_symbol = "[→](bold red)";
-        vicmd_symbol = "[←](bold yellow)";
+        success_symbol = "[>](bold green)";
+        error_symbol = "[>](bold red)";
+        vicmd_symbol = "[<](bold yellow)";
       };
       
-      # Disable extras
+      # Clean up - disable extras
       shell.disabled = true;
       username.disabled = true;
-      hostname.ssh_only = true;
+      hostname = {
+        ssh_only = true;
+        format = "at [$hostname]($style) ";
+        style = "bold green";
+      };
       cmd_duration.disabled = true;
       time.disabled = true;
     };
