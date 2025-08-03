@@ -34,6 +34,9 @@
         } else if ($env.SSH_AUTH_SOCK | is-empty) and ("/run/current-system/sw/bin/gpgconf" | path exists) {
           $env.SSH_AUTH_SOCK = (^/run/current-system/sw/bin/gpgconf --list-dirs agent-ssh-socket | str trim)
         }
+        
+        # Add starship initialization
+        use ~/.cache/starship/init.nu
       '';
     };
     "Library/Application Support/nushell/env.nu".source = pkgs.writeTextFile {
