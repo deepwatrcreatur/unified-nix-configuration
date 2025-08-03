@@ -35,8 +35,14 @@
           $env.SSH_AUTH_SOCK = (^/run/current-system/sw/bin/gpgconf --list-dirs agent-ssh-socket | str trim)
         }
         
-        # Add starship initialization
-        source ~/.cache/starship/init.nu
+        # Starship prompt integration
+        $env.STARSHIP_SHELL = "nu"
+        $env.PROMPT_COMMAND = { ||
+            ^/usr/local/bin/starship prompt --cmd-duration $env.CMD_DURATION_MS $"--status=($env.LAST_EXIT_CODE)"
+        }
+        $env.PROMPT_COMMAND_RIGHT = { ||
+            ^/usr/local/bin/starship prompt --right --cmd-duration $env.CMD_DURATION_MS $"--status=($env.LAST_EXIT_CODE)"
+        }        
       '';
     };
     "Library/Application Support/nushell/env.nu".source = pkgs.writeTextFile {
