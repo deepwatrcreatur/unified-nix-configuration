@@ -36,7 +36,7 @@
         }
         
         # Add starship initialization
-        use ~/.cache/starship/init.nu
+        source ~/.cache/starship/init.nu
       '';
     };
     "Library/Application Support/nushell/env.nu".source = pkgs.writeTextFile {
