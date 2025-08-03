@@ -81,10 +81,11 @@ let
 
   # Special aliases that need different handling for nushell
   nushellSpecialAliases = {
-    "gdct" = "git describe --tags (git rev-list --tags --max-count=1 | complete | get stdout | str trim)";
-    "gignored" = "git ls-files -v | lines | where ($it | str starts-with '[[:lower:]]')";
     "gpoat" = "git push origin --all; git push origin --tags";
     "gpristine" = "git reset --hard; git clean -dffx";
+    # Simplified versions that work as aliases
+    "gdct" = "^git describe --tags";
+    "gignored" = "^git ls-files -v";
   };
 
   # Convert shellAliases to Nushell alias commands with proper external command syntax
