@@ -82,7 +82,7 @@ let
   # Special aliases that need different handling for nushell
   nushellSpecialAliases = {
     "gpoat" = "git push origin --all; git push origin --tags";
-    "gpristine" = "git reset --hard; git clean -dffx";
+    # "gpristine" = "git reset --hard; git clean -dffx";  # DISABLED - too dangerous for auto-execution
     # Simplified versions that work as aliases
     "gdct" = "^git describe --tags";
     "gignored" = "^git ls-files -v";
@@ -99,7 +99,7 @@ let
       "alias ${name} = ^${value}"
     ) filteredShellAliases) ++
     (lib.mapAttrsToList (name: value: 
-      "alias ${name} = ${value}"
+      "alias ${name} = ^${value}"  # ADD ^ prefix here too!
     ) nushellSpecialAliases)
   );
 in
@@ -178,6 +178,7 @@ in
         ci = "commit";
         st = "status";
         graph = "mergiraf";
+        # ... (keeping your existing git aliases)
       };
 
       attributes = [
