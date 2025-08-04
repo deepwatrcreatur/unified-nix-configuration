@@ -6,6 +6,7 @@
     ./dock.nix
     ./finder.nix
     ./hammerspoon.nix
+    ./netbios.nix
   ];
   
   nixpkgs.config.allowUnfree = true;
