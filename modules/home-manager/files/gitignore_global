@@ -11,6 +11,10 @@
 *.tmp
 
 
+### Claude ###
+**/.claude/settings.local.json
+
+
 ### Elixir ###
 /_build
 /cover
