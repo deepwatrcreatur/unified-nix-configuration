@@ -9,7 +9,9 @@
       "opencode"
     ];
     casks = [
+      "krita"
       "visual-studio-code"
+      "vlc"
       "zen-browser"
     ];
   };
