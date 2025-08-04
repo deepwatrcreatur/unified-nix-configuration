@@ -163,6 +163,7 @@ in
       userEmail = "deepwatrcreatur@gmail.com";
 
       extraConfig = {
+        core.excludesfile = "${config.xdg.configHome}/git/ignore";
         init.defaultBranch = "main";
         core.editor = "hx";
         core.fsmonitor = true;
@@ -234,6 +235,8 @@ in
 
       lfs.enable = true;
     };
+
+    xdg.configFile."git/ignore".source = ./files/gitignore_global;
 
     # Shell aliases for bash, zsh, fish (unchanged)
     programs.bash.shellAliases = shellAliases;
