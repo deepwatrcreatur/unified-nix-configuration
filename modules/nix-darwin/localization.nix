@@ -1,7 +1,7 @@
 {
   system.defaults.NSGlobalDomain = {
     # Time and Date
-    AppleICUForce24HourTime = true;
+    AppleICUForce24HourTime = false;
     
     # Units
     AppleMeasurementUnits = "Centimeters";
