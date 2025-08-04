@@ -9,7 +9,6 @@
     AppleTemperatureUnit  = "Celsius";
     
     # Language and Region
-    AppleLanguages = [ "en-CA" ];  # Canadian English preference
     AppleLocale = "en_CA@currency=CAD";  # Canadian locale with CAD currency
   };
 }
