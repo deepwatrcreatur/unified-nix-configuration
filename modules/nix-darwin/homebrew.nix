@@ -39,6 +39,7 @@ in {
       casks = [
         "font-fira-code"
         "ghostty"
+        "maccy"
         "rustdesk"
       ] ++ config.homebrew.hostSpecific.casks;
     };
