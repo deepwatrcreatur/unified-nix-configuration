@@ -36,10 +36,6 @@
     # Disable Fast User Switching menu item
     /usr/bin/defaults write /Library/Preferences/.GlobalPreferences.plist MultipleSessionEnabled -bool false
     
-    # Disable screensaver password prompt
-    #/usr/bin/defaults -currentHost write com.apple.screensaver askForPassword -bool false
-    #/usr/bin/defaults -currentHost write com.apple.screensaver askForPasswordDelay -int 0
-
     # Configure menu bar clock
     /usr/bin/defaults write com.apple.menuextra.clock IsAnalog -bool false
     /usr/bin/defaults write com.apple.menuextra.clock Show24Hour -bool true
