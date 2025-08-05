@@ -7,7 +7,9 @@
     ./finder.nix
     ./hammerspoon.nix
     ./localization.nix
+    ./maccy.nix
     ./netbios.nix
+    ./screensaver.nix
   ];
   
   nixpkgs.config.allowUnfree = true;
