@@ -37,11 +37,17 @@ in
     springboard-hide-duration = 0.0;
     springboard-page-duration = 0.0;
 
-    # Disable hot corners.
-    wvous-tl-corner = 0;
+    # hot corners.
     wvous-tr-corner = 0;
-    wvous-bl-corner = 0;
     wvous-br-corner = 0;
+
+    # Top-left: ctrl to disable screensaver
+    "wvous-tl-corner" = 6;
+    "wvous-tl-modifier" = 262144;
+    
+    # Bottom-left: ctrl for launchpad (app chooser)
+    "wvous-bl-corner" = 11;
+    "wvous-bl-modifier" = 262144;
 
     launchanim = 0;
   };
