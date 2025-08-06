@@ -40,6 +40,7 @@ in {
         "font-fira-code"
         "ghostty"
         "maccy"
+        "raycast"
         "rustdesk"
       ] ++ config.homebrew.hostSpecific.casks;
     };
