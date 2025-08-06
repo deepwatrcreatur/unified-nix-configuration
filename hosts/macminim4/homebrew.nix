@@ -9,10 +9,14 @@
       "opencode"
     ];
     casks = [
+      "claude"
+      "discord"
       "krita"
+      "telegram"
       "visual-studio-code"
       "vlc"
       "zen-browser"
+      "zoom"
     ];
   };
 }
