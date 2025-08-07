@@ -10,6 +10,7 @@
     ./maccy.nix
     ./netbios.nix
     ./screensaver.nix
+    ../wezterm-config.nix
   ];
   
   nixpkgs.config.allowUnfree = true;
