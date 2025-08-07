@@ -11,6 +11,7 @@
     casks = [
       "claude"
       "discord"
+      "gitkraken"
       "krita"
       "telegram"
       "visual-studio-code"
