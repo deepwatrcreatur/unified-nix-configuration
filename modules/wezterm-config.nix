@@ -1,5 +1,5 @@
 {
-  imports = [ ../../modules/wezterm.nix ];
+  imports = [ ./wezterm.nix ];
   
   programs.wezterm = {
     enable = true;
@@ -14,7 +14,7 @@
     window.opacity = 0.95;
     
     macos.nativeFullscreen = true;  # Only applied on macOS
-    #linux.enableWayland = true;    # Only applied on Linux
+    linux.enableWayland = true;    # Only applied on Linux
     
     keyBindings = [
       { key = "t"; mods = "CTRL|SHIFT"; action = "SpawnTab 'CurrentPaneDomain'"; }
