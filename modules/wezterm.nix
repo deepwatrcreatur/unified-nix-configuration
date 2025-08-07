@@ -216,15 +216,8 @@ in {
     # Install Wezterm package
     environment.systemPackages = [ cfg.package ];
     
-    # Create config file in appropriate location
-    environment.etc = mkIf isDarwin {
-      "wezterm/wezterm.lua".source = configFile;
-    };
-    
-    # For NixOS systems, place config in system location
-    environment.etc = mkIf isLinux {
-      "wezterm/wezterm.lua".source = configFile;
-    };
+    # Create config file in system location (works on both Darwin and Linux)
+    environment.etc."wezterm/wezterm.lua".source = configFile;
     
     # Home Manager integration (works on both platforms)
     # This assumes home-manager is available as a NixOS module
@@ -239,5 +232,6 @@ in {
       source-code-pro
       hack-font
     ];
+    
   };
 }
