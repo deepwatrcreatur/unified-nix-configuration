@@ -216,26 +216,23 @@ in {
     # Install Wezterm package
     environment.systemPackages = [ cfg.package ];
     
-    # macOS specific configuration
+    # Create config file in appropriate location
     environment.etc = mkIf isDarwin {
       "wezterm/wezterm.lua".source = configFile;
     };
     
-    # Linux specific configuration - for NixOS systems
-    programs.wezterm = mkIf isLinux {
-      enable = true;
-      package = cfg.package;
+    # For NixOS systems, place config in system location
+    environment.etc = mkIf isLinux {
+      "wezterm/wezterm.lua".source = configFile;
     };
     
     # Home Manager integration (works on both platforms)
-    home-manager.sharedModules = [{
-      programs.wezterm = {
-        enable = true;
-        package = cfg.package;
-        extraConfig = builtins.readFile configFile;
-      };
+    # This assumes home-manager is available as a NixOS module
+    home-manager.sharedModules = mkIf (hasAttr "home-manager" config) [{
+      home.file.".config/wezterm/wezterm.lua".source = configFile;
     }];
     
+    # Font packages (useful for both platforms)
     fonts.packages = with pkgs; [
       jetbrains-mono
       fira-code
