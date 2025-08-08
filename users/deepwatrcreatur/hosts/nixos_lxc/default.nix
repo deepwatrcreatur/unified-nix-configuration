@@ -1,4 +1,4 @@
-# users/deepwatrcreatur/hosts/homeserver/default.nix
+# users/deepwatrcreatur/hosts/nixos_lxc/default.nix
 { config, pkgs, lib,  ... }:
 
 {
