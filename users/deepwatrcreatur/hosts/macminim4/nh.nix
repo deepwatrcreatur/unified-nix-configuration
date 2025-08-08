@@ -3,6 +3,6 @@
   imports = [../../../../modules/nh.nix];
   
   programs.nh = {
-    flake = "/home/deepwatrcreatur/unified-nix-configuration";
+    flake = "/Volumes/Work/unified-nix-configuration";
   };
 }
