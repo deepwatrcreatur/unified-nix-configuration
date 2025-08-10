@@ -6,7 +6,7 @@
 {
   darwinConfigurations.my-new-mac = helpers.mkDarwinSystem {
     system = "aarch64-darwin"; # or "x86_64-darwin"
-    hostPath = ./hosts/my-new-mac;
+    hostPath = ../hosts/my-new-mac;
     username = "your-username";
     
     # Optional: add extra modules

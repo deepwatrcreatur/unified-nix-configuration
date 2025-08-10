@@ -6,7 +6,7 @@
 {
   nixosConfigurations.my-new-host = helpers.mkNixosSystem {
     system = "x86_64-linux"; # or "aarch64-linux"
-    hostPath = ./hosts/my-new-host;
+    hostPath = ../hosts/my-new-host;
     
     # Optional: add modules from a directory
     # modules = importAllModulesInDir ./hosts/my-new-host/modules;
