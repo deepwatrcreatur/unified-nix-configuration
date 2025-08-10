@@ -3,6 +3,6 @@
 {
   homeConfigurations.proxmox-root = helpers.mkHomeConfig {
     system = "x86_64-linux";
-    userPath = ./users/root/hosts/proxmox;
+    userPath = ../users/root/hosts/proxmox;
   };
 }
