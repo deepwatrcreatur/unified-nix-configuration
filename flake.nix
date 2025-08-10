@@ -2,48 +2,7 @@
 {
   description = "Multi-system Nix configurations (NixOS, nix-darwin, Home Manager)";
 
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-
-    nix-darwin.url = "github:LnL7/nix-darwin/master";
-    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
-
-    home-manager.url = "github:nix-community/home-manager";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
-
-    sops-nix.url = "github:Mic92/sops-nix";
-    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
-
-    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
-    determinate.inputs.nixpkgs.follows = "nixpkgs";
-
-    nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
-
-    homebrew-core = {
-      url = "github:homebrew/homebrew-core";
-      flake = false;
-    };
-  
-    homebrew-cask = {
-      url = "github:homebrew/homebrew-cask";
-      flake = false;
-    };
-
-    tap-romkatv-powerlevel10k = {
-      url = "github:romkatv/homebrew-powerlevel10k";
-      flake = false;
-    };
-  
-    tap-gabe565 = {
-      url = "github:gabe565/homebrew-tap";
-      flake = false;
-    };
-  
-    tap-sst = {
-      url = "github:sst/homebrew-tap";
-      flake = false;
-    };
-  };
+  inputs = import ./inputs.nix;
 
   outputs = inputs@{ ... }:
   let
@@ -67,124 +26,99 @@
     importAllModulesInDir = dir:
       let
         items = builtins.readDir dir;
-        # Use nixpkgsLib here
         isNixFile = name: type: type == "regular" && nixpkgsLib.hasSuffix ".nix" name;
         nixFileNames = nixpkgsLib.attrNames (nixpkgsLib.filterAttrs isNixFile items);
       in
         map (fileName: dir + "/${fileName}") nixFileNames;
-  in
-  {
-    # --- Home Manager Configurations (Standalone) ---
-    homeConfigurations = {
-      proxmox-root = inputs.home-manager.lib.homeManagerConfiguration {
-        pkgs = import inputs.nixpkgs {
-          system = "x86_64-linux";
-          config = commonNixpkgsConfig;
-          overlays = commonOverlays;
+
+    # Helper functions to reduce boilerplate in individual host files
+    helpers = {
+      # Standard NixOS system builder
+      mkNixosSystem = { system ? "x86_64-linux", hostPath, modules ? [], extraModules ? [] }: 
+        inputs.nixpkgs.lib.nixosSystem {
+          inherit system;
+          specialArgs = systemSpecialArgs;
+          modules = [
+            {
+              nixpkgs.overlays = commonOverlays;
+              nixpkgs.config = commonNixpkgsConfig;
+            }
+            inputs.sops-nix.nixosModules.sops
+            inputs.home-manager.nixosModules.home-manager
+            inputs.determinate.nixosModules.default
+            ./modules
+            hostPath
+          ] ++ modules ++ extraModules;
         };
-        extraSpecialArgs = homeManagerModuleArgs;
-        modules = [
-          ./users/root/hosts/proxmox
-          ./modules/home-manager
-        ];
-      };
-    };
 
-    # --- Darwin Configurations ---
-    darwinConfigurations.macminim4 = inputs.nix-darwin.lib.darwinSystem {
-      system = "aarch64-darwin";
-      specialArgs = systemSpecialArgs // {
-        inherit (inputs) nix-homebrew homebrew-core homebrew-cask;
-      };
-      modules = [
-        {
-          nixpkgs.overlays = commonOverlays;
-          nixpkgs.config = commonNixpkgsConfig;
-        }
-        ./modules
-        ./hosts/macminim4
-        inputs.home-manager.darwinModules.home-manager
-        ({ pkgs, config, lib, inputs, ... }: { # These are Darwin module args
-          home-manager.users.deepwatrcreatur = {
-            
-            imports = [
-              ./users/deepwatrcreatur
-              ./users/deepwatrcreatur/hosts/macminim4
-              ./modules/home-manager
-            ];
+      # Standard Darwin system builder  
+      mkDarwinSystem = { system ? "aarch64-darwin", hostPath, username, modules ? [] }:
+        let
+          # Extract just the hostname from the path for user config
+          hostName = builtins.baseNameOf (toString hostPath);
+        in
+        inputs.nix-darwin.lib.darwinSystem {
+          inherit system;
+          specialArgs = systemSpecialArgs // {
+            inherit (inputs) nix-homebrew homebrew-core homebrew-cask;
           };
-          home-manager.extraSpecialArgs = homeManagerModuleArgs;
+          modules = [
+            {
+              nixpkgs.overlays = commonOverlays;
+              nixpkgs.config = commonNixpkgsConfig;
+            }
+            ./modules
+            hostPath
+            inputs.home-manager.darwinModules.home-manager
+            ({ pkgs, ... }: {
+              home-manager.users.${username} = {
+                imports = [
+                  ./users/${username}
+                  ./users/${username}/hosts/${hostName}
+                  ./modules/home-manager
+                ];
+              };
+              home-manager.extraSpecialArgs = homeManagerModuleArgs;
 
-          users.users.deepwatrcreatur = {
-            name = "deepwatrcreatur";
-            home = "/Users/deepwatrcreatur";
-            shell = pkgs.fish; 
+              users.users.${username} = {
+                name = username;
+                home = "/Users/${username}";
+                shell = pkgs.fish;
+              };
+            })
+          ] ++ modules;
+        };
+
+      # Standard Home Manager configuration builder
+      mkHomeConfig = { system ? "x86_64-linux", userPath, modules ? [] }:
+        inputs.home-manager.lib.homeManagerConfiguration {
+          pkgs = import inputs.nixpkgs {
+            inherit system;
+            config = commonNixpkgsConfig;
+            overlays = commonOverlays;
           };
-        })
-      ];
+          extraSpecialArgs = homeManagerModuleArgs;
+          modules = [
+            userPath
+            ./modules/home-manager
+          ] ++ modules;
+        };
     };
 
-    # --- NixOS Configurations ---
-    nixosConfigurations = {
-      ansible = inputs.nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = systemSpecialArgs;
-        modules = [
-          # You might want commonNixpkgsConfig and commonOverlays here too
-          {
-            nixpkgs.overlays = commonOverlays;
-            nixpkgs.config = commonNixpkgsConfig;
-          }
-          # ./modules/nix-settings.nix 
-          # ./hosts/nixos-lxc/ansible  
-          # ./hosts/nixos
-          inputs.sops-nix.nixosModules.sops
-          inputs.home-manager.nixosModules.home-manager
-          ({ config, lib, inputs, ... }: { 
-            home-manager.users.ansible = {
-              imports = [ ./modules ]; 
-            };
-            home-manager.extraSpecialArgs = homeManagerModuleArgs;
-          })
-        ];
-      };
+    # Helper to load and merge all output configurations
+    loadOutputs = outputsDir:
+      let
+        outputFiles = importAllModulesInDir outputsDir;
+        # Create a context object that output files can use
+        outputContext = {
+          inherit inputs nixpkgsLib commonNixpkgsConfig commonOverlays 
+                  systemSpecialArgs homeManagerModuleArgs importAllModulesInDir helpers;
+        };
+      in
+        nixpkgsLib.foldl' (acc: file: 
+          nixpkgsLib.recursiveUpdate acc (import file outputContext)
+        ) {} outputFiles;
 
-      homeserver = inputs.nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = systemSpecialArgs;
-        modules = [
-          {
-            nixpkgs.overlays = commonOverlays;
-            nixpkgs.config = commonNixpkgsConfig;
-          }
-          inputs.sops-nix.nixosModules.sops
-          inputs.home-manager.nixosModules.home-manager
-          inputs.determinate.nixosModules.default
-          ./modules
-          ./hosts/nixos
-        ]
-        ++(importAllModulesInDir ./hosts/homeserver/modules)
-        # Optional local secrets from original flake
-        ++ (if builtins.pathExists /etc/nixos/local-secrets.nix
-            then [ /etc/nixos/local-secrets.nix ]
-          else []);
-      };
-      nixos_lxc = inputs.nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = systemSpecialArgs;
-        modules = [
-          {
-            nixpkgs.overlays = commonOverlays;
-            nixpkgs.config = commonNixpkgsConfig;
-          }
-          inputs.sops-nix.nixosModules.sops
-          inputs.home-manager.nixosModules.home-manager
-          inputs.determinate.nixosModules.default
-          ./modules
-          ./hosts/nixos
-        ]
-        ++(importAllModulesInDir ./hosts/nixos_lxc/modules);
-      };
-    };
-  };
+  in
+    loadOutputs ./outputs;
 }
