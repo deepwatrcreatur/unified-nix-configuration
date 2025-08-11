@@ -31,8 +31,9 @@ in {
         cleanup = "zap";
       };
       brews = [
-        "fish"
+        "ccat"
         "cmake"
+        "fish"
         "powerlevel10k"
         "bitwarden-cli"
       ] ++ config.homebrew.hostSpecific.brews;
