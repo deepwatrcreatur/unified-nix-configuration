@@ -334,7 +334,7 @@ in {
         "d ${logDir} 0755 root root -"
       ];
       
-      systemd.services = mapAttrs' (name: job:
+      systemd.services = (mapAttrs' (name: job:
         nameValuePair "rsync-${name}" {
           description = "Rsync job: ${job.name}";
           serviceConfig = {
@@ -348,9 +348,21 @@ in {
           });
           path = with pkgs; [ rsync coreutils util-linux ];
         }
-      ) cfg.jobs;
+      ) cfg.jobs) // (optionalAttrs (cfg.logRetentionDays > 0) {
+        # Log cleanup service for Linux
+        rsync-log-cleanup = {
+          description = "Clean up old rsync logs";
+          serviceConfig = {
+            Type = "oneshot";
+            User = "root";
+          };
+          script = ''
+            find ${logDir} -name "*.log" -mtime +${toString cfg.logRetentionDays} -delete
+          '';
+        };
+      });
       
-      systemd.timers = mapAttrs' (name: job:
+      systemd.timers = (mapAttrs' (name: job:
         nameValuePair "rsync-${name}" (mkIf (job.schedule != null) {
           description = "Timer for rsync job: ${job.name}";
           wantedBy = [ "timers.target" ];
@@ -360,28 +372,16 @@ in {
             RandomizedDelaySec = "5m";
           };
         })
-      ) cfg.jobs;
-      
-      # Log cleanup service for Linux
-      systemd.services.rsync-log-cleanup = mkIf (cfg.logRetentionDays > 0) {
-        description = "Clean up old rsync logs";
-        serviceConfig = {
-          Type = "oneshot";
-          User = "root";
+      ) cfg.jobs) // (optionalAttrs (cfg.logRetentionDays > 0) {
+        rsync-log-cleanup = {
+          description = "Timer for rsync log cleanup";
+          wantedBy = [ "timers.target" ];
+          timerConfig = {
+            OnCalendar = "weekly";
+            Persistent = true;
+          };
         };
-        script = ''
-          find ${logDir} -name "*.log" -mtime +${toString cfg.logRetentionDays} -delete
-        '';
-      };
-      
-      systemd.timers.rsync-log-cleanup = mkIf (cfg.logRetentionDays > 0) {
-        description = "Timer for rsync log cleanup";
-        wantedBy = [ "timers.target" ];
-        timerConfig = {
-          OnCalendar = "weekly";
-          Persistent = true;
-        };
-      };
+      });
     })
   ]);
 }
