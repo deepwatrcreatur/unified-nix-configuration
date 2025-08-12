@@ -13,8 +13,6 @@
     ./npm.nix
     ./eza.nix 
     ./fzf.nix
-    ./ripgrep-enhanced.nix
-    ./rsync-enhanced.nix
     ./shell-aliases.nix
     ./sshs.nix
    ];
