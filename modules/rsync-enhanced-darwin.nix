@@ -1,3 +1,4 @@
+# modules/rsync-enhanced-darwin.nix
 { config, lib, pkgs, ... }:
 
 with lib;
@@ -5,10 +6,6 @@ with lib;
 let
   cfg = config.services.rsync-enhanced;
   
-  # Detect platform by checking if systemd options exist (more reliable than platform detection)
-  hasSystemd = options.systemd or null != null;
-  
-  # Platform-specific paths
   logDir = "/var/log/rsync";
   
   # Generate rsync command with all options
@@ -93,7 +90,7 @@ let
       else [] # Custom schedules would need manual plist configuration
     );
     ${optionalString (job.user != "root") "UserName"} = mkIf (job.user != "root") job.user;
-    ${optionalString (job.group != "root") "GroupName"} = mkIf (job.group != "root") job.group;
+    ${optionalString (job.group != "staff") "GroupName"} = mkIf (job.group != "staff") job.group;
     StandardOutPath = "${logDir}/${job.name}.stdout.log";
     StandardErrorPath = "${logDir}/${job.name}.stderr.log";
     EnvironmentVariables = job.environment;
@@ -103,7 +100,7 @@ let
     options = {
       name = mkOption {
         type = types.str;
-        description = "Name of the rsync job (used for logging and service name)";
+        description = "Name of the rsync job (used for logging and launchd label)";
       };
       
       source = mkOption {
@@ -122,9 +119,8 @@ let
         type = types.nullOr (types.enum [ "hourly" "daily" "weekly" ]);
         default = null;
         description = ''
-          Schedule for automatic execution. 
-          On Linux: creates systemd timer. On macOS: creates launchd job.
-          For custom schedules, configure manually after activation.
+          Schedule for automatic execution using launchd.
+          For custom schedules, configure the launchd plist manually after activation.
         '';
         example = "daily";
       };
@@ -171,27 +167,25 @@ let
         type = types.str;
         default = "";
         description = "Command to run on successful completion";
-        example = if hasSystemd then "notify-send 'Backup completed successfully'" 
-                                else "osascript -e 'display notification \"Backup completed\" with title \"Rsync\"'";
+        example = ''osascript -e 'display notification "Backup completed" with title "Rsync"' '';
       };
       
       onFailure = mkOption {
         type = types.str;
         default = "";
         description = "Command to run on failure";
-        example = if hasSystemd then "notify-send 'Backup failed!'"
-                                else "osascript -e 'display notification \"Backup failed\" with title \"Rsync\"'";
+        example = ''osascript -e 'display notification "Backup failed" with title "Rsync"' '';
       };
       
       user = mkOption {
         type = types.str;
-        default = if hasSystemd then "root" else "$(whoami)";
+        default = "$(whoami)";
         description = "User to run the rsync job as";
       };
       
       group = mkOption {
         type = types.str;
-        default = if hasSystemd then "root" else "staff";
+        default = "staff";
         description = "Group to run the rsync job as";
       };
       
@@ -199,16 +193,14 @@ let
         type = types.attrsOf types.str;
         default = {};
         description = "Environment variables for the rsync job";
-        example = { 
-          SSH_AUTH_SOCK = if hasSystemd then "/run/user/1000/ssh-agent" else "/tmp/launch-ssh-auth-sock";
-        };
+        example = { SSH_AUTH_SOCK = "/tmp/launch-ssh-auth-sock"; };
       };
     };
   };
 
 in {
   options.services.rsync-enhanced = {
-    enable = mkEnableOption "enhanced rsync service with scheduling and monitoring";
+    enable = mkEnableOption "enhanced rsync service with launchd scheduling and monitoring";
     
     jobs = mkOption {
       type = types.attrsOf jobType;
@@ -223,8 +215,7 @@ in {
             schedule = "daily";
             compress = true;
             exclude = [ "*.tmp" ".git/" ];
-            onSuccess = ${if hasSystemd then ''"echo 'Documents backed up successfully'"'' 
-                                       else ''"osascript -e 'display notification \"Documents backed up\" with title \"Rsync\"'"''};
+            onSuccess = "osascript -e 'display notification \"Documents backed up\" with title \"Rsync\"'";
           };
         }
       '';
@@ -241,7 +232,6 @@ in {
         "Thumbs.db"
         ".Trash-*"
         ".cache/"
-      ] ++ optionals (not hasSystemd) [
         ".DocumentRevisions-V100"
         ".fseventsd"
         ".Spotlight-V100"
@@ -249,7 +239,7 @@ in {
         ".VolumeIcon.icns"
         ".com.apple.timemachine.donotpresent"
       ];
-      description = "Global exclude patterns applied to all jobs";
+      description = "Global exclude patterns applied to all jobs (includes macOS-specific excludes)";
     };
     
     logRetentionDays = mkOption {
@@ -265,123 +255,59 @@ in {
     };
   };
 
-  config = mkIf cfg.enable (mkMerge [
-    # Common configuration for both platforms
-    {
-      # Ensure rsync package is available
-      environment.systemPackages = [ pkgs.rsync ] ++ optional cfg.enableMonitoring (
-        pkgs.writeShellScriptBin "rsync-status" ''
-          #!/bin/sh
-          echo "=== Rsync Enhanced Status (${if hasSystemd then "Linux" else "macOS"}) ==="
+  config = mkIf cfg.enable {
+    # Ensure rsync package is available
+    environment.systemPackages = [ pkgs.rsync ] ++ optional cfg.enableMonitoring (
+      pkgs.writeShellScriptBin "rsync-status" ''
+        #!/bin/sh
+        echo "=== Rsync Enhanced Status (macOS/launchd) ==="
+        echo
+        
+        echo "Active Jobs:"
+        ${concatStringsSep "\n" (mapAttrsToList (name: job: ''
+          echo "  ${job.name}:"
+          echo "    LaunchAgent: org.nixos.rsync-${name}"
+          if launchctl list | grep -q "org.nixos.rsync-${name}"; then
+            echo "    Status: loaded"
+          else
+            echo "    Status: not loaded"
+          fi
+          echo "    Last log entries:"
+          if [ -f "${logDir}/${job.name}.log" ]; then
+            tail -n 3 "${logDir}/${job.name}.log" | sed 's/^/      /'
+          else
+            echo "      No log file found"
+          fi
           echo
-          
-          echo "Active Jobs:"
-          ${concatStringsSep "\n" (mapAttrsToList (name: job: ''
-            echo "  ${job.name}:"
-            ${if hasSystemd then ''
-              echo "    Service: rsync-${name}.service"
-              echo "    Status: $(systemctl is-active rsync-${name}.service 2>/dev/null || echo "inactive")"
-              ${optionalString (job.schedule != null) ''
-                echo "    Timer: $(systemctl is-active rsync-${name}.timer 2>/dev/null || echo "inactive")"
-                echo "    Next run: $(systemctl list-timers rsync-${name}.timer --no-legend 2>/dev/null | awk '{print $1, $2}' || echo "Not scheduled")"
-              ''}
-            '' else ''
-              echo "    LaunchAgent: org.nixos.rsync-${name}"
-              if launchctl list | grep -q "org.nixos.rsync-${name}"; then
-                echo "    Status: loaded"
-              else
-                echo "    Status: not loaded"
-              fi
-            ''}
-            echo "    Last log entries:"
-            if [ -f "${logDir}/${job.name}.log" ]; then
-              tail -n 3 "${logDir}/${job.name}.log" | sed 's/^/      /'
-            else
-              echo "      No log file found"
-            fi
-            echo
-          '') cfg.jobs)}
-          
-          echo "Log files:"
-          ls -lah ${logDir}/ 2>/dev/null || echo "  No log directory found"
-          
-          echo
-          echo "Manual job execution:"
-          ${concatStringsSep "\n" (mapAttrsToList (name: job: ''
-            echo "  rsync-${name}  # Run ${job.name} job manually"
-          '') cfg.jobs)}
-        ''
-      ) ++ (mapAttrsToList (name: job:
-        pkgs.writeShellScriptBin "rsync-${name}" (mkRsyncCommand (job // {
-          exclude = job.exclude ++ cfg.globalExcludes;
-        }))
-      ) cfg.jobs);
-    }
-
-    # macOS-specific configuration
-    (mkIf (not hasSystemd) {
-      launchd.agents = mapAttrs (name: job:
-        mkIf (job.schedule != null) {
-          enable = true;
-          config = mkLaunchdPlist name job;
-        }
-      ) cfg.jobs;
-    })
-
-    # Linux-specific configuration
-    (mkIf hasSystemd {
-      systemd.tmpfiles.rules = [
-        "d ${logDir} 0755 root root -"
-      ];
-      
-      systemd.services = (mapAttrs' (name: job:
-        nameValuePair "rsync-${name}" {
-          description = "Rsync job: ${job.name}";
-          serviceConfig = {
-            Type = "oneshot";
-            User = job.user;
-            Group = job.group;
-            Environment = mapAttrsToList (k: v: "${k}=${v}") job.environment;
-          };
-          script = mkRsyncCommand (job // {
-            exclude = job.exclude ++ cfg.globalExcludes;
-          });
-          path = with pkgs; [ rsync coreutils util-linux ];
-        }
-      ) cfg.jobs) // (optionalAttrs (cfg.logRetentionDays > 0) {
-        # Log cleanup service for Linux
-        rsync-log-cleanup = {
-          description = "Clean up old rsync logs";
-          serviceConfig = {
-            Type = "oneshot";
-            User = "root";
-          };
-          script = ''
-            find ${logDir} -name "*.log" -mtime +${toString cfg.logRetentionDays} -delete
-          '';
-        };
-      });
-      
-      systemd.timers = (mapAttrs' (name: job:
-        nameValuePair "rsync-${name}" (mkIf (job.schedule != null) {
-          description = "Timer for rsync job: ${job.name}";
-          wantedBy = [ "timers.target" ];
-          timerConfig = {
-            OnCalendar = job.schedule;
-            Persistent = true;
-            RandomizedDelaySec = "5m";
-          };
-        })
-      ) cfg.jobs) // (optionalAttrs (cfg.logRetentionDays > 0) {
-        rsync-log-cleanup = {
-          description = "Timer for rsync log cleanup";
-          wantedBy = [ "timers.target" ];
-          timerConfig = {
-            OnCalendar = "weekly";
-            Persistent = true;
-          };
-        };
-      });
-    })
-  ]);
+        '') cfg.jobs)}
+        
+        echo "Log files:"
+        ls -lah ${logDir}/ 2>/dev/null || echo "  No log directory found"
+        
+        echo
+        echo "Manual job execution:"
+        ${concatStringsSep "\n" (mapAttrsToList (name: job: ''
+          echo "  rsync-${name}  # Run ${job.name} job manually"
+        '') cfg.jobs)}
+        
+        echo
+        echo "LaunchD Management:"
+        echo "  launchctl load ~/Library/LaunchAgents/org.nixos.rsync-*.plist    # Load agents"
+        echo "  launchctl unload ~/Library/LaunchAgents/org.nixos.rsync-*.plist  # Unload agents"
+        echo "  launchctl list | grep rsync                                      # List rsync agents"
+      ''
+    ) ++ (mapAttrsToList (name: job:
+      pkgs.writeShellScriptBin "rsync-${name}" (mkRsyncCommand (job // {
+        exclude = job.exclude ++ cfg.globalExcludes;
+      }))
+    ) cfg.jobs);
+    
+    # Create launchd agents for scheduled jobs
+    launchd.agents = mapAttrs (name: job:
+      mkIf (job.schedule != null) {
+        enable = true;
+        config = mkLaunchdPlist name job;
+      }
+    ) cfg.jobs;
+  };
 }

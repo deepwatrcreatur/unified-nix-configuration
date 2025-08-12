@@ -1,4 +1,22 @@
+# Check status on any host:
+# rsync-status
 
+# Manual backup execution:
+# rsync-documents-sync      # On laptop
+# rsync-documents-backup    # On desktop
+# rsync-home-nas-sync      # Manual NAS sync on laptop
+
+# Platform-specific management:
+# Linux (systemd):
+#   systemctl status rsync-documents-backup.service
+#   systemctl start rsync-documents-backup.service
+#   journalctl -u rsync-documents-backup.service
+
+# macOS (launchd):
+#   launchctl list | grep rsync
+#   launchctl load ~/Library/LaunchAgents/org.nixos.rsync-documents-sync.plist
+#   launchctl start org.nixos.rsync-documents-sync
+=================
 services.rsync-enhanced = {
   enable = true;
   
