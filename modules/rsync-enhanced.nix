@@ -5,11 +5,11 @@ with lib;
 let
   cfg = config.services.rsync-enhanced;
   
-  # Detect if we're on Darwin/macOS
-  isDarwin = pkgs.stdenv.isDarwin;
+  # Detect platform by checking if systemd options exist (more reliable than platform detection)
+  hasSystemd = options.systemd or null != null;
   
   # Platform-specific paths
-  logDir = if isDarwin then "/var/log/rsync" else "/var/log/rsync";
+  logDir = "/var/log/rsync";
   
   # Generate rsync command with all options
   mkRsyncCommand = job: let
@@ -171,27 +171,27 @@ let
         type = types.str;
         default = "";
         description = "Command to run on successful completion";
-        example = if isDarwin then "osascript -e 'display notification \"Backup completed\" with title \"Rsync\"'" 
-                              else "notify-send 'Backup completed successfully'";
+        example = if hasSystemd then "notify-send 'Backup completed successfully'" 
+                                else "osascript -e 'display notification \"Backup completed\" with title \"Rsync\"'";
       };
       
       onFailure = mkOption {
         type = types.str;
         default = "";
         description = "Command to run on failure";
-        example = if isDarwin then "osascript -e 'display notification \"Backup failed\" with title \"Rsync\"'"
-                              else "notify-send 'Backup failed!'";
+        example = if hasSystemd then "notify-send 'Backup failed!'"
+                                else "osascript -e 'display notification \"Backup failed\" with title \"Rsync\"'";
       };
       
       user = mkOption {
         type = types.str;
-        default = if isDarwin then "$(whoami)" else "root";
+        default = if hasSystemd then "root" else "$(whoami)";
         description = "User to run the rsync job as";
       };
       
       group = mkOption {
         type = types.str;
-        default = if isDarwin then "staff" else "root";
+        default = if hasSystemd then "root" else "staff";
         description = "Group to run the rsync job as";
       };
       
@@ -200,7 +200,7 @@ let
         default = {};
         description = "Environment variables for the rsync job";
         example = { 
-          SSH_AUTH_SOCK = if isDarwin then "/tmp/launch-ssh-auth-sock" else "/run/user/1000/ssh-agent";
+          SSH_AUTH_SOCK = if hasSystemd then "/run/user/1000/ssh-agent" else "/tmp/launch-ssh-auth-sock";
         };
       };
     };
@@ -218,13 +218,13 @@ in {
         {
           documents-backup = {
             name = "documents-backup";
-            source = "${if isDarwin then "/Users/username" else "/home/user"}/Documents/";
+            source = "/Users/username/Documents/";
             destination = "backup-server:/backups/documents/";
             schedule = "daily";
             compress = true;
             exclude = [ "*.tmp" ".git/" ];
-            onSuccess = ${if isDarwin then ''"osascript -e 'display notification \"Documents backed up\" with title \"Rsync\"'"'' 
-                                       else ''"echo 'Documents backed up successfully'"''};
+            onSuccess = ${if hasSystemd then ''"echo 'Documents backed up successfully'"'' 
+                                       else ''"osascript -e 'display notification \"Documents backed up\" with title \"Rsync\"'"''};
           };
         }
       '';
@@ -241,7 +241,7 @@ in {
         "Thumbs.db"
         ".Trash-*"
         ".cache/"
-      ] ++ optionals isDarwin [
+      ] ++ optionals (not hasSystemd) [
         ".DocumentRevisions-V100"
         ".fseventsd"
         ".Spotlight-V100"
@@ -272,26 +272,26 @@ in {
       environment.systemPackages = [ pkgs.rsync ] ++ optional cfg.enableMonitoring (
         pkgs.writeShellScriptBin "rsync-status" ''
           #!/bin/sh
-          echo "=== Rsync Enhanced Status (${if isDarwin then "macOS" else "Linux"}) ==="
+          echo "=== Rsync Enhanced Status (${if hasSystemd then "Linux" else "macOS"}) ==="
           echo
           
           echo "Active Jobs:"
           ${concatStringsSep "\n" (mapAttrsToList (name: job: ''
             echo "  ${job.name}:"
-            ${if isDarwin then ''
-              echo "    LaunchAgent: org.nixos.rsync-${name}"
-              if launchctl list | grep -q "org.nixos.rsync-${name}"; then
-                echo "    Status: loaded"
-              else
-                echo "    Status: not loaded"
-              fi
-            '' else ''
+            ${if hasSystemd then ''
               echo "    Service: rsync-${name}.service"
               echo "    Status: $(systemctl is-active rsync-${name}.service 2>/dev/null || echo "inactive")"
               ${optionalString (job.schedule != null) ''
                 echo "    Timer: $(systemctl is-active rsync-${name}.timer 2>/dev/null || echo "inactive")"
                 echo "    Next run: $(systemctl list-timers rsync-${name}.timer --no-legend 2>/dev/null | awk '{print $1, $2}' || echo "Not scheduled")"
               ''}
+            '' else ''
+              echo "    LaunchAgent: org.nixos.rsync-${name}"
+              if launchctl list | grep -q "org.nixos.rsync-${name}"; then
+                echo "    Status: loaded"
+              else
+                echo "    Status: not loaded"
+              fi
             ''}
             echo "    Last log entries:"
             if [ -f "${logDir}/${job.name}.log" ]; then
@@ -319,7 +319,7 @@ in {
     }
 
     # macOS-specific configuration
-    (mkIf isDarwin {
+    (mkIf (not hasSystemd) {
       launchd.agents = mapAttrs (name: job:
         mkIf (job.schedule != null) {
           enable = true;
@@ -329,7 +329,7 @@ in {
     })
 
     # Linux-specific configuration
-    (mkIf (!isDarwin) {
+    (mkIf hasSystemd {
       systemd.tmpfiles.rules = [
         "d ${logDir} 0755 root root -"
       ];
