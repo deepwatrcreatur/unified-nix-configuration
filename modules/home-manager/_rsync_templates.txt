@@ -1,0 +1,63 @@
+
+services.rsync-enhanced = {
+  enable = true;
+  
+  jobs = {
+    documents-backup = {
+      name = "documents-backup";
+      source = "/home/user/Documents/";
+      destination = "backup-server:/backups/documents/";
+      schedule = "daily";
+      compress = true;
+      exclude = [ "*.tmp" ".git/" "node_modules/" ];
+      onSuccess = "notify-send 'Documents backed up successfully'";
+      onFailure = "systemctl --user start backup-failure-handler";
+    };
+    
+    photos-sync = {
+      name = "photos-sync";
+      source = "/home/user/Pictures/";
+      destination = "/mnt/nas/photos/";
+      schedule = "0 2 * * *"; # Daily at 2 AM
+      archive = true;
+      deleteExtraneous = true;
+      user = "user";
+      group = "users";
+    };
+  };
+  
+  logRetentionDays = 14;
+  enableMonitoring = true;
+};
+============================
+# In your darwin-configuration.nix
+services.rsync-enhanced = {
+  enable = true;
+  
+  jobs = {
+    documents-backup = {
+      name = "documents-backup";
+      source = "/Users/myuser/Documents/";
+      destination = "backup-server:/backups/documents/";
+      schedule = "daily";
+      compress = true;
+      onSuccess = ''osascript -e 'display notification "Documents backed up successfully" with title "Rsync"' '';
+      onFailure = ''osascript -e 'display notification "Backup failed!" with title "Rsync"' '';
+    };
+  };
+};
+=========================
+# In your configuration.nix - same syntax!
+services.rsync-enhanced = {
+  enable = true;
+  
+  jobs = {
+    photos-sync = {
+      name = "photos-sync";
+      source = "/home/user/Pictures/";
+      destination = "/mnt/nas/photos/";
+      schedule = "daily";
+      onSuccess = "notify-send 'Photos synced successfully'";
+    };
+  };
+};

@@ -14,6 +14,7 @@
     ./eza.nix 
     ./fzf.nix
     ./ripgrep-enhanced.nix
+    ./rsync-enhanced.nix
     ./shell-aliases.nix
     ./sshs.nix
    ];
@@ -27,7 +28,6 @@
     nmap
     htop
     btop
-    rsync
     iperf3
     yamllint
     file

@@ -14,7 +14,11 @@
 
   programs.fish.enable = true;
 
+  services.rsync-enhanced = {
+    enable = true;
 
+    jobs = {};
+  };
     
   services.tailscale.enable = true;
 
