@@ -5,9 +5,9 @@ with lib;
 
 let
   cfg = config.services.rsync-enhanced;
-  
+
   logDir = "/var/log/rsync";
-  
+
   # Generate rsync command with all options
   mkRsyncCommand = job: let
     baseArgs = [
@@ -16,38 +16,38 @@ let
       "--stats"
       "--human-readable"
     ] ++ job.extraArgs;
-    
+
     archiveArgs = optionals job.archive [
       "--archive"
     ];
-    
+
     deleteArgs = optionals job.deleteExtraneous [
       "--delete"
       "--delete-excluded"
     ];
-    
+
     compressionArgs = optionals job.compress [
       "--compress"
     ];
-    
+
     dryRunArgs = optionals job.dryRun [
       "--dry-run"
     ];
-    
+
     excludeArgs = concatMap (pattern: ["--exclude" pattern]) job.exclude;
-    
+
     allArgs = baseArgs ++ archiveArgs ++ deleteArgs ++ compressionArgs ++ dryRunArgs ++ excludeArgs;
-    
+
     logFile = "${logDir}/${job.name}.log";
-    
+
     rsyncCmd = "${pkgs.rsync}/bin/rsync ${concatStringsSep " " (map escapeShellArg allArgs)} ${escapeShellArg job.source} ${escapeShellArg job.destination}";
   in ''
     # Create log directory
     mkdir -p "${logDir}"
-    
+
     # Log start time
     echo "$(date): Starting rsync job '${job.name}'" >> "${logFile}"
-    
+
     # Run rsync with logging
     if ${rsyncCmd} 2>&1 | tee -a "${logFile}"; then
       echo "$(date): Rsync job '${job.name}' completed successfully" >> "${logFile}"
@@ -57,14 +57,14 @@ let
       ${optionalString (job.onFailure != "") job.onFailure}
       exit 1
     fi
-    
+
     # Rotate log if it gets too large (keep last 1000 lines)
     if [ $(wc -l < "${logFile}") -gt 1000 ]; then
       tail -n 1000 "${logFile}" > "${logFile}.tmp" && mv "${logFile}.tmp" "${logFile}"
     fi
   '';
 
-  # Generate launchd plist for macOS
+  # Generate launchd plist for macOS - FIXED SYNTAX
   mkLaunchdPlist = name: job: {
     Label = "org.nixos.rsync-${name}";
     ProgramArguments = [
@@ -74,7 +74,11 @@ let
         exclude = job.exclude ++ cfg.globalExcludes;
       }))
     ];
-    ${optionalString (job.schedule != null) "StartCalendarInterval"} = mkIf (job.schedule != null) (
+    StandardOutPath = "${logDir}/${job.name}.stdout.log";
+    StandardErrorPath = "${logDir}/${job.name}.stderr.log";
+  } 
+  // optionalAttrs (job.schedule != null) {
+    StartCalendarInterval = 
       if job.schedule == "daily" then [{
         Hour = 2;
         Minute = 0;
@@ -87,12 +91,15 @@ let
       else if job.schedule == "hourly" then [{
         Minute = 0;
       }]
-      else [] # Custom schedules would need manual plist configuration
-    );
-    ${optionalString (job.user != "root") "UserName"} = mkIf (job.user != "root") job.user;
-    ${optionalString (job.group != "staff") "GroupName"} = mkIf (job.group != "staff") job.group;
-    StandardOutPath = "${logDir}/${job.name}.stdout.log";
-    StandardErrorPath = "${logDir}/${job.name}.stderr.log";
+      else []; # Custom schedules would need manual plist configuration
+  }
+  // optionalAttrs (job.user != "root" && job.user != "$(whoami)" && job.user != "") {
+    UserName = job.user;
+  }
+  // optionalAttrs (job.group != "staff" && job.group != "") {
+    GroupName = job.group;
+  }
+  // optionalAttrs (job.environment != {}) {
     EnvironmentVariables = job.environment;
   };
 
@@ -102,19 +109,19 @@ let
         type = types.str;
         description = "Name of the rsync job (used for logging and launchd label)";
       };
-      
+
       source = mkOption {
         type = types.str;
         description = "Source path or remote location";
         example = "/Users/username/Documents/";
       };
-      
+
       destination = mkOption {
         type = types.str;
         description = "Destination path or remote location";
         example = "user@backup-server:/backup/documents/";
       };
-      
+
       schedule = mkOption {
         type = types.nullOr (types.enum [ "hourly" "daily" "weekly" ]);
         default = null;
@@ -124,71 +131,71 @@ let
         '';
         example = "daily";
       };
-      
+
       archive = mkOption {
         type = types.bool;
         default = true;
         description = "Use archive mode (-a): preserve permissions, timestamps, symbolic links, etc.";
       };
-      
+
       compress = mkOption {
         type = types.bool;
         default = false;
         description = "Compress data during transfer";
       };
-      
+
       deleteExtraneous = mkOption {
         type = types.bool;
         default = false;
         description = "Delete files in destination that don't exist in source";
       };
-      
+
       dryRun = mkOption {
         type = types.bool;
         default = false;
         description = "Perform a trial run with no changes made";
       };
-      
+
       exclude = mkOption {
         type = types.listOf types.str;
         default = [];
         description = "List of patterns to exclude";
         example = [ "*.tmp" "*.log" ".git/" "node_modules/" ];
       };
-      
+
       extraArgs = mkOption {
         type = types.listOf types.str;
         default = [];
         description = "Additional rsync arguments";
         example = [ "--backup" "--backup-dir=/backup/old" ];
       };
-      
+
       onSuccess = mkOption {
         type = types.str;
         default = "";
         description = "Command to run on successful completion";
         example = ''osascript -e 'display notification "Backup completed" with title "Rsync"' '';
       };
-      
+
       onFailure = mkOption {
         type = types.str;
         default = "";
         description = "Command to run on failure";
         example = ''osascript -e 'display notification "Backup failed" with title "Rsync"' '';
       };
-      
+
       user = mkOption {
         type = types.str;
-        default = "$(whoami)";
-        description = "User to run the rsync job as";
+        default = "";
+        description = "User to run the rsync job as (empty string for current user)";
       };
-      
+
       group = mkOption {
         type = types.str;
         default = "staff";
         description = "Group to run the rsync job as";
       };
-      
+
       environment = mkOption {
         type = types.attrsOf types.str;
         default = {};
@@ -201,7 +208,7 @@ let
 in {
   options.services.rsync-enhanced = {
     enable = mkEnableOption "enhanced rsync service with launchd scheduling and monitoring";
-    
+
     jobs = mkOption {
       type = types.attrsOf jobType;
       default = {};
@@ -220,15 +227,15 @@ in {
         }
       '';
     };
-    
+
     globalExcludes = mkOption {
       type = types.listOf types.str;
-      default = [ 
-        "*.tmp" 
-        "*.temp" 
-        "*.swp" 
-        "*~" 
-        ".DS_Store" 
+      default = [
+        "*.tmp"
+        "*.temp"
+        "*.swp"
+        "*~"
+        ".DS_Store"
         "Thumbs.db"
         ".Trash-*"
         ".cache/"
@@ -241,13 +248,13 @@ in {
       ];
       description = "Global exclude patterns applied to all jobs (includes macOS-specific excludes)";
     };
-    
+
     logRetentionDays = mkOption {
       type = types.int;
       default = 30;
       description = "Number of days to retain rsync logs";
     };
-    
+
     enableMonitoring = mkOption {
       type = types.bool;
       default = true;
@@ -262,12 +269,12 @@ in {
         #!/bin/sh
         echo "=== Rsync Enhanced Status (macOS/launchd) ==="
         echo
-        
+
         echo "Active Jobs:"
         ${concatStringsSep "\n" (mapAttrsToList (name: job: ''
           echo "  ${job.name}:"
           echo "    LaunchAgent: org.nixos.rsync-${name}"
-          if launchctl list | grep -q "org.nixos.rsync-${name}"; then
+          if launchctl list | grep -q "org.nixos.rsync-${name}" 2>/dev/null; then
             echo "    Status: loaded"
           else
             echo "    Status: not loaded"
@@ -280,16 +287,16 @@ in {
           fi
           echo
         '') cfg.jobs)}
-        
+
         echo "Log files:"
         ls -lah ${logDir}/ 2>/dev/null || echo "  No log directory found"
-        
+
         echo
         echo "Manual job execution:"
         ${concatStringsSep "\n" (mapAttrsToList (name: job: ''
           echo "  rsync-${name}  # Run ${job.name} job manually"
         '') cfg.jobs)}
-        
+
         echo
         echo "LaunchD Management:"
         echo "  launchctl load ~/Library/LaunchAgents/org.nixos.rsync-*.plist    # Load agents"
@@ -301,7 +308,7 @@ in {
         exclude = job.exclude ++ cfg.globalExcludes;
       }))
     ) cfg.jobs);
-    
+
     # Create launchd agents for scheduled jobs
     launchd.agents = mapAttrs (name: job:
       mkIf (job.schedule != null) {
