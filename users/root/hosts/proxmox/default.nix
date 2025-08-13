@@ -15,6 +15,7 @@
 
   # Add packages to base config for root user
   home.packages = with pkgs; [
+    rsync
       ];
 
   # Configure programs
