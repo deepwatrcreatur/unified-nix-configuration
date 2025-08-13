@@ -1,4 +1,4 @@
-# modules/rsync-enhanced-darwin.nix
+# modules/nix-darwin/rsync-enhanced.nix
 { config, lib, pkgs, ... }:
 
 with lib;
