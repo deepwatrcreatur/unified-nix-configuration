@@ -6,7 +6,7 @@ Host pve-strix
     user root
 
 Host opnsense
-    Hostname opnsense.deepwatercreature.com
+    Hostname 10.10.10.1
     user root
 
 Host pve-tomahawk
