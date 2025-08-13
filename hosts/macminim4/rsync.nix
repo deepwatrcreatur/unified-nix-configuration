@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 
 {
-  imports = [../../../modules/nix-darwin/rsync-enhanced.nix ];
+  imports = [./../../../modules/nix-darwin/rsync-enhanced.nix ];
   
   services.rsync-enhanced = {
     enable = true;
