@@ -5,6 +5,7 @@
     ../../modules/nix-darwin
     ../../modules/nix-darwin/security.nix
     ../../modules/nix-darwin/rsync-enhanced.nix
+    ../../modules/rsync-enhanced-darwin.nix
     ./system-defaults.nix
     ./nix-store-uuid.nix
     ./just.nix
