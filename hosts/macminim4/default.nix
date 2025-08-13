@@ -4,7 +4,7 @@
   imports = [
     ../../modules/nix-darwin
     ../../modules/nix-darwin/security.nix
-    ../../modules/nix-darwin/rsync-enhanced.nix
+    ./rsync.nix
     ./system-defaults.nix
     ./nix-store-uuid.nix
     ./just.nix
@@ -15,12 +15,6 @@
 
   programs.fish.enable = true;
 
-  services.rsync-enhanced = {
-    enable = true;
-
-    jobs = {};
-  };
-    
   services.tailscale.enable = true;
 
   # Define the primary user for user-specific settings
