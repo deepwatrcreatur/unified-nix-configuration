@@ -4,7 +4,7 @@
   imports = [
     ../../modules/nix-darwin
     ../../modules/nix-darwin/security.nix
-    ../../modules/rsync-enhanced.nix
+    ../../modules/nix-darwin/rsync-enhanced.nix
     ./system-defaults.nix
     ./nix-store-uuid.nix
     ./just.nix
