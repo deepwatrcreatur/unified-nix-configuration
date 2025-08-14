@@ -33,6 +33,7 @@
     bat
     tmux
     neovim
+    flow-control
     python3
     glow
     age
