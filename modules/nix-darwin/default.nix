@@ -3,6 +3,8 @@
 {
   imports = [
     ./nix-mount.nix
+    ./accessibility.nix
+    ./clock.nix
     ./dock.nix
     ./finder.nix
     ./hammerspoon.nix
@@ -10,6 +12,7 @@
     ./maccy.nix
     ./netbios.nix
     ./screensaver.nix
+    ./trackpad.nix
     ../wezterm-config.nix
   ];
   
