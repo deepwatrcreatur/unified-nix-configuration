@@ -30,6 +30,24 @@
       USBMouseStopsTrackpad = false;
       # Enable momentum scrolling
       TrackpadMomentumScroll = true;
+      # Version info
+      version = 12;
+      UserPreferences = true;
+    };
+
+    # Bluetooth trackpad settings
+    "com.apple.driver.AppleBluetoothMultitouch.trackpad" = {
+      Clicking = true;
+      TrackpadRightClick = true;
+      TrackpadScroll = true;
+      TrackpadPinch = true;
+      TrackpadRotate = true;
+      TrackpadMomentumScroll = true;
+      TrackpadThreeFingerDrag = true;
+      TrackpadCornerSecondaryClick = false;
+      USBMouseStopsTrackpad = false;
+      UserPreferences = true;
+      version = 5;
     };
 
     # Mouse settings
@@ -40,6 +58,21 @@
       MouseMomentumScroll = true;
       MouseTwoFingerDoubleTapGesture = 3;
       MouseTwoFingerHorizSwipeGesture = 2;
+      MouseButtonDivision = 55;
+      UserPreferences = true;
+      version = true;
+    };
+
+    # Bluetooth mouse settings
+    "com.apple.driver.AppleBluetoothMultitouch.mouse" = {
+      MouseButtonMode = "OneButton";
+      MouseHorizontalScroll = true;
+      MouseVerticalScroll = true;
+      MouseMomentumScroll = true;
+      MouseTwoFingerDoubleTapGesture = 3;
+      MouseTwoFingerHorizSwipeGesture = 2;
+      MouseButtonDivision = 55;
+      UserPreferences = true;
     };
   };
 }
