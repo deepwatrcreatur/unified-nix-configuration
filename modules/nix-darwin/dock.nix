@@ -25,6 +25,7 @@ in
       { app = "/Applications/Ghostty.app"; }
     ];
   };
+  
   system.defaults.CustomSystemPreferences."com.apple.dock" = {
     autohide-time-modifier    = 0.0;
     autohide-delay            = 0.0;
