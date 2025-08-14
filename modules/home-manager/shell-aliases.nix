@@ -28,7 +28,7 @@ in
     alias ".." = cd ..
     alias update = ^just --justfile ~/.justfile update
     alias nh-update = ^just --justfile ~/.justfile nh-update
-    ssh-nocheck = ^ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null 
+    alias ssh-nocheck = ^ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null 
     ${lib.optionalString (pkgs.stdenv.isDarwin) "alias xcode = ^open -a Xcode"}
   '';
 }
