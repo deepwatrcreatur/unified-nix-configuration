@@ -9,6 +9,7 @@ let
     ".." = "cd ..";
     update = "just --justfile ~/.justfile update";
     nh-update = "just --justfile ~/.justfile nh-update";
+    ssh-nocheck = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "; 
   } // lib.optionalAttrs (pkgs.stdenv.isDarwin) {
     xcode = "open -a Xcode";
   };
@@ -27,6 +28,7 @@ in
     alias ".." = cd ..
     alias update = ^just --justfile ~/.justfile update
     alias nh-update = ^just --justfile ~/.justfile nh-update
+    ssh-nocheck = ^ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null 
     ${lib.optionalString (pkgs.stdenv.isDarwin) "alias xcode = ^open -a Xcode"}
   '';
 }
