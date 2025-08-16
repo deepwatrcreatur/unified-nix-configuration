@@ -2,19 +2,16 @@
   description = "Unified NixOS configuration for multiple hosts";
 
   inputs = {
-    # Core nixpkgs
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     
-    # Home Manager
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     
-    # Nix Darwin (if you have macOS hosts)
     nix-darwin = {
-      url = "github:LnL7/nix-darwin";
+      url = "github:LnL7/nix-darwin/nix-darwin-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -73,7 +70,6 @@
   in
   {
     nixosConfigurations = {
-      # Your existing hosts (adjust these to match your current setup)
       homeserver = mkSystem {
         system = "x86_64-linux";
         modules = [
@@ -119,6 +115,7 @@
         ];
       };
 
+      # NEW: Garuda-nix host
       garuda-nix = mkGarudaSystem {
         system = "x86_64-linux";
         modules = [
@@ -128,6 +125,7 @@
       };
     };
 
+    # Darwin configurations (if you have macOS hosts)
     darwinConfigurations = {
       macminim4 = nix-darwin.lib.darwinSystem {
         system = "aarch64-darwin";
