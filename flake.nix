@@ -2,20 +2,19 @@
   description = "Unified NixOS configuration for multiple hosts";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.11";
+      url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     
     nix-darwin = {
-      url = "github:LnL7/nix-darwin/nix-darwin-25.11";
+      url = "github:LnL7/nix-darwin/nix-darwin-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Additional flakes for specific hosts
     hyprland = {
       url = "github:hyprwm/Hyprland";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -32,7 +31,6 @@
       # Note: GNS follows their own nixpkgs for caching benefits
       # Don't override their nixpkgs input unless necessary
     };
-
   };
 
   outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, nix-darwin, hyprland, omarchy-nix, garuda, ... }:
@@ -70,6 +68,7 @@
   in
   {
     nixosConfigurations = {
+      # Your existing hosts (adjust these to match your current setup)
       homeserver = mkSystem {
         system = "x86_64-linux";
         modules = [
@@ -105,7 +104,6 @@
         ];
       };
 
-      # NEW: Omarchy-nix host
       omarchy-nix = mkSystem {
         system = "x86_64-linux";
         modules = [
@@ -115,7 +113,6 @@
         ];
       };
 
-      # NEW: Garuda-nix host
       garuda-nix = mkGarudaSystem {
         system = "x86_64-linux";
         modules = [
@@ -125,7 +122,6 @@
       };
     };
 
-    # Darwin configurations (if you have macOS hosts)
     darwinConfigurations = {
       macminim4 = nix-darwin.lib.darwinSystem {
         system = "aarch64-darwin";
