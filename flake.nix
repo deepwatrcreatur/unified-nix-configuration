@@ -127,7 +127,7 @@
         system = "aarch64-darwin";
         specialArgs = { inherit inputs self; };
         modules = [
-          ./hosts/darwin/macminim4
+          ./hosts/macminim4
           home-manager.darwinModules.home-manager
           {
             home-manager = {
