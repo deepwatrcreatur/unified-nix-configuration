@@ -1,18 +1,47 @@
+# flake.nix
 {
-  description = "Unified NixOS configuration for multiple hosts";
+  description = "Multi-system Nix configurations (NixOS, nix-darwin, Home Manager)";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
-    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-    
-    home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
-      inputs.nixpkgs.follows = "nixpkgs";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+
+    nix-darwin.url = "github:LnL7/nix-darwin/master";
+    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+
+    home-manager.url = "github:nix-community/home-manager";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
+    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+
+    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
+    determinate.inputs.nixpkgs.follows = "nixpkgs";
+
+    nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
+
+    homebrew-core = {
+      url = "github:homebrew/homebrew-core";
+      flake = false;
     };
-    
-    nix-darwin = {
-      url = "github:LnL7/nix-darwin/nix-darwin-25.05";
-      inputs.nixpkgs.follows = "nixpkgs";
+
+    homebrew-cask = {
+      url = "github:homebrew/homebrew-cask";
+      flake = false;
+    };
+
+    tap-romkatv-powerlevel10k = {
+      url = "github:romkatv/powerlevel10k";
+      flake = false;
+    };
+
+    tap-gabe565 = {
+      url = "github:gabe565/homebrew-tap";
+      flake = false;
+    };
+
+    tap-sst = {
+      url = "github:sst/homebrew-tap";
+      flake = false;
     };
 
     hyprland = {
@@ -33,122 +62,153 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, nix-darwin, hyprland, omarchy-nix, garuda, ... }:
+  outputs = inputs@{ ... }:
   let
-    # Helper function to create system configurations
-    mkSystem = { system, modules }: nixpkgs.lib.nixosSystem {
-      inherit system;
-      specialArgs = { inherit inputs self; };
-      modules = modules ++ [
-        home-manager.nixosModules.home-manager
-        {
-          home-manager = {
-            useGlobalPkgs = true;
-            useUserPackages = true;
+    # Standard library from nixpkgs - this is the "pure" lib
+    nixpkgsLib = inputs.nixpkgs.lib;
+
+    commonNixpkgsConfig = {
+      allowUnfree = true;
+    };
+    commonOverlays = [];
+
+    # SpecialArgs for NixOS and Darwin SYSTEM modules.
+    # These modules can safely receive the pure nixpkgsLib.
+    systemSpecialArgs = { inherit inputs; lib = nixpkgsLib; };
+
+    # SpecialArgs specifically for HOME MANAGER modules.
+    # We only pass 'inputs'. Home Manager will provide its own 'lib' and 'config.lib'.
+    homeManagerModuleArgs = { inherit inputs; };
+
+    # Helper to import all .nix files from a directory as module paths
+    importAllModulesInDir = dir:
+      let
+        items = builtins.readDir dir;
+        isNixFile = name: type: type == "regular" && nixpkgsLib.hasSuffix ".nix" name;
+        nixFileNames = nixpkgsLib.attrNames (nixpkgsLib.filterAttrs isNixFile items);
+      in
+        map (fileName: dir + "/${fileName}") nixFileNames;
+
+    # Helper functions to reduce boilerplate in individual host files
+    helpers = {
+      # Standard NixOS system builder
+      mkNixosSystem = { system ? "x86_64-linux", hostPath, modules ? [], extraModules ? [] }:
+        inputs.nixpkgs.lib.nixosSystem {
+          inherit system;
+          specialArgs = systemSpecialArgs;
+          modules = [
+            {
+              nixpkgs.overlays = commonOverlays;
+              nixpkgs.config = commonNixpkgsConfig;
+            }
+            inputs.sops-nix.nixosModules.sops
+            inputs.home-manager.nixosModules.home-manager
+            inputs.determinate.nixosModules.default
+            ./modules
+            hostPath
+          ] ++ modules ++ extraModules;
+        };
+
+      # Standard Darwin system builder
+      mkDarwinSystem = { system ? "aarch64-darwin", hostPath, username, modules ? [] }:
+        let
+          # Extract just the hostname from the path for user config
+          hostName = builtins.baseNameOf (toString hostPath);
+        in
+        inputs.nix-darwin.lib.darwinSystem {
+          inherit system;
+          specialArgs = systemSpecialArgs // {
+            inherit (inputs) nix-homebrew homebrew-core homebrew-cask;
           };
-        }
-      ];
+          modules = [
+            {
+              nixpkgs.overlays = commonOverlays;
+              nixpkgs.config = commonNixpkgsConfig;
+            }
+            ./modules
+            hostPath
+            inputs.home-manager.darwinModules.home-manager
+            ({ pkgs, ... }: {
+              home-manager.users.${username} = {
+                imports = [
+                  ./users/${username}
+                  ./users/${username}/hosts/${hostName}
+                  ./modules/home-manager
+                ];
+              };
+              home-manager.extraSpecialArgs = homeManagerModuleArgs;
+
+              users.users.${username} = {
+                name = username;
+                home = "/Users/${username}";
+                shell = pkgs.fish;
+              };
+            })
+          ] ++ modules;
+        };
+
+      mkOmarchySystem = { system ? "x86_64-linux", hostPath, modules ? [], extraModules ? [] }:
+        inputs.nixpkgs.lib.nixosSystem {
+          inherit system;
+          specialArgs = systemSpecialArgs;
+          modules = [
+            {
+              nixpkgs.overlays = commonOverlays;
+              nixpkgs.config = commonNixpkgsConfig;
+            }
+            inputs.sops-nix.nixosModules.sops
+            inputs.home-manager.nixosModules.home-manager
+            inputs.determinate.nixosModules.default
+            inputs.omarchy-nix.nixosModules.default
+            ./modules
+            hostPath
+          ] ++ modules ++ extraModules;
+        };
+
+      mkGarudaSystem = { system ? "x86_64-linux", hostPath, modules ? [], extraModules ? [] }:
+        inputs.garuda.lib.garudaSystem {
+          inherit system;
+          modules = [
+            {
+              nixpkgs.overlays = commonOverlays;
+              nixpkgs.config = commonNixpkgsConfig;
+            }
+            inputs.home-manager.nixosModules.home-manager
+            ./modules
+            hostPath
+          ] ++ modules ++ extraModules;
+        };
+
+      # Standard Home Manager configuration builder
+      mkHomeConfig = { system ? "x86_64-linux", userPath, modules ? [] }:
+        inputs.home-manager.lib.homeManagerConfiguration {
+          pkgs = import inputs.nixpkgs {
+            inherit system;
+            config = commonNixpkgsConfig;
+            overlays = commonOverlays;
+          };
+          extraSpecialArgs = homeManagerModuleArgs;
+          modules = [
+            userPath
+            ./modules/home-manager
+          ] ++ modules;
+        };
     };
 
-    # Helper function for Garuda systems using their lib
-    mkGarudaSystem = { system, modules }: garuda.lib.garudaSystem {
-      inherit system;
-      modules = modules ++ [
-        home-manager.nixosModules.home-manager
-        {
-          home-manager = {
-            useGlobalPkgs = true;
-            useUserPackages = true;
-          };
-        }
-      ];
-    };
+    # Helper to load and merge all output configurations
+    loadOutputs = outputsDir:
+      let
+        outputFiles = importAllModulesInDir outputsDir;
+        # Create a context object that output files can use
+        outputContext = {
+          inherit inputs nixpkgsLib commonNixpkgsConfig commonOverlays
+                  systemSpecialArgs homeManagerModuleArgs importAllModulesInDir helpers;
+        };
+      in
+        nixpkgsLib.foldl' (acc: file:
+          nixpkgsLib.recursiveUpdate acc (import file outputContext)
+        ) {} outputFiles;
 
-    inputs = { inherit nixpkgs nixpkgs-unstable home-manager nix-darwin hyprland omarchy-nix garuda; };
   in
-  {
-    nixosConfigurations = {
-      # Your existing hosts (adjust these to match your current setup)
-      homeserver = mkSystem {
-        system = "x86_64-linux";
-        modules = [
-          ./hosts/nixos/homeserver
-          ./hosts/common-nixos.nix
-        ];
-      };
-
-      inference1 = mkSystem {
-        system = "x86_64-linux"; 
-        modules = [
-          ./hosts/nixos/inference1
-          ./hosts/common-nixos.nix
-          ./modules/nixos/common-inference-vm.nix
-        ];
-      };
-
-      inference2 = mkSystem {
-        system = "x86_64-linux";
-        modules = [
-          ./hosts/nixos/inference2
-          ./hosts/common-nixos.nix
-          ./modules/nixos/common-inference-vm.nix
-        ];
-      };
-
-      inference3 = mkSystem {
-        system = "x86_64-linux";
-        modules = [
-          ./hosts/nixos/inference3
-          ./hosts/common-nixos.nix
-          ./modules/nixos/common-inference-vm.nix
-        ];
-      };
-
-      omarchy-nix = mkSystem {
-        system = "x86_64-linux";
-        modules = [
-          ./hosts/nixos/omarchy-nix
-          ./hosts/common-nixos.nix
-          omarchy-nix.nixosModules.default
-        ];
-      };
-
-      garuda-nix = mkGarudaSystem {
-        system = "x86_64-linux";
-        modules = [
-          ./hosts/nixos/garuda-nix
-          # Note: Don't include common-nixos.nix here as Garuda provides its own base
-        ];
-      };
-    };
-
-    darwinConfigurations = {
-      macminim4 = nix-darwin.lib.darwinSystem {
-        system = "aarch64-darwin";
-        specialArgs = { inherit inputs self; };
-        modules = [
-          ./hosts/macminim4
-          home-manager.darwinModules.home-manager
-          {
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-            };
-          }
-        ];
-      };
-    };
-
-    # Development shell for managing the flake
-    devShells = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ] (system:
-      let pkgs = nixpkgs.legacyPackages.${system}; in
-      pkgs.mkShell {
-        buildInputs = with pkgs; [
-          nixos-rebuild
-          home-manager
-          git
-        ];
-      }
-    );
-  };
+    loadOutputs ./outputs;
 }
