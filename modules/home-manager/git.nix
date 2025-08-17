@@ -149,26 +149,31 @@ in
   };
 
   config = {
-    
-    # Set GITHUB_TOKEN in each shell's config
-    programs.bash.sessionVariables.GITHUB_TOKEN = 
-      "$(test -f ${config.home.homeDirectory}/.config/git/github-token && cat ${config.home.homeDirectory}/.config/git/github-token)";
-    
-    programs.zsh.sessionVariables.GITHUB_TOKEN = 
-      "$(test -f ${config.home.homeDirectory}/.config/git/github-token && cat ${config.home.homeDirectory}/.config/git/github-token)";
 
-    programs.fish.interactiveShellInit = ''
+    # Shell configurations that merge with existing configs from other modules
+
+    programs.bash.sessionVariables = lib.mkMerge [
+      { GITHUB_TOKEN = "$(test -f ${config.home.homeDirectory}/.config/git/github-token && cat ${config.home.homeDirectory}/.config/git/github-token)"; }
+    ];
+    
+    programs.zsh.sessionVariables = lib.mkMerge [
+      { GITHUB_TOKEN = "$(test -f ${config.home.homeDirectory}/.config/git/github-token && cat ${config.home.homeDirectory}/.config/git/github-token)"; }
+    ];
+
+    programs.fish.interactiveShellInit = lib.mkAfter ''
       if test -f ~/.config/git/github-token
         set -gx GITHUB_TOKEN (cat ~/.config/git/github-token)
       end
     '';
 
-    programs.nushell.extraConfig = ''
+    programs.nushell.extraConfig = lib.mkAfter ''
       # Set GitHub token for API access
       if (test -f ~/.config/git/github-token) {
         $env.GITHUB_TOKEN = (cat ~/.config/git/github-token | str trim)
       }
-    '';
+
+      ${nushellAliases}
+    '';  
     
     home.packages = with pkgs; [
       gitAndTools.delta
