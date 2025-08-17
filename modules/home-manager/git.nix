@@ -149,8 +149,34 @@ in
   };
 
   config = {
-
     # Shell configurations that merge with existing configs from other modules
+
+    programs.bash.initExtra = lib.mkAfter ''
+      if [ -f ~/.config/git/github-token ]; then
+        export GITHUB_TOKEN="$(cat ~/.config/git/github-token)"
+      fi
+    '';
+    
+    programs.zsh.initExtra = lib.mkAfter ''
+      if [ -f ~/.config/git/github-token ]; then
+        export GITHUB_TOKEN="$(cat ~/.config/git/github-token)"
+      fi
+    '';
+
+    programs.fish.interactiveShellInit = lib.mkAfter ''
+      if test -f ~/.config/git/github-token
+        set -gx GITHUB_TOKEN (cat ~/.config/git/github-token)
+      end
+    '';
+
+    programs.nushell.extraConfig = lib.mkAfter ''
+      # Set GitHub token for API access
+      if (test -f ~/.config/git/github-token) {
+        $env.GITHUB_TOKEN = (cat ~/.config/git/github-token | str trim)
+      }
+
+      ${nushellAliases}
+    '';
 
     programs.bash.sessionVariables = lib.mkMerge [
       { GITHUB_TOKEN = "$(test -f ${config.home.homeDirectory}/.config/git/github-token && cat ${config.home.homeDirectory}/.config/git/github-token)"; }
