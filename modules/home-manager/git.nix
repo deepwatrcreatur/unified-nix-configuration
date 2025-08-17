@@ -170,8 +170,8 @@ in
 
     programs.nushell.extraConfig = lib.mkAfter ''
       # Set GitHub token for API access
-      if (test -f ~/.config/git/github-token) {
-        $env.GITHUB_TOKEN = (cat ~/.config/git/github-token | str trim)
+      if ("~/.config/git/github-token" | path exists) {
+        $env.GITHUB_TOKEN = (open ~/.config/git/github-token | str trim)
       }
 
       ${nushellAliases}
