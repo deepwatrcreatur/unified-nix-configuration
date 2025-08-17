@@ -268,8 +268,6 @@ in
     programs.bash.shellAliases = shellAliases;
     programs.zsh.shellAliases = shellAliases;
     programs.fish.shellAliases = shellAliases;
-    
-    # Properly formatted nushell aliases
-    programs.nushell.extraConfig = nushellAliases;
+  
   };
 }
