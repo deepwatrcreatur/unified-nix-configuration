@@ -90,14 +90,14 @@ let
 
   # Convert shellAliases to Nushell alias commands with proper external command syntax
   # Filter out aliases that contain dangerous multi-command syntax
-  filteredShellAliases = lib.filterAttrs (name: value: 
+  filteredShellAliases = lib.filterAttrs (name: value:
     # Only include simple single-command aliases - exclude anything with:
     !lib.hasInfix ";" value &&   # No semicolons
-    !lib.hasInfix "&&" value &&  # No double ampersands  
+    !lib.hasInfix "&&" value &&  # No double ampersands
     !lib.hasInfix "|" value &&   # No pipes
     !lib.hasInfix "(" value      # No subcommands
   ) shellAliases;
-  
+
   # Simple, safe single-command aliases for nushell
   nushellSafeAliases = {
     "gdct" = "git describe --tags";
@@ -113,7 +113,7 @@ let
       git push origin --tags
       print "Done!"
     }
-    
+
     def gpristine [] {
       print "⚠️  WARNING: This will delete ALL untracked files and reset to HEAD!"
       print "This action cannot be undone. Are you sure? (y/N)"
@@ -133,12 +133,12 @@ let
       git status --porcelain | lines | parse "{status} {file}" | where status != ""
     }
   '';
-  
+
   nushellAliases = lib.concatStringsSep "\n" (
-    (lib.mapAttrsToList (name: value: 
+    (lib.mapAttrsToList (name: value:
       "alias ${name} = ^${value}"
     ) filteredShellAliases) ++
-    (lib.mapAttrsToList (name: value: 
+    (lib.mapAttrsToList (name: value:
       "alias ${name} = ^${value}"
     ) nushellSafeAliases)
   ) + "\n\n" + nushellFunctions;
@@ -150,13 +150,12 @@ in
 
   config = {
     # Shell configurations that merge with existing configs from other modules
-
     programs.bash.initExtra = lib.mkAfter ''
       if [ -f ~/.config/git/github-token ]; then
         export GITHUB_TOKEN="$(cat ~/.config/git/github-token)"
       fi
     '';
-    
+
     programs.zsh.initExtra = lib.mkAfter ''
       if [ -f ~/.config/git/github-token ]; then
         export GITHUB_TOKEN="$(cat ~/.config/git/github-token)"
@@ -178,29 +177,6 @@ in
       ${nushellAliases}
     '';
 
-    programs.bash.sessionVariables = lib.mkMerge [
-      { GITHUB_TOKEN = "$(test -f ${config.home.homeDirectory}/.config/git/github-token && cat ${config.home.homeDirectory}/.config/git/github-token)"; }
-    ];
-    
-    programs.zsh.sessionVariables = lib.mkMerge [
-      { GITHUB_TOKEN = "$(test -f ${config.home.homeDirectory}/.config/git/github-token && cat ${config.home.homeDirectory}/.config/git/github-token)"; }
-    ];
-
-    programs.fish.interactiveShellInit = lib.mkAfter ''
-      if test -f ~/.config/git/github-token
-        set -gx GITHUB_TOKEN (cat ~/.config/git/github-token)
-      end
-    '';
-
-    programs.nushell.extraConfig = lib.mkAfter ''
-      # Set GitHub token for API access
-      if (test -f ~/.config/git/github-token) {
-        $env.GITHUB_TOKEN = (cat ~/.config/git/github-token | str trim)
-      }
-
-      ${nushellAliases}
-    '';  
-    
     home.packages = with pkgs; [
       gitAndTools.delta
       mergiraf
@@ -290,10 +266,9 @@ in
 
     xdg.configFile."git/ignore".source = ./files/gitignore_global;
 
-    # Shell aliases for bash, zsh, fish (unchanged)
-    programs.bash.shellAliases = shellAliases;
-    programs.zsh.shellAliases = shellAliases;
-    programs.fish.shellAliases = shellAliases;
-  
+    # Shell aliases that merge with existing configs
+    programs.bash.shellAliases = lib.mkMerge [ shellAliases ];
+    programs.zsh.shellAliases = lib.mkMerge [ shellAliases ];
+    programs.fish.shellAliases = lib.mkMerge [ shellAliases ];
   };
 }
