@@ -1,8 +1,7 @@
 { config, lib, pkgs, ... }:
-
 {
   nixpkgs.config.allowUnfree = true;
-
+  
   nix = {
     settings = {
       experimental-features = [
@@ -10,32 +9,58 @@
         "flakes"
         "impure-derivations"
         "ca-derivations"
+        "cgroups"          # Process isolation for builds
+        "pipe-operators"   # Nice syntax sugar you're using
       ];
-
+      
+      # Performance settings
       download-buffer-size = 1048576000;
-
-      # Optional: Garbage collection settings
-      # Keep 10 generations and run GC weekly
-      # You can comment these out if you want to manage GC differently
+      http-connections = 50;            # More concurrent downloads
+      max-jobs = "auto";
+      cores = 0; # Use all available cores
+      
+      # Build settings
+      builders-use-substitutes = true;  # Builders can use binary caches
+      use-cgroups = true;               # Better build isolation
+      lazy-trees = true;                # Better flake performance
+      
+      # Garbage collection and derivation settings
       keep-outputs = true;
       keep-derivations = true;
       
-      # Limit the number of parallel builds (tune for your hardware)
-      max-jobs = "auto";
-      cores = 0; # Use all available cores
-
-      # Enable trusted users (so your user can run nix commands without sudo)
-      trusted-users = [ "root" "@wheel" ];
+      # UX improvements
+      show-trace = true;                # Better error messages
+      warn-dirty = false;               # Less noisy for development
+      flake-registry = "";              # Disable global flake registry
+      
+      trusted-users = [ 
+        "root" 
+        "@wheel"
+        "@build"    # Build users
+        "@admin"    # Admin users (macOS)
+      ];
       
       substituters = [
         "https://cache.nixos.org/"
         "https://cuda-maintainers.cachix.org"
+        "https://cache.garnix.io/"
+        "https://nix-community.cachix.org/"
+        "https://hyprland.cachix.org/"
       ];
-
+      
       trusted-public-keys = [
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
         "cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="
+        "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
+        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+        "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
       ];
+    };
+    
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 30d";
     };
   };
 }
