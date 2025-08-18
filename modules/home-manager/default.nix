@@ -7,6 +7,7 @@
     ./helix
     ./fish.nix
     ./fd-enhanced.nix
+    ./ripgrep-enhanced.nix
     ./jujutsu
     ./starship.nix
     ./cargo-binstall.nix
@@ -47,6 +48,6 @@
   };
 
   home.file.".ssh/config".source = ./ssh-config;
-  
+
   programs.home-manager.enable = true;
 }
