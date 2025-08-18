@@ -9,7 +9,7 @@ in
   options.programs.ripgrep-enhanced = {
     enable = mkEnableOption "ripgrep with enhanced configuration" // {
       default = true;
-      arguments = [ "--smart-case" ];
+      arguments = [ "--smart-case" "--follow" ];
     };
 
     package = mkOption {
