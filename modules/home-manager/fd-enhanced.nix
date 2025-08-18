@@ -7,7 +7,11 @@ let
 in
 {
   options.programs.fd-enhanced = {
-    enable = mkEnableOption "fd with enhanced aliases and functions";
+    enable = mkOption {
+      type = types.bool;
+      default = true;
+      description = "Enable fd with enhanced aliases and functions";
+    };
 
     package = mkOption {
       type = types.package;
