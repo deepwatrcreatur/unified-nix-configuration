@@ -3,11 +3,11 @@
 with lib;
 
 let
-  cfg = config.programs.fd;
+  cfg = config.programs.fd-enhanced;
 in
 {
-  options.programs.fd = {
-    enable = mkEnableOption "fd, a fast alternative to find";
+  options.programs.fd-enhanced = {
+    enable = mkEnableOption "fd with enhanced aliases and functions";
 
     package = mkOption {
       type = types.package;
@@ -16,32 +16,14 @@ in
       description = "The fd package to use.";
     };
 
-    settings = mkOption {
-      type = with types; attrsOf (oneOf [ bool int str (listOf str) ]);
-      default = {};
-      description = "Configuration options for fd.";
-      example = literalExpression ''
-        {
-          hidden = true;
-          no-ignore = false;
-          follow = true;
-          case-sensitive = false;
-          max-depth = 10;
-          exclude = [ ".git" "node_modules" ".cache" ];
-        }
-      '';
-    };
-
     aliases = mkOption {
       type = with types; attrsOf str;
       default = {};
-      description = "Shell aliases for fd commands.";
+      description = "Additional shell aliases for fd commands.";
       example = literalExpression ''
         {
-          fda = "fd -H -I";  # find all (including hidden and ignored)
-          fdf = "fd -t f";   # find files only
-          fdd = "fd -t d";   # find directories only
-          fdx = "fd -t x";   # find executables only
+          fdrs = "fd -e rs";     # find Rust files
+          fdpy = "fd -e py";     # find Python files
         }
       '';
     };
@@ -73,6 +55,12 @@ in
       type = types.bool;
       default = true;
       description = "Enable shell integration with useful aliases and functions.";
+    };
+
+    createFdIgnore = mkOption {
+      type = types.bool;
+      default = true;
+      description = "Create .fdignore file with default excludes.";
     };
   };
 
@@ -122,7 +110,7 @@ in
       ]);
 
     # Create fdignore file if excludes are specified
-    home.file.".fdignore" = mkIf (cfg.defaultExcludes != []) {
+    home.file.".fdignore" = mkIf (cfg.createFdIgnore && cfg.defaultExcludes != []) {
       text = concatStringsSep "\n" cfg.defaultExcludes;
     };
 
@@ -246,7 +234,5 @@ in
         ^fd --type file --exec basename {} \; | ^sort | ^uniq -d
       }
     '';
-  
   });
 }
-
