@@ -6,6 +6,7 @@
     ./nushell.nix
     ./helix
     ./fish.nix
+    ./fd.nix
     ./jujutsu
     ./starship.nix
     ./cargo-binstall.nix
