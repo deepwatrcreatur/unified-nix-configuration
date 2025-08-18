@@ -69,18 +69,14 @@ in
       cfg.package
       zellij
       # Additional tools that enhance the yazelix experience
-      fd
-      ripgrep
       fzf
       bat
       eza
-      zoxide
       file
       mediainfo
       poppler_utils
       ffmpegthumbnailer
       unar
-      jq
       miller
     ];
     
