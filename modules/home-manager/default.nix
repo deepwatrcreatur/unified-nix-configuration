@@ -3,7 +3,7 @@
 let
   # Helper to import all .nix files from common directory
   commonDir = ./common;
-  commonFiles = builtins.readDir commonDir;
+  commonItems = builtins.readDir commonDir;
   commonModules = lib.filterAttrs (name: type:
     (type == "regular" && lib.hasSuffix ".nix" name) ||
     type == "directory"
