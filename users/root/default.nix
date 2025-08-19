@@ -1,9 +1,6 @@
 { config, pkgs, lib, inputs, ... }:
 {
   imports = [
-    ../../modules/home-manager/rename.nix
-    ../../modules/home-manager/zoxide.nix
-    ../../modules/home-manager/atuin.nix
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/gpg-cli.nix
   ];
