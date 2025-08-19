@@ -1,27 +1,25 @@
-# modules/nix-darwin/common-darwin.nix
+# modules/nix-darwin/default.nix (rename from common-darwin.nix)
 { config, pkgs, lib, ... }:
+let
+  # Helper to import all .nix files AND directories from common directory
+  commonDir = ./common;
+  commonItems = builtins.readDir commonDir;
+  commonModules = lib.filterAttrs (name: type: 
+    (type == "regular" && lib.hasSuffix ".nix" name) || 
+    type == "directory"
+  ) commonItems;
+  commonImports = lib.mapAttrsToList (name: _: commonDir + "/${name}") commonModules;
+in
 {
   imports = [
-    ./nix-mount.nix
-    ./accessibility.nix
-    ./clock.nix
-    ./dock.nix
-    ./finder.nix
-    ./hammerspoon.nix
-    ./localization.nix
-    ./maccy.nix
-    ./netbios.nix
-    ./screensaver.nix
-    ./trackpad.nix
+    # Auto-import all common Darwin modules
+  ] ++ commonImports ++ [
+    # Explicit imports that don't belong in common
     ../wezterm-config.nix
   ];
-  
+
   nixpkgs.config.allowUnfree = true;
-  
-  environment.systemPackages = with pkgs; [
-    watch
-  ];
-  
+
   # Increase file descriptor limits for Nix builds
   launchd.daemons.limit-maxfiles = {
     script = ''
@@ -33,29 +31,24 @@
       KeepAlive = false;
     };
   };
-  
+
   system.defaults = {
     NSGlobalDomain = {
-      NSNavPanelExpandedStateForSaveMode = true; # Expand save dialogs by default
-      NSDocumentSaveNewDocumentsToCloud = false; # Save documents locally by default
+      NSNavPanelExpandedStateForSaveMode = true;
+      NSDocumentSaveNewDocumentsToCloud = false;
     };
     LaunchServices = {
       LSQuarantine = false;
     };
   };
-  
-  # Also set via system activation script as a fallback
+
   system.activationScripts.extraActivation.text = ''
-    # Set file descriptor limits
     launchctl limit maxfiles 65536 200000 2>/dev/null || true
   '';
 
-  # Activation script for unsupported settings
   system.activationScripts.postActivation.text = ''
-    # Disable automatic software updates
     /usr/bin/defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticCheckEnabled -bool false
     /usr/bin/defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticallyInstallMacOSUpdates -bool false
     /usr/bin/defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticDownload -bool false
   '';
 }
-
