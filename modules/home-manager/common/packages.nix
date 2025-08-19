@@ -5,6 +5,8 @@
     wget
     curl
     xh
+    jq
+    yq
     fastfetch
     nmap
     htop
