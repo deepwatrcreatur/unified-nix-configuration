@@ -4,8 +4,12 @@ let
   # Helper to import all .nix files from common directory
   commonDir = ./common;
   commonFiles = builtins.readDir commonDir;
-  commonModules = lib.filterAttrs (name: type: type == "regular" && lib.hasSuffix ".nix" name) commonFiles;
-  commonImports = lib.mapAttrsToList (name: _: commonDir + "/${name}") commonModules;
+  commonModules = lib.filterAttrs (name: type:
+    (type == "regular" && lib.hasSuffix ".nix" name) ||
+    type == "directory"
+    ) commonItems;
+  commonImports = lib.mapAttrsToList (name: _: commonDir + 
+"/${name}") commonModules;
 in
 {
   imports = commonImports;
