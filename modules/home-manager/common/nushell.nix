@@ -11,8 +11,54 @@
     shellAliases = {
       rename = "^rename -n";
       rename-apply = "^rename";
+      l = "ls --all";
+      c = "clear";
+      ll = "ls -l";
     };
     configFile.text = ''
+      # Enhanced table display
+      $env.config.table = {
+        mode: rounded
+        index_mode: always
+        show_empty: true
+        padding: { left: 1, right: 1 }
+        trim: {
+          methodology: wrapping
+          wrapping_try_keep_words: true
+          truncating_suffix: "..."
+        }
+      }
+
+      # Better completions
+      $env.config.completions = {
+        case_sensitive: false
+        quick: true
+        partial: true
+        algorithm: "prefix"
+        use_ls_colors: true
+      }
+
+      # Enhanced shell integration
+      $env.config.shell_integration = {
+        osc2: true   # sets tab/window title
+        osc7: true   # communicates path to terminal
+        osc8: true   # clickable links
+        osc133: true # prompt markers for smart terminals
+      }
+
+      # Better history settings
+      $env.config.history = {
+        max_size: 100_000
+        sync_on_enter: true
+        file_format: "plaintext"
+      }
+
+      # Useful navigation function: cd + ls
+      def --env cx [arg] {
+        cd $arg
+        ls -l
+      }
+
       # SSH auth socket setup
       if ($env.SSH_AUTH_SOCK | is-empty) and ("/opt/homebrew/bin/gpgconf" | path exists) {
         $env.SSH_AUTH_SOCK = (^/opt/homebrew/bin/gpgconf --list-dirs agent-ssh-socket | str trim)
