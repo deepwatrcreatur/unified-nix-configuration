@@ -30,12 +30,11 @@
       }
     '';
     envFile.text = ''
-      # Import the path add command from stdlib
-      use std/util "path add"
-      
-      # Add common paths
-      [
+      # Set up PATH with all required directories
+      $env.PATH = ($env.PATH | split row (char esep) | prepend [
         "${config.home.homeDirectory}/.nix-profile/bin"
+        "/opt/homebrew/bin"
+        "/opt/homebrew/opt/mise/bin"
         "/usr/bin"
         "/bin"
         "/usr/sbin"
@@ -43,16 +42,10 @@
         "/usr/local/bin"
         "/run/current-system/sw/bin"
         "/nix/var/nix/profiles/default/bin"
-      ] | each {|p| path add $p}
-      
-      # Add macOS-specific paths only if they exist
-      [
-        "/opt/homebrew/bin"
-        "/opt/homebrew/opt/mise/bin"
         "/usr/local/MacGPG2/bin"
         "/Applications/Ghostty.app/Contents/MacOS"
         "/System/Cryptexes/App/usr/bin"
-      ] | where {|path| $path | path exists} | each {|p| path add $p}
+      ] | where {|path| $path | path exists} | uniq)
     '';
   };
 }
