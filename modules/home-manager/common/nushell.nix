@@ -76,8 +76,20 @@
       }
     '';
     envFile.text = ''
-      # Set up PATH with all required directories
-      $env.PATH = ($env.PATH | split row (char esep) | prepend [
+      # Better PATH handling with environment conversions
+      $env.ENV_CONVERSIONS = {
+        "PATH": {
+          from_string: { |s| $s | split row (char esep) | path expand --no-symlink }
+          to_string: { |v| $v | path expand --no-symlink | str join (char esep) }
+        }
+        "Path": {
+          from_string: { |s| $s | split row (char esep) | path expand --no-symlink }
+          to_string: { |v| $v | path expand --no-symlink | str join (char esep) }
+        }
+      }
+
+      # Set up PATH with all required directories (simplified due to conversions)
+      $env.PATH = ($env.PATH | prepend [
         "${config.home.homeDirectory}/.nix-profile/bin"
         "/opt/homebrew/bin"
         "/opt/homebrew/opt/mise/bin"
