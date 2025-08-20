@@ -6,7 +6,7 @@
     enable = true;
 
     # Specify the Zed package (optional override if needed)
-    package = pkgs.zed-editor;
+    package = pkgs.zed-zed-editor-fhs;
 
     # User settings for Zed, written to ~/.config/zed/settings.json
     userSettings = {
