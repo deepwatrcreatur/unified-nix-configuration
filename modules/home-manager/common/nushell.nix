@@ -79,9 +79,9 @@
         let time_segment = ([
           (ansi reset)
           (ansi magenta)
-          (date now | format date '%x %X') # try to respect user's locale
-        ] | str join | str replace --regex --all "([/:])" $"(ansi green)${1}(ansi magenta)" |
-          str replace --regex --all "([AP]M)" $"(ansi magenta_underline)${1}")
+          (date now | format date "%x %X") # try to respect user's locale
+        ] | str join | str replace --regex --all "([/:])" $"(ansi green)$1(ansi magenta)" |
+          str replace --regex --all "([AP]M)" $"(ansi magenta_underline)$1")
 
         let last_exit_code = if ($env.LAST_EXIT_CODE != 0) {([
           (ansi rb)
