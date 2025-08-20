@@ -17,6 +17,8 @@
     AppleShowAllExtensions = true;
     AppleShowAllFiles      = true;
 
+    CreateDesktop = true;
+
     FXEnableExtensionChangeWarning = true;
     FXPreferredViewStyle           = "Nlsv"; # List style.
     FXRemoveOldTrashItems          = true;
