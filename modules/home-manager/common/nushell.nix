@@ -59,6 +59,43 @@
         ls -l
       }
 
+      # Custom prompt functions
+      def create_left_prompt [] {
+        let dir = match (do --ignore-shell-errors { $env.PWD | path relative-to $nu.home-path }) {
+          null => $env.PWD
+          '' => '~'
+          $relative_pwd => ([~ $relative_pwd] | path join)
+        }
+
+        let path_color = (if (is-admin) { ansi red_bold } else { ansi green_bold })
+        let separator_color = (if (is-admin) { ansi light_red_bold } else { ansi light_green_bold })
+        let path_segment = $"($path_color)($dir)"
+
+        $path_segment | str replace --all (char path_sep) $"($separator_color)(char path_sep)($path_color)"
+      }
+
+      def create_right_prompt [] {
+        # create a right prompt in magenta with green separators and am/pm underlined
+        let time_segment = ([
+          (ansi reset)
+          (ansi magenta)
+          (date now | format date '%x %X') # try to respect user's locale
+        ] | str join | str replace --regex --all "([/:])" $"(ansi green)${1}(ansi magenta)" |
+          str replace --regex --all "([AP]M)" $"(ansi magenta_underline)${1}")
+
+        let last_exit_code = if ($env.LAST_EXIT_CODE != 0) {([
+          (ansi rb)
+          ($env.LAST_EXIT_CODE)
+        ] | str join)
+        } else { "" }
+
+        ([$last_exit_code, (char space), $time_segment] | str join)
+      }
+
+      # Use custom prompt functions
+      $env.PROMPT_COMMAND = {|| create_left_prompt }
+      $env.PROMPT_COMMAND_RIGHT = {|| create_right_prompt }
+
       # SSH auth socket setup
       if ($env.SSH_AUTH_SOCK | is-empty) and ("/opt/homebrew/bin/gpgconf" | path exists) {
         $env.SSH_AUTH_SOCK = (^/opt/homebrew/bin/gpgconf --list-dirs agent-ssh-socket | str trim)
@@ -66,14 +103,14 @@
         $env.SSH_AUTH_SOCK = (^/run/current-system/sw/bin/gpgconf --list-dirs agent-ssh-socket | str trim)
       }
 
-      # Starship prompt integration
-      $env.STARSHIP_SHELL = "nu"
-      $env.PROMPT_COMMAND = { ||
-          ^/usr/local/bin/starship prompt --cmd-duration $env.CMD_DURATION_MS $"--status=($env.LAST_EXIT_CODE)"
-      }
-      $env.PROMPT_COMMAND_RIGHT = { ||
-          ^/usr/local/bin/starship prompt --right --cmd-duration $env.CMD_DURATION_MS $"--status=($env.LAST_EXIT_CODE)"
-      }
+      # Starship prompt integration (commented out - using custom prompt instead)
+      # $env.STARSHIP_SHELL = "nu"
+      # $env.PROMPT_COMMAND = { ||
+      #     ^/usr/local/bin/starship prompt --cmd-duration $env.CMD_DURATION_MS $"--status=($env.LAST_EXIT_CODE)"
+      # }
+      # $env.PROMPT_COMMAND_RIGHT = { ||
+      #     ^/usr/local/bin/starship prompt --right --cmd-duration $env.CMD_DURATION_MS $"--status=($env.LAST_EXIT_CODE)"
+      # }
     '';
     envFile.text = ''
       # Better PATH handling with environment conversions
