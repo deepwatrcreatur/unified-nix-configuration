@@ -88,22 +88,29 @@
         }
       }
 
-      # Set up PATH with all required directories (simplified due to conversions)
-      $env.PATH = ($env.PATH | prepend [
+      # Set up PATH - keep essential paths, only add macOS paths on Darwin
+      $env.PATH = ($env.PATH | prepend ([
         "${config.home.homeDirectory}/.nix-profile/bin"
-        "/opt/homebrew/bin"
-        "/opt/homebrew/opt/mise/bin"
-        "/usr/bin"
+        "/nix/var/nix/profiles/default/bin"
+        "/run/current-system/sw/bin"
+        "/run/wrappers/bin"
+        "/usr/bin" 
         "/bin"
         "/usr/sbin"
         "/sbin"
         "/usr/local/bin"
-        "/run/current-system/sw/bin"
-        "/nix/var/nix/profiles/default/bin"
-        "/usr/local/MacGPG2/bin"
-        "/Applications/Ghostty.app/Contents/MacOS"
-        "/System/Cryptexes/App/usr/bin"
-      ] | where {|path| $path | path exists} | uniq)
+      ] | append (
+        # Add macOS-specific paths only on Darwin
+        if $nu.os-info.name == "macos" {
+          [
+            "/opt/homebrew/bin"
+            "/opt/homebrew/opt/mise/bin"
+            "/usr/local/MacGPG2/bin"
+            "/Applications/Ghostty.app/Contents/MacOS"
+            "/System/Cryptexes/App/usr/bin"
+          ]
+        } else { [] }
+      )) | flatten | uniq)
     '';
   };
 }
