@@ -111,6 +111,14 @@
       # $env.PROMPT_COMMAND_RIGHT = { ||
       #     ^/usr/local/bin/starship prompt --right --cmd-duration $env.CMD_DURATION_MS $"--status=($env.LAST_EXIT_CODE)"
       # }
+      
+      # Override any starship initialization that happens after this config loads
+      # This must come last to ensure it overrides starship
+    '';
+    extraConfig = ''
+      # Final override of prompt - this runs after all other config including starship
+      $env.PROMPT_COMMAND = {|| create_left_prompt }
+      $env.PROMPT_COMMAND_RIGHT = {|| create_right_prompt }
     '';
     envFile.text = ''
       # Better PATH handling with environment conversions
