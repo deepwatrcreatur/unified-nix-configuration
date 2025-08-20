@@ -11,7 +11,6 @@
     shellAliases = {
       rename = "^rename -n";
       rename-apply = "^rename";
-      # Add other aliases here if you want them in nushell
     };
     configFile.text = ''
       # SSH auth socket setup
@@ -31,8 +30,11 @@
       }
     '';
     envFile.text = ''
-      # Set up PATH with conditional logic handled within the assignment
-      $env.PATH = ($env.PATH | split row (char esep) | prepend ([
+      # Import the path add command from stdlib
+      use std/util "path add"
+      
+      # Add common paths
+      [
         "${config.home.homeDirectory}/.nix-profile/bin"
         "/usr/bin"
         "/bin"
@@ -41,16 +43,16 @@
         "/usr/local/bin"
         "/run/current-system/sw/bin"
         "/nix/var/nix/profiles/default/bin"
-      ] | append (
-        # Add macOS-specific paths only if they exist
-        [
-          "/opt/homebrew/bin"
-          "/opt/homebrew/opt/mise/bin"
-          "/usr/local/MacGPG2/bin"
-          "/Applications/Ghostty.app/Contents/MacOS"
-          "/System/Cryptexes/App/usr/bin"
-        ] | filter {|path| $path | path exists}
-      )) | flatten | uniq)
+      ] | each {|p| path add $p}
+      
+      # Add macOS-specific paths only if they exist
+      [
+        "/opt/homebrew/bin"
+        "/opt/homebrew/opt/mise/bin"
+        "/usr/local/MacGPG2/bin"
+        "/Applications/Ghostty.app/Contents/MacOS"
+        "/System/Cryptexes/App/usr/bin"
+      ] | where {|path| $path | path exists} | each {|p| path add $p}
     '';
   };
 }
