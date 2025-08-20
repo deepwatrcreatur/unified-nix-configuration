@@ -88,12 +88,12 @@
         }
       }
 
-      # Set up PATH - keep essential paths, only add macOS paths on Darwin
+      # Set up PATH - ensure wrappers come before current-system to avoid broken sudo
       $env.PATH = ($env.PATH | prepend ([
         "${config.home.homeDirectory}/.nix-profile/bin"
         "/nix/var/nix/profiles/default/bin"
+        "/run/wrappers/bin"                # Put wrappers BEFORE current-system
         "/run/current-system/sw/bin"
-        "/run/wrappers/bin"
         "/usr/bin" 
         "/bin"
         "/usr/sbin"
