@@ -4,7 +4,7 @@
   programs.starship = {
     enable = true;
     enableFishIntegration = true;
-    #enableNushellIntegration = true;
+    enableNushellIntegration = true;
     enableBashIntegration = true;
     enableZshIntegration = true;
   };
