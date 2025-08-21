@@ -52,7 +52,7 @@ in {
       autoMigrate = true;
       taps."homebrew/homebrew-core" = homebrew-core;
       taps."homebrew/homebrew-cask" = homebrew-cask;
-      mutableTaps = false;
+      mutableTaps = true;
     };
   };
 }
