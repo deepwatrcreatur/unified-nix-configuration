@@ -1,4 +1,6 @@
 # modules/wezterm-config.nix - Your configuration file
+{ config, lib, pkgs, ... }:
+
 {
   imports = [ ./wezterm.nix ];
   programs.wezterm = {
