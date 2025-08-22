@@ -250,7 +250,10 @@ in {
         -- Key bindings
         config.keys = {
         ${concatStringsSep ",\n        " (map (binding:
-          "{ key = '${binding.key}', mods = '${binding.mods}', action = wezterm.action.${binding.action} }"
+          if binding.mods != "" then
+            "{ key = '${binding.key}', mods = '${binding.mods}', action = wezterm.action.${binding.action} }"
+          else
+            "{ key = '${binding.key}', action = wezterm.action.${binding.action} }"
         ) cfg.keyBindings)}
         }
 
@@ -258,7 +261,10 @@ in {
         -- Mouse bindings  
         config.mouse_bindings = {
         ${concatStringsSep ",\n        " (map (binding:
-          "{ event = { ${binding.event} }, mods = '${binding.mods}', action = wezterm.action.${binding.action} }"
+          if binding.mods != "" then
+            "{ event = { ${binding.event} }, mods = '${binding.mods}', action = wezterm.action.${binding.action} }"
+          else
+            "{ event = { ${binding.event} }, action = wezterm.action.${binding.action} }"
         ) cfg.mouseBindings)}
         }
         ''}
