@@ -61,7 +61,10 @@ let
     -- Key bindings
     config.keys = {
       ${concatStringsSep ",\n      " (map (binding:
-        "{ key = '${binding.key}', mods = '${binding.mods}', action = wezterm.action.${binding.action} }"
+        if binding.mods != "" then
+          "{ key = '${binding.key}', mods = '${binding.mods}', action = wezterm.action.${binding.action} }"
+        else
+          "{ key = '${binding.key}', action = wezterm.action.${binding.action} }"
       ) cfg.keyBindings)}
     }
 
