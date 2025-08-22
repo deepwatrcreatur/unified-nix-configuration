@@ -1,4 +1,4 @@
-# modules/wezterm.nix - The main module
+# modules/wezterm.nix - Home Manager module
 { config, lib, pkgs, ... }:
 
 with lib;
@@ -9,70 +9,6 @@ let
   # Platform detection
   isDarwin = pkgs.stdenv.isDarwin;
   isLinux = pkgs.stdenv.isLinux;
-
-  # Default configuration that works well on both platforms
-  defaultConfig = ''
-    local wezterm = require 'wezterm'
-    local config = wezterm.config_builder()
-
-    -- Font configuration
-    config.font = wezterm.font('${cfg.font.name}', { weight = '${cfg.font.weight}' })
-    config.font_size = ${toString cfg.font.size}
-
-    -- Color scheme
-    config.color_scheme = '${cfg.colorScheme}'
-
-    -- Window configuration
-    config.window_background_opacity = ${toString cfg.window.opacity}
-    config.window_decorations = '${cfg.window.decorations}'
-    config.window_close_confirmation = '${cfg.window.closeConfirmation}'
-    config.adjust_window_size_when_changing_font_size = ${boolToString cfg.window.adjustSizeWhenChangingFont}
-
-    -- Tab configuration
-    config.enable_tab_bar = ${boolToString cfg.tabs.enable}
-    config.hide_tab_bar_if_only_one_tab = ${boolToString cfg.tabs.hideIfOnlyOne}
-    config.tab_bar_at_bottom = ${boolToString cfg.tabs.atBottom}
-
-    -- Scrollback configuration
-    config.scrollback_lines = ${toString cfg.scrollbackLines}
-
-    -- Platform-specific settings
-    ${optionalString isDarwin ''
-    -- macOS specific settings
-    config.native_macos_fullscreen_mode = ${boolToString cfg.macos.nativeFullscreen}
-    config.send_composed_key_when_left_alt_is_pressed = ${boolToString cfg.macos.leftAltComposed}
-    config.send_composed_key_when_right_alt_is_pressed = ${boolToString cfg.macos.rightAltComposed}
-    ${optionalString (cfg.macos.windowBackgroundBlur > 0) ''
-    config.macos_window_background_blur = ${toString cfg.macos.windowBackgroundBlur}
-    ''}
-    ''}
-
-    ${optionalString isLinux ''
-    -- Linux specific settings
-    config.enable_wayland = ${boolToString cfg.linux.enableWayland}
-    ''}
-
-    -- Key bindings
-    config.keys = {
-    ${concatStringsSep ",\n    " (map (binding:
-      "  { key = '${binding.key}', mods = '${binding.mods}', action = wezterm.action.${binding.action} }"
-    ) cfg.keyBindings)}
-    }
-
-    -- Mouse bindings
-    ${optionalString (cfg.mouseBindings != []) ''
-    config.mouse_bindings = {
-    ${concatStringsSep ",\n    " (map (binding:
-      "  { event = { ${binding.event} }, mods = '${binding.mods}', action = wezterm.action.${binding.action} }"
-    ) cfg.mouseBindings)}
-    }
-    ''}
-
-    -- Custom configuration
-    ${cfg.extraConfig}
-
-    return config
-  '';
 
 in {
   options.programs.wezterm = {
@@ -259,14 +195,69 @@ in {
 
   config = mkIf cfg.enable {
     # Install Wezterm package
-    environment.systemPackages = [ cfg.package ];
+    home.packages = [ cfg.package ];
 
-    # Font packages (useful for both platforms)
-    fonts.packages = with pkgs; [
-      jetbrains-mono
-      fira-code
-      source-code-pro
-      hack-font
-    ];
+    # Generate wezterm config file in ~/.config/wezterm/wezterm.lua
+    home.file.".config/wezterm/wezterm.lua".text = ''
+      local wezterm = require 'wezterm'
+      local config = wezterm.config_builder()
+
+      -- Font configuration
+      config.font = wezterm.font('${cfg.font.name}', { weight = '${cfg.font.weight}' })
+      config.font_size = ${toString cfg.font.size}
+
+      -- Color scheme
+      config.color_scheme = '${cfg.colorScheme}'
+
+      -- Window configuration
+      config.window_background_opacity = ${toString cfg.window.opacity}
+      config.window_decorations = '${cfg.window.decorations}'
+      config.window_close_confirmation = '${cfg.window.closeConfirmation}'
+      config.adjust_window_size_when_changing_font_size = ${boolToString cfg.window.adjustSizeWhenChangingFont}
+
+      -- Tab configuration
+      config.enable_tab_bar = ${boolToString cfg.tabs.enable}
+      config.hide_tab_bar_if_only_one_tab = ${boolToString cfg.tabs.hideIfOnlyOne}
+      config.tab_bar_at_bottom = ${boolToString cfg.tabs.atBottom}
+
+      -- Scrollback configuration
+      config.scrollback_lines = ${toString cfg.scrollbackLines}
+
+      ${optionalString isDarwin ''
+      -- macOS specific settings
+      config.native_macos_fullscreen_mode = ${boolToString cfg.macos.nativeFullscreen}
+      config.send_composed_key_when_left_alt_is_pressed = ${boolToString cfg.macos.leftAltComposed}
+      config.send_composed_key_when_right_alt_is_pressed = ${boolToString cfg.macos.rightAltComposed}
+      ${optionalString (cfg.macos.windowBackgroundBlur > 0) ''
+      config.macos_window_background_blur = ${toString cfg.macos.windowBackgroundBlur}
+      ''}
+      ''}
+
+      ${optionalString isLinux ''
+      -- Linux specific settings
+      config.enable_wayland = ${boolToString cfg.linux.enableWayland}
+      ''}
+
+      -- Key bindings
+      config.keys = {
+      ${concatStringsSep ",\n      " (map (binding:
+        "{ key = '${binding.key}', mods = '${binding.mods}', action = wezterm.action.${binding.action} }"
+      ) cfg.keyBindings)}
+      }
+
+      ${optionalString (cfg.mouseBindings != []) ''
+      -- Mouse bindings  
+      config.mouse_bindings = {
+      ${concatStringsSep ",\n      " (map (binding:
+        "{ event = { ${binding.event} }, mods = '${binding.mods}', action = wezterm.action.${binding.action} }"
+      ) cfg.mouseBindings)}
+      }
+      ''}
+
+      -- Custom configuration
+      ${cfg.extraConfig}
+
+      return config
+    '';
   };
 }
