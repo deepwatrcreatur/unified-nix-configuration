@@ -69,7 +69,10 @@ let
     ${optionalString (cfg.mouseBindings != []) ''
     config.mouse_bindings = {
       ${concatStringsSep ",\n      " (map (binding:
-        "{ event = { ${binding.event} }, mods = '${binding.mods}', action = wezterm.action.${binding.action} }"
+        if binding.mods != "" then
+          "{ event = { ${binding.event} }, mods = '${binding.mods}', action = wezterm.action.${binding.action} }"
+        else
+          "{ event = { ${binding.event} }, action = wezterm.action.${binding.action} }"
       ) cfg.mouseBindings)}
     }
     ''}
