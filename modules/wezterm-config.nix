@@ -1,28 +1,38 @@
+# modules/wezterm-config.nix
 {
   imports = [ ./wezterm.nix ];
-  
   programs.wezterm = {
     enable = true;
-    
     font = {
       name = "JetBrains Mono";
-      size = 13.0;
+      size = 16.0;
     };
-    
-    # colorScheme = "Tokyo Night";
-    
-    window.opacity = 0.95;
-    
-    macos.nativeFullscreen = true;  # Only applied on macOS
-    linux.enableWayland = true;    # Only applied on Linux
-    
+    colorScheme = "Catppuccin Mocha";
+    window = {
+      opacity = 1.0;
+      decorations = "RESIZE";
+      adjustSizeWhenChangingFont = false;
+    };
+    tabs.enable = false;
+    scrollbackLines = 5000;
+    macos = {
+      nativeFullscreen = true;
+      windowBackgroundBlur = 30;
+    };
+    linux.enableWayland = true;
     keyBindings = [
-      { key = "t"; mods = "CTRL|SHIFT"; action = "SpawnTab 'CurrentPaneDomain'"; }
+      { key = "q"; mods = "CTRL"; action = "ToggleFullScreen"; }
+      { key = "'"; mods = "CTRL"; action = "ClearScrollback 'ScrollbackAndViewport'"; }
     ];
-    
+    mouseBindings = [
+      {
+        event = "Up = { streak = 1, button = 'Left' }";
+        mods = "CTRL";
+        action = "OpenLinkAtMouseCursor";
+      }
+    ];
     extraConfig = ''
-      -- Any additional Lua configuration
-      config.scrollback_lines = 5000
+      -- Any additional custom Lua configuration
     '';
   };
 }
