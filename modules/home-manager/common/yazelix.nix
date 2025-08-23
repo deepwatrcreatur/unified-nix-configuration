@@ -11,7 +11,7 @@ in
     enable = mkOption {
       type = types.bool;
       default = true;
-      description = "Enable yazelix - integrated yazi + zellij + helix setup";
+      description = "Enable yazelix - integrated yazi + helix setup";
     };
 
     package = mkOption {
@@ -26,21 +26,15 @@ in
       description = "Enable shell integration for yazelix";
     };
 
-    enableDesktopEntry = mkOption {
-      type = types.bool;
-      default = false;
-      description = "Create desktop entry for yazelix (Linux only)";
-    };
-
     keymap = mkOption {
       type = types.lines;
-      default = '''';
+      default = "";
       description = "Custom keymap configuration for yazi";
     };
 
     theme = mkOption {
       type = types.lines;
-      default = '''';
+      default = "";
       description = "Custom theme configuration for yazi";
     };
 
@@ -52,7 +46,7 @@ in
 
     initLua = mkOption {
       type = types.lines;
-      default = '''';
+      default = "";
       description = "Custom init.lua for yazi";
     };
 
@@ -64,13 +58,10 @@ in
   };
 
   config = mkIf cfg.enable {
-    # Install required packages
+    # Install required packages for yazi functionality
     home.packages = with pkgs; [
       cfg.package
-      zellij
-      # Additional tools that enhance the yazelix experience
-      fzf
-      bat
+      # File management and preview tools
       eza
       file
       mediainfo
@@ -79,8 +70,8 @@ in
       unar
       miller
     ];
-    
-    # Shell aliases and functions for yazelix integration
+
+    # Shell aliases for yazelix
     programs.bash.shellAliases = mkIf cfg.enableShellIntegration {
       yazelix = "zellij -l yazelix";
       yz = "yazi";
@@ -100,15 +91,15 @@ in
       yazelix = "zellij -l yazelix";
       yz = "yazi";
     };
-    
-    # Yazi configuration
+
+    # Yazi configuration optimized for helix integration
     programs.yazi = {
       enable = true;
       package = cfg.package;
       enableBashIntegration = cfg.enableShellIntegration;
       enableZshIntegration = cfg.enableShellIntegration;
       enableFishIntegration = cfg.enableShellIntegration;
-      
+
       settings = recursiveUpdate {
         mgr = {
           show_hidden = false;
@@ -140,7 +131,7 @@ in
         };
       } cfg.settings;
 
-      keymap = mkIf (cfg.keymap != "") {
+      keymap = {
         mgr.prepend_keymap = [
           { on = [ "g" "h" ]; run = "cd ~"; desc = "Go to home directory"; }
           { on = [ "g" "c" ]; run = "cd ~/.config"; desc = "Go to config directory"; }
@@ -150,19 +141,18 @@ in
           { on = [ "<C-s>" ]; run = "search fd"; desc = "Search files with fd"; }
           { on = [ "<C-f>" ]; run = "search rg"; desc = "Search content with ripgrep"; }
           { on = [ "T" ]; run = "plugin --sync smart-enter"; desc = "Enter hovered directory or open file"; }
-        ];
+        ] ++ (if cfg.keymap != "" then lib.strings.splitString "\n" cfg.keymap else []);
       };
 
       theme = mkIf (cfg.theme != "") cfg.theme;
 
       initLua = ''
-        -- Custom yazelix init.lua
-        -- Only require plugins if they exist
+        -- Yazelix init.lua for helix integration
         ${cfg.initLua}
       '';
     };
 
-    # Install yazi plugins and zellij layout
+    # Install yazi plugins and yazelix zellij layout
     xdg.configFile = lib.mkMerge [
       # Yazi plugins
       (lib.mkMerge (
@@ -174,63 +164,35 @@ in
         }) cfg.plugins
       ))
       
-      # Zellij layout for yazelix
+      # Yazelix Zellij Layout
       {
         "zellij/layouts/yazelix.kdl" = {
           text = ''
             layout {
-              pane size=1 borderless=true {
-                plugin location="zellij:tab-bar"
-              }
-              pane split_direction="vertical" {
-                pane size="30%" {
-                  command "yazi"
+                pane size=1 borderless=true {
+                    plugin location="zellij:tab-bar"
                 }
-                pane split_direction="horizontal" {
-                  pane {
-                    command "hx"
-                    args "."
-                  }
-                  pane size="30%" {
-                    // Terminal pane for commands
-                  }
+                pane split_direction="vertical" {
+                    pane size="30%" {
+                        command "yazi"
+                    }
+                    pane split_direction="horizontal" {
+                        pane {
+                            command "hx"
+                            args "."
+                        }
+                        pane size="30%" {
+                            // Terminal pane for commands, git, etc.
+                        }
+                    }
                 }
-              }
-              pane size=2 borderless=true {
-                plugin location="zellij:status-bar"
-              }
+                pane size=2 borderless=true {
+                    plugin location="zellij:status-bar"
+                }
             }
           '';
         };
       }
     ];
-
-    # Desktop entry for yazelix (Linux only)
-    xdg.desktopEntries.yazelix = mkIf (cfg.enableDesktopEntry && pkgs.stdenv.isLinux) {
-      name = "Yazelix";
-      comment = "Integrated file manager and editor";
-      exec = "zellij -l yazelix";
-      icon = "folder";
-      terminal = true;
-      categories = [ "Development" "FileManager" ];
-    };
-
-    # Install additional tools via cargo-binstall if needed
-    home.activation.installYazelixTools = lib.hm.dag.entryAfter ["writeBoundary"] ''
-      # Ensure ~/.cargo/bin exists
-      mkdir -p "$HOME/.cargo/bin"
-      
-      # Install additional yazi tools if not available via nixpkgs
-      if ! command -v ya >/dev/null 2>&1; then
-        "${pkgs.cargo-binstall}/bin/cargo-binstall" \
-          yazi-cli \
-          --force --no-confirm || true
-      fi
-      
-      # Update all cargo-installed tools
-      if command -v cargo-update >/dev/null 2>&1; then
-        "${pkgs.rustc}/bin/cargo" install-update -a || true
-      fi
-    '';
   };
 }
