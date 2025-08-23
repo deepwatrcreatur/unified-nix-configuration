@@ -84,6 +84,12 @@ let
     
     // Additional custom configuration
     ${cfg.extraConfig}
+    
+    // Enable automatic copying on select for better terminal integration
+    copy_on_select true
+    
+    // Use system clipboard
+    copy_clipboard "system"
   '';
 
 in {
@@ -227,14 +233,7 @@ in {
 
     extraKeybinds = mkOption {
       type = types.lines;
-      default = if pkgs.stdenv.isDarwin then ''
-        normal {
-            bind "Ctrl Shift c" { Copy; }
-        }
-        shared_except "locked" {
-            bind "Ctrl Shift c" { Copy; }
-        }
-      '' else "";
+      default = "";
       description = "Extra keybind configuration in KDL format.";
       example = ''
         normal {
@@ -333,22 +332,9 @@ in {
     '';
 
     programs.nushell.extraConfig = mkIf (cfg.shellIntegration.enable && cfg.shellIntegration.enableNushellIntegration) ''
-      # Zellij completions for Nushell
-      try {
-        ^${cfg.package}/bin/zellij setup --generate-completion nushell | save -f ~/.cache/zellij-completion.nu
-        use ~/.cache/zellij-completion.nu *
-      } catch {
-        # Silently ignore completion generation errors
-      }
-      
-      # Zellij auto-start
-      if (which zellij | is-empty) == false {
-        if ($env | get -i ZELLIJ | is-empty) {
-          if (ps | where name =~ zellij | is-empty) {
-            ^${cfg.package}/bin/zellij
-          }
-        }
-      }
+      # Zellij completions for Nushell (disabled due to compatibility issues)
+      # You can manually generate completions if needed:
+      # zellij setup --generate-completion nushell | save ~/.cache/zellij-completion.nu
     '';
 
     # Create a desktop entry (Linux only)
