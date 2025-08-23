@@ -229,10 +229,10 @@ in {
       type = types.lines;
       default = if pkgs.stdenv.isDarwin then ''
         normal {
-            bind "Cmd c" { Copy; }
+            bind "Ctrl Shift c" { Copy; }
         }
         shared_except "locked" {
-            bind "Cmd c" { Copy; }
+            bind "Ctrl Shift c" { Copy; }
         }
       '' else "";
       description = "Extra keybind configuration in KDL format.";
