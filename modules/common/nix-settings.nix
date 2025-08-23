@@ -55,6 +55,15 @@
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
       ];
+
+       # Home Manager backup setting - conditionally set based on context
+       home-manager = lib.mkIf (lib.hasAttr "home-manager" config) {
+         backupFileExtension = "backup";
+       };
+  
+       home = lib.mkIf (lib.hasAttr "home" config) {
+         backupFileExtension = "backup";
+       };
     };
   };
 }
