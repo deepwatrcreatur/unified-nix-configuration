@@ -3,7 +3,7 @@
 with lib;
 
 let
-  cfg = config.programs.zellij;
+  cfg = config.programs.zellij-custom;
   
   formatKdl = value:
     if isAttrs value then
@@ -87,8 +87,8 @@ let
   '';
 
 in {
-  options.programs.zellij = {
-    enable = mkEnableOption "Zellij terminal multiplexer" // {
+  options.programs.zellij-extended = {
+    enable = mkEnableOption "Zellij terminal multiplexer with extended configuration" // {
       default = true;
     };
 

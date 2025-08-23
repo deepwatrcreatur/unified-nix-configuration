@@ -62,6 +62,7 @@ in
     home.packages = with pkgs; [
       cfg.package
       # File management and preview tools
+      zellij
       eza
       file
       mediainfo
