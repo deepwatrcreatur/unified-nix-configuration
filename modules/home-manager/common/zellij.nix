@@ -233,7 +233,11 @@ in {
 
     extraKeybinds = mkOption {
       type = types.lines;
-      default = "";
+      default = if pkgs.stdenv.isDarwin then ''
+        shared_except "locked" {
+            bind "Ctrl Shift c" { Copy; }
+        }
+      '' else "";
       description = "Extra keybind configuration in KDL format.";
       example = ''
         normal {
