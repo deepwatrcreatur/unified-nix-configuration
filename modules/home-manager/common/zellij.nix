@@ -3,7 +3,7 @@
 with lib;
 
 let
-  cfg = config.programs.zellij-extended;
+  cfg = config.programs.zellij-custom;
   
   formatKdl = value:
     if isAttrs value then
@@ -121,7 +121,7 @@ in {
 
     copyCommand = mkOption {
       type = types.str;
-      default = "wl-copy";
+      default = if pkgs.stdenv.isDarwin then "pbcopy" else "wl-copy";
       description = "Command used to copy to clipboard.";
       example = "xclip -selection clipboard";
     };
@@ -227,7 +227,14 @@ in {
 
     extraKeybinds = mkOption {
       type = types.lines;
-      default = "";
+      default = if pkgs.stdenv.isDarwin then ''
+        normal {
+            bind "Cmd c" { Copy; }
+        }
+        shared_except "locked" {
+            bind "Cmd c" { Copy; }
+        }
+      '' else "";
       description = "Extra keybind configuration in KDL format.";
       example = ''
         normal {
@@ -326,14 +333,19 @@ in {
     '';
 
     programs.nushell.extraConfig = mkIf (cfg.shellIntegration.enable && cfg.shellIntegration.enableNushellIntegration) ''
-      ^${cfg.package}/bin/zellij setup --generate-completion nushell | save -f ~/.cache/zellij-completion.nu
-      use ~/.cache/zellij-completion.nu *
+      # Zellij completions for Nushell
+      try {
+        ^${cfg.package}/bin/zellij setup --generate-completion nushell | save -f ~/.cache/zellij-completion.nu
+        use ~/.cache/zellij-completion.nu *
+      } catch {
+        # Silently ignore completion generation errors
+      }
       
       # Zellij auto-start
       if (which zellij | is-empty) == false {
         if ($env | get -i ZELLIJ | is-empty) {
           if (ps | where name =~ zellij | is-empty) {
-            ${cfg.package}/bin/zellij
+            ^${cfg.package}/bin/zellij
           }
         }
       }
