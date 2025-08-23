@@ -3,7 +3,7 @@
 with lib;
 
 let
-  cfg = config.programs.zellij-extended;
+  cfg = config.programs.zellij-custom;
   
   formatKdl = value:
     if isAttrs value then
@@ -294,6 +294,12 @@ in {
         description = "Enable Fish integration.";
       };
     };
+
+    enableDesktopEntry = mkOption {
+      type = types.bool;
+      default = false;
+      description = "Create desktop entry for Zellij (useful for rofi/application launchers).";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -333,8 +339,8 @@ in {
       }
     '';
 
-    # Create a desktop entry
-    xdg.desktopEntries.zellij = mkIf cfg.enable {
+    # Create a desktop entry (Linux only)
+    xdg.desktopEntries.zellij = mkIf (cfg.enable && pkgs.stdenv.isLinux) {
       name = "Zellij";
       comment = "A terminal workspace with batteries included";
       exec = "${cfg.package}/bin/zellij";
