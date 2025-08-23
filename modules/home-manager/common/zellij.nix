@@ -3,7 +3,7 @@
 with lib;
 
 let
-  cfg = config.programs.zellij-custom;
+  cfg = config.programs.zellij-extended;
   
   formatKdl = value:
     if isAttrs value then
