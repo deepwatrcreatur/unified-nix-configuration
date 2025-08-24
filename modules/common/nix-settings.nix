@@ -57,13 +57,4 @@
       ];
     };
   };
-    
-  # Home Manager backup setting - conditionally set based on context
-  home-manager = lib.mkIf (lib.hasAttr "home-manager" config) {
-    backupFileExtension = "backup";
-  };
-  
-  home = lib.mkIf (lib.hasAttr "home" config) {
-    backupFileExtension = "backup";
-  };
 }
