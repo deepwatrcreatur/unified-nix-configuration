@@ -13,6 +13,8 @@
     btop
     iperf3
     yamllint
+    dust
+    ouch
     file
     lsd
     bat
