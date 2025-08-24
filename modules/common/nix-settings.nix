@@ -56,14 +56,14 @@
         "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
       ];
     };
+  };
     
-    # Home Manager backup setting - conditionally set based on context
-    home-manager = lib.mkIf (lib.hasAttr "home-manager" config) {
-      backupFileExtension = "backup";
-    };
+  # Home Manager backup setting - conditionally set based on context
+  home-manager = lib.mkIf (lib.hasAttr "home-manager" config) {
+    backupFileExtension = "backup";
+  };
   
-    home = lib.mkIf (lib.hasAttr "home" config) {
-      backupFileExtension = "backup";
-    };
+  home = lib.mkIf (lib.hasAttr "home" config) {
+    backupFileExtension = "backup";
   };
 }
