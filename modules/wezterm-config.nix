@@ -26,7 +26,7 @@
     ];
     extraConfig = ''
       -- Default program: launch zellij with welcome layout
-      config.default_prog = { 'zellij', '-l', 'welcome' }
+      config.default_prog = { '~/.nix-profile/bin/zellij', '-l', 'welcome' }
       
       -- Mouse bindings (manual for now)
       config.mouse_bindings = {
