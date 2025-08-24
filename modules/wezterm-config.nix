@@ -25,6 +25,9 @@
       { key = "\\\""; mods = "CTRL"; action = "ClearScrollback 'ScrollbackAndViewport'"; }
     ];
     extraConfig = ''
+      -- Default program: launch zellij with welcome layout
+      config.default_prog = { 'zellij', '-l', 'welcome' }
+      
       -- Mouse bindings (manual for now)
       config.mouse_bindings = {
         {
