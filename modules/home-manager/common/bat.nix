@@ -1,8 +1,7 @@
-{ config, lib, pkgs, ... }: let
-  inherit (lib) enabled;
-in {
-  programs.bat = enabled {
-    config.theme      = "onehalf";
+{ config, lib, pkgs, ... }: {
+  programs.bat = {
+    enable = true;
+    config.theme = "onehalf";
     themes.onehalf.src = pkgs.writeText "onehalf.tmTheme" config.theme.tmTheme;
     config.pager = "less --quit-if-one-screen --RAW-CONTROL-CHARS";
   };
