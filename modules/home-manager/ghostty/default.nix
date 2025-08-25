@@ -1,10 +1,9 @@
 { pkgs, lib, ... }:
 {
   # Set environment variables for system integration
-  home.sessionVariables = {
-    TERMINAL = lib.mkIf pkgs.stdenv.isLinux "ghostty";
-    TERM_PROGRAM = lib.mkIf pkgs.stdenv.isDarwin "ghostty";
-  };
+  home.sessionVariables = 
+    lib.optionalAttrs pkgs.stdenv.isLinux { TERMINAL = "ghostty"; }
+    lib.optionalAttrs pkgs.stdenv.isDarwin { TERM_PROGRAM = "ghostty"; };
 
   # Install Ghostty on Linux (handle macOS separately if needed)
   home.packages = lib.optionals pkgs.stdenv.isLinux [
@@ -15,7 +14,6 @@
     source = ./config;
   };
 
-  # Enhanced theme management
   xdg.configFile."ghostty/themes/Sugarplum" = {
     source = ./themes/Sugarplum;
   };
@@ -35,9 +33,9 @@
     # Don't set settings here since we're using the config file
   };
 
-  # Platform-specific shell integration setup
-  programs.fish.enable = lib.mkDefault true; # Since you use fish integration
+  programs.fish.enable = lib.mkDefault true; 
   
+  # Optional: Add ghostty to desktop entries on Linux
   xdg.desktopEntries = lib.mkIf pkgs.stdenv.isLinux {
     ghostty = {
       name = "Ghostty";
