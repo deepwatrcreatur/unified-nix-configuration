@@ -1,9 +1,10 @@
 { config, lib, pkgs, ... }: {
   programs.bat = {
     enable = true;
-    config.theme = "onehalf";
-    themes.onehalf.src = pkgs.writeText "onehalf.tmTheme" config.theme.tmTheme;
-    config.pager = "less --quit-if-one-screen --RAW-CONTROL-CHARS";
+    config = {
+      theme = "OneHalfDark";  # Use a built-in theme
+      pager = "less --quit-if-one-screen --RAW-CONTROL-CHARS";
+    };
   };
   
   home.sessionVariables = {
