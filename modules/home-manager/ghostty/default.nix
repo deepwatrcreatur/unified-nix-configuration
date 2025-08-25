@@ -2,7 +2,7 @@
 {
   # Set environment variables for system integration
   home.sessionVariables = 
-    lib.optionalAttrs pkgs.stdenv.isLinux { TERMINAL = "ghostty"; }
+    lib.optionalAttrs pkgs.stdenv.isLinux { TERMINAL = "ghostty"; } //
     lib.optionalAttrs pkgs.stdenv.isDarwin { TERM_PROGRAM = "ghostty"; };
 
   # Install Ghostty on Linux (handle macOS separately if needed)
