@@ -2,7 +2,6 @@
 { config, pkgs, lib, ... }: {
   home.packages = with pkgs; [
     age
-    bat
     btop
     comma
     curl
