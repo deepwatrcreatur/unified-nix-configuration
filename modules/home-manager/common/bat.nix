@@ -6,6 +6,11 @@ in {
     PAGER    = "bat --plain";
   };
   
+  environment.shellAliases = {
+    cat  = "bat";
+    less = "bat --plain";
+  };
+  
   home-manager.sharedModules = [{
     programs.bat = enabled {
       config.theme      = "onehalf";
@@ -13,7 +18,11 @@ in {
       config.pager = "less --quit-if-one-screen --RAW-CONTROL-CHARS";
     };
     
-    # Move shell aliases here
+    home.sessionVariables = {
+      MANPAGER = "bat --plain";
+      PAGER    = "bat --plain";
+    };
+    
     home.shellAliases = {
       cat  = "bat";
       less = "bat --plain";
