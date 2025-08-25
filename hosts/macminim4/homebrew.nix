@@ -12,6 +12,7 @@
       "claude"
       "discord"
       "gitkraken"
+      "karabiner-elements"
       "krita"
       "telegram"
       "visual-studio-code"
