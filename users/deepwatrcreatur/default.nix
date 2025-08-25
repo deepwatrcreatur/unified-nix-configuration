@@ -1,4 +1,5 @@
 { config, pkgs, lib, inputs, ... }:
+
 {
   imports = [
     ../../modules/home-manager/secrets-activation.nix
