@@ -67,11 +67,8 @@ let
   };
 in
 {
-  # System-level: Install Karabiner Elements
-  homebrew.casks = [ "karabiner-elements" ];
-
-  # User-level: Configure karabiner for your user
-  home-manager.users.deepwatrcreatur.xdg.configFile."karabiner/karabiner.json" = {
+  # Configure karabiner config file
+  xdg.configFile."karabiner/karabiner.json" = {
     text = toJSON karabinerConfig;
   };
 }
