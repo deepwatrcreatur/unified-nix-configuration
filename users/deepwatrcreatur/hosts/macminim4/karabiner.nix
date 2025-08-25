@@ -1,31 +1,9 @@
-# karabiner.nix 
-{ lib, config, ... }: 
+# karabiner.nix
+{ config, lib, pkgs, ... }:
 
 let
   inherit (lib.strings) toJSON;
   allBasic = map (x: x // { type = "basic"; });
-  
-  # Get username from config or use a default
-  username = config.users.primaryUser or 
-             (builtins.head (builtins.attrNames config.home-manager.users));
-
-  karabinerConfig = {
-    global.show_in_menu_bar = false;
-
-    profiles = [{
-      inherit complex_modifications;
-
-      name = "Default";
-      selected = true;
-
-      virtual_hid_keyboard.keyboard_type_v2 = "ansi";
-
-      devices = [{
-        inherit simple_modifications;
-        identifiers.is_keyboard = true;
-      }];
-    }];
-  };
 
   # Core caps lock ↔ escape swap
   simple_modifications = [
@@ -93,12 +71,28 @@ let
     #   }) (lib.range 1 12));
     # }
   ];
+
+  karabinerConfig = {
+    global.show_in_menu_bar = false;
+
+    profiles = [{
+      inherit complex_modifications;
+
+      name = "Default";
+      selected = true;
+
+      virtual_hid_keyboard.keyboard_type_v2 = "ansi";
+
+      devices = [{
+        inherit simple_modifications;
+        identifiers.is_keyboard = true;
+      }];
+    }];
+  };
 in
 {
-  # System-level homebrew installation
-  homebrew.casks = [ "karabiner-elements" ];
-
-  # Home-manager user configuration - dynamically apply to the user
-  home-manager.users.${username}.xdg.configFile."karabiner/karabiner.json".text = 
-    toJSON karabinerConfig;
+  # Just configure the karabiner config file - no homebrew needed here
+  xdg.configFile."karabiner/karabiner.json" = {
+    text = toJSON karabinerConfig;
+  };
 }
