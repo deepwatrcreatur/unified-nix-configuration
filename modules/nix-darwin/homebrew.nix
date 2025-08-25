@@ -38,6 +38,7 @@ in {
         "bitwarden-cli"
       ] ++ config.homebrew.hostSpecific.brews;
       casks = [
+        "coteditor"
         "font-fira-code"
         "ghostty"
         "maccy"
