@@ -52,7 +52,7 @@ let
     global.show_in_menu_bar = false;
 
     profiles = [{
-      inherit complex_modifications;
+      inherit complex_modifications simple_modifications;
 
       name = "Default";
       selected = true;
@@ -60,7 +60,6 @@ let
       virtual_hid_keyboard.keyboard_type_v2 = "ansi";
 
       devices = [{
-        inherit simple_modifications;
         identifiers.is_keyboard = true;
       }];
     }];
