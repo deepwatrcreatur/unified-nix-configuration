@@ -7,6 +7,7 @@ let
     la = "lsd -a";
     lla = "lsd -la";
     ".." = "cd ..";
+    bp = "bat --paging=never --plain";
     update = "just --justfile ~/.justfile update";
     nh-update = "just --justfile ~/.justfile nh-update";
     ssh-nocheck = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "; 
@@ -25,6 +26,7 @@ in
     alias ll = ^lsd -l
     alias la = ^lsd -a
     alias lla = ^lsd -la
+    alias bp = ^bat --paging=never --plain
     alias ".." = cd ..
     alias update = ^just --justfile ~/.justfile update
     alias nh-update = ^just --justfile ~/.justfile nh-update
