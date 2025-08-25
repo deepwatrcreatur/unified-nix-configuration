@@ -46,30 +46,6 @@ let
         }
       ];
     }
-
-    # Right Command → Right Option (for better window management)
-    # Many people find right cmd less useful than right option
-    # {
-    #   description = "Right Command → Right Option";
-    #   manipulators = allBasic [
-    #     {
-    #       from.key_code = "right_command";
-    #       to = [{ key_code = "right_option"; }];
-    #     }
-    #   ];
-    # }
-
-    # Function keys without holding fn (if you use them often)
-    # {
-    #   description = "Use F1-F12 as standard function keys";
-    #   manipulators = allBasic (map (n: {
-    #     from.key_code = "f${toString n}";
-    #     to = [{ 
-    #       key_code = "f${toString n}";
-    #       modifiers = [ "fn" ];
-    #     }];
-    #   }) (lib.range 1 12));
-    # }
   ];
 
   karabinerConfig = {
@@ -91,8 +67,11 @@ let
   };
 in
 {
-  # Just configure the karabiner config file - no homebrew needed here
-  xdg.configFile."karabiner/karabiner.json" = {
+  # System-level: Install Karabiner Elements
+  homebrew.casks = [ "karabiner-elements" ];
+
+  # User-level: Configure karabiner for your user
+  home-manager.users.deepwatrcreatur.xdg.configFile."karabiner/karabiner.json" = {
     text = toJSON karabinerConfig;
   };
 }
