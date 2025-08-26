@@ -45,14 +45,15 @@
   services.openssh.enable = true;
 
   # Disable screen lock
-  services.displayManager.gdm.autoSuspend = false;
+  services.xserver.displayManager.gdm.autoSuspend = false;
   security.pam.services.gdm.unixAuth = true;
-  services.logind.settings.Login = {
-    HandlePowerKey = "ignore";
-    HandleSuspendKey = "ignore";
-    HandleHibernateKey = "ignore";
-    HandleLidSwitch = "ignore";
-  };
+  services.logind.lidSwitch = "ignore";
+  services.logind.extraConfig = ''
+    HandlePowerKey=ignore
+    HandleSuspendKey=ignore
+    HandleHibernateKey=ignore
+    HandleLidSwitch=ignore
+  '';
 
   # Define your user account
   users.users.deepwatrcreatur = {
