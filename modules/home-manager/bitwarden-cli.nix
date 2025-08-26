@@ -42,7 +42,7 @@ in
       fi
     '';
 
-    programs.zsh.initExtra = lib.mkIf (secretPath != null) ''
+    programs.zsh.initContent = lib.mkIf (secretPath != null) ''
       if [[ -f "${secretPath}" ]]; then
         export BW_SESSION="$(cat ${secretPath})"
       fi
