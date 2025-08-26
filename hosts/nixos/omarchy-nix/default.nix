@@ -17,6 +17,7 @@
   omarchy = {
     # Replace with your actual details
     full_name = "Anwer Khan";
+    email = "deepwatrcreatur@gmail.com";
     theme = "tokyo-night"; # Options: tokyo-night, catppuccin, nord, etc.
     
     # Optional: Enable specific omarchy features
