@@ -41,7 +41,6 @@
     };
 
     multimedia.enable = true;
-    development.enable = true;
     office.enable = true;
   };
 
