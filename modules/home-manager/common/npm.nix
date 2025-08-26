@@ -30,7 +30,7 @@
       fish_add_path $HOME/.npm-global/bin
     '';
   
-    programs.zsh.initExtra = lib.mkIf config.programs.zsh.enable ''
+    programs.zsh.initContent = lib.mkIf config.programs.zsh.enable ''
       export PATH="$HOME/.npm-global/bin:$PATH"
     '';
   

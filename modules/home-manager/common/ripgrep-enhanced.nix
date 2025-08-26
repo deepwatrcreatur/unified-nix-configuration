@@ -232,7 +232,7 @@ in
       }
     '';
 
-    programs.zsh.initExtra = mkIf cfg.enableZshIntegration ''
+    programs.zsh.initContent = mkIf cfg.enableZshIntegration ''
       # Ripgrep with fzf integration
       rgfzf() {
         if [ $# -eq 0 ]; then
