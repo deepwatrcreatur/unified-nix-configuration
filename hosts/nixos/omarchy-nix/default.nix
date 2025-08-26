@@ -9,6 +9,10 @@
   
   nixpkgs.hostPlatform = "x86_64-linux";
 
+  # Boot loader configuration
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+
   # Configure omarchy-nix specific settings
   omarchy = {
     # Replace with your actual details
