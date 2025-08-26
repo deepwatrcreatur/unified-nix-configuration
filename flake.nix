@@ -160,6 +160,9 @@
             inputs.home-manager.nixosModules.home-manager
             inputs.determinate.nixosModules.default
             inputs.omarchy-nix.nixosModules.default
+            {
+              home-manager.extraSpecialArgs = homeManagerModuleArgs;
+            }
             ./modules
             hostPath
           ] ++ modules ++ extraModules;
@@ -174,6 +177,9 @@
               nixpkgs.config = commonNixpkgsConfig;
             }
             inputs.home-manager.nixosModules.home-manager
+            {
+              home-manager.extraSpecialArgs = homeManagerModuleArgs;
+            }
             ./modules
             hostPath
           ] ++ modules ++ extraModules;
