@@ -37,6 +37,9 @@
     office.enable = true;
   };
 
+  # Enable SSH daemon
+  services.openssh.enable = true;
+
   # Define your user account
   users.users.deepwatrcreatur = {
     isNormalUser = true;

@@ -49,6 +49,9 @@
   # Enable networking
   networking.networkmanager.enable = true;
 
+  # Enable SSH daemon
+  services.openssh.enable = true;
+
   users.users.deepwatrcreatur = {
     isNormalUser = true;
     extraGroups = [ "networkmanager" "wheel" ];
