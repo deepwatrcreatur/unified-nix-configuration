@@ -158,7 +158,7 @@ in
       }
     '';
 
-    programs.zsh.initExtra = mkIf cfg.enableShellIntegration ''
+    programs.zsh.initContent = mkIf cfg.enableShellIntegration ''
       # Same functions for zsh
       fde_edit() {
         local file

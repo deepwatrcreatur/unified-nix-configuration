@@ -325,7 +325,7 @@ in {
       eval "$(${cfg.package}/bin/zellij setup --generate-auto-start bash)"
     '';
 
-    programs.zsh.initExtra = mkIf (cfg.shellIntegration.enable && cfg.shellIntegration.enableZshIntegration) ''
+    programs.zsh.initContent = mkIf (cfg.shellIntegration.enable && cfg.shellIntegration.enableZshIntegration) ''
       eval "$(${cfg.package}/bin/zellij setup --generate-completion zsh)"
       eval "$(${cfg.package}/bin/zellij setup --generate-auto-start zsh)"
     '';

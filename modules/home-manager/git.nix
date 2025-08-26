@@ -156,7 +156,7 @@ in
       fi
     '';
 
-    programs.zsh.initExtra = lib.mkAfter ''
+    programs.zsh.initContent = lib.mkAfter ''
       if [ -f ~/.config/git/github-token ]; then
         export GITHUB_TOKEN="$(cat ~/.config/git/github-token)"
       fi
