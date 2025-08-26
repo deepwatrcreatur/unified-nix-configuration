@@ -28,6 +28,10 @@
   # Enable Hyprland (omarchy-nix provides its own Hyprland config)
   programs.hyprland.enable = true;
 
+  # Enable AMD graphics drivers
+  hardware.graphics.enable = true;
+  services.xserver.videoDrivers = [ "amdgpu" ];
+
   home-manager.users.deepwatrcreatur = {
     imports = [ 
       inputs.omarchy-nix.homeManagerModules.default 
