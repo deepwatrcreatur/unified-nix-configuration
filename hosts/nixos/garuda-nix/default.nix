@@ -18,7 +18,11 @@
 
   # Enable AMD graphics drivers
   hardware.graphics.enable = true;
+  hardware.graphics.enable32Bit = true;
   services.xserver.videoDrivers = [ "amdgpu" ];
+  
+  # Force amdgpu driver for older AMD cards if needed
+  boot.kernelParams = [ "amdgpu.si_support=1" "amdgpu.cik_support=1" ];
 
   # Garuda Linux configuration
   # These are the main toggles that make a system "Garuda-like"
