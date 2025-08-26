@@ -62,6 +62,9 @@
     # initialPassword = "changeme";
   };
 
+  # Disable garuda's home-manager to avoid conflicts
+  garuda.home-manager.enable = false;
+  
   home-manager.users.deepwatrcreatur = {
     imports = [ 
       ../../../users/deepwatrcreatur/hosts/garuda-nix
