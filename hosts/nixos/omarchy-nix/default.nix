@@ -17,7 +17,6 @@
   omarchy = {
     # Replace with your actual details
     full_name = "Anwer Khan";
-    email_address = "anwer@deepwatercreature.com";
     theme = "tokyo-night"; # Options: tokyo-night, catppuccin, nord, etc.
     
     # Optional: Enable specific omarchy features
@@ -53,8 +52,6 @@
     isNormalUser = true;
     extraGroups = [ "networkmanager" "wheel" ];
   };
-
-  nixpkgs.config.allowUnfree = true;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
