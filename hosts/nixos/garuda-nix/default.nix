@@ -9,6 +9,10 @@
   
   nixpkgs.hostPlatform = "x86_64-linux";
 
+  # Boot loader configuration
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+
   # Enable Hyprland for the system (required for proper session files)
   programs.hyprland.enable = true;
 
