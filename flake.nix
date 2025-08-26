@@ -162,6 +162,8 @@
             inputs.omarchy-nix.nixosModules.default
             {
               home-manager.extraSpecialArgs = homeManagerModuleArgs;
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
             }
             ./modules
             hostPath
@@ -179,6 +181,8 @@
             inputs.home-manager.nixosModules.home-manager
             {
               home-manager.extraSpecialArgs = homeManagerModuleArgs;
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
             }
             ./modules
             hostPath
