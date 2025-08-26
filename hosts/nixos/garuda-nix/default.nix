@@ -62,14 +62,8 @@
     # initialPassword = "changeme";
   };
 
-  # Disable garuda's home-manager to avoid conflicts
-  garuda.home-manager.enable = false;
-  
-  home-manager.users.deepwatrcreatur = {
-    imports = [ 
-      ../../../users/deepwatrcreatur/hosts/garuda-nix
-    ];
-  };
+  # Note: Garuda handles user configuration internally
+  # home-manager configuration moved to avoid conflicts
 
   # Additional system packages (beyond what Garuda provides)
   environment.systemPackages = with pkgs; [
