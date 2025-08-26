@@ -178,12 +178,6 @@
               nixpkgs.overlays = commonOverlays;
               nixpkgs.config = commonNixpkgsConfig;
             }
-            inputs.home-manager.nixosModules.home-manager
-            {
-              home-manager.extraSpecialArgs = homeManagerModuleArgs;
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-            }
             ./modules
             hostPath
           ] ++ modules ++ extraModules;
