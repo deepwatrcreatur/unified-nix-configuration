@@ -16,6 +16,10 @@
   # Enable Hyprland for the system (required for proper session files)
   programs.hyprland.enable = true;
 
+  # Enable AMD graphics drivers
+  hardware.graphics.enable = true;
+  services.xserver.videoDrivers = [ "amdgpu" ];
+
   # Garuda Linux configuration
   # These are the main toggles that make a system "Garuda-like"
   garuda = {
