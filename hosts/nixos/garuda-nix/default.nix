@@ -40,6 +40,17 @@
   # Enable SSH daemon
   services.openssh.enable = true;
 
+  # Disable screen lock
+  services.xserver.displayManager.gdm.autoSuspend = false;
+  security.pam.services.gdm.unixAuth = true;
+  services.logind.lidSwitch = "ignore";
+  services.logind.settings.Login = {
+    HandlePowerKey = "ignore";
+    HandleSuspendKey = "ignore";
+    HandleHibernateKey = "ignore";
+    HandleLidSwitch = "ignore";
+  };
+
   # Define your user account
   users.users.deepwatrcreatur = {
     isNormalUser = true;
