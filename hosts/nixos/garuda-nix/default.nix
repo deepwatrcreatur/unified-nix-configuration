@@ -39,9 +39,6 @@
       cachyos-kernel = true;
       enable = true;
     };
-
-    multimedia.enable = true;
-    office.enable = true;
   };
 
   # Enable SSH daemon
