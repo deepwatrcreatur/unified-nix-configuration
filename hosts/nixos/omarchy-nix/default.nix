@@ -52,6 +52,17 @@
   # Enable SSH daemon
   services.openssh.enable = true;
 
+  # Disable screen lock
+  services.xserver.displayManager.gdm.autoSuspend = false;
+  security.pam.services.gdm.unixAuth = true;
+  services.logind.lidSwitch = "ignore";
+  services.logind.extraConfig = ''
+    HandlePowerKey=ignore
+    HandleSuspendKey=ignore
+    HandleHibernateKey=ignore
+    HandleLidSwitch=ignore
+  '';
+
   users.users.deepwatrcreatur = {
     isNormalUser = true;
     extraGroups = [ "networkmanager" "wheel" ];
