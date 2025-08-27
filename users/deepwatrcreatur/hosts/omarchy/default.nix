@@ -16,6 +16,4 @@
     ffmpeg
     virt-viewer
   ];
-
-  home.stateVersion = "25.05";
 }
