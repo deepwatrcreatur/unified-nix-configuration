@@ -4,7 +4,6 @@
   imports = [
     ../../default.nix
     ../../../../modules/home-manager/ghostty
-    ./rbw.nix
   ];
 
   home.username = "deepwatrcreatur";
@@ -12,6 +11,7 @@
 
   home.packages = with pkgs; [
     bitwarden
+    ghostty
     megacmd
     ffmpeg
     virt-viewer
