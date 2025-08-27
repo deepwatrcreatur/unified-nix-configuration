@@ -11,7 +11,9 @@
 
   home.packages = with pkgs; [
     bitwarden
+    firefox
     ghostty
+    google-chrome[]
     megacmd
     ffmpeg
     virt-viewer
