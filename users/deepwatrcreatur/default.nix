@@ -17,6 +17,8 @@
   home.username = "deepwatrcreatur";
   home.stateVersion = "24.11";
 
+  home.file.force = true;
+
   home.packages = with pkgs; [
     go
     chezmoi
