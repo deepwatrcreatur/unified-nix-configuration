@@ -4,9 +4,12 @@
 {
   programs.gpg = {
     enable = true;
-    pinentry.enable = true;
+  };
+
+  services.gpg-agent = {
+    enable = true;
     # Choose one based on your desktop environment (e.g., GNOME, KDE, XFCE)
-    pinentry.program = "${pkgs.pinentry-gtk2}/bin/pinentry-gtk2";
-    # Or pinentry.program = "${pkgs.pinentry-qt}/bin/pinentry-qt";
+    pinentryPackage = pkgs.pinentry-gtk2;
+    # Or pinentryPackage = pkgs.pinentry-qt;
   };
 }
