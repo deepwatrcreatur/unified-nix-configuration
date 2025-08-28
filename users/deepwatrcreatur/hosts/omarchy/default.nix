@@ -3,6 +3,7 @@
 {
   imports = [
     ../../default.nix
+    ./justfile.nix
     ../../../../modules/home-manager/gpg-desktop-linux.nix
     ../../../../modules/home-manager/ghostty
   ];
