@@ -14,10 +14,23 @@
   home.packages = with pkgs; [
     bitwarden
     firefox
-    ghostty
     google-chrome
     megacmd
     ffmpeg
     virt-viewer
   ];
+
+  programs.firefox = {
+    enable = true;
+  };
+
+  programs.ghostty = {
+    enable = true;
+  };
+
+  programs.google-chrome = {
+    enable = true;
+  };
+
+  
 }
