@@ -15,7 +15,6 @@
     firefox
     ghostty
     google-chrome
-    home-manager
     megacmd
     ffmpeg
     virt-viewer
