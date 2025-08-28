@@ -60,9 +60,9 @@
       }
 
       # SSH auth socket setup
-      if ($env.SSH_AUTH_SOCK | is-empty) and ("/opt/homebrew/bin/gpgconf" | path exists) {
+      if ($env.SSH_AUTH_SOCK? | is-empty) and ("/opt/homebrew/bin/gpgconf" | path exists) {
         $env.SSH_AUTH_SOCK = (^/opt/homebrew/bin/gpgconf --list-dirs agent-ssh-socket | str trim)
-      } else if ($env.SSH_AUTH_SOCK | is-empty) and ("/run/current-system/sw/bin/gpgconf" | path exists) {
+      } else if ($env.SSH_AUTH_SOCK? | is-empty) and ("/run/current-system/sw/bin/gpgconf" | path exists) {
         $env.SSH_AUTH_SOCK = (^/run/current-system/sw/bin/gpgconf --list-dirs agent-ssh-socket | str trim)
       }
 
