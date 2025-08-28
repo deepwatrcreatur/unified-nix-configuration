@@ -2,7 +2,7 @@
 { config, pkgs, lib, inputs, ... }:
 
 {
-  programs.gnupg = {
+  programs.gpg = {
     enable = true;
     pinentry.enable = true;
     # Choose one based on your desktop environment (e.g., GNOME, KDE, XFCE)
