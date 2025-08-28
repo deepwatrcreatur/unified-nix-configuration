@@ -14,7 +14,8 @@
     bitwarden
     firefox
     ghostty
-    google-chrome 
+    google-chrome
+    home-manager
     megacmd
     ffmpeg
     virt-viewer
