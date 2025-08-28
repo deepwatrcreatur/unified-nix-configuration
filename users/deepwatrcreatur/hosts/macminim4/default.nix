@@ -16,11 +16,8 @@
     bitwarden
     megacmd
     ffmpeg
+    ghostty-bin
     yt-dlp
     virt-viewer
   ];
-
-  programs.ghostty-bin = {
-    enable = true;
-  };
 }
