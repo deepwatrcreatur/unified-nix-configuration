@@ -3,7 +3,7 @@
 {
   imports = [
     ../../default.nix
-    #../../../../modules/home-manager/gpg-desktop-linux.nix
+    ../../../../modules/home-manager/gpg-desktop-linux.nix
     ../../../../modules/home-manager/ghostty
   ];
 
@@ -14,7 +14,7 @@
     bitwarden
     firefox
     ghostty
-    google-chrome[]
+    google-chrome 
     megacmd
     ffmpeg
     virt-viewer
