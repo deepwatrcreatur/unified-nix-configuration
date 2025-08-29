@@ -7,8 +7,7 @@
     ./justfile.nix
     ./nh.nix
     ./fish-extra.nix
-    ../../../../modules/home-manager/git.nix
-    ../../../../modules/home-manager/gpg-cli.nix
+    ../../../../modules/home-manager # Common home-manager modules
   ];
 
   # Set the username and home directory for Home Manager
