@@ -17,6 +17,7 @@
     megacmd
     ffmpeg
     ghostty-bin
+    input-leap
     yt-dlp
     virt-viewer
   ];
