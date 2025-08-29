@@ -14,8 +14,10 @@
 
   home.packages = with pkgs; [
     bitwarden
-    megacmd
     ffmpeg
+    input-leap
+    mailspring
+    megacmd
     virt-viewer
   ];
 
