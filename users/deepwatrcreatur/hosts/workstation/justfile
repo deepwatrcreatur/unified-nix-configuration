@@ -1,7 +1,7 @@
-# users/root/hosts/justfile
+# users/deepwatrcreatur/hosts/workstation/justfile
 
 update:
-  nix run nixpkgs#home-manager -- switch --flake /home/deepwatrcreatur/unified-nix-configuration
+  sudo nixos-rebuild switch --flake /home/deepwatrcreatur/unified-nix-configuration#workstation
 
 nh-update:
-  nh home switch /home/deepwatrcreatur/unified-nix-configuration#homeConfigurations.deepwatrcreatur.activationPackage
+  nh os switch /home/deepwatrcreatur/unified-nix-configuration#workstation

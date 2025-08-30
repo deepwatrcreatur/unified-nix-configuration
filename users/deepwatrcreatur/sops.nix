@@ -13,7 +13,7 @@ in
 { # This is the single top-level attribute set for the module
 
   # Imports must be declared here.
-  imports = [ inputs.sops-nix.homeManagerModules.sops ];
+  # Note: sops-nix home-manager module is imported at the system level
 
   # Config must be declared here.
   config = {

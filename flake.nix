@@ -98,6 +98,14 @@
             }
             inputs.sops-nix.nixosModules.sops
             inputs.home-manager.nixosModules.home-manager
+            {
+              home-manager.extraSpecialArgs = homeManagerModuleArgs;
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.sharedModules = [
+                inputs.sops-nix.homeManagerModules.sops
+              ];
+            }
             inputs.determinate.nixosModules.default
             ./modules
             hostPath
