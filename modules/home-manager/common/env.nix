@@ -4,6 +4,7 @@
     EDITOR = "hx";
     VISUAL = "hx";
     GPG_TTY = "(tty)";
+    NH_FLAKE = "${config.home.homeDirectory}/unified-nix-configuration";
   };
   home.sessionPath = [
     "${config.home.homeDirectory}/.nix-profile/bin"
