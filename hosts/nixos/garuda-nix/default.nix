@@ -5,16 +5,13 @@
     ./hardware-configuration.nix
   ];
 
-  networking.hostName = "garuda-nix";
+  networking.hostname = "garuda-nix";
   
   nixpkgs.hostPlatform = "x86_64-linux";
 
   # Boot loader configuration
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-
-  # Enable Hyprland for the system (required for proper session files)
-  programs.hyprland.enable = true;
 
   # Enable AMD graphics drivers
   hardware.graphics.enable = true;
@@ -31,9 +28,6 @@
     # can easily switch between Hyprland and dr460nized at the login screen
     dr460nized.enable = true;
     
-    # Enable gaming optimizations and applications
-    gaming.enable = true;
-    
     # Performance tweaks including CachyOS kernel
     performance-tweaks = {
       cachyos-kernel = true;
@@ -48,12 +42,6 @@
   services.xserver.displayManager.gdm.autoSuspend = false;
   security.pam.services.gdm.unixAuth = true;
   services.logind.lidSwitch = "ignore";
-  services.logind.extraConfig = ''
-    HandlePowerKey=ignore
-    HandleSuspendKey=ignore
-    HandleHibernateKey=ignore
-    HandleLidSwitch=ignore
-  '';
 
   # Define your user account
   users.users.deepwatrcreatur = {
