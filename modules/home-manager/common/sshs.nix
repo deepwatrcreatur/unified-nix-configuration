@@ -137,16 +137,21 @@
   # Ensure SSH is properly configured
   programs.ssh = {
     enable = true;
-    addKeysToAgent = "yes";
+    enableDefaultConfig = false;
     
-    # Connection multiplexing (matches sshs config)
-    controlMaster = "auto";
-    controlPath = "~/.ssh/master-%r@%h:%p";
-    controlPersist = "10m";
-    
-    # Performance settings
-    serverAliveInterval = 60;
-    serverAliveCountMax = 3;
+    # Global default settings for all hosts
+    matchBlocks."*" = {
+      addKeysToAgent = "yes";
+      
+      # Connection multiplexing (matches sshs config)
+      controlMaster = "auto";
+      controlPath = "~/.ssh/master-%r@%h:%p";
+      controlPersist = "10m";
+      
+      # Performance settings
+      serverAliveInterval = 60;
+      serverAliveCountMax = 3;
+    };
     
     extraConfig = ''
       # Compression

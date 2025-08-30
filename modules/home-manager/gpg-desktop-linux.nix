@@ -9,7 +9,7 @@
   services.gpg-agent = {
     enable = true;
     # Choose one based on your desktop environment (e.g., GNOME, KDE, XFCE)
-    pinentryPackage = pkgs.pinentry-gnome3;
-    # Or pinentryPackage = pkgs.pinentry-qt;
+    pinentry.package = pkgs.pinentry-gnome3;
+    # Or pinentry.package = pkgs.pinentry-qt;
   };
 }
