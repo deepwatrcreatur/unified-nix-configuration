@@ -2,33 +2,30 @@
 
 {
   imports = [
-    ../../default.nix  
+    ../../default.nix
+    ./justfile.nix
+    ../../../../modules/home-manager
+    ../../../../modules/home-manager/gpg-desktop-linux.nix
+    #../../../../modules/home-manager/ghostty
   ];
 
   home.username = "deepwatrcreatur";
   home.homeDirectory = "/home/deepwatrcreatur";
 
-  # Enable Hyprland through Home Manager for user-specific configuration
-  wayland.windowManager.hyprland = {
-    enable = true;
-    # You can add custom Hyprland configuration here
-    settings = {
-      # Example custom keybindings (optional)
-      "$mod" = "SUPER";
-      bind = [
-        # custom keybindings here
-        # "$mod, F, exec, firefox"
-        # "$mod, T, exec, kitty"
-      ];
-    };
-  };
-
-  # Enable required terminal for Hyprland default config
-  programs.kitty.enable = true;
-  
   home.packages = with pkgs; [
-    firefox
+    bitwarden
+    ffmpeg
+    input-leap
+    mailspring
+    megacmd
+    virt-viewer
   ];
 
-  home.stateVersion = "25.05";
+  programs.firefox = {
+    enable = true;
+  };
+
+  programs.google-chrome = {
+    enable = true;
+  };
 }
