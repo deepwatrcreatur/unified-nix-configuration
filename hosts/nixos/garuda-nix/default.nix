@@ -59,7 +59,13 @@
     git
   ];
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  # Override nix settings for Lix compatibility
+  nix.settings = {
+    experimental-features = [ "nix-command" "flakes" "cgroups" ];
+    # Remove Lix-incompatible settings from common module
+    download-buffer-size = lib.mkForce null;
+    lazy-trees = lib.mkForce null;
+  };
   nixpkgs.config.allowUnfree = true;
 
   system.stateVersion = "24.11";
