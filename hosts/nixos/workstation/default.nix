@@ -67,7 +67,13 @@
     extraGroups = [ "networkmanager" "wheel" ];
   };
 
-  # Additional system packages (beyond what Garuda provides)
+  home-manager.users.deepwatrcreatur = {
+    imports = [ 
+      ../../../users/deepwatrcreatur/hosts/workstation
+    ];
+  };
+
+  # Additional system packages
   environment.systemPackages = with pkgs; [
     vim
     git
