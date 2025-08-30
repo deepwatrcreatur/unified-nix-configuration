@@ -6,7 +6,8 @@
     ./justfile.nix
     ../../../../modules/home-manager
     ../../../../modules/home-manager/gpg-desktop-linux.nix
-    #../../../../modules/home-manager/ghostty
+    ../../../../modules/home-manager/ghostty
+    ../../../../modules/wezterm-config.nix
   ];
 
   home.username = "deepwatrcreatur";
@@ -16,8 +17,8 @@
     bitwarden
     ffmpeg
     input-leap
-    mailspring
     megacmd
+    thunderbird-bin
     virt-viewer
   ];
 
