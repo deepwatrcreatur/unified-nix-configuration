@@ -24,6 +24,14 @@
   # Force amdgpu driver for older AMD cards if needed
   boot.kernelParams = [ "amdgpu.si_support=1" "amdgpu.cik_support=1" ];
 
+  # Enable AMD graphics drivers
+  hardware.graphics.enable = true;
+  hardware.graphics.enable32Bit = true;
+  services.xserver.videoDrivers = [ "amdgpu" ];
+  
+  # Force amdgpu driver for older AMD cards if needed
+  boot.kernelParams = [ "amdgpu.si_support=1" "amdgpu.cik_support=1" ];
+
   # Enable KDE Plasma desktop environment
   services.xserver.enable = true;
   services.displayManager.sddm.enable = true;
@@ -45,14 +53,9 @@
   services.openssh.enable = true;
 
   # Disable screen lock
-  services.displayManager.gdm.autoSuspend = false;
+  services.xserver.displayManager.gdm.autoSuspend = false;
   security.pam.services.gdm.unixAuth = true;
-  services.logind.settings.Login = {
-    HandlePowerKey = "ignore";
-    HandleSuspendKey = "ignore";
-    HandleHibernateKey = "ignore";
-    HandleLidSwitch = "ignore";
-  };
+  services.logind.lidSwitch = "ignore";
 
   # Define your user account
   users.users.deepwatrcreatur = {
@@ -60,13 +63,14 @@
     extraGroups = [ "networkmanager" "wheel" ];
   };
 
-  home-manager.users.deepwatrcreatur = {
-    imports = [ 
-      ../../../users/deepwatrcreatur/hosts/workstation
-    ];
-  };
+  # Additional system packages (beyond what Garuda provides)
+  environment.systemPackages = with pkgs; [
+    vim
+    git
+  ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nixpkgs.config.allowUnfree = true;
 
   system.stateVersion = "25.05";
 }
