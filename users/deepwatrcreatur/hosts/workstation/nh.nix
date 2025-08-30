@@ -4,5 +4,7 @@
   
   programs.nh = {
     flake = "/home/deepwatrcreatur/unified-nix-configuration";
+    # Specify the hostname for NixOS configurations
+    os.hostname = "workstation";
   };
 }
