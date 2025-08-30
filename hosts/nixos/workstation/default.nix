@@ -16,10 +16,22 @@
   # Enable Hyprland for the system (required for proper session files)
   programs.hyprland.enable = true;
 
-  # Enable AMD graphics drivers
-  hardware.graphics.enable = true;
-  hardware.graphics.enable32Bit = true;
+  # Enable AMD graphics drivers with firmware
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
+    extraPackages = with pkgs; [
+      amdvlk
+      rocmPackages.clr.icd
+    ];
+    extraPackages32 = with pkgs; [
+      driversi686Linux.amdvlk
+    ];
+  };
   services.xserver.videoDrivers = [ "amdgpu" ];
+  
+  # Enable AMD GPU firmware
+  hardware.enableRedistributableFirmware = true;
   
   # Force amdgpu driver for older AMD cards if needed
   boot.kernelParams = [ "amdgpu.si_support=1" "amdgpu.cik_support=1" ];
