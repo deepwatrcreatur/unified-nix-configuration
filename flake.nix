@@ -55,11 +55,6 @@
       inputs.home-manager.follows = "home-manager";
     };
 
-    garuda = {
-      url = "gitlab:garuda-linux/garuda-nix-subsystem/stable";
-      # Note: GNS follows their own nixpkgs for caching benefits
-      # Don't override their nixpkgs input unless necessary
-    };
   };
 
   outputs = inputs@{ ... }:
@@ -170,18 +165,6 @@
           ] ++ modules ++ extraModules;
         };
 
-      mkGarudaSystem = { system ? "x86_64-linux", hostPath, modules ? [], extraModules ? [] }:
-        inputs.garuda.lib.garudaSystem {
-          inherit system;
-          modules = [
-            {
-              nixpkgs.overlays = commonOverlays;
-              nixpkgs.config = commonNixpkgsConfig;
-            }
-            ./modules
-            hostPath
-          ] ++ modules ++ extraModules;
-        };
 
       # Standard Home Manager configuration builder
       mkHomeConfig = { system ? "x86_64-linux", userPath, modules ? [] }:
