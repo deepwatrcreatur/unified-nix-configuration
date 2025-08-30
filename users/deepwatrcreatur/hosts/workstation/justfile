@@ -1,0 +1,7 @@
+# users/root/hosts/justfile
+
+update:
+  nix run nixpkgs#home-manager -- switch --flake /home/deepwatrcreatur/unified-nix-configuration
+
+nh-update:
+  nh home switch /home/deepwatrcreatur/unified-nix-configuration#homeConfigurations.deepwatrcreatur.activationPackage
