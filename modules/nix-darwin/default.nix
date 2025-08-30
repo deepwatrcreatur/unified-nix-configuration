@@ -18,6 +18,12 @@ in
     ../wezterm-config.nix
   ];
 
+  # macOS-specific wezterm configuration
+  programs.wezterm.extraConfig = lib.mkAfter ''
+    -- Default program: launch zellij with nushell as default shell (macOS path)
+    config.default_prog = { wezterm.home_dir .. '/.nix-profile/bin/zellij', '-l', 'welcome' }
+  '';
+
   nixpkgs.config.allowUnfree = true;
 
   # Increase file descriptor limits for Nix builds

@@ -6,6 +6,12 @@
     ../../../modules/wezterm-config.nix
   ];
 
+  # Linux-specific wezterm configuration
+  programs.wezterm.extraConfig = lib.mkAfter ''
+    -- Default program: launch zellij with nushell as default shell (Linux path)
+    config.default_prog = { '/etc/profiles/per-user/deepwatrcreatur/bin/zellij', '-l', 'welcome' }
+  '';
+
   networking.hostName = "workstation";
   
   nixpkgs.hostPlatform = "x86_64-linux";

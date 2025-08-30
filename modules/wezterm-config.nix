@@ -25,9 +25,6 @@
       { key = "\\\""; mods = "CTRL"; action = "ClearScrollback 'ScrollbackAndViewport'"; }
     ];
     extraConfig = ''
-      -- Default program: launch zellij with nushell as default shell
-      config.default_prog = { wezterm.home_dir .. '/.nix-profile/bin/zellij', '-l', 'welcome' }
-  
       -- Mouse bindings (manual for now)
       config.mouse_bindings = {
         {
