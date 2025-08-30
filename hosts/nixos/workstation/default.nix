@@ -24,14 +24,6 @@
   # Force amdgpu driver for older AMD cards if needed
   boot.kernelParams = [ "amdgpu.si_support=1" "amdgpu.cik_support=1" ];
 
-  # Enable AMD graphics drivers
-  hardware.graphics.enable = true;
-  hardware.graphics.enable32Bit = true;
-  services.xserver.videoDrivers = [ "amdgpu" ];
-  
-  # Force amdgpu driver for older AMD cards if needed
-  boot.kernelParams = [ "amdgpu.si_support=1" "amdgpu.cik_support=1" ];
-
   # Enable KDE Plasma desktop environment
   services.xserver.enable = true;
   services.displayManager.sddm.enable = true;
