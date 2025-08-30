@@ -5,7 +5,7 @@
     ./hardware-configuration.nix
   ];
 
-  networking.hostname = "garuda-nix";
+  networking.hostName = "garuda-nix";
   
   nixpkgs.hostPlatform = "x86_64-linux";
 
