@@ -17,8 +17,8 @@
     bitwarden
     ffmpeg
     input-leap
+    mailspring
     megacmd
-    thunderbird-bin
     virt-viewer
   ];
 
