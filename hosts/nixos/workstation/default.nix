@@ -3,6 +3,7 @@
 {
   imports = [
     ./hardware-configuration.nix
+    ../../../modules/wezterm-config.nix
   ];
 
   networking.hostName = "workstation";
