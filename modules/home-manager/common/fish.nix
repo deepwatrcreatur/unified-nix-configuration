@@ -19,6 +19,9 @@
     interactiveShellInit = ''
       # Set GPG_TTY for all systems
       set -gx GPG_TTY (tty)
+      
+      # Set NH_FLAKE for nh helper
+      set -gx NH_FLAKE "${config.home.homeDirectory}/unified-nix-configuration"
     '';
   };
 }
