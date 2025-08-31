@@ -20,9 +20,6 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # Enable Hyprland for the system (required for proper session files)
-  programs.hyprland.enable = true;
-
   # Enable AMD graphics drivers with firmware
   hardware.graphics = {
     enable = true;
@@ -64,9 +61,9 @@
   services.openssh.enable = true;
 
   # Disable screen lock
-  services.xserver.displayManager.gdm.autoSuspend = false;
+  services.displayManager.gdm.autoSuspend = false;
   security.pam.services.gdm.unixAuth = true;
-  services.logind.lidSwitch = "ignore";
+  services.logind.setings.Login.HandleLidSwitch = "ignore";
 
   # Define your user account
   users.users.deepwatrcreatur = {
