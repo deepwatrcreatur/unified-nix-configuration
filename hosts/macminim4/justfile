@@ -1,6 +1,5 @@
+update:
+  sudo darwin-rebuild switch
 
-update dir="/Volumes/Work/unified-nix-configuration":
-  sudo darwin-rebuild switch --flake {{dir}}#macminim4
-
-nh-update dir="/Volumes/Work/unified-nix-configuration":
-  nix --experimental-features 'nix-command flakes' run 'github:viperML/nh' -- darwin switch {{dir}}
+nh-update:
+  nix --experimental-features 'nix-command flakes' run 'github:viperML/nh' -- darwin switch
