@@ -7,6 +7,7 @@
       GPG_TTY = "(tty)";
       GNUPGHOME = "${config.home.homeDirectory}/.gnupg";
       SOPS_AGE_KEY_FILE = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
+      NH_FLAKE = "${config.home.homeDirectory}/unified-nix-configuration";
     };
     shellAliases = {
       rename = "^rename -n";
