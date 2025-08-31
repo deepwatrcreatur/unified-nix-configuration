@@ -63,7 +63,7 @@
   # Disable screen lock
   services.displayManager.gdm.autoSuspend = false;
   security.pam.services.gdm.unixAuth = true;
-  services.logind.setings.Login.HandleLidSwitch = "ignore";
+  services.logind.settings.Login.HandleLidSwitch = "ignore";
 
   # Define your user account
   users.users.deepwatrcreatur = {
