@@ -48,7 +48,7 @@
 
     services.displayManager = {
       cosmic-greeter.enable = true;
-      gd1m.autoSuspend = false;
+      gdm.autoSuspend = false;
       autoLogin = {
         enable = true;
         user = "deepwatrcreatur";
