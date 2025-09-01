@@ -17,7 +17,7 @@
   nixpkgs.hostPlatform = "x86_64-linux";
 
   # Boot loader configuration
-  boot.loader.systemd-boot.enable = true;
+  boot.loader.limine.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Enable AMD graphics drivers with firmware
