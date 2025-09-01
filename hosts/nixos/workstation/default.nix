@@ -42,10 +42,19 @@
 
   # Enable KDE Plasma desktop environment
   services.xserver.enable = true;
-  services.displayManager.sddm.enable = true;
-  services.desktopManager.plasma6.enable = true;
+  # services.displayManager.sddm.enable = true;
+  # services.desktopManager.plasma6.enable = true;
+    services.desktopManager.cosmic.enable = true;
 
-  # Enable sound
+    services.displayManager = {
+      cosmic-greeter.enable = true;
+      services.displayManager.gd1m.autoSuspend = false;
+      autoLogin = {
+        enable = true;
+        user = "deepwatrcreatur";
+      };
+    };
+
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -61,7 +70,6 @@
   services.openssh.enable = true;
 
   # Disable screen lock
-  services.displayManager.gdm.autoSuspend = false;
   security.pam.services.gdm.unixAuth = true;
   services.logind.settings.Login.HandleLidSwitch = "ignore";
 
