@@ -31,7 +31,7 @@
     enable = true;
   };
 
-  # Plasma panel configuration
+  # Plasma panel configuration - start simple, add widgets manually after
   programs.plasma = {
     enable = true;
     panels = [
@@ -42,11 +42,6 @@
         widgets = [
           "org.kde.plasma.kickoff"
           "org.kde.plasma.icontasks"
-          "org.kde.plasma.weather"
-          "org.kde.plasma.cameraindicator"
-          "org.kde.plasma.systemloadviewer"
-          "org.kde.plasma.systemmonitor"
-          "org.kde.plasma.networkmanagement"
           "org.kde.plasma.systemtray"
           "org.kde.plasma.digitalclock"
         ];
