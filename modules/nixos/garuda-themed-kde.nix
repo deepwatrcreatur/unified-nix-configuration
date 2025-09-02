@@ -24,7 +24,6 @@
     
     # Additional tools for theming
     dconf-editor          # For GTK app theming
-    latte-dock           # Advanced dock for KDE
     
     # Fonts that match Garuda's aesthetic
     jetbrains-mono
