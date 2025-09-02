@@ -16,6 +16,7 @@
   home.packages = with pkgs; [
     bitwarden
     ffmpeg
+    gitkraken
     input-leap
     mailspring
     megacmd
