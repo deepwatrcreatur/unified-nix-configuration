@@ -47,6 +47,22 @@
       tags = ["server"]
       
       [[hosts]]
+      name = "cache and build server"
+      host = "10.10.11.68"
+      username = "deepwatrcreatur"
+      port = 22
+      description = "NixOS LXC for building nix packages"
+      tags = ["server"]
+      
+      [[hosts]]
+      name = "workstation"
+      host = "10.10.11.73"
+      username = "deepwatrcreatur"
+      port = 22
+      description = "NixOS workstation"
+      tags = ["desktop"]
+      
+      [[hosts]]
       name = "opnsense"
       host = "10.10.10.1"
       username = "root"
@@ -65,7 +81,7 @@
       
       # Groups for organizing hosts
       [groups]
-      homelab = ["pvestrix", "homeserver"]
+      homelab = ["pve-strix", "pve-tomahaw", "opnsense", "homeserver"]
       
       # Additional SSH options
       [ssh_options]
@@ -91,7 +107,7 @@
       # Quick SSH connection script
       
       case "$1" in
-        "pvestrix")
+        "pve-strix")
           ssh root@10.10.11.57 -p 22
           ;;
         "opnsense")
