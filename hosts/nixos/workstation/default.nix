@@ -71,6 +71,8 @@
   security.pam.services.gdm.unixAuth = true;
   services.logind.settings.Login.HandleLidSwitch = "ignore";
 
+  security.sudo.wheelNeedsPassword = false;
+  
   # Define your user account
   users.users.deepwatrcreatur = {
     isNormalUser = true;
