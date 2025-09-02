@@ -55,6 +55,12 @@
       inputs.home-manager.follows = "home-manager";
     };
 
+    plasma-manager = {
+      url = "github:pjones/plasma-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
+
   };
 
   outputs = inputs@{ ... }:
@@ -104,6 +110,7 @@
               home-manager.useUserPackages = true;
               home-manager.sharedModules = [
                 inputs.sops-nix.homeManagerModules.sops
+                inputs.plasma-manager.homeManagerModules.plasma-manager
               ];
             }
             inputs.determinate.nixosModules.default
