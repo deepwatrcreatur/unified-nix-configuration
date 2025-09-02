@@ -31,6 +31,29 @@
     enable = true;
   };
 
+  # Plasma panel configuration
+  programs.plasma = {
+    enable = true;
+    panels = [
+      {
+        location = "bottom";
+        alignment = "right";
+        height = 68;
+        widgets = [
+          "org.kde.plasma.kickoff"
+          "org.kde.plasma.icontasks"
+          "org.kde.plasma.weather"
+          "org.kde.plasma.cameraindicator"
+          "org.kde.plasma.systemloadviewer"
+          "org.kde.plasma.systemmonitor"
+          "org.kde.plasma.networkmanagement"
+          "org.kde.plasma.systemtray"
+          "org.kde.plasma.digitalclock"
+        ];
+      }
+    ];
+  };
+
   # Input Leap client service
   systemd.user.services.input-leap-client = {
     Unit = {
