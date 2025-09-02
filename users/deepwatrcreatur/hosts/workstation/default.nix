@@ -30,4 +30,22 @@
   programs.google-chrome = {
     enable = true;
   };
+
+  # Input Leap client service
+  systemd.user.services.input-leap-client = {
+    Unit = {
+      Description = "Input Leap Client";
+      After = [ "graphical-session.target" ];
+      Wants = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.input-leap}/bin/input-leapc --no-daemon --name workstation 10.10.11.150";
+      Restart = "on-failure";
+      RestartSec = "5";
+    };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
+  };
 }
