@@ -4,6 +4,7 @@
   imports = [
     ./hardware-configuration.nix
     ../../../modules/wezterm-config.nix
+    ../../../modules/nixos/garuda-themed-kde.nix
   ];
 
   # Linux-specific wezterm configuration
@@ -40,20 +41,15 @@
   # Force amdgpu driver for older AMD cards if needed
   boot.kernelParams = [ "amdgpu.si_support=1" "amdgpu.cik_support=1" ];
 
-  # Enable KDE Plasma desktop environment
+  # Enable X11 for KDE
   services.xserver.enable = true;
-  # services.displayManager.sddm.enable = true;
-  # services.desktopManager.plasma6.enable = true;
-    services.desktopManager.cosmic.enable = true;
 
-    services.displayManager = {
-      cosmic-greeter.enable = true;
-      gdm.autoSuspend = false;
-      autoLogin = {
-        enable = true;
-        user = "deepwatrcreatur";
-      };
+  services.displayManager = {
+    autoLogin = {
+      enable = true;
+      user = "deepwatrcreatur";
     };
+  };
 
   security.rtkit.enable = true;
   services.pipewire = {
