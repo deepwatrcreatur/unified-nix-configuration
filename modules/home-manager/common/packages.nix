@@ -5,6 +5,7 @@
     btop
     comma
     curl
+    dig
     dua
     dust
     fastfetch
