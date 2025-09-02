@@ -65,6 +65,8 @@
   # Enable SSH daemon
   services.openssh.enable = true;
 
+  services.tailscale.enable = true;
+   
   # Disable screen lock
   security.pam.services.gdm.unixAuth = true;
   services.logind.settings.Login.HandleLidSwitch = "ignore";
