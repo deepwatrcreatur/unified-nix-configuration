@@ -4,4 +4,4 @@ update:
   sudo nixos-rebuild switch --flake /home/deepwatrcreatur/unified-nix-configuration#workstation
 
 nh-update:
-  nh os switch /home/deepwatrcreatur/unified-nix-configuration#workstation
+  nh os switch
