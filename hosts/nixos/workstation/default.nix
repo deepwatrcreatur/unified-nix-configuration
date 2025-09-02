@@ -75,6 +75,7 @@
   users.users.deepwatrcreatur = {
     isNormalUser = true;
     extraGroups = [ "networkmanager" "wheel" ];
+    shell = pkgs.nushell;
   };
 
   home-manager.users.deepwatrcreatur = {
