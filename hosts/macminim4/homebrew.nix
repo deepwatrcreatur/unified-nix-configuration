@@ -7,6 +7,7 @@
   homebrew.hostSpecific = {
     brews = [
       "opencode"
+      "doxx"
     ];
     casks = [
       "claude"
