@@ -7,7 +7,7 @@
     #../../../../modules/home-manager/zed.nix
     ../../../../modules/home-manager/gpg-mac.nix
     ../../../../modules/home-manager/env-darwin.nix
-    ../../../../modules/nh.nix
+    ./nh.nix
     ./karabiner.nix
     ../../xbar.nix
     ../../rbw.nix
