@@ -1,5 +1,5 @@
 # modules/nix-darwin/homebrew.nix
-{ nix-homebrew, homebrew-core, homebrew-cask, config, lib, ... }: 
+{ nix-homebrew, config, lib, ... }: 
 let
   inherit (lib) mkOption types;
 in {
@@ -51,8 +51,6 @@ in {
       enable = true;
       user = config.system.primaryUser;
       autoMigrate = true;
-      taps."homebrew/homebrew-core" = homebrew-core;
-      taps."homebrew/homebrew-cask" = homebrew-cask;
       mutableTaps = true;
     };
   };
