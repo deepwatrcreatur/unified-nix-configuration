@@ -1,5 +1,5 @@
 update:
-  darwin-rebuild switch
+  darwin-rebuild switch --flake ~/unified-nix-configuration/.#macminim4
 
 nh-update:
   nh darwin switch
