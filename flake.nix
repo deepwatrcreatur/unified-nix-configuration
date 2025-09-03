@@ -19,16 +19,6 @@
 
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
 
-    homebrew-core = {
-      url = "github:homebrew/homebrew-core";
-      flake = false;
-    };
-
-    homebrew-cask = {
-      url = "github:homebrew/homebrew-cask";
-      flake = false;
-    };
-
     tap-romkatv-powerlevel10k = {
       url = "github:romkatv/powerlevel10k";
       flake = false;
@@ -128,7 +118,7 @@
         inputs.nix-darwin.lib.darwinSystem {
           inherit system;
           specialArgs = systemSpecialArgs // {
-            inherit (inputs) nix-homebrew homebrew-core homebrew-cask;
+            inherit (inputs) nix-homebrew;
           };
           modules = [
             {
