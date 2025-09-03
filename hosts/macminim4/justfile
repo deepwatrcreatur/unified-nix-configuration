@@ -1,5 +1,5 @@
 update:
-  sudo darwin-rebuild switch
+  darwin-rebuild switch
 
 nh-update:
-  nix --experimental-features 'nix-command flakes' run 'github:viperML/nh' -- darwin switch
+  nh darwin switch
