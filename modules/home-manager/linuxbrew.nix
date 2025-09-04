@@ -3,30 +3,40 @@
 with lib;
 
 let
-  brewPrefix = "$HOME/.linuxbrew";
+  brewPrefix = "/home/linuxbrew/.linuxbrew";
   commonBrews = (import ../common-brew-packages.nix).brews;
 in
 {
   # Add Homebrew to PATH and environment
-  home.sessionPath = [ "$HOME/.linuxbrew/bin" "$HOME/.linuxbrew/sbin" ];
+  home.sessionPath = [ "${brewPrefix}/bin" "${brewPrefix}/sbin" ];
   
   home.sessionVariables = {
-    HOMEBREW_PREFIX = "$HOME/.linuxbrew";
-    HOMEBREW_CELLAR = "$HOME/.linuxbrew/Cellar";
-    HOMEBREW_REPOSITORY = "$HOME/.linuxbrew/Homebrew";
+    HOMEBREW_PREFIX = brewPrefix;
+    HOMEBREW_CELLAR = "${brewPrefix}/Cellar";
+    HOMEBREW_REPOSITORY = "${brewPrefix}/Homebrew";
   };
 
   # Shell integration
   programs.bash.initExtra = mkIf config.programs.bash.enable ''
-    if [ -f "$HOME/.linuxbrew/bin/brew" ]; then
-      eval "$($HOME/.linuxbrew/bin/brew shellenv)"
+    if [ -f "${brewPrefix}/bin/brew" ]; then
+      eval "$(${brewPrefix}/bin/brew shellenv)"
     fi
   '';
 
   programs.fish.shellInit = mkIf config.programs.fish.enable ''
-    if test -f "$HOME/.linuxbrew/bin/brew"
-      eval ($HOME/.linuxbrew/bin/brew shellenv)
+    if test -f "${brewPrefix}/bin/brew"
+      eval (${brewPrefix}/bin/brew shellenv)
     end
+  '';
+
+  programs.nushell.extraConfig = mkIf config.programs.nushell.enable ''
+    # Add Homebrew to PATH if it exists
+    if ("${brewPrefix}/bin/brew" | path exists) {
+      $env.PATH = ($env.PATH | prepend "${brewPrefix}/bin" | prepend "${brewPrefix}/sbin")
+      $env.HOMEBREW_PREFIX = "${brewPrefix}"
+      $env.HOMEBREW_CELLAR = "${brewPrefix}/Cellar"
+      $env.HOMEBREW_REPOSITORY = "${brewPrefix}/Homebrew"
+    }
   '';
 
   # Install script for common packages
