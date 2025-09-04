@@ -6,6 +6,7 @@
     ../../../modules/nixos/networking.nix
     ../../../modules/nixos
     ../../../modules/nixos/services/iperf3.nix
+    ../../../modules/linux/linuxbrew-system.nix
     #./packages.nix
     #./podman.nix
     #./influxdb.nix

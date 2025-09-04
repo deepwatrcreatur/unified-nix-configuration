@@ -8,6 +8,7 @@
     ./rbw.nix
     ../../../../modules/home-manager/git.nix
     ../../../../modules/home-manager/gpg-cli.nix
+    ../../../../modules/home-manager/linuxbrew.nix
     ../.. # default module for user
     #../../../../modules/home-manager/rclone.nix
   ];
