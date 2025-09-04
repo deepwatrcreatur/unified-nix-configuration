@@ -7,8 +7,7 @@ let
   commonBrews = (import ../common-brew-packages.nix).brews;
 in
 {
-  # Add Homebrew to PATH and environment
-  home.sessionPath = [ "${brewPrefix}/bin" "${brewPrefix}/sbin" ];
+  # Add Homebrew environment variables (PATH handled in env.nix)
   
   home.sessionVariables = {
     HOMEBREW_PREFIX = brewPrefix;
