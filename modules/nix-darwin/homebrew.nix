@@ -31,12 +31,11 @@ in {
         cleanup = "zap";
       };
       brews = [
-        "ccat"
         "cmake"
         "fish"
         "powerlevel10k"
         "bitwarden-cli"
-      ] ++ config.homebrew.hostSpecific.brews;
+      ] ++ (import ../common-brew-packages.nix).brews ++ config.homebrew.hostSpecific.brews;
       casks = [
         "coteditor"
         "font-fira-code"
