@@ -46,23 +46,27 @@ in
       set -eu
       
       # Install Homebrew if not present
-      if [ ! -f "$HOME/.linuxbrew/bin/brew" ]; then
-        echo "Installing Homebrew to $HOME/.linuxbrew..."
-        export HOMEBREW_PREFIX="$HOME/.linuxbrew"
-        ${pkgs.bash}/bin/bash -c "$(${pkgs.curl}/bin/curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      if [ ! -f "${brewPrefix}/bin/brew" ]; then
+        echo "Installing Homebrew to ${brewPrefix}..."
+        
+        # Set up comprehensive PATH for homebrew installer on NixOS
+        export PATH="${pkgs.coreutils}/bin:${pkgs.util-linux}/bin:${pkgs.gnugrep}/bin:${pkgs.gawk}/bin:${pkgs.git}/bin:${pkgs.curl}/bin:${pkgs.glibc.bin}/bin:${pkgs.findutils}/bin:${pkgs.gnused}/bin:${pkgs.gnutar}/bin:${pkgs.gzip}/bin:${pkgs.which}/bin:${pkgs.ruby}/bin:/nix/var/nix/profiles/default/bin:/run/current-system/sw/bin:$PATH"
+        
+        # Run the installer with proper environment
+        NONINTERACTIVE=1 ${pkgs.bash}/bin/bash -c "$(${pkgs.curl}/bin/curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       fi
 
       # Set up environment
-      export PATH="$HOME/.linuxbrew/bin:$HOME/.linuxbrew/sbin:$PATH"
-      export HOMEBREW_PREFIX="$HOME/.linuxbrew"
-      export HOMEBREW_CELLAR="$HOME/.linuxbrew/Cellar"
-      export HOMEBREW_REPOSITORY="$HOME/.linuxbrew/Homebrew"
+      export PATH="${brewPrefix}/bin:${brewPrefix}/sbin:$PATH"
+      export HOMEBREW_PREFIX="${brewPrefix}"
+      export HOMEBREW_CELLAR="${brewPrefix}/Cellar"
+      export HOMEBREW_REPOSITORY="${brewPrefix}/Homebrew"
       
       # Install common packages
       ${concatStringsSep "\n" (map (formula: ''
-        if ! "$HOME/.linuxbrew/bin/brew" list "${formula}" &>/dev/null; then
+        if ! "${brewPrefix}/bin/brew" list "${formula}" &>/dev/null; then
           echo "Installing formula: ${formula}"
-          "$HOME/.linuxbrew/bin/brew" install "${formula}"
+          "${brewPrefix}/bin/brew" install "${formula}"
         fi
       '') commonBrews)}
       
