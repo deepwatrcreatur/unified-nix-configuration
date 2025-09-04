@@ -3,6 +3,7 @@
   home.packages = with pkgs; [
     age
     bandwhich
+    bottom
     btop
     comma
     curl
