@@ -80,6 +80,8 @@
     shell = pkgs.nushell;
   };
 
+  home-manager.backupFileExtension = "backup";
+  
   home-manager.users.deepwatrcreatur = {
     imports = [ 
       ../../../users/deepwatrcreatur/hosts/workstation
