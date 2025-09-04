@@ -5,6 +5,7 @@
     ./hardware-configuration.nix
     ../../../modules/wezterm-config.nix
     ../../../modules/nixos/garuda-themed-kde.nix
+    ../../../modules/linux/linuxbrew.nix
   ];
 
   # Linux-specific wezterm configuration
