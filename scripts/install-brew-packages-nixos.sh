@@ -33,29 +33,42 @@ fi
 # Create symlinks for tools that homebrew installer expects in standard locations
 echo "Creating symlinks for homebrew installer compatibility..."
 mkdir -p /bin /usr/bin
-ln -sf $(which bash) /bin/bash 2>/dev/null || true
-ln -sf $(which mkdir) /bin/mkdir 2>/dev/null || true
-ln -sf $(which chmod) /bin/chmod 2>/dev/null || true
-ln -sf $(which chown) /bin/chown 2>/dev/null || true
-ln -sf $(which chgrp) /bin/chgrp 2>/dev/null || true
-ln -sf $(which touch) /bin/touch 2>/dev/null || true
-ln -sf $(which cat) /bin/cat 2>/dev/null || true
-ln -sf $(which readlink) /bin/readlink 2>/dev/null || true
-ln -sf $(which rm) /bin/rm 2>/dev/null || true
-ln -sf $(which stat) /usr/bin/stat 2>/dev/null || true
-ln -sf $(which ldd) /usr/bin/ldd 2>/dev/null || true
-ln -sf $(which curl) /bin/curl 2>/dev/null || true
-ln -sf $(which git) /bin/git 2>/dev/null || true
-ln -sf $(which tr) /bin/tr 2>/dev/null || true
-ln -sf $(which mv) /bin/mv 2>/dev/null || true
-ln -sf $(which shasum) /bin/shasum 2>/dev/null || true
-ln -sf $(which sha256sum) /bin/sha256sum 2>/dev/null || true
-ln -sf $(which cut) /bin/cut 2>/dev/null || true
-ln -sf $(which flock) /bin/flock 2>/dev/null || true
-ln -sf $(which tar) /bin/tar 2>/dev/null || true
-ln -sf $(which gzip) /bin/gzip 2>/dev/null || true
-ln -sf $(which wc) /bin/wc 2>/dev/null || true
-ln -sf $(which grep) /bin/grep 2>/dev/null || true
+
+# Use full system paths to avoid PATH dependency issues
+SYSTEM_BIN="/run/current-system/sw/bin"
+
+ln -sf $SYSTEM_BIN/bash /bin/bash 2>/dev/null || true
+ln -sf $SYSTEM_BIN/mkdir /bin/mkdir 2>/dev/null || true
+ln -sf $SYSTEM_BIN/chmod /bin/chmod 2>/dev/null || true
+ln -sf $SYSTEM_BIN/chown /bin/chown 2>/dev/null || true
+ln -sf $SYSTEM_BIN/chgrp /bin/chgrp 2>/dev/null || true
+ln -sf $SYSTEM_BIN/touch /bin/touch 2>/dev/null || true
+ln -sf $SYSTEM_BIN/cat /bin/cat 2>/dev/null || true
+ln -sf $SYSTEM_BIN/readlink /bin/readlink 2>/dev/null || true
+ln -sf $SYSTEM_BIN/rm /bin/rm 2>/dev/null || true
+ln -sf $SYSTEM_BIN/stat /usr/bin/stat 2>/dev/null || true
+ln -sf $SYSTEM_BIN/ldd /usr/bin/ldd 2>/dev/null || true
+ln -sf $SYSTEM_BIN/curl /bin/curl 2>/dev/null || true
+ln -sf $SYSTEM_BIN/git /bin/git 2>/dev/null || true
+ln -sf $SYSTEM_BIN/tr /bin/tr 2>/dev/null || true
+ln -sf $SYSTEM_BIN/mv /bin/mv 2>/dev/null || true
+ln -sf $SYSTEM_BIN/shasum /bin/shasum 2>/dev/null || true
+ln -sf $SYSTEM_BIN/sha256sum /bin/sha256sum 2>/dev/null || true
+ln -sf $SYSTEM_BIN/cut /bin/cut 2>/dev/null || true
+ln -sf $SYSTEM_BIN/flock /bin/flock 2>/dev/null || true
+ln -sf $SYSTEM_BIN/tar /bin/tar 2>/dev/null || true
+ln -sf $SYSTEM_BIN/gzip /bin/gzip 2>/dev/null || true
+ln -sf $SYSTEM_BIN/wc /bin/wc 2>/dev/null || true
+ln -sf $SYSTEM_BIN/grep /bin/grep 2>/dev/null || true
+ln -sf $SYSTEM_BIN/ls /bin/ls 2>/dev/null || true
+ln -sf $SYSTEM_BIN/find /bin/find 2>/dev/null || true
+ln -sf $SYSTEM_BIN/sed /bin/sed 2>/dev/null || true
+ln -sf $SYSTEM_BIN/awk /bin/awk 2>/dev/null || true
+ln -sf $SYSTEM_BIN/sort /bin/sort 2>/dev/null || true
+ln -sf $SYSTEM_BIN/uniq /bin/uniq 2>/dev/null || true
+ln -sf $SYSTEM_BIN/xargs /bin/xargs 2>/dev/null || true
+
+# Ruby needs special handling since it's not in base system
 ln -sf $(nix-shell -p ruby_3_4 --run "which ruby") /bin/ruby 2>/dev/null || true
 
 # Function to run homebrew installation as regular user
