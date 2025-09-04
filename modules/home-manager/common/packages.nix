@@ -2,6 +2,7 @@
 { config, pkgs, lib, ... }: {
   home.packages = with pkgs; [
     age
+    bandwhich
     btop
     comma
     curl
@@ -12,6 +13,8 @@
     file
     flow-control
     glow
+    gping
+    grex
     htop
     iperf3
     jq
@@ -20,6 +23,7 @@
     nmap
     ouch
     python3
+    sad
     tmux
     wget
     xh
