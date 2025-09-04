@@ -11,6 +11,7 @@
     ../../../../modules/home-manager/gpg-cli.nix
     ../../../../modules/home-manager/git.nix
     ../../../../modules/home-manager/secrets-activation.nix
+    ../../../../modules/home-manager/linuxbrew.nix
   ];
 
   # Add packages to base config for root user
