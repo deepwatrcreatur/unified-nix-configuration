@@ -32,13 +32,13 @@ in
   # Install script for common packages
   home.file.".local/bin/install-brew-packages" = {
     text = ''
-      #!/bin/bash
+      #!${pkgs.bash}/bin/bash
       set -eu
       
       # Install Homebrew if not present
       if [ ! -f "${brewPrefix}/bin/brew" ]; then
         echo "Installing Homebrew..."
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        ${pkgs.bash}/bin/bash -c "$(${pkgs.curl}/bin/curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       fi
 
       # Set up environment
