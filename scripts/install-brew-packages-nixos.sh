@@ -34,42 +34,29 @@ fi
 echo "Creating symlinks for homebrew installer compatibility..."
 mkdir -p /bin /usr/bin
 
-# Use full system paths to avoid PATH dependency issues
+# Create symlinks for essential tools (suppress errors for cleaner output)
 SYSTEM_BIN="/run/current-system/sw/bin"
 
-ln -sf $SYSTEM_BIN/bash /bin/bash 2>/dev/null || true
-ln -sf $SYSTEM_BIN/mkdir /bin/mkdir 2>/dev/null || true
-ln -sf $SYSTEM_BIN/chmod /bin/chmod 2>/dev/null || true
-ln -sf $SYSTEM_BIN/chown /bin/chown 2>/dev/null || true
-ln -sf $SYSTEM_BIN/chgrp /bin/chgrp 2>/dev/null || true
-ln -sf $SYSTEM_BIN/touch /bin/touch 2>/dev/null || true
-ln -sf $SYSTEM_BIN/cat /bin/cat 2>/dev/null || true
-ln -sf $SYSTEM_BIN/readlink /bin/readlink 2>/dev/null || true
-ln -sf $SYSTEM_BIN/rm /bin/rm 2>/dev/null || true
-ln -sf $SYSTEM_BIN/stat /usr/bin/stat 2>/dev/null || true
-ln -sf $SYSTEM_BIN/ldd /usr/bin/ldd 2>/dev/null || true
-ln -sf $SYSTEM_BIN/curl /bin/curl 2>/dev/null || true
-ln -sf $SYSTEM_BIN/git /bin/git 2>/dev/null || true
-ln -sf $SYSTEM_BIN/tr /bin/tr 2>/dev/null || true
-ln -sf $SYSTEM_BIN/mv /bin/mv 2>/dev/null || true
-ln -sf $SYSTEM_BIN/shasum /bin/shasum 2>/dev/null || true
-ln -sf $SYSTEM_BIN/sha256sum /bin/sha256sum 2>/dev/null || true
-ln -sf $SYSTEM_BIN/cut /bin/cut 2>/dev/null || true
-ln -sf $SYSTEM_BIN/flock /bin/flock 2>/dev/null || true
-ln -sf $SYSTEM_BIN/tar /bin/tar 2>/dev/null || true
-ln -sf $SYSTEM_BIN/gzip /bin/gzip 2>/dev/null || true
-ln -sf $SYSTEM_BIN/wc /bin/wc 2>/dev/null || true
-ln -sf $SYSTEM_BIN/grep /bin/grep 2>/dev/null || true
-ln -sf $SYSTEM_BIN/ls /bin/ls 2>/dev/null || true
-ln -sf $SYSTEM_BIN/find /bin/find 2>/dev/null || true
-ln -sf $SYSTEM_BIN/sed /bin/sed 2>/dev/null || true
-ln -sf $SYSTEM_BIN/awk /bin/awk 2>/dev/null || true
-ln -sf $SYSTEM_BIN/sort /bin/sort 2>/dev/null || true
-ln -sf $SYSTEM_BIN/uniq /bin/uniq 2>/dev/null || true
-ln -sf $SYSTEM_BIN/xargs /bin/xargs 2>/dev/null || true
+# Core system tools
+tools_bin=(
+    bash mkdir chmod chown chgrp touch cat readlink rm
+    curl git tr mv cut tar gzip wc grep ls find sed awk
+    sort uniq xargs ps id whoami uname which flock
+)
+
+for tool in "${tools_bin[@]}"; do
+    ln -sf "$SYSTEM_BIN/$tool" "/bin/$tool" 2>/dev/null || true
+done
+
+# Tools that go in /usr/bin
+tools_usr_bin=(stat ldd shasum sha256sum)
+for tool in "${tools_usr_bin[@]}"; do
+    ln -sf "$SYSTEM_BIN/$tool" "/usr/bin/$tool" 2>/dev/null || true
+done
 
 # Ruby needs special handling since it's not in base system
-ln -sf $(nix-shell -p ruby_3_4 --run "which ruby") /bin/ruby 2>/dev/null || true
+echo "Setting up Ruby..."
+ln -sf $(nix-shell -p ruby_3_4 --run "which ruby" 2>/dev/null) /bin/ruby 2>/dev/null || true
 
 # Function to run homebrew installation as regular user
 install_homebrew() {
