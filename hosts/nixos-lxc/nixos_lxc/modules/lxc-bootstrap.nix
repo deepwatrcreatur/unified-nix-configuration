@@ -38,6 +38,7 @@
   # Enable SSH daemon for remote access
   services.openssh = {
     enable = true;
+    startWhenNeeded = false;  # Force persistent daemon instead of socket activation
     settings = {
       PasswordAuthentication = true;
       PermitRootLogin = "yes";
