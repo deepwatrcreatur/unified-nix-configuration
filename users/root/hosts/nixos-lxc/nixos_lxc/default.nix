@@ -6,8 +6,8 @@
     ../.. # default config for root
     ./nixos_lxc-justfile.nix
     ./nh.nix
-    ../../../../modules/home-manager/git.nix
-    ../../../../modules/home-manager/gpg-cli.nix
+    ../../../../../modules/home-manager/git.nix
+    ../../../../../modules/home-manager/gpg-cli.nix
   ];
 
   # Set the username and home directory for Home Manager
