@@ -23,6 +23,8 @@
       }
       # NOTE: Excluded inputs.determinate.nixosModules.default for LXC compatibility
       ../modules
+      # Override nix settings with LXC-compatible version
+      { imports = [ ../modules/common/nix-settings-lxc.nix ]; }
       ../hosts/nixos  # Base NixOS config
     ] ++ (importAllModulesInDir ../hosts/nixos_lxc/modules);
   };
