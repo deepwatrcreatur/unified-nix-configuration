@@ -17,6 +17,8 @@
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
     determinate.inputs.nixpkgs.follows = "nixpkgs";
 
+    mac-app-util.url = "github:hraban/mac-app-util";
+
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
 
     tap-romkatv-powerlevel10k = {
@@ -69,7 +71,7 @@
 
     # SpecialArgs specifically for HOME MANAGER modules.
     # We only pass 'inputs'. Home Manager will provide its own 'lib' and 'config.lib'.
-    homeManagerModuleArgs = { inherit inputs; };
+    homeManagerModuleArgs = { inherit inputs; inherit (inputs) mac-app-util; };
 
     # Helper to import all .nix files from a directory as module paths
     importAllModulesInDir = dir:
