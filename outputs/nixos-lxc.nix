@@ -24,13 +24,13 @@
       # NOTE: Excluded inputs.determinate.nixosModules.default for LXC compatibility
       ../modules/nixos/lxc-modules.nix  # Custom modules that exclude regular nix-settings
       ../hosts/nixos  # Base NixOS config
-    ] ++ (importAllModulesInDir ../hosts/nixos_lxc/modules);
+    ] ++ (importAllModulesInDir ../hosts/nixos-lxc/nixos_lxc/modules);
   };
 
   # LXC configuration with Determinate Nix for transition after bootstrap
   nixosConfigurations.nixos_lxc_with_determinate = helpers.mkNixosSystem {
     system = "x86_64-linux";
     hostPath = ../hosts/nixos;  # Base NixOS config
-    modules = importAllModulesInDir ../hosts/nixos_lxc/modules;
+    modules = importAllModulesInDir ../hosts/nixos-lxc/nixos_lxc/modules;
   };
 }
