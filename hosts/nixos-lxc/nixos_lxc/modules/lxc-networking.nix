@@ -5,7 +5,7 @@
   networking = {
     useDHCP = lib.mkDefault true;
     interfaces.eth0.useDHCP = lib.mkDefault true;
-    dhcpcd.enable = true;
+    dhcpcd.enable = lib.mkForce true;  # Override the global setting
     nameservers = [ "8.8.8.8" "1.1.1.1" "10.10.10.1" ];
   };
   
