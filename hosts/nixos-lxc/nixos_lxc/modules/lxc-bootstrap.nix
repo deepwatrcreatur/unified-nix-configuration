@@ -40,8 +40,10 @@
     enable = true;
     startWhenNeeded = false;  # Force persistent daemon instead of socket activation
     settings = {
-      PasswordAuthentication = true;
-      PermitRootLogin = "yes";
+      PasswordAuthentication = false;
+      PubkeyAuthentication = true;
+      PermitRootLogin = "without-password";
+      UsePam = false;  # Disable PAM to avoid authentication issues in LXC
     };
   };
 
