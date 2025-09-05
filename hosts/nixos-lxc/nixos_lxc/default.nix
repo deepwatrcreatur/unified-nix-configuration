@@ -14,7 +14,7 @@ in
   imports = [
     inputs.sops-nix.nixosModules.sops
     inputs.home-manager.nixosModules.home-manager
-    (./. + "/../../../modules")
+    (./. + "/../../../../modules")
     (./. + "/../../../hosts/nixos")
   ]
   ++ (importAllModulesInDir (./. + "/../../../hosts/nixos_lxc/modules"));
