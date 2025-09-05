@@ -30,7 +30,7 @@
   # Create a convenience script for entering user environment
   environment.systemPackages = with pkgs; [
     (writeScriptBin "enter-user" ''
-      #!/bin/bash
+      #!${pkgs.bash}/bin/bash
       exec su deepwatrcreatur -s /run/current-system/sw/bin/bash
     '')
   ];
