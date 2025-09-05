@@ -1,7 +1,8 @@
-{ config, pkgs, ... }:
+{ config, pkgs, mac-app-util, ... }:
 
 {
   imports = [
+    mac-app-util.homeManagerModules.default
     ../../../../modules/home-manager/rclone.nix
     ../../../../modules/home-manager/ghostty
     #../../../../modules/home-manager/zed.nix
@@ -22,4 +23,7 @@
     yt-dlp
     virt-viewer
   ];
+
+  # Enable mac-app-util to make nix-installed apps appear in Spotlight
+  services.mac-app-util.enable = true;
 }
