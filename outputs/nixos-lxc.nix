@@ -22,7 +22,7 @@
         ];
       }
       # NOTE: Excluded inputs.determinate.nixosModules.default for LXC compatibility
-      ./modules
+      ../modules
       ../hosts/nixos  # Base NixOS config
     ] ++ (importAllModulesInDir ../hosts/nixos_lxc/modules);
   };
