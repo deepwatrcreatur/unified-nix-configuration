@@ -43,7 +43,7 @@
       PasswordAuthentication = false;
       PubkeyAuthentication = true;
       PermitRootLogin = "without-password";
-      UsePam = false;  # Disable PAM to avoid authentication issues in LXC
+      UsePAM = false;  # Disable PAM to avoid authentication issues in LXC
     };
   };
 
