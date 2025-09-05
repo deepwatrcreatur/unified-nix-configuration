@@ -3,13 +3,13 @@
 
 {
   imports = [
-    ../.. # default config for root
+    ../../.. # default config for deepwatrcreatur (up 3 levels)
     ./nixos_lxc-justfile.nix
     ./nh.nix
     ./rbw.nix
-    ../../../../modules/home-manager/git.nix
-    ../../../../modules/home-manager/gpg-cli.nix
-    #../../../../modules/home-manager/rclone.nix
+    ../../../../../modules/home-manager/git.nix
+    ../../../../../modules/home-manager/gpg-cli.nix
+    #../../../../../modules/home-manager/rclone.nix
   ];
 
   # Set the username and home directory for Home Manager
