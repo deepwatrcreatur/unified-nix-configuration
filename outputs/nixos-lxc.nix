@@ -18,7 +18,7 @@
         home-manager.useUserPackages = true;
         home-manager.sharedModules = [
           inputs.sops-nix.homeManagerModules.sops
-          inputs.plasma-manager.homeManagerModules.plasma-manager
+          # Exclude plasma-manager for LXC - not needed in headless container
         ];
       }
       # NOTE: Excluded inputs.determinate.nixosModules.default for LXC compatibility
