@@ -3,9 +3,9 @@
 {
   imports = [
     "${modulesPath}/virtualisation/lxc-container.nix"
-    ../../../modules/nixos/networking.nix
-    ../../../modules/nixos
-    ../../../modules/nixos/services/iperf3.nix
+    ../../../../modules/nixos/networking.nix
+    ../../../../modules/nixos
+    ../../../../modules/nixos/services/iperf3.nix
   ];
 
   networking.hostName = "nixos_lxc";

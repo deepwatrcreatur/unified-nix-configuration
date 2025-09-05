@@ -2,8 +2,8 @@
 { config, pkgs, inputs, lib, ... }:
 {
   imports = [
-    ../../../modules/nixos
-    ../../../modules/nixos/lxc-nixos.nix
+    ../../../../modules/nixos
+    ../../../../modules/nixos/lxc-nixos.nix
   ];
 
   networking.hostName = "cache";
