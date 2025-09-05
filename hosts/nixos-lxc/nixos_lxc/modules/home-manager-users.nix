@@ -15,8 +15,8 @@ in
 
     users.deepwatrcreatur = {
       imports = [
-        ../../../users/deepwatrcreatur 
-        ../../../users/deepwatrcreatur/hosts/nixos_lxc
+        ../../../../users/deepwatrcreatur 
+        ../../../../users/deepwatrcreatur/hosts/nixos-lxc/nixos_lxc
         ../../../../modules/home-manager
                                      
       ];
@@ -26,7 +26,7 @@ in
 
     users.root = {
       imports = [
-       ../../../users/root
+       ../../../../users/root
         ../../../../modules/home-manager # Ensure this doesn't try to load gnupg
       ];
       home.packages = (config.home.packages or []) ++ sharedPackages ++ [
