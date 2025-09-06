@@ -77,7 +77,7 @@
 
   # Ensure root has a working shell environment
   users.users.root = {
-    shell = lib.mkForce pkgs.bash;
+    shell = lib.mkForce (lib.getExe pkgs.bash);
     extraGroups = [ "wheel" ];
   };
 
@@ -98,5 +98,27 @@
       exec su deepwatrcreatur -s /run/current-system/sw/bin/bash
     '')
   ];
+
+  # Fix PAM and authentication issues in LXC
+  security.pam.services = {
+    # Enable basic unix authentication for su and sudo
+    su.unixAuth = lib.mkForce true;
+    sudo.unixAuth = lib.mkForce true;
+    login.unixAuth = lib.mkForce true;
+    sshd.unixAuth = lib.mkForce true;
+  };
+
+  # Ensure authentication works in LXC environment
+  users.mutableUsers = lib.mkForce true;
+  
+  # Fix SSH configuration for LXC
+  services.openssh = {
+    enable = true;
+    settings = {
+      PermitRootLogin = "yes";  # Allow root login for LXC management
+      PasswordAuthentication = false;  # Keep key-only authentication
+      PubkeyAuthentication = true;
+    };
+  };
 
 }
