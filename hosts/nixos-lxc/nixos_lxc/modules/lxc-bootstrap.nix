@@ -35,18 +35,4 @@
     '')
   ];
 
-  # Enable SSH daemon for remote access
-  services.openssh = {
-    enable = true;
-    startWhenNeeded = false;  # Force persistent daemon instead of socket activation
-    settings = {
-      PasswordAuthentication = false;
-      PubkeyAuthentication = true;
-      PermitRootLogin = "without-password";
-      UsePAM = false;  # Disable PAM to avoid authentication issues in LXC
-    };
-  };
-
-  # Open SSH port in firewall
-  networking.firewall.allowedTCPPorts = [ 22 ];
 }
