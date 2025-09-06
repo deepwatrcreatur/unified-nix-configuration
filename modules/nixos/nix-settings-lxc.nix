@@ -18,6 +18,7 @@
       
       # Build settings (remove newer settings)
       builders-use-substitutes = true;
+      sandbox = false;  # Required for LXC containers
       # Removed: use-cgroups, lazy-trees - not supported in older Nix versions
       # auto-optimise-store = false; # Uncomment if needed for very old Nix versions
       
