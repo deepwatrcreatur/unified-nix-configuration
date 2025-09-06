@@ -43,11 +43,28 @@
       Type = "oneshot";
       RemainAfterExit = true;
       ExecStart = pkgs.writeShellScript "fix-sudo-setuid" ''
-        # Find the current system's sudo binary and fix its permissions
-        SUDO_PATH=$(readlink -f /run/current-system/sw/bin/sudo)
-        if [ -f "$SUDO_PATH" ]; then
-          chown root:root "$SUDO_PATH"
-          chmod u+s "$SUDO_PATH"
+        # Fix sudo permissions in multiple locations
+        for sudo_path in \
+          "/run/current-system/sw/bin/sudo" \
+          "/run/wrappers/bin/sudo" \
+          $(which sudo 2>/dev/null || echo "") \
+          $(readlink -f /run/current-system/sw/bin/sudo 2>/dev/null || echo "")
+        do
+          if [ -n "$sudo_path" ] && [ -f "$sudo_path" ]; then
+            echo "Fixing sudo at: $sudo_path"
+            chown root:root "$sudo_path" || true
+            chmod u+s "$sudo_path" || true
+          fi
+        done
+        
+        # Ensure wrappers directory has correct permissions
+        if [ -d "/run/wrappers" ]; then
+          chown root:root /run/wrappers
+          chmod 755 /run/wrappers
+        fi
+        if [ -d "/run/wrappers/bin" ]; then
+          chown root:root /run/wrappers/bin
+          chmod 755 /run/wrappers/bin
         fi
       '';
     };
@@ -62,6 +79,16 @@
   users.users.root = {
     shell = lib.mkForce pkgs.bash;
     extraGroups = [ "wheel" ];
+  };
+
+  # Force sudo wrapper to be created with proper permissions in LXC
+  security.wrappers = {
+    sudo = {
+      source = "${pkgs.sudo}/bin/sudo";
+      owner = "root";
+      group = "root";
+      setuid = true;
+    };
   };
 
   # Create a convenience script for entering user environment
