@@ -10,6 +10,7 @@
 
   networking.hostName = "nixos_lxc";
 
+  security.sudo.enable = true;
   security.sudo.wheelNeedsPassword = false;
 
   systemd.mounts = [{

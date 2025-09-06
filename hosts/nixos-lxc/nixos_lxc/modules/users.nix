@@ -1,11 +1,11 @@
 { config, lib, pkgs, ... }:
 
 {
-  users.users.root.shell = lib.getExe pkgs.bash;
+  users.users.root.shell = pkgs.nushell;
 
   users.users.deepwatrcreatur = {
     isNormalUser = true;
-    shell = lib.getExe pkgs.bash;
+    shell = pkgs.nushell;
     description = "Anwer Khan";
     home = "/home/deepwatrcreatur";
     extraGroups = [ "networkmanager" "wheel" ];
