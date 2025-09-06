@@ -24,8 +24,6 @@
       # NOTE: Excluded inputs.determinate.nixosModules.default for LXC compatibility
       ../modules/nixos/lxc-modules.nix  # Custom modules that exclude regular nix-settings
       ../hosts/nixos  # Base NixOS config
-      # Bootstrap-specific automation (only for without_determinate)
-      ../hosts/nixos-lxc/nixos_lxc/modules/lxc-bootstrap.nix
     ] ++ (importAllModulesInDir ../hosts/nixos-lxc/nixos_lxc/modules);
   };
 
