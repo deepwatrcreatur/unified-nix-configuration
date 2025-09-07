@@ -4,16 +4,9 @@
   imports = [
     "${modulesPath}/virtualisation/lxc-container.nix"
     ../../../../../modules/nixos/networking.nix
-    ../../../../../modules/nixos
   ];
 
-  networking.hostName = "cache-build-server";
-
-  # LXC containers don't need traditional filesystems or bootloaders - disable assertions
-  system.build.checkSystemAssertions = lib.mkOverride 100 "";
-  
-  # Alternative: Override the specific assertions
-  assertions = lib.mkOverride 1 [];
+  networking.hostName = lib.mkForce "cache-build-server";
 
   security.sudo.enable = true;
   security.sudo.wheelNeedsPassword = false;
