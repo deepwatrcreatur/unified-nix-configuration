@@ -21,7 +21,7 @@
         nix-top
         
         # Build optimization tools  
-        nix-nix-prefetch-git
+        nix-prefetch-git
         nix-prefetch-github
         
         # Additional build server tools
