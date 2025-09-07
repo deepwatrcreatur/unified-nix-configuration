@@ -24,6 +24,4 @@
     virt-viewer
   ];
 
-  # Enable mac-app-util to make nix-installed apps appear in Spotlight
-  services.mac-app-util.enable = true;
 }
