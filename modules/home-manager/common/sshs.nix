@@ -39,6 +39,51 @@
       
       # SSH connection profiles
       [[hosts]]
+      name = "cache-build-server"
+      host = "10.10.11.39"
+      username = "deepwatrcreatur"
+      port = 22
+      description = "NixOS LXC that builds packages and serves from cache"
+      tags = ["server"]
+      
+      # SSH connection profiles
+      [[hosts]]
+      name = "nixoslxc"
+      host = "10.10.11.40"
+      username = "deepwatrcreatur"
+      port = 22
+      description = "NixOS LXC fresh with my config"
+
+      
+      # SSH connection profiles
+      [[hosts]]
+      name = "inference1"
+      host = "10.10.11.131"
+      username = "deepwatrcreatur"
+      port = 22
+      description = "NixOS VM that serves LLM"
+      tags = ["inference"]
+      
+      # SSH connection profiles
+      [[hosts]]
+      name = "inference2"
+      host = "10.10.11.132"
+      username = "deepwatrcreatur"
+      port = 22
+      description = "NixOS VM that serves LLM"
+      tags = ["inference"]
+      
+      # SSH connection profiles
+      [[hosts]]
+      name = "inference3"
+      host = "10.10.11.133"
+      username = "deepwatrcreatur"
+      port = 22
+      description = "NixOS VM that serves LLM"
+      tags = ["inference"]
+      
+      # SSH connection profiles
+      [[hosts]]
       name = "HomeServer"
       host = "10.10.11.69"
       username = "deepwatrcreatur"
