@@ -1,10 +1,6 @@
 Host *
 	IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
 
-Host pve-strix
-    HostName 10.10.11.57
-    user root
-
 Host opnsense
     Hostname 10.10.10.1
     user root
@@ -13,18 +9,46 @@ Host pve-tomahawk
     Hostname 10.10.11.55
     user root
 
-Host casaos
-    Hostname casaos.deepwatercreature.com
-    user deepwatrcreatur
+Host pve-strix
+    HostName 10.10.11.57
+    user root
 
 Host cache
-    Hostname cache.deepwatercreature.com
+    Hostname 10.10.11.39
+    user deepwatrcreatur
+
+Host nixoslxc
+    Hostname 10.10.11.40
     user deepwatrcreatur
 
 Host homeserver
-    Hostname homeserver.deepwatercreature.com
+    Hostname 10.10.11.69
+    user deepwatrcreatur
+
+Host workstation
+    Hostname 10.10.11.73
+    user deepwatrcreatur
+
+Host inference1
+    Hostname 10.10.11.131
+    user deepwatrcreatur
+
+Host inference2
+    Hostname 10.10.11.132
+    user deepwatrcreatur
+
+Host inference3
+    Hostname 10.10.11.133
+    user deepwatrcreatur
+
+Host macminim4
+    Hostname 10.10.11.150
     user deepwatrcreatur
 
 Host infisical
     Hostname infisical.deepwatercreature.com
+    user deepwatrcreatur
+
+Host casaos
+    Hostname 10.10.11.77
     user deepwatrcreatur

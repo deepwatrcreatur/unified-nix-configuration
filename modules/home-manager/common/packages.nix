@@ -25,6 +25,7 @@
     ouch
     python3
     sad
+    sshs
     tmux
     wget
     xh
