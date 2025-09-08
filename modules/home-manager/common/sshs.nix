@@ -11,11 +11,6 @@
     text = ''
       # SSHS Configuration
       
-      # Default settings
-      [default]
-      username = "${config.home.username}"
-      port = 22
-      
       # Key bindings (optional customization)
       [keybindings]
       quit = "q"
