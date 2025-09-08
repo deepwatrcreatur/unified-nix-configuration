@@ -11,18 +11,6 @@
     text = ''
       # SSHS Configuration
       
-      # Theme configuration
-      [theme]
-      # Available themes: default, dark, light, solarized
-      name = "dark"
-      
-      # Custom colors (optional)
-      [theme.colors]
-      # background = "#1e1e1e"
-      # foreground = "#d4d4d4"
-      # selected = "#264f78"
-      # border = "#3c3c3c"
-      
       # SSH connection profiles
       [[hosts]]
       name = "cache-build-server"
