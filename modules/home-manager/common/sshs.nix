@@ -90,14 +90,6 @@
       tags = ["server"]
       
       [[hosts]]
-      name = "cache and build server"
-      host = "10.10.11.39"
-      username = "deepwatrcreatur"
-      port = 22
-      description = "NixOS LXC for building nix packages"
-      tags = ["server"]
-      
-      [[hosts]]
       name = "workstation"
       host = "10.10.11.73"
       username = "deepwatrcreatur"
@@ -120,7 +112,13 @@
       port = 22
       description = "Proxmox host"
       tags = ["homelab"]
-      
+
+      [[hosts]]
+      name = "macminim4"
+      host = "10.10.11.150"
+      username = "deepwatrcreatur"
+      port = 22
+      description = "macOS desktop"
       
       # Groups for organizing hosts
       [groups]
