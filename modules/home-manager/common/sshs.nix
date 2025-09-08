@@ -166,7 +166,6 @@
         "inference1")
           ssh deepwatrcreatur@10.10.11.131 -p 22
           ;;
-          ;;
         *)
           echo "Available shortcuts: strix, opnsense, homeserver, cache, tomahawk, inference1"
           ;;
