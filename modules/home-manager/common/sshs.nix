@@ -46,7 +46,6 @@
       description = "NixOS LXC that builds packages and serves from cache"
       tags = ["server"]
       
-      # SSH connection profiles
       [[hosts]]
       name = "nixoslxc"
       host = "10.10.11.40"
@@ -55,7 +54,6 @@
       description = "NixOS LXC fresh with my config"
 
       
-      # SSH connection profiles
       [[hosts]]
       name = "inference1"
       host = "10.10.11.131"
@@ -93,7 +91,7 @@
       
       [[hosts]]
       name = "cache and build server"
-      host = "10.10.11.68"
+      host = "10.10.11.39"
       username = "deepwatrcreatur"
       port = 22
       description = "NixOS LXC for building nix packages"
@@ -116,7 +114,7 @@
       tags = ["homelab"]
       
       [[hosts]]
-      name = "pvestrix"
+      name = "pve-strix"
       host = "10.10.11.57"
       username = "root"
       port = 22
@@ -126,8 +124,8 @@
       
       # Groups for organizing hosts
       [groups]
-      homelab = ["pve-strix", "pve-tomahaw", "opnsense", "homeserver"]
-      
+      homelab = ["pve-strix", "pve-tomahawk", "opnsense", "homeserver", "cache-build-server"]
+      inference = ["inference1", "inference2", "inference3"]      
       # Additional SSH options
       [ssh_options]
       # These will be passed to SSH
@@ -152,8 +150,11 @@
       # Quick SSH connection script
       
       case "$1" in
-        "pve-strix")
+        "strix")
           ssh root@10.10.11.57 -p 22
+          ;;
+        "tomahawk")
+          ssh root@10.10.11.55 -p 22
           ;;
         "opnsense")
           ssh root@10.10.10.1
@@ -161,9 +162,15 @@
         "homeserver")
           ssh deepwatrcreatur@10.10.11.69
           ;;
+        "cache")
+          ssh deepwatrcreatur@10.10.11.39 -p 22
+          ;;
+        "inference1")
+          ssh deepwatrcreatur@10.10.11.131 -p 22
+          ;;
           ;;
         *)
-          echo "Available shortcuts: pvestrix, opnsense, homeserver"
+          echo "Available shortcuts: strix, opnsense, homeserver, cache, tomahawk, inference1"
           ;;
       esac
     '';
