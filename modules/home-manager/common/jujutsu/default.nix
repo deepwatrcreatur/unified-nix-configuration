@@ -18,6 +18,6 @@ in
   # Add jj and lazyjj to home.packages
   home.packages = with pkgs; [
     jujutsu
-    lazyjj  
+    #lazyjj  
   ];
 }
