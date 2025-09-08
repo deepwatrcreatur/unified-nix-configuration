@@ -11,15 +11,6 @@
     text = ''
       # SSHS Configuration
       
-      # Key bindings (optional customization)
-      [keybindings]
-      quit = "q"
-      connect = "Enter"
-      edit = "e"
-      delete = "d"
-      add = "a"
-      search = "/"
-      
       # Theme configuration
       [theme]
       # Available themes: default, dark, light, solarized
