@@ -6,7 +6,7 @@
     ../../../../../modules/nixos/networking.nix
   ];
 
-  networking.hostName = lib.mkForce "cache-build-server";
+  networking.hostName = lib.mkForce "cache";
 
   security.sudo.enable = true;
   security.sudo.wheelNeedsPassword = false;
