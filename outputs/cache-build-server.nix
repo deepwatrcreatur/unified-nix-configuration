@@ -25,8 +25,8 @@
       ../hosts/nixos-lxc/lxc-systemd-suppressions.nix
       ../hosts/nixos  # Base NixOS config
     ] ++ [
-      ../hosts/nixos-lxc/nixos_lxc/cache-build-server/modules/configuration.nix
+      ../hosts/nixos-lxc/cache-build-server/modules/configuration.nix
       # Keep working nixos_lxc modules for now
-    ] ++ (importAllModulesInDir ../hosts/nixos-lxc/nixos_lxc/modules);
+    ] ++ (importAllModulesInDir ../hosts/nixos-lxc/cache-build-server/modules);
   };
 }
