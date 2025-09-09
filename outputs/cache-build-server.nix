@@ -22,6 +22,7 @@
       }
       inputs.determinate.nixosModules.default
       ../modules/nixos/lxc-modules.nix  # Use LXC-specific modules instead of regular ones
+      ../hosts/nixos-lxc/lxc-systemd-suppressions.nix
       ../hosts/nixos  # Base NixOS config
     ] ++ [
       ../hosts/nixos-lxc/nixos_lxc/cache-build-server/modules/configuration.nix
