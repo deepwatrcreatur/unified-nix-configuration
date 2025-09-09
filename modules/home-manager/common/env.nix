@@ -39,7 +39,7 @@
   # Add zsh configuration with determinate nixd completion
   programs.zsh = {
     enable = true;
-    initExtra = ''
+    initContent = ''
       # Determinate nixd completion
       eval "$(determinate-nixd completion zsh)"
     '';
