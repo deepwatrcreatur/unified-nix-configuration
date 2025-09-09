@@ -41,6 +41,7 @@
       ];
       
       substituters = [
+        "http://10.10.11.39:5000/"
         "https://cache.nixos.org/"
         "https://cuda-maintainers.cachix.org"
         "https://cache.garnix.io/"
