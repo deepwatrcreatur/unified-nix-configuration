@@ -19,5 +19,4 @@
     };
   };
 
-  networking.firewall.enable = false;
 }
