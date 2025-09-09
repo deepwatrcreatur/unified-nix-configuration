@@ -8,7 +8,7 @@
     cores = 0; # Use all available cores
     
     # Build server optimizations
-    builders-use-substituters = true;
+    builders-use-substitutes = true;
     substitute = true;
     trusted-users = [ "root" "@wheel" "nixbuilder" ];
     
