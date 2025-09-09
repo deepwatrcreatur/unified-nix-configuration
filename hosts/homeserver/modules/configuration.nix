@@ -7,6 +7,7 @@
     ../../../modules/nixos
     ../../../modules/nixos/services/iperf3.nix
     ../../../modules/linux/linuxbrew-system.nix
+    ../../nixos-lxc/lxc-systemd-suppressions.nix
     #./packages.nix
     #./podman.nix
     #./influxdb.nix

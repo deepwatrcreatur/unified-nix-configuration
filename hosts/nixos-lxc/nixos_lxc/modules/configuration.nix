@@ -6,6 +6,7 @@
     ../../../../modules/nixos/networking.nix
     ../../../../modules/nixos
     ../../../../modules/nixos/services/iperf3.nix
+    ../lxc-systemd-suppressions.nix
   ];
 
   networking.hostName = "nixos_lxc";
