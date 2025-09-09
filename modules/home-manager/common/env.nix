@@ -13,8 +13,14 @@
   ];
   
   # Set NH_FLAKE for bash specifically
-  programs.bash.sessionVariables = {
-    NH_FLAKE = "${config.home.homeDirectory}/unified-nix-configuration";
+  programs.bash = {
+    sessionVariables = {
+      NH_FLAKE = "${config.home.homeDirectory}/unified-nix-configuration";
+    };
+    initExtra = ''
+      # Determinate nixd completion
+      eval "$(determinate-nixd completion bash)"
+    '';
   };
   programs.nushell = {
     enable = true;
@@ -26,6 +32,18 @@
     enable = true;
     shellInit = ''
       set -gx PATH /home/linuxbrew/.linuxbrew/bin /home/linuxbrew/.linuxbrew/sbin $PATH
+      
+      # Determinate nixd completion
+      eval "$(determinate-nixd completion fish)"
+    '';
+  };
+  
+  # Add zsh configuration with determinate nixd completion
+  programs.zsh = {
+    enable = true;
+    initExtra = ''
+      # Determinate nixd completion
+      eval "$(determinate-nixd completion zsh)"
     '';
   };
 }
