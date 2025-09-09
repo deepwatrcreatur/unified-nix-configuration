@@ -1,15 +1,14 @@
-# users/deepwatrcreatur/hosts/nixos_lxc/default.nix
+# users/deepwatrcreatur/hosts/cache-build-server/default.nix
 { config, pkgs, lib,  ... }:
 
 {
   imports = [
-    ../../.. # default config for deepwatrcreatur (up 3 levels)
-    ./nixos_lxc-justfile.nix
+    ../..
+    ./justfile.nix
     ./nh.nix
     ./rbw.nix
-    ../../../../../modules/home-manager/git.nix
-    ../../../../../modules/home-manager/gpg-cli.nix
-    #../../../../../modules/home-manager/rclone.nix
+    ../../../../modules/home-manager/git.nix
+    ../../../../modules/home-manager/gpg-cli.nix
   ];
 
   # Set the username and home directory for Home Manager
