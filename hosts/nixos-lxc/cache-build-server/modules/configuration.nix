@@ -3,7 +3,7 @@
 {
   imports = [
     "${modulesPath}/virtualisation/lxc-container.nix"
-    ../../../../../modules/nixos/networking.nix
+    ../../../../modules/nixos/networking.nix
   ];
 
   networking.hostName = lib.mkForce "cache";

@@ -8,9 +8,9 @@
 
     users.deepwatrcreatur = {
       imports = [
-        ../../../../../users/deepwatrcreatur
-        ../../../../../users/deepwatrcreatur/hosts/nixos-lxc/nixos_lxc
-        ../../../../../modules/home-manager
+        ../../../../users/deepwatrcreatur
+        ../../../../users/deepwatrcreatur/hosts/cache-build-server
+        ../../../../modules/home-manager
       ];
       
       # Build server specific packages
@@ -41,8 +41,9 @@
 
     users.root = {
       imports = [
-        ../../../../../users/root
-        ../../../../../modules/home-manager
+        ../../../../users/root
+        ../../../../users/root/hosts/cache-build-server
+        ../../../../modules/home-manager
       ];
       
       # Root-specific build server management
