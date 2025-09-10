@@ -2,9 +2,13 @@
 
 {
   # Base VM configuration for inference machines
+  # Boot loader configuration for UEFI with Limine
+  boot.loader.systemd-boot.enable = lib.mkForce false;
+  boot.loader.grub.enable = lib.mkForce false;
   boot.loader.limine.enable = true;
   boot.kernelParams = [ "nomodeset" "vga=795" ];
-  boot.kernelModules = [ "ceph" ];
+  # Remove ceph module since ceph is not currently configured
+  # boot.kernelModules = [ "ceph" ];
 
   # Time zone
   time.timeZone = "America/Toronto";
