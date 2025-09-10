@@ -1,4 +1,4 @@
-# Configuration for KDE Plasma with Garuda Dragonized theming elements
+# Configuration for GNOME with Garuda Dragonized theming elements
 { config, pkgs, ... }:
 
 {
@@ -14,13 +14,12 @@
     # Wallpapers and assets (manual download needed)
     # garuda-wallpapers would go here if packaged
     
-    # KDE applications and tools
-    kdePackages.plasma-desktop
-    kdePackages.systemsettings
-    kdePackages.plasma-systemmonitor
-    kdePackages.kate
-    kdePackages.dolphin
-    kdePackages.konsole
+    # GNOME applications and tools
+    gnome-tweaks
+    gnome-shell-extensions
+    gnomeExtensions.dash-to-dock
+    gnomeExtensions.gsconnect
+    gnomeExtensions.clipboard-indicator
     
     # Additional tools for theming
     dconf-editor          # For GTK app theming
@@ -31,12 +30,10 @@
     noto-fonts-color-emoji
   ];
 
-  # Enable KDE Plasma desktop environment
-  services.desktopManager.plasma6.enable = true;
-  services.displayManager.sddm.enable = true;
-
-  # Enable X11 for KDE
+  # Enable GNOME desktop environment
   services.xserver.enable = true;
+  services.xserver.desktopManager.gnome.enable = true;
+  services.displayManager.gdm.enable = true;
 
   services.displayManager = {
     autoLogin = {
@@ -59,7 +56,7 @@
     enable = true;
     extraPortals = [ 
       pkgs.xdg-desktop-portal-gtk 
-      pkgs.kdePackages.xdg-desktop-portal-kde
+      pkgs.xdg-desktop-portal-gnome
     ];
   };
   
@@ -87,6 +84,6 @@
 # Post-installation steps:
 # 1. Icons should be available system-wide after rebuild
 # 2. For wallpapers, manually download from Garuda's GitLab
-# 3. Configure KDE's theming through System Settings
-# 4. Set BeautyLine as icon theme in KDE settings
+# 3. Configure GNOME's theming through GNOME Tweaks
+# 4. Set BeautyLine as icon theme in GNOME settings
 # 5. Extract color schemes from Sweet theme for manual application

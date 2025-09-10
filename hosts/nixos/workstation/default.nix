@@ -4,7 +4,9 @@
   imports = [
     ./hardware-configuration.nix
     ../../../modules/wezterm-config.nix
-    ../../../modules/nixos/garuda-themed-kde.nix
+    # Desktop Environment - uncomment one:
+    # ../../../modules/nixos/garuda-themed-kde.nix
+    ../../../modules/nixos/garuda-themed-gnome.nix
     ../../../modules/linux/linuxbrew-system.nix
   ];
 
@@ -42,15 +44,6 @@
   # Force amdgpu driver for older AMD cards if needed
   boot.kernelParams = [ "amdgpu.si_support=1" "amdgpu.cik_support=1" ];
 
-  # Enable X11 for KDE
-  services.xserver.enable = true;
-
-  services.displayManager = {
-    autoLogin = {
-      enable = true;
-      user = "deepwatrcreatur";
-    };
-  };
 
   security.rtkit.enable = true;
   services.pipewire = {
@@ -69,7 +62,6 @@
   services.tailscale.enable = true;
    
   # Disable screen lock
-  security.pam.services.gdm.unixAuth = true;
   services.logind.settings.Login.HandleLidSwitch = "ignore";
 
   security.sudo.wheelNeedsPassword = false;
