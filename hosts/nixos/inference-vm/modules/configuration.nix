@@ -2,9 +2,7 @@
 
 {
   # Base VM configuration for inference machines
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "/dev/sda";
-  boot.loader.grub.useOSProber = true;
+  boot.loader.limine.enable = true;
   boot.kernelParams = [ "nomodeset" "vga=795" ];
   boot.kernelModules = [ "ceph" ];
 
