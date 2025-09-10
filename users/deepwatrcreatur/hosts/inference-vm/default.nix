@@ -17,6 +17,9 @@
     
     # Additional tools for inference work
     httpie  # jq is already in common packages
+    
+    # CUDA debugging tools
+    cudaPackages.cuda_gdb
   ];
 
   # Inference-specific shell aliases (nushell aliases handled by common modules)
