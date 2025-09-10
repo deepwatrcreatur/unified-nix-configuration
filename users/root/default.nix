@@ -3,6 +3,7 @@
   imports = [
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/gpg-cli.nix
+    ../../modules/home-manager
   ];
   
   home.username = "root";
