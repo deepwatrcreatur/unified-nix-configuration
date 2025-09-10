@@ -15,7 +15,7 @@
     # System administration (lsof, strace likely in common)
     
     # CUDA debugging tools
-    cudaPackages.cuda-gdb
+    cudaPackages.cuda_gdb
   ];
 
   # Root shell aliases for inference administration  
