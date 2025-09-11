@@ -35,6 +35,7 @@
   services.xserver.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
   services.displayManager.gdm.enable = true;
+  services.displayManager.gdm.wayland = false;  # Force X11 to avoid AMD GPU issues
 
   services.displayManager = {
     autoLogin = {
