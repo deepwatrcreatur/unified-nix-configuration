@@ -1,7 +1,13 @@
 # Configuration for KDE Plasma with Garuda Dragonized theming elements
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
+  # Import plasma-manager for home-manager integration
+  home-manager.sharedModules = [
+    inputs.plasma-manager.homeManagerModules.plasma-manager
+    ../kde-plasma.nix
+  ];
+
   # System packages for theming
   environment.systemPackages = with pkgs; [
     # Icon themes (these work across desktop environments)
