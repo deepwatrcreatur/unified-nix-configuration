@@ -23,7 +23,7 @@ in {
     font = {
       name = mkOption {
         type = types.str;
-        default = "JetBrains Mono";
+        default = "Fira Code";  # Changed from JetBrains Mono due to build issues
         description = "Font family name";
       };
 
