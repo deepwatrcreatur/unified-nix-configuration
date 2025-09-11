@@ -32,23 +32,6 @@
     enable = true;
   };
 
-  # Plasma panel configuration - start simple, add widgets manually after
-  programs.plasma = {
-    enable = true;
-    panels = [
-      {
-        location = "bottom";
-        alignment = "right";
-        height = 68;
-        widgets = [
-          "org.kde.plasma.kickoff"
-          "org.kde.plasma.icontasks"
-          "org.kde.plasma.systemtray"
-          "org.kde.plasma.digitalclock"
-        ];
-      }
-    ];
-  };
 
   # Input Leap client service
   systemd.user.services.input-leap-client = {

@@ -20,6 +20,7 @@
     gnomeExtensions.dash-to-dock
     gnomeExtensions.gsconnect
     gnomeExtensions.clipboard-indicator
+    gnomeExtensions.pop-shell  # Excellent tiling window manager
     
     # Additional tools for theming
     dconf-editor          # For GTK app theming
