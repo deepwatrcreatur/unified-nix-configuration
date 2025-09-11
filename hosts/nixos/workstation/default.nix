@@ -29,8 +29,8 @@
   # Enable AMD GPU firmware
   hardware.enableRedistributableFirmware = true;
   
-  # Configure keyboard - caps lock as escape for input-leap compatibility
-  services.xserver.xkb.options = "caps:escape";
+  # Configure keyboard - disable caps lock to avoid input-leap interference
+  services.xserver.xkb.options = "caps:none";
 
 
   security.rtkit.enable = true;
