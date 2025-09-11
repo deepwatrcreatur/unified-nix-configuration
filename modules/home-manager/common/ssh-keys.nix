@@ -11,9 +11,12 @@ let
   pubKeys = map (file: builtins.readFile (sshKeysDir + "/${file}")) pubKeyFiles;
 in
 {
-  # Use the built-in Home Manager SSH authorized keys option
-  programs.openssh = {
-    enable = lib.mkDefault true;
-    authorizedKeys.keys = pubKeys;
-  };
+  # Home Manager way to set SSH authorized keys
+  home.file.".ssh/authorized_keys".text = lib.concatStringsSep "\n" pubKeys;
+  
+  # Ensure .ssh directory has correct permissions
+  home.file.".ssh/authorized_keys".onChange = ''
+    chmod 600 ~/.ssh/authorized_keys
+    chmod 700 ~/.ssh
+  '';
 }
