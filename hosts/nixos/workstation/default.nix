@@ -3,6 +3,7 @@
 {
   imports = [
     ./hardware-configuration.nix
+    ../../../modules/nixos/common  # Common NixOS modules (SSH keys, etc.)
     ../../../modules/wezterm-config.nix
     # Desktop Environment - uncomment one:
      ../../../modules/nixos/garuda-themed-kde.nix
@@ -72,7 +73,7 @@
 
   security.sudo.wheelNeedsPassword = false;
   
-  # Define your user account
+  # Define your user account (SSH keys managed by common/ssh-keys.nix)
   users.users.deepwatrcreatur = {
     isNormalUser = true;
     extraGroups = [ "networkmanager" "wheel" ];
