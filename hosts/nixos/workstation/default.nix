@@ -6,8 +6,8 @@
     ../../../modules/nixos/common  # Common NixOS modules (SSH keys, etc.)
     ../../../modules/wezterm-config.nix
     # Desktop Environment - uncomment one:
-     ../../../modules/nixos/garuda-themed-kde.nix
-    #../../../modules/nixos/garuda-themed-gnome.nix
+    #../../../modules/nixos/garuda-themed-kde.nix
+     ../../../modules/nixos/garuda-themed-gnome.nix
     ../../../modules/nixos/x11-session-support.nix
     ../../../modules/linux/linuxbrew-system.nix
   ];
@@ -26,19 +26,13 @@
   boot.loader.limine.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # Enable AMD graphics drivers with firmware
+  # Enable basic graphics (remove problematic AMD-specific packages)
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
-    extraPackages = with pkgs; [
-      amdvlk
-      rocmPackages.clr.icd
-    ];
-    extraPackages32 = with pkgs; [
-      driversi686Linux.amdvlk
-    ];
   };
-  services.xserver.videoDrivers = [ "amdgpu" ];
+  # Use modesetting driver instead of amdgpu for stability
+  services.xserver.videoDrivers = [ "modesetting" ];
   
   # Enable AMD GPU firmware
   hardware.enableRedistributableFirmware = true;
