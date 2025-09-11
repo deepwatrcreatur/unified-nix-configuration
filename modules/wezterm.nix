@@ -199,7 +199,7 @@ in {
 
     # Font packages (useful for both platforms)
     fonts.packages = with pkgs; [
-      jetbrains-mono
+      # jetbrains-mono  # Temporarily commented out due to build issues
       fira-code
       source-code-pro
       hack-font
