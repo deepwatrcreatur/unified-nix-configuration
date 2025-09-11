@@ -32,7 +32,7 @@
     dconf-editor          # For GTK app theming
     
     # Fonts that match Garuda's aesthetic
-    jetbrains-mono
+    # jetbrains-mono  # Temporarily commented out due to build issues
     fira-code
     noto-fonts-color-emoji
   ];
@@ -74,14 +74,14 @@
     packages = with pkgs; [
       noto-fonts
       noto-fonts-emoji
-      jetbrains-mono
+      # jetbrains-mono  # Temporarily commented out due to build issues
       fira-code
       fira-code-symbols
     ];
     
     fontconfig = {
       defaultFonts = {
-        monospace = [ "JetBrains Mono" "Fira Code" ];
+        monospace = [ "Fira Code" ];  # Removed JetBrains Mono due to build issues
         sansSerif = [ "Noto Sans" ];
         serif = [ "Noto Serif" ];
         emoji = [ "Noto Color Emoji" ];
