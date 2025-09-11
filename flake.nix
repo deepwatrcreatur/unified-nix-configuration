@@ -102,7 +102,6 @@
               home-manager.useUserPackages = true;
               home-manager.sharedModules = [
                 inputs.sops-nix.homeManagerModules.sops
-                inputs.plasma-manager.homeManagerModules.plasma-manager
               ];
             }
             inputs.determinate.nixosModules.default
