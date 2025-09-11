@@ -9,16 +9,16 @@
     desktopManager.gnome.sessionPath = [ pkgs.gnome-session ];
   };
 
-  # Configure GDM to support both Wayland and X11 sessions
+  # Configure GDM for X11 only (Wayland disabled for AMD GPU stability)
   services.displayManager.gdm = {
-    # Don't disable Wayland - keep both options available
-    wayland = true;
+    # Disable Wayland to avoid AMD GPU crashes
+    wayland = false;
     
-    # Enable X11 fallback and session selection
+    # X11 only configuration
     settings = {
       daemon = {
-        # Allow users to choose between Wayland and X11
-        WaylandEnable = true;
+        # Disable Wayland entirely for stability
+        WaylandEnable = false;
       };
       security = {
         # Disable automatic login to force session selection
