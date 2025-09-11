@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ../../default.nix  # Import main user config (includes SSH keys and common modules)
     mac-app-util.homeManagerModules.default
     ../../../../modules/home-manager/rclone.nix
     ../../../../modules/home-manager/ghostty
