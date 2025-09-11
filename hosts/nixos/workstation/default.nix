@@ -42,8 +42,13 @@
   # Enable AMD GPU firmware
   hardware.enableRedistributableFirmware = true;
   
-  # Force amdgpu driver for older AMD cards if needed
-  boot.kernelParams = [ "amdgpu.si_support=1" "amdgpu.cik_support=1" ];
+  # Force amdgpu driver for older AMD cards if needed + stability fixes
+  boot.kernelParams = [ 
+    "amdgpu.si_support=1" 
+    "amdgpu.cik_support=1"
+    "amdgpu.dc=0"        # Disable display core to prevent crashes
+    "amdgpu.dpm=0"       # Disable dynamic power management
+  ];
 
 
   security.rtkit.enable = true;
