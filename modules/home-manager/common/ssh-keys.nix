@@ -17,9 +17,9 @@ in
     mode = "0600";  # Set correct permissions directly
   };
   
-  # Ensure .ssh directory exists with correct permissions
-  home.file.".ssh/.keep" = {
-    text = "";
-    mode = "0700";
-  };
+  # Use activation script to ensure .ssh directory permissions
+  home.activation.fixSshPermissions = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    $DRY_RUN_CMD mkdir -p $HOME/.ssh
+    $DRY_RUN_CMD chmod 700 $HOME/.ssh
+  '';
 }
