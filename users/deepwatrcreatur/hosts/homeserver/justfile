@@ -1,7 +1,0 @@
-# users/deepwatrcreatur/hosts/homeserver/justfile
-
-update dir="/home/deepwatrcreatur/unified-nix-configuration":
-  sudo nixos-rebuild switch --flake {{dir}}#homeserver
-
-nh-update dir="/home/deepwatrcreatur/unified-nix-configuration":
-  nix --experimental-features 'nix-command flakes' run 'github:viperML/nh' -- os switch {{dir}}

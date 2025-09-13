@@ -1,4 +1,4 @@
-# users/root/hosts/proxmox-justfile.nix
+# users/deepwatrcreatur/just.nix
 { config, pkgs, lib, ... }:
 {
   home.packages = [ pkgs.just ];
