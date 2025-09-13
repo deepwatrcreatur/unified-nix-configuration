@@ -6,7 +6,7 @@
     ./hardware-configuration.nix
     
     # Import common inference VM configuration
-    ../../../../modules/nixos/inference-vm
+    ../../../../nixos/inference-vm
   ];
 
   # Host-specific configuration
