@@ -1,4 +1,4 @@
-# users/deepwatrcreatur/hosts/cache-build-server/justfile
+# users/deepwatrcreatur/justfile
 
 update dir="/home/deepwatrcreatur/unified-nix-configuration":
   sudo nixos-rebuild switch --flake {{dir}}#{{`hostname`}}
