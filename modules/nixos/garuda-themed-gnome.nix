@@ -11,9 +11,6 @@
     # Cursor themes
     capitaine-cursors      # Clean cursor theme
     
-    # Wallpapers and assets (manual download needed)
-    # garuda-wallpapers would go here if packaged
-    
     # GNOME applications and tools
     gnome-tweaks
     gnome-shell-extensions
@@ -21,6 +18,8 @@
     gnomeExtensions.gsconnect
     gnomeExtensions.clipboard-indicator
     gnomeExtensions.pop-shell  # Excellent tiling window manager
+    gnomeExtensions.transparent-window-moving  # For window transparency
+    gnomeExtensions.blur-my-shell  # For shell transparency effects
     
     # Additional tools for theming
     dconf-editor          # For GTK app theming
@@ -81,10 +80,3 @@
     };
   };
 }
-
-# Post-installation steps:
-# 1. Icons should be available system-wide after rebuild
-# 2. For wallpapers, manually download from Garuda's GitLab
-# 3. Configure GNOME's theming through GNOME Tweaks
-# 4. Set BeautyLine as icon theme in GNOME settings
-# 5. Extract color schemes from Sweet theme for manual application
