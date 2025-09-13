@@ -71,9 +71,11 @@
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.cudaSupport = true;
 
+  security.sudo.wheelNeedsPassword = false;
+
   # Networking
   networking.networkmanager.enable = true;
   networking.firewall.enable = false;
-
-  system.stateVersion = "24.11";
+i
+  system.stateVersion = "25.05";
 }
