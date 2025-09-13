@@ -32,6 +32,7 @@
     enable = true;
     port = 5000;
     bindAddress = "0.0.0.0";
+    secretKeyFile = "/etc/nix/cache-signing-key.sec";
   };
 
   # SSH for remote builds

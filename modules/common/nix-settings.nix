@@ -50,6 +50,7 @@
       ];
       
       trusted-public-keys = [
+        "cache.deepwatercreature.com:yHwJwr0bC7pCOcb5ispC2LmOXSQKp1immY8iMSvznCc="
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
         "cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="
         "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
