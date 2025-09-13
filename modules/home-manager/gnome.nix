@@ -7,18 +7,22 @@
       # Enable extensions
       enabled-extensions = [
         "dash-to-dock@micxgx.gmail.com"
-        "gsconnect@andyholmes.github.io" 
+        "gsconnect@andyholmes.github.io"
         "clipboard-indicator@tudmotu.com"
         "pop-shell@system76.com"
+        "transparent-window-moving@noobsai.github.com"
+        "blur-my-shell@aunetx"
       ];
     };
 
     # Dash to Dock configuration
     "org/gnome/shell/extensions/dash-to-dock" = {
-      dock-position = "BOTTOM";
-      dock-fixed = false;
-      intellihide = true;
+      dock-position = "RIGHT";
+      dock-fixed = true;
+      intellihide = false;
       show-apps-at-top = true;
+      transparency-mode = "DYNAMIC";
+      background-opacity = 0.3;
     };
 
     # Pop Shell (tiling) configuration
@@ -33,6 +37,8 @@
     "org/gnome/desktop/interface" = {
       color-scheme = "prefer-dark";
       icon-theme = "BeautyLine";
+      gtk-theme = "Adwaita-dark";
+      enable-animations = true;
     };
 
     # Window management
@@ -40,6 +46,43 @@
       focus-mode = "sloppy";
       resize-with-right-button = true;
     };
+
+    # Screen lock and session settings
+    "org/gnome/desktop/screensaver" = {
+      lock-enabled = false;
+      idle-activation-enabled = false;
+    };
+
+    "org/gnome/desktop/session" = {
+      idle-delay = "uint32 0";  # Disable idle timeout
+    };
+
+    "org/gnome/settings-daemon/plugins/power" = {
+      sleep-inactive-ac-type = "nothing";
+      sleep-inactive-battery-type = "nothing";
+    };
+
+    # Blur My Shell extension configuration for transparency
+    "org/gnome/shell/extensions/blur-my-shell/panel" = {
+      blur = true;
+      brightness = 0.8;
+      sigma = 15;
+      static-blur = true;
+      unblur-in-overview = false;
+    };
+
+    "org/gnome/shell/extensions/blur-my-shell/dash-to-dock" = {
+      blur = true;
+      brightness = 0.7;
+      sigma = 15;
+      static-blur = true;
+      unblur-in-overview = false;
+    };
+
+    "org/gnome/shell/extensions/blur-my-shell/applications" = {
+      blur = false;  # Don't blur application windows by default
+    };
+
   };
 
   # GNOME-specific applications
