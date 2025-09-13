@@ -12,7 +12,7 @@
         "pop-shell@system76.com"
         "transparent-window-moving@noobsai.github.com"
         "blur-my-shell@aunetx"
-        "openweather-extension@jenslody.de"
+        "openweather-extension@penguin-teal.github.io"
       ];
     };
 
