@@ -11,6 +11,7 @@
         ../../../../users/deepwatrcreatur
         ../../../../users/deepwatrcreatur/hosts/cache-build-server
         ../../../../modules/home-manager
+        ../../../../modules/home-manager/gpg-cli.nix
       ];
       
       # Build server specific packages
