@@ -4,7 +4,7 @@
 {
   imports = [
     ../..
-    ./justfile.nix
+    ../../just.nix
     ./nh.nix
     ./rbw.nix
     ../../../../modules/home-manager/git.nix
