@@ -50,7 +50,7 @@
   services.tailscale.enable = true;
    
   # Disable screen lock
-  services.logind.settings.Login.HandleLidSwitch = "ignore";
+  services.logind.lidSwitch = "ignore";
 
   security.sudo.wheelNeedsPassword = false;
   

@@ -1,5 +1,5 @@
 # Enable both Wayland and X11 sessions for GNOME
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   # Ensure X11 support is enabled alongside Wayland
@@ -9,8 +9,9 @@
     desktopManager.gnome.sessionPath = [ pkgs.gnome-session ];
   };
 
-  # Configure GDM for X11 only (Wayland disabled for AMD GPU stability)
-  services.displayManager.gdm = {
+  # Configure GDM for X11 only when GNOME is enabled (Wayland disabled for AMD GPU stability)
+  services.xserver.displayManager.gdm = lib.mkIf (config.services.xserver.desktopManager.gnome.enable) {
+    enable = true;
     # Disable Wayland to avoid AMD GPU crashes
     wayland = false;
     

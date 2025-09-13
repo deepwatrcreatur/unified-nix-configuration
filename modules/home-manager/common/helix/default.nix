@@ -13,7 +13,7 @@
       pyright
       black
       typescript-language-server
-      prettier
+      nodePackages.prettier
       gopls
       go
     ];

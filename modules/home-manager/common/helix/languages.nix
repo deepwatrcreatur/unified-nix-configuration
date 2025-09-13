@@ -30,13 +30,13 @@
       name = "javascript";
       auto-format = true;
       language-servers = [ "typescript-language-server" ];
-      formatter = { command = "${pkgs.prettier}/bin/prettier"; args = [ "--parser" "javascript" ]; };
+      formatter = { command = "${pkgs.nodePackages.prettier}/bin/prettier"; args = [ "--parser" "javascript" ]; };
     }
     {
       name = "typescript";
       auto-format = true;
       language-servers = [ "typescript-language-server" ];
-      formatter = { command = "${pkgs.prettier}/bin/prettier"; args = [ "--parser" "typescript" ]; };
+      formatter = { command = "${pkgs.nodePackages.prettier}/bin/prettier"; args = [ "--parser" "typescript" ]; };
     }
     {
       name = "go";
