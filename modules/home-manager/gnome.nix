@@ -12,6 +12,7 @@
         "pop-shell@system76.com"
         "transparent-window-moving@noobsai.github.com"
         "blur-my-shell@aunetx"
+        "openweather-extension@jenslody.de"
       ];
     };
 
@@ -45,6 +46,13 @@
     "org/gnome/desktop/wm/preferences" = {
       focus-mode = "sloppy";
       resize-with-right-button = true;
+      num-workspaces = 4;
+    };
+
+    # Dynamic workspaces
+    "org/gnome/mutter" = {
+      dynamic-workspaces = true;
+      workspaces-only-on-primary = true;
     };
 
     # Screen lock and session settings
@@ -81,6 +89,23 @@
 
     "org/gnome/shell/extensions/blur-my-shell/applications" = {
       blur = false;  # Don't blur application windows by default
+    };
+
+    # OpenWeather extension configuration for Toronto
+    "org/gnome/shell/extensions/openweather" = {
+      city = "6167865>Toronto, Ontario, Canada>-1";
+      unit = "celsius";
+      wind-speed-unit = "kph";
+      pressure-unit = "kPa";
+      show-text-in-panel = true;
+      position-in-panel = "center";
+      menu-alignment = 75.0;
+      translate-condition = true;
+      use-symbolic-icons = true;
+      show-sunrise-sunset = true;
+      show-zero-digit = false;
+      center-forecast = false;
+      days-forecast = 5;
     };
 
   };
