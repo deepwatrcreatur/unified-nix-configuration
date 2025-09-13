@@ -4,6 +4,7 @@
   # Inference VM specific configuration for deepwatrcreatur
   imports = [
     ../.. # Import default user config
+    ../../just.nix
   ];
 
   # Inference-specific packages (only what's not in common)
