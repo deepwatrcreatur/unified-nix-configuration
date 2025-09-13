@@ -6,9 +6,8 @@
     ../../../modules/nixos/common  # Common NixOS modules (SSH keys, etc.)
     ../../../modules/wezterm-config.nix
     # Desktop Environment - uncomment one:
-     ../../../modules/nixos/garuda-themed-kde.nix
-    #../../../modules/nixos/garuda-themed-gnome.nix
-    ../../../modules/nixos/x11-session-support.nix
+    # ../../../modules/nixos/garuda-themed-kde.nix
+    ../../../modules/nixos/garuda-themed-gnome.nix
     ../../../modules/linux/linuxbrew-system.nix
   ];
 
