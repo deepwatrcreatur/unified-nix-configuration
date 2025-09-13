@@ -30,7 +30,7 @@
   # Binary cache serving
   services.nix-serve = {
     enable = true;
-    port = 5000;
+    port = 80;
     bindAddress = "0.0.0.0";
   };
 
@@ -47,7 +47,7 @@
   # Firewall - SSH and nix-serve
   networking.firewall = {
     enable = true;
-    allowedTCPPorts = [ 22 5000 ];
+    allowedTCPPorts = [ 22 80 ];
   };
 
   # System monitoring for build server
