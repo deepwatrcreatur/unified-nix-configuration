@@ -1,7 +1,7 @@
-# users/deepwatrcreatur/hosts/homeserver/justfile
+# users/deepwatrcreatur/hosts/cache-build-server/justfile
 
 update dir="/home/deepwatrcreatur/unified-nix-configuration":
-  sudo nixos-rebuild switch --flake {{dir}}#nixos_lxc
+  sudo nixos-rebuild switch --flake {{dir}}#{{`hostname`}}
 
 nh-update dir="/home/deepwatrcreatur/unified-nix-configuration":
-  nix --experimental-features 'nix-command flakes' run 'github:viperML/nh' -- os switch {{dir}}
+  nh os switch {{dir}}#{{`hostname`}}
