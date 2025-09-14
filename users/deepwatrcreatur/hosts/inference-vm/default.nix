@@ -19,8 +19,9 @@
     # Additional tools for inference work
     httpie  # jq is already in common packages
     
-    # CUDA debugging tools
+    # CUDA debugging and monitoring tools
     cudaPackages.cuda_gdb
+    nvtop  # GPU monitoring tool
   ];
 
   # Inference-specific shell aliases (nushell aliases handled by common modules)
@@ -36,5 +37,14 @@
   home.sessionVariables = {
     OLLAMA_HOST = "0.0.0.0:11434";
     CUDA_VISIBLE_DEVICES = "0";  # Use first GPU
+  };
+
+  # Override secrets activation for inference VMs - disable GPG key decryption to prevent failures
+  services.secrets-activation = {
+    enable = true;
+    secretsPath = toString ../../secrets;
+    continueOnError = true;  # Be more lenient for inference VMs
+    enableBitwardenDecryption = false;  # Not needed for inference work
+    enableGpgKeyDecryption = false;     # Not needed for inference work, prevents log exposure
   };
 }
