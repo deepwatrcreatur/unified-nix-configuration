@@ -41,7 +41,7 @@
       ];
       
       substituters = [
-        "http://cache.deepwatercreature.com/"
+        "http://cache.deepwatercreature.com:5000/"
         "https://cache.nixos.org/"
         "https://cuda-maintainers.cachix.org"
         "https://cache.garnix.io/"
