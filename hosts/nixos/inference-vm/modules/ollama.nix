@@ -9,25 +9,25 @@
     acceleration = "cuda";  # Enable CUDA acceleration
     environmentVariables = {
       OLLAMA_HOST = "0.0.0.0";
-      HOME = "/models/ollama";
+      #HOME = "/models/ollama";
     };
   };
 
   # Override systemd service for custom paths
   systemd.services.ollama = {
     environment = {
-      HOME = lib.mkForce "/models/ollama";
-      OLLAMA_MODELS = lib.mkForce "/models/ollama/models";
+      #HOME = lib.mkForce "/models/ollama";
+      #OLLAMA_MODELS = lib.mkForce "/models/ollama/models";
     };
-    serviceConfig = {
-      ReadWritePaths = lib.mkForce [ 
-        "/models/ollama" 
-        "/models/ollama/models" 
-        "/models/ollama/models/blobs" 
-      ];
-      WorkingDirectory = lib.mkForce "/models/ollama";
-      StateDirectory = lib.mkForce "";
-    };   
+    #serviceConfig = {
+    #  ReadWritePaths = lib.mkForce [ 
+    #    "/models/ollama" 
+    #    "/models/ollama/models" 
+    #    "/models/ollama/models/blobs" 
+    #  ];
+    #  WorkingDirectory = lib.mkForce "/models/ollama";
+    #  StateDirectory = lib.mkForce "";
+    #};   
   };
 
   # Force binary packages and avoid building from source
