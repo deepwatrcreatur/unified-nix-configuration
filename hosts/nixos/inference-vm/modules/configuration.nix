@@ -2,31 +2,31 @@
 
 {
   # Custom overlay to rebuild Ollama with Tesla P40 support (CUDA compute capability 6.1)
-  nixpkgs.overlays = [
-    (final: prev: {
-      ollama = prev.ollama.overrideAttrs (old: {
-        # Enable broader CUDA architecture support including Pascal (6.1) for Tesla P40
-        cmakeFlags = (old.cmakeFlags or []) ++ [
-          "-DGGML_CUDA_ARCHITECTURES=61;70;75;80;86;89;90"
-        ];
+  #nixpkgs.overlays = [
+  #  (final: prev: {
+  #    ollama = prev.ollama.overrideAttrs (old: {
+  #      # Enable broader CUDA architecture support including Pascal (6.1) for Tesla P40
+  #      cmakeFlags = (old.cmakeFlags or []) ++ [
+  #        "-DGGML_CUDA_ARCHITECTURES=61;70;75;80;86;89;90"
+  #      ];
         
         # Ensure CUDA support is properly enabled with additional dependencies
-        buildInputs = (old.buildInputs or []) ++ [
-          prev.cudaPackages.cuda_nvcc
-          prev.cudaPackages.cuda_cudart
-          prev.cudaPackages.libcublas
-          prev.cudaPackages.libcusparse
-          prev.cudaPackages.libcurand
-        ];
+        #buildInputs = (old.buildInputs or []) ++ [
+        #  prev.cudaPackages.cuda_nvcc
+        #  prev.cudaPackages.cuda_cudart
+        #  prev.cudaPackages.libcublas
+        #  prev.cudaPackages.libcusparse
+        #  prev.cudaPackages.libcurand
+        #];
         
         # Set specific CMake variables for CUDA compilation in preConfigure
-        preConfigure = (old.preConfigure or "") + ''
-          export CUDA_PATH=${prev.cudaPackages.cudatoolkit}
-          export CUDACXX=${prev.cudaPackages.cuda_nvcc}/bin/nvcc
-        '';
-      });
-    })
-  ];
+        #preConfigure = (old.preConfigure or "") + ''
+        #  export CUDA_PATH=${prev.cudaPackages.cudatoolkit}
+        #  export CUDACXX=${prev.cudaPackages.cuda_nvcc}/bin/nvcc
+        #'';
+  #    });
+  #  })
+  #];
 
   # Base VM configuration for inference machines
   # Boot loader configuration for UEFI with systemd-boot
@@ -66,32 +66,31 @@
   services.openssh.enable = true;
   services.netdata.enable = true;
   services.tailscale.enable = true;
-  programs.firefox.enable = true;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.cudaSupport = true;
+  #nixpkgs.config.cudaSupport = true;
 
   # NVIDIA driver support
-  services.xserver.videoDrivers = [ "nvidia" ];
-  hardware.opengl = {
-    enable = true;
-    driSupport32Bit = true;
-  };
+  #services.xserver.videoDrivers = [ "nvidia" ];
+  #hardware.opengl = {
+  #  enable = true;
+  #  driSupport32Bit = true;
+  #};
 
-  hardware.nvidia = {
-    modesetting.enable = true;
-    powerManagement.enable = false;
-    powerManagement.finegrained = false;
-    open = false;  # Use proprietary driver
-    nvidiaSettings = true;
-    package = config.boot.kernelPackages.nvidiaPackages.stable;
-  };
+  #hardware.nvidia = {
+  #  modesetting.enable = true;
+  #  powerManagement.enable = false;
+  #  powerManagement.finegrained = false;
+  #  open = false;  # Use proprietary driver
+  #  nvidiaSettings = true;
+  #  package = config.boot.kernelPackages.nvidiaPackages.stable;
+  #};
 
   # Add NVIDIA utilities to system packages
-  environment.systemPackages = with pkgs; [
+  #environment.systemPackages = with pkgs; [
     # nvidia-smi comes with driver
-  ];
+  #];
 
   security.sudo.wheelNeedsPassword = false;
 
