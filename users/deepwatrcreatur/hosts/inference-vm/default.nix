@@ -21,7 +21,6 @@
     
     # CUDA debugging and monitoring tools
     cudaPackages.cuda_gdb
-    nvtop  # GPU monitoring tool
   ];
 
   # Inference-specific shell aliases (nushell aliases handled by common modules)
@@ -43,8 +42,8 @@
   services.secrets-activation = {
     enable = true;
     secretsPath = toString ../../secrets;
-    continueOnError = true;  # Be more lenient for inference VMs
-    enableBitwardenDecryption = false;  # Not needed for inference work
-    enableGpgKeyDecryption = false;     # Not needed for inference work, prevents log exposure
+    continueOnError = lib.mkForce true;  # Be more lenient for inference VMs
+    enableBitwardenDecryption = lib.mkForce false;  # Not needed for inference work
+    enableGpgKeyDecryption = lib.mkForce false;     # Not needed for inference work, prevents log exposure
   };
 }
