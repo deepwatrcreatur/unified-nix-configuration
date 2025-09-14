@@ -47,20 +47,20 @@
     LC_ALL = "en_US.UTF-8";
   };
 
-  # Enable X11 and GNOME
-  services.xserver.enable = true;
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  # Disable X11 and GNOME for headless inference server
+  # services.xserver.enable = true;
+  # services.xserver.displayManager.gdm.enable = true;
+  # services.xserver.desktopManager.gnome.enable = true;
 
-  # Configure keymap
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
-  };
+  # Configure keymap (not needed without X11)
+  # services.xserver.xkb = {
+  #   layout = "us";
+  #   variant = "";
+  # };
 
-  # Workaround for GNOME autologin
-  systemd.services."getty@tty1".enable = false;
-  systemd.services."autovt@tty1".enable = false;
+  # Enable console login (remove GNOME autologin workaround)
+  # systemd.services."getty@tty1".enable = false;
+  # systemd.services."autovt@tty1".enable = false;
 
   # Enable essential services
   services.openssh.enable = true;
