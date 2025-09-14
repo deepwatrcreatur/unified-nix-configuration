@@ -25,10 +25,10 @@ in {
   
   config = {
     homebrew = {
-      enable = true;
+      enable = false;  # Temporarily disabled due to hanging issues
       onActivation = {
-        autoUpdate = true;
-        cleanup = "zap";
+        autoUpdate = false;  # Temporarily disabled due to git permission issues
+        cleanup = "uninstall";  # Changed from "zap" to avoid git operations
       };
       brews = [
         "cmake"
