@@ -1,9 +1,8 @@
 { config, lib, pkgs, ... }:
-
 {
   # Ollama service configuration
   services.ollama = {
-    enable = true;
+    enable = false;  # Disable service temporarily for manual testing
     host = "0.0.0.0";  # Bind to all interfaces
     port = 11434;
     acceleration = "cuda";  # Enable CUDA acceleration
@@ -38,9 +37,7 @@
     allowBuildFromSource = false;
   };
 
-  # Add ollama to system packages - will use available binary version
-  # Note: You may need to override the services.ollama.package directly
-  # to use a specific older version from nixpkgs history
+  # Add ollama to system packages - current version for now
   environment.systemPackages = with pkgs; [
     ollama
   ];
