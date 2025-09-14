@@ -30,7 +30,17 @@
     };   
   };
 
-  # Add ollama to system packages
+  # Force binary packages and avoid building from source
+  nixpkgs.config = {
+    allowUnfree = true;
+    # Prefer binary substitutes over building
+    preferLocalBuild = false;
+    allowBuildFromSource = false;
+  };
+
+  # Add ollama to system packages - will use available binary version
+  # Note: You may need to override the services.ollama.package directly
+  # to use a specific older version from nixpkgs history
   environment.systemPackages = with pkgs; [
     ollama
   ];
