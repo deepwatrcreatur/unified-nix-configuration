@@ -59,14 +59,13 @@
   # };
 
   # Enable console login (remove GNOME autologin workaround)
-  # systemd.services."getty@tty1".enable = false;
-  # systemd.services."autovt@tty1".enable = false;
+  systemd.services."getty@tty1".enable = false;
+  systemd.services."autovt@tty1".enable = false;
 
   # Enable essential services
   services.openssh.enable = true;
   services.netdata.enable = true;
   services.tailscale.enable = true;
-  programs.firefox.enable = true;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;

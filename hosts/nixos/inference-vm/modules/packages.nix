@@ -9,8 +9,6 @@
     helix
     
     # Terminal tools
-    ghostty
-    kitty
     nushell
     bat
     fzf
