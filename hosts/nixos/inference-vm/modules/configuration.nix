@@ -76,7 +76,6 @@
   services.xserver.videoDrivers = [ "nvidia" ];
   hardware.opengl = {
     enable = true;
-    driSupport = true;
     driSupport32Bit = true;
   };
 
@@ -91,7 +90,7 @@
 
   # Add NVIDIA utilities to system packages
   environment.systemPackages = with pkgs; [
-    nvidia-smi
+    # nvidia-smi comes with driver
   ];
 
   security.sudo.wheelNeedsPassword = false;
