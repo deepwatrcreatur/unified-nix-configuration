@@ -5,6 +5,7 @@
   imports = [
     ../.. # Import default user config
     ../../just.nix
+    ../../../modules/home-manager/gpg-cli.nix
   ];
 
   # Inference-specific packages (only what's not in common)
