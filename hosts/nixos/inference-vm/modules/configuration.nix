@@ -99,6 +99,6 @@
   # Networking
   networking.networkmanager.enable = true;
   networking.firewall.enable = false;
-i
+
   system.stateVersion = "25.05";
 }
