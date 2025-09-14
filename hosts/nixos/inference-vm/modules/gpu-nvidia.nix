@@ -1,10 +1,10 @@
 { config, lib, pkgs, ... }:
 
 {
-  # NVIDIA GPU configuration
+  # NVIDIA GPU configuration - use binary packages only
   services.xserver.videoDrivers = ["nvidia"];
   hardware.graphics.enable = true;
-  
+
   hardware.nvidia = {
     # Modesetting is required
     modesetting.enable = true;
@@ -18,9 +18,17 @@
 
     # Enable nvidia-settings
     nvidiaSettings = true;
-    
-    # Use stable driver package
+
+    # Use stable driver package - prefer binary substitutes
     package = config.boot.kernelPackages.nvidiaPackages.stable;
+  };
+
+  # Force binary packages for GPU-related components
+  nixpkgs.config = {
+    allowUnfree = true;
+    # Avoid building CUDA packages from source
+    cudaSupport = true;
+    preferLocalBuild = false;
   };
 
   # CUDA environment
