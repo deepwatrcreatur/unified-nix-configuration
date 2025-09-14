@@ -18,4 +18,10 @@
     system = "x86_64-linux";
     hostPath = ../hosts/nixos/inference-vm/hosts/inference3;
   };
+
+  # Inference Fresh (minimal configuration from fresh-nixos branch)
+  nixosConfigurations.inference-fresh = helpers.mkNixosSystem {
+    system = "x86_64-linux";
+    hostPath = ../hosts/nixos/inference-vm/hosts/inference-fresh;
+  };
 }
