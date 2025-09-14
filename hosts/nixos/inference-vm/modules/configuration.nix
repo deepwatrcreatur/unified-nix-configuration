@@ -29,11 +29,12 @@
   ];
 
   # Base VM configuration for inference machines
-  # Boot loader configuration for UEFI with Limine
-  boot.loader.systemd-boot.enable = lib.mkForce false;
-  boot.loader.grub.enable = lib.mkForce false;
-  boot.loader.limine.enable = true;
-  boot.kernelParams = [ "nomodeset" "vga=795" ];
+  # Boot loader configuration for UEFI with systemd-boot
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.limine.enable = false;
+  # Remove nomodeset to enable GPU drivers
+  # boot.kernelParams = [ "nomodeset" "vga=795" ];
   # Remove ceph module since ceph is not currently configured
   # boot.kernelModules = [ "ceph" ];
 
@@ -70,6 +71,28 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.cudaSupport = true;
+
+  # NVIDIA driver support
+  services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.opengl = {
+    enable = true;
+    driSupport = true;
+    driSupport32Bit = true;
+  };
+
+  hardware.nvidia = {
+    modesetting.enable = true;
+    powerManagement.enable = false;
+    powerManagement.finegrained = false;
+    open = false;  # Use proprietary driver
+    nvidiaSettings = true;
+    package = config.boot.kernelPackages.nvidiaPackages.stable;
+  };
+
+  # Add NVIDIA utilities to system packages
+  environment.systemPackages = with pkgs; [
+    nvidia-smi
+  ];
 
   security.sudo.wheelNeedsPassword = false;
 

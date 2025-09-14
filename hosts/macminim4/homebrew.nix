@@ -18,7 +18,7 @@
       "telegram"
       "visual-studio-code"
       "vlc"
-      "zen-browser"
+      #"zen-browser"  # Temporarily commented out due to installation issues
       "zoom"
     ];
   };
