@@ -1,6 +1,10 @@
 { config, lib, pkgs, ... }:
 
 {
+  imports = [
+    ../../../common/nix-settings.nix
+  ];
+
   # Custom overlay to rebuild Ollama with Tesla P40 support (CUDA compute capability 6.1)
   nixpkgs.overlays = [
     (final: prev: {
@@ -70,6 +74,7 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.cudaSupport = true;
+  nixpkgs.config.cudaPackages = pkgs.cudaPackages_12_6;
 
   # NVIDIA driver support
   services.xserver.videoDrivers = [ "nvidia" ];
