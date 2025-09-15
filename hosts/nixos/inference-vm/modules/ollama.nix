@@ -1,44 +1,23 @@
-{ config, lib, pkgs, ... }:
+{ lib, ... }:
+
 {
-  # Ollama service configuration
+  # Enable Ollama service with CUDA acceleration
   services.ollama = {
-    enable = false;  # Disable service temporarily for manual testing
-    host = "0.0.0.0";  # Bind to all interfaces
+    enable = true;
+    host = "0.0.0.0";
     port = 11434;
-    acceleration = "cuda";  # Enable CUDA acceleration
+    acceleration = "cuda";
     environmentVariables = {
       OLLAMA_HOST = "0.0.0.0";
-      #HOME = "/models/ollama";
+      OLLAMA_MODELS = "/models/ollama/models";
     };
   };
 
-  # Override systemd service for custom paths
-  systemd.services.ollama = {
-    environment = {
-      #HOME = lib.mkForce "/models/ollama";
-      #OLLAMA_MODELS = lib.mkForce "/models/ollama/models";
-    };
-    #serviceConfig = {
-    #  ReadWritePaths = lib.mkForce [ 
-    #    "/models/ollama" 
-    #    "/models/ollama/models" 
-    #    "/models/ollama/models/blobs" 
-    #  ];
-    #  WorkingDirectory = lib.mkForce "/models/ollama";
-    #  StateDirectory = lib.mkForce "";
-    #};   
+  # Custom model storage path
+  systemd.services.ollama.environment.HOME = lib.mkForce "/models/ollama";
+  systemd.services.ollama.serviceConfig = {
+    ReadWritePaths = lib.mkForce [ "/models/ollama" ];
+    WorkingDirectory = lib.mkForce "/models/ollama";
+    StateDirectory = lib.mkForce "";
   };
-
-  # Force binary packages and avoid building from source
-  nixpkgs.config = {
-    allowUnfree = true;
-    # Prefer binary substitutes over building
-    preferLocalBuild = false;
-    allowBuildFromSource = false;
-  };
-
-  # Add ollama to system packages - current version for now
-  environment.systemPackages = with pkgs; [
-    ollama
-  ];
 }
