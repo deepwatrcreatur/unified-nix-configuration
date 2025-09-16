@@ -12,7 +12,13 @@
         "pop-shell@system76.com"
         "transparent-window-moving@noobsai.github.com"
         "blur-my-shell@aunetx"
-        "openweather-extension@penguin-teal.github.io"
+        "weatheroclock@CleoMenezesJr.github.io"
+        "screenshot-window-sizer@gnome-shell-extensions.gcampax.github.com"
+        "places-menu@gnome-shell-extensions.gcampax.github.com"
+        "apps-menu@gnome-shell-extensions.gcampax.github.com"
+        "workspace-indicator@gnome-shell-extensions.gcampax.github.com"
+        "system-monitor@gnome-shell-extensions.gcampax.github.com"
+        "status-icons@gnome-shell-extensions.gcampax.github.com"
       ];
     };
 
@@ -91,22 +97,6 @@
       blur = false;  # Don't blur application windows by default
     };
 
-    # OpenWeather extension configuration for Toronto
-    "org/gnome/shell/extensions/openweather" = {
-      city = "6167865>Toronto, Ontario, Canada>-1";
-      unit = "celsius";
-      wind-speed-unit = "kph";
-      pressure-unit = "kPa";
-      show-text-in-panel = true;
-      position-in-panel = "center";
-      menu-alignment = 75.0;
-      translate-condition = true;
-      use-symbolic-icons = true;
-      show-sunrise-sunset = true;
-      show-zero-digit = false;
-      center-forecast = false;
-      days-forecast = 5;
-    };
 
   };
 

@@ -20,13 +20,7 @@
     gnomeExtensions.pop-shell  # Excellent tiling window manager
     gnomeExtensions.transparent-window-moving  # For window transparency
     gnomeExtensions.blur-my-shell  # For shell transparency effects
-    # OpenWeather with forced compatibility for GNOME Shell 48+
-    (gnomeExtensions.openweather-refined.overrideAttrs (old: {
-      postInstall = ''
-        sed -i 's/"shell-version": \[.*\]/"shell-version": ["48","47","46"]/' \
-          $out/share/gnome-shell/extensions/*/metadata.json
-      '';
-    }))
+    gnomeExtensions.weatheroclock
     
     # Additional tools for theming
     dconf-editor          # For GTK app theming
