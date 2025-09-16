@@ -12,7 +12,6 @@
     ../../../../modules/home-manager/gnome.nix
   ];
 
-  home.username = "deepwatrcreatur";
   home.homeDirectory = "/home/deepwatrcreatur";
 
   home.packages = with pkgs; [

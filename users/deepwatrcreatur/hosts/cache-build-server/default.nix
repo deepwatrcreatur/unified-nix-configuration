@@ -11,8 +11,7 @@
     ../../../../modules/home-manager/gpg-cli.nix
   ];
 
-  # Set the username and home directory for Home Manager
-  home.username = "deepwatrcreatur";
+  # Set home directory for Home Manager
   home.homeDirectory = "/home/deepwatrcreatur"; # Home directory for the root user
 
   # Add packages

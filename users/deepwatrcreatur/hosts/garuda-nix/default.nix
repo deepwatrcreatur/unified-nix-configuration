@@ -5,7 +5,6 @@
     ../../default.nix  
   ];
 
-  home.username = "deepwatrcreatur";
   home.homeDirectory = "/home/deepwatrcreatur";
 
   # Garuda provides extensive home-manager configuration through their modules

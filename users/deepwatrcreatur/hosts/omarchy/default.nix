@@ -9,7 +9,6 @@
     #../../../../modules/home-manager/ghostty
   ];
 
-  home.username = "deepwatrcreatur";
   home.homeDirectory = "/home/deepwatrcreatur";
 
   home.packages = with pkgs; [
