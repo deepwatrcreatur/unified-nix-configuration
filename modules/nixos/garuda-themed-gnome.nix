@@ -20,7 +20,7 @@
     gnomeExtensions.pop-shell  # Excellent tiling window manager
     gnomeExtensions.transparent-window-moving  # For window transparency
     gnomeExtensions.blur-my-shell  # For shell transparency effects
-    gnomeExtensions.weatheroclock
+    gnomeExtensions.weather-oclock
     
     # Additional tools for theming
     dconf-editor          # For GTK app theming
