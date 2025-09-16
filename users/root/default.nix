@@ -8,7 +8,7 @@
   
   home.username = "root";
   home.homeDirectory = "/root";
-  home.stateVersion = "24.11";
+  home.stateVersion = "25.05";
   home.packages = with pkgs; [ sops ];
   programs.home-manager.enable = true;
   
