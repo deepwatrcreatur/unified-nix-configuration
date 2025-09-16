@@ -9,6 +9,7 @@
     curl
     dig
     dua
+    du-dust
     dust
     fastfetch
     file
@@ -20,12 +21,15 @@
     iotop
     iperf3
     jq
+    killall
     lsd
+    ncdu
     neovim
     netcat
     nethogs
     nmap
     ouch
+    pstree
     python3
     sad
     sshs
