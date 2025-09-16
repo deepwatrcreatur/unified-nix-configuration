@@ -17,10 +17,13 @@
     gping
     grex
     htop
+    iotop
     iperf3
     jq
     lsd
     neovim
+    netcat
+    nethogs
     nmap
     ouch
     python3
