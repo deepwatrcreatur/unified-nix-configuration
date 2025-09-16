@@ -57,7 +57,7 @@
   users.users.deepwatrcreatur = {
     isNormalUser = true;
     extraGroups = [ "networkmanager" "wheel" ];
-    shell = pkgs.nushell;
+    shell = pkgs.fish;
   };
 
   home-manager.backupFileExtension = "backup";
