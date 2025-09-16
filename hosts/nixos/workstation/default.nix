@@ -73,6 +73,7 @@
   environment.systemPackages = with pkgs; [
     vim
     git
+    nushell  # Stopgap: Add nushell at system level for ghostty compatibility
   ];
 
   # Enable nix-ld for running dynamically linked executables (like homebrew packages)

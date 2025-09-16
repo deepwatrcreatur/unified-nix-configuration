@@ -32,6 +32,7 @@ window-vsync                   = true
 # Other
 clipboard-paste-protection     = true
 clipboard-trim-trailing-spaces = true
+command                        = fish
 copy-on-select                 = true
 macos-auto-secure-input        = true
 macos-secure-input-indication  = true
