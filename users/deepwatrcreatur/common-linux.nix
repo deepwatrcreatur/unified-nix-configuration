@@ -1,5 +1,5 @@
 { config, pkgs, lib, ... }:
 {
 
-  home.shell = pkgs.nushell;
+  home.shell = pkgs.fish;
 }
