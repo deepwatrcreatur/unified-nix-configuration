@@ -1,11 +1,11 @@
 { config, lib, pkgs, ... }:
 
 {
-  users.users.root.shell = pkgs.nushell;
+  users.users.root.shell = pkgs.fish;
 
   users.users.deepwatrcreatur = {
     isNormalUser = true;
-    shell = pkgs.nushell;
+    shell = pkgs.fish;
     description = "Anwer Khan";
     home = "/home/deepwatrcreatur";
     extraGroups = [ "networkmanager" "wheel" "docker" ];

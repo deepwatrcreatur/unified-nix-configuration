@@ -8,7 +8,7 @@
     home = "/home/deepwatrcreatur";
     extraGroups = [ "networkmanager" "wheel" "ollama" ];
     packages = with pkgs; [];
-    shell = pkgs.nushell;
+    shell = pkgs.fish;
     # SSH keys managed via SOPS if needed
   };
 
