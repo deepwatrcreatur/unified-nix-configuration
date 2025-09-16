@@ -10,5 +10,5 @@
   home.packages = with pkgs; [
   ];
 
-  home.stateVersion = "25.05";
+  home.stateVersion = "24.11";
 }
