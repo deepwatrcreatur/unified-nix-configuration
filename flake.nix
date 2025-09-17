@@ -4,6 +4,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
     nix-darwin.url = "github:LnL7/nix-darwin/nix-darwin-25.05";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
@@ -63,7 +64,18 @@
     commonNixpkgsConfig = {
       allowUnfree = true;
     };
-    commonOverlays = [];
+    commonOverlays = [
+      # Overlay to add specific packages from unstable
+      (final: prev: 
+        let
+          unstable = import inputs.nixpkgs-unstable {
+            inherit (prev) system;
+            config = commonNixpkgsConfig;
+          };
+        in {
+          ghostty-bin = unstable.ghostty-bin;
+        })
+    ];
 
     # SpecialArgs for NixOS and Darwin SYSTEM modules.
     # These modules can safely receive the pure nixpkgsLib.
@@ -138,6 +150,8 @@
                 ];
               };
               home-manager.extraSpecialArgs = homeManagerModuleArgs;
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
 
               users.users.${username} = {
                 name = username;
