@@ -8,7 +8,13 @@
     enableBashIntegration = true;
     enableZshIntegration = true;
     settings = {
-      command_timeout = 1000; # 1 second timeout for git commands
+      command_timeout = 2000; # 2 second timeout for commands
+      git_status = {
+        disabled = false;
+        ahead = "⇡\${count}";
+        diverged = "⇕⇡\${ahead_count}⇣\${behind_count}";
+        behind = "⇣\${count}";
+      };
     };
   };
 }
