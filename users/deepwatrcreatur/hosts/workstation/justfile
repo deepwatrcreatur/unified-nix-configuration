@@ -1,0 +1,7 @@
+# users/deepwatrcreatur/justfile
+
+update dir="/home/deepwatrcreatur/unified-nix-configuration":
+  sudo nixos-rebuild switch --flake {{dir}}#{{`hostname`}}
+
+nh-update dir="/home/deepwatrcreatur/unified-nix-configuration":
+  nh os switch {{dir}}#{{`hostname`}}

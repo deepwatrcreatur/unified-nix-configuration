@@ -1,0 +1,7 @@
+# users/deepwatrcreatur/hosts/inference-node/justfile
+
+update:
+  home-manager switch --flake /home/deepwatrcreatur/unified-nix-configuration
+
+nh-update:
+  nh home switch /home/deepwatrcreatur/unified-nix-configuration

@@ -7,7 +7,6 @@
     ./rsync.nix
     ./system-defaults.nix
     ./nix-store-uuid.nix
-    ./just.nix
     ./homebrew.nix
   ];
 
