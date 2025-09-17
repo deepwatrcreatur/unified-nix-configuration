@@ -4,7 +4,6 @@
   imports = [
     ../../default.nix
     ./nh.nix
-    ../../just.nix
     ../../../../modules/home-manager
     ../../../../modules/home-manager/gpg-desktop-linux.nix
     ../../../../modules/home-manager/ghostty

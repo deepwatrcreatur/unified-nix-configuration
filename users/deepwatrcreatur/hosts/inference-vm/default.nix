@@ -4,7 +4,6 @@
   # Inference VM specific configuration for deepwatrcreatur
   imports = [
     ../.. # Import default user config
-    ../../just.nix
     ../../../../modules/home-manager/gpg-cli.nix
   ];
 
