@@ -4,8 +4,13 @@ let
   # Get the username from config
   username = config.home.username;
 
-  # Get the hostname - try from config first, fallback to environment
-  hostname = config.networking.hostName or (builtins.getEnv "HOSTNAME");
+  # Get the hostname - try from environment variables that should work across platforms
+  hostname = if (builtins.getEnv "HOSTNAME") != "" then 
+    builtins.getEnv "HOSTNAME"
+  else if (builtins.getEnv "HOST") != "" then
+    builtins.getEnv "HOST"
+  else
+    "unknown";
 
   # Path to the host-specific justfile
   justfilePath = ../../users/${username}/hosts/${hostname}/justfile;
