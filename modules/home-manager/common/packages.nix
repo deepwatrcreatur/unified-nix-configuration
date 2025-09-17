@@ -25,7 +25,6 @@
     ncdu
     neovim
     netcat
-    nethogs
     nmap
     ouch
     pstree
