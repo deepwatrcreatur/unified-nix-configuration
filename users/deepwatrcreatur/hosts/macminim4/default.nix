@@ -19,7 +19,7 @@
     bitwarden
     megacmd
     ffmpeg
-    ghostty-bin
+    # ghostty-bin  # Not available in nixpkgs 25.05
     input-leap
     yt-dlp
     virt-viewer
