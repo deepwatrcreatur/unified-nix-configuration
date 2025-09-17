@@ -25,4 +25,5 @@
     virt-viewer
   ];
 
+  home.stateVersion = "25.11";
 }
