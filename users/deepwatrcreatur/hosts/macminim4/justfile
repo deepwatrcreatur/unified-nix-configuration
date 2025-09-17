@@ -5,4 +5,3 @@ update dir="/Users/deepwatrcreatur/unified-nix-configuration":
 
 nh-update dir="/Users/deepwatrcreatur/unified-nix-configuration":
   nh darwin switch {{dir}}#{{`hostname`}}
-
