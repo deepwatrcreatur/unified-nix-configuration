@@ -16,7 +16,6 @@
   };
 
   home.username = "deepwatrcreatur";
-  home.stateVersion = "25.05";
 
   home.packages = with pkgs; [
     go
