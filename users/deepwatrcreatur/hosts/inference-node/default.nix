@@ -3,6 +3,7 @@
 {
   imports = [
     ../../default.nix
+    ./nh.nix
   ];
 
   home.homeDirectory = "/home/deepwatrcreatur";
@@ -10,5 +11,5 @@
   home.packages = with pkgs; [
   ];
 
-  home.stateVersion = "24.11";
+  home.stateVersion = "25.05";
 }
