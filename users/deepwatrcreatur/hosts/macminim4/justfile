@@ -1,0 +1,7 @@
+# users/deepwatrcreatur/hosts/macminim4/justfile
+
+update dir="/Users/deepwatrcreatur/unified-nix-configuration":
+  darwin-rebuild switch {{dir}}#{{`hostname`}}
+
+nh-update dir="/Users/deepwatrcreatur/unified-nix-configuration":
+  nh darwin switch {{dir}}#{{`hostname`}}
