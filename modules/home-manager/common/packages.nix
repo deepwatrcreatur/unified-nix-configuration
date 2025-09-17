@@ -18,7 +18,6 @@
     gping
     grex
     htop
-    iotop
     iperf3
     jq
     killall
