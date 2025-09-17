@@ -3,13 +3,13 @@
   description = "Multi-system Nix configurations (NixOS, nix-darwin, Home Manager)";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
-    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.11";
 
-    nix-darwin.url = "github:LnL7/nix-darwin/nix-darwin-24.11";
+    nix-darwin.url = "github:LnL7/nix-darwin/master";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
 
-    home-manager.url = "github:nix-community/home-manager/release-24.11";
+    home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     sops-nix.url = "github:Mic92/sops-nix";
@@ -65,15 +65,16 @@
       allowUnfree = true;
     };
     commonOverlays = [
-      # Overlay to add specific packages from unstable
+      # Overlay to selectively use stable packages when unstable ones cause issues
       (final: prev: 
         let
-          unstable = import inputs.nixpkgs-unstable {
+          stable = import inputs.nixpkgs-stable {
             inherit (prev) system;
             config = commonNixpkgsConfig;
           };
         in {
-          ghostty-bin = unstable.ghostty-bin;
+          # Add stable packages here when needed to avoid compilation
+          # Example: some-package = stable.some-package;
         })
     ];
 
