@@ -41,7 +41,8 @@
       ];
       
       substituters = [
-        "http://cache.deepwatercreature.com:5000/"
+        "http://cache.deepwatercreature.com:8081/cache-local"  # Attic cache (preferred)
+        "http://cache.deepwatercreature.com:5000/"             # Legacy nix-serve
         "https://cache.nixos.org/"
         "https://cuda-maintainers.cachix.org"
         "https://cache.garnix.io/"

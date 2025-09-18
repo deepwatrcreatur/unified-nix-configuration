@@ -31,6 +31,9 @@
     nix-prefetch-git
     nix-prefetch-github
     nix-index
+
+    # Cache management
+    attic-client
     
     # Monitoring
     nvtopPackages.full
