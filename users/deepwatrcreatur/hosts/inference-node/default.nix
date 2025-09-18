@@ -6,6 +6,7 @@
   imports = [
     ../../default.nix
     ./nh.nix
+    ./just.nix
   ];
 
   home.homeDirectory = "/home/deepwatrcreatur";
