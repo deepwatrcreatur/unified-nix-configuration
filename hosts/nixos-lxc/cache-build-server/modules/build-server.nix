@@ -30,12 +30,71 @@
     options = "--delete-older-than 3d"; # Keep recent builds
   };
 
-  # Binary cache serving
+  # Binary cache serving with nix-serve (legacy)
   services.nix-serve = {
     enable = true;
     port = 5000;
     bindAddress = "0.0.0.0";
     secretKeyFile = "/var/lib/nix-serve/cache-priv-key.pem";
+  };
+
+  # Attic binary cache server
+  services.atticd = {
+    enable = true;
+
+    # Server configuration
+    settings = {
+      listen = "[::]:5001";
+      allowed-hosts = [ "cache-build-server" ];
+      api-endpoint = "http://cache-build-server:5001/";
+
+      # Database
+      database.url = "sqlite:///var/lib/atticd/server.db";
+
+      # Storage
+      storage = {
+        type = "local";
+        path = "/var/lib/atticd/storage";
+      };
+
+      # Enable compression
+      compression.type = "zstd";
+
+      # Garbage collection
+      garbage-collection = {
+        interval = "12 hours";
+        default-retention-period = "7 days";
+      };
+    };
+  };
+
+  # Initialize Attic cache and configure upstream
+  systemd.services.attic-init = {
+    description = "Initialize Attic cache";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "atticd.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+    script = ''
+      # Wait for atticd to be ready
+      sleep 5
+
+      # Create cache if it doesn't exist
+      if ! ${pkgs.attic-client}/bin/attic cache info cache-local --server http://localhost:5001 2>/dev/null; then
+        echo "Creating cache-local..."
+        ${pkgs.attic-client}/bin/attic cache create cache-local --server http://localhost:5001
+      fi
+
+      # Configure as upstream cache for nixos.org
+      ${pkgs.attic-client}/bin/attic cache configure cache-local \
+        --upstream-cache-key-names cache.nixos.org-1 \
+        --upstream-cache-uris https://cache.nixos.org \
+        --server http://localhost:5001 || true
+
+      echo "Attic cache initialized successfully"
+    '';
   };
 
   # Add nginx reverse proxy for caching behavior
@@ -82,24 +141,27 @@
       };
     };
 
-    # Separate vhost for upstream-only access (port 8081)
-    virtualHosts."upstream-cache" = {
+    # Attic cache server proxy
+    virtualHosts."attic-cache" = {
       listen = [ { addr = "0.0.0.0"; port = 8081; } ];
       locations = {
         "/" = {
-          proxyPass = "https://cache.nixos.org";
+          proxyPass = "http://127.0.0.1:5001";
           extraConfig = ''
-            proxy_ssl_server_name on;
-            proxy_set_header Host cache.nixos.org;
             proxy_cache nix_cache;
             proxy_cache_valid 200 1d;
             proxy_cache_valid 404 5m;
-            add_header X-Cache-Status "UPSTREAM-$upstream_cache_status";
-            add_header X-Cache-Source "nixos.org";
+            add_header X-Cache-Status "ATTIC-$upstream_cache_status";
+            add_header X-Cache-Source "attic";
+
+            # Support for chunked uploads
+            proxy_request_buffering off;
+            client_max_body_size 2G;
           '';
         };
       };
     };
+
   };
 
   # Generate signing keys for nix-serve
@@ -136,10 +198,10 @@
     };
   };
 
-  # Firewall - SSH, nix-serve, and nginx cache proxies
+  # Firewall - SSH, nix-serve, attic, and nginx cache proxies
   networking.firewall = {
     enable = true;
-    allowedTCPPorts = [ 22 5000 8080 8081 ];
+    allowedTCPPorts = [ 22 5000 5001 8080 8081 ];
   };
 
   # System monitoring for build server
@@ -148,7 +210,7 @@
     MaxRetentionSec=1month
   '';
 
-  # Post-build hook to automatically push built packages to cache
+  # Post-build hook to automatically push built packages to both caches
   environment.etc."nix/post-build-hook.sh" = {
     text = ''
       #!/bin/sh
@@ -156,8 +218,15 @@
       set -f # disable globbing
       export IFS=' '
 
-      echo "Uploading paths" $OUT_PATHS
-      exec nix copy --to "http://localhost:5000" $OUT_PATHS
+      echo "Uploading paths to caches:" $OUT_PATHS
+
+      # Upload to nix-serve (legacy)
+      nix copy --to "http://localhost:5000" $OUT_PATHS || true
+
+      # Upload to Attic
+      ${pkgs.attic-client}/bin/attic push cache-local $OUT_PATHS --server http://localhost:5001 || true
+
+      echo "Upload completed"
     '';
     mode = "0755";
   };
