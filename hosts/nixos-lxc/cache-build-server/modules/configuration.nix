@@ -6,7 +6,7 @@
     ../../../../modules/nixos/networking.nix
   ];
 
-  networking.hostName = lib.mkForce "cache";
+  networking.hostName = "cache-build-server";
 
   security.sudo.enable = true;
   security.sudo.wheelNeedsPassword = false;
@@ -19,5 +19,5 @@
 
   boot.initrd.systemd.fido2.enable = false;
 
-  system.stateVersion = "25.05";
+  system.stateVersion = "24.11";
 }
