@@ -20,9 +20,11 @@
 
         echo "Uploading to Attic cache:" $OUT_PATHS
 
+        # Set server for attic client
+        export ATTIC_SERVER="http://cache.deepwatercreature.com:5001"
+
         # Push to Attic cache server
-        ${pkgs.attic-client}/bin/attic push cache-local $OUT_PATHS \
-          --server http://cache.deepwatercreature.com:5001 || {
+        ${pkgs.attic-client}/bin/attic push cache-local $OUT_PATHS || {
           echo "Warning: Failed to upload to Attic cache"
           exit 0  # Don't fail the build if cache upload fails
         }

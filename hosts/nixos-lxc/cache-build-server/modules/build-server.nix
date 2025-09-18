@@ -84,8 +84,9 @@
       mkdir -p /var/lib/atticd
       if [[ ! -f /var/lib/atticd/env ]]; then
         echo "Generating Attic server token..."
+        # Generate RSA private key in base64 format for Attic
         token=$(${pkgs.openssl}/bin/openssl genrsa -traditional 4096 | ${pkgs.coreutils}/bin/base64 -w0)
-        echo "ATTIC_SERVER_TOKEN_RS256_SECRET=\"$token\"" > /var/lib/atticd/env
+        echo "ATTIC_SERVER_TOKEN_RS256_SECRET_BASE64=\"$token\"" > /var/lib/atticd/env
         chmod 600 /var/lib/atticd/env
         echo "Attic server token generated"
       fi
@@ -105,17 +106,19 @@
       # Wait for atticd to be ready
       sleep 5
 
+      # Set server endpoint for attic client
+      export ATTIC_SERVER="http://localhost:5001"
+
       # Create cache if it doesn't exist
-      if ! ${pkgs.attic-client}/bin/attic cache info cache-local --server http://localhost:5001 2>/dev/null; then
+      if ! ${pkgs.attic-client}/bin/attic cache info cache-local 2>/dev/null; then
         echo "Creating cache-local..."
-        ${pkgs.attic-client}/bin/attic cache create cache-local --server http://localhost:5001
+        ${pkgs.attic-client}/bin/attic cache create cache-local
       fi
 
       # Configure as upstream cache for nixos.org
       ${pkgs.attic-client}/bin/attic cache configure cache-local \
         --upstream-cache-key-names cache.nixos.org-1 \
-        --upstream-cache-uris https://cache.nixos.org \
-        --server http://localhost:5001 || true
+        --upstream-cache-uris https://cache.nixos.org || true
 
       echo "Attic cache initialized successfully"
     '';
