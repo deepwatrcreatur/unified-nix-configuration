@@ -68,21 +68,25 @@
     virtualHosts."cache-server" = {
       listen = [ { addr = "0.0.0.0"; port = 8080; } ];
       locations = {
-        # Try local nix-serve first, then fallback to upstream
+        # Serve local cache with proper caching headers
         "/" = {
           proxyPass = "http://nix-serve-backend";
           extraConfig = ''
             proxy_cache nix_cache;
             proxy_cache_valid 200 1d;
             proxy_cache_valid 404 5m;
-            add_header X-Cache-Status $upstream_cache_status;
-
-            # If local cache returns 404, try upstream
-            error_page 404 = @upstream_fallback;
+            add_header X-Cache-Status "LOCAL-$upstream_cache_status";
+            add_header X-Cache-Source "nix-serve";
           '';
         };
+      };
+    };
 
-        "@upstream_fallback" = {
+    # Separate vhost for upstream-only access (port 8081)
+    virtualHosts."upstream-cache" = {
+      listen = [ { addr = "0.0.0.0"; port = 8081; } ];
+      locations = {
+        "/" = {
           proxyPass = "https://cache.nixos.org";
           extraConfig = ''
             proxy_ssl_server_name on;
@@ -91,10 +95,7 @@
             proxy_cache_valid 200 1d;
             proxy_cache_valid 404 5m;
             add_header X-Cache-Status "UPSTREAM-$upstream_cache_status";
-
-            # Store successful responses for future requests
-            proxy_store on;
-            proxy_store_access user:rw group:rw all:r;
+            add_header X-Cache-Source "nixos.org";
           '';
         };
       };
@@ -135,10 +136,10 @@
     };
   };
 
-  # Firewall - SSH, nix-serve, and nginx cache proxy
+  # Firewall - SSH, nix-serve, and nginx cache proxies
   networking.firewall = {
     enable = true;
-    allowedTCPPorts = [ 22 5000 8080 ];
+    allowedTCPPorts = [ 22 5000 8080 8081 ];
   };
 
   # System monitoring for build server
