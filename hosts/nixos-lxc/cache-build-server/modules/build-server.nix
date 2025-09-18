@@ -42,6 +42,9 @@
   services.atticd = {
     enable = true;
 
+    # Environment file for server token
+    environmentFile = "/var/lib/atticd/env";
+
     # Server configuration
     settings = {
       listen = "[::]:5001";
@@ -68,11 +71,32 @@
     };
   };
 
+  # Generate Attic server token
+  systemd.services.attic-token-setup = {
+    description = "Setup Attic server token";
+    wantedBy = [ "multi-user.target" ];
+    before = [ "atticd.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+    script = ''
+      mkdir -p /var/lib/atticd
+      if [[ ! -f /var/lib/atticd/env ]]; then
+        echo "Generating Attic server token..."
+        token=$(${pkgs.openssl}/bin/openssl genrsa -traditional 4096 | ${pkgs.coreutils}/bin/base64 -w0)
+        echo "ATTIC_SERVER_TOKEN_RS256_SECRET=\"$token\"" > /var/lib/atticd/env
+        chmod 600 /var/lib/atticd/env
+        echo "Attic server token generated"
+      fi
+    '';
+  };
+
   # Initialize Attic cache and configure upstream
   systemd.services.attic-init = {
     description = "Initialize Attic cache";
     wantedBy = [ "multi-user.target" ];
-    after = [ "atticd.service" ];
+    after = [ "atticd.service" "attic-token-setup.service" ];
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
