@@ -38,6 +38,69 @@
     secretKeyFile = "/var/lib/nix-serve/cache-priv-key.pem";
   };
 
+  # Add nginx reverse proxy for caching behavior
+  services.nginx = {
+    enable = true;
+    recommendedGzipSettings = true;
+    recommendedOptimisation = true;
+    recommendedProxySettings = true;
+
+    # Configure cache storage
+    commonHttpConfig = ''
+      proxy_cache_path /var/cache/nginx/nix-cache levels=1:2 keys_zone=nix_cache:10m max_size=10g inactive=7d use_temp_path=off;
+      proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
+      proxy_cache_lock on;
+    '';
+
+    upstreams = {
+      "nix-serve-backend" = {
+        servers = {
+          "127.0.0.1:5000" = {};
+        };
+      };
+      "nixos-cache" = {
+        servers = {
+          "cache.nixos.org:443" = {};
+        };
+      };
+    };
+
+    virtualHosts."cache-server" = {
+      listen = [ { addr = "0.0.0.0"; port = 8080; } ];
+      locations = {
+        # Try local nix-serve first, then fallback to upstream
+        "/" = {
+          proxyPass = "http://nix-serve-backend";
+          extraConfig = ''
+            proxy_cache nix_cache;
+            proxy_cache_valid 200 1d;
+            proxy_cache_valid 404 5m;
+            add_header X-Cache-Status $upstream_cache_status;
+
+            # If local cache returns 404, try upstream
+            error_page 404 = @upstream_fallback;
+          '';
+        };
+
+        "@upstream_fallback" = {
+          proxyPass = "https://cache.nixos.org";
+          extraConfig = ''
+            proxy_ssl_server_name on;
+            proxy_set_header Host cache.nixos.org;
+            proxy_cache nix_cache;
+            proxy_cache_valid 200 1d;
+            proxy_cache_valid 404 5m;
+            add_header X-Cache-Status "UPSTREAM-$upstream_cache_status";
+
+            # Store successful responses for future requests
+            proxy_store on;
+            proxy_store_access user:rw group:rw all:r;
+          '';
+        };
+      };
+    };
+  };
+
   # Generate signing keys for nix-serve
   systemd.services.nix-serve-keys = {
     description = "Generate Nix cache signing keys";
@@ -72,10 +135,10 @@
     };
   };
 
-  # Firewall - SSH and nix-serve
+  # Firewall - SSH, nix-serve, and nginx cache proxy
   networking.firewall = {
     enable = true;
-    allowedTCPPorts = [ 22 5000 ];
+    allowedTCPPorts = [ 22 5000 8080 ];
   };
 
   # System monitoring for build server
