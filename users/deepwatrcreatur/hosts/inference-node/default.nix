@@ -1,6 +1,8 @@
 { config, pkgs, inputs, ... }:
 
 {
+  # Allow unfree packages for CUDA/NVIDIA tools
+  nixpkgs.config.allowUnfree = true;
   imports = [
     ../../default.nix
     ./nh.nix
