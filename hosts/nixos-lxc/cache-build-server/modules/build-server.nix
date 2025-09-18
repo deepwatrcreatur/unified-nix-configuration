@@ -48,8 +48,8 @@
     # Server configuration
     settings = {
       listen = "[::]:5001";
-      allowed-hosts = [ "cache-build-server" ];
-      api-endpoint = "http://cache-build-server:5001/";
+      allowed-hosts = [ "cache-build-server" "localhost" "127.0.0.1" ];
+      api-endpoint = "http://localhost:5001/";
 
       # Database
       database.url = "sqlite:///var/lib/atticd/server.db";
