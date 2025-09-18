@@ -9,7 +9,13 @@
   home.homeDirectory = "/home/deepwatrcreatur";
 
   home.packages = with pkgs; [
+    # GPU monitoring and tools
+    nvtopPackages.nvidia  # NVIDIA GPU monitor
+    gpustat               # Simple GPU utilization viewer
+    glxinfo              # OpenGL info
+    vulkan-tools         # Vulkan utilities
+    nvitop               # Alternative GPU process monitor
   ];
 
-  home.stateVersion = "25.05";
+  home.stateVersion = "25.11";
 }
