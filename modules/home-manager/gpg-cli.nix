@@ -19,7 +19,7 @@
     enableZshIntegration = true;
     enableNushellIntegration = true;
     enableFishIntegration = true;
-    # extraConfig = "allow-loopback-pinentry";
+    extraConfig = "allow-loopback-pinentry";
   };
 }
 

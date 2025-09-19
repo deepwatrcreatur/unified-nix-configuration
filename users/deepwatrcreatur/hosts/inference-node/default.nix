@@ -7,6 +7,7 @@
     ../../default.nix
     ./nh.nix
     ./just.nix
+    ../../../../modules/home-manager/gpg-cli.nix
   ];
 
   home.homeDirectory = "/home/deepwatrcreatur";
