@@ -119,11 +119,12 @@
     };
     script = ''
       # Wait for SOPS secrets to be available
-      if [[ -f /run/secrets/attic-client-token ]]; then
+      SOPS_TOKEN_PATH="/home/deepwatrcreatur/.config/sops/attic-client-token"
+      if [[ -f "$SOPS_TOKEN_PATH" ]]; then
         echo "Setting up Attic client configuration with SOPS token..."
 
         # Read the SOPS-managed token
-        ATTIC_TOKEN=$(cat /run/secrets/attic-client-token)
+        ATTIC_TOKEN=$(cat "$SOPS_TOKEN_PATH")
 
         # Replace placeholder in config file
         sed "s/@ATTIC_CLIENT_TOKEN@/$ATTIC_TOKEN/" /etc/attic/config.toml > /tmp/attic-config.toml
@@ -132,7 +133,7 @@
 
         echo "Attic client configuration updated with SOPS token"
       else
-        echo "Warning: SOPS attic-client-token not found at /run/secrets/attic-client-token"
+        echo "Warning: SOPS attic-client-token not found at $SOPS_TOKEN_PATH"
         echo "Attic client authentication may not work until the secret is properly configured"
       fi
     '';
@@ -157,8 +158,9 @@
       echo "Initializing Attic cache with SOPS-managed authentication..."
 
       # Check if SOPS token is available
-      if [[ -f /run/secrets/attic-client-token ]]; then
-        ATTIC_TOKEN=$(cat /run/secrets/attic-client-token)
+      SOPS_TOKEN_PATH="/home/deepwatrcreatur/.config/sops/attic-client-token"
+      if [[ -f "$SOPS_TOKEN_PATH" ]]; then
+        ATTIC_TOKEN=$(cat "$SOPS_TOKEN_PATH")
 
         # Login using the SOPS-managed token
         if ${pkgs.attic-client}/bin/attic login local http://localhost:5001 "$ATTIC_TOKEN" --set-default; then
@@ -326,12 +328,13 @@
 
       # Upload to Attic with SOPS-managed authentication
       export ATTIC_CONFIG="/etc/attic/config.toml"
-      if [ -f /run/secrets/attic-client-token ] && [ -f /etc/attic/config.toml ]; then
+      SOPS_TOKEN_PATH="/home/deepwatrcreatur/.config/sops/attic-client-token"
+      if [ -f "$SOPS_TOKEN_PATH" ] && [ -f /etc/attic/config.toml ]; then
         echo "Pushing to Attic cache with SOPS-managed authentication..."
         ${pkgs.attic-client}/bin/attic push cache-local $OUT_PATHS || {
           echo "Attic push failed - attempting recovery..."
           # Try to re-login and create cache if needed
-          ATTIC_TOKEN=$(cat /run/secrets/attic-client-token 2>/dev/null || echo "")
+          ATTIC_TOKEN=$(cat "$SOPS_TOKEN_PATH" 2>/dev/null || echo "")
           if [ -n "$ATTIC_TOKEN" ]; then
             echo "Re-authenticating with Attic server..."
             ${pkgs.attic-client}/bin/attic login local http://localhost:5001 "$ATTIC_TOKEN" --set-default || true

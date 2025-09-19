@@ -56,6 +56,13 @@ in
         path = "${config.home.homeDirectory}/.config/git/github-token";
         mode = "0600";
       };
+
+      secrets."attic-client-token" = {
+        sopsFile = "${sopsSecretsDir}/attic-client-token.yaml.enc";
+        format = "yaml";
+        path = "${config.home.homeDirectory}/.config/sops/attic-client-token";
+        mode = "0600";
+      };
     };
   };
 }

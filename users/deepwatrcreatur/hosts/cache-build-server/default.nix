@@ -18,8 +18,8 @@
   ];
 
   # Configure programs
-  programs.bash.enable = true; 
-  
+  programs.bash.enable = true;
+
   # Let Home Manager manage itself if you want the `home-manager` command available
   programs.home-manager.enable = true;
 
