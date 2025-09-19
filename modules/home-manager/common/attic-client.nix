@@ -1,49 +1,13 @@
-
-
 { config, lib, pkgs, ... }:
 
 let
-  cfg = config.programs.attic-client;
-
-  # The content of the post-build hook script
-  uploadScriptContent = pkgs.writeShellScript "attic-upload.sh" ''
-    #!"${pkgs.bash}/bin/bash
-    # This script is executed by the post-build-hook.
-    # It pushes the paths of newly built derivations to the Attic cache.
-
-    set -euo pipefail
-
-    # Check if attic config exists - if not, skip upload silently
-    # This prevents bootstrap issues when secrets aren't available yet
-    CONFIG_FILE="$HOME/.config/attic/config.toml"
-    if [ ! -f "$CONFIG_FILE" ]; then
-      # Config not available yet, skip upload silently
-      exit 0
-    fi
-
-    # The paths to upload are passed as arguments.
-    PATHS_TO_UPLOAD="$@"
-
-    if [ -z "$PATHS_TO_UPLOAD" ]; then
-      # No paths to upload, exit gracefully.
-      exit 0
-    fi
-
-    echo "Attic: Pushing paths to cache..."
-    # Use the user's configured attic client
-    # Suppress errors if push fails (e.g., network issues)
-    ${pkgs.attic-client}/bin/attic push cache-local $PATHS_TO_UPLOAD || {
-      echo "Attic: Push failed, continuing build..."
-      exit 0
-    }
-    echo "Attic: Push complete."
-  '';
+  cfg = config.services.attic-client;
 in
 {
-  options.programs.attic-client = {
-    enable = lib.mkEnableOption "Attic binary cache client (Home Manager)" // {
-      default = false;
-      description = "Whether to enable the Attic client at the user level.";
+  options.services.attic-client = {
+    enable = lib.mkEnableOption "Attic binary cache client" // {
+      default = true;
+      description = "Whether to enable Attic binary cache client with SOPS-managed authentication";
     };
 
     servers = lib.mkOption {
@@ -91,22 +55,14 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    # 1. Install the package
+    # Install attic-client
     home.packages = [ pkgs.attic-client ];
 
-    # 2. Place the upload script in the user's home
-    home.file.".config/attic/upload.sh" = {
-      source = uploadScriptContent;
-      executable = true;
-    };
+    # Merge default servers with user-specified servers
+    services.attic-client.servers = lib.mkDefault cfg.defaultServers;
 
-    # 3. Configure nix.conf to use the hook
-    nix.extraOptions = ''
-      post-build-hook = ${config.home.homeDirectory}/.config/attic/upload.sh
-    '';
-
-    # 4. Create Attic client configuration template (as a writable file, not symlink)
-    home.file.".config/attic/config.toml.template".text =
+    # Create Attic client configuration template
+    home.file.".config/attic/config.toml".text =
       let
         allServers = cfg.defaultServers // cfg.servers;
         serverConfigs = lib.mapAttrsToList (name: server: ''
@@ -117,40 +73,38 @@ in
       in
       lib.concatStringsSep "\n\n" serverConfigs;
 
-    # 5. Home activation script to substitute tokens
+    # Home activation script to substitute tokens
     home.activation.attic-config = lib.hm.dag.entryAfter ["writeBoundary"] ''
       $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.config/attic
 
-      template_file="${config.home.homeDirectory}/.config/attic/config.toml.template"
-      config_file="${config.home.homeDirectory}/.config/attic/config.toml"
+      if [[ -f ${config.home.homeDirectory}/.config/attic/config.toml ]]; then
+        config_file="${config.home.homeDirectory}/.config/attic/config.toml"
+        temp_file="/tmp/attic-config-$$.toml"
 
-      if [[ -f "$template_file" ]]; then
         # Copy the template
-        cp "$template_file" "$config_file"
+        cp "$config_file" "$temp_file"
 
         ${lib.concatStringsSep "\n        " (lib.mapAttrsToList (name: server: ''
           # Substitute token for ${name}
           if [[ -f "${server.tokenPath}" ]]; then
-            # Read token and extract value if in shell export format
-            token_line=$(cat "${server.tokenPath}")
-            # Extract value between quotes if present (shell export format), otherwise use as-is
-            if [[ "$token_line" =~ =\"(.*)\" ]]; then
-              token="''${BASH_REMATCH[1]}"
-            else
-              token="$token_line"
-            fi
-
+            token=$(cat "${server.tokenPath}")
             placeholder="@ATTIC_CLIENT_TOKEN_${lib.toUpper (builtins.replaceStrings ["-"] ["_"] name)}@"
-            # Use portable sed syntax (create temp file)
-            $DRY_RUN_CMD ${pkgs.gnused}/bin/sed "s|$placeholder|$token|g" "$config_file" > "$config_file.tmp"
-            $DRY_RUN_CMD mv "$config_file.tmp" "$config_file"
+            $DRY_RUN_CMD sed -i "s|$placeholder|$token|g" "$temp_file"
           else
             $VERBOSE_ECHO "Warning: Token file not found for ${name}: ${server.tokenPath}"
           fi
         '') (cfg.defaultServers // cfg.servers))}
 
+        # Move the configured file into place
+        $DRY_RUN_CMD mv "$temp_file" "$config_file"
         $VERBOSE_ECHO "Attic client configuration updated with SOPS tokens"
       fi
     '';
+
+    # Add shell aliases for convenience
+    home.shellAliases = {
+      attic-push-local = "attic push cache-local";
+      attic-push-build-server = "attic push cache-build-server";
+    };
   };
 }
