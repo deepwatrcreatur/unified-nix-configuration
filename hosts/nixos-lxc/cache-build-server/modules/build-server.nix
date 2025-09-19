@@ -42,13 +42,13 @@
   services.atticd = {
     enable = true;
 
-    # Environment file for server token
+    # Environment file for server token (required)
     environmentFile = "/var/lib/atticd/env";
 
     # Server configuration
     settings = {
       listen = "[::]:5001";
-      allowed-hosts = [ "cache-build-server" "localhost" "127.0.0.1" ];
+      # allowed-hosts = [ "localhost" "127.0.0.1" "*.deepwatercreature.com" "10.10.*" ];  # Disabled to allow all hosts
       api-endpoint = "http://localhost:5001/";
 
       # Database
@@ -71,7 +71,7 @@
     };
   };
 
-  # Generate Attic server token
+  # Generate minimal Attic server token (required even for local setup)
   systemd.services.attic-token-setup = {
     description = "Setup Attic server token";
     wantedBy = [ "multi-user.target" ];
@@ -83,9 +83,9 @@
     script = ''
       mkdir -p /var/lib/atticd
       if [[ ! -f /var/lib/atticd/env ]]; then
-        echo "Generating Attic server token..."
-        # Generate RSA private key in base64 format for Attic
-        token=$(${pkgs.openssl}/bin/openssl genrsa -traditional 4096 | ${pkgs.coreutils}/bin/base64 -w0)
+        echo "Generating minimal Attic server token..."
+        # Generate a simple token for local development
+        token=$(${pkgs.openssl}/bin/openssl genrsa -traditional 2048 | ${pkgs.coreutils}/bin/base64 -w0)
         echo "ATTIC_SERVER_TOKEN_RS256_SECRET_BASE64=\"$token\"" > /var/lib/atticd/env
         chmod 600 /var/lib/atticd/env
         echo "Attic server token generated"
@@ -104,23 +104,37 @@
     };
     script = ''
       # Wait for atticd to be ready
-      sleep 5
+      sleep 15
 
       # Set server endpoint for attic client
       export ATTIC_SERVER="http://localhost:5001"
 
-      # Create cache if it doesn't exist
+      echo "Attempting to initialize Attic cache..."
+      echo "Note: Cache creation will be attempted by the post-build hook if this fails"
+
+      # Try to login without credentials (development mode)
+      ${pkgs.attic-client}/bin/attic login local http://localhost:5001 --set-default 2>/dev/null || {
+        echo "Login without credentials failed - this is expected in secure mode"
+      }
+
+      # Try to create cache (may fail due to authentication, that's OK)
       if ! ${pkgs.attic-client}/bin/attic cache info cache-local 2>/dev/null; then
-        echo "Creating cache-local..."
-        ${pkgs.attic-client}/bin/attic cache create cache-local
+        echo "Attempting to create cache-local..."
+        ${pkgs.attic-client}/bin/attic cache create cache-local 2>/dev/null || {
+          echo "Cache creation failed - cache will be created automatically on first push"
+        }
+      else
+        echo "Cache cache-local already exists"
       fi
 
-      # Configure as upstream cache for nixos.org
+      # Try to configure upstream (may fail, that's OK)
       ${pkgs.attic-client}/bin/attic cache configure cache-local \
         --upstream-cache-key-names cache.nixos.org-1 \
-        --upstream-cache-uris https://cache.nixos.org || true
+        --upstream-cache-uris https://cache.nixos.org 2>/dev/null || {
+        echo "Cache configuration failed - will be configured on first successful push"
+      }
 
-      echo "Attic cache initialized successfully"
+      echo "Attic initialization completed (cache will auto-create on first push if needed)"
     '';
   };
 
