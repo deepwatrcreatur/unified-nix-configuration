@@ -71,24 +71,69 @@
     };
   };
 
-  # Generate minimal Attic server token (required even for local setup)
+  # Generate Attic server token and setup client config with SOPS-managed token
   systemd.services.attic-token-setup = {
-    description = "Setup Attic server token";
+    description = "Setup Attic server token and client configuration";
     wantedBy = [ "multi-user.target" ];
     before = [ "atticd.service" ];
+    after = [ "sops-nix.service" ];
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
     };
     script = ''
       mkdir -p /var/lib/atticd
+
+      # Generate server token if it doesn't exist
       if [[ ! -f /var/lib/atticd/env ]]; then
-        echo "Generating minimal Attic server token..."
-        # Generate a simple token for local development
-        token=$(${pkgs.openssl}/bin/openssl genrsa -traditional 2048 | ${pkgs.coreutils}/bin/base64 -w0)
-        echo "ATTIC_SERVER_TOKEN_RS256_SECRET_BASE64=\"$token\"" > /var/lib/atticd/env
+        echo "Generating Attic server token..."
+        server_token=$(${pkgs.openssl}/bin/openssl genrsa -traditional 2048 | ${pkgs.coreutils}/bin/base64 -w0)
+        echo "ATTIC_SERVER_TOKEN_RS256_SECRET_BASE64=\"$server_token\"" > /var/lib/atticd/env
         chmod 600 /var/lib/atticd/env
         echo "Attic server token generated"
+      fi
+
+      echo "Attic token setup completed - client authentication will use SOPS-managed token"
+    '';
+  };
+
+  # Create Attic client configuration using SOPS-managed token
+  environment.etc."attic/config.toml" = {
+    text = ''
+      [servers.local]
+      endpoint = "http://localhost:5001"
+      token = "@ATTIC_CLIENT_TOKEN@"
+    '';
+    mode = "0644";
+  };
+
+  # Service to substitute the SOPS token into the config file
+  systemd.services.attic-client-config = {
+    description = "Setup Attic client configuration with SOPS token";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "sops-nix.service" "attic-token-setup.service" ];
+    before = [ "attic-init.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+    script = ''
+      # Wait for SOPS secrets to be available
+      if [[ -f /run/secrets/attic-client-token ]]; then
+        echo "Setting up Attic client configuration with SOPS token..."
+
+        # Read the SOPS-managed token
+        ATTIC_TOKEN=$(cat /run/secrets/attic-client-token)
+
+        # Replace placeholder in config file
+        sed "s/@ATTIC_CLIENT_TOKEN@/$ATTIC_TOKEN/" /etc/attic/config.toml > /tmp/attic-config.toml
+        mv /tmp/attic-config.toml /etc/attic/config.toml
+        chmod 644 /etc/attic/config.toml
+
+        echo "Attic client configuration updated with SOPS token"
+      else
+        echo "Warning: SOPS attic-client-token not found at /run/secrets/attic-client-token"
+        echo "Attic client authentication may not work until the secret is properly configured"
       fi
     '';
   };
@@ -97,7 +142,7 @@
   systemd.services.attic-init = {
     description = "Initialize Attic cache";
     wantedBy = [ "multi-user.target" ];
-    after = [ "atticd.service" "attic-token-setup.service" ];
+    after = [ "atticd.service" "attic-client-config.service" ];
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
@@ -106,35 +151,50 @@
       # Wait for atticd to be ready
       sleep 15
 
-      # Set server endpoint for attic client
-      export ATTIC_SERVER="http://localhost:5001"
+      # Use the client configuration with SOPS token
+      export ATTIC_CONFIG="/etc/attic/config.toml"
 
-      echo "Attempting to initialize Attic cache..."
-      echo "Note: Cache creation will be attempted by the post-build hook if this fails"
+      echo "Initializing Attic cache with SOPS-managed authentication..."
 
-      # Try to login without credentials (development mode)
-      ${pkgs.attic-client}/bin/attic login local http://localhost:5001 --set-default 2>/dev/null || {
-        echo "Login without credentials failed - this is expected in secure mode"
-      }
+      # Check if SOPS token is available
+      if [[ -f /run/secrets/attic-client-token ]]; then
+        ATTIC_TOKEN=$(cat /run/secrets/attic-client-token)
 
-      # Try to create cache (may fail due to authentication, that's OK)
-      if ! ${pkgs.attic-client}/bin/attic cache info cache-local 2>/dev/null; then
-        echo "Attempting to create cache-local..."
-        ${pkgs.attic-client}/bin/attic cache create cache-local 2>/dev/null || {
-          echo "Cache creation failed - cache will be created automatically on first push"
-        }
+        # Login using the SOPS-managed token
+        if ${pkgs.attic-client}/bin/attic login local http://localhost:5001 "$ATTIC_TOKEN" --set-default; then
+          echo "Successfully logged into Attic server"
+
+          # Create cache if it doesn't exist
+          if ! ${pkgs.attic-client}/bin/attic cache info cache-local 2>/dev/null; then
+            echo "Creating cache-local..."
+            if ${pkgs.attic-client}/bin/attic cache create cache-local; then
+              echo "Cache cache-local created successfully"
+            else
+              echo "Failed to create cache-local"
+            fi
+          else
+            echo "Cache cache-local already exists"
+          fi
+
+          # Configure upstream cache
+          if ${pkgs.attic-client}/bin/attic cache configure cache-local \
+              --upstream-cache-key-names cache.nixos.org-1 \
+              --upstream-cache-uris https://cache.nixos.org; then
+            echo "Cache upstream configuration successful"
+          else
+            echo "Cache upstream configuration failed"
+          fi
+
+          echo "Attic cache initialized successfully"
+        else
+          echo "Failed to login to Attic server - check authentication token"
+          exit 1
+        fi
       else
-        echo "Cache cache-local already exists"
+        echo "Warning: SOPS attic-client-token not found"
+        echo "Skipping Attic cache initialization - configure secret first"
+        exit 0
       fi
-
-      # Try to configure upstream (may fail, that's OK)
-      ${pkgs.attic-client}/bin/attic cache configure cache-local \
-        --upstream-cache-key-names cache.nixos.org-1 \
-        --upstream-cache-uris https://cache.nixos.org 2>/dev/null || {
-        echo "Cache configuration failed - will be configured on first successful push"
-      }
-
-      echo "Attic initialization completed (cache will auto-create on first push if needed)"
     '';
   };
 
@@ -264,8 +324,28 @@
       # Upload to nix-serve (legacy)
       nix copy --to "http://localhost:5000" $OUT_PATHS || true
 
-      # Upload to Attic
-      ${pkgs.attic-client}/bin/attic push cache-local $OUT_PATHS --server http://localhost:5001 || true
+      # Upload to Attic with SOPS-managed authentication
+      export ATTIC_CONFIG="/etc/attic/config.toml"
+      if [ -f /run/secrets/attic-client-token ] && [ -f /etc/attic/config.toml ]; then
+        echo "Pushing to Attic cache with SOPS-managed authentication..."
+        ${pkgs.attic-client}/bin/attic push cache-local $OUT_PATHS || {
+          echo "Attic push failed - attempting recovery..."
+          # Try to re-login and create cache if needed
+          ATTIC_TOKEN=$(cat /run/secrets/attic-client-token 2>/dev/null || echo "")
+          if [ -n "$ATTIC_TOKEN" ]; then
+            echo "Re-authenticating with Attic server..."
+            ${pkgs.attic-client}/bin/attic login local http://localhost:5001 "$ATTIC_TOKEN" --set-default || true
+            echo "Attempting to create cache if missing..."
+            ${pkgs.attic-client}/bin/attic cache create cache-local 2>/dev/null || true
+            echo "Retrying push to Attic..."
+            ${pkgs.attic-client}/bin/attic push cache-local $OUT_PATHS || echo "Attic push still failed after recovery"
+          else
+            echo "No SOPS token available for Attic authentication"
+          fi
+        }
+      else
+        echo "Attic config or SOPS token not found, skipping Attic upload"
+      fi
 
       echo "Upload completed"
     '';
