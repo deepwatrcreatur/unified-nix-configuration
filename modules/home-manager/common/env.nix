@@ -7,6 +7,7 @@
   };
   home.sessionPath = [
     "${config.home.homeDirectory}/.nix-profile/bin"
+    "${config.home.homeDirectory}/.cargo/bin"
     "/home/linuxbrew/.linuxbrew/bin"
     "/home/linuxbrew/.linuxbrew/sbin"
   ];
@@ -23,13 +24,11 @@
   programs.nushell = {
     enable = true;
     extraConfig = ''
-      $env.PATH = ($env.PATH | split row (char esep) | prepend "/home/linuxbrew/.linuxbrew/bin" | prepend "/home/linuxbrew/.linuxbrew/sbin")
     '';
   };
   programs.fish = {
     enable = true;
     shellInit = ''
-      set -gx PATH /home/linuxbrew/.linuxbrew/bin /home/linuxbrew/.linuxbrew/sbin $PATH
       
       # Determinate nixd completion
       eval "$(determinate-nixd completion fish)"

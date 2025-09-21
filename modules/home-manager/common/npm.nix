@@ -26,21 +26,7 @@
       "$HOME/.npm-global/bin"
     ];
 
-    programs.fish.shellInit = lib.mkIf config.programs.fish.enable ''
-      fish_add_path $HOME/.npm-global/bin
-    '';
-  
-    programs.zsh.initContent = lib.mkIf config.programs.zsh.enable ''
-      export PATH="$HOME/.npm-global/bin:$PATH"
-    '';
-  
-    programs.bash.bashrcExtra = lib.mkIf config.programs.bash.enable ''
-      export PATH="$HOME/.npm-global/bin:$PATH"
-    '';
-
-    programs.nushell.extraConfig = lib.mkIf config.programs.nushell.enable ''
-      $env.PATH = ($env.PATH | split row (char esep) | prepend $"($env.HOME)/.npm-global/bin")
-    '';
+    
   
     # Create the npm global directory if it doesn't exist
     home.activation.createNpmGlobalDir = lib.hm.dag.entryAfter ["writeBoundary"] ''
