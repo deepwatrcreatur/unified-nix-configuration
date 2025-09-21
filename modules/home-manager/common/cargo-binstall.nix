@@ -7,7 +7,5 @@
     pkgs.cargo-binstall
   ];
 
-  home.sessionVariables = {
-    PATH = "$HOME/.cargo/bin:$PATH";
-  };
+  
 }
