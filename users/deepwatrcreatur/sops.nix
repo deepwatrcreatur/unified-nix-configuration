@@ -60,7 +60,7 @@ in
 
       secrets."attic-client-token" = {
         sopsFile = "${globalSopsSecretsDir}/attic-client-token.yaml.enc";
-        format = "yaml";
+        format = "binary";
         path = "${config.home.homeDirectory}/.config/sops/attic-client-token";
         mode = "0600";
       };
