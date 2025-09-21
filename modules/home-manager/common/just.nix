@@ -10,14 +10,14 @@ let
   # Path to the host-specific justfile, using the declarative hostname
   # An empty hostname is valid, in which case we'll just use the user-level fallback
   justfilePath = if cfg.hostname != "" then
-    ../../users/${username}/hosts/${cfg.hostname}/justfile
+    ../../../users/${username}/hosts/${cfg.hostname}/justfile
   else
     # This path is intentionally invalid to make the check fail
     "/path/to/non-existent/justfile";
   hostJustfileExists = builtins.pathExists justfilePath;
 
   # Fallback to user-level justfile
-  userJustfilePath = ../../users/${username}/justfile;
+  userJustfilePath = ../../../users/${username}/justfile;
   userJustfileExists = builtins.pathExists userJustfilePath;
 in
 {
