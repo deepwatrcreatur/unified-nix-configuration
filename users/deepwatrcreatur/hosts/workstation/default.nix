@@ -31,7 +31,10 @@
     enable = true;
   };
 
-  programs.just.hostname = "workstation";
+  myModules.just = {
+    enable = true;
+    hostname = "workstation";
+  };
 
 
   # Input Leap client service
