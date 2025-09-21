@@ -9,7 +9,8 @@
   home.username = "root";
   home.homeDirectory = "/root";
   home.stateVersion = "25.11";
-  home.packages = with pkgs; [ sops ];
+
+  # Allow root to manage Home Manager
   programs.home-manager.enable = true;
   
 }

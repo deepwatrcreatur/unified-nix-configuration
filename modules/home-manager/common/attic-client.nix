@@ -1,13 +1,37 @@
+
+
 { config, lib, pkgs, ... }:
 
 let
-  cfg = config.services.attic-client;
+  cfg = config.programs.attic-client;
+
+  # The content of the post-build hook script
+  uploadScriptContent = pkgs.writeShellScript "attic-upload.sh" ''
+    #!"${pkgs.bash}/bin/bash
+    # This script is executed by the post-build-hook.
+    # It pushes the paths of newly built derivations to the Attic cache.
+
+    set -euo pipefail
+
+    # The paths to upload are passed as arguments.
+    PATHS_TO_UPLOAD="$@"
+
+    if [ -z "$PATHS_TO_UPLOAD" ]; then
+      # No paths to upload, exit gracefully.
+      exit 0
+    fi
+
+    echo "Attic: Pushing paths to cache..."
+    # Use the user's configured attic client
+    "${pkgs.attic-client}/bin/attic push cache-local $PATHS_TO_UPLOAD
+    echo "Attic: Push complete."
+  '';
 in
 {
-  options.services.attic-client = {
-    enable = lib.mkEnableOption "Attic binary cache client" // {
-      default = true;
-      description = "Whether to enable Attic binary cache client with SOPS-managed authentication";
+  options.programs.attic-client = {
+    enable = lib.mkEnableOption "Attic binary cache client (Home Manager)" // {
+      default = false;
+      description = "Whether to enable the Attic client at the user level.";
     };
 
     servers = lib.mkOption {
@@ -55,13 +79,21 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    # Install attic-client
+    # 1. Install the package
     home.packages = [ pkgs.attic-client ];
 
-    # Merge default servers with user-specified servers
-    services.attic-client.servers = lib.mkDefault cfg.defaultServers;
+    # 2. Place the upload script in the user's home
+    home.file.".config/attic/upload.sh" = {
+      source = uploadScriptContent;
+      executable = true;
+    };
 
-    # Create Attic client configuration template
+    # 3. Configure nix.conf to use the hook
+    nix.extraOptions = ''
+      post-build-hook = ${config.home.homeDirectory}/.config/attic/upload.sh
+    '';
+
+    # 4. Create Attic client configuration template
     home.file.".config/attic/config.toml".text =
       let
         allServers = cfg.defaultServers // cfg.servers;
@@ -73,7 +105,7 @@ in
       in
       lib.concatStringsSep "\n\n" serverConfigs;
 
-    # Home activation script to substitute tokens
+    # 5. Home activation script to substitute tokens
     home.activation.attic-config = lib.hm.dag.entryAfter ["writeBoundary"] ''
       $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.config/attic
 
@@ -100,11 +132,5 @@ in
         $VERBOSE_ECHO "Attic client configuration updated with SOPS tokens"
       fi
     '';
-
-    # Add shell aliases for convenience
-    home.shellAliases = {
-      attic-push-local = "attic push cache-local";
-      attic-push-build-server = "attic push cache-build-server";
-    };
   };
 }
