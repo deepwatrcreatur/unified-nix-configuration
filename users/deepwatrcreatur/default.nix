@@ -15,6 +15,11 @@
     enable = true;
   };
 
+  programs.rclone = {
+    enable = true;
+    filterFile = ./rclone-filter.txt;
+  };
+
   home.username = "deepwatrcreatur";
 
   home.packages = with pkgs; [

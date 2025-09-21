@@ -1,60 +1,25 @@
-# modules/home-manager/rclone.nix
+{ config, lib, pkgs, ... }:
 
-{ config, lib, pkgs, inputs, ... }:
+with lib;
 
+let
+  cfg = config.programs.rclone;
+in
 {
-  imports = [ inputs.sops-nix.homeManagerModules.sops ];
+  options.programs.rclone = {
+    enable = mkEnableOption "rclone";
 
-  home.packages = [
-    pkgs.rclone
-    pkgs.sops
-  ];
+    filterFile = mkOption {
+      type = types.path;
+      description = "Path to the rclone filter file.";
+    };
+  };
 
-  xdg.configFile."rclone/rclone-filter.txt".text = ''
-    # Exclude common macOS system files
-    - .DS_Store
-    - .AppleDouble
-    - .LSOverride
-    - .DocumentRevisions-V100
-    - .fseventsd
-    - .Spotlight-V100
-    - .Trashes
+  config = mkIf cfg.enable {
+    home.packages = [ pkgs.rclone ];
 
-    # Exclude common Windows system files
-    - Thumbs.db
-    - desktop.ini
-    - $RECYCLE.BIN/
-    - System Volume Information/
-
-    # Exclude temporary and cache files
-    - *.tmp
-    - *.temp
-    - *.bak
-    - *.swp
-    - *.~*
-    - *~
-
-    # Exclude common application cache and log files
-    - *.log
-    - *.cache
-    - node_modules/
-    - __pycache__/
-    - *.pyc
-    - *.pyo
-
-    # Exclude common version control files
-    - .git/
-    - .gitignore
-    - .gitattributes
-    - .hg/
-    - .svn/
-
-    # Include everything else (catch-all)
-    + **
-  '';
-
-  #home.file.".config/rclone/rclone.conf" = {
-  #  source = sopsLib.readText ../../secrets/rclone.conf;
-  #  executable = false;
-  #};
+    home.file.".config/rclone/filter.txt" = {
+      source = cfg.filterFile;
+    };
+  };
 }

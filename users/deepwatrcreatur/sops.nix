@@ -63,6 +63,13 @@ in
         path = "${config.home.homeDirectory}/.config/sops/attic-client-token";
         mode = "0600";
       };
+
+      secrets."rclone.conf" = {
+        sopsFile = "${sopsSecretsDir}/rclone.conf.enc";
+        format = "binary";
+        path = "${config.home.homeDirectory}/.config/rclone/rclone.conf";
+        mode = "0600";
+      };
     };
   };
 }
