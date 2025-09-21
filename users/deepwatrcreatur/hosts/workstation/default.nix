@@ -31,6 +31,8 @@
     enable = true;
   };
 
+  programs.just.hostname = "workstation";
+
 
   # Input Leap client service
   systemd.user.services.input-leap-client = {
