@@ -28,4 +28,9 @@
   };
 
   home.stateVersion = "24.11";
+
+  programs.attic-client.enable = true;
+}
+
+  programs.attic-client.enable = true;
 }

@@ -16,4 +16,6 @@
     systemctl-tui
   ];
 
+  programs.attic-client.enable = true;
+
 }

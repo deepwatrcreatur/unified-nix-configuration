@@ -25,4 +25,6 @@
   ];
 
   home.stateVersion = "25.11";
+
+  programs.attic-client.enable = true;
 }

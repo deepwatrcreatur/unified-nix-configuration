@@ -20,6 +20,7 @@
 
   # Configure programs
   programs.bash.enable = true;
+  programs.attic-client.enable = true;
   
   # Configure secrets activation
   services.secrets-activation = {
