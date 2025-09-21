@@ -322,17 +322,17 @@ in {
     # Shell integration
     programs.bash.initExtra = mkIf (cfg.shellIntegration.enable && cfg.shellIntegration.enableBashIntegration) ''
       eval "$(${cfg.package}/bin/zellij setup --generate-completion bash)"
-      eval "$(${cfg.package}/bin/zellij setup --generate-auto-start bash)"
+      if [[ -z "$ZELLIJ" && $- == *i* ]]; then ${cfg.package}/bin/zellij; fi
     '';
 
     programs.zsh.initContent = mkIf (cfg.shellIntegration.enable && cfg.shellIntegration.enableZshIntegration) ''
       eval "$(${cfg.package}/bin/zellij setup --generate-completion zsh)"
-      eval "$(${cfg.package}/bin/zellij setup --generate-auto-start zsh)"
+      if [[ -z "$ZELLIJ" && -o INTERACTIVE ]]; then ${cfg.package}/bin/zellij; fi
     '';
 
     programs.fish.interactiveShellInit = mkIf (cfg.shellIntegration.enable && cfg.shellIntegration.enableFishIntegration) ''
       ${cfg.package}/bin/zellij setup --generate-completion fish | source
-      ${cfg.package}/bin/zellij setup --generate-auto-start fish | source
+      if not set -q ZELLIJ; and status is-interactive; ${cfg.package}/bin/zellij; end
     '';
 
     programs.nushell.extraConfig = mkIf (cfg.shellIntegration.enable && cfg.shellIntegration.enableNushellIntegration) ''
