@@ -1,16 +1,14 @@
 { lib, ... }:
 
 let
-  # Path to the common directory
-  commonDir = ./common;
-
-  # Get all files in the common directory
-  commonFiles = builtins.readDir commonDir;
-
-  # Filter only .nix files and import them
-  modules = lib.filterAttrs (name: type: type == "regular" && lib.hasSuffix ".nix" name) commonFiles;
-  moduleImports = lib.mapAttrsToList (name: _: import (commonDir + "/${name}")) modules;
-
-in {
-  ## imports = moduleImports ++ [ ../linux  ];
+  # Get all .nix files and directories in the current directory
+  currentDir = ./.;
+  items = builtins.readDir currentDir;
+  # Filter out default.nix itself to prevent infinite recursion, and also the common folder which is handled separately
+  validItems = lib.filterAttrs (name: _: name != "default.nix" && name != "common") items;
+  # Create a list of paths to import
+  moduleImports = lib.mapAttrsToList (name: _: currentDir + "/${name}") validItems;
+in
+{
+  imports = moduleImports ++ [ ./common ];
 }
