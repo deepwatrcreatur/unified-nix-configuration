@@ -2,12 +2,12 @@
 
 {
   imports = [
+    inputs.sops-nix.homeManagerModules.sops
     ../../modules/home-manager/secrets-activation.nix
     ./sops.nix
     ./rbw.nix
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/bitwarden-cli.nix
-    ../../modules/home-manager/rclone.nix
     ../../modules/home-manager
   ];
 
@@ -15,9 +15,10 @@
     enable = true;
   };
 
-  programs.rclone = {
-    enable = true;
-    filterFile = ./rclone-filter.txt;
+  programs.rclone.enable = true;
+
+  home.file.".config/rclone/filter.txt" = {
+    source = ./rclone-filter.txt;
   };
 
   home.username = "deepwatrcreatur";
