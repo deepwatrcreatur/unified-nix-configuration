@@ -1,6 +1,9 @@
 { config, lib, pkgs, ... }:
 
 {
+  # Enable the centralized Attic client module for this host
+  myModules.attic-client.enable = true;
+
   # Build server optimizations
   nix.settings = {
     # Override common settings for build server use
@@ -18,9 +21,6 @@
     
     # Increase timeout for large packages
     timeout = 7200; # 2 hours
-    
-    # Auto-push built packages to local cache
-    post-build-hook = "/etc/nix/post-build-hook.sh";
   };
   
   # More aggressive garbage collection for build server
@@ -94,48 +94,6 @@
       fi
 
       echo "Attic token setup completed - client authentication will use SOPS-managed token"
-    '';
-  };
-
-  # Create Attic client configuration using SOPS-managed token
-  environment.etc."attic/config.toml" = {
-    text = ''
-      [servers.local]
-      endpoint = "http://localhost:5001"
-      token = "@ATTIC_CLIENT_TOKEN@"
-    '';
-    mode = "0644";
-  };
-
-  # Service to substitute the SOPS token into the config file
-  systemd.services.attic-client-config = {
-    description = "Setup Attic client configuration with SOPS token";
-    wantedBy = [ "multi-user.target" ];
-    after = [ "sops-nix.service" "attic-token-setup.service" ];
-    before = [ "attic-init.service" ];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-    };
-    script = ''
-      # Wait for SOPS secrets to be available
-      SOPS_TOKEN_PATH="/home/deepwatrcreatur/.config/sops/attic-client-token"
-      if [[ -f "$SOPS_TOKEN_PATH" ]]; then
-        echo "Setting up Attic client configuration with SOPS token..."
-
-        # Read the SOPS-managed token
-        ATTIC_TOKEN=$(cat "$SOPS_TOKEN_PATH")
-
-        # Replace placeholder in config file
-        sed "s/@ATTIC_CLIENT_TOKEN@/$ATTIC_TOKEN/" /etc/attic/config.toml > /tmp/attic-config.toml
-        mv /tmp/attic-config.toml /etc/attic/config.toml
-        chmod 644 /etc/attic/config.toml
-
-        echo "Attic client configuration updated with SOPS token"
-      else
-        echo "Warning: SOPS attic-client-token not found at $SOPS_TOKEN_PATH"
-        echo "Attic client authentication may not work until the secret is properly configured"
-      fi
     '';
   };
 
@@ -312,46 +270,4 @@
     SystemMaxUse=2G
     MaxRetentionSec=1month
   '';
-
-  # Post-build hook to automatically push built packages to both caches
-  environment.etc."nix/post-build-hook.sh" = {
-    text = ''
-      #!/bin/sh
-      set -eu
-      set -f # disable globbing
-      export IFS=' '
-
-      echo "Uploading paths to caches:" $OUT_PATHS
-
-      # Upload to nix-serve (legacy)
-      nix copy --to "http://localhost:5000" $OUT_PATHS || true
-
-      # Upload to Attic with SOPS-managed authentication
-      export ATTIC_CONFIG="/etc/attic/config.toml"
-      SOPS_TOKEN_PATH="/home/deepwatrcreatur/.config/sops/attic-client-token"
-      if [ -f "$SOPS_TOKEN_PATH" ] && [ -f /etc/attic/config.toml ]; then
-        echo "Pushing to Attic cache with SOPS-managed authentication..."
-        ${pkgs.attic-client}/bin/attic push cache-local $OUT_PATHS || {
-          echo "Attic push failed - attempting recovery..."
-          # Try to re-login and create cache if needed
-          ATTIC_TOKEN=$(cat "$SOPS_TOKEN_PATH" 2>/dev/null || echo "")
-          if [ -n "$ATTIC_TOKEN" ]; then
-            echo "Re-authenticating with Attic server..."
-            ${pkgs.attic-client}/bin/attic login local http://localhost:5001 "$ATTIC_TOKEN" --set-default || true
-            echo "Attempting to create cache if missing..."
-            ${pkgs.attic-client}/bin/attic cache create cache-local 2>/dev/null || true
-            echo "Retrying push to Attic..."
-            ${pkgs.attic-client}/bin/attic push cache-local $OUT_PATHS || echo "Attic push still failed after recovery"
-          else
-            echo "No SOPS token available for Attic authentication"
-          fi
-        }
-      else
-        echo "Attic config or SOPS token not found, skipping Attic upload"
-      fi
-
-      echo "Upload completed"
-    '';
-    mode = "0755";
-  };
 }
