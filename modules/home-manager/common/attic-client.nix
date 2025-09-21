@@ -23,7 +23,7 @@ let
 
     echo "Attic: Pushing paths to cache..."
     # Use the user's configured attic client
-    "${pkgs.attic-client}/bin/attic push cache-local $PATHS_TO_UPLOAD
+    ${pkgs.attic-client}/bin/attic push cache-local $PATHS_TO_UPLOAD
     echo "Attic: Push complete."
   '';
 in
