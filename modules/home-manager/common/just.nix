@@ -4,7 +4,7 @@
 with lib;
 
 let
-  cfg = config.programs.just;
+  cfg = config.myModules.just;
   username = config.home.username;
 
   # Path to the host-specific justfile, using the declarative hostname
@@ -21,7 +21,7 @@ let
   userJustfileExists = builtins.pathExists userJustfilePath;
 in
 {
-  options.programs.just = {
+  options.myModules.just = {
     enable = mkEnableOption "just";
 
     hostname = mkOption {

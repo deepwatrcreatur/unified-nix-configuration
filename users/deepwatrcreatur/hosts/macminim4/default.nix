@@ -26,6 +26,9 @@
 
   home.stateVersion = "25.11";
 
-  programs.just.hostname = "macminim4";
+  myModules.just = {
+    enable = true;
+    hostname = "macminim4";
+  };
   programs.attic-client.enable = true;
 }
