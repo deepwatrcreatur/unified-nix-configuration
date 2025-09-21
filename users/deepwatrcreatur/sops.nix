@@ -4,6 +4,7 @@
 
 let
   sopsSecretsDir = toString (builtins.path { path = ./secrets; });
+  globalSopsSecretsDir = toString (builtins.path { path = ../../secrets; });
 
   # Determine the target path for data.json based on the system
   #bitwardenDataJsonPath = if pkgs.stdenv.isDarwin  
@@ -58,7 +59,7 @@ in
       };
 
       secrets."attic-client-token" = {
-        sopsFile = "${sopsSecretsDir}/attic-client-token.yaml.enc";
+        sopsFile = "${globalSopsSecretsDir}/attic-client-token.yaml.enc";
         format = "yaml";
         path = "${config.home.homeDirectory}/.config/sops/attic-client-token";
         mode = "0600";
