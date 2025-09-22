@@ -104,4 +104,11 @@
   home.packages = with pkgs; [
     # Add GNOME-specific user applications here if needed
   ];
+
+  # Enable GNOME Keyring for password management
+  services.gnome-keyring = {
+    enable = true;
+    # Disable the SSH component to avoid conflicts with other agents
+    components = ["pkcs11" "secrets"];
+  };
 }
