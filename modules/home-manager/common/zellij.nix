@@ -113,7 +113,7 @@ in {
 
     defaultShell = mkOption {
       type = types.nullOr types.str;
-      default = "${pkgs.nushell}/bin/nu";
+      default = "${pkgs.fish}/bin/fish";
       description = "Default shell to use in new panes.";
       example = "${pkgs.zsh}/bin/zsh";
     };
@@ -332,7 +332,8 @@ in {
 
     programs.fish.interactiveShellInit = mkIf (cfg.shellIntegration.enable && cfg.shellIntegration.enableFishIntegration) ''
       ${cfg.package}/bin/zellij setup --generate-completion fish | source
-      if not set -q ZELLIJ; and status is-interactive; ${cfg.package}/bin/zellij; end
+      # Commented out auto-launch to prevent shell loops
+      # if not set -q ZELLIJ; and status is-interactive; ${cfg.package}/bin/zellij; end
     '';
 
     programs.nushell.extraConfig = mkIf (cfg.shellIntegration.enable && cfg.shellIntegration.enableNushellIntegration) ''
