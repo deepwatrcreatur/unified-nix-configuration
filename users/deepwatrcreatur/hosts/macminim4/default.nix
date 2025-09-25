@@ -31,7 +31,4 @@
     hostname = "macminim4";
   };
   programs.attic-client.enable = true;
-
-  # Override zellij default shell to use homebrew fish on macOS
-  programs.zellij-extended.defaultShell = "/opt/homebrew/bin/fish";
 }
