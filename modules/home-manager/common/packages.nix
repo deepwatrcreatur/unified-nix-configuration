@@ -5,6 +5,7 @@
     bandwhich
     bottom
     btop
+    bun
     comma
     curl
     dig
