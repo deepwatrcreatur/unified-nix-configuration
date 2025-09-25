@@ -21,6 +21,11 @@
   # Configure programs
   programs.bash.enable = true;
   programs.attic-client.enable = true;
+
+  myModules.just = {
+    enable = true;
+    hostname = "proxmox";
+  };
   
   # Configure secrets activation
   services.secrets-activation = {
