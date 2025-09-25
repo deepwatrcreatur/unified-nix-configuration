@@ -7,6 +7,10 @@ Host pve-tomahawk
     Hostname 10.10.11.55
     user root
 
+Host pve-z170
+    Hostname 10.10.11.56
+    user root
+
 Host pve-strix
     HostName 10.10.11.57
     user root
