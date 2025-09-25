@@ -54,4 +54,6 @@
       WantedBy = [ "graphical-session.target" ];
     };
   };
+
+  home.stateVersion = "24.11";
 }
