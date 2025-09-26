@@ -21,6 +21,7 @@
     htop
     iperf3
     jq
+    just
     killall
     lsd
     ncdu
