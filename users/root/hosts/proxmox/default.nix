@@ -5,7 +5,7 @@
   imports = [
     ../.. # default config for root
     ./proxmox-fish-extra.nix
-    ./proxmox-justfile.nix
+    # ./proxmox-justfile.nix # No longer needed
     ./nh.nix
     #../../../../modules/home-manager/env/standalone-hm.nix
     ../../../../modules/home-manager/gpg-cli.nix
@@ -16,17 +16,15 @@
   # Add packages to base config for root user
   home.packages = with pkgs; [
     rsync
+    nix
   ];
 
   # Configure programs
   programs.bash.enable = true;
   programs.attic-client.enable = true;
 
-  myModules.just = {
-    enable = true;
-    hostname = "proxmox";
-  };
-  
+  home.file.".justfile".source = ./justfile; # Directly link the justfile
+
   # Configure secrets activation
   services.secrets-activation = {
     enable = true;

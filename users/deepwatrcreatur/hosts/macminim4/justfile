@@ -1,8 +1,9 @@
 # users/deepwatrcreatur/hosts/macminim4/justfile
 
-update dir="/Users/deepwatrcreatur/unified-nix-configuration":
-  darwin-rebuild switch {{dir}}#{{`hostname`}}
+# macOS - use darwin-rebuild or nh
+update:
+  darwin-rebuild switch $NH_FLAKE#macminim4
 
 nh-update:
-  nh darwin switch --hostname {{`hostname`}}
+  nh darwin switch
 
