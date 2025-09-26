@@ -231,12 +231,7 @@ in {
       type = types.lines;
       default = if pkgs.stdenv.isDarwin then ''
         shared_except "locked" {
-            bind "Cmd c" { Copy; }
-            bind "Cmd v" { 
-              WriteChars "\u{1b}[200~";
-              action "Paste";
-              WriteChars "\u{1b}[201~";
-            }
+            bind "Ctrl c" { Copy; }
         }
       '' else "";
       description = "Extra keybind configuration in KDL format.";
