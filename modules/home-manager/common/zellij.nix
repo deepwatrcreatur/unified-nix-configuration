@@ -29,7 +29,6 @@ let
     
     // Copy settings
     ${optionalString (cfg.copyCommand != "") "copy_command \"${cfg.copyCommand}\""}
-    copy_clipboard "${cfg.copyClipboard}"
     
     // Mouse mode
     mouse_mode ${if cfg.mouseMode then "true" else "false"}
@@ -85,11 +84,8 @@ let
     // Additional custom configuration
     ${cfg.extraConfig}
     
-    // Enable automatic copying on select for better terminal integration
-    copy_on_select true
-    
     // Use system clipboard
-    copy_clipboard "system"
+    copy_clipboard "${cfg.copyClipboard}"
   '';
 
 in {
@@ -235,7 +231,12 @@ in {
       type = types.lines;
       default = if pkgs.stdenv.isDarwin then ''
         shared_except "locked" {
-            bind "Ctrl Shift c" { Copy; }
+            bind "Cmd c" { Copy; }
+            bind "Cmd v" { 
+              WriteChars "\u{1b}[200~";
+              action "Paste";
+              WriteChars "\u{1b}[201~";
+            }
         }
       '' else "";
       description = "Extra keybind configuration in KDL format.";
