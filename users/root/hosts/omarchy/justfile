@@ -1,7 +1,8 @@
-# users/root/hosts/justfile
+# users/root/hosts/omarchy/justfile
 
+# Omarchy (home-manager only) - use home-manager or nh (root user)
 update:
-  nix run nixpkgs#home-manager -- switch --flake /home/deepwatrcreatur/unified-nix-configuration
+  nix run nixpkgs#home-manager -- switch --flake $NH_FLAKE#root
 
 nh-update:
-  nh home switch /home/deepwatrcreatur/unified-nix-configuration#homeConfigurations.root.activationPackage
+  nh home switch $NH_FLAKE#homeConfigurations.root.activationPackage

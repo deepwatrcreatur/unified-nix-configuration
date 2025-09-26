@@ -6,21 +6,20 @@ with lib;
 let
   cfg = config.myModules.just;
   username = config.home.username;
+  flakeRoot = ../../..; # This will resolve to the flake's root directory
 
   # Path to the host-specific justfile, using the declarative hostname
-  # An empty hostname is valid, in which case we'll just use the user-level fallback
   justfilePath = if cfg.hostname != "" then
-    ../../../users/${username}/hosts/${cfg.hostname}/justfile
+    "${flakeRoot}/users/${username}/hosts/${cfg.hostname}/justfile"
   else
-    # This path is intentionally invalid to make the check fail
-    "/path/to/non-existent/justfile";
-  hostJustfileExists = builtins.pathExists justfilePath;
+    null;
+  hostJustfileExists = if justfilePath != null then builtins.pathExists justfilePath else false;
 
   # Fallback to user-level justfile
-  userJustfilePath = ../../../users/${username}/justfile;
+  userJustfilePath = "${flakeRoot}/users/${username}/justfile";
   userJustfileExists = builtins.pathExists userJustfilePath;
 in
-{
+(lib.trace "just.nix: username=${username}, hostname=${cfg.hostname}, flakeRoot=${toString flakeRoot}, justfilePath=${toString justfilePath}, hostJustfileExists=${toString hostJustfileExists}" {
   options.myModules.just = {
     enable = mkEnableOption "just";
 
@@ -39,4 +38,4 @@ in
       source = if hostJustfileExists then justfilePath else userJustfilePath;
     };
   };
-}
+})

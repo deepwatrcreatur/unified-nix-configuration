@@ -31,11 +31,7 @@
     enable = true;
   };
 
-  myModules.just = {
-    enable = true;
-    hostname = "workstation";
-  };
-
+  home.file.".justfile".source = ./justfile; # Directly link the justfile
 
   # Input Leap client service
   systemd.user.services.input-leap-client = {

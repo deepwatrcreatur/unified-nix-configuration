@@ -26,9 +26,6 @@
 
   home.stateVersion = "25.11";
 
-  myModules.just = {
-    enable = true;
-    hostname = "macminim4";
-  };
+  home.file.".justfile".source = ./justfile; # Directly link the justfile
   programs.attic-client.enable = true;
 }
