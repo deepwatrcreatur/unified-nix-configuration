@@ -11,7 +11,9 @@
   home.stateVersion = "25.11";
 
   home.packages = with pkgs; [
+    claude-code
     cursor-cli
+    gemini-cli
   ];
   # Allow root to manage Home Manager
   programs.home-manager.enable = true;

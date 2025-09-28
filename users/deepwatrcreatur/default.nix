@@ -26,7 +26,9 @@
   home.packages = with pkgs; [
     go
     chezmoi
+    claude-code
     cursor-cli
+    gemini-cli
     stow
     mix2nix
   ];
