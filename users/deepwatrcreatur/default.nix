@@ -27,6 +27,7 @@
     go
     chezmoi
     claude-code
+    claude-monitor
     cursor-cli
     gemini-cli
     stow
