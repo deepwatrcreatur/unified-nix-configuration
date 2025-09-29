@@ -15,6 +15,7 @@
     claude-monitor
     cursor-cli
     gemini-cli
+    opencode
   ];
   # Allow root to manage Home Manager
   programs.home-manager.enable = true;

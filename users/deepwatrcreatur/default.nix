@@ -30,6 +30,7 @@
     claude-monitor
     cursor-cli
     gemini-cli
+    opencode
     stow
     mix2nix
   ];
