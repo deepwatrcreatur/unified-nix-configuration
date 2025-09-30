@@ -77,7 +77,7 @@
           # Example: some-package = stable.some-package;
         })
       # Grok CLI overlay
-      ./overlays/grok-cli.nix
+      (import ./overlays/grok-cli.nix)
     ];
 
     # SpecialArgs for NixOS and Darwin SYSTEM modules.
