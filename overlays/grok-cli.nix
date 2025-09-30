@@ -14,8 +14,7 @@ final: prev: {
     
     npmDepsHash = "sha256-Yl51fCnI3soQ4sGBg4dr+kVak8zYEkMTgyUKDaRK6N0=";
     
-    # The package has a bin field in package.json
-    dontNpmBuild = true;
+    
     
     meta = with final.lib; {
       description = "An open-source AI agent that brings the power of Grok directly into your terminal";
