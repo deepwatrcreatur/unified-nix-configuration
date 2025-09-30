@@ -13,6 +13,13 @@ final: prev: {
     };
     
     npmDepsHash = "sha256-Yl51fCnI3soQ4sGBg4dr+kVak8zYEkMTgyUKDaRK6N0=";
+
+    nativeBuildInputs = with final; [
+      python3
+    ] ++ (if stdenv.isDarwin then [
+      stdenv.cc.cc.lib
+      Security
+    ] else []);
     
     
     
