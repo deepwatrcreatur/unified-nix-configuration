@@ -18,6 +18,7 @@
     glow
     gping
     grex
+    grok-cli
     htop
     iperf3
     jq
