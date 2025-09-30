@@ -2,6 +2,7 @@
 
   environment.systemPackages = with pkgs; [
      graphite-cli
+     grok-cli
      sops
   ];
 }
