@@ -1,14 +1,14 @@
 { config, lib, pkgs, ... }:
 
 let
-  cfg = config.programs.grok-cli;
+  cfg = config.programs.grok-api-key;
   globalSopsSecretsDir = toString (builtins.path { path = ../../../secrets; });
 in
 {
-  options.programs.grok-cli = {
-    enable = lib.mkEnableOption "Grok CLI with XAI API key integration" // {
+  options.programs.grok-api-key = {
+    enable = lib.mkEnableOption "Grok CLI XAI API key integration" // {
       default = true;
-      description = "Whether to enable grok-cli with automatic API key injection for all shells.";
+      description = "Whether to enable grok-cli automatic API key injection for all shells.";
     };
 
     apiKeyPath = lib.mkOption {
@@ -25,9 +25,6 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    # Install grok-cli package
-    home.packages = [ pkgs.grok-cli ];
-
     # Configure SOPS secret for XAI API key (only if manageSopsSecret is true)
     sops.secrets."xai-api-key" = lib.mkIf cfg.manageSopsSecret {
       sopsFile = "${globalSopsSecretsDir}/xai_api_key.enc";
