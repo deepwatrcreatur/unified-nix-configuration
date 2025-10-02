@@ -77,12 +77,11 @@
           # Example: some-package = stable.some-package;
         })
       # Grok CLI overlay
-      (import ./overlays/grok-cli.nix)
     ];
 
     # SpecialArgs for NixOS and Darwin SYSTEM modules.
     # These modules can safely receive the pure nixpkgsLib.
-    systemSpecialArgs = { inherit inputs; lib = nixpkgsLib; };
+    systemSpecialArgs = { inherit inputs; lib = nixpkgsLib; myModules = import ./modules; };
 
     # SpecialArgs specifically for HOME MANAGER modules.
     # We only pass 'inputs'. Home Manager will provide its own 'lib' and 'config.lib'.
