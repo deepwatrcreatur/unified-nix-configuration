@@ -89,5 +89,31 @@ in
 
     # 5. Configure Nix to use the post-build hook.
     nix.settings.post-build-hook = "/etc/nix/attic-upload.sh";
+
+    # 6. Prepare the token for the Nix daemon.
+    systemd.services.nix-attic-token = {
+      description = "Prepare Attic token for Nix daemon";
+      wantedBy = [ "multi-user.target" ];
+      after = [ "sops-nix.service" ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+      };
+      script = ''
+        set -euo pipefail
+        if [[ -f "${config.sops.secrets."attic-client-token".path}" ]]; then
+          echo "Preparing Attic token for Nix daemon..."
+          token=$(cat "${config.sops.secrets."attic-client-token".path}")
+          echo "bearer $token" > /run/nix/attic-token-bearer
+          chmod 0644 /run/nix/attic-token-bearer
+        else
+          echo "Warning: Attic client token not found. Nix pulls will likely fail."
+        fi
+      '';
+    };
+
+    # 7. Make the Nix daemon wait for the token.
+    systemd.services.nix-daemon.serviceConfig.Requires = "nix-attic-token.service";
+    systemd.services.nix-daemon.after = [ "nix-attic-token.service" ];
   };
 }
