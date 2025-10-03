@@ -1,5 +1,6 @@
 { config, pkgs, ... }:
 {
+  boot.isContainer = true;
   networking.hostName = "ansible";
   services.openssh.enable = true;
   users.users.ansible = {
