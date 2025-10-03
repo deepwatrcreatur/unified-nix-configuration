@@ -2,14 +2,14 @@
 { config, pkgs, lib, inputs, ... }:
 
 {
-  imports = [ inputs.home-manager.modules.programs.gnupg ];
-  
-  programs.gnupg = {
+  programs.gpg = {
     enable = true;
-    agent = {
-      enable = true;
-      enableSshSupport = true;
-      pinentry.program = "${pkgs.pinentry-gnome3}/bin/pinentry";
-    };
+  };
+
+  services.gpg-agent = {
+    enable = true;
+    # Choose one based on your desktop environment (e.g., GNOME, KDE, XFCE)
+    #pinentry.package = pkgs.pinentry-qt;
+    pinentry.package = pkgs.pinentry-gnome3;
   };
 }
