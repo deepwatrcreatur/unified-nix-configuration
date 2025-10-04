@@ -1,4 +1,14 @@
 { pkgs, lib, ... }:
+let
+  configFile = 
+    if pkgs.stdenv.isDarwin then ./config-darwin
+    else pkgs.substitute({
+      src = ./config-linux;
+      substitutions = {
+        "@fishPath@" = pkgs.fish;
+      };
+    });
+in
 {
   # Set environment variables for system integration
   home.sessionVariables = 
@@ -11,7 +21,7 @@
   ];
 
   xdg.configFile."ghostty/config" = {
-    source = ./config;
+    source = configFile;
   };
 
   xdg.configFile."ghostty/themes/Sugarplum" = {
