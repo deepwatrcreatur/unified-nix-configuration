@@ -1,13 +1,14 @@
 { pkgs, lib, ... }:
 let
-  configFile = 
-    if pkgs.stdenv.isDarwin then ./config-darwin
-    else pkgs.substitute({
-      src = ./config-linux;
-      substitutions = {
-        "@fishPath@" = pkgs.fish;
-      };
-    });
+  shellCommand = 
+    if pkgs.stdenv.isDarwin then "/opt/homebrew/bin/fish"
+    else "${pkgs.fish}/bin/fish";
+
+  configFile = pkgs.substitute {
+    src = ./config;
+    substitutions = [ "--replace" "@shellCommand@" shellCommand ];
+  };
+
 in
 {
   # Set environment variables for system integration
