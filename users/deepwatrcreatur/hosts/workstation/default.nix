@@ -17,7 +17,7 @@
     bitwarden
     ffmpeg
     gitkraken
-    input-leap
+    deskflow
     mailspring
     megacmd
     virt-viewer
