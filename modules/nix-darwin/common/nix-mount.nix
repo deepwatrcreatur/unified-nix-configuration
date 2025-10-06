@@ -50,5 +50,13 @@ in
     system.activationScripts.fixLaunchDaemonPermissions.text = ''
       /bin/sh /run/current-system/sw/etc/fix-nix-mount-plist.sh
     '';
+
+    system.activationScripts.updateDeterminateNixScript.text = ''
+      # Update determinate nix mount script with current UUID
+      if [ -f /usr/local/bin/mount-nix-ssd.sh ]; then
+        echo "Updating determinate nix mount script with UUID: ${cfg.uuid}"
+        /usr/bin/sed -i '' 's/SSD_UUID=".*"/SSD_UUID="${cfg.uuid}"/' /usr/local/bin/mount-nix-ssd.sh || true
+      fi
+    '';
   };
 }
