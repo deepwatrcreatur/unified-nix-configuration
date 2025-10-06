@@ -103,13 +103,15 @@ in
      if [ -n "$DRY_RUN_CMD" ]; then
        echo "DRY RUN: Would decrypt Bitwarden session"
      else
-       if SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" sops -d --extract '["BW_SESSION"]' "${cfg.secretsPath}/bitwarden.yaml" > $HOME/.config/sops/BW_SESSION 2>&1; then
+       SOPS_OUTPUT=$(SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" sops -d --extract '["BW_SESSION"]' "${cfg.secretsPath}/bitwarden.yaml" 2>&1)
+       if [ $? -eq 0 ]; then
+         echo "$SOPS_OUTPUT" > $HOME/.config/sops/BW_SESSION
          chmod 600 $HOME/.config/sops/BW_SESSION
          echo "Bitwarden session decrypted successfully"
        else
          echo "Warning: Failed to decrypt Bitwarden session"
          echo "Debug: SOPS error output:"
-         SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" sops -d --extract '["BW_SESSION"]' "${cfg.secretsPath}/bitwarden.yaml" 2>&1 || true
+         echo "$SOPS_OUTPUT"
          ${optionalString (!cfg.continueOnError) "exit 1"}
        fi
      fi

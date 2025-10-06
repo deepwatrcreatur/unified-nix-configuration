@@ -12,6 +12,9 @@
 
   nix.enable = false; # Required for Determinate Nix Installer
 
+  environment.systemPackages = [
+  ];
+
   programs.fish.enable = true;
 
   services.tailscale.enable = true;

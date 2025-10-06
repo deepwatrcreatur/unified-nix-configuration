@@ -37,7 +37,7 @@
     enable = true;
     secretsPath = toString ./secrets;
     continueOnError = false;  # Be stricter for regular user
-    enableBitwardenDecryption = true;
+    enableBitwardenDecryption = false;  # Handled by sops-nix
     enableGpgKeyDecryption = true;
   };
 }
