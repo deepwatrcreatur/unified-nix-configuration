@@ -10,7 +10,8 @@ let
     bp = "bat --paging=never --plain";
     update = "just --justfile ~/.justfile update";
     nh-update = "just --justfile ~/.justfile nh-update";
-    ssh-nocheck = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "; 
+    ssh-nocheck = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ";
+    rsync = "/run/current-system/sw/bin/rsync";
   } // lib.optionalAttrs (pkgs.stdenv.isDarwin) {
     xcode = "open -a Xcode";
   };
@@ -31,6 +32,7 @@ in
     alias update = ^just --justfile ~/.justfile update
     alias nh-update = ^just --justfile ~/.justfile nh-update
     alias ssh-nocheck = ^ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null 
+    alias rsync = ^/run/current-system/sw/bin/rsync
     ${lib.optionalString (pkgs.stdenv.isDarwin) "alias xcode = ^open -a Xcode"}
   '';
 }
