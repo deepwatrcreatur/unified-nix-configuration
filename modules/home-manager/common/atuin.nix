@@ -1,5 +1,10 @@
 { config, pkgs, lib, ... }:
 
 {
-  programs.atuin.enable = true;
+  programs.atuin = {
+    enable = true;
+    enableFishIntegration = true;
+    enableBashIntegration = true;
+    enableZshIntegration = true;
+  };
 }
