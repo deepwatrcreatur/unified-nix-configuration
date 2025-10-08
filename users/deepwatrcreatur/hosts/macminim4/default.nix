@@ -23,7 +23,7 @@
     obsidian
     obsidian-export
     yt-dlp
-    virt-viewer
+    # virt-viewer  # Linux-only, broken on macOS
   ];
 
   home.stateVersion = "25.11";
