@@ -20,6 +20,8 @@
     deskflow
     mailspring
     megacmd
+    obsidian
+    obsidian-export
     virt-viewer
   ];
 

@@ -20,6 +20,8 @@
     ffmpeg
     ghostty-bin  # Available via overlay from unstable
     input-leap
+    obsidian
+    obsidian-export
     yt-dlp
     virt-viewer
   ];
