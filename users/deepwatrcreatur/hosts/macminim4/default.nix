@@ -16,10 +16,11 @@
 
   home.packages = with pkgs; [
     bitwarden
-    megacmd
+    cyberduck
     ffmpeg
     ghostty-bin  # Available via overlay from unstable
     input-leap
+    megacmd
     obsidian
     obsidian-export
     yt-dlp
