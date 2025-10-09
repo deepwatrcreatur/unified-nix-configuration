@@ -4,6 +4,7 @@
   imports = [
     ./hardware-configuration.nix
     ../../../modules/nixos/common  # Common NixOS modules (SSH keys, etc.)
+    ../../../modules/nixos/attic-client.nix  # Attic cache client
     ../../../modules/wezterm-config.nix
     # Desktop Environment - uncomment one:
     # ../../../modules/nixos/garuda-themed-kde.nix
@@ -71,13 +72,15 @@
 
   # Additional system packages
   environment.systemPackages = with pkgs; [
-    vim
+    filezilla
     git
     nushell  # Stopgap: Add nushell at system level for ghostty compatibility
+    vim
   ];
 
   # Enable nix-ld for running dynamically linked executables (like homebrew packages)
   programs.nix-ld.enable = true;
+  myModules.attic-client.enable = true;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nixpkgs.config.allowUnfree = true;
