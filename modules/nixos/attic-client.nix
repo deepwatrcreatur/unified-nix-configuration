@@ -34,8 +34,7 @@ in
   config = mkIf cfg.enable {
     # 1. Define the system-level SOPS secret for the client token.
     sops.secrets."attic-client-token" = {
-      sopsFile = ../../secrets/attic-client-token.yaml.enc;
-      format = "binary";
+      sopsFile = ../../hosts/nixos/workstation/secrets/attic-client-token.yaml.enc;
       # This makes the decrypted secret available to the systemd service.
       path = "/run/secrets/attic-client-token";
       owner = config.users.users.root.name; # or a dedicated user
@@ -72,7 +71,7 @@ in
 
     # 4. Create the post-build hook script.
     environment.etc."nix/attic-upload.sh" = {
-      executable = true;
+      mode = "0755";
       text = ''
         #!${pkgs.bash}/bin/bash
         set -euo pipefail

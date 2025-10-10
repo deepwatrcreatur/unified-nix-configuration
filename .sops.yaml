@@ -14,3 +14,5 @@ creation_rules:
     age: "age17mn5lnlh2mgttp950wc7a2nl9kphewa4jj8e0uhlv3svx68a54vqyngcyr"
   - path_regex: secrets/.*\.enc$
     age: "age17mn5lnlh2mgttp950wc7a2nl9kphewa4jj8e0uhlv3svx68a54vqyngcyr"
+  - path_regex: hosts/nixos/workstation/secrets/.*\.enc$
+    age: "age1awqed0la6x3rr39et8fjruw42mf8v2sqct78mcjzx5d226gcx9nqrjdmjz"
