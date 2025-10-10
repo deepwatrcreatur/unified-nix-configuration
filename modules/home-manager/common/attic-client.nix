@@ -93,8 +93,8 @@ in
       post-build-hook = ${config.home.homeDirectory}/.config/attic/upload.sh
     '';
 
-    # 4. Create Attic client configuration template
-    home.file.".config/attic/config.toml".text =
+    # 4. Create Attic client configuration template (as a writable file, not symlink)
+    home.file.".config/attic/config.toml.template".text =
       let
         allServers = cfg.defaultServers // cfg.servers;
         serverConfigs = lib.mapAttrsToList (name: server: ''
@@ -109,26 +109,24 @@ in
     home.activation.attic-config = lib.hm.dag.entryAfter ["writeBoundary"] ''
       $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.config/attic
 
-      if [[ -f ${config.home.homeDirectory}/.config/attic/config.toml ]]; then
-        config_file="${config.home.homeDirectory}/.config/attic/config.toml"
-        temp_file="/tmp/attic-config-$$.toml"
+      template_file="${config.home.homeDirectory}/.config/attic/config.toml.template"
+      config_file="${config.home.homeDirectory}/.config/attic/config.toml"
 
+      if [[ -f "$template_file" ]]; then
         # Copy the template
-        cp "$config_file" "$temp_file"
+        cp "$template_file" "$config_file"
 
         ${lib.concatStringsSep "\n        " (lib.mapAttrsToList (name: server: ''
           # Substitute token for ${name}
           if [[ -f "${server.tokenPath}" ]]; then
             token=$(cat "${server.tokenPath}")
             placeholder="@ATTIC_CLIENT_TOKEN_${lib.toUpper (builtins.replaceStrings ["-"] ["_"] name)}@"
-            $DRY_RUN_CMD sed -i "s|$placeholder|$token|g" "$temp_file"
+            $DRY_RUN_CMD sed -i "" "s|$placeholder|$token|g" "$config_file"
           else
             $VERBOSE_ECHO "Warning: Token file not found for ${name}: ${server.tokenPath}"
           fi
         '') (cfg.defaultServers // cfg.servers))}
 
-        # Move the configured file into place
-        $DRY_RUN_CMD mv "$temp_file" "$config_file"
         $VERBOSE_ECHO "Attic client configuration updated with SOPS tokens"
       fi
     '';
