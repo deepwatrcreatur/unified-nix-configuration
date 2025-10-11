@@ -13,6 +13,14 @@ let
 
     set -euo pipefail
 
+    # Check if attic config exists - if not, skip upload silently
+    # This prevents bootstrap issues when secrets aren't available yet
+    CONFIG_FILE="$HOME/.config/attic/config.toml"
+    if [ ! -f "$CONFIG_FILE" ]; then
+      # Config not available yet, skip upload silently
+      exit 0
+    fi
+
     # The paths to upload are passed as arguments.
     PATHS_TO_UPLOAD="$@"
 
@@ -23,7 +31,11 @@ let
 
     echo "Attic: Pushing paths to cache..."
     # Use the user's configured attic client
-    ${pkgs.attic-client}/bin/attic push cache-local $PATHS_TO_UPLOAD
+    # Suppress errors if push fails (e.g., network issues)
+    ${pkgs.attic-client}/bin/attic push cache-local $PATHS_TO_UPLOAD || {
+      echo "Attic: Push failed, continuing build..."
+      exit 0
+    }
     echo "Attic: Push complete."
   '';
 in
