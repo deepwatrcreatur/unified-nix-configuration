@@ -119,9 +119,19 @@ in
         ${lib.concatStringsSep "\n        " (lib.mapAttrsToList (name: server: ''
           # Substitute token for ${name}
           if [[ -f "${server.tokenPath}" ]]; then
-            token=$(cat "${server.tokenPath}")
+            # Read token and extract value if in shell export format
+            token_line=$(cat "${server.tokenPath}")
+            # Extract value between quotes if present (shell export format), otherwise use as-is
+            if [[ "$token_line" =~ =\"(.*)\" ]]; then
+              token="''${BASH_REMATCH[1]}"
+            else
+              token="$token_line"
+            fi
+
             placeholder="@ATTIC_CLIENT_TOKEN_${lib.toUpper (builtins.replaceStrings ["-"] ["_"] name)}@"
-            $DRY_RUN_CMD sed -i "" "s|$placeholder|$token|g" "$config_file"
+            # Use portable sed syntax (create temp file)
+            $DRY_RUN_CMD ${pkgs.gnused}/bin/sed "s|$placeholder|$token|g" "$config_file" > "$config_file.tmp"
+            $DRY_RUN_CMD mv "$config_file.tmp" "$config_file"
           else
             $VERBOSE_ECHO "Warning: Token file not found for ${name}: ${server.tokenPath}"
           fi
