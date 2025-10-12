@@ -29,12 +29,25 @@ in
       default = "cache-local";
       description = "The name of the cache to push to.";
     };
+
+    tokenFile = mkOption {
+      type = types.nullOr types.path;
+      default = null;
+      description = "Path to the SOPS encrypted token file. If null, secret must be configured manually.";
+    };
+
+    tokenKey = mkOption {
+      type = types.str;
+      default = "ATTIC_SERVER_TOKEN_RS256_SECRET_BASE64";
+      description = "The key name in the SOPS file containing the token.";
+    };
   };
 
   config = mkIf cfg.enable {
-    # 1. Define the system-level SOPS secret for the client token.
-    sops.secrets."attic-client-token" = {
-      sopsFile = ../../hosts/nixos/workstation/secrets/attic-client-token.yaml.enc;
+    # 1. Define the system-level SOPS secret for the client token (if tokenFile is provided).
+    sops.secrets."attic-client-token" = mkIf (cfg.tokenFile != null) {
+      sopsFile = cfg.tokenFile;
+      key = cfg.tokenKey;
       # This makes the decrypted secret available to the systemd service.
       path = "/run/secrets/attic-client-token";
       owner = config.users.users.root.name; # or a dedicated user
@@ -51,11 +64,10 @@ in
     };
 
     # 3. Create a systemd service to substitute the token into the config file.
-    # This runs after sops-nix has decrypted the secrets.
+    # This runs after sops-nix has decrypted the secrets during system activation.
     systemd.services.attic-client-config = {
       description = "Substitute Attic client token";
       wantedBy = [ "multi-user.target" ];
-      after = [ "sops-nix.service" ];
       serviceConfig.Type = "oneshot";
       script = ''
         set -euo pipefail
@@ -78,6 +90,13 @@ in
         if [ -z "$OUT_PATHS" ]; then
           exit 0
         fi
+
+        # Check if the token file exists (it won't during initial build)
+        if [ ! -f "${config.sops.secrets."attic-client-token".path}" ]; then
+          echo "Attic: Token not yet available, skipping push"
+          exit 0
+        fi
+
         echo "Attic: Pushing paths to cache '${cfg.cache}'..."
         # Ensure the config service has run before trying to push
         systemctl is-active --quiet attic-client-config.service || \
@@ -93,7 +112,6 @@ in
     systemd.services.nix-attic-token = {
       description = "Prepare Attic token for Nix daemon";
       wantedBy = [ "multi-user.target" ];
-      after = [ "sops-nix.service" ];
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
@@ -102,6 +120,7 @@ in
         set -euo pipefail
         if [[ -f "${config.sops.secrets."attic-client-token".path}" ]]; then
           echo "Preparing Attic token for Nix daemon..."
+          mkdir -p /run/nix
           token=$(cat "${config.sops.secrets."attic-client-token".path}")
           echo "bearer $token" > /run/nix/attic-token-bearer
           chmod 0644 /run/nix/attic-token-bearer

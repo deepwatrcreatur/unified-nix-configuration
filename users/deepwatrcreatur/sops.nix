@@ -58,9 +58,11 @@ in
         mode = "0600";
       };
 
-      secrets."attic-client-token" = {
-        sopsFile = "${sopsSecretsDir}/attic-client-token.yaml.enc";
-        format = "binary";
+      # Attic client token - only for non-NixOS systems (on NixOS it's system-level)
+      # On macOS or standalone home-manager, enable this. On NixOS, it's handled at system-level.
+      secrets."attic-client-token" = lib.mkIf pkgs.stdenv.isDarwin {
+        sopsFile = "${globalSopsSecretsDir}/attic-client-token.yaml.enc";
+        key = "ATTIC_SERVER_TOKEN_RS256_SECRET_BASE64";  # Extract specific key from YAML
         path = "${config.home.homeDirectory}/.config/sops/attic-client-token";
         mode = "0600";
       };
