@@ -42,11 +42,15 @@
 
     users.root = {
       imports = [
-        ../../../../users/root
-        ../../../../users/root/hosts/cache-build-server
-        ../../../../modules/home-manager
+        ../../../../modules/home-manager/git.nix
+        ../../../../modules/home-manager/gpg-cli.nix
       ];
-      
+
+      home.username = "root";
+      home.homeDirectory = "/root";
+      home.stateVersion = "25.11";
+      programs.home-manager.enable = true;
+
       # Root-specific build server management
       home.packages = with pkgs; [
         nix-tree
