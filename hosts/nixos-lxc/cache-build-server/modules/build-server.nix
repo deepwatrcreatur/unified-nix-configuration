@@ -1,9 +1,6 @@
 { config, lib, pkgs, ... }:
 
 {
-  # Enable the centralized Attic client module for this host
-  myModules.attic-client.enable = true;
-
   # Build server optimizations
   nix.settings = {
     # Override common settings for build server use
