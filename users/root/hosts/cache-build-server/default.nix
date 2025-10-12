@@ -10,11 +10,14 @@
     ../../../../modules/home-manager/gpg-cli.nix
   ];
 
+  # Disable attic-client for root (no SOPS secrets configured)
+  services.attic-client.enable = false;
+
   # Add packages
   home.packages = [
   ];
 
   # Configure programs
-  programs.bash.enable = true; 
-  
+  programs.bash.enable = true;
+
 }
