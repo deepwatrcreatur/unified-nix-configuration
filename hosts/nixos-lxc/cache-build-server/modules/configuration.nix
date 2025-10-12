@@ -9,6 +9,9 @@
   # SOPS configuration for secrets management
   sops.age.keyFile = "/var/lib/sops/age/keys.txt";
 
+  # Enable OpenSSH (also satisfies sops-nix requirement)
+  services.openssh.enable = true;
+
   networking.hostName = "cache-build-server";
 
   security.sudo.enable = true;
