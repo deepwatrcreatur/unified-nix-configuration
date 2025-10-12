@@ -20,5 +20,7 @@ in {
   imports = moduleImports ++ [
     # Use LXC-specific nix settings instead of the regular one
     ./nix-settings-lxc.nix
+    # SOPS configuration for secrets management
+    ./common/sops.nix
   ];
 }
