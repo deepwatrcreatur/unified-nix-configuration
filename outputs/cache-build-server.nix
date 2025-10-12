@@ -10,6 +10,10 @@
         nixpkgs.overlays = commonOverlays;
         nixpkgs.config = commonNixpkgsConfig;
       }
+      # Configure SOPS age keyFile before importing sops-nix module
+      {
+        sops.age.keyFile = "/var/lib/sops/age/keys.txt";
+      }
       inputs.sops-nix.nixosModules.sops
       inputs.home-manager.nixosModules.home-manager
       {
