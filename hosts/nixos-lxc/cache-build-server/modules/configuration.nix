@@ -6,6 +6,9 @@
     ../../../../modules/nixos/networking.nix
   ];
 
+  # SOPS configuration for secrets management
+  sops.age.keyFile = "/var/lib/sops/age/keys.txt";
+
   networking.hostName = "cache-build-server";
 
   security.sudo.enable = true;
