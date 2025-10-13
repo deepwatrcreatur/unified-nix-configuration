@@ -61,45 +61,56 @@ in
     # Merge default servers with user-specified servers
     services.attic-client.servers = lib.mkDefault cfg.defaultServers;
 
-    # Create Attic client configuration template
-    home.file.".config/attic/config.toml".text =
-      let
-        allServers = cfg.defaultServers // cfg.servers;
-        serverConfigs = lib.mapAttrsToList (name: server: ''
-          [servers.${name}]
-          endpoint = "${server.endpoint}"
-          token = "@ATTIC_CLIENT_TOKEN_${lib.toUpper (builtins.replaceStrings ["-"] ["_"] name)}@"
-        '') allServers;
-      in
-      lib.concatStringsSep "\n\n" serverConfigs;
-
     # Home activation script to substitute tokens
-    home.activation.attic-config = lib.hm.dag.entryAfter ["writeBoundary"] ''
-      $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.config/attic
+    home.activation.attic-config = lib.hm.dag.entryAfter ["linkGeneration"] ''
+      config_dir="${config.home.homeDirectory}/.config/attic"
+      config_file="$config_dir/config.toml"
 
-      if [[ -f ${config.home.homeDirectory}/.config/attic/config.toml ]]; then
-        config_file="${config.home.homeDirectory}/.config/attic/config.toml"
-        temp_file="/tmp/attic-config-$$.toml"
+      # Only run if we're the actual user, not root during system activation
+      if [[ "$HOME" == "${config.home.homeDirectory}" ]]; then
+        mkdir -p "$config_dir"
 
-        # Copy the template
-        cp "$config_file" "$temp_file"
+        # Generate the config template inline
+        cat > "$config_file" <<'ATTIC_EOF'
+${let
+  allServers = cfg.defaultServers // cfg.servers;
+  serverConfigs = lib.mapAttrsToList (name: server: ''
+[servers.${name}]
+endpoint = "${server.endpoint}"
+token = "@ATTIC_CLIENT_TOKEN_${lib.toUpper (builtins.replaceStrings ["-"] ["_"] name)}@"
+  '') allServers;
+in lib.concatStringsSep "\n" serverConfigs}
+ATTIC_EOF
 
-        ${lib.concatStringsSep "\n        " (lib.mapAttrsToList (name: server: ''
-          # Substitute token for ${name}
-          if [[ -f "${server.tokenPath}" ]]; then
-            token=$(cat "${server.tokenPath}")
-            placeholder="@ATTIC_CLIENT_TOKEN_${lib.toUpper (builtins.replaceStrings ["-"] ["_"] name)}@"
-            $DRY_RUN_CMD sed -i "s|$placeholder|$token|g" "$temp_file"
-          else
-            $VERBOSE_ECHO "Warning: Token file not found for ${name}: ${server.tokenPath}"
-          fi
-        '') (cfg.defaultServers // cfg.servers))}
+        # Make it writable (should already be, but just in case)
+        chmod u+w "$config_file"
 
-        # Move the configured file into place
-        $DRY_RUN_CMD mv "$temp_file" "$config_file"
-        $VERBOSE_ECHO "Attic client configuration updated with SOPS tokens"
+            ${lib.concatStringsSep "\n            " (lib.mapAttrsToList (name: server: ''
+              # Substitute token for ${name}
+              if [[ -f "${server.tokenPath}" ]]; then
+                token=$(cat "${server.tokenPath}" 2>/dev/null || echo "")
+                if [[ -n "$token" ]]; then
+                  placeholder="@ATTIC_CLIENT_TOKEN_${lib.toUpper (builtins.replaceStrings ["-"] ["_"] name)}@"
+                  sed -i'.bak' "s|$placeholder|$token|g" "$config_file"
+                  rm -f "$config_file.bak"
+                else
+                  echo "Warning: Token file empty for ${name}: ${server.tokenPath}" >&2
+                fi
+              else
+                echo "Warning: Token file not found for ${name}: ${server.tokenPath}" >&2
+              fi
+            '') (cfg.defaultServers // cfg.servers))}
+
+        echo "Attic client configuration with tokens saved to $config_file"
+      else
+        echo "Skipping attic-client config setup - not running as user ${config.home.username}" >&2
       fi
     '';
+
+    # Set ATTIC_CONFIG environment variable (optional, attic uses ~/.config/attic/config.toml by default)
+    home.sessionVariables = {
+      ATTIC_CONFIG = "${config.home.homeDirectory}/.config/attic/config.toml";
+    };
 
     # Add shell aliases for convenience
     home.shellAliases = {
