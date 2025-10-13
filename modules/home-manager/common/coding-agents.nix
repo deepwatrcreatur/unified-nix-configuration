@@ -6,6 +6,6 @@
     claude-monitor
     cursor-cli
     gemini-cli
-    opencode
+    # opencode  # Temporarily disabled due to hash mismatch in node_modules
   ];
 }
