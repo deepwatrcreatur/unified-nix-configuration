@@ -2,9 +2,8 @@
 { config, pkgs, lib, inputs, ... }:
 
 {
-  # Install pinentry packages
+  # Install pinentry package (gnome3 for GNOME desktop)
   home.packages = with pkgs; [
-    pinentry-gtk2
     pinentry-gnome3
   ];
 

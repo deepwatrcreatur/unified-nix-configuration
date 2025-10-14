@@ -58,11 +58,10 @@ in
         mode = "0600";
       };
 
-      # Attic client token - only for non-NixOS systems (on NixOS it's system-level)
-      # On macOS or standalone home-manager, enable this. On NixOS, it's handled at system-level.
-      secrets."attic-client-token" = lib.mkIf pkgs.stdenv.isDarwin {
+      # Attic client token - user-level JWT token for both macOS and NixOS
+      secrets."attic-client-token" = {
         sopsFile = "${globalSopsSecretsDir}/attic-client-token.yaml.enc";
-        key = "ATTIC_SERVER_TOKEN_RS256_SECRET_BASE64";  # Extract specific key from YAML
+        key = "ATTIC_CLIENT_JWT_TOKEN";
         path = "${config.home.homeDirectory}/.config/sops/attic-client-token";
         mode = "0600";
       };
