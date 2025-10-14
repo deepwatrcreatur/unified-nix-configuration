@@ -38,7 +38,7 @@ in
 
     tokenKey = mkOption {
       type = types.str;
-      default = "ATTIC_SERVER_TOKEN_RS256_SECRET_BASE64";
+      default = "ATTIC_CLIENT_JWT_TOKEN";
       description = "The key name in the SOPS file containing the token.";
     };
   };
@@ -81,27 +81,49 @@ in
       '';
     };
 
-    # 4. Create the post-build hook script.
+    # 4. Create the post-build hook script (fail-safe: never blocks builds)
     environment.etc."nix/attic-upload.sh" = {
       mode = "0755";
       text = ''
         #!${pkgs.bash}/bin/bash
-        set -euo pipefail
+        # DO NOT use 'set -e' - we want to continue even if push fails
+        set -uo pipefail
+
         if [ -z "$OUT_PATHS" ]; then
           exit 0
         fi
 
-        # Check if the token file exists (it won't during initial build)
+        # Check if the token file exists
         if [ ! -f "${config.sops.secrets."attic-client-token".path}" ]; then
-          echo "Attic: Token not yet available, skipping push"
+          echo "Attic: Token not available, skipping push" >&2
           exit 0
         fi
 
-        echo "Attic: Pushing paths to cache '${cfg.cache}'..."
-        # Ensure the config service has run before trying to push
-        systemctl is-active --quiet attic-client-config.service || \
-          (echo "Waiting for attic-client-config service..." && systemctl start attic-client-config.service)
-        ${pkgs.attic-client}/bin/attic push ${cfg.cache} $OUT_PATHS
+        # Wrap everything in a try-catch to never fail the build
+        {
+          echo "Attic: Attempting to push to cache '${cfg.cache}'..." >&2
+
+          # Ensure the config service has run
+          if ! systemctl is-active --quiet attic-client-config.service; then
+            echo "Attic: Starting config service..." >&2
+            systemctl start attic-client-config.service || {
+              echo "Attic: Config service failed, skipping push" >&2
+              exit 0
+            }
+          fi
+
+          # Try to push, but don't fail if it errors
+          if ${pkgs.attic-client}/bin/attic push ${cfg.cache} $OUT_PATHS 2>&1; then
+            echo "Attic: Successfully pushed paths" >&2
+          else
+            echo "Attic: Push failed (server unavailable?), continuing anyway" >&2
+          fi
+        } || {
+          echo "Attic: Upload hook failed, but build continues" >&2
+        }
+
+        # Always exit successfully so builds never fail
+        exit 0
       '';
     };
 
