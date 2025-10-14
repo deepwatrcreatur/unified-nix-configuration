@@ -81,7 +81,7 @@
   # Enable nix-ld for running dynamically linked executables (like homebrew packages)
   programs.nix-ld.enable = true;
   myModules.attic-client = {
-    enable = true;
+    enable = false;  # Temporarily disabled - use user-level config instead
     tokenFile = ./secrets/attic-client-token.yaml.enc;
   };
 

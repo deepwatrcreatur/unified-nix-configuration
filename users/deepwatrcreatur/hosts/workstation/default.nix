@@ -35,6 +35,9 @@
 
   home.file.".justfile".source = ./justfile; # Directly link the justfile
 
+  # Enable user-level attic client (like macminim4)
+  services.attic-client.enable = true;
+
   # Input Leap client service
   systemd.user.services.input-leap-client = {
     Unit = {
