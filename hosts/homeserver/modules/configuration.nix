@@ -4,8 +4,9 @@
   imports = [
     "${modulesPath}/virtualisation/lxc-container.nix"
     ../../../modules/nixos/networking.nix
-    ../../../modules/nixos
     ../../../modules/nixos/services/iperf3.nix
+    ../../../modules/nixos/common  # Only import common nixos modules (SSH keys, etc.)
+    ../../../modules/nixos/attic-client.nix  # Cache client
     ../../../modules/linux/linuxbrew-system.nix
     ../../nixos-lxc/lxc-systemd-suppressions.nix
     #./packages.nix
@@ -19,6 +20,8 @@
 
   networking.hostName = "homeserver";
 
+  # Ensure SSH is enabled for SOPS
+  services.openssh.enable = true;
   services.nginx-proxy-manager.enable = true;
   
   # Enable nix-ld for running dynamically linked executables (like homebrew packages)
