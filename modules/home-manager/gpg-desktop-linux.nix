@@ -2,17 +2,15 @@
 { config, pkgs, lib, inputs, ... }:
 
 {
-  home.packages = [ pkgs.pinentry-gnome3 ];
-
-  programs.gpg = {
-    enable = true;
-  };
-
   # Install pinentry packages
   home.packages = with pkgs; [
     pinentry-gtk2
     pinentry-gnome3
   ];
+
+  programs.gpg = {
+    enable = true;
+  };
 
   # Set up shell initialization for GPG
   programs.bash.initExtra = ''
