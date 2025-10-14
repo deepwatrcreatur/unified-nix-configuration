@@ -3,6 +3,7 @@
 {
   imports = [
     ./hardware-configuration.nix
+    ./networking.nix
     ../../../modules/nixos/common  # Common NixOS modules (SSH keys, etc.)
     ../../../modules/nixos/attic-client.nix  # Attic cache client
     ../../../modules/wezterm-config.nix
@@ -18,8 +19,6 @@
     config.default_prog = { '/etc/profiles/per-user/deepwatrcreatur/bin/zellij', '-l', 'welcome' }
   '';
 
-  networking.hostName = "workstation";
-  
   nixpkgs.hostPlatform = "x86_64-linux";
 
   # Boot loader configuration
@@ -41,14 +40,9 @@
     pulse.enable = true;
   };
 
-  # Enable networking
-  networking.networkmanager.enable = true;
-
   # Enable SSH daemon
   services.openssh.enable = true;
 
-  services.tailscale.enable = true;
-   
   # Disable screen lock
   services.logind.lidSwitch = "ignore";
 
