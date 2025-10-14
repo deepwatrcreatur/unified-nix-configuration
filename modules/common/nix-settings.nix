@@ -41,7 +41,7 @@
       ];
       
       substituters = [
-        "http://cache.deepwatercreature.com:8081/cache-local"  # Attic cache (preferred)
+        "http://cache-build-server:5001/cache-local"           # Attic cache (preferred)
         "http://cache.deepwatercreature.com:5000/"             # Legacy nix-serve
         "https://cache.nixos.org/"
         "https://cuda-maintainers.cachix.org"
@@ -60,7 +60,7 @@
         "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
       ];
 
-      access-tokens = "cache.deepwatercreature.com:8081/cache-local = /run/nix/attic-token-bearer";
+      access-tokens = "cache-build-server:5001 = /run/nix/attic-token-bearer";
     };
   };
 }
