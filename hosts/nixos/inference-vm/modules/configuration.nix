@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ../../../common/nix-settings.nix
+    ../../../../modules/common/nix-settings.nix
   ];
 
   # Custom overlay to rebuild Ollama with Tesla P40 support (CUDA compute capability 6.1)
