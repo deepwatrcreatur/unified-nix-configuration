@@ -82,7 +82,7 @@
   programs.nix-ld.enable = true;
   myModules.attic-client = {
     enable = true;  # Robust post-build hook that never fails builds
-    tokenFile = ./secrets/attic-client-token.yaml.enc;
+    tokenFile = ../../../secrets/attic-client-token.yaml.enc;  # Use global token file
   };
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
