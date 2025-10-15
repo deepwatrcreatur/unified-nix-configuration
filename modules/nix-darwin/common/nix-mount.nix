@@ -35,13 +35,27 @@ in
           "/bin/sh"
           "-c"
           # Initial 5-second delay, retry every 5 seconds for 60 seconds
-          ''/bin/sleep 5; for i in {1..12}; do /usr/sbin/diskutil mount -mountPoint /nix ${cfg.uuid} && exit 0; /bin/sleep 5; done; exit 1''
+          ''
+            LOGFILE="/Users/deepwatrcreatur/nix-mount.log"
+            echo "Starting nix-mount script" > $LOGFILE
+            /bin/sleep 5
+            for i in {1..12}; do
+              echo "Attempt $i" >> $LOGFILE
+              /usr/sbin/diskutil mount -mountPoint /nix ${cfg.uuid} >> $LOGFILE 2>&1
+              if [ $? -eq 0 ]; then
+                echo "Mount successful" >> $LOGFILE
+                exit 0
+              fi
+              echo "Mount failed, sleeping 5s" >> $LOGFILE
+              /bin/sleep 5
+            done
+            echo "Mount failed after 12 attempts" >> $LOGFILE
+            exit 1
+          ''
         ];
         Label = "com.nix.mount";
         RunAtLoad = true;
         KeepAlive = false;
-        StandardErrorPath = "/tmp/nix-mount-error.log";
-        StandardOutPath = "/tmp/nix-mount-out.log";
       };
     };
 
