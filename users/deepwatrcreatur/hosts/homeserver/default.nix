@@ -13,7 +13,9 @@
   ];
 
   # Set home directory for Home Manager
-  home.homeDirectory = "/home/deepwatrcreatur"; # Home directory for the root user
+  home.homeDirectory = "/home/deepwatrcreatur"; 
+
+  home.file.".justfile".source = ./justfile; 
 
   # Add packages
   home.packages = [
