@@ -17,6 +17,7 @@
       };
       # Only accept DNS from DHCPv4, ignore DNS from IPv6 RA
       dhcpV4Config.UseDNS = true;
+      dhcpV4Config.UseDomains = true;  # Use search domain from DHCP
       ipv6AcceptRAConfig.UseDNS = false;
       linkConfig.RequiredForOnline = "routable";
     };
