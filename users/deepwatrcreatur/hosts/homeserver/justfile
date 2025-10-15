@@ -1,4 +1,4 @@
-# users/deepwatrcreatur/hosts/homeserver/justfile
+# users/deepwatrcreatur/hosts/workstation/justfile
 
 # NixOS - use nixos-rebuild or nh
 update:
