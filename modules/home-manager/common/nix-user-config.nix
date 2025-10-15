@@ -53,31 +53,36 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    # Create user Nix configuration
+    # Create user Nix configuration (removed netrc-file setting for Determinate Nix compatibility)
     home.file.".config/nix/nix.conf".text = ''
       experimental-features = ${lib.concatStringsSep " " cfg.experimentalFeatures}
       substituters = ${lib.concatStringsSep " " cfg.substituters}
       trusted-public-keys = ${lib.concatStringsSep " " cfg.trustedPublicKeys}
-      ${lib.optionalString (cfg.netrcMachine != null) "netrc-file = ${config.home.homeDirectory}/.config/nix/netrc"}
     '';
 
-    # Create netrc file if configured
+    # Create netrc file in Determinate Nix's managed location
     home.activation.nix-netrc = lib.mkIf (cfg.netrcMachine != null) (
       lib.hm.dag.entryAfter ["writeBoundary"] ''
-        netrc_file="${config.home.homeDirectory}/.config/nix/netrc"
+        netrc_file="/nix/var/determinate/netrc"
         token_file="${cfg.netrcTokenPath}"
 
         # Only create netrc if we're the actual user and token exists
         if [[ "$HOME" == "${config.home.homeDirectory}" && -f "$token_file" ]]; then
           token=$(cat "$token_file" 2>/dev/null || echo "")
           if [[ -n "$token" ]]; then
-            mkdir -p "$(dirname "$netrc_file")"
-            cat > "$netrc_file" <<EOF
+            # Append to Determinate Nix's netrc if not already present
+            if [[ -w "$netrc_file" ]] || sudo test -w "$(dirname "$netrc_file")" 2>/dev/null; then
+              if ! sudo grep -q "machine ${cfg.netrcMachine}" "$netrc_file" 2>/dev/null; then
+                sudo tee -a "$netrc_file" > /dev/null <<EOF
+
 machine ${cfg.netrcMachine}
 password $token
 EOF
-            chmod 600 "$netrc_file"
-            echo "Created netrc authentication for ${cfg.netrcMachine}"
+                echo "Added netrc authentication for ${cfg.netrcMachine} to Determinate Nix's netrc"
+              fi
+            else
+              echo "Warning: Cannot write to Determinate Nix's netrc at $netrc_file" >&2
+            fi
           else
             echo "Warning: Token file empty at $token_file" >&2
           fi
