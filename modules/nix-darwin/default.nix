@@ -18,6 +18,11 @@ in
     ../wezterm-config.nix
   ];
 
+  # Import darwin-specific home-manager modules for all users
+  home-manager.sharedModules = [
+    ../home-manager/attic-client-darwin.nix
+  ];
+
   # macOS-specific wezterm configuration
   programs.wezterm.extraConfig = lib.mkAfter ''
     -- Default program: launch zellij with nushell as default shell (macOS path)
