@@ -30,5 +30,4 @@
   home.stateVersion = "25.11";
 
   home.file.".justfile".source = ./justfile; # Directly link the justfile
-  services.attic-client.enable = true;
 }
