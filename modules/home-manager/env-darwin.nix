@@ -26,6 +26,10 @@
   
   # Only fish configuration here - nushell is handled by the nushell module
   programs.fish = {
+    shellAliases = {
+      fish = "/nix/var/nix/profiles/system/sw/bin/fish";
+    };
+    
     interactiveShellInit = ''
       set -gx GNUPGHOME ${config.home.homeDirectory}/.gnupg
       set -gx SOPS_AGE_KEY_FILE ${config.home.homeDirectory}/.config/sops/age/keys.txt
