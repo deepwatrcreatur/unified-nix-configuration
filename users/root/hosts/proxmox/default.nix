@@ -21,7 +21,7 @@
 
   # Configure programs
   programs.bash.enable = true;
-  programs.attic-client.enable = true;
+  services.attic-client.enable = true;
 
   home.file.".justfile".source = ./justfile; # Directly link the justfile
 
