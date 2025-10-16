@@ -5,7 +5,7 @@
   imports = [
     ../.. # default config for root
     ./proxmox-fish-extra.nix
-    # ./proxmox-justfile.nix # No longer needed
+    ./justfile.nix
     ./nh.nix
     #../../../../modules/home-manager/env/standalone-hm.nix
     ../../../../modules/home-manager/gpg-cli.nix
