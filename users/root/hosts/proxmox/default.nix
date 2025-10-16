@@ -37,10 +37,4 @@
   home.file.".gnupg/public-key.asc" = {
     source = ../../gpg-public-key.asc;
   };
-  home.file.".config/sops/.sops.yaml" = {
-    source = "${toString ../../secrets}/sops.yaml";
-    force = true;
-  };
-  home.file.".config/Bitwarden CLI/.keep".text = "";
-
 }
