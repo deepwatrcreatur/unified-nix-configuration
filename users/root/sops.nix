@@ -50,6 +50,14 @@ in
         path = "${config.xdg.configHome}/Bitwarden CLI/data.json";
         mode = "0600";
       };
+
+      # Attic client token for root user
+      secrets."attic-client-token" = {
+        sopsFile = "${sopsSecretsDir}/attic-client-token.yaml.enc";
+        format = "binary";
+        path = "${config.home.homeDirectory}/.config/sops/attic-client-token";
+        mode = "0600";
+      };
     };
   };
 }
