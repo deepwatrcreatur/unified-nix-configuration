@@ -1,4 +1,11 @@
 { config, lib, pkgs, ... }:
+
+let
+  # Path to GitHub token (works for both user and root contexts)
+  githubTokenPath = if config ? home
+    then "${config.home.homeDirectory}/.config/git/github-token"
+    else "/root/.config/git/github-token";
+in
 {
   nixpkgs.config.allowUnfree = true;
   
@@ -61,7 +68,10 @@
         "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
       ];
 
-      access-tokens = "cache-build-server:5001 = /run/nix/attic-token-bearer";
+      access-tokens = [
+        "cache-build-server:5001 = /run/nix/attic-token-bearer"
+        "github.com = ${githubTokenPath}"
+      ];
     };
   };
 }
