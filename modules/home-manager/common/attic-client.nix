@@ -87,17 +87,21 @@ ATTIC_EOF
 
             ${lib.concatStringsSep "\n            " (lib.mapAttrsToList (name: server: ''
               # Substitute token for ${name}
+              token=""
               if [[ -f "${server.tokenPath}" ]]; then
                 token=$(cat "${server.tokenPath}" 2>/dev/null || echo "")
-                if [[ -n "$token" ]]; then
-                  placeholder="@ATTIC_CLIENT_TOKEN_${lib.toUpper (builtins.replaceStrings ["-"] ["_"] name)}@"
-                  sed -i'.bak' "s|$placeholder|$token|g" "$config_file"
-                  rm -f "$config_file.bak"
-                else
-                  echo "Warning: Token file empty for ${name}: ${server.tokenPath}" >&2
-                fi
+              elif [[ -f "${config.home.homeDirectory}/.config/sops/attic-client-token" ]]; then
+                # Read token from secrets-activation decrypted file
+                token=$(cat "${config.home.homeDirectory}/.config/sops/attic-client-token" 2>/dev/null || echo "")
+              fi
+
+              if [[ -n "$token" ]]; then
+                placeholder="@ATTIC_CLIENT_TOKEN_${lib.toUpper (builtins.replaceStrings ["-"] ["_"] name)}@"
+                sed -i'.bak' "s|$placeholder|$token|g" "$config_file"
+                rm -f "$config_file.bak"
+                echo "Successfully applied attic token for ${name}" >&2
               else
-                echo "Warning: Token file not found for ${name}: ${server.tokenPath}" >&2
+                echo "Warning: Token not found for ${name}" >&2
               fi
             '') (cfg.defaultServers // cfg.servers))}
 
