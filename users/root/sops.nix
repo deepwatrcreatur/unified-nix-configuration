@@ -51,7 +51,7 @@ in
         mode = "0600";
       };
 
-      # Attic client token for root user
+      # Attic client token for root user (disabled due to age key mismatch)
       secrets."attic-client-token" = {
         sopsFile = "${sopsSecretsDir}/attic-client-token.yaml.enc";
         format = "binary";
