@@ -1,7 +1,6 @@
 { config, pkgs, lib, inputs, ... }:
 {
   imports = [
-    ./sops.nix # Import SOPS configuration for attic token and other secrets
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/gpg-cli.nix
     ../../modules/home-manager

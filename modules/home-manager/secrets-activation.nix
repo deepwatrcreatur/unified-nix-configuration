@@ -30,6 +30,12 @@ in
       description = "Whether to decrypt GPG private key";
     };
 
+    enableAtticTokenDecryption = mkOption {
+      type = types.bool;
+      default = false;
+      description = "Whether to decrypt Attic client token";
+    };
+
     continueOnError = mkOption {
       type = types.bool;
       default = true;
@@ -137,6 +143,30 @@ in
      fi
    else
      echo "Warning: Bitwarden data.json not found at ${cfg.secretsPath}/data.json.enc"
+   fi
+ ''}
+
+    ${optionalString cfg.enableAtticTokenDecryption ''
+    # Decrypt Attic client token
+    if [ -f "${cfg.secretsPath}/attic-client-token.yaml" ]; then
+     echo "Decrypting Attic client token..."
+     if [ -n "$DRY_RUN_CMD" ]; then
+       echo "DRY RUN: Would decrypt Attic client token"
+     else
+       SOPS_OUTPUT=$(SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" sops -d --extract '["ATTIC_CLIENT_TOKEN"]' "${cfg.secretsPath}/attic-client-token.yaml" 2>&1)
+       if [ $? -eq 0 ]; then
+         echo "$SOPS_OUTPUT" > $HOME/.config/sops/attic-client-token
+         chmod 600 $HOME/.config/sops/attic-client-token
+         echo "Attic client token decrypted successfully"
+       else
+         echo "Warning: Failed to decrypt Attic client token"
+         echo "Debug: SOPS error output:"
+         echo "$SOPS_OUTPUT"
+         ${optionalString (!cfg.continueOnError) "exit 1"}
+       fi
+     fi
+   else
+     echo "Warning: Attic client token not found at ${cfg.secretsPath}/attic-client-token.yaml"
    fi
  ''}
 
