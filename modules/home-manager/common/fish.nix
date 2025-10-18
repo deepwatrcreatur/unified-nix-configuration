@@ -17,12 +17,12 @@
       { name = "grc"; src = pkgs.fishPlugins.grc; }
     ];
 
-    # loginShellInit runs before interactiveShellInit and ensures PATH is set up
-    loginShellInit = ''
-      # Ensure Nix paths are in PATH early for SSH sessions
-      fish_add_path --prepend --global ${config.home.homeDirectory}/.nix-profile/bin
-      fish_add_path --prepend --global /nix/var/nix/profiles/default/bin
-      fish_add_path --prepend --global /run/current-system/sw/bin
+    # shellInit runs for ALL shells (login and non-login) - critical for SSH
+    shellInit = ''
+      # Ensure Nix paths are in PATH early for ALL sessions (especially SSH)
+      fish_add_path --prepend --move ${config.home.homeDirectory}/.nix-profile/bin
+      fish_add_path --prepend --move /nix/var/nix/profiles/default/bin
+      fish_add_path --prepend --move /run/current-system/sw/bin
     '';
 
     interactiveShellInit = ''
