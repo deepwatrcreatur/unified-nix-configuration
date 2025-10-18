@@ -152,19 +152,19 @@ in
     # Shell configurations that merge with existing configs from other modules
     programs.bash.initExtra = lib.mkAfter ''
       if [ -f ~/.config/git/github-token ]; then
-        export GITHUB_TOKEN="$(cat ~/.config/git/github-token)"
+        export GITHUB_TOKEN="$(/bin/cat ~/.config/git/github-token)"
       fi
     '';
 
     programs.zsh.initContent = lib.mkAfter ''
       if [ -f ~/.config/git/github-token ]; then
-        export GITHUB_TOKEN="$(cat ~/.config/git/github-token)"
+        export GITHUB_TOKEN="$(/bin/cat ~/.config/git/github-token)"
       fi
     '';
 
     programs.fish.interactiveShellInit = lib.mkAfter ''
       if test -f ~/.config/git/github-token
-        set -gx GITHUB_TOKEN (cat ~/.config/git/github-token)
+        set -gx GITHUB_TOKEN (/bin/cat ~/.config/git/github-token)
       end
     '';
 

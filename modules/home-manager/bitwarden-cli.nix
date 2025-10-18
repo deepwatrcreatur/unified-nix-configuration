@@ -38,19 +38,19 @@ in
     # Configure BW_SESSION environment variable for all shells
     programs.bash.initExtra = lib.mkIf (secretPath != null) ''
       if [[ -f "${secretPath}" ]]; then
-        export BW_SESSION="$(cat ${secretPath})"
+        export BW_SESSION="$(/bin/cat ${secretPath})"
       fi
     '';
 
     programs.zsh.initContent = lib.mkIf (secretPath != null) ''
       if [[ -f "${secretPath}" ]]; then
-        export BW_SESSION="$(cat ${secretPath})"
+        export BW_SESSION="$(/bin/cat ${secretPath})"
       fi
     '';
 
     programs.fish.interactiveShellInit = lib.mkIf (secretPath != null) ''
       if test -f ${secretPath}
-        set -gx BW_SESSION (cat ${secretPath})
+        set -gx BW_SESSION (/bin/cat ${secretPath})
       end
     '';
  
