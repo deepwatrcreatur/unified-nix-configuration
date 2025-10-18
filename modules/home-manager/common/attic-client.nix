@@ -118,8 +118,8 @@ ATTIC_EOF
 
     # Add shell aliases for convenience
     home.shellAliases = {
-      attic-push-local = "attic push cache-local";
-      attic-push-build-server = "attic push cache-build-server";
+      attic-push = "attic push cache-build-server:cache-local";
+      attic-push-cache-local = "attic push cache-build-server:cache-local";
     };
   };
 }
