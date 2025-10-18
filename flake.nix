@@ -198,6 +198,7 @@
           };
           extraSpecialArgs = homeManagerModuleArgs;
           modules = [
+            inputs.sops-nix.homeManagerModules.sops
             userPath
             ./modules/home-manager
           ] ++ modules;
