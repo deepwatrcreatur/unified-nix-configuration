@@ -32,7 +32,9 @@
 
     # shellInit runs for ALL fish shells - critical for SSH sessions on macOS
     shellInit = lib.mkBefore ''
-      # Add macOS-specific paths early (before common paths)
+      # Add nix-darwin per-user profile (CRITICAL for SSH sessions)
+      fish_add_path --prepend --move /etc/profiles/per-user/${config.home.username}/bin
+      # Add macOS-specific paths
       fish_add_path --prepend --move /opt/homebrew/bin
       fish_add_path --prepend --move /usr/local/bin
     '';
