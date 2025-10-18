@@ -29,7 +29,14 @@
     shellAliases = {
       fish = "/nix/var/nix/profiles/system/sw/bin/fish";
     };
-    
+
+    # Ensure PATH is set up early for macOS SSH sessions
+    loginShellInit = lib.mkBefore ''
+      # Add macOS-specific paths early
+      fish_add_path --prepend --global /opt/homebrew/bin
+      fish_add_path --prepend --global /usr/local/bin
+    '';
+
     interactiveShellInit = ''
       set -gx GNUPGHOME ${config.home.homeDirectory}/.gnupg
       set -gx SOPS_AGE_KEY_FILE ${config.home.homeDirectory}/.config/sops/age/keys.txt
