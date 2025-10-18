@@ -30,11 +30,11 @@
       fish = "/nix/var/nix/profiles/system/sw/bin/fish";
     };
 
-    # Ensure PATH is set up early for macOS SSH sessions
-    loginShellInit = lib.mkBefore ''
-      # Add macOS-specific paths early
-      fish_add_path --prepend --global /opt/homebrew/bin
-      fish_add_path --prepend --global /usr/local/bin
+    # shellInit runs for ALL fish shells - critical for SSH sessions on macOS
+    shellInit = lib.mkBefore ''
+      # Add macOS-specific paths early (before common paths)
+      fish_add_path --prepend --move /opt/homebrew/bin
+      fish_add_path --prepend --move /usr/local/bin
     '';
 
     interactiveShellInit = ''
