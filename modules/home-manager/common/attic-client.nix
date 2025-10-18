@@ -55,20 +55,53 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    # Install attic-client
-    home.packages = [ pkgs.attic-client ];
+    # Install attic-client and sops for token decryption
+    home.packages = [ pkgs.attic-client pkgs.sops ];
 
     # Merge default servers with user-specified servers
     services.attic-client.servers = lib.mkDefault cfg.defaultServers;
 
-    # Home activation script to substitute tokens
+    # Set SOPS environment variable for token decryption
+    home.sessionVariables = {
+      SOPS_AGE_KEY_FILE = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
+    };
+
+    # Home activation script to decrypt token and substitute into config
     home.activation.attic-config = lib.hm.dag.entryAfter ["linkGeneration"] ''
       config_dir="${config.home.homeDirectory}/.config/attic"
       config_file="$config_dir/config.toml"
+      token_file="${config.home.homeDirectory}/.config/sops/attic-client-token"
 
       # Only run if we're the actual user, not root during system activation
       if [[ "$HOME" == "${config.home.homeDirectory}" ]]; then
+        # Ensure sops config directory exists
+        mkdir -p "${config.home.homeDirectory}/.config/sops"
         mkdir -p "$config_dir"
+
+        # Decrypt Attic client token from global secrets if not already decrypted
+        global_token_path="${config.home.homeDirectory}/unified-nix-configuration/secrets/attic-client-token.yaml.enc"
+
+        if [[ ! -f "$token_file" ]] || [[ "$global_token_path" -nt "$token_file" ]]; then
+          if [[ -f "$global_token_path" ]]; then
+            echo "Decrypting Attic client token from global secrets..." >&2
+
+            # Export SOPS_AGE_KEY_FILE and add sops to PATH
+            export SOPS_AGE_KEY_FILE="${config.home.homeDirectory}/.config/sops/age/keys.txt"
+            export PATH="${lib.makeBinPath [ pkgs.sops ]}:$PATH"
+
+            if SOPS_OUTPUT=$(sops -d --extract '["ATTIC_CLIENT_JWT_TOKEN"]' "$global_token_path" 2>&1); then
+              echo "$SOPS_OUTPUT" > "$token_file"
+              chmod 600 "$token_file"
+              echo "Attic client token decrypted successfully" >&2
+            else
+              echo "Warning: Failed to decrypt Attic client token" >&2
+              echo "Debug: SOPS error output: $SOPS_OUTPUT" >&2
+              # Continue anyway - token might already exist
+            fi
+          else
+            echo "Warning: Attic client token not found at $global_token_path" >&2
+          fi
+        fi
 
         # Generate the config template inline
         cat > "$config_file" <<'ATTIC_EOF'

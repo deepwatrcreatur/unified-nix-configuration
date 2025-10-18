@@ -30,12 +30,6 @@ in
       description = "Whether to decrypt GPG private key";
     };
 
-    enableAtticTokenDecryption = mkOption {
-      type = types.bool;
-      default = false;
-      description = "Whether to decrypt Attic client token";
-    };
-
     continueOnError = mkOption {
       type = types.bool;
       default = true;
@@ -146,29 +140,6 @@ in
    fi
  ''}
 
-    ${optionalString cfg.enableAtticTokenDecryption ''
-    # Decrypt Attic client token from global secrets
-    if [ -f "${cfg.secretsPath}/../../secrets/attic-client-token.yaml.enc" ]; then
-     echo "Decrypting global Attic client token..."
-     if [ -n "$DRY_RUN_CMD" ]; then
-       echo "DRY RUN: Would decrypt global Attic client token"
-     else
-       SOPS_OUTPUT=$(SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" sops -d --extract '["ATTIC_CLIENT_JWT_TOKEN"]' "${cfg.secretsPath}/../../secrets/attic-client-token.yaml.enc" 2>&1)
-       if [ $? -eq 0 ]; then
-         echo "$SOPS_OUTPUT" > $HOME/.config/sops/attic-client-token
-         chmod 600 $HOME/.config/sops/attic-client-token
-         echo "Global Attic client token decrypted successfully"
-       else
-         echo "Warning: Failed to decrypt global Attic client token"
-         echo "Debug: SOPS error output:"
-         echo "$SOPS_OUTPUT"
-         ${optionalString (!cfg.continueOnError) "exit 1"}
-       fi
-     fi
-   else
-     echo "Warning: Attic client token not found at global location"
-   fi
- ''}
 
     # Import GPG keys
     echo "Importing GPG keys..."
