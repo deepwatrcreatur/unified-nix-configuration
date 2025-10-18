@@ -32,7 +32,6 @@
     continueOnError = true;  # Be more forgiving for root
     enableBitwardenDecryption = true;
     enableGpgKeyDecryption = true;
-    enableAtticTokenDecryption = true;
   };
   
   home.file.".gnupg/public-key.asc" = {
