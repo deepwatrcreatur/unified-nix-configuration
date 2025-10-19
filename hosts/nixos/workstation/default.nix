@@ -80,10 +80,10 @@
     tokenFile = ../../../secrets/attic-client-token.yaml.enc;  # Use global token file
   };
 
-  # Enable snap support with Raindrop
+  # Enable snap support
   myModules.snap = {
     enable = true;
-    packages = [ "raindrop" ];
+    packages = [ ];
   };
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
