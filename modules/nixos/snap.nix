@@ -22,8 +22,7 @@ in
     services.snap.enable = true;
 
     # Add /snap/bin to system PATH
-    environment.systemPackages = [ pkgs.snapd ];
-    environment.variables = {
+    environment.sessionVariables = {
       PATH = [ "/snap/bin" ];
     };
 
