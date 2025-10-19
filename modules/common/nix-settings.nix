@@ -33,11 +33,12 @@
       warn-dirty = false;               # Less noisy for development
       flake-registry = "";              # Disable global flake registry
       
-      trusted-users = [ 
-        "root" 
+      trusted-users = [
+        "root"
         "@wheel"
         "@build"    # Build users
         "@admin"    # Admin users (macOS)
+        "deepwatrcreatur"  # Explicit user trust
       ];
       
       substituters = [
