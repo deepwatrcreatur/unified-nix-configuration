@@ -6,6 +6,7 @@
     ./networking.nix
     ../../../modules/nixos/common  # Common NixOS modules (SSH keys, etc.)
     ../../../modules/nixos/attic-client.nix  # Attic cache client
+    ../../../modules/nixos/snap.nix  # Snap package manager support
     ../../../modules/wezterm-config.nix
     # Desktop Environment - uncomment one:
     # ../../../modules/nixos/garuda-themed-kde.nix
@@ -77,6 +78,12 @@
   myModules.attic-client = {
     enable = true;  # Robust post-build hook that never fails builds
     tokenFile = ../../../secrets/attic-client-token.yaml.enc;  # Use global token file
+  };
+
+  # Enable snap support with Raindrop
+  myModules.snap = {
+    enable = true;
+    packages = [ "raindrop" ];
   };
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
