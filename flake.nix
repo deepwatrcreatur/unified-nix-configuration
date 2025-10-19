@@ -54,6 +54,11 @@
       inputs.home-manager.follows = "home-manager";
     };
 
+    nix-snapd = {
+      url = "github:nix-community/nix-snapd";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs = inputs@{ ... }:
@@ -119,6 +124,7 @@
               ];
             }
             inputs.determinate.nixosModules.default
+            inputs.nix-snapd.nixosModules.default
             ./modules
             hostPath
           ] ++ modules ++ extraModules;
