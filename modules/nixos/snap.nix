@@ -33,8 +33,8 @@ in
         serviceConfig = {
           Type = "oneshot";
           RemainAfterExit = true;
-          ExecCondition = "${pkgs.bash}/bin/bash -c '! ${pkgs.snap}/bin/snap list ${snapPkg} &>/dev/null'";
-          ExecStart = "${pkgs.snap}/bin/snap install ${snapPkg}";
+          ExecCondition = "${pkgs.bash}/bin/bash -c '! /run/current-system/sw/bin/snap list ${snapPkg} &>/dev/null'";
+          ExecStart = "/run/current-system/sw/bin/snap install ${snapPkg}";
         };
       };
     }) cfg.packages);
