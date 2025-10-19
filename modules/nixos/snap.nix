@@ -21,6 +21,12 @@ in
     # Enable snapd service
     services.snap.enable = true;
 
+    # Add /snap/bin to system PATH
+    environment.systemPackages = [ pkgs.snapd ];
+    environment.variables = {
+      PATH = [ "/snap/bin" ];
+    };
+
     # Install snap packages using systemd oneshot services
     # This runs after snapd is started
     systemd.services = builtins.listToAttrs (map (snapPkg: {
