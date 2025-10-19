@@ -21,10 +21,10 @@ in
     # Enable snapd service
     services.snap.enable = true;
 
-    # Add /snap/bin to system PATH
-    environment.sessionVariables = {
-      PATH = [ "/snap/bin" ];
-    };
+    # Add /snap/bin to system PATH (appended, not prepended, to avoid breaking wrappers)
+    environment.extraInit = ''
+      export PATH="$PATH:/snap/bin"
+    '';
 
     # Install snap packages using systemd oneshot services
     # This runs after snapd is started
