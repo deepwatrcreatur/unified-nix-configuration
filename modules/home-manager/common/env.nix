@@ -19,7 +19,7 @@
     };
     initExtra = ''
       # Determinate nixd completion
-      eval "$(determinate-nixd completion bash)"
+      eval "$(determinate-nixd --nix-bin /nix/var/nix/profiles/default/bin completion bash)"
     '';
   };
   programs.nushell = {
@@ -32,7 +32,7 @@
     shellInit = ''
       
       # Determinate nixd completion
-      eval "$(determinate-nixd completion fish)"
+      eval "$(determinate-nixd --nix-bin /nix/var/nix/profiles/default/bin completion fish)"
     '';
   };
   
@@ -41,7 +41,7 @@
     enable = true;
     initContent = ''
       # Determinate nixd completion
-      eval "$(determinate-nixd completion zsh)"
+      eval "$(determinate-nixd --nix-bin /nix/var/nix/profiles/default/bin completion zsh)"
     '';
   };
 }
