@@ -53,5 +53,23 @@
     };
   };
 
+  # Deskflow client service
+  systemd.user.services.deskflow = {
+    Unit = {
+      Description = "Deskflow Client";
+      After = [ "graphical-session.target" ];
+      Wants = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.deskflow}/bin/deskflow";
+      Restart = "on-failure";
+      RestartSec = "5";
+    };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
+  };
+
   home.stateVersion = "24.11";
 }
