@@ -33,6 +33,9 @@
   ];
 
   # Base VM configuration for inference machines
+  # Enable QEMU Guest Agent for better VM management
+  services.qemuGuest.enable = true;
+
   # Boot loader configuration for UEFI with systemd-boot
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;

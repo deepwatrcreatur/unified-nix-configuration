@@ -6,8 +6,11 @@
   ];
 
   networking.hostName = "omarchy-nix";
-  
+
   nixpkgs.hostPlatform = "x86_64-linux";
+
+  # Enable QEMU Guest Agent for better VM management
+  services.qemuGuest.enable = true;
 
   # Boot loader configuration
   boot.loader.systemd-boot.enable = true;

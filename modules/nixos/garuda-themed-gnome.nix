@@ -39,7 +39,7 @@
     wayland = false;  # Force X11 to avoid AMD GPU issues
   };
   services.displayManager.autoLogin = {
-    enable = false;
+    enable = true;
     user = "deepwatrcreatur";
   };
 
