@@ -1,4 +1,5 @@
 # modules/wezterm-config.nix - Your configuration file
+{ pkgs, ... }:
 {
   imports = [ ./wezterm.nix ];
   programs.wezterm = {
@@ -19,7 +20,6 @@
       nativeFullscreen = true;
       windowBackgroundBlur = 30;
     };
-    linux.enableWayland = true;
     keyBindings = [
       { key = "q"; mods = "CTRL"; action = "ToggleFullScreen"; }
       { key = "\\\""; mods = "CTRL"; action = "ClearScrollback 'ScrollbackAndViewport'"; }
