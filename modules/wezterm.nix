@@ -125,14 +125,6 @@ in {
       };
     };
 
-    # Linux specific options
-    linux = {
-      enableWayland = mkOption {
-        type = types.bool;
-        default = true;
-        description = "Enable Wayland support on Linux";
-      };
-    };
 
     keyBindings = mkOption {
       type = types.listOf (types.submodule {
@@ -242,10 +234,6 @@ in {
         ''}
         ''}
 
-        ${optionalString isLinux ''
-        -- Linux specific settings
-        config.enable_wayland = ${boolToString cfg.linux.enableWayland}
-        ''}
 
         -- Key bindings
         config.keys = {
