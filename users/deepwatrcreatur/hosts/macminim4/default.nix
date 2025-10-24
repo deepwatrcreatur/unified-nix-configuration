@@ -19,7 +19,7 @@
     cyberduck
     ffmpeg
     ghostty-bin  # Available via overlay from unstable
-    input-leap
+    # input-leap  # Temporarily disabled due to Wayland dependency issues on macOS
     megacmd
     obsidian
     obsidian-export
