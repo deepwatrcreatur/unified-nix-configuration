@@ -1,8 +1,0 @@
-# users/deepwatrcreatur/hosts/omarchy/justfile
-
-# Omarchy (home-manager only) - use home-manager or nh
-update:
-  nix run nixpkgs#home-manager -- switch --flake $NH_FLAKE#deepwatrcreatur
-
-nh-update:
-  nh home switch $NH_FLAKE#homeConfigurations.deepwatrcreatur.activationPackage

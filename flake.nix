@@ -37,16 +37,7 @@
       flake = false;
     };
 
-    hyprland = {
-      url = "github:hyprwm/Hyprland";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
-    omarchy-nix = {
-      url = "github:henrysipp/omarchy-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.home-manager.follows = "home-manager";
-    };
 
     plasma-manager = {
       url = "github:pjones/plasma-manager";
@@ -182,7 +173,6 @@
             inputs.sops-nix.nixosModules.sops
             inputs.home-manager.nixosModules.home-manager
             inputs.determinate.nixosModules.default
-            inputs.omarchy-nix.nixosModules.default
             {
               home-manager.extraSpecialArgs = homeManagerModuleArgs;
               home-manager.useGlobalPkgs = true;
