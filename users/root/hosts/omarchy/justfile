@@ -1,8 +1,0 @@
-# users/root/hosts/omarchy/justfile
-
-# Omarchy (home-manager only) - use home-manager or nh (root user)
-update:
-  nix run nixpkgs#home-manager -- switch --flake $NH_FLAKE#root
-
-nh-update:
-  nh home switch $NH_FLAKE#homeConfigurations.root.activationPackage
