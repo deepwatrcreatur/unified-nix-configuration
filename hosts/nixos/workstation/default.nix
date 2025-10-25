@@ -72,6 +72,7 @@
     nushell  # Stopgap: Add nushell at system level for ghostty compatibility
     nvtopPackages.amd  # GPU monitoring tool for AMD GPUs
     pavucontrol
+    rclone-browser
     vim
     vscode.fhs  # VSCode with FHS environment
   ];
