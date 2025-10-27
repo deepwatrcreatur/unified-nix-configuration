@@ -8,6 +8,7 @@
     bun
     comma
     curl
+    difftastic
     dig
     dua
     du-dust
