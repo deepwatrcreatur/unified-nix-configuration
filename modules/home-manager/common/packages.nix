@@ -13,6 +13,7 @@
     dua
     du-dust
     dust
+    dysk
     fastfetch
     file
     flow-control
