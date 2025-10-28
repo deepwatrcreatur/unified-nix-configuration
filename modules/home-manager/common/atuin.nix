@@ -1,7 +1,6 @@
 { config, pkgs, lib, ... }:
 
 let
-  globalSopsSecretsDir = toString (builtins.path { path = ../../../../secrets; });
   secretPath = config.sops.secrets."atuin-key".path;
 in
 {
@@ -14,7 +13,7 @@ in
 
   # Configure SOPS secret for Atuin key
   sops.secrets."atuin-key" = {
-    sopsFile = "${globalSopsSecretsDir}/atuin-key.enc";
+    sopsFile = ../../../secrets/atuin-key.enc;
     key = "atuin_key";
   };
 
