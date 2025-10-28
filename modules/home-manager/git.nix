@@ -178,7 +178,7 @@ in
     '';
 
     home.packages = with pkgs; [
-      gitAndTools.delta
+      delta
       mergiraf
       gh
       lazygit
