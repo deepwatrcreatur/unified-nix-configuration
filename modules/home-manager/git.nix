@@ -187,10 +187,9 @@ in
     programs.git = {
       enable = true;
       package = pkgs.git;
-      userName = "Anwer Khan";
-      userEmail = "deepwatrcreatur@gmail.com";
-
-      extraConfig = {
+      settings = {
+        user.name = "Anwer Khan";
+        user.email = "deepwatrcreatur@gmail.com";
         core.excludesfile = "${config.xdg.configHome}/git/ignore";
         init.defaultBranch = "main";
         core.editor = "hx";
@@ -236,17 +235,16 @@ in
         rerere.enabled = true;
         rerere.autoUpdate = true;
         tag.sort = "version:refname";
+        alias = {
+          co = "checkout";
+          br = "branch";
+          ci = "commit";
+          st = "status";
+          graph = "mergiraf";
+        };
       } // lib.optionalAttrs config.programs.git.gui.enable {
         diff.guitool = "meld";
         merge.guitool = "meld";
-      };
-
-      aliases = {
-        co = "checkout";
-        br = "branch";
-        ci = "commit";
-        st = "status";
-        graph = "mergiraf";
       };
 
       attributes = [

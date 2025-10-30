@@ -20,7 +20,7 @@
     set -gx GPG_TTY (tty)
   '';
 
-  programs.zsh.initExtra = ''
+  programs.zsh.initContent = ''
     export GPG_TTY=$(tty)
   '';
 

@@ -14,7 +14,7 @@
   home.homeDirectory = "/home/deepwatrcreatur";
 
   home.packages = with pkgs; [
-    bitwarden
+    bitwarden-desktop
     ffmpeg
     gitkraken
     deskflow

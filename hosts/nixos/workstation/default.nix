@@ -45,7 +45,7 @@
   services.openssh.enable = true;
 
   # Disable screen lock
-  services.logind.lidSwitch = "ignore";
+  services.logind.settings.Login.HandleLidSwitch = "ignore";
 
   security.sudo.wheelNeedsPassword = false;
   

@@ -25,5 +25,5 @@
 
   boot.initrd.systemd.fido2.enable = false;
 
-  system.stateVersion = "24.11";
+  system.stateVersion = "25.05";
 }

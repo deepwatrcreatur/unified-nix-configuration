@@ -15,7 +15,7 @@
   ];
 
   home.packages = with pkgs; [
-    bitwarden
+    bitwarden-desktop
     cyberduck
     ffmpeg
     ghostty-bin  # Available via overlay from unstable

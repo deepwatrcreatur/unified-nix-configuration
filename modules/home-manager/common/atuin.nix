@@ -24,7 +24,7 @@ in
     fi
   '';
 
-  programs.zsh.initExtra = ''
+  programs.zsh.initContent = ''
     if [[ -f "${secretPath}" ]]; then
       export ATUIN_KEY="$(/bin/cat ${secretPath})"
     fi

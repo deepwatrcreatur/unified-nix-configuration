@@ -10,7 +10,7 @@
   };
 
   # Configure GDM for X11 only when GNOME is enabled (Wayland disabled for AMD GPU stability)
-  services.xserver.displayManager.gdm = lib.mkIf (config.services.xserver.desktopManager.gnome.enable) {
+  services.xserver.displayManager.gdm = lib.mkIf (config.services.desktopManager.gnome.enable) {
     enable = true;
     # Disable Wayland to avoid AMD GPU crashes
     wayland = false;
