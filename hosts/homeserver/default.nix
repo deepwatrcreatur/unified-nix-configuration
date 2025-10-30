@@ -16,6 +16,9 @@
     ./sops.nix
     ./tplink-energy-monitor.nix
     ./users.nix
+    ./boot.nix
+    ./i18n.nix
+    ./nix-settings.nix
   ];
 
   nixpkgs.hostPlatform = "x86_64-linux";

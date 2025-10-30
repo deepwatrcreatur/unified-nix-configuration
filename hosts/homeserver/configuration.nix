@@ -3,8 +3,8 @@
 {
   imports = [
     "${modulesPath}/virtualisation/lxc-container.nix"
-    "../../../modules/nixos/services/iperf3.nix"
-    "../../nixos-lxc/lxc-systemd-suppressions.nix"
+    ../../modules/nixos/services/iperf3.nix
+    ../nixos-lxc/lxc-systemd-suppressions.nix
   ];
 
   # Ensure SSH is enabled for SOPS

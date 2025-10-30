@@ -10,7 +10,7 @@
     secrets = {
       API_KEY = {
         # Path is relative to this sops.nix file.
-        sopsFile = ../secrets/cloudflare-secrets.yaml;
+        sopsFile = ./secrets/cloudflare-secrets.yaml;
         # The format is needed if the secret is not a simple string.
         format = "yaml";
       };
