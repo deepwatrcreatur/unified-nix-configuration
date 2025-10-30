@@ -66,7 +66,7 @@ in
       eza
       file
       mediainfo
-      (if lib.hasAttr "poppler-utils" pkgs then pkgs.poppler-utils else pkgs.poppler_utils)
+      poppler-utils
       ffmpegthumbnailer
       unar
       miller

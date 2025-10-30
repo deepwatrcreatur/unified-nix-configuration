@@ -33,8 +33,8 @@
 
   # Enable GNOME desktop environment
   services.xserver.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
-  services.xserver.displayManager.gdm = {
+  services.desktopManager.gnome.enable = true;
+  services.displayManager.gdm = {
     enable = true;
     wayland = false;  # Force X11 to avoid AMD GPU issues
   };
@@ -65,7 +65,7 @@
   fonts = {
     packages = with pkgs; [
       noto-fonts
-      noto-fonts-emoji
+      noto-fonts-color-emoji
       # jetbrains-mono  # Temporarily commented out due to build issues
       fira-code
       fira-code-symbols

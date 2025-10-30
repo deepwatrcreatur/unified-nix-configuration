@@ -76,5 +76,5 @@
   ];
 
   # Set to the latest stable NixOS version you are using!
-  system.stateVersion = "24.11";
+  system.stateVersion = "25.05";
 }
