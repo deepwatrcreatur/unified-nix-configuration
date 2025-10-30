@@ -16,7 +16,6 @@
     ./sops.nix
     ./tplink-energy-monitor.nix
     ./users.nix
-    ./boot.nix
     ./nix-settings.nix
   ];
 
