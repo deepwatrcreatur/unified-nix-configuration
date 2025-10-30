@@ -15,15 +15,27 @@ in
 
     users.deepwatrcreatur = {
       imports = [
-        ../../../users/deepwatrcreatur 
-        ../../../users/deepwatrcreatur/hosts/homeserver
-        ../../../modules/home-manager
+        ../../users/deepwatrcreatur 
+        ../../users/deepwatrcreatur/hosts/homeserver
+        ../../modules/home-manager
                                      
       ];
       home.packages = (config.home.packages or []) ++ sharedPackages ++ [        
       ];
     };
 
+  };
+
+  # Systemd service for Home Manager
+  systemd.services.home-manager-deepwatrcreatur = {
+    description = "Home Manager activation for deepwatrcreatur";
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = "${pkgs.home-manager}/bin/home-manager switch --flake .#deepwatrcreatur@homeserver";
+      User = "deepwatrcreatur";
+    };
   };
   
 }

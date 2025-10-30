@@ -40,11 +40,11 @@ in
   # Configure sops to manage the secrets
   sops.secrets = {
     "kasa_collector_influxdb_token" = {
-      sopsFile = ../secrets/kasa-secrets.yaml;  # Path to your sops-encrypted file
+      sopsFile = ./secrets/kasa-secrets.yaml;  # Path to your sops-encrypted file
       owner = "root";
     };
     "kasa_collector_tplink_password" = {
-      sopsFile = ../secrets/kasa-secrets.yaml;  # Path to your sops-encrypted file
+      sopsFile = ./secrets/kasa-secrets.yaml;  # Path to your sops-encrypted file
       owner = "root";
     };
   };
