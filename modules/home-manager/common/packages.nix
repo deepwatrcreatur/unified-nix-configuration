@@ -11,7 +11,6 @@
     difftastic
     dig
     dua
-    du-dust
     dust
     dysk
     fastfetch
