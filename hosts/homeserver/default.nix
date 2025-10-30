@@ -17,7 +17,6 @@
     ./tplink-energy-monitor.nix
     ./users.nix
     ./boot.nix
-    ./i18n.nix
     ./nix-settings.nix
   ];
 
