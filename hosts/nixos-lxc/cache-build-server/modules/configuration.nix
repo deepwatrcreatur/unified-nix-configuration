@@ -17,6 +17,8 @@
   security.sudo.enable = true;
   security.sudo.wheelNeedsPassword = false;
 
+  security.wrappers.sudo.setuid = true;
+
   systemd.mounts = [{
     what = "debugfs";
     where = "/sys/kernel/debug";
