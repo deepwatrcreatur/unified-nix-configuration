@@ -71,10 +71,9 @@ in
           token=$(cat "$token_file" 2>/dev/null || echo "")
           if [[ -n "$token" ]]; then
             # Append to Determinate Nix's netrc if not already present
-            if [[ -w "$netrc_file" ]] || sudo test -w "$(dirname "$netrc_file")" 2>/dev/null; then
-              if ! sudo grep -q "machine ${cfg.netrcMachine}" "$netrc_file" 2>/dev/null; then
-                sudo tee -a "$netrc_file" > /dev/null <<EOF
-
+                      if [[ -w "$netrc_file" ]] || test -w "$(dirname "$netrc_file")" 2>/dev/null; then
+                        if ! grep -q "machine ${cfg.netrcMachine}" "$netrc_file" 2>/dev/null; then
+                          tee -a "$netrc_file" > /dev/null <<EOF
 machine ${cfg.netrcMachine}
 password $token
 EOF
