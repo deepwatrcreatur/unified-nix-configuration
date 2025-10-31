@@ -222,6 +222,14 @@
 
   };
 
+  # User and group for nix-serve
+  users.users.nix-serve = {
+    isSystemUser = true;
+    group = "nix-serve";
+  };
+
+  users.groups.nix-serve = {};
+
   # Generate signing keys for nix-serve
   systemd.services.nix-serve-keys = {
     description = "Generate Nix cache signing keys";
