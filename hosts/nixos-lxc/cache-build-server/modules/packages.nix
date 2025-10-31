@@ -36,6 +36,5 @@
     attic-client
     
     # Monitoring
-    nvtopPackages.full
   ];
 }
