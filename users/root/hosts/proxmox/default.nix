@@ -4,7 +4,7 @@
 {
   imports = [
     ../.. # default config for root
-    ./proxmox-fish-extra.nix
+    ./proxmox-shell-extra.nix
     ./justfile.nix
     ./nh.nix
     #../../../../modules/home-manager/env/standalone-hm.nix
