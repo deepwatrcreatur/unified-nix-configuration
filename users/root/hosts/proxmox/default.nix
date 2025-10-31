@@ -16,7 +16,6 @@
   # Add packages to base config for root user
   home.packages = with pkgs; [
     rsync
-    nix
   ];
 
   # Configure programs
@@ -37,4 +36,6 @@
   home.file.".gnupg/public-key.asc" = {
     source = ../../gpg-public-key.asc;
   };
+
+  sops.age.keyFile = "/root/.config/sops/age/keys.txt";
 }
