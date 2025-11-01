@@ -38,4 +38,6 @@
   };
 
   sops.age.keyFile = "/root/.config/sops/age/keys.txt";
+
+  services.gpg-agent.enableSshSupport = lib.mkForce false;
 }
