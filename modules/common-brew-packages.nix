@@ -7,6 +7,8 @@
   ];
 
   # Add more common packages here as needed
-  # casks = [];
+  casks = [
+    "claude-code"
+  ];
   # taps = [];
 }

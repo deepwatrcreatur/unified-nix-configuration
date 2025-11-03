@@ -10,7 +10,6 @@
       "doxx"
     ];
     casks = [
-      "claude"
       "discord"
       "gitkraken"
       "karabiner-elements"
