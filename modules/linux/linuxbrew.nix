@@ -88,7 +88,7 @@ in
       fi
 
       # Set up environment for this script
-      export PATH="${cfg.brewPrefix}/bin:${cfg.brewPrefix}/sbin:$PATH"
+      export PATH="${cfg.brewPrefix}/bin:${cfg.brewPrefix}/sbin:${pkgs.coreutils}/bin:$PATH"
       export HOMEBREW_PREFIX="${cfg.brewPrefix}"
       export HOMEBREW_CELLAR="${cfg.brewPrefix}/Cellar"
       export HOMEBREW_REPOSITORY="${cfg.brewPrefix}/Homebrew"
