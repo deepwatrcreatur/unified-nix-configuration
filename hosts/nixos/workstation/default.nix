@@ -12,6 +12,7 @@
     # ../../../modules/nixos/garuda-themed-kde.nix
     ../../../modules/nixos/garuda-themed-gnome.nix
     ../../../modules/linux/linuxbrew-system.nix
+    ../../../modules/linux/linuxbrew.nix
   ];
 
   # Enable Homebrew
