@@ -19,6 +19,9 @@
 
     # shellInit runs for ALL shells (login and non-login) - critical for SSH
     shellInit = ''
+      # Prioritize Homebrew binaries
+      fish_add_path --prepend --move /home/linuxbrew/.linuxbrew/bin
+
       # Ensure Nix paths are in PATH early for ALL sessions (especially SSH)
       fish_add_path --prepend --move ${config.home.homeDirectory}/.nix-profile/bin
       fish_add_path --prepend --move /nix/var/nix/profiles/default/bin
