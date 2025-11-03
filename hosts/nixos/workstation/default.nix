@@ -14,6 +14,13 @@
     ../../../modules/linux/linuxbrew-system.nix
   ];
 
+  # Enable Homebrew
+  programs.homebrew = {
+    enable = true;
+    brews = (import ../../../modules/common-brew-packages.nix).brews;
+    casks = (import ../../../modules/common-brew-packages.nix).casks;
+  };
+
   # Linux-specific wezterm configuration
   programs.wezterm.extraConfig = lib.mkAfter ''
     -- Default program: launch zellij with nushell as default shell (Linux path)
