@@ -6,11 +6,11 @@
     GPG_TTY = "(tty)";
   };
   home.sessionPath = [
+    "/home/linuxbrew/.linuxbrew/bin"
+    "/home/linuxbrew/.linuxbrew/sbin"
     "/run/wrappers/bin"  # NixOS security wrappers (sudo, etc.) must come first
     "${config.home.homeDirectory}/.nix-profile/bin"
     "${config.home.homeDirectory}/.cargo/bin"
-    "/home/linuxbrew/.linuxbrew/bin"
-    "/home/linuxbrew/.linuxbrew/sbin"
   ];
   
   # Set NH_FLAKE for bash specifically

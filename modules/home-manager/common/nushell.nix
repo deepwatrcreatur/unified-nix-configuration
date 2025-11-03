@@ -91,6 +91,7 @@
 
       # Set up PATH - ensure wrappers come before current-system to avoid broken sudo
       $env.PATH = ($env.PATH | prepend ([
+        "/home/linuxbrew/.linuxbrew/bin"
         "${config.home.homeDirectory}/.nix-profile/bin"
         "/nix/var/nix/profiles/default/bin"
         "/run/wrappers/bin"                # Put wrappers BEFORE current-system
