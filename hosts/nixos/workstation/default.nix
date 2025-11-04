@@ -60,9 +60,12 @@
   # Define your user account (SSH keys managed by common/ssh-keys.nix)
   users.users.deepwatrcreatur = {
     isNormalUser = true;
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "lp" ];
     shell = pkgs.fish;
   };
+
+  # Enable printing
+  services.printing.enable = true;
 
   home-manager.backupFileExtension = "backup";
   

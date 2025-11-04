@@ -8,8 +8,15 @@
     # Firewall configuration
     firewall = {
       enable = true;
-      allowedTCPPorts = [ 24800 ];  # Deskflow server
+      allowedTCPPorts = [ 24800 631 ];  # Deskflow server and CUPS
     };
+  };
+
+  # Enable Avahi for service discovery (e.g., printers)
+  services.avahi = {
+    enable = true;
+    nssmdns = true;
+    openFirewall = true;
   };
 
   # Enable Tailscale VPN
