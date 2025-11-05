@@ -1,5 +1,5 @@
 # modules/home-manager/git.nix
-{ config, pkgs, lib, inputs, ... }:
+{ config, pkgs, lib, inputs, hostName, ... }:
 let
   # Define shell aliases for reuse across shells
   shellAliases = {
@@ -182,7 +182,8 @@ in
       mergiraf
       gh
       lazygit
-    ] ++ lib.optionals config.programs.git.gui.enable [ meld ];
+      difftastic # Add difftastic to the list of packages
+    ] ++ lib.optionals (lib.elem hostName [ "workstation" "macminim4" ]) [ meld ];
 
     programs.git = {
       enable = true;
@@ -204,15 +205,6 @@ in
         commit.gpgsign = true;
         user.signingkey = "EF1502C27653693B";
 
-        # Diff drivers
-        "diff.elixir".command = "git diff --color-words";
-        "diff.rust".command = "git diff --color-words";
-        "diff.markdown".command = "git diff --color-words";
-        "diff.json".command = "git diff --color-words";
-        "diff.python".command = "git diff --color-words";
-        "diff.bash".command = "git diff --color-words";
-        "diff.nix".command = "git diff --color-words";
-
         # Delta settings
         delta.navigate = true;
         delta.syntax-theme = "Dracula";
@@ -226,6 +218,7 @@ in
         diff.algorithm = "histogram";
         diff.colorMoved = "default";
         diff.tool = "vimdiff";
+        diff.external = "${pkgs.difftastic}/bin/difft"; # Use difftastic as the external diff tool
         merge.conflictstyle = "diff3";
         merge.tool = "vimdiff";
         pull.rebase = true;
@@ -242,22 +235,10 @@ in
           st = "status";
           graph = "mergiraf";
         };
-      } // lib.optionalAttrs config.programs.git.gui.enable {
+      } // lib.optionalAttrs (lib.elem hostName [ "workstation" "macminim4" ]) {
         diff.guitool = "meld";
         merge.guitool = "meld";
       };
-
-      attributes = [
-        "*.ex diff=elixir"
-        "*.exs diff=elixir"
-        "*.rs diff=rust"
-        "*.md diff=markdown"
-        "*.json diff=json"
-        "*.py diff=python"
-        "*.sh diff=bash"
-        "*.nix diff=nix"
-        "*.lock -diff"
-      ];
 
       lfs.enable = true;
     };
