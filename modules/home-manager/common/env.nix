@@ -6,9 +6,9 @@
     GPG_TTY = "(tty)";
   };
   home.sessionPath = [
+    "/run/wrappers/bin"  # NixOS security wrappers (sudo, etc.) must come first
     "/home/linuxbrew/.linuxbrew/bin"
     "/home/linuxbrew/.linuxbrew/sbin"
-    "/run/wrappers/bin"  # NixOS security wrappers (sudo, etc.) must come first
     "${config.home.homeDirectory}/.nix-profile/bin"
     "${config.home.homeDirectory}/.cargo/bin"
   ];

@@ -96,6 +96,9 @@
     helpers = {
       # Standard NixOS system builder
       mkNixosSystem = { system ? "x86_64-linux", hostPath, modules ? [], extraModules ? [] }:
+        let
+          hostName = builtins.baseNameOf (toString hostPath);
+        in
         inputs.nixpkgs.lib.nixosSystem {
           inherit system;
           specialArgs = systemSpecialArgs;
@@ -107,7 +110,7 @@
             inputs.sops-nix.nixosModules.sops
             inputs.home-manager.nixosModules.home-manager
             {
-              home-manager.extraSpecialArgs = homeManagerModuleArgs;
+              home-manager.extraSpecialArgs = homeManagerModuleArgs // { inherit hostName; };
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.sharedModules = [
