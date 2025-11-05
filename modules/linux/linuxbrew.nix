@@ -81,7 +81,7 @@ in
 
     # Install Homebrew and manage packages
     system.activationScripts.homebrew = lib.mkIf (cfg.brews != [] || cfg.casks != [] || cfg.taps != []) ''
-      runuser -u ${config.users.users.deepwatrcreatur.name} -- env PATH=${pkgs.coreutils}/bin:${pkgs.curl}/bin:/bin /bin/bash -c "$(cat <<'EOF'
+      runuser -u ${config.users.users.deepwatrcreatur.name} -- /bin/bash -c "$(cat <<'EOF'
         # Install Homebrew if not present
         if [ ! -f \"${cfg.brewPrefix}/bin/brew\" ]; then
           echo \"Installing Homebrew...\"
@@ -89,7 +89,7 @@ in
         fi
 
         # Set up environment for this script
-        export PATH=\"${cfg.brewPrefix}/bin:\"${cfg.brewPrefix}/sbin:${pkgs.coreutils}/bin:$PATH\"
+        export PATH=\"${cfg.brewPrefix}/bin:\"${cfg.brewPrefix}/sbin:$PATH\"
         export HOMEBREW_PREFIX=\"${cfg.brewPrefix}\"
         export HOMEBREW_CELLAR=\"${cfg.brewPrefix}/Cellar\"
         export HOMEBREW_REPOSITORY=\"${cfg.brewPrefix}/Homebrew\"
