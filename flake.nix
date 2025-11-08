@@ -95,7 +95,7 @@
     # Helper functions to reduce boilerplate in individual host files
     helpers = {
       # Standard NixOS system builder
-      mkNixosSystem = { system ? "x86_64-linux", hostPath, modules ? [], extraModules ? [] }:
+      mkNixosSystem = { system ? "x86_64-linux", hostPath, modules ? [], extraModules ? [], isDesktop ? false }:
         let
           hostName = builtins.baseNameOf (toString hostPath);
         in
@@ -110,7 +110,7 @@
             inputs.sops-nix.nixosModules.sops
             inputs.home-manager.nixosModules.home-manager
             {
-              home-manager.extraSpecialArgs = homeManagerModuleArgs // { inherit hostName; };
+              home-manager.extraSpecialArgs = homeManagerModuleArgs // { inherit hostName isDesktop; };
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.sharedModules = [
@@ -125,7 +125,7 @@
         };
 
       # Standard Darwin system builder
-      mkDarwinSystem = { system ? "aarch64-darwin", hostPath, username, modules ? [] }:
+      mkDarwinSystem = { system ? "aarch64-darwin", hostPath, username, modules ? [], isDesktop ? true }:
         let
           # Extract just the hostname from the path for user config
           hostName = builtins.baseNameOf (toString hostPath);
@@ -151,7 +151,7 @@
                   ./modules/home-manager
                 ];
               };
-              home-manager.extraSpecialArgs = homeManagerModuleArgs;
+              home-manager.extraSpecialArgs = homeManagerModuleArgs // { inherit hostName isDesktop; };
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
 
