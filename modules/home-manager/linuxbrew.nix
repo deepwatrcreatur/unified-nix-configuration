@@ -19,22 +19,12 @@ in
   programs.bash.initExtra = mkIf config.programs.bash.enable ''
     if [ -f "${brewPrefix}/bin/brew" ]; then
       eval "$(${brewPrefix}/bin/brew shellenv)"
-    fi
-    # Ensure /run/wrappers/bin is at the front of PATH for NixOS security wrappers
-    if [ -d /run/wrappers/bin ]; then
-      export PATH="/run/wrappers/bin:$PATH"
-    fi
-  '';
+    fi'';
 
   programs.fish.shellInit = mkIf config.programs.fish.enable ''
     if test -f "${brewPrefix}/bin/brew"
       eval (${brewPrefix}/bin/brew shellenv)
-    end
-    # Ensure /run/wrappers/bin is at the front of PATH for NixOS security wrappers
-    if test -d /run/wrappers/bin
-      set -gx PATH /run/wrappers/bin $PATH
-    end
-  '';
+    end'';
 
   programs.nushell.extraConfig = mkIf config.programs.nushell.enable ''
     # Add Homebrew to PATH if it exists
@@ -43,12 +33,7 @@ in
       $env.HOMEBREW_PREFIX = "${brewPrefix}"
       $env.HOMEBREW_CELLAR = "${brewPrefix}/Cellar"
       $env.HOMEBREW_REPOSITORY = "${brewPrefix}/Homebrew"
-    }
-    # Ensure /run/wrappers/bin is at the front of PATH for NixOS security wrappers
-    if ("/run/wrappers/bin" | path exists) {
-      $env.PATH = ($env.PATH | prepend "/run/wrappers/bin")
-    }
-  '';
+    }'';
 
   # Install script for common packages
   home.file.".local/bin/install-brew-packages" = {
