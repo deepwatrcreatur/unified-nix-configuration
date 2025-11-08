@@ -1,5 +1,5 @@
 # modules/home-manager/git.nix
-{ config, pkgs, lib, inputs, hostName, ... }:
+{ config, pkgs, lib, inputs, hostName, isDesktop ? false, ... }:
 let
   # Define shell aliases for reuse across shells
   shellAliases = {
@@ -183,7 +183,7 @@ in
       gh
       lazygit
       difftastic # Add difftastic to the list of packages
-    ] ++ lib.optionals (lib.elem hostName [ "workstation" "macminim4" ]) [ meld ];
+    ] ++ lib.optionals isDesktop [ meld ];
 
     programs.git = {
       enable = true;
@@ -235,7 +235,7 @@ in
           st = "status";
           graph = "mergiraf";
         };
-      } // lib.optionalAttrs (lib.elem hostName [ "workstation" "macminim4" ]) {
+      } // lib.optionalAttrs isDesktop {
         diff.guitool = "meld";
         merge.guitool = "meld";
       };
