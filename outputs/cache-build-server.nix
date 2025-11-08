@@ -1,36 +1,18 @@
 # outputs/cache-build-server.nix - NixOS Build Server LXC Container
-{ helpers, importAllModulesInDir, inputs, nixpkgsLib, systemSpecialArgs, homeManagerModuleArgs, commonOverlays, commonNixpkgsConfig, ... }:
+{ helpers, ... }:
 {
-  # LXC configuration without standard helpers - following nixos_lxc_without_determinate pattern
-  nixosConfigurations.cache-build-server = nixpkgsLib.nixosSystem {
+  nixosConfigurations.cache-build-server = helpers.mkNixosSystem {
     system = "x86_64-linux";
-    specialArgs = systemSpecialArgs;
-    modules = [
-      {
-        nixpkgs.overlays = commonOverlays;
-        nixpkgs.config = commonNixpkgsConfig;
-      }
+    hostPath = ../hosts/nixos-lxc/cache-build-server;
+    isDesktop = false;
+    extraModules = [
       # Configure SOPS age keyFile before importing sops-nix module
       {
         sops.age.keyFile = "/var/lib/sops/age/keys.txt";
       }
-      inputs.sops-nix.nixosModules.sops
-      inputs.home-manager.nixosModules.home-manager
-      {
-        home-manager.extraSpecialArgs = homeManagerModuleArgs;
-        home-manager.useGlobalPkgs = true;
-        home-manager.useUserPackages = true;
-        home-manager.sharedModules = [
-          inputs.sops-nix.homeManagerModules.sops
-        ];
-      }
-      inputs.determinate.nixosModules.default
       ../modules/nixos/lxc-modules.nix  # Use LXC-specific modules instead of regular ones
       ../hosts/nixos-lxc/lxc-systemd-suppressions.nix
       ../hosts/nixos  # Base NixOS config
-    ] ++ [
-      ../hosts/nixos-lxc/cache-build-server/modules/configuration.nix
-      # Keep working nixos_lxc modules for now
-    ] ++ (importAllModulesInDir ../hosts/nixos-lxc/cache-build-server/modules);
+    ];
   };
 }
