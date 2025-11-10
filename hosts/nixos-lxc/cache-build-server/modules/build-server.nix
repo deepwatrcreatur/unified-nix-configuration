@@ -148,7 +148,7 @@
 
           # Configure upstream cache
           if ${pkgs.attic-client}/bin/attic cache configure cache-local \
-              --upstream-cache-key-names cache.nixos.org-1 \
+              --upstream-cache-key-name cache.nixos.org-1 \
               --upstream-cache-uris https://cache.nixos.org; then
             echo "Cache upstream configuration successful"
           else
