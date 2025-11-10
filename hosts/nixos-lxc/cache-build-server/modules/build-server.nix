@@ -98,23 +98,35 @@
   systemd.services.attic-init = {
     description = "Initialize Attic cache";
     wantedBy = [ "multi-user.target" ];
-    after = [ "atticd.service" "attic-client-config.service" ];
+    after = [ "atticd.service" "home-manager-deepwatrcreatur.service" ];
+    requires = [ "home-manager-deepwatrcreatur.service" ];
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
     };
     script = ''
       # Wait for atticd to be ready
-      sleep 15
+      echo "Waiting for atticd to be ready..."
+      for i in {1..30}; do
+        if ${pkgs.curl}/bin/curl -s -f http://localhost:5001/; then
+          echo "atticd is ready."
+          break
+        fi
+        if [ $i -eq 30 ]; then
+          echo "atticd failed to start after 30 seconds."
+          exit 1
+        fi
+        sleep 1
+      done
 
       # Use the client configuration with SOPS token
       export ATTIC_CONFIG="/etc/attic/config.toml"
 
       echo "Initializing Attic cache with SOPS-managed authentication..."
 
-      # Check if SOPS token is available
+      # Check if SOPS token is available and not empty
       SOPS_TOKEN_PATH="/home/deepwatrcreatur/.config/sops/attic-client-token"
-      if [[ -f "$SOPS_TOKEN_PATH" ]]; then
+      if [[ -s "$SOPS_TOKEN_PATH" ]]; then
         ATTIC_TOKEN=$(cat "$SOPS_TOKEN_PATH")
 
         # Login using the SOPS-managed token
@@ -128,6 +140,7 @@
               echo "Cache cache-local created successfully"
             else
               echo "Failed to create cache-local"
+              exit 1
             fi
           else
             echo "Cache cache-local already exists"
@@ -148,7 +161,7 @@
           exit 1
         fi
       else
-        echo "Warning: SOPS attic-client-token not found"
+        echo "Warning: SOPS attic-client-token not found or is empty"
         echo "Skipping Attic cache initialization - configure secret first"
         exit 0
       fi
