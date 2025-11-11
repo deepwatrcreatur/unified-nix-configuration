@@ -43,7 +43,6 @@
     wget
     xdg-ninja
     xh
-    xq
     yamllint
     yq
   ];
