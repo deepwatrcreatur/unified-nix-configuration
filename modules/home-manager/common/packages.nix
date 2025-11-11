@@ -41,7 +41,7 @@
     sshs
     tmux
     wget
-    xdg-xdg-ninja
+    xdg-ninja
     xh
     xq
     yamllint
