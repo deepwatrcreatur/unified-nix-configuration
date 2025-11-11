@@ -6,6 +6,7 @@
     bottom
     btop
     bun
+    cloc
     comma
     curl
     difftastic
@@ -16,15 +17,19 @@
     fastfetch
     file
     flow-control
+    gdu
     glow
     gping
     grex
     htop
     iperf3
+    jless
+    jnv
     jq
     just
     killall
     lsd
+    navi
     ncdu
     neovim
     netcat
@@ -36,7 +41,9 @@
     sshs
     tmux
     wget
+    xdg-xdg-ninja
     xh
+    xq
     yamllint
     yq
   ];
