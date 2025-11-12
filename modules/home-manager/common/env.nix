@@ -7,9 +7,9 @@
   };
   home.sessionPath = [
     "/run/wrappers/bin"  # NixOS security wrappers (sudo, etc.) must come first
+    "${config.home.homeDirectory}/.nix-profile/bin"
     "/home/linuxbrew/.linuxbrew/bin"
     "/home/linuxbrew/.linuxbrew/sbin"
-    "${config.home.homeDirectory}/.nix-profile/bin"
     "${config.home.homeDirectory}/.cargo/bin"
   ];
   
