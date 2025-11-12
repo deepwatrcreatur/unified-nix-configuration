@@ -9,8 +9,7 @@
     nix-darwin.url = "github:LnL7/nix-darwin/master";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
 
-    home-manager.url = "github:nix-community/home-manager/master";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    
 
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
@@ -19,6 +18,10 @@
     determinate.inputs.nixpkgs.follows = "nixpkgs";
 
     mac-app-util.url = "github:hraban/mac-app-util";
+    mac-app-util.inputs.nixpkgs.follows = "nixpkgs";
+    mac-app-util.inputs.flake-utils.follows = "flake-utils";
+
+    flake-utils.url = "github:numtide/flake-utils";
 
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
 
@@ -40,9 +43,8 @@
 
 
     plasma-manager = {
-      url = "github:pjones/plasma-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.home-manager.follows = "home-manager";
+    url = "github:pjones/plasma-manager";
+    inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nix-snapd = {
@@ -98,17 +100,22 @@
       mkNixosSystem = { system ? "x86_64-linux", hostPath, modules ? [], extraModules ? [], isDesktop ? false }:
         let
           hostName = builtins.baseNameOf (toString hostPath);
+            # Fetch home-manager at build time
+            home-manager = builtins.fetchTarball {
+              url = "https://github.com/nix-community/home-manager/archive/master.tar.gz";
+            sha256 = "";
+          };
         in
         inputs.nixpkgs.lib.nixosSystem {
           inherit system;
           specialArgs = systemSpecialArgs;
           modules = [
             {
-              nixpkgs.overlays = commonOverlays;
-              nixpkgs.config = commonNixpkgsConfig;
+            nixpkgs.overlays = commonOverlays;
+            nixpkgs.config = commonNixpkgsConfig;
             }
             inputs.sops-nix.nixosModules.sops
-            inputs.home-manager.nixosModules.home-manager
+            (import "${home-manager}/nixos")
             {
               home-manager.extraSpecialArgs = homeManagerModuleArgs // { inherit hostName isDesktop; };
               home-manager.useGlobalPkgs = true;
@@ -121,7 +128,7 @@
             inputs.nix-snapd.nixosModules.default
             ./modules
             hostPath
-          ] ++ modules ++ extraModules;
+      ] ++ modules ++ extraModules;
         };
 
       # Standard Darwin system builder
@@ -129,20 +136,25 @@
         let
           # Extract just the hostname from the path for user config
           hostName = builtins.baseNameOf (toString hostPath);
+            # Fetch home-manager at build time
+            home-manager = builtins.fetchTarball {
+              url = "https://github.com/nix-community/home-manager/archive/master.tar.gz";
+            sha256 = "1jvmr6n8hf8ibjczqlg5kw89zkama59rqc4rj2zas7fpn8c3yrdp";
+          };
         in
         inputs.nix-darwin.lib.darwinSystem {
           inherit system;
           specialArgs = systemSpecialArgs // {
-            inherit (inputs) nix-homebrew;
+          inherit (inputs) nix-homebrew;
           };
           modules = [
             {
-              nixpkgs.overlays = commonOverlays;
-              nixpkgs.config = commonNixpkgsConfig;
+            nixpkgs.overlays = commonOverlays;
+            nixpkgs.config = commonNixpkgsConfig;
             }
             ./modules
             hostPath
-            inputs.home-manager.darwinModules.home-manager
+            (import "${home-manager}/nix-darwin")
             ({ pkgs, ... }: {
               home-manager.users.${username} = {
                 imports = [
@@ -157,24 +169,31 @@
 
               users.users.${username} = {
                 name = username;
-                home = "/Users/${username}";
-                shell = pkgs.fish;
+              home = "/Users/${username}";
+              shell = pkgs.fish;
               };
-            })
-          ] ++ modules;
+        })
+      ] ++ modules;
         };
 
       mkOmarchySystem = { system ? "x86_64-linux", hostPath, modules ? [], extraModules ? [] }:
+        let
+        # Fetch home-manager at build time
+        home-manager = builtins.fetchTarball {
+            url = "https://github.com/nix-community/home-manager/archive/master.tar.gz";
+            sha256 = "1jvmr6n8hf8ibjczqlg5kw89zkama59rqc4rj2zas7fpn8c3yrdp";
+          };
+        in
         inputs.nixpkgs.lib.nixosSystem {
           inherit system;
           specialArgs = systemSpecialArgs;
           modules = [
             {
-              nixpkgs.overlays = commonOverlays;
-              nixpkgs.config = commonNixpkgsConfig;
+            nixpkgs.overlays = commonOverlays;
+            nixpkgs.config = commonNixpkgsConfig;
             }
             inputs.sops-nix.nixosModules.sops
-            inputs.home-manager.nixosModules.home-manager
+            (import "${home-manager}/nixos")
             inputs.determinate.nixosModules.default
             {
               home-manager.extraSpecialArgs = homeManagerModuleArgs;

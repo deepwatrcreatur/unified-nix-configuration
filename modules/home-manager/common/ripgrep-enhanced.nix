@@ -258,32 +258,23 @@ in
       }
     '';
 
-    programs.fish.interactiveShellInit = mkIf cfg.enableFishIntegration ''
-      # Ripgrep with fzf integration
-      function rgfzf
-        if test (count $argv) -eq 0
-          echo "Usage: rgfzf <search_pattern> [rg_options...]"
-          return 1
-        end
-        rg --color=always --line-number --no-heading --smart-case $argv |
-          fzf --ansi \
-              --color "hl:-1:underline,hl+:-1:underline:reverse" \
-              --delimiter : \
-              --preview 'bat --color=always {1} --highlight-line {2}' \
-              --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' \
-              --bind 'enter:become(nvim {1} +{2})'
-      end
-
-      # Search and edit with ripgrep
-      function rge
-        set -l result (rg --no-heading --line-number $argv[1] | fzf --delimiter=: --preview 'bat --color=always --line-range {2}: {1}')
-        if test -n "$result"
-          set -l file (echo $result | cut -d: -f1)
-          set -l line (echo $result | cut -d: -f2)
-          $EDITOR $file +$line
-        end
-      end
+    programs.fish.functions = mkIf cfg.enableFishIntegration {
+    rgfzf = ''
+      if test (count $argv) -eq 0
+      echo "Usage: rgfzf <search_pattern> [rg_options...]"
+    return 1
+    end
+    rg --color=always --line-number --no-heading --smart-case $argv | fzf --ansi --color "hl:-1:underline,hl+:-1:underline:reverse" --delimiter : --preview 'bat --color=always {1} --highlight-line {2}' --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' --bind 'enter:become(nvim {1} +{2})'
     '';
+    rge = ''
+    set -l result (rg --no-heading --line-number $argv[1] | fzf --delimiter=: --preview 'bat --color=always --line-range {2}: {1}')
+    if test -n "$result"
+    set -l file (echo $result | cut -d: -f1)
+    set -l line (echo $result | cut -d: -f2)
+    $EDITOR $file +$line
+      end
+      '';
+    };
 
     # Nushell integration with advanced functions
     programs.nushell.extraConfig = mkIf cfg.enableNushellIntegration ''
