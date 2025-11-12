@@ -2,8 +2,8 @@
 
 {
   imports = [
-    ../../default.nix  # Import main user config (includes SSH keys and common modules)
     mac-app-util.homeManagerModules.default
+    ../../default.nix  # Import main user config (includes SSH keys and common modules)
     ../../../../modules/home-manager/ghostty
     #../../../../modules/home-manager/zed.nix
     ../../../../modules/home-manager/gpg-mac.nix
