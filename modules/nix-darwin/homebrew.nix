@@ -37,7 +37,6 @@ in {
         "bitwarden-cli"
       ] ++ (import ../common-brew-packages.nix).brews ++ config.homebrew.hostSpecific.brews;
       casks = [
-        "claude-code"
         "coteditor"
         "font-fira-code"
         "ghostty"
