@@ -197,14 +197,14 @@
 
 
       # Standard Home Manager configuration builder
-      mkHomeConfig = { system ? "x86_64-linux", userPath, modules ? [] }:
+      mkHomeConfig = { system ? "x86_64-linux", userPath, modules ? [], isDesktop ? false }:
         inputs.home-manager.lib.homeManagerConfiguration {
           pkgs = import inputs.nixpkgs {
             inherit system;
             config = commonNixpkgsConfig;
             overlays = commonOverlays;
           };
-          extraSpecialArgs = homeManagerModuleArgs;
+          extraSpecialArgs = homeManagerModuleArgs // { inherit isDesktop; };
           modules = [
             inputs.sops-nix.homeManagerModules.sops
             userPath
