@@ -86,6 +86,7 @@
     rclone-browser
     vim
     vscode.fhs  # VSCode with FHS environment
+    inputs.zen-browser.packages.${pkgs.system}.default
   ];
 
   # Enable nix-ld for running dynamically linked executables (like homebrew packages)
