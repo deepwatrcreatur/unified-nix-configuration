@@ -45,6 +45,14 @@ in
         path = "${config.xdg.configHome}/sops/BW_SESSION";
         mode = "0600";
       };
+      # TODO: Fix bitwarden_data_json decryption - sops-install-secrets failing with "no binary data found in tree"
+      # This error is causing all secrets to fail. Once fixed, re-enable this:
+      # secrets."bitwarden_data_json" = {
+      #   sopsFile = "${sopsSecretsDir}/data.json.enc";
+      #   format = "binary";
+      #   path = "${config.home.homeDirectory}/.config/Bitwarden CLI/data.json";
+      #   mode = "0600";
+      # };
       secrets."bitwarden_data_json" = {
         sopsFile = "${sopsSecretsDir}/data.json.enc";
         format = "binary";
