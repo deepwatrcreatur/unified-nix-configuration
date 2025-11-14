@@ -14,7 +14,7 @@ font-feature                   = dlig
 font-feature                   = ss05
 
 font-thicken                   = false
-font-size                      = 24
+font-size                      = 16
 window-inherit-font-size       = false
 
 # Look and Feel
