@@ -145,6 +145,7 @@
               nixpkgs.overlays = commonOverlays;
               nixpkgs.config = commonNixpkgsConfig;
             }
+            inputs.sops-nix.darwinModules.sops
             ./modules
             hostPath
             inputs.home-manager.darwinModules.home-manager
