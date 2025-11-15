@@ -8,4 +8,7 @@
     ./ssh-keys.nix
     ./sops.nix
   ];
+
+  # Increase the file descriptor limit for the Nix daemon
+  systemd.services.nix-daemon.serviceConfig.LimitNOFILE = 200000;
 }
