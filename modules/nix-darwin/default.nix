@@ -32,7 +32,16 @@ in
   nixpkgs.config.allowUnfree = true;
 
   # Increase file descriptor limits for Nix builds
-  launchd.maxOpenFiles = 200000;
+  launchd.daemons.limit-maxfiles = {
+    script = ''
+      launchctl limit maxfiles 65536 200000
+    '';
+    serviceConfig = {
+      Label = "limit.maxfiles";
+      RunAtLoad = true;
+      KeepAlive = false;
+    };
+  };
 
   system.defaults = {
     NSGlobalDomain = {
@@ -43,6 +52,10 @@ in
       LSQuarantine = false;
     };
   };
+
+  system.activationScripts.extraActivation.text = ''
+    launchctl limit maxfiles 65536 200000 2>/dev/null || true
+  '';
 
   system.activationScripts.postActivation.text = ''
     /usr/bin/defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticCheckEnabled -bool false
