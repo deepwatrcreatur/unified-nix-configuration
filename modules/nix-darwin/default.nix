@@ -31,15 +31,16 @@ in
 
   nixpkgs.config.allowUnfree = true;
 
-  # Increase file descriptor limits for Nix builds
-  launchd.daemons.limit-maxfiles = {
-    script = ''
-      launchctl limit maxfiles 65536 200000
-    '';
+  # Increase file descriptor limits for Nix builds to 200000
+  # nix-darwin doesn't have a built-in option for this, so we use launchd daemon approach
+  # This sets both soft and hard limits via launchctl at boot time
+  launchd.daemons."org.nix-community.limit-maxfiles" = {
+    script = "/bin/launchctl limit maxfiles 65536 200000";
     serviceConfig = {
-      Label = "limit.maxfiles";
       RunAtLoad = true;
       KeepAlive = false;
+      StandardOutPath = "/var/log/nix-daemon-limit.log";
+      StandardErrorPath = "/var/log/nix-daemon-limit.log";
     };
   };
 
@@ -53,8 +54,10 @@ in
     };
   };
 
+  # Also set limits during system activation as a fallback
   system.activationScripts.extraActivation.text = ''
-    launchctl limit maxfiles 65536 200000 2>/dev/null || true
+    echo "Setting launchctl file descriptor limits..."
+    /bin/launchctl limit maxfiles 65536 200000 2>/dev/null || true
   '';
 
   system.activationScripts.postActivation.text = ''
