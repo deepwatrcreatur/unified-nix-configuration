@@ -83,6 +83,11 @@
           # Example: some-package = stable.some-package;
         })
       # Grok CLI overlay
+      (final: prev: {
+        fish = prev.fish.overrideAttrs (oldAttrs: {
+          doCheck = false;
+        });
+      })
     ];
 
     # SpecialArgs for NixOS and Darwin SYSTEM modules.
