@@ -1,8 +1,8 @@
-{ config, pkgs, mac-app-util, ... }:
+{ config, pkgs, mac-app-util ? null, ... }:
 
 {
   imports = [
-    mac-app-util.homeManagerModules.default
+    # mac-app-util.homeManagerModules.default  # TODO: Temporarily disabled - sbcl build failure
     ../../default.nix  # Import main user config (includes SSH keys and common modules)
     ../../../../modules/home-manager/ghostty
     #../../../../modules/home-manager/zed.nix
