@@ -1,61 +1,42 @@
-# CLAUDE.md
+# Claude's Guide to the Unified Nix Configuration
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Hello! This is a guide to help you understand and work with this Nix configuration repository.
 
-## Repository Overview
+## Repository Purpose
 
-This is a unified multi-host Nix configuration repository that manages NixOS, nix-darwin (macOS), and Home Manager configurations across different machines. The flake uses a modular architecture with helper functions to reduce boilerplate.
+This repository uses Nix to manage system and user configurations for multiple machines (NixOS, macOS). It's built with Nix Flakes for reproducibility.
 
-## Build and Deployment Commands
+## Key Technologies
 
-### macOS (nix-darwin) - macminim4
-```bash
-# Standard rebuild (from host directory)
-darwin-rebuild switch --flake ~/unified-nix-configuration/.#macminim4
+-   **Nix/NixOS:** For system and package management.
+-   **home-manager:** For user-specific dotfiles and packages.
+-   **Nix Flakes:** For reproducible builds.
+-   **sops-nix:** For managing secrets.
 
-# Using nh (preferred)
-nh darwin switch
-```
+## How It's Organized
 
-### NixOS Hosts
-```bash
-# Standard rebuild for homeserver
-sudo nixos-rebuild switch --flake /path/to/repo#homeserver
+-   `flake.nix`: The main entry point.
+-   `hosts/`: Configurations for each specific machine (e.g., `homeserver`, `macminim4`).
+-   `modules/`: Shared and reusable configuration modules.
+-   `users/`: User-specific settings.
+-   `secrets/`: Encrypted secrets.
 
-# Using nh (where available)
-nh os switch
+## Common Tasks
 
-# For LXC containers
-nix --experimental-features 'nix-command flakes' run 'github:viperML/nh' -- os switch /path/to/repo
-```
+### Applying Configurations
 
-### Home Manager (standalone)
-```bash
-# For standalone home-manager configs
-nh home switch /path/to/repo#homeConfigurations.username.activationPackage
-```
+-   **NixOS:** `sudo nixos-rebuild switch --flake .#<hostname>`
+-   **macOS:** `darwin-rebuild switch --flake .#<hostname>`
 
-## Architecture
+Replace `<hostname>` with the target machine's name.
 
-### Core Structure
-- `flake.nix`: Main entry point with helper functions for system builders
-- `outputs/`: Individual host output definitions that use the helpers
-- `hosts/`: Host-specific configurations organized by type
-- `modules/`: Shared modules organized by platform (common, nix-darwin, nixos, home-manager)
-- `users/`: User-specific Home Manager configurations
+### Adding a new package to a system
 
-### Helper Functions (flake.nix:86-190)
-- `mkDarwinSystem`: Standard nix-darwin system builder with Home Manager integration
-- `mkNixosSystem`: Standard NixOS system builder with Home Manager integration
-- `mkOmarchySystem`: Specialized NixOS builder for omarchy-nix integration
-- `mkHomeConfig`: Standalone Home Manager configuration builder
+1.  Find the correct host configuration file in `hosts/`.
+2.  Add the package to the `environment.systemPackages` list.
+3.  Rebuild the system configuration using the commands above.
 
-### Host Categories
-- **macOS**: `hosts/macminim4/` - Darwin configuration
-- **NixOS**: `hosts/homeserver/`, `hosts/nixos/` - Standard NixOS hosts
-- **LXC**: `hosts/nixos-lxc/` - Container-specific configurations
-- **Infisical**: `hosts/infisical/` - Secrets management host
-
+### A Note on Secrets
 ### Module Organization
 - `modules/common/`: Cross-platform shared modules (packages, nix-settings, etc.) - imported by all hosts
 - `modules/nix-darwin/`: macOS-specific modules (dock, finder, security) - auto-imported only by Darwin hosts via modules/nix-darwin/default.nix
