@@ -21,9 +21,17 @@ The primary goal of this repository is to provide a single source of truth for s
 ## Directory Structure
 
 -   `hosts/`: Contains the main configuration for each individual host. Each host has a dedicated directory with its specific NixOS or home-manager configuration.
+  - Organized by platform: `nixos/`, `macminim4/` (darwin), `nixos-lxc/`, `infisical/`
+  - Each host imports platform-specific modules automatically
 -   `modules/`: Contains reusable Nix modules that are shared across different hosts. This includes common packages, system settings, and user configurations.
+  - `common/`: Cross-platform modules imported by all hosts
+  - `nix-darwin/`: macOS-specific modules (auto-imported only by Darwin hosts)
+  - `nixos/`: Linux-specific modules (auto-imported only by NixOS hosts)
+  - `home-manager/`: User environment modules
 -   `users/`: Contains user-specific configurations, such as dotfiles, packages, and services.
+  - Organized by username with host-specific overrides in `users/{username}/hosts/{hostname}/`
 -   `secrets/`: Contains encrypted secret files managed by `sops`.
+-   `outputs/`: Host output definitions using helper functions from flake.nix
 
 ## Getting Started
 
