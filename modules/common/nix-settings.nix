@@ -30,7 +30,6 @@ in
       builders-use-substitutes = true;  # Builders can use binary caches
       use-cgroups = true;               # Better build isolation
       lazy-trees = true;                # Better flake performance
-      max-open-files = 200000;          # Increase file descriptor limit for Nix builds
       
       # Garbage collection and derivation settings
       keep-outputs = true;
