@@ -85,6 +85,7 @@
     nvtopPackages.amd  # GPU monitoring tool for AMD GPUs
     pavucontrol
     rclone-browser
+    usbutils
     vim
     vscode.fhs  # VSCode with FHS environment
     inputs.zen-browser.packages.${pkgs.system}.default
