@@ -9,4 +9,13 @@
   environment.systemPackages = with pkgs; [
     # No extra cosmic extensions for now, as they might be outdated
   ];
+
+  # Enable XDG portals for COSMIC
+  xdg.portal = {
+    enable = true;
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-cosmic
+      xdg-desktop-portal-gtk
+    ];
+  };
 }
