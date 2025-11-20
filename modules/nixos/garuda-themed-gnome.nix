@@ -38,10 +38,10 @@
     enable = true;
     wayland = false;  # Force X11 to avoid AMD GPU issues
   };
-  services.displayManager.autoLogin = {
-    enable = true;
-    user = "deepwatrcreatur";
-  };
+  # services.displayManager.autoLogin = {
+  #   enable = true;
+  #   user = "deepwatrcreatur";
+  # };
 
   # GTK theming for applications
   programs.dconf.enable = true;

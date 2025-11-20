@@ -6,7 +6,7 @@
   services.xserver = {
     enable = true;
     # Enable X11 session support for GNOME
-    desktopManager.gnome.sessionPath = [ pkgs.gnome.gnome-session_48 ];
+    desktopManager.gnome.sessionPath = [ pkgs.gnome.gnome-session ];
   };
 
   # Configure GDM for X11 only when GNOME is enabled (Wayland disabled for AMD GPU stability)
@@ -30,7 +30,7 @@
 
   # Ensure both session types are available in the greeter
   environment.systemPackages = with pkgs; [
-    gnome.gnome-session_48  # Required for GNOME on X11
+    gnome.gnome-session  # Required for GNOME on X11
   ];
 
   # XDG portals for both Wayland and X11 compatibility
