@@ -10,8 +10,9 @@
     ../../../modules/wezterm-config.nix
     # Desktop Environment - uncomment one:
     # ../../../modules/nixos/garuda-themed-kde.nix
-    # ../../../modules/nixos/garuda-themed-gnome.nix # GNOME with X11 for deskflow compatibility
-    ../../../modules/nixos/cosmic.nix # COSMIC desktop environment
+    ../../../modules/nixos/garuda-themed-gnome.nix # GNOME with X11 for deskflow compatibility
+    ../../../modules/nixos/x11-session-support.nix # Force X11 for deskflow compatibility
+    # ../../../modules/nixos/cosmic.nix # COSMIC desktop environment
     ../../../modules/linux/linuxbrew-system.nix
     ../../../modules/linux/linuxbrew.nix
   ];

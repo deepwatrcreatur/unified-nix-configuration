@@ -22,7 +22,9 @@
     # As a workaround, we explicitly tell xdg-desktop-portal to use the gtk backend
     # for screen sharing.
     config = {
-      "org.freedesktop.impl.portal.ScreenCast" = "gtk";
+      common = {
+        "org.freedesktop.impl.portal.ScreenCast" = "gtk";
+      };
     };
   };
 }
