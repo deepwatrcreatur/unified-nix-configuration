@@ -14,8 +14,15 @@
   xdg.portal = {
     enable = true;
     extraPortals = with pkgs; [
+      xdg-desktop-portal-cosmic
       xdg-desktop-portal-gnome
+      xdg-desktop-portal-gtk
     ];
-    config.common.default = "gnome";
+    # The cosmic portal implementation for screen capture is not working correctly.
+    # As a workaround, we explicitly tell xdg-desktop-portal to use the gtk backend
+    # for screen sharing.
+    config = {
+      "org.freedesktop.impl.portal.ScreenCast" = "gtk";
+    };
   };
 }
