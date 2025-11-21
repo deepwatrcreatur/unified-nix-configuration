@@ -18,18 +18,24 @@ in
   # Shell integration
   programs.bash.initExtra = mkIf config.programs.bash.enable ''
     if [ -f "${brewPrefix}/bin/brew" ]; then
-      eval "$(${brewPrefix}/bin/brew shellenv)"
+      export PATH="$PATH:${brewPrefix}/sbin:${brewPrefix}/bin"
+      export HOMEBREW_PREFIX="${brewPrefix}"
+      export HOMEBREW_CELLAR="${brewPrefix}/Cellar"
+      export HOMEBREW_REPOSITORY="${brewPrefix}/Homebrew"
     fi'';
 
   programs.fish.shellInit = mkIf config.programs.fish.enable ''
     if test -f "${brewPrefix}/bin/brew"
-      eval (${brewPrefix}/bin/brew shellenv)
+      set -gx PATH $PATH "${brewPrefix}/sbin" "${brewPrefix}/bin"
+      set -gx HOMEBREDE_PREFIX "${brewPrefix}"
+      set -gx HOMEBREW_CELLAR "${brewPrefix}/Cellar"
+      set -gx HOMEBREW_REPOSITORY "${brewPrefix}/Homebrew"
     end'';
 
   programs.nushell.extraConfig = mkIf config.programs.nushell.enable ''
     # Add Homebrew to PATH if it exists
     if ("${brewPrefix}/bin/brew" | path exists) {
-      $env.PATH = ($env.PATH | prepend "${brewPrefix}/bin" | prepend "${brewPrefix}/sbin")
+      $env.PATH = ($env.PATH | append "${brewPrefix}/bin" | append "${brewPrefix}/sbin")
       $env.HOMEBREW_PREFIX = "${brewPrefix}"
       $env.HOMEBREW_CELLAR = "${brewPrefix}/Cellar"
       $env.HOMEBREW_REPOSITORY = "${brewPrefix}/Homebrew"
