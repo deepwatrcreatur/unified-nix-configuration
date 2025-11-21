@@ -45,9 +45,6 @@
       Description = "Deskflow Server";
       After = [ "graphical-session.target" ];
       Wants = [ "graphical-session.target" ];
-      # Make sure the config file is present before starting
-      Requires = [ "home-manager-files.target" ];
-      After = [ "home-manager-files.target" ];
     };
     Service = {
       Type = "simple";

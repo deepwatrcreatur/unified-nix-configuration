@@ -45,7 +45,7 @@
   services.xserver.enable = true;
 
   services.displayManager = {
-    defaultSession = "plasma";
+    defaultSession = "plasmax11";
     autoLogin = {
       enable = true;
       user = "deepwatrcreatur";
