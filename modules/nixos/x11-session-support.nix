@@ -23,7 +23,7 @@
       };
       security = {
         # Disable automatic login to force session selection
-        AutomaticLoginEnable = false;
+        AutomaticLoginEnable = true;
       };
     };
   };
