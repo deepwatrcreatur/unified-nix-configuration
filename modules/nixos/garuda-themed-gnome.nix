@@ -14,13 +14,13 @@
     # GNOME applications and tools
     gnome-tweaks
     gnome-shell-extensions
-    gnomeExtensions.dash-to-dock
-    gnomeExtensions.gsconnect
-    gnomeExtensions.clipboard-indicator
-    gnomeExtensions.pop-shell  # Excellent tiling window manager
-    gnomeExtensions.transparent-window-moving  # For window transparency
-    gnomeExtensions.blur-my-shell  # For shell transparency effects
-    gnomeExtensions.weather-oclock
+    # gnomeExtensions.dash-to-dock
+    # gnomeExtensions.gsconnect
+    # gnomeExtensions.clipboard-indicator
+    # gnomeExtensions.pop-shell  # Excellent tiling window manager
+    # gnomeExtensions.transparent-window-moving  # For window transparency
+    # gnomeExtensions.blur-my-shell  # For shell transparency effects
+    # gnomeExtensions.weather-oclock
     
     # Additional tools for theming
     dconf-editor          # For GTK app theming
@@ -38,10 +38,10 @@
     enable = true;
     wayland = false;  # Force X11 to avoid AMD GPU issues
   };
-  # services.displayManager.autoLogin = {
-  #   enable = true;
-  #   user = "deepwatrcreatur";
-  # };
+  services.displayManager.autoLogin = {
+    enable = true;
+    user = "deepwatrcreatur";
+  };
 
   # GTK theming for applications
   programs.dconf.enable = true;
