@@ -35,34 +35,25 @@
 
   home.file.".justfile".source = ./justfile; # Directly link the justfile
 
-  # Input Leap client service
-  systemd.user.services.input-leap-client = {
-    Unit = {
-      Description = "Input Leap Client";
-      After = [ "graphical-session.target" ];
-      Wants = [ "graphical-session.target" ];
-    };
-    Service = {
-      Type = "simple";
-      ExecStart = "${pkgs.input-leap}/bin/input-leapc --no-daemon --name workstation 10.10.11.150";
-      Restart = "on-failure";
-      RestartSec = "5";
-    };
-    Install = {
-      WantedBy = [ "graphical-session.target" ];
-    };
-  };
+  home.file.".config/deskflow/deskflow.conf".text = ''
+    clipboardSharing = true
+  '';
 
-  # Deskflow client service
+  # Deskflow server service
   systemd.user.services.deskflow = {
     Unit = {
-      Description = "Deskflow Client";
+      Description = "Deskflow Server";
       After = [ "graphical-session.target" ];
       Wants = [ "graphical-session.target" ];
+      # Make sure the config file is present before starting
+      Requires = [ "home-manager-files.target" ];
+      After = [ "home-manager-files.target" ];
     };
     Service = {
       Type = "simple";
-      ExecStart = "${pkgs.deskflow}/bin/deskflow";
+      ExecStart = ''
+        ${pkgs.deskflow}/bin/deskflow server --config ${config.home.homeDirectory}/.config/deskflow/deskflow.conf
+      '';
       Restart = "on-failure";
       RestartSec = "5";
     };
