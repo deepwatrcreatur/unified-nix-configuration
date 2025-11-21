@@ -52,6 +52,10 @@
     pulse.enable = true;
   };
 
+  # Disable screen readers (Orca and Speech Dispatcher)
+  services.orca.enable = false;
+  services.speechd.enable = false;
+
   # Enable SSH daemon
   services.openssh.enable = true;
 
@@ -81,6 +85,7 @@
 
   # Additional system packages
   environment.systemPackages = with pkgs; [
+    at-spi2-core # Accessibility framework for deskflow clipboard
     filezilla
     git
     nushell  # Stopgap: Add nushell at system level for ghostty compatibility
