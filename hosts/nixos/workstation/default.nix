@@ -14,6 +14,10 @@
     # ../../../modules/nixos/x11-session-support.nix # Force X11 for deskflow compatibility
     ../../../modules/nixos/kde-x11.nix # KDE with X11 for deskflow compatibility
     # ../../../modules/nixos/cosmic.nix # COSMIC desktop environment
+    # ../../../modules/nixos/xfce.nix
+    # ../../../modules/nixos/cinnamon.nix
+    # ../../../modules/nixos/mate.nix
+    # ../../../modules/nixos/lxde.nix
     ../../../modules/linux/linuxbrew-system.nix
     ../../../modules/linux/linuxbrew.nix
   ];
