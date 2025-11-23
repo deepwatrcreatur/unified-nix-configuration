@@ -112,7 +112,7 @@
   # Enable snap support
   myModules.snap = {
     enable = true;
-    packages = [ ];
+    packages = [ "icloud-for-linux" ];
   };
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
