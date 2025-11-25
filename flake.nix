@@ -12,8 +12,6 @@
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-    
-
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -43,11 +41,10 @@
       flake = false;
     };
 
-
-
     plasma-manager = {
-    url = "github:pjones/plasma-manager";
-    inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:pjones/plasma-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
     };
 
     nix-snapd = {
@@ -214,7 +211,7 @@
             config = commonNixpkgsConfig;
             overlays = commonOverlays;
           };
-          extraSpecialArgs = homeManagerModuleArgs // { inherit isDesktop; };
+          extraSpecialArgs = homeManagerModuleArgs // { inherit isDesktop; hostName = ""; };
           modules = [
             inputs.sops-nix.homeManagerModules.sops
             userPath
