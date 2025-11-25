@@ -89,7 +89,7 @@ in
             export SOPS_AGE_KEY_FILE="${config.home.homeDirectory}/.config/sops/age/keys.txt"
             export PATH="${lib.makeBinPath [ pkgs.sops ]}:$PATH"
 
-            if SOPS_OUTPUT=$(sops -d --extract '["ATTIC_CLIENT_JWT_TOKEN"]' "$global_token_path" 2>&1); then
+            if SOPS_OUTPUT=$(sops --input-type yaml --output-type yaml -d "$global_token_path" 2>&1 | grep "ATTIC_CLIENT_JWT_TOKEN:" | cut -d: -f2- | xargs); then
               echo "$SOPS_OUTPUT" > "$token_file"
               chmod 600 "$token_file"
               echo "Attic client token decrypted successfully" >&2
