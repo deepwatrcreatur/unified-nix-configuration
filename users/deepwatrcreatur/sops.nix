@@ -30,6 +30,7 @@ in
     home.file."${config.xdg.configHome}/Bitwarden CLI/.keep".text = "";
 
     sops = {
+      defaultSopsFile = "${sopsSecretsDir}/secrets.yaml";
       age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
 
       secrets."gpg-private-key" = {
