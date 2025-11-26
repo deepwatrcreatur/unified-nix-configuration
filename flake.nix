@@ -216,7 +216,6 @@
             inputs.sops-nix.homeManagerModules.sops
             userPath
             ./modules/home-manager
-            ./modules/home-manager/non-nixos.nix
           ] ++ modules;
         };
     };

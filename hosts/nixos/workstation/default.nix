@@ -78,6 +78,8 @@
   # Enable printing
   services.printing.enable = true;
 
+  home-manager.backupFileExtension = "backup";
+  
   home-manager.users.deepwatrcreatur = {
     imports = [ 
       ../../../users/deepwatrcreatur/hosts/workstation

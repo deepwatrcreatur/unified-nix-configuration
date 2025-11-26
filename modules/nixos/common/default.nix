@@ -3,7 +3,6 @@
 
 {
   imports = [
-    ./home-manager.nix
     ./locale.nix
     ./nh.nix
     ./ssh-keys.nix
