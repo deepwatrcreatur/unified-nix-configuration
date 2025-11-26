@@ -21,5 +21,4 @@ in
   };
   home.file.".ssh/config".source = ./ssh-config;
   programs.home-manager.enable = true;
-  programs.home-manager.backupFileExtension = "bak";
 }
