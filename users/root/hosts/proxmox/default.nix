@@ -27,7 +27,7 @@
   # Configure secrets activation
   services.secrets-activation = {
     enable = true;
-    secretsPath = toString ../../secrets;
+    secretsPath = toString ../../../../secrets;
     continueOnError = true;  # Be more forgiving for root
     enableBitwardenDecryption = true;
     enableGpgKeyDecryption = true;
