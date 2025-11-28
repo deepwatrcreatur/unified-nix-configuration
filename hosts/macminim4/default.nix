@@ -28,10 +28,12 @@
     home = "/Users/deepwatrcreatur";
   };
   
+
   home-manager.users.deepwatrcreatur = {
     imports = [
       ../../modules/home-manager
     ];
+    services.attic-client.enable = false;
   };
   system.stateVersion = 6;
 }
