@@ -1,7 +1,7 @@
 { config, pkgs, lib, inputs, ... }:
 {
   imports = [
-    ./sops-root.nix
+    ../../modules/home-manager/sops-root.nix
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/gpg-cli.nix
     ../../modules/home-manager
