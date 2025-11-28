@@ -30,6 +30,12 @@ in
       description = "Whether to decrypt GPG private key";
     };
 
+    enableGithubTokenDecryption = mkOption {
+      type = types.bool;
+      default = true;
+      description = "Whether to decrypt the GitHub token";
+    };
+
     continueOnError = mkOption {
       type = types.bool;
       default = true;
@@ -140,6 +146,29 @@ in
    fi
  ''}
 
+    ${optionalString cfg.enableGithubTokenDecryption ''
+    # Decrypt GitHub token
+    if [ -f "${cfg.secretsPath}/github-token.txt.enc" ]; then
+      echo "Decrypting GitHub token..."
+      if [ -n "$DRY_RUN_CMD" ]; then
+        echo "DRY RUN: Would decrypt GitHub token"
+      else
+        # Ensure the target directory exists
+        mkdir -p "$HOME/.config/git"
+        if SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" sops -d "${cfg.secretsPath}/github-token.txt.enc" > "$HOME/.config/git/github-token" 2>&1; then
+          chmod 600 "$HOME/.config/git/github-token"
+          echo "GitHub token decrypted successfully"
+        else
+          echo "Warning: Failed to decrypt GitHub token"
+          echo "Debug: SOPS error output:"
+          SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" sops -d "${cfg.secretsPath}/github-token.txt.enc" 2>&1 || true
+          ${optionalString (!cfg.continueOnError) "exit 1"}
+        fi
+      fi
+    else
+      echo "Warning: GitHub token not found at ${cfg.secretsPath}/github-token.txt.enc"
+    fi
+    ''}
 
     # Import GPG keys
     echo "Importing GPG keys..."
