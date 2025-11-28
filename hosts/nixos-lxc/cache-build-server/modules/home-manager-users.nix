@@ -42,6 +42,7 @@
 
     users.root = {
       imports = [
+        ../../../../users/root
         ../../../../modules/home-manager/git.nix
         ../../../../modules/home-manager/gpg-cli.nix
       ];
