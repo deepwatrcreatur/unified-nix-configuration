@@ -61,7 +61,7 @@ in
         mode = "0600";
       };
       secrets."github-token" = {
-        sopsFile = "${sopsSecretsDir}/github-token.txt.enc";
+        sopsFile = "${globalSopsSecretsDir}/github-token.txt.enc";
         format = "binary";
         path = "${config.home.homeDirectory}/.config/git/github-token";
         mode = "0600";
