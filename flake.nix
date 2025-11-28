@@ -79,6 +79,9 @@
           # Add stable packages here when needed to avoid compilation
           # Example: some-package = stable.some-package;
         })
+      (final: prev: {
+        tailscale = inputs.nixpkgs-stable.legacyPackages.${prev.system}.tailscale;
+      })
       # Grok CLI overlay
       (final: prev: {
         fish = prev.fish.overrideAttrs (oldAttrs: {
