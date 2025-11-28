@@ -15,7 +15,7 @@ Host pve-strix
     HostName 10.10.11.57
     user root
 
-Host cache
+Host cache-build-server
     Hostname 10.10.11.39
     user deepwatrcreatur
 
