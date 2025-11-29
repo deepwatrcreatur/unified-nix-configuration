@@ -55,86 +55,56 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    # Install attic-client and sops for token decryption
-    home.packages = [ pkgs.attic-client pkgs.sops ];
+    # Install attic-client
+    home.packages = [ pkgs.attic-client ];
 
     # Merge default servers with user-specified servers
     services.attic-client.servers = lib.mkDefault cfg.defaultServers;
 
-    # Set SOPS environment variable for token decryption
-    home.sessionVariables = {
-      SOPS_AGE_KEY_FILE = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
-    };
+    # Create Attic client configuration template
+    home.file.".config/attic/config.toml".text = 
+      let
+        allServers = cfg.defaultServers // cfg.servers;
+        serverConfigs = lib.mapAttrsToList (name: server: ''
+          [servers.${name}]
+          endpoint = "${server.endpoint}"
+          token = "@ATTIC_CLIENT_TOKEN_${lib.toUpper (builtins.replaceStrings ["-"] ["_"] name)}@"
+        '') allServers;
+      in
+      lib.concatStringsSep "\n\n" serverConfigs;
 
-    # Home activation script to decrypt token and substitute into config
-    home.activation.attic-config = lib.hm.dag.entryAfter ["linkGeneration"] ''
-      config_dir="${config.home.homeDirectory}/.config/attic"
-      config_file="$config_dir/config.toml"
-      token_file="${config.home.homeDirectory}/.config/sops/attic-client-token"
+    # Home activation script to substitute tokens
+    home.activation.attic-config = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.config/attic
 
-      # Only run if we're the actual user, not root during system activation
-      if [[ "$HOME" == "${config.home.homeDirectory}" ]]; then
-        # Ensure sops config directory exists
-        mkdir -p "${config.home.homeDirectory}/.config/sops"
-        mkdir -p "$config_dir"
+      if [[ -f ${config.home.homeDirectory}/.config/attic/config.toml ]]; then
+        config_file="${config.home.homeDirectory}/.config/attic/config.toml"
+        temp_file="/tmp/attic-config-$$.toml"
 
-        # Decrypt Attic client token from global secrets if not already decrypted
-        global_token_path="${config.home.homeDirectory}/unified-nix-configuration/secrets/attic-client-token.yaml.enc"
+        # Copy the template
+        cp "$config_file" "$temp_file"
 
-        if [[ ! -f "$token_file" ]] || [[ "$global_token_path" -nt "$token_file" ]]; then
-          if [[ -f "$global_token_path" ]]; then
-            echo "Decrypting Attic client token from global secrets..." >&2
-
-            # Export SOPS_AGE_KEY_FILE and add sops to PATH
-            export SOPS_AGE_KEY_FILE="${config.home.homeDirectory}/.config/sops/age/keys.txt"
-            export PATH="${lib.makeBinPath [ pkgs.sops ]}:$PATH"
-
-            if SOPS_OUTPUT=$(sops --input-type yaml --output-type yaml -d "$global_token_path" 2>&1 | grep "ATTIC_CLIENT_JWT_TOKEN:" | cut -d: -f2- | xargs); then
-              echo "$SOPS_OUTPUT" > "$token_file"
-              chmod 600 "$token_file"
-              echo "Attic client token decrypted successfully" >&2
-            else
-              echo "Warning: Failed to decrypt Attic client token" >&2
-              echo "Debug: SOPS error output: $SOPS_OUTPUT" >&2
-              # Continue anyway - token might already exist
-            fi
+        ${lib.concatStringsSep "\n        " (lib.mapAttrsToList (name: server: ''
+          # Substitute token for ${name}
+          if [[ -f "${server.tokenPath}" ]]; then
+            token=$(cat "${server.tokenPath}")
+            placeholder="@ATTIC_CLIENT_TOKEN_${lib.toUpper (builtins.replaceStrings ["-"] ["_"] name)}@"
+            $DRY_RUN_CMD sed -i "s|$placeholder|$token|g" "$temp_file"
           else
-            echo "Warning: Attic client token not found at $global_token_path" >&2
+            $VERBOSE_ECHO "Warning: Token file not found for ${name}: ${server.tokenPath}"
           fi
-        fi
+        '') (cfg.defaultServers // cfg.servers))}
 
-        # Generate the config template inline
-        cat > "$config_file" <<'ATTIC_EOF'
-${let
-  allServers = cfg.defaultServers // cfg.servers;
-  serverConfigs = lib.mapAttrsToList (name: server: ''
-[servers.${name}]
-endpoint = "${server.endpoint}"
-token = "@ATTIC_CLIENT_TOKEN_${lib.toUpper (builtins.replaceStrings ["-"] ["_"] name)}@"
-  '') allServers;
-in lib.concatStringsSep "\n" serverConfigs}
-ATTIC_EOF
-
-        # Make it writable (should already be, but just in case)
-        chmod u+w "$config_file"
-
-
-
-        echo "Attic client configuration with tokens saved to $config_file"
-      else
-        echo "Skipping attic-client config setup - not running as user ${config.home.username}" >&2
+        # Move the configured file into place
+        $DRY_RUN_CMD mv "$temp_file" "$config_file"
+        $VERBOSE_ECHO "Attic client configuration updated with SOPS tokens"
       fi
     '';
 
-    # Set ATTIC_CONFIG environment variable (optional, attic uses ~/.config/attic/config.toml by default)
-    home.sessionVariables = {
-      ATTIC_CONFIG = "${config.home.homeDirectory}/.config/attic/config.toml";
-    };
-
     # Add shell aliases for convenience
     home.shellAliases = {
-      attic-push = "attic push cache-build-server:cache-local";
-      attic-push-cache-local = "attic push cache-build-server:cache-local";
+      attic-push-local = "attic push cache-local";
+      attic-push-build-server = "attic push cache-build-server";
     };
   };
 }

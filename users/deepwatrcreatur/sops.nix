@@ -30,9 +30,8 @@ in
     home.file."${config.xdg.configHome}/Bitwarden CLI/.keep".text = "";
 
     sops = {
-      defaultSopsFormat = "yaml";
       defaultSopsFile = "${sopsSecretsDir}/secrets.yaml";
-      age.sshKeyPaths = [ "/Users/deepwatrcreatur/.ssh/id_ed25519" ];
+      age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
 
       secrets."gpg-private-key" = {
         sopsFile = "${sopsSecretsDir}/gpg-private-key.asc.enc";
@@ -73,8 +72,7 @@ in
         sopsFile = "${globalSopsSecretsDir}/attic-client-token.yaml.enc";
         key = "ATTIC_CLIENT_JWT_TOKEN";
         path = "${config.home.homeDirectory}/.config/sops/attic-client-token";
-        format = "yaml";
-        owner = "deepwatrcreatur";
+        mode = "0600";
       };
 
       secrets."rclone.conf" = {
