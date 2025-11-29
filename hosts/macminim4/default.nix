@@ -33,7 +33,7 @@
     imports = [
       ../../modules/home-manager
     ];
-    services.attic-client.enable = false;
+    services.attic-client.enable = true;
   };
   system.stateVersion = 6;
 }
