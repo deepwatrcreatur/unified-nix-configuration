@@ -3,7 +3,7 @@
 {
   imports = [
     inputs.sops-nix.homeManagerModules.sops
-    ../../modules/home-manager/secrets-activation.nix
+    # ../../modules/home-manager/secrets-activation.nix
     ./sops.nix
     ./rbw.nix
     ../../modules/home-manager/git.nix
@@ -33,41 +33,37 @@
   home.file.".gnupg/public-key.asc" = {
     source = ./gpg-public-key.asc;  # Remove toString, just use the path directly
   };
-  services.secrets-activation = {
-    enable = true;
-    secretsPath = toString ./secrets;
-    continueOnError = false;  # Be stricter for regular user
-    enableBitwardenDecryption = false;  # Handled by sops-nix
-    enableGpgKeyDecryption = true;
-  };
 
-  # On macOS, the sops-nix LaunchAgent fails with "Operation not permitted" due to nix store mount restrictions.
-  # Instead, disable the LaunchAgent and run sops-install-secrets during home-manager activation.
-  launchd.agents.sops-nix = lib.mkForce { enable = false; };
-  
-  home.activation.sopsInstallSecrets = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-      echo "Running sops-install-secrets to decrypt secrets..."
-      export SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
-      
-      # Try to find and run the sops-nix-user script if it exists
-      sops_nix_user="${config.sops.package}/bin/sops-install-secrets"
-      if [[ ! -x "$sops_nix_user" ]]; then
-        # Look for it in the LaunchAgent directory or nix store
-        for script in /nix/store/*/sops-nix-user /nix/store/*/sops-install-secrets; do
-          if [[ -x "$script" ]]; then
-            sops_nix_user="$script"
-            break
-          fi
-        done
-      fi
-      
-      if [[ -x "$sops_nix_user" ]]; then
-        bash "$sops_nix_user" || true
-        echo "sops-install-secrets completed"
-      else
-        echo "Warning: sops-install-secrets not found, secrets may not be decrypted"
-      fi
-    fi
+  home.activation.mySopsActivation = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    export SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
+    export PATH="${lib.makeBinPath [ pkgs.sops ]}:$PATH"
+
+    # Decrypt gpg-private-key
+    mkdir -p "$HOME/.gnupg"
+    sops -d "${toString ./secrets}/gpg-private-key.asc.enc" > "$HOME/.gnupg/private-key.asc"
+    chmod 600 "$HOME/.gnupg/private-key.asc"
+
+    # Decrypt BW_SESSION
+    mkdir -p "$HOME/.config/sops"
+    sops -d --extract '["BW_SESSION"]' "${toString ./secrets}/bitwarden.yaml" > "$HOME/.config/sops/BW_SESSION"
+    chmod 600 "$HOME/.config/sops/BW_SESSION"
+
+    # Decrypt bitwarden_data_json
+    mkdir -p "$HOME/.config/Bitwarden CLI"
+    rm -f "$HOME/.config/Bitwarden CLI/data.json"
+    sops -d "${toString ./secrets}/data.json.enc" > "$HOME/.config/Bitwarden CLI/data.json"
+    chmod 600 "$HOME/.config/Bitwarden CLI/data.json"
+
+    # Decrypt github-token
+    mkdir -p "$HOME/.config/git"
+    sops -d "${toString ./secrets}/github-token.txt.enc" > "$HOME/.config/git/github-token"
+    chmod 600 "$HOME/.config/git/github-token"
+
+    # Decrypt rclone.conf
+    mkdir -p "$HOME/.config/rclone"
+    rm -f "$HOME/.config/rclone/rclone.conf"
+    sops -d "${toString ./secrets}/rclone.conf.enc" > "$HOME/.config/rclone/rclone.conf"
+    chmod 600 "$HOME/.config/rclone/rclone.conf"
   '';
 }
+

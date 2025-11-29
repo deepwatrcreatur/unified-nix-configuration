@@ -129,7 +129,7 @@
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.sharedModules = [
-                inputs.sops-nix.homeManagerModules.sops
+                # inputs.sops-nix.homeManagerModules.sops
               ];
             }
             inputs.determinate.nixosModules.default
@@ -155,7 +155,7 @@
               nixpkgs.overlays = commonOverlays;
               nixpkgs.config = commonNixpkgsConfig;
             }
-            inputs.sops-nix.darwinModules.sops
+            # inputs.sops-nix.darwinModules.sops
             ./modules
             hostPath
             inputs.home-manager.darwinModules.home-manager
@@ -171,7 +171,7 @@
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.sharedModules = [
-                inputs.sops-nix.homeManagerModules.sops
+                # inputs.sops-nix.homeManagerModules.sops
               ];
 
               users.users.${username} = {
@@ -216,7 +216,7 @@
           };
           extraSpecialArgs = homeManagerModuleArgs // { inherit isDesktop; hostName = ""; };
           modules = [
-            inputs.sops-nix.homeManagerModules.sops
+            # inputs.sops-nix.homeManagerModules.sops
             userPath
             ./modules/home-manager
           ] ++ modules;
