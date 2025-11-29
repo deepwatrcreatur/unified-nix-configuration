@@ -3,7 +3,7 @@
 {
   imports = [
     ../../modules/nix-darwin
-    ../../modules/nix-darwin/security.nix
+    ../../modules/nix-darwin/pam.nix
     ./rsync.nix
     ./system-defaults.nix
     ./nix-store-uuid.nix
