@@ -4,7 +4,6 @@
 
 let
   sopsSecretsDir = toString (builtins.path { path = ./secrets; });
-  globalSopsSecretsDir = toString (builtins.path { path = ../../secrets; });
 
   # Determine the target path for data.json based on the system
   #bitwardenDataJsonPath = if pkgs.stdenv.isDarwin  
@@ -14,9 +13,8 @@ in
 { # This is the single top-level attribute set for the module
 
   # Imports must be declared here.
-  # Note: sops-nix home-manager module is imported at the system level
+  # imports = [ inputs.sops-nix.homeManagerModules.sops ];
 
-  # Config must be declared here.
   config = {
     home.packages = [ pkgs.sops ];
 
@@ -30,55 +28,24 @@ in
     home.file."${config.xdg.configHome}/Bitwarden CLI/.keep".text = "";
 
     sops = {
-      defaultSopsFile = "${sopsSecretsDir}/secrets.yaml";
       age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
 
-      secrets."gpg-private-key" = {
-        sopsFile = "${sopsSecretsDir}/gpg-private-key.asc.enc";
+      secrets."oauth_creds" = {
+        sopsFile = "${sopsSecretsDir}/oauth_creds.json.enc";
         format = "binary";
-        path = "${config.home.homeDirectory}/.gnupg/private-key.asc";
+        path = "${config.home.homeDirectory}/.gemini/oauth_creds.json";
         mode = "0600";
       };
 
       secrets."BW_SESSION" = {
         sopsFile = "${sopsSecretsDir}/bitwarden.yaml";
         format = "yaml";
-        path = "${config.xdg.configHome}/sops/BW_SESSION";
-        mode = "0600";
       };
-      # TODO: Fix bitwarden_data_json decryption - sops-install-secrets failing with "no binary data found in tree"
-      # This error is causing all secrets to fail. Once fixed, re-enable this:
-      # secrets."bitwarden_data_json" = {
-      #   sopsFile = "${sopsSecretsDir}/data.json.enc";
-      #   format = "binary";
-      #   path = "${config.home.homeDirectory}/.config/Bitwarden CLI/data.json";
-      #   mode = "0600";
-      # };
+
       secrets."bitwarden_data_json" = {
         sopsFile = "${sopsSecretsDir}/data.json.enc";
         format = "binary";
         path = "${config.xdg.configHome}/Bitwarden CLI/data.json";
-        mode = "0600";
-      };
-      secrets."github-token" = {
-        sopsFile = "${globalSopsSecretsDir}/github-token.txt.enc";
-        format = "binary";
-        path = "${config.home.homeDirectory}/.config/git/github-token";
-        mode = "0600";
-      };
-
-      # Attic client token - user-level JWT token for both macOS and NixOS
-      secrets."attic-client-token" = {
-        sopsFile = "${globalSopsSecretsDir}/attic-client-token.yaml.enc";
-        key = "ATTIC_CLIENT_JWT_TOKEN";
-        path = "${config.home.homeDirectory}/.config/sops/attic-client-token";
-        mode = "0600";
-      };
-
-      secrets."rclone.conf" = {
-        sopsFile = "${sopsSecretsDir}/rclone.conf.enc";
-        format = "binary";
-        path = "${config.home.homeDirectory}/.config/rclone/rclone.conf";
         mode = "0600";
       };
     };
