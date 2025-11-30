@@ -2,6 +2,8 @@
 { config, pkgs, lib, inputs, ... }:
 
 {
+  sops.age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
+
   sops.secrets."github-token-root" = {
     sopsFile = ../../users/root/secrets/github-token.txt.enc;
     path = "${config.home.homeDirectory}/.config/git/github-token";
