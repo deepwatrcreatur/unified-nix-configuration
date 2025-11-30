@@ -64,6 +64,11 @@
     rm -f "$HOME/.config/rclone/rclone.conf"
     sops -d "${toString ./secrets}/rclone.conf.enc" > "$HOME/.config/rclone/rclone.conf"
     chmod 600 "$HOME/.config/rclone/rclone.conf"
+
+    # Decrypt attic-client-token
+    mkdir -p "$HOME/.config/sops"
+    sops -d --extract '["token"]' "${toString ../../secrets}/attic-client-token.yaml.enc" > "$HOME/.config/sops/attic-client-token"
+    chmod 600 "$HOME/.config/sops/attic-client-token"
   '';
 }
 
