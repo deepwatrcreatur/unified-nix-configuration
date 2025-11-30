@@ -216,9 +216,9 @@
           };
           extraSpecialArgs = homeManagerModuleArgs // { inherit isDesktop; hostName = ""; };
           modules = [
-            inputs.sops-nix.homeManagerModules.sops
             userPath
             ./modules/home-manager
+            inputs.sops-nix.homeManagerModules.sops
           ] ++ modules;
         };
     };
