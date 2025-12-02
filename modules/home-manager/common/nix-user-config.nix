@@ -53,12 +53,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    # Create user Nix configuration (removed netrc-file setting for Determinate Nix compatibility)
-    home.file.".config/nix/nix.conf".text = ''
-      experimental-features = ${lib.concatStringsSep " " cfg.experimentalFeatures}
-      substituters = ${lib.concatStringsSep " " cfg.substituters}
-      trusted-public-keys = ${lib.concatStringsSep " " cfg.trustedPublicKeys}
-    '';
+
 
     # Create netrc file in Determinate Nix's managed location
     home.activation.nix-netrc = lib.mkIf (cfg.netrcMachine != null) (
