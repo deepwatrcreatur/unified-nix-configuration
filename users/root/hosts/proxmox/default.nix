@@ -5,7 +5,6 @@
     ./justfile.nix
     ./nh.nix
     ./proxmox-shell-extra.nix
-    ../../../../modules/home-manager/sops-root.nix
     ../../../../modules/home-manager/git.nix
     ../../../../modules/home-manager/gpg-cli.nix
     ../../../../modules/home-manager
