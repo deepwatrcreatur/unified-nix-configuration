@@ -31,17 +31,23 @@ in
     export SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
     export PATH="${lib.makeBinPath [ pkgs.sops pkgs.gnupg ]}:$PATH"
 
+    # --- GitHub Token Decryption ---
+    GITHUB_TOKEN_ENC_FILE="${./secrets/github-token.txt.enc}"
+    GITHUB_TOKEN_DEC_FILE="$HOME/.config/git/github-token"
+    mkdir -p "$(dirname "$GITHUB_TOKEN_DEC_FILE")"
+    sops -d --age "$(cat "$SOPS_AGE_KEY_FILE")" "$GITHUB_TOKEN_ENC_FILE" > "$GITHUB_TOKEN_DEC_FILE"
+
     # --- Manual GPG Private Key Decryption and Import ---
     GPG_ENCRYPTED_FILE_PATH="${gpgEncryptedFilePath}" # Nix will interpolate the correct path here
-    GPG_DEC_FILE_PATH="$HOME/.gnupg/private-key.asc" # Desired output path for manual decryption
+    GPG_DEC_FILE_FILE="$HOME/.gnupg/private-key.asc" # Desired output path for manual decryption
     
     mkdir -p "$HOME/.gnupg" # Ensure directory exists
     
     # Perform manual decryption using sops -d, explicitly passing the AGE private key
-    sops -d --age "$(cat "$SOPS_AGE_KEY_FILE")" "$GPG_ENCRYPTED_FILE_PATH" > "$GPG_DEC_FILE_PATH"
+    sops -d --age "$(cat "$SOPS_AGE_KEY_FILE")" "$GPG_ENCRYPTED_FILE_PATH" > "$GPG_DEC_FILE_FILE"
     
-    # Attempt to import GPG private key from $GPG_DEC_FILE_PATH
-    gpg --batch --import "$GPG_DEC_FILE_PATH"
+    # Attempt to import GPG private key from $GPG_DEC_FILE_FILE
+    gpg --batch --import "$GPG_DEC_FILE_FILE"
     
     # Restart gpg-agent to ensure it picks up the new key
     gpgconf --kill gpg-agent
