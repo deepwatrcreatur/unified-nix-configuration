@@ -1,4 +1,4 @@
 # users/root/hosts/homeserver/justfile
 
 update:
-  nixos-rebuild switch --flake /home/deepwatrcreatur/unified-nix-configuration
+  nixos-rebuild switch --flake /root/unified-nix-configuration
