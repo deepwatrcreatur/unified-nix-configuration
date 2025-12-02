@@ -1,6 +1,7 @@
 { config, pkgs, lib, inputs, ... }:
 {
   imports = [
+    ../../../../modules/common/nix-settings.nix
     ./justfile.nix
     ./nh.nix
     ./proxmox-shell-extra.nix
@@ -13,6 +14,8 @@
   home.username = "root";
   home.homeDirectory = "/root";
   home.stateVersion = "25.11";
+
+  nix.package = pkgs.nix;
 
   home.packages = with pkgs; [
   ];

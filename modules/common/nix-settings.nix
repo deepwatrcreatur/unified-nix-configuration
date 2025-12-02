@@ -2,7 +2,10 @@
 
 let
   # Path to GitHub token (works for both user and root contexts)
-  githubTokenPath = if config ? home
+  githubTokenPath =
+    if (config ? sops && config.sops.secrets ? "github-token-root" && config.sops.secrets."github-token-root" != null)
+    then config.sops.secrets."github-token-root".path
+    else if config ? home
     then "${config.home.homeDirectory}/.config/git/github-token"
     else "/root/.config/git/github-token";
 in
@@ -29,7 +32,6 @@ in
       # Build settings
       builders-use-substitutes = true;  # Builders can use binary caches
       use-cgroups = true;               # Better build isolation
-      lazy-trees = true;                # Better flake performance
       
       # Garbage collection and derivation settings
       keep-outputs = true;
