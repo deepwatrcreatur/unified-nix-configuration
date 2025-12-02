@@ -5,7 +5,7 @@
     enable = true;
     settings = {
       user = {
-        name = lib.mkForce "root";
+        name = lib.mkForce "Anwer Khan";
         email = lib.mkForce "deepwatrcreatur@gmail.com";
       };
       signing.signByDefault = lib.mkForce true;
