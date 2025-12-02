@@ -6,6 +6,7 @@
     # ../../modules/home-manager/secrets-activation.nix
     ./sops.nix
     ./rbw.nix
+    ./env.nix
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/bitwarden-cli.nix
     ../../modules/home-manager
