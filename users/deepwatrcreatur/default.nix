@@ -43,17 +43,6 @@
     sops -d "${toString ./secrets}/gpg-private-key.asc.enc" > "$HOME/.gnupg/private-key.asc"
     chmod 600 "$HOME/.gnupg/private-key.asc"
 
-    # Decrypt BW_SESSION
-    mkdir -p "$HOME/.config/sops"
-    sops -d --extract '["BW_SESSION"]' "${toString ./secrets}/bitwarden.yaml" > "$HOME/.config/sops/BW_SESSION"
-    chmod 600 "$HOME/.config/sops/BW_SESSION"
-
-    # Decrypt bitwarden_data_json
-    mkdir -p "$HOME/.config/Bitwarden CLI"
-    rm -f "$HOME/.config/Bitwarden CLI/data.json"
-    sops -d "${toString ./secrets}/data.json.enc" > "$HOME/.config/Bitwarden CLI/data.json"
-    chmod 600 "$HOME/.config/Bitwarden CLI/data.json"
-
     # Decrypt github-token
     mkdir -p "$HOME/.config/git"
     sops -d "${toString ./secrets}/github-token.txt.enc" > "$HOME/.config/git/github-token"
@@ -67,7 +56,7 @@
 
     # Decrypt attic-client-token
     mkdir -p "$HOME/.config/sops"
-    sops -d --extract '["token"]' "${toString ../../secrets}/attic-client-token.yaml.enc" > "$HOME/.config/sops/attic-client-token"
+    sops -d --input-type yaml --extract '["ATTIC_CLIENT_JWT_TOKEN"]' "${toString ../../secrets}/attic-client-token.yaml.enc" > "$HOME/.config/sops/attic-client-token"
     chmod 600 "$HOME/.config/sops/attic-client-token"
   '';
 }
