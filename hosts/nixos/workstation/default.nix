@@ -9,15 +9,15 @@
     ../../../modules/nixos/snap.nix  # Snap package manager support
     ../../../modules/wezterm-config.nix
     # Desktop Environment - uncomment one:
-    # ../../../modules/nixos/garuda-themed-kde.nix
-    # ../../../modules/nixos/garuda-themed-gnome.nix # GNOME with X11 for deskflow compatibility
-    # ../../../modules/nixos/x11-session-support.nix # Force X11 for deskflow compatibility
-    ../../../modules/nixos/kde-x11.nix # KDE with X11 for deskflow compatibility
-    # ../../../modules/nixos/cosmic.nix # COSMIC desktop environment
-    # ../../../modules/nixos/xfce.nix
-    # ../../../modules/nixos/cinnamon.nix
-    # ../../../modules/nixos/mate.nix
-    # ../../../modules/nixos/lxde.nix
+    # ../../../modules/nixos/sessions/garuda-themed-kde.nix
+    # ../../../modules/nixos/sessions/garuda-themed-gnome.nix # GNOME with X11 for deskflow compatibility
+    # ../../../modules/nixos/sessions/x11-session-support.nix # Force X11 for deskflow compatibility
+    #../../../modules/nixos/sessions/kde-x11.nix # KDE with X11 for deskflow compatibility
+    # ../../../modules/nixos/sessions/cosmic.nix # COSMIC desktop environment
+    # ../../../modules/nixos/sessions/xfce.nix
+    # ../../../modules/nixos/sessions/cinnamon.nix
+    ../../../modules/nixos/sessions/mate.nix
+    # ../../../modules/nixos/sessions/lxde.nix
     ../../../modules/linux/linuxbrew-system.nix
     ../../../modules/linux/linuxbrew.nix
   ];

@@ -1,11 +1,11 @@
-# Configuration for KDE Plasma with Garuda Dragonized theming elements
+# Configuration for KDE Plasma with Garuda Dragonized theming elements, forced to use X11
 { config, pkgs, inputs, ... }:
 
 {
   # Import plasma-manager for home-manager integration
   home-manager.sharedModules = [
     inputs.plasma-manager.homeManagerModules.plasma-manager
-    ../kde-plasma.nix
+    ../../kde-plasma.nix
   ];
 
   # System packages for theming
@@ -45,6 +45,7 @@
   services.xserver.enable = true;
 
   services.displayManager = {
+    defaultSession = "plasmax11";
     autoLogin = {
       enable = true;
       user = "deepwatrcreatur";
