@@ -23,9 +23,6 @@
     enable = false;
   }];
 
-    # No bootloader is needed for LXC
-  boot.loader.grub.enable = false;
-  boot.loader.systemd-boot.enable = false;
-
+  boot.initrd.systemd.fido2.enable = false;
 
 }
