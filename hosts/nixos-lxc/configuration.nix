@@ -66,8 +66,4 @@
 
   # Minimal systemd services
   system.stateVersion = "25.05"; # Set to your NixOS version
-
-  # No bootloader is needed for LXC
-  boot.loader.grub.enable = false;
-  boot.loader.systemd-boot.enable = false;
 }
