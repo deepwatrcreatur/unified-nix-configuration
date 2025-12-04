@@ -7,5 +7,6 @@
       ./modules/home-manager-users.nix
       ./modules/packages.nix
       ./modules/users.nix
+      ./modules/sops.nix
     ];
 }

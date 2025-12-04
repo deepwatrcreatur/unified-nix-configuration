@@ -98,8 +98,8 @@
   systemd.services.attic-init = {
     description = "Initialize Attic cache";
     wantedBy = [ "multi-user.target" ];
-    after = [ "atticd.service" "home-manager-deepwatrcreatur.service" ];
-    requires = [ "home-manager-deepwatrcreatur.service" ];
+    after = [ "atticd.service" "sops-nix.service" ];
+    requires = [ "sops-nix.service" ];
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
@@ -125,45 +125,45 @@
       echo "Initializing Attic cache with SOPS-managed authentication..."
 
       # Check if SOPS token is available and not empty
-      SOPS_TOKEN_PATH="/home/deepwatrcreatur/.config/sops/attic-client-token"
-      if [[ -s "$SOPS_TOKEN_PATH" ]]; then
-        ATTIC_TOKEN=$(cat "$SOPS_TOKEN_PATH")
+      SOPS_TOKEN_PATH="/run/secrets/attic-client-token"
+      if [[ ! -s "$SOPS_TOKEN_PATH" ]]; then
+        echo "Error: SOPS attic-client-token not found or is empty at $SOPS_TOKEN_PATH"
+        echo "Cannot initialize Attic cache - configure secret first"
+        exit 1
+      fi
 
-        # Login using the SOPS-managed token
-        if ${pkgs.attic-client}/bin/attic login local http://localhost:5001 "$ATTIC_TOKEN" --set-default; then
-          echo "Successfully logged into Attic server"
+      ATTIC_TOKEN=$(cat "$SOPS_TOKEN_PATH")
 
-          # Create cache if it doesn't exist
-          if ! ${pkgs.attic-client}/bin/attic cache info cache-local 2>/dev/null; then
-            echo "Creating cache-local..."
-            if ${pkgs.attic-client}/bin/attic cache create cache-local; then
-              echo "Cache cache-local created successfully"
-            else
-              echo "Failed to create cache-local"
-              exit 1
-            fi
+      # Login using the SOPS-managed token
+      if ${pkgs.attic-client}/bin/attic login local http://localhost:5001 "$ATTIC_TOKEN" --set-default; then
+        echo "Successfully logged into Attic server"
+
+        # Create cache if it doesn't exist
+        if ! ${pkgs.attic-client}/bin/attic cache info cache-local 2>/dev/null; then
+          echo "Creating cache-local..."
+          if ${pkgs.attic-client}/bin/attic cache create cache-local; then
+            echo "Cache cache-local created successfully"
           else
-            echo "Cache cache-local already exists"
+            echo "Failed to create cache-local"
+            exit 1
           fi
-
-          # Configure upstream cache
-          if ${pkgs.attic-client}/bin/attic cache configure cache-local \
-              --upstream-cache-key-name cache.nixos.org-1 \
-              --upstream-cache-uris https://cache.nixos.org; then
-            echo "Cache upstream configuration successful"
-          else
-            echo "Cache upstream configuration failed"
-          fi
-
-          echo "Attic cache initialized successfully"
         else
-          echo "Failed to login to Attic server - check authentication token"
-          exit 1
+          echo "Cache cache-local already exists"
         fi
+
+        # Configure upstream cache
+        if ${pkgs.attic-client}/bin/attic cache configure cache-local \
+            --upstream-cache-key-name cache.nixos.org-1 \
+            --upstream-cache-uris https://cache.nixos.org; then
+          echo "Cache upstream configuration successful"
+        else
+          echo "Cache upstream configuration failed"
+        fi
+
+        echo "Attic cache initialized successfully"
       else
-        echo "Warning: SOPS attic-client-token not found or is empty"
-        echo "Skipping Attic cache initialization - configure secret first"
-        exit 0
+        echo "Failed to login to Attic server - check authentication token"
+        exit 1
       fi
     '';
   };
