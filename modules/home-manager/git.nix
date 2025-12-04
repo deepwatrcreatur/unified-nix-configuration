@@ -235,16 +235,13 @@ in
           st = "status";
           graph = "mergiraf";
         };
+        url."ssh://git@github.com/".insteadOf = "https://github.com/";
       } // lib.optionalAttrs isDesktop {
         diff.guitool = "meld";
         merge.guitool = "meld";
       };
 
-      extraConfig = {
-        "url \"ssh://git@github.com/\"" = {
-          insteadOf = "https://github.com/";
-        };
-      };
+
 
       lfs.enable = true;
     };
