@@ -11,6 +11,7 @@ let
     name != "default.nix" && 
     name != "common" && 
     name != "inference-vm" &&
+    name != "sessions" &&
     name != "garuda-themed-gnome.nix" &&
     name != "garuda-themed-kde.nix" &&
     name != "x11-session-support.nix"
