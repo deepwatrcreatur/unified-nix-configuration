@@ -66,6 +66,15 @@
         default-retention-period = "7 days";
       };
     };
+
+    # Explicitly define service configuration for proper permissions
+    serviceConfig = {
+      User = "atticd";
+      Group = "atticd";
+      StateDirectory = "atticd"; # Maps to /var/lib/atticd
+      RuntimeDirectory = "atticd"; # Maps to /run/atticd (for temporary files)
+      RuntimeDirectoryMode = "0755";
+    };
   };
 
   # Generate Attic server token and setup client config with SOPS-managed token
@@ -235,6 +244,14 @@
 
   };
 
+  # User and group for atticd
+  users.users.atticd = {
+    isSystemUser = true;
+    group = "atticd";
+  };
+
+  users.groups.atticd = {};
+
   # User and group for nix-serve
   users.users.nix-serve = {
     isSystemUser = true;
@@ -253,6 +270,8 @@
       RemainAfterExit = true;
       User = "nix-serve";
       Group = "nix-serve";
+      StateDirectory = "nix-serve";
+      RuntimeDirectory = "nix-serve";
     };
     script = ''
       mkdir -p /var/lib/nix-serve
@@ -288,4 +307,12 @@
     SystemMaxUse=2G
     MaxRetentionSec=1month
   '';
+
+  systemd.services."nix-serve" = {
+    serviceConfig.StateDirectory = "nix-serve";
+    serviceConfig.RuntimeDirectory = "nix-serve";
+    serviceConfig.RuntimeDirectoryMode = "0755";
+    serviceConfig.User = "nix-serve";
+    serviceConfig.Group = "nix-serve";
+  };
 }
