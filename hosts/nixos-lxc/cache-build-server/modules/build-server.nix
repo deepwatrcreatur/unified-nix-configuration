@@ -301,8 +301,8 @@
   '';
 
   systemd.services.atticd = {
-    serviceConfig.StateDirectory = lib.mkForce "/var/lib/atticd";
-    serviceConfig.RuntimeDirectory = lib.mkForce "/run/atticd";
+    serviceConfig.StateDirectory = "atticd";
+    serviceConfig.RuntimeDirectory = "atticd";
     serviceConfig.RuntimeDirectoryMode = "0755";
     serviceConfig.User = "atticd";
     serviceConfig.Group = "atticd";
