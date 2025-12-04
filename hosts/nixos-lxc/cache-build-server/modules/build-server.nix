@@ -67,14 +67,6 @@
       };
     };
 
-    # Explicitly define service configuration for proper permissions
-    serviceConfig = {
-      User = "atticd";
-      Group = "atticd";
-      StateDirectory = "atticd"; # Maps to /var/lib/atticd
-      RuntimeDirectory = "atticd"; # Maps to /run/atticd (for temporary files)
-      RuntimeDirectoryMode = "0755";
-    };
   };
 
   # Generate Attic server token and setup client config with SOPS-managed token
@@ -291,7 +283,7 @@
     enable = true;
     settings = {
       PasswordAuthentication = false;
-      PermitRootLogin = "no";
+      PermitRootLogin = "yes";
       X11Forwarding = false;
     };
   };
@@ -307,6 +299,14 @@
     SystemMaxUse=2G
     MaxRetentionSec=1month
   '';
+
+  systemd.services.atticd = {
+    serviceConfig.StateDirectory = "atticd";
+    serviceConfig.RuntimeDirectory = "atticd";
+    serviceConfig.RuntimeDirectoryMode = "0755";
+    serviceConfig.User = "atticd";
+    serviceConfig.Group = "atticd";
+  };
 
   systemd.services."nix-serve" = {
     serviceConfig.StateDirectory = "nix-serve";
