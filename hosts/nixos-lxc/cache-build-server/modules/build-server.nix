@@ -301,9 +301,7 @@
   '';
 
   systemd.services.atticd = {
-    serviceConfig.StateDirectory = "atticd";
-    serviceConfig.RuntimeDirectory = "atticd";
-    serviceConfig.RuntimeDirectoryMode = "0755";
+
     serviceConfig.User = "atticd";
     serviceConfig.Group = "atticd";
   };
@@ -315,4 +313,10 @@
     serviceConfig.User = "nix-serve";
     serviceConfig.Group = "nix-serve";
   };
+
+  # Explicitly create and manage directories for atticd
+  systemd.tmpfiles.rules = [
+    "d /var/lib/atticd 0755 atticd atticd -"
+    "d /run/atticd 0755 atticd atticd -"
+  ];
 }
