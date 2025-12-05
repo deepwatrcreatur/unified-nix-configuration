@@ -128,8 +128,11 @@
               home-manager.extraSpecialArgs = homeManagerModuleArgs // { inherit hostName isDesktop; };
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
-              home-manager.sharedModules = [
-                inputs.sops-nix.homeManagerModules.sops
+              # home-manager.sharedModules = [
+              #   inputs.sops-nix.homeManagerModules.sops
+              # ];
+            }
+            inputs.determinate.nixosModules.default
             inputs.nix-snapd.nixosModules.default
             ./modules
             hostPath
