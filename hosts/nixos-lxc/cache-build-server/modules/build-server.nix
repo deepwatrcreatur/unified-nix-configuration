@@ -81,13 +81,16 @@
     };
     script = ''
       mkdir -p /var/lib/atticd
+      
+      # Ensure the environment file exists
+      touch /var/lib/atticd/env
+      chmod 600 /var/lib/atticd/env
 
-      # Generate server token if it doesn't exist
-      if [[ ! -f /var/lib/atticd/env ]]; then
+      # Generate server token if it doesn't exist in the file
+      if ! grep -q "ATTIC_SERVER_TOKEN_RS256_SECRET_BASE64" /var/lib/atticd/env; then
         echo "Generating Attic server token..."
         server_token=$(${pkgs.openssl}/bin/openssl genrsa -traditional 2048 | ${pkgs.coreutils}/bin/base64 -w0)
-        echo "ATTIC_SERVER_TOKEN_RS256_SECRET_BASE64=\"$server_token\"" > /var/lib/atticd/env
-        chmod 600 /var/lib/atticd/env
+        echo "ATTIC_SERVER_TOKEN_RS256_SECRET_BASE64=\"$server_token\"" >> /var/lib/atticd/env
         echo "Attic server token generated"
       fi
 
