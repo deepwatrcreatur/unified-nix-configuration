@@ -35,10 +35,11 @@
       fi
 
       # Create environment file with JWT secret
+      # The secret is an RSA private key, so use RS256 (not HS256)
       JWT_SECRET=$(cat "$SOPS_JWT_PATH")
-      echo "ATTIC_SERVER_TOKEN_HS256_SECRET_BASE64=$JWT_SECRET" > /etc/atticd.env
+      echo "ATTIC_SERVER_TOKEN_RS256_SECRET_BASE64=$JWT_SECRET" > /etc/atticd.env
       chmod 600 /etc/atticd.env
-      echo "Created atticd environment file with JWT secret"
+      echo "Created atticd environment file with JWT secret (RS256)"
     '';
   };
 
@@ -166,10 +167,9 @@
           echo "Cache cache-local already exists"
         fi
 
-        # Configure upstream cache
+        # Configure upstream cache key (for skipping already-signed paths)
         if ${pkgs.attic-client}/bin/attic cache configure cache-local \
-            --upstream-cache-key-name cache.nixos.org-1 \
-            --upstream-cache-uris https://cache.nixos.org; then
+            --upstream-cache-key-name cache.nixos.org-1; then
           echo "Cache upstream configuration successful"
         else
           echo "Cache upstream configuration failed"
