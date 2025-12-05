@@ -304,7 +304,7 @@ But the file is still being created despite `services.attic-client.enable = fals
 3. Consider using `lib.mkForce false` in user configuration
 4. Add `force = true` to Home Manager file configuration as suggested by error message
 
-### 7. Attic Cache Authentication Issues
+### 7. Attic Cache Authentication Issues - JWT Algorithm Mismatch
 
 **Problem**: attic-init.service successfully logs in but fails to create cache with "Unauthorized" error.
 
@@ -315,15 +315,80 @@ Creating cache-local...
 Error: Unauthorized: Unauthorized.
 ```
 
-**Root Cause** (under investigation):
-- Login succeeds but cache creation fails, suggesting token has login permissions but not admin/create permissions
-- May be related to JWT token scope or server-side permission configuration
-- Could be timing issue with SOPS secret availability
+**Root Cause**: 
+The JWT signing algorithm mismatch between server and client tokens:
+- Server was configured with an RSA private key (for RS256 signing)
+- But the environment variable was set as `ATTIC_SERVER_TOKEN_HS256_SECRET_BASE64` (HMAC)
+- Client tokens were generated with HS256 algorithm
+- Server couldn't verify client tokens because it expected RS256 signatures
 
-**Next Steps**:
-1. Verify JWT token has proper permissions for cache creation
-2. Check atticd server configuration for permission requirements
-3. Investigate token refresh or timing issues
+**Solution**:
+
+1. **Fix the server environment variable** to use RS256:
+   ```nix
+   # BEFORE (broken - algorithm mismatch):
+   echo "ATTIC_SERVER_TOKEN_HS256_SECRET_BASE64=$JWT_SECRET" > /etc/atticd.env
+   
+   # AFTER (working - correct algorithm):
+   echo "ATTIC_SERVER_TOKEN_RS256_SECRET_BASE64=$JWT_SECRET" > /etc/atticd.env
+   ```
+
+2. **Regenerate client tokens** using RS256 with `atticd-atticadm`:
+   ```bash
+   # Generate new admin token with RS256 (must match server's key)
+   atticd-atticadm make-token \
+     --config /nix/store/...-checked-attic-server.toml \
+     --sub admin-user \
+     --validity "2 years" \
+     --pull '*' --push '*' --delete '*' \
+     --create-cache '*' --configure-cache '*' \
+     --configure-cache-retention '*' --destroy-cache '*'
+   ```
+
+3. **Update SOPS secret** with the new RS256 token:
+   ```bash
+   # Copy encrypted file to .yaml for sops to recognize format
+   cp secrets/attic-server-token.yaml.enc /tmp/test.yaml
+   
+   # Update the token value
+   sops set /tmp/test.yaml '["ATTIC_SERVER_TOKEN"]' '"eyJhbGciOiJSUzI1NiI..."'
+   
+   # Copy back
+   cp /tmp/test.yaml secrets/attic-server-token.yaml.enc
+   ```
+
+**Key Insight**: When using an RSA private key as your JWT secret, you MUST:
+- Use `ATTIC_SERVER_TOKEN_RS256_SECRET_BASE64` (not HS256)
+- Generate client tokens with `atticd-atticadm` which uses the same key
+- Ensure all tokens use the RS256 algorithm (check JWT header: `"alg":"RS256"`)
+
+### 8. Attic Cache Configure Command Changes
+
+**Problem**: `attic cache configure` fails with unknown argument error.
+
+**Symptoms**:
+```
+error: unexpected argument '--upstream-cache-uris' found
+  tip: a similar argument exists: '--upstream-cache-key-name'
+```
+
+**Root Cause**: 
+The `--upstream-cache-uris` option was removed in newer versions of attic-client. The upstream cache URIs are now configured differently.
+
+**Solution**:
+Remove the `--upstream-cache-uris` argument from cache configuration:
+```nix
+# BEFORE (broken - deprecated argument):
+${pkgs.attic-client}/bin/attic cache configure cache-local \
+    --upstream-cache-key-name cache.nixos.org-1 \
+    --upstream-cache-uris https://cache.nixos.org
+
+# AFTER (working):
+${pkgs.attic-client}/bin/attic cache configure cache-local \
+    --upstream-cache-key-name cache.nixos.org-1
+```
+
+The `--upstream-cache-key-name` is sufficient - it tells attic to skip paths already signed by that key when pushing.
 
 ## Resolution Progress Summary
 
@@ -335,15 +400,16 @@ Error: Unauthorized: Unauthorized.
 5. ✅ **Environment file management** - Moved to `/etc/atticd.env` with proper permissions
 6. ✅ **SQLite database permission issues** - Added `?mode=rwc` parameter
 7. ✅ **atticd.service startup** - Service now starts successfully
+8. ✅ **JWT algorithm mismatch** - Changed from HS256 to RS256, regenerated tokens
+9. ✅ **Deprecated cache configure args** - Removed `--upstream-cache-uris`
 
 ### Remaining Issues:
 1. 🔄 **Home Manager attic config file conflict** - Module disable not working properly
-2. 🔄 **attic-init cache creation authorization** - Login works but cache creation fails
 
 ### Current Status:
 - **atticd.service**: ✅ Running successfully 
+- **attic-init.service**: ✅ Cache initialized successfully
 - **home-manager-root.service**: ❌ File conflict with `/root/.config/attic/config.toml`
-- **attic-init.service**: ❌ Authorization failure during cache creation
 
 ## Troubleshooting Commands
 
