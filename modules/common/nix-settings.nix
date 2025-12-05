@@ -72,7 +72,8 @@ in
 
       access-tokens = [
         "cache-build-server:5001 = /run/nix/attic-token-bearer"
-        "github.com = ${githubTokenPath}"
+      ] ++ lib.optionals (builtins.pathExists githubTokenPath) [
+        "github.com=${builtins.readFile githubTokenPath}"
       ];
     };
   };
