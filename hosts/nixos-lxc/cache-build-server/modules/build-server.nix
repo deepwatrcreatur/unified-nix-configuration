@@ -1,11 +1,45 @@
 { config, lib, pkgs, ... }:
 
 {
+  # Sops secret for attic server token
   sops.secrets."attic-server-token" = {
-    sopsFile = ../../../../secrets/attic-server-private-key.yaml.enc;
-    key = "ATTIC_SERVER_PRIVATE_KEY_BASE64";
+    sopsFile = ../../../../secrets/attic-server-token.yaml.enc;
+    key = "ATTIC_SERVER_TOKEN";
     path = "/run/secrets/attic-server-token";
     owner = config.users.users.root.name;
+  };
+
+  sops.secrets."attic-jwt-secret" = {
+    sopsFile = ../../../../secrets/attic-server-private-key.yaml.enc;
+    key = "ATTIC_SERVER_PRIVATE_KEY_BASE64";
+    path = "/run/secrets/attic-jwt-secret";
+    owner = config.users.users.root.name;
+  };
+
+  # Create atticd environment file with JWT secret
+  systemd.services.atticd-env = {
+    description = "Create atticd environment file";
+    wantedBy = [ "multi-user.target" ];
+    before = [ "atticd.service" ];
+    after = [ "sops-nix.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+    script = ''
+      # Ensure the JWT secret is available
+      SOPS_JWT_PATH="${config.sops.secrets."attic-jwt-secret".path}"
+      if [[ ! -s "$SOPS_JWT_PATH" ]]; then
+        echo "Error: SOPS attic-jwt-secret not found or is empty at $SOPS_JWT_PATH"
+        exit 1
+      fi
+
+      # Create environment file with JWT secret
+      JWT_SECRET=$(cat "$SOPS_JWT_PATH")
+      echo "ATTIC_SERVER_TOKEN_HS256_SECRET_BASE64=$JWT_SECRET" > /etc/atticd.env
+      chmod 600 /etc/atticd.env
+      echo "Created atticd environment file with JWT secret"
+    '';
   };
 
   # Build server optimizations
@@ -76,10 +110,7 @@
 
   };
 
-
-
-    
-      # Initialize Attic cache and configure upstream
+  # Initialize Attic cache and configure upstream
   systemd.services.attic-init = {
     description = "Initialize Attic cache";
     wantedBy = [ "multi-user.target" ];
@@ -292,4 +323,16 @@
   };
 
   # Let systemd StateDirectory handle all directory management
+
+  systemd.tmpfiles.rules = [
+    "d /etc/attic 0755 atticd atticd -"
+  ];
+
+  environment.etc."attic/config.toml" = {
+    text = ''
+    '';
+    user = "atticd";
+    group = "atticd";
+    mode = "0644";
+  };
 }
