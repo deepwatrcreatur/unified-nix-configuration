@@ -129,10 +129,7 @@
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.sharedModules = [
-                # inputs.sops-nix.homeManagerModules.sops
-              ];
-            }
-            inputs.determinate.nixosModules.default
+                inputs.sops-nix.homeManagerModules.sops
             inputs.nix-snapd.nixosModules.default
             ./modules
             hostPath
