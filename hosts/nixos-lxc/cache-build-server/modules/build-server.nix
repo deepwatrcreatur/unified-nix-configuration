@@ -1,6 +1,13 @@
 { config, lib, pkgs, ... }:
 
 {
+  sops.secrets."attic-server-token" = {
+    sopsFile = ../../../../secrets/attic-server-private-key.yaml.enc;
+    key = "ATTIC_SERVER_PRIVATE_KEY_BASE64";
+    path = "/run/secrets/attic-server-token";
+    owner = config.users.users.root.name;
+  };
+
   # Build server optimizations
   nix.settings = {
     # Override common settings for build server use
@@ -40,7 +47,7 @@
     enable = true;
 
     # Environment file for server token (required)
-    environmentFile = "/var/lib/atticd/env";
+    environmentFile = "/etc/atticd.env";
 
     # Server configuration
     settings = {
@@ -49,7 +56,7 @@
       api-endpoint = "http://localhost:5001/";
 
       # Database
-      database.url = "sqlite:///var/lib/atticd/server.db";
+      database.url = "sqlite:///var/lib/atticd/server.db?mode=rwc";
 
       # Storage
       storage = {
@@ -69,35 +76,10 @@
 
   };
 
-  # Generate Attic server token and setup client config with SOPS-managed token
-  systemd.services.attic-token-setup = {
-    description = "Setup Attic server token and client configuration";
-    wantedBy = [ "multi-user.target" ];
-    before = [ "atticd.service" ];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-    };
-    script = ''
-      mkdir -p /var/lib/atticd
-      
-      # Ensure the environment file exists
-      touch /var/lib/atticd/env
-      chmod 600 /var/lib/atticd/env
 
-      # Generate server token if it doesn't exist in the file
-      if ! grep -q "ATTIC_SERVER_TOKEN_RS256_SECRET_BASE64" /var/lib/atticd/env; then
-        echo "Generating Attic server token..."
-        server_token=$(${pkgs.openssl}/bin/openssl genrsa -traditional 2048 | ${pkgs.coreutils}/bin/base64 -w0)
-        echo "ATTIC_SERVER_TOKEN_RS256_SECRET_BASE64=\"$server_token\"" >> /var/lib/atticd/env
-        echo "Attic server token generated"
-      fi
 
-      echo "Attic token setup completed - client authentication will use SOPS-managed token"
-    '';
-  };
-
-  # Initialize Attic cache and configure upstream
+    
+      # Initialize Attic cache and configure upstream
   systemd.services.attic-init = {
     description = "Initialize Attic cache";
     wantedBy = [ "multi-user.target" ];
@@ -127,9 +109,9 @@
       echo "Initializing Attic cache with SOPS-managed authentication..."
 
       # Check if SOPS token is available and not empty
-      SOPS_TOKEN_PATH="/run/secrets/attic-client-token"
+      SOPS_TOKEN_PATH="${config.sops.secrets."attic-server-token".path}"
       if [[ ! -s "$SOPS_TOKEN_PATH" ]]; then
-        echo "Error: SOPS attic-client-token not found or is empty at $SOPS_TOKEN_PATH"
+        echo "Error: SOPS attic-server-token not found or is empty at $SOPS_TOKEN_PATH"
         echo "Cannot initialize Attic cache - configure secret first"
         exit 1
       fi
@@ -267,7 +249,6 @@
       RuntimeDirectory = "nix-serve";
     };
     script = ''
-      mkdir -p /var/lib/nix-serve
       if [[ ! -f /var/lib/nix-serve/cache-priv-key.pem ]]; then
         ${pkgs.nix}/bin/nix-store --generate-binary-cache-key cache.local /var/lib/nix-serve/cache-priv-key.pem /var/lib/nix-serve/cache-pub-key.pem
         chown nix-serve:nix-serve /var/lib/nix-serve/cache-*.pem
@@ -301,13 +282,6 @@
     MaxRetentionSec=1month
   '';
 
-  systemd.services.atticd = {
-    serviceConfig.StateDirectory = "atticd";
-    serviceConfig.RuntimeDirectory = "atticd";
-    serviceConfig.RuntimeDirectoryMode = "0755";
-    serviceConfig.User = "atticd";
-    serviceConfig.Group = "atticd";
-  };
 
   systemd.services."nix-serve" = {
     serviceConfig.StateDirectory = "nix-serve";
@@ -317,9 +291,5 @@
     serviceConfig.Group = "nix-serve";
   };
 
-  # Explicitly create and manage directories for atticd
-  systemd.tmpfiles.rules = [
-    "d /var/lib/atticd 0755 atticd atticd -"
-    "d /run/atticd 0755 atticd atticd -"
-  ];
+  # Let systemd StateDirectory handle all directory management
 }
