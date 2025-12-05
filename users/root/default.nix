@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ./sops.nix # <--- Import sops configuration
+    # ./sops.nix # <--- Temporarily disabled sops configuration
     ./git.nix # <--- Import git configuration
     ./env.nix
     ../../modules/home-manager/git.nix # Keep this import if it provides other common git modules

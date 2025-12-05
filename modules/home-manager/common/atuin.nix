@@ -16,9 +16,12 @@
     alias asr = atuin script run
   '';
 
-  sops.secrets."atuin-key" = lib.mkIf (builtins.pathExists ../../../secrets/atuin-key.enc) {
-    sopsFile = ../../../secrets/atuin-key.enc;
-    key = "atuin_key";
-    path = "${config.home.homeDirectory}/.config/atuin/key.json";
-  };
+  # Sops configuration temporarily disabled due to module conflicts
+  # sops = lib.mkIf (builtins.hasAttr "secrets" (config.sops or {}) && builtins.pathExists ../../../secrets/atuin-key.enc) {
+  #   secrets."atuin-key" = {
+  #     sopsFile = ../../../secrets/atuin-key.enc;
+  #     key = "atuin_key";
+  #     path = "${config.home.homeDirectory}/.config/atuin/key.json";
+  #   };
+  # };
 }

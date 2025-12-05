@@ -74,7 +74,6 @@
     description = "Setup Attic server token and client configuration";
     wantedBy = [ "multi-user.target" ];
     before = [ "atticd.service" ];
-    after = [ "sops-nix.service" ];
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
@@ -102,8 +101,7 @@
   systemd.services.attic-init = {
     description = "Initialize Attic cache";
     wantedBy = [ "multi-user.target" ];
-    after = [ "atticd.service" "sops-nix.service" ];
-    requires = [ "sops-nix.service" ];
+    after = [ "atticd.service" ];
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
