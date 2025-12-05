@@ -6,7 +6,7 @@ in
 {
   options.services.attic-client = {
     enable = lib.mkEnableOption "Attic binary cache client" // {
-      default = true;
+      default = false;
       description = "Whether to enable Attic binary cache client with SOPS-managed authentication";
     };
 

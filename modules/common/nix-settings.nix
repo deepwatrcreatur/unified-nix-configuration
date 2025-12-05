@@ -61,7 +61,7 @@ in
       ];
       
       trusted-public-keys = [
-        "cache.deepwatercreature.com:o95LnlK2Xz/aaFtygmgB0P4gA8WBVnFZc0gx1WyorBw="
+        "cache.local:ZgbuAAq3bKHgggdHXaru261sRQE/wZ55teTSYMxWqxY="
         "cache-local:63xryK76L6y/NphTP/iS63yiYqldoWvVlWI0N8rgvBw="  # Attic cache-local public key
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
         "cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="
