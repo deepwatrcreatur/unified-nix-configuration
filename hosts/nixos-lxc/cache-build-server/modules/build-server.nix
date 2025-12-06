@@ -115,42 +115,45 @@
   systemd.services.attic-init = {
     description = "Initialize Attic cache";
     wantedBy = [ "multi-user.target" ];
-    after = [ "atticd.service" ];
+    after = [ "atticd.service" "sops-nix.service" ];
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
+      Restart = "on-failure";
+      RestartSec = "10";
     };
     script = ''
       # Wait for atticd to be ready
       echo "Waiting for atticd to be ready..."
-      for i in {1..30}; do
+      for i in {1..60}; do
         if ${pkgs.curl}/bin/curl -s -f http://localhost:5001/; then
           echo "atticd is ready."
           break
         fi
-        if [ $i -eq 30 ]; then
-          echo "atticd failed to start after 30 seconds."
+        if [ $i -eq 60 ]; then
+          echo "atticd failed to start after 60 seconds."
           exit 1
         fi
         sleep 1
       done
 
-      # Use the client configuration with SOPS token
+      # Use the client configuration
       export ATTIC_CONFIG="/etc/attic/config.toml"
 
       echo "Initializing Attic cache with SOPS-managed authentication..."
 
       # Check if SOPS token is available and not empty
       SOPS_TOKEN_PATH="${config.sops.secrets."attic-server-token".path}"
-      if [[ ! -s "$SOPS_TOKEN_PATH" ]]; then
+      if ! ${pkgs.coreutils}/bin/test -s "$SOPS_TOKEN_PATH"; then
         echo "Error: SOPS attic-server-token not found or is empty at $SOPS_TOKEN_PATH"
         echo "Cannot initialize Attic cache - configure secret first"
         exit 1
       fi
 
-      ATTIC_TOKEN=$(cat "$SOPS_TOKEN_PATH")
+      ATTIC_TOKEN=$(${pkgs.coreutils}/bin/cat "$SOPS_TOKEN_PATH")
 
       # Login using the SOPS-managed token
+      echo "Attempting to login to Attic server..."
       if ${pkgs.attic-client}/bin/attic login local http://localhost:5001 "$ATTIC_TOKEN" --set-default; then
         echo "Successfully logged into Attic server"
 
@@ -160,7 +163,8 @@
           if ${pkgs.attic-client}/bin/attic cache create cache-local; then
             echo "Cache cache-local created successfully"
           else
-            echo "Failed to create cache-local"
+            echo "Failed to create cache-local - checking server status"
+            ${pkgs.attic-client}/bin/attic server-info || echo "Cannot connect to server"
             exit 1
           fi
         else
@@ -172,12 +176,14 @@
             --upstream-cache-key-name cache.nixos.org-1; then
           echo "Cache upstream configuration successful"
         else
-          echo "Cache upstream configuration failed"
+          echo "Cache upstream configuration failed (non-critical)"
         fi
 
         echo "Attic cache initialized successfully"
       else
-        echo "Failed to login to Attic server - check authentication token"
+        echo "Failed to login to Attic server - checking server status..."
+        ${pkgs.curl}/bin/curl -v http://localhost:5001/ || echo "Server not reachable"
+        echo "Token available: $(${pkgs.coreutils}/bin/test -n "$ATTIC_TOKEN" && echo "YES" || echo "NO")"
         exit 1
       fi
     '';
