@@ -6,7 +6,7 @@
 }:
 let
   user = config.home-manager.users.${config.system.primaryUser};
-  hasZenBrowser = user ? programs.zen-browser.package;
+  hasZenBrowser = user.programs.zen-browser.enable or false;
   hasWezterm = config.programs.wezterm.enable or false;
 in
 {

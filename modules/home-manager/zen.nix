@@ -1,4 +1,5 @@
-{ lib, ... }:
+{ config, pkgs, lib, inputs, ... }:
+
 let
   inherit (lib) disabled;
 
@@ -165,11 +166,24 @@ let
   };
 in
 {
-  home-manager.sharedModules = [
-    {
-      programs.zen-browser = disabled {
-        inherit policies;
-      };
-    }
-  ];
+  options.programs.zen-browser = {
+    enable = lib.mkEnableOption "Zen Browser" // { default = true; };
+    package = lib.mkOption {
+      type = lib.types.package;
+      default = inputs.zen-browser.packages.${pkgs.system}.default;
+      description = "Zen Browser package";
+    };
+    policies = lib.mkOption {
+      type = lib.types.attrs;
+      default = policies;
+      description = "Zen Browser policies configuration";
+    };
+  };
+
+  config = lib.mkIf config.programs.zen-browser.enable {
+    home.packages = [ config.programs.zen-browser.package ];
+    programs.zen-browser = disabled {
+      inherit (config.programs.zen-browser) policies;
+    };
+  };
 }
