@@ -94,11 +94,6 @@ The `max-open-files` nix setting is a perfect example of why this architecture i
 - By placing it in `modules/nix-darwin/system-limits.nix`, it only affects Darwin hosts
 - NixOS hosts never see this setting, preventing build failures
 - The alternative approach (conditional logic in common modules) is error-prone and harder to maintain
-The `max-open-files` nix setting is a perfect example of why this architecture is important:
-- This setting only exists in nix-darwin, not NixOS
-- By placing it in `modules/nix-darwin/system-limits.nix`, it only affects Darwin hosts
-- NixOS hosts never see this setting, preventing build failures
-- The alternative approach (conditional logic in common modules) is error-prone and harder to maintain
 
 ### Module Dependencies
 - System modules receive `inputs` and pure `nixpkgsLib`
@@ -114,69 +109,6 @@ Each host/user combination has justfiles with common commands. The `just` comman
 - `nix-homebrew`: macOS package management integration
 - `nh`: Modern Nix helper for rebuilds and maintenance
 - `determinate`: Nix installer and system integration
-
-## Common Issues and Solutions
-
-### Build Failures Due to Platform-Specific Options
-**Problem**: Error like `error: unknown setting 'max-open-files'` on NixOS
-**Cause**: Darwin-specific nix settings being applied to NixOS hosts
-**Solution**: Move platform-specific settings to appropriate module directories:
-- Darwin-only settings → `modules/nix-darwin/`
-- NixOS-only settings → `modules/nixos/`
-- Common settings → `modules/common/`
-
-### Module Import Issues
-**Problem**: Module not being loaded or applied
-**Check**: 
-- For Darwin: Check `modules/nix-darwin/default.nix` auto-import logic
-- For NixOS: Verify explicit import in host configuration
-- For common: Ensure module is in `modules/common/` and properly structured
-
-### Cache Authentication Errors
-**Problem**: `HTTP error 401` from cache servers
-**Solution**: Usually harmless - occurs when cache token isn't available, falls back to public caches
-
-## Common Issues and Solutions
-
-### Build Failures Due to Platform-Specific Options
-**Problem**: Error like `error: unknown setting 'max-open-files'` on NixOS
-**Cause**: Darwin-specific nix settings being applied to NixOS hosts
-**Solution**: Move platform-specific settings to appropriate module directories:
-- Darwin-only settings → `modules/nix-darwin/`
-- NixOS-only settings → `modules/nixos/`
-- Common settings → `modules/common/`
-
-### Module Import Issues
-**Problem**: Module not being loaded or applied
-**Check**: 
-- For Darwin: Check `modules/nix-darwin/default.nix` auto-import logic
-- For NixOS: Verify explicit import in host configuration
-- For common: Ensure module is in `modules/common/` and properly structured
-
-### Cache Authentication Errors
-**Problem**: `HTTP error 401` from cache servers
-**Solution**: Usually harmless - occurs when cache token isn't available, falls back to public caches
-
-## Common Issues and Solutions
-
-### Build Failures Due to Platform-Specific Options
-**Problem**: Error like `error: unknown setting 'max-open-files'` on NixOS
-**Cause**: Darwin-specific nix settings being applied to NixOS hosts
-**Solution**: Move platform-specific settings to appropriate module directories:
-- Darwin-only settings → `modules/nix-darwin/`
-- NixOS-only settings → `modules/nixos/`
-- Common settings → `modules/common/`
-
-### Module Import Issues
-**Problem**: Module not being loaded or applied
-**Check**: 
-- For Darwin: Check `modules/nix-darwin/default.nix` auto-import logic
-- For NixOS: Verify explicit import in host configuration
-- For common: Ensure module is in `modules/common/` and properly structured
-
-### Cache Authentication Errors
-**Problem**: `HTTP error 401` from cache servers
-**Solution**: Usually harmless - occurs when cache token isn't available, falls back to public caches
 
 ## Common Issues and Solutions
 
@@ -220,3 +152,4 @@ hostname
 # Then use appropriate rebuild commands:
 # For NixOS: sudo nixos-rebuild switch --flake .#hostname
 # For Darwin: darwin-rebuild switch --flake .#hostname
+```
