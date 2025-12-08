@@ -48,6 +48,18 @@ The auto-import system in `modules/nix-darwin/default.nix` automatically loads a
 ### User Configuration
 User configs are organized under `users/{username}/` with host-specific overrides in `users/{username}/hosts/{hostname}/`. Each user has justfiles for common tasks.
 
+### Helper Functions (flake.nix:86-190)
+- `mkDarwinSystem`: Standard nix-darwin system builder with Home Manager integration
+- `mkNixosSystem`: Standard NixOS system builder with Home Manager integration
+- `mkOmarchySystem`: Specialized NixOS builder for omarchy-nix integration
+- `mkHomeConfig`: Standalone Home Manager configuration builder
+
+### Host Categories
+- **macOS**: `hosts/macminim4/` - Darwin configuration
+- **NixOS**: `hosts/homeserver/`, `hosts/nixos/` - Standard NixOS hosts
+- **LXC**: `hosts/nixos-lxc/` - Container-specific configurations
+- **Infisical**: `hosts/infisical/` - Secrets management host
+
 ## Common Development Patterns
 
 ### Adding a New Host
