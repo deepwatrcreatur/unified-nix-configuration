@@ -4,7 +4,7 @@
   # KDE Plasma Home Manager configuration
   programs.plasma = {
     enable = true;
-    
+
     # Panel configuration - bottom panel with right alignment
     panels = [
       {

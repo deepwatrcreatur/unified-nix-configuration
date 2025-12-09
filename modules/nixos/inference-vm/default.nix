@@ -1,4 +1,10 @@
-{ config, pkgs, lib, inputs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 
 {
   # All settings identical for inference1, inference2, inference3
@@ -27,7 +33,12 @@
       system = "x86_64-linux";
       maxJobs = 8;
       speedFactor = 2;
-      supportedFeatures = [ "nixos-test" "benchmark" "big-parallel" "kvm" ];
+      supportedFeatures = [
+        "nixos-test"
+        "benchmark"
+        "big-parallel"
+        "kvm"
+      ];
       sshUser = "deepwatrcreatur";
       sshKey = "/root/.ssh/nix-remote";
     }

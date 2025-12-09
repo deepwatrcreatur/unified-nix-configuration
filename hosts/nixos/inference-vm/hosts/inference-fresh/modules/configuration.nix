@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   # Custom overlay to rebuild Ollama with Tesla P40 support (CUDA compute capability 6.1)
@@ -9,21 +14,21 @@
   #      cmakeFlags = (old.cmakeFlags or []) ++ [
   #        "-DGGML_CUDA_ARCHITECTURES=61;70;75;80;86;89;90"
   #      ];
-        
-        # Ensure CUDA support is properly enabled with additional dependencies
-        #buildInputs = (old.buildInputs or []) ++ [
-        #  prev.cudaPackages.cuda_nvcc
-        #  prev.cudaPackages.cuda_cudart
-        #  prev.cudaPackages.libcublas
-        #  prev.cudaPackages.libcusparse
-        #  prev.cudaPackages.libcurand
-        #];
-        
-        # Set specific CMake variables for CUDA compilation in preConfigure
-        #preConfigure = (old.preConfigure or "") + ''
-        #  export CUDA_PATH=${prev.cudaPackages.cudatoolkit}
-        #  export CUDACXX=${prev.cudaPackages.cuda_nvcc}/bin/nvcc
-        #'';
+
+  # Ensure CUDA support is properly enabled with additional dependencies
+  #buildInputs = (old.buildInputs or []) ++ [
+  #  prev.cudaPackages.cuda_nvcc
+  #  prev.cudaPackages.cuda_cudart
+  #  prev.cudaPackages.libcublas
+  #  prev.cudaPackages.libcusparse
+  #  prev.cudaPackages.libcurand
+  #];
+
+  # Set specific CMake variables for CUDA compilation in preConfigure
+  #preConfigure = (old.preConfigure or "") + ''
+  #  export CUDA_PATH=${prev.cudaPackages.cudatoolkit}
+  #  export CUDACXX=${prev.cudaPackages.cuda_nvcc}/bin/nvcc
+  #'';
   #    });
   #  })
   #];
@@ -89,7 +94,7 @@
 
   # Add NVIDIA utilities to system packages
   #environment.systemPackages = with pkgs; [
-    # nvidia-smi comes with driver
+  # nvidia-smi comes with driver
   #];
 
   security.sudo.wheelNeedsPassword = false;

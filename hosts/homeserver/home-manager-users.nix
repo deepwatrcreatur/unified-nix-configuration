@@ -1,4 +1,10 @@
-{ config, pkgs, lib, inputs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 
 let
   # Define shared packages to extend home.packages
@@ -15,15 +21,16 @@ in
 
     users.deepwatrcreatur = {
       imports = [
-        ../../users/deepwatrcreatur 
+        ../../users/deepwatrcreatur
         ../../users/deepwatrcreatur/hosts/homeserver
         ../../modules/home-manager
-                                     
+
       ];
-      home.packages = (config.home.packages or []) ++ sharedPackages ++ [        
-      ];
+      home.packages =
+        (config.home.packages or [ ])
+        ++ sharedPackages;
     };
 
   };
-  
+
 }

@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   imports = [
@@ -22,12 +27,11 @@
   # Define the primary user for user-specific settings
   # required to enable some recently-added functionality
   system.primaryUser = "deepwatrcreatur";
-  
+
   users.users.deepwatrcreatur = {
     name = "deepwatrcreatur";
     home = "/Users/deepwatrcreatur";
   };
-  
 
   home-manager.users.deepwatrcreatur = {
     imports = [

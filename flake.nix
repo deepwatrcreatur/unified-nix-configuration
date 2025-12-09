@@ -59,186 +59,249 @@
 
   };
 
-  outputs = inputs@{ ... }:
-  let
-    # Standard library from nixpkgs - this is the "pure" lib
-    nixpkgsLib = inputs.nixpkgs.lib;
+  outputs =
+    inputs:
+    let
+      # Standard library from nixpkgs - this is the "pure" lib
+      nixpkgsLib = inputs.nixpkgs.lib;
 
-    commonNixpkgsConfig = {
-      allowUnfree = true;
-    };
-    commonOverlays = [
-      # Overlay to selectively use stable packages when unstable ones cause issues
-      (final: prev: 
-        let
-          stable = import inputs.nixpkgs-stable {
-            inherit (prev) system;
-            config = commonNixpkgsConfig;
-          };
-        in {
-          # Add stable packages here when needed to avoid compilation
-          # Example: some-package = stable.some-package;
+      commonNixpkgsConfig = {
+        allowUnfree = true;
+      };
+      commonOverlays = [
+        # Overlay to selectively use stable packages when unstable ones cause issues
+        (
+          final: prev:
+          let
+            stable = import inputs.nixpkgs-stable {
+              inherit (prev) system;
+              config = commonNixpkgsConfig;
+            };
+          in
+          {
+            # Add stable packages here when needed to avoid compilation
+            # Example: some-package = stable.some-package;
+          }
+        )
+        (final: prev: {
+          inherit (inputs.nixpkgs-stable.legacyPackages.${prev.system}) tailscale;
         })
-      (final: prev: {
-        tailscale = inputs.nixpkgs-stable.legacyPackages.${prev.system}.tailscale;
-      })
-      # Grok CLI overlay
-      (final: prev: {
-        fish = prev.fish.overrideAttrs (oldAttrs: {
-          doCheck = false;
-        });
-      })
-    ];
+        # Grok CLI overlay
+        (final: prev: {
+          fish = prev.fish.overrideAttrs (oldAttrs: {
+            doCheck = false;
+          });
+        })
+      ];
 
-    # SpecialArgs for NixOS and Darwin SYSTEM modules.
-    # These modules can safely receive the pure nixpkgsLib.
-    systemSpecialArgs = { inherit inputs; lib = nixpkgsLib; myModules = import ./modules; };
+      # SpecialArgs for NixOS and Darwin SYSTEM modules.
+      # These modules can safely receive the pure nixpkgsLib.
+      systemSpecialArgs = {
+        inherit inputs;
+        lib = nixpkgsLib;
+        myModules = import ./modules;
+      };
 
-    # SpecialArgs specifically for HOME MANAGER modules.
-    # We only pass 'inputs'. Home Manager will provide its own 'lib' and 'config.lib'.
-    homeManagerModuleArgs = { inherit inputs; inherit (inputs) mac-app-util; };
+      # SpecialArgs specifically for HOME MANAGER modules.
+      # We only pass 'inputs'. Home Manager will provide its own 'lib' and 'config.lib'.
+      homeManagerModuleArgs = {
+        inherit inputs;
+        inherit (inputs) mac-app-util;
+      };
 
-    # Helper to import all .nix files from a directory as module paths
-    importAllModulesInDir = dir:
-      let
-        items = builtins.readDir dir;
-        isNixFile = name: type: type == "regular" && nixpkgsLib.hasSuffix ".nix" name;
-        nixFileNames = nixpkgsLib.attrNames (nixpkgsLib.filterAttrs isNixFile items);
-      in
+      # Helper to import all .nix files from a directory as module paths
+      importAllModulesInDir =
+        dir:
+        let
+          items = builtins.readDir dir;
+          isNixFile = name: type: type == "regular" && nixpkgsLib.hasSuffix ".nix" name;
+          nixFileNames = nixpkgsLib.attrNames (nixpkgsLib.filterAttrs isNixFile items);
+        in
         map (fileName: dir + "/${fileName}") nixFileNames;
 
-    # Helper functions to reduce boilerplate in individual host files
-    helpers = {
-      # Standard NixOS system builder
-      mkNixosSystem = { system ? "x86_64-linux", hostPath, modules ? [], extraModules ? [], isDesktop ? false }:
-        let
-          hostName = builtins.baseNameOf (toString hostPath);
-        in
-        inputs.nixpkgs.lib.nixosSystem {
-          inherit system;
-          specialArgs = systemSpecialArgs;
-          modules = [
-            {
-              nixpkgs.overlays = commonOverlays;
-              nixpkgs.config = commonNixpkgsConfig;
-            }
-            inputs.sops-nix.nixosModules.sops
-            inputs.home-manager.nixosModules.home-manager
-            {
-              home-manager.extraSpecialArgs = homeManagerModuleArgs // { inherit hostName isDesktop; };
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              # home-manager.sharedModules = [
-              #   inputs.sops-nix.homeManagerModules.sops
-              # ];
-            }
-            inputs.determinate.nixosModules.default
-            inputs.nix-snapd.nixosModules.default
-            ./modules
-            hostPath
-          ] ++ modules ++ extraModules;
-        };
-
-      # Standard Darwin system builder
-      mkDarwinSystem = { system ? "aarch64-darwin", hostPath, username, modules ? [], isDesktop ? true }:
-        let
-          # Extract just the hostname from the path for user config
-          hostName = builtins.baseNameOf (toString hostPath);
-        in
-        inputs.nix-darwin.lib.darwinSystem {
-          inherit system;
-          specialArgs = systemSpecialArgs // {
-            inherit (inputs) nix-homebrew;
-          };
-          modules = [
-            {
-              nixpkgs.overlays = commonOverlays;
-              nixpkgs.config = commonNixpkgsConfig;
-            }
-            # inputs.sops-nix.darwinModules.sops
-            ./modules
-            hostPath
-            inputs.home-manager.darwinModules.home-manager
-            ({ pkgs, ... }: {
-              home-manager.users.${username} = {
-                imports = [
-                  ./users/${username}
-                  ./users/${username}/hosts/${hostName}
-                  ./modules/home-manager
-                ];
-              };
-              home-manager.extraSpecialArgs = homeManagerModuleArgs // { inherit hostName isDesktop; };
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.sharedModules = [
-                # inputs.sops-nix.homeManagerModules.sops
-              ];
-
-              users.users.${username} = {
-                name = username;
-                home = "/Users/${username}";
-                shell = pkgs.fish;
-              };
-            })
-          ] ++ modules;
-        };
-
-      mkOmarchySystem = { system ? "x86_64-linux", hostPath, modules ? [], extraModules ? [] }:
-        inputs.nixpkgs.lib.nixosSystem {
-          inherit system;
-          specialArgs = systemSpecialArgs;
-          modules = [
-            {
-              nixpkgs.overlays = commonOverlays;
-              nixpkgs.config = commonNixpkgsConfig;
-            }
-            inputs.sops-nix.nixosModules.sops
-            inputs.home-manager.nixosModules.home-manager
-            inputs.determinate.nixosModules.default
-            {
-              home-manager.extraSpecialArgs = homeManagerModuleArgs;
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-            }
-            ./modules
-            hostPath
-          ] ++ modules ++ extraModules;
-        };
-
-
-      # Standard Home Manager configuration builder
-      mkHomeConfig = { system ? "x86_64-linux", userPath, modules ? [], isDesktop ? false }:
-        inputs.home-manager.lib.homeManagerConfiguration {
-          pkgs = import inputs.nixpkgs {
+      # Helper functions to reduce boilerplate in individual host files
+      helpers = {
+        # Standard NixOS system builder
+        mkNixosSystem =
+          {
+            system ? "x86_64-linux",
+            hostPath,
+            modules ? [ ],
+            extraModules ? [ ],
+            isDesktop ? false,
+          }:
+          let
+            hostName = builtins.baseNameOf (toString hostPath);
+          in
+          inputs.nixpkgs.lib.nixosSystem {
             inherit system;
-            config = commonNixpkgsConfig;
-            overlays = commonOverlays;
+            specialArgs = systemSpecialArgs;
+            modules = [
+              {
+                nixpkgs.overlays = commonOverlays;
+                nixpkgs.config = commonNixpkgsConfig;
+              }
+              inputs.sops-nix.nixosModules.sops
+              inputs.home-manager.nixosModules.home-manager
+              {
+                home-manager.extraSpecialArgs = homeManagerModuleArgs // {
+                  inherit hostName isDesktop;
+                };
+                home-manager.useGlobalPkgs = true;
+                home-manager.useUserPackages = true;
+                # home-manager.sharedModules = [
+                #   inputs.sops-nix.homeManagerModules.sops
+                # ];
+              }
+              inputs.determinate.nixosModules.default
+              inputs.nix-snapd.nixosModules.default
+              ./modules
+              hostPath
+            ]
+            ++ modules
+            ++ extraModules;
           };
-          extraSpecialArgs = homeManagerModuleArgs // { inherit isDesktop; hostName = ""; };
-          modules = [
-            userPath
-            ./modules/home-manager
-            inputs.sops-nix.homeManagerModules.sops
-          ] ++ modules;
-        };
-    };
 
-    # Helper to load and merge all output configurations
-    loadOutputs = outputsDir:
-      let
-        outputFiles = importAllModulesInDir outputsDir;
-        # Create a context object that output files can use
-        outputContext = {
-          inherit inputs nixpkgsLib commonNixpkgsConfig commonOverlays
-                  systemSpecialArgs homeManagerModuleArgs importAllModulesInDir helpers;
-        };
-      in
-        nixpkgsLib.foldl' (acc: file:
-          nixpkgsLib.recursiveUpdate acc (import file outputContext)
-        ) {} outputFiles;
+        # Standard Darwin system builder
+        mkDarwinSystem =
+          {
+            system ? "aarch64-darwin",
+            hostPath,
+            username,
+            modules ? [ ],
+            isDesktop ? true,
+          }:
+          let
+            # Extract just the hostname from the path for user config
+            hostName = builtins.baseNameOf (toString hostPath);
+          in
+          inputs.nix-darwin.lib.darwinSystem {
+            inherit system;
+            specialArgs = systemSpecialArgs // {
+              inherit (inputs) nix-homebrew;
+            };
+            modules = [
+              {
+                nixpkgs.overlays = commonOverlays;
+                nixpkgs.config = commonNixpkgsConfig;
+              }
+              # inputs.sops-nix.darwinModules.sops
+              ./modules
+              hostPath
+              inputs.home-manager.darwinModules.home-manager
+              (
+                { pkgs, ... }:
+                {
+                  home-manager.users.${username} = {
+                    imports = [
+                      ./users/${username}
+                      ./users/${username}/hosts/${hostName}
+                      ./modules/home-manager
+                    ];
+                  };
+                  home-manager.extraSpecialArgs = homeManagerModuleArgs // {
+                    inherit hostName isDesktop;
+                  };
+                  home-manager.useGlobalPkgs = true;
+                  home-manager.useUserPackages = true;
+                  home-manager.sharedModules = [
+                    # inputs.sops-nix.homeManagerModules.sops
+                  ];
 
-  in
-    (loadOutputs ./outputs) // {
+                  users.users.${username} = {
+                    name = username;
+                    home = "/Users/${username}";
+                    shell = pkgs.fish;
+                  };
+                }
+              )
+            ]
+            ++ modules;
+          };
+
+        mkOmarchySystem =
+          {
+            system ? "x86_64-linux",
+            hostPath,
+            modules ? [ ],
+            extraModules ? [ ],
+          }:
+          inputs.nixpkgs.lib.nixosSystem {
+            inherit system;
+            specialArgs = systemSpecialArgs;
+            modules = [
+              {
+                nixpkgs.overlays = commonOverlays;
+                nixpkgs.config = commonNixpkgsConfig;
+              }
+              inputs.sops-nix.nixosModules.sops
+              inputs.home-manager.nixosModules.home-manager
+              inputs.determinate.nixosModules.default
+              {
+                home-manager.extraSpecialArgs = homeManagerModuleArgs;
+                home-manager.useGlobalPkgs = true;
+                home-manager.useUserPackages = true;
+              }
+              ./modules
+              hostPath
+            ]
+            ++ modules
+            ++ extraModules;
+          };
+
+        # Standard Home Manager configuration builder
+        mkHomeConfig =
+          {
+            system ? "x86_64-linux",
+            userPath,
+            modules ? [ ],
+            isDesktop ? false,
+          }:
+          inputs.home-manager.lib.homeManagerConfiguration {
+            pkgs = import inputs.nixpkgs {
+              inherit system;
+              config = commonNixpkgsConfig;
+              overlays = commonOverlays;
+            };
+            extraSpecialArgs = homeManagerModuleArgs // {
+              inherit isDesktop;
+              hostName = "";
+            };
+            modules = [
+              userPath
+              ./modules/home-manager
+              inputs.sops-nix.homeManagerModules.sops
+            ]
+            ++ modules;
+          };
+      };
+
+      # Helper to load and merge all output configurations
+      loadOutputs =
+        outputsDir:
+        let
+          outputFiles = importAllModulesInDir outputsDir;
+          # Create a context object that output files can use
+          outputContext = {
+            inherit
+              inputs
+              nixpkgsLib
+              commonNixpkgsConfig
+              commonOverlays
+              systemSpecialArgs
+              homeManagerModuleArgs
+              importAllModulesInDir
+              helpers
+              ;
+          };
+        in
+        nixpkgsLib.foldl' (
+          acc: file: nixpkgsLib.recursiveUpdate acc (import file outputContext)
+        ) { } outputFiles;
+
+    in
+    (loadOutputs ./outputs)
+    // {
       hm-opts = inputs.home-manager.lib.homeManagerConfiguration {
         pkgs = import inputs.nixpkgs {
           system = "x86_64-linux";

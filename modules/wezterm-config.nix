@@ -21,8 +21,16 @@
       windowBackgroundBlur = 30;
     };
     keyBindings = [
-      { key = "q"; mods = "CTRL"; action = "ToggleFullScreen"; }
-      { key = "\\\""; mods = "CTRL"; action = "ClearScrollback 'ScrollbackAndViewport'"; }
+      {
+        key = "q";
+        mods = "CTRL";
+        action = "ToggleFullScreen";
+      }
+      {
+        key = "\\\"";
+        mods = "CTRL";
+        action = "ClearScrollback 'ScrollbackAndViewport'";
+      }
     ];
     extraConfig = ''
       -- Mouse bindings (manual for now)

@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   # System packages for inference VMs
@@ -7,39 +12,39 @@
     vim
     neovim
     helix
-    
+
     # Terminal tools
     nushell
     bat
     fzf
     yazi
     tmux
-    
+
     # System monitoring
     netdata
     htop
     btop
-    
+
     # Network tools
     tailscale
     wget
     curl
     iperf3
-    
+
     # Development tools
     git
     gitAndTools.gh
     elixir
     erlang
     tigerbeetle
-    
+
     # System tools
     stow
     home-manager
     sops
     age
     ssh-to-age
-    
+
     # Shell themes
     oh-my-posh
     starship

@@ -49,7 +49,10 @@
     undercurl = true;
     jump-label-alphabet = "hatesincludorkmjfxwypgvb";
     end-of-line-diagnostics = "hint";
-    rulers = [ 80 120 ];
+    rulers = [
+      80
+      120
+    ];
 
     lsp = {
       display-messages = true;
@@ -65,7 +68,10 @@
         "read-only-indicator"
         "file-modification-indicator"
       ];
-      center = [ "file-name" "version-control" ];
+      center = [
+        "file-name"
+        "version-control"
+      ];
       right = [
         "diagnostics"
         "selections"
@@ -167,8 +173,14 @@ buffer_name} --chooser-file=/tmp/unique-file"
     };
 
     insert = {
-      "C-h" = [ "jump_view_left" "insert_mode" ];
-      "C-l" = [ "jump_view_right" "insert_mode" ];
+      "C-h" = [
+        "jump_view_left"
+        "insert_mode"
+      ];
+      "C-l" = [
+        "jump_view_right"
+        "insert_mode"
+      ];
     };
 
     select = {

@@ -1,5 +1,10 @@
 # users/deepwatrcreatur/hosts/cache-build-server/justfile.nix
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 {
   home.packages = [ pkgs.just ];
 

@@ -1,19 +1,22 @@
 # modules/home-manager/default.nix
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   # Helper to import all .nix files from common directory
   commonDir = ./common;
   commonItems = builtins.readDir commonDir;
-  commonModules = lib.filterAttrs (name: type:
-    (type == "regular" && lib.hasSuffix ".nix" name) ||
-    type == "directory"
-    ) commonItems;
-  commonImports = lib.mapAttrsToList (name: _: commonDir + 
-"/${name}") commonModules;
+  commonModules = lib.filterAttrs (
+    name: type: (type == "regular" && lib.hasSuffix ".nix" name) || type == "directory"
+  ) commonItems;
+  commonImports = lib.mapAttrsToList (name: _: commonDir + "/${name}") commonModules;
 in
 {
   imports = commonImports;
-  
+
   # Copy .terminfo files into place
   home.file.".terminfo" = {
     source = ../../modules/home-manager/terminfo;

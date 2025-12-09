@@ -1,5 +1,10 @@
 # Enable both Wayland and X11 sessions for GNOME
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   # Ensure X11 support is enabled alongside Wayland
@@ -10,11 +15,11 @@
   };
 
   # Configure GDM for X11 only when GNOME is enabled (Wayland disabled for AMD GPU stability)
-  services.xserver.displayManager.gdm = lib.mkIf (config.services.desktopManager.gnome.enable) {
+  services.xserver.displayManager.gdm = lib.mkIf config.services.desktopManager.gnome.enable {
     enable = true;
     # Disable Wayland to avoid AMD GPU crashes
     wayland = false;
-    
+
     # X11 only configuration
     settings = {
       daemon = {
@@ -30,7 +35,7 @@
 
   # Ensure both session types are available in the greeter
   environment.systemPackages = with pkgs; [
-    gnome-session  # Required for GNOME on X11
+    gnome-session # Required for GNOME on X11
   ];
 
   # XDG portals for both Wayland and X11 compatibility

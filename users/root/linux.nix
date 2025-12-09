@@ -1,9 +1,13 @@
-
 # home/deepwatrcreatur.nix
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 {
   imports = [ ../modules/home/fish-shared.nix ];
-  
+
   home.username = "root";
   home.homeDirectory = "/root";
 
@@ -12,7 +16,7 @@
     fish
     # ...other packages you want...
   ];
-    
+
   # Copy .terminfo files into place
   home.file.".terminfo" = {
     source = ./terminfo; # Place your terminfo files in home/terminfo/

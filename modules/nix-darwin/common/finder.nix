@@ -1,30 +1,29 @@
-
 {
   system.defaults.NSGlobalDomain = {
     AppleShowAllFiles = true;
     AppleShowAllExtensions = true;
 
     "com.apple.springing.enabled" = true;
-    "com.apple.springing.delay"   = 0.0;
+    "com.apple.springing.delay" = 0.0;
   };
 
   system.defaults.CustomSystemPreferences."com.apple.desktopservices" = {
     DSDontWriteNetworkStores = true;
-    DSDontWriteUSBStores     = true;
+    DSDontWriteUSBStores = true;
   };
 
   system.defaults.finder = {
     AppleShowAllExtensions = true;
-    AppleShowAllFiles      = true;
+    AppleShowAllFiles = true;
 
     CreateDesktop = true;
 
     FXEnableExtensionChangeWarning = true;
-    FXPreferredViewStyle           = "Nlsv"; # List style.
-    FXRemoveOldTrashItems          = true;
+    FXPreferredViewStyle = "Nlsv"; # List style.
+    FXRemoveOldTrashItems = true;
 
-    _FXShowPosixPathInTitle      = true;
-    _FXSortFoldersFirst          = true;
+    _FXShowPosixPathInTitle = true;
+    _FXSortFoldersFirst = true;
     _FXSortFoldersFirstOnDesktop = false;
 
     NewWindowTarget = "Home";
@@ -32,10 +31,10 @@
     QuitMenuItem = true; # Allow quitting of Finder application
 
     ShowExternalHardDrivesOnDesktop = true;
-    ShowMountedServersOnDesktop     = true;
-    ShowPathbar                     = true;
-    ShowRemovableMediaOnDesktop     = true;
-    ShowStatusBar                   = true;
+    ShowMountedServersOnDesktop = true;
+    ShowPathbar = true;
+    ShowRemovableMediaOnDesktop = true;
+    ShowStatusBar = true;
   };
 
   system.defaults.CustomSystemPreferences."com.apple.finder" = {
@@ -47,14 +46,20 @@
     WarnOnEmptyTrash = false;
   };
 
-  home-manager.sharedModules = [(homeArgs: let
-    lib' = homeArgs.lib;
+  home-manager.sharedModules = [
+    (
+      homeArgs:
+      let
+        lib' = homeArgs.lib;
 
-    inherit (lib'.hm.dag) entryAfter;
-  in {
-    home.activation.showLibrary = entryAfter [ "writeBoundary" ] /* bash */ ''
-      # Unhide ~/Library.
-      /usr/bin/chflags nohidden ~/Library
-    '';
-  })];
+        inherit (lib'.hm.dag) entryAfter;
+      in
+      {
+        home.activation.showLibrary = entryAfter [ "writeBoundary" ] /* bash */ ''
+          # Unhide ~/Library.
+          /usr/bin/chflags nohidden ~/Library
+        '';
+      }
+    )
+  ];
 }

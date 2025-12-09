@@ -1,5 +1,10 @@
 # modules/home-manager/shell-aliases.nix
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   aliases = {
     ls = "lsd";
@@ -12,15 +17,18 @@ let
     nh-update = "just --justfile ~/.justfile nh-update";
     ssh-nocheck = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ";
     rsync = "/run/current-system/sw/bin/rsync";
-  } // lib.optionalAttrs (pkgs.stdenv.isDarwin) {
+  }
+  // lib.optionalAttrs pkgs.stdenv.isDarwin {
     xcode = "open -a Xcode";
   };
 in
 {
-  programs.bash.shellAliases = aliases;
-  programs.zsh.shellAliases = aliases;
-  programs.fish.shellAliases = aliases;
-  
+  programs = {
+    bash.shellAliases = aliases;
+    zsh.shellAliases = aliases;
+    fish.shellAliases = aliases;
+  };
+
   # Handle nushell separately with proper syntax
   programs.nushell.extraConfig = ''
     alias ls = ^lsd
@@ -33,6 +41,6 @@ in
     alias nh-update = ^just --justfile ~/.justfile nh-update
     alias ssh-nocheck = ^ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null 
     alias rsync = ^/run/current-system/sw/bin/rsync
-    ${lib.optionalString (pkgs.stdenv.isDarwin) "alias xcode = ^open -a Xcode"}
+    ${lib.optionalString pkgs.stdenv.isDarwin "alias xcode = ^open -a Xcode"}
   '';
 }

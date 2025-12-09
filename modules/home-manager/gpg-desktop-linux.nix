@@ -1,5 +1,11 @@
 # modules/home-manager/gpg-desktop-linux.nix
-{ config, pkgs, lib, inputs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 
 {
   # Install pinentry package (gnome3 for GNOME desktop)

@@ -1,9 +1,14 @@
-{ config, pkgs, mac-app-util ? null, ... }:
+{
+  config,
+  pkgs,
+  mac-app-util ? null,
+  ...
+}:
 
 {
   imports = [
     # mac-app-util.homeManagerModules.default  # TODO: Temporarily disabled - sbcl build failure
-    ../../default.nix  # Import main user config (includes SSH keys and common modules)
+    ../../default.nix # Import main user config (includes SSH keys and common modules)
     ../../../../modules/home-manager/ghostty
     #../../../../modules/home-manager/zed.nix
     ../../../../modules/home-manager/gpg-mac.nix
@@ -18,7 +23,7 @@
     bitwarden-desktop
     cyberduck
     ffmpeg
-    ghostty-bin  # Available via overlay from unstable
+    ghostty-bin # Available via overlay from unstable
     # input-leap  # Temporarily disabled due to Wayland dependency issues on macOS
     megacmd
     obsidian

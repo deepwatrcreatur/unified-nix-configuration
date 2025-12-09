@@ -2,7 +2,7 @@
 {
   programs.rbw = {
     enable = true;
-    package = pkgs.rbw; 
+    package = pkgs.rbw;
     settings = {
       email = "bitwarden.com@deepwatercreature.com";
       lock_timeout = 300; # Cache login info for 5 minutes

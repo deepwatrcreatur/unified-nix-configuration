@@ -1,5 +1,10 @@
 # modules/home-manager/npm.nix
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 {
   options.myModules.npm.enable = lib.mkOption {
     type = lib.types.bool;
@@ -26,10 +31,8 @@
       "$HOME/.npm-global/bin"
     ];
 
-    
-  
     # Create the npm global directory if it doesn't exist
-    home.activation.createNpmGlobalDir = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    home.activation.createNpmGlobalDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.npm-global
       $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.npm-cache
     '';

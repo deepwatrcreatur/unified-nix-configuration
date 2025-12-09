@@ -1,5 +1,10 @@
 # outputs/ansible.nix
-{ helpers, inputs, homeManagerModuleArgs, ... }:
+{
+  helpers,
+  inputs,
+  homeManagerModuleArgs,
+  ...
+}:
 {
   #nixosConfigurations.ansible = helpers.mkNixosSystem {
   #  system = "x86_64-linux";

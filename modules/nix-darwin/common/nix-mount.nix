@@ -1,16 +1,24 @@
 # modules/nix-darwin/nix-mount.nix
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.custom.nix-mount;
 
   # Create an executable script in the Nix store
-  fixNixMountPlistScript = pkgs.runCommand "fix-nix-mount-plist.sh" {
-    src = ./fix-nix-mount-plist.sh;
-  } ''
-    mkdir -p $out
-    cp $src $out/fix-nix-mount-plist.sh
-    chmod +x $out/fix-nix-mount-plist.sh
-  '';
+  fixNixMountPlistScript =
+    pkgs.runCommand "fix-nix-mount-plist.sh"
+      {
+        src = ./fix-nix-mount-plist.sh;
+      }
+      ''
+        mkdir -p $out
+        cp $src $out/fix-nix-mount-plist.sh
+        chmod +x $out/fix-nix-mount-plist.sh
+      '';
 in
 {
   options.custom.nix-mount = {
@@ -59,7 +67,8 @@ in
       };
     };
 
-    environment.etc."fix-nix-mount-plist.sh".source = "${fixNixMountPlistScript}/fix-nix-mount-plist.sh";
+    environment.etc."fix-nix-mount-plist.sh".source =
+      "${fixNixMountPlistScript}/fix-nix-mount-plist.sh";
 
     system.activationScripts.fixLaunchDaemonPermissions.text = ''
       /bin/sh /run/current-system/sw/etc/fix-nix-mount-plist.sh

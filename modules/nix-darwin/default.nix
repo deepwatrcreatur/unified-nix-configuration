@@ -1,19 +1,22 @@
 # modules/nix-darwin/default.nix (rename from common-darwin.nix)
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   # Helper to import all .nix files AND directories from common directory
   commonDir = ./common;
   commonItems = builtins.readDir commonDir;
-  commonModules = lib.filterAttrs (name: type: 
-    (type == "regular" && lib.hasSuffix ".nix" name) || 
-    type == "directory"
+  commonModules = lib.filterAttrs (
+    name: type: (type == "regular" && lib.hasSuffix ".nix" name) || type == "directory"
   ) commonItems;
   commonImports = lib.mapAttrsToList (name: _: commonDir + "/${name}") commonModules;
 in
 {
-  imports = [
-    # Auto-import all common Darwin modules
-  ] ++ commonImports ++ [
+  imports = commonImports
+  ++ [
     # Explicit imports that don't belong in common
     ../wezterm-config.nix
     ./system-limits.nix

@@ -1,7 +1,14 @@
-{ config, pkgs, lib, inputs, ... }: {
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
+{
 
   environment.systemPackages = with pkgs; [
-     graphite-cli
-     sops
+    graphite-cli
+    sops
   ];
 }

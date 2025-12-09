@@ -1,6 +1,11 @@
 # modules/home-manager/fish-shared.nix
 
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   programs.fish = {
@@ -10,11 +15,26 @@
       rename-apply = "rename";
     };
     plugins = [
-      { name = "fzf"; src = pkgs.fishPlugins.fzf; }
-      { name = "z"; src = pkgs.fishPlugins.z; }
-      { name = "puffer"; src = pkgs.fishPlugins.puffer; }
-      { name = "autopair"; src = pkgs.fishPlugins.autopair; }
-      { name = "grc"; src = pkgs.fishPlugins.grc; }
+      {
+        name = "fzf";
+        src = pkgs.fishPlugins.fzf;
+      }
+      {
+        name = "z";
+        src = pkgs.fishPlugins.z;
+      }
+      {
+        name = "puffer";
+        src = pkgs.fishPlugins.puffer;
+      }
+      {
+        name = "autopair";
+        src = pkgs.fishPlugins.autopair;
+      }
+      {
+        name = "grc";
+        src = pkgs.fishPlugins.grc;
+      }
     ];
 
     # shellInit runs for ALL shells (login and non-login) - critical for SSH

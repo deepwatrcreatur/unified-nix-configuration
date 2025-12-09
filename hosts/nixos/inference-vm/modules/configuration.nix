@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   imports = [
@@ -10,19 +15,19 @@
     (final: prev: {
       ollama = prev.ollama.overrideAttrs (old: {
         # Enable broader CUDA architecture support including Pascal (6.1) for Tesla P40
-        cmakeFlags = (old.cmakeFlags or []) ++ [
+        cmakeFlags = (old.cmakeFlags or [ ]) ++ [
           "-DGGML_CUDA_ARCHITECTURES=61;70;75;80;86;89;90"
         ];
-        
+
         # Ensure CUDA support is properly enabled with additional dependencies
-        buildInputs = (old.buildInputs or []) ++ [
+        buildInputs = (old.buildInputs or [ ]) ++ [
           prev.cudaPackages.cuda_nvcc
           prev.cudaPackages.cuda_cudart
           prev.cudaPackages.libcublas
           prev.cudaPackages.libcusparse
           prev.cudaPackages.libcurand
         ];
-        
+
         # Set specific CMake variables for CUDA compilation in preConfigure
         preConfigure = (old.preConfigure or "") + ''
           export CUDA_PATH=${prev.cudaPackages.cudatoolkit}
@@ -90,7 +95,7 @@
     modesetting.enable = true;
     powerManagement.enable = false;
     powerManagement.finegrained = false;
-    open = false;  # Use proprietary driver
+    open = false; # Use proprietary driver
     nvidiaSettings = true;
     package = config.boot.kernelPackages.nvidiaPackages.stable;
   };

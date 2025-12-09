@@ -1,5 +1,10 @@
 # modules/home-manager/env-darwin.nix
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 {
   home.sessionPath = [
     "/opt/homebrew/bin"
@@ -17,13 +22,13 @@
     "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin"
     "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin"
   ];
-  
+
   # Set environment variables for the session
   home.sessionVariables = {
     GNUPGHOME = "${config.home.homeDirectory}/.gnupg";
     SOPS_AGE_KEY_FILE = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
   };
-  
+
   # Only fish configuration here - nushell is handled by the nushell module
   programs.fish = {
     shellAliases = {

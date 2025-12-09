@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.services.nix-user-config;
@@ -54,33 +59,32 @@ in
 
   config = lib.mkIf cfg.enable {
 
-
     # Create netrc file in Determinate Nix's managed location
     home.activation.nix-netrc = lib.mkIf (cfg.netrcMachine != null) (
-      lib.hm.dag.entryAfter ["writeBoundary"] ''
-        netrc_file="/nix/var/determinate/netrc"
-        token_file="${cfg.netrcTokenPath}"
+      lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+                netrc_file="/nix/var/determinate/netrc"
+                token_file="${cfg.netrcTokenPath}"
 
-        # Only create netrc if we're the actual user and token exists
-        if [[ "$HOME" == "${config.home.homeDirectory}" && -f "$token_file" ]]; then
-          token=$(cat "$token_file" 2>/dev/null || echo "")
-          if [[ -n "$token" ]]; then
-            # Append to Determinate Nix's netrc if not already present
-                      if [[ -w "$netrc_file" ]] || test -w "$(dirname "$netrc_file")" 2>/dev/null; then
-                        if ! grep -q "machine ${cfg.netrcMachine}" "$netrc_file" 2>/dev/null; then
-                          tee -a "$netrc_file" > /dev/null <<EOF
-machine ${cfg.netrcMachine}
-password $token
-EOF
-                echo "Added netrc authentication for ${cfg.netrcMachine} to Determinate Nix's netrc"
-              fi
-            else
-              echo "Warning: Cannot write to Determinate Nix's netrc at $netrc_file" >&2
-            fi
-          else
-            echo "Warning: Token file empty at $token_file" >&2
-          fi
-        fi
+                # Only create netrc if we're the actual user and token exists
+                if [[ "$HOME" == "${config.home.homeDirectory}" && -f "$token_file" ]]; then
+                  token=$(cat "$token_file" 2>/dev/null || echo "")
+                  if [[ -n "$token" ]]; then
+                    # Append to Determinate Nix's netrc if not already present
+                              if [[ -w "$netrc_file" ]] || test -w "$(dirname "$netrc_file")" 2>/dev/null; then
+                                if ! grep -q "machine ${cfg.netrcMachine}" "$netrc_file" 2>/dev/null; then
+                                  tee -a "$netrc_file" > /dev/null <<EOF
+        machine ${cfg.netrcMachine}
+        password $token
+        EOF
+                        echo "Added netrc authentication for ${cfg.netrcMachine} to Determinate Nix's netrc"
+                      fi
+                    else
+                      echo "Warning: Cannot write to Determinate Nix's netrc at $netrc_file" >&2
+                    fi
+                  else
+                    echo "Warning: Token file empty at $token_file" >&2
+                  fi
+                fi
       ''
     );
   };

@@ -1,4 +1,10 @@
-{ config, lib, modulesPath, pkgs, ... }:
+{
+  config,
+  lib,
+  modulesPath,
+  pkgs,
+  ...
+}:
 
 {
   imports = [
@@ -19,11 +25,13 @@
 
   security.wrappers.sudo.setuid = true;
 
-  systemd.mounts = [{
-    what = "debugfs";
-    where = "/sys/kernel/debug";
-    enable = false;
-  }];
+  systemd.mounts = [
+    {
+      what = "debugfs";
+      where = "/sys/kernel/debug";
+      enable = false;
+    }
+  ];
 
   boot.initrd.systemd.fido2.enable = false;
 

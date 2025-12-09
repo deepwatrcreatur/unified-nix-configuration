@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -17,25 +22,29 @@ in
 
     brews = mkOption {
       type = types.listOf types.str;
-      default = [];
+      default = [ ];
       description = "List of Homebrew formulae to install";
     };
 
     casks = mkOption {
       type = types.listOf types.str;
-      default = [];
+      default = [ ];
       description = "List of Homebrew casks to install (if supported on Linux)";
     };
 
     taps = mkOption {
       type = types.listOf types.str;
-      default = [];
+      default = [ ];
       description = "List of Homebrew taps to add";
     };
 
     onActivation = {
       cleanup = mkOption {
-        type = types.enum [ "none" "uninstall" "zap" ];
+        type = types.enum [
+          "none"
+          "uninstall"
+          "zap"
+        ];
         default = "none";
         description = "Cleanup strategy for Homebrew packages";
       };
@@ -77,68 +86,79 @@ in
     '';
 
     # Add Homebrew bin to PATH
-    environment.sessionVariables.PATH = [ "${cfg.brewPrefix}/bin" "${cfg.brewPrefix}/sbin" ];
+    environment.sessionVariables.PATH = [
+      "${cfg.brewPrefix}/bin"
+      "${cfg.brewPrefix}/sbin"
+    ];
 
     # Install Homebrew and manage packages
-    system.activationScripts.homebrew = lib.mkIf (cfg.brews != [] || cfg.casks != [] || cfg.taps != []) ''
-      runuser -u ${config.users.users.deepwatrcreatur.name} -- /bin/bash -c "$(cat <<'EOF'
-        export PATH="${pkgs.git}/bin:${pkgs.gcc}/bin:$PATH"
-        # Install Homebrew if not present
-        if [ ! -f "${cfg.brewPrefix}/bin/brew" ]; then
-          echo "Installing Homebrew..."
-          /bin/bash -c "$(${pkgs.curl}/bin/curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        fi
+    system.activationScripts.homebrew =
+      lib.mkIf (cfg.brews != [ ] || cfg.casks != [ ] || cfg.taps != [ ])
+        ''
+          runuser -u ${config.users.users.deepwatrcreatur.name} -- /bin/bash -c "$(cat <<'EOF'
+            export PATH="${pkgs.git}/bin:${pkgs.gcc}/bin:$PATH"
+            # Install Homebrew if not present
+            if [ ! -f "${cfg.brewPrefix}/bin/brew" ]; then
+              echo "Installing Homebrew..."
+              /bin/bash -c "$(${pkgs.curl}/bin/curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+            fi
 
-        # Set up environment for this script
-        export PATH="${cfg.brewPrefix}/bin:${cfg.brewPrefix}/sbin:$PATH"
-        export HOMEBREW_PREFIX="${cfg.brewPrefix}"
-        export HOMEBREW_CELLAR="${cfg.brewPrefix}/Cellar"
-        export HOMEBREW_REPOSITORY="${cfg.brewPrefix}/Homebrew"
+            # Set up environment for this script
+            export PATH="${cfg.brewPrefix}/bin:${cfg.brewPrefix}/sbin:$PATH"
+            export HOMEBREW_PREFIX="${cfg.brewPrefix}"
+            export HOMEBREW_CELLAR="${cfg.brewPrefix}/Cellar"
+            export HOMEBREW_REPOSITORY="${cfg.brewPrefix}/Homebrew"
 
-        # Auto-update if requested
-        ${optionalString cfg.onActivation.autoUpdate ''
-          echo "Updating Homebrew..."
-          "${cfg.brewPrefix}/bin/brew" update
-        ''}
+            # Auto-update if requested
+            ${optionalString cfg.onActivation.autoUpdate ''
+              echo "Updating Homebrew..."
+              "${cfg.brewPrefix}/bin/brew" update
+            ''}
 
-        # Add taps
-        ${concatStringsSep "\n" (map (tap: ''
-          echo "Adding tap: ${tap}"
-          "${cfg.brewPrefix}/bin/brew" tap "${tap}" || true
-        '') cfg.taps)}
+            # Add taps
+            ${concatStringsSep "\n" (
+              map (tap: ''
+                echo "Adding tap: ${tap}"
+                "${cfg.brewPrefix}/bin/brew" tap "${tap}" || true
+              '') cfg.taps
+            )}
 
-        # Install formulae
-        ${concatStringsSep "\n" (map (formula: ''
-          if ! "${cfg.brewPrefix}/bin/brew" list "${formula}" &>/dev/null; then
-            echo "Installing formula: ${formula}"
-            "${cfg.brewPrefix}/bin/brew" install "${formula}"
-          fi
-        '') cfg.brews)}
+            # Install formulae
+            ${concatStringsSep "\n" (
+              map (formula: ''
+                if ! "${cfg.brewPrefix}/bin/brew" list "${formula}" &>/dev/null; then
+                  echo "Installing formula: ${formula}"
+                  "${cfg.brewPrefix}/bin/brew" install "${formula}"
+                fi
+              '') cfg.brews
+            )}
 
-        # Install casks (if any are specified)
-        ${concatStringsSep "\n" (map (cask: ''
-          if ! "${cfg.brewPrefix}/bin/brew" list --cask "${cask}" &>/dev/null; then
-            echo "Installing cask: ${cask}"
-            "${cfg.brewPrefix}/bin/brew" install --cask "${cask}" || echo "Cask ${cask} may not be supported on Linux"
-          fi
-        '') cfg.casks)}
+            # Install casks (if any are specified)
+            ${concatStringsSep "\n" (
+              map (cask: ''
+                if ! "${cfg.brewPrefix}/bin/brew" list --cask "${cask}" &>/dev/null; then
+                  echo "Installing cask: ${cask}"
+                  "${cfg.brewPrefix}/bin/brew" install --cask "${cask}" || echo "Cask ${cask} may not be supported on Linux"
+                fi
+              '') cfg.casks
+            )}
 
-        # Upgrade packages if requested
-        ${optionalString cfg.onActivation.upgrade ''
-          echo "Upgrading Homebrew packages..."
-          "${cfg.brewPrefix}/bin/brew" upgrade
-        ''}
+            # Upgrade packages if requested
+            ${optionalString cfg.onActivation.upgrade ''
+              echo "Upgrading Homebrew packages..."
+              "${cfg.brewPrefix}/bin/brew" upgrade
+            ''}
 
-        # Cleanup based on strategy
-        ${optionalString (cfg.onActivation.cleanup != "none") ''
-          echo "Cleaning up Homebrew..."
-          "${cfg.brewPrefix}/bin/brew" cleanup
-          ${optionalString (cfg.onActivation.cleanup == "zap") ''
-            "${cfg.brewPrefix}/bin/brew" autoremove
-          ''}
-        ''}
-      EOF
-      )"
-    '';
+            # Cleanup based on strategy
+            ${optionalString (cfg.onActivation.cleanup != "none") ''
+              echo "Cleaning up Homebrew..."
+              "${cfg.brewPrefix}/bin/brew" cleanup
+              ${optionalString (cfg.onActivation.cleanup == "zap") ''
+                "${cfg.brewPrefix}/bin/brew" autoremove
+              ''}
+            ''}
+          EOF
+          )"
+        '';
   };
 }

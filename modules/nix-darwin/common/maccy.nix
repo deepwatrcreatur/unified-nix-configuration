@@ -1,12 +1,17 @@
-{ lib, ... }: let
+{ lib, ... }:
+let
   inherit (lib.strings) toJSON;
-in {
+in
+{
   homebrew.casks = [ "maccy" ];
 
   system.defaults.CustomSystemPreferences."org.p0deje.Maccy" = {
     KeyboardShortcuts_delete = 0;
-    KeyboardShortcuts_pin    = 0;
-    KeyboardShortcuts_popup  = toJSON { carbonKeyCode = 9; carbonModifiers = 4352; }; # control+command+v
+    KeyboardShortcuts_pin = 0;
+    KeyboardShortcuts_popup = toJSON {
+      carbonKeyCode = 9;
+      carbonModifiers = 4352;
+    }; # control+command+v
 
     SUEnableAutomaticChecks = 0;
 
@@ -19,12 +24,12 @@ in {
       "public.html"
     ];
 
-    menuIcon      = "clipboard";
+    menuIcon = "clipboard";
     popupPosition = "window";
-    searchMode    = "fuzzy";
+    searchMode = "fuzzy";
 
     showFooter = 0;
     showSearch = 1;
-    showTitle  = 0;
+    showTitle = 0;
   };
 }

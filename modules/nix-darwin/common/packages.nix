@@ -1,5 +1,11 @@
 # modules/nix-darwin/common/packages.nix
-{ config, pkgs, lib, ... }: {
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+{
   environment.systemPackages = with pkgs; [
     watch
   ];

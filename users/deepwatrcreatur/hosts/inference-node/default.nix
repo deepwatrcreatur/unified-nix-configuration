@@ -1,4 +1,9 @@
-{ config, pkgs, inputs, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
   # Allow unfree packages for CUDA/NVIDIA tools
@@ -14,8 +19,8 @@
 
   home.packages = with pkgs; [
     # GPU utilities that work well with Nix
-    glxinfo              # OpenGL info
-    vulkan-tools         # Vulkan utilities
+    glxinfo # OpenGL info
+    vulkan-tools # Vulkan utilities
 
     # Note: For GPU monitoring tools like nvtop, use system packages:
     # sudo apt install nvtop
@@ -28,9 +33,6 @@
   };
 
   home.stateVersion = "24.11";
-
-  programs.attic-client.enable = true;
-}
 
   programs.attic-client.enable = true;
 }

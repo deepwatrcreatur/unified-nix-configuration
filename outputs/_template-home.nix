@@ -7,7 +7,7 @@
   homeConfigurations.my-new-home = helpers.mkHomeConfig {
     system = "x86_64-linux"; # or "aarch64-linux", "x86_64-darwin", "aarch64-darwin"
     userPath = ../users/username/hosts/my-new-home;
-    
+
     # Optional: add extra modules
     # modules = [
     #   ({ config, pkgs, ... }: {

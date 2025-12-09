@@ -1,16 +1,23 @@
 # users/deepwatrcreatur/sops.nix
 # This module unconditionally configures sops for deepwatrcreatur within Home Manager.
-{ config, pkgs, lib, inputs, ... }: # Module arguments
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
+}: # Module arguments
 
 let
   sopsSecretsDir = toString (builtins.path { path = ./secrets; });
 
   # Determine the target path for data.json based on the system
-  #bitwardenDataJsonPath = if pkgs.stdenv.isDarwin  
+  #bitwardenDataJsonPath = if pkgs.stdenv.isDarwin
   #  then "${config.home.homeDirectory}/Library/Application Support/Bitwarden CLI/data.json"
   #  else "${config.xdg.configHome}/Bitwarden CLI/data.json";
 in
-{ # This is the single top-level attribute set for the module
+{
+  # This is the single top-level attribute set for the module
 
   # Imports must be declared here.
   # imports = [ inputs.sops-nix.homeManagerModules.sops ];

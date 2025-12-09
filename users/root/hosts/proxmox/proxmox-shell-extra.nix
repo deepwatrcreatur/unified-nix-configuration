@@ -1,5 +1,10 @@
 # users/root/hosts/proxmox/proxmox-shell-extra.nix
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 {
   programs.bash.initExtra = lib.mkAfter ''
     # Nix integration for Bash shell (Proxmox only)

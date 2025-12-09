@@ -1,11 +1,17 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
 let
   cfg = config.programs.zellij-extended;
-  
-  formatKdl = value:
+
+  formatKdl =
+    value:
     if isAttrs value then
       concatStringsSep "\n" (mapAttrsToList (k: v: "${k} ${formatKdl v}") value)
     else if isList value then
@@ -20,49 +26,49 @@ let
   configFile = pkgs.writeText "zellij-config.kdl" ''
     // Theme
     theme "${cfg.theme}"
-    
+
     // Default shell
     ${optionalString (cfg.defaultShell != null) "default_shell \"${cfg.defaultShell}\""}
-    
+
     // Default layout
     ${optionalString (cfg.defaultLayout != null) "default_layout \"${cfg.defaultLayout}\""}
-    
+
     // Copy settings
     ${optionalString (cfg.copyCommand != "") "copy_command \"${cfg.copyCommand}\""}
-    
+
     // Mouse mode
     mouse_mode ${if cfg.mouseMode then "true" else "false"}
-    
+
     // Pane frames
     pane_frames ${if cfg.paneFrames then "true" else "false"}
-    
+
     // Mirror session
     mirror_session ${if cfg.mirrorSession then "true" else "false"}
-    
+
     // Layout directory
     ${optionalString (cfg.layoutDir != null) "layout_dir \"${cfg.layoutDir}\""}
-    
+
     // Theme directory  
     ${optionalString (cfg.themeDir != null) "theme_dir \"${cfg.themeDir}\""}
-    
+
     // Session serialization
     session_serialization ${if cfg.sessionSerialization then "true" else "false"}
-    
+
     // Serialize pane viewport
     serialize_pane_viewport ${if cfg.serializePaneViewport then "true" else "false"}
-    
+
     // Scrollback editor
     ${optionalString (cfg.scrollbackEditor != null) "scrollback_editor \"${cfg.scrollbackEditor}\""}
-    
+
     // Auto layout
     auto_layout ${if cfg.autoLayout then "true" else "false"}
-    
+
     // Simplified UI
     simplified_ui ${if cfg.simplifiedUi then "true" else "false"}
-    
+
     // Default mode
     default_mode "${cfg.defaultMode}"
-    
+
     // UI configuration
     ui {
         pane_frames {
@@ -70,25 +76,26 @@ let
             hide_session_name ${if cfg.ui.paneFrames.hideSessionName then "true" else "false"}
         }
     }
-    
+
     // Keybinds
     keybinds clear-defaults=${if cfg.keybinds.clearDefaults then "true" else "false"} {
         ${cfg.extraKeybinds}
     }
-    
+
     // Plugins
     plugins {
         ${cfg.extraPlugins}
     }
-    
+
     // Additional custom configuration
     ${cfg.extraConfig}
-    
+
     // Use system clipboard
     copy_clipboard "${cfg.copyClipboard}"
   '';
 
-in {
+in
+{
   options.programs.zellij-extended = {
     enable = mkEnableOption "Zellij terminal multiplexer with extended configuration" // {
       default = true;
@@ -129,7 +136,10 @@ in {
     };
 
     copyClipboard = mkOption {
-      type = types.enum [ "system" "primary" ];
+      type = types.enum [
+        "system"
+        "primary"
+      ];
       default = "system";
       description = "Clipboard to copy to.";
     };
@@ -198,7 +208,22 @@ in {
     };
 
     defaultMode = mkOption {
-      type = types.enum [ "normal" "locked" "resize" "pane" "tab" "scroll" "enter-search" "search" "rename-tab" "rename-pane" "session" "move" "prompt" "tmux" ];
+      type = types.enum [
+        "normal"
+        "locked"
+        "resize"
+        "pane"
+        "tab"
+        "scroll"
+        "enter-search"
+        "search"
+        "rename-tab"
+        "rename-pane"
+        "session"
+        "move"
+        "prompt"
+        "tmux"
+      ];
       default = "normal";
       description = "Default mode to start in.";
     };
@@ -229,11 +254,15 @@ in {
 
     extraKeybinds = mkOption {
       type = types.lines;
-      default = if pkgs.stdenv.isDarwin then ''
-        shared_except "locked" {
-            bind "Ctrl c" { Copy; }
-        }
-      '' else "";
+      default =
+        if pkgs.stdenv.isDarwin then
+          ''
+            shared_except "locked" {
+                bind "Ctrl c" { Copy; }
+            }
+          ''
+        else
+          "";
       description = "Extra keybind configuration in KDL format.";
       example = ''
         normal {
@@ -311,32 +340,40 @@ in {
   config = mkIf cfg.enable {
     home.packages = [ cfg.package ];
 
-    xdg.configFile."zellij/config.kdl" = mkIf (cfg.enable) {
+    xdg.configFile."zellij/config.kdl" = mkIf cfg.enable {
       source = configFile;
     };
 
     # Shell integration
-    programs.bash.initExtra = mkIf (cfg.shellIntegration.enable && cfg.shellIntegration.enableBashIntegration) ''
-      eval "$(${cfg.package}/bin/zellij setup --generate-completion bash)"
-      if [[ -z "$ZELLIJ" && $- == *i* ]]; then ${cfg.package}/bin/zellij; fi
-    '';
+    programs.bash.initExtra =
+      mkIf (cfg.shellIntegration.enable && cfg.shellIntegration.enableBashIntegration)
+        ''
+          eval "$(${cfg.package}/bin/zellij setup --generate-completion bash)"
+          if [[ -z "$ZELLIJ" && $- == *i* ]]; then ${cfg.package}/bin/zellij; fi
+        '';
 
-    programs.zsh.initContent = mkIf (cfg.shellIntegration.enable && cfg.shellIntegration.enableZshIntegration) ''
-      eval "$(${cfg.package}/bin/zellij setup --generate-completion zsh)"
-      if [[ -z "$ZELLIJ" && -o INTERACTIVE ]]; then ${cfg.package}/bin/zellij; fi
-    '';
+    programs.zsh.initContent =
+      mkIf (cfg.shellIntegration.enable && cfg.shellIntegration.enableZshIntegration)
+        ''
+          eval "$(${cfg.package}/bin/zellij setup --generate-completion zsh)"
+          if [[ -z "$ZELLIJ" && -o INTERACTIVE ]]; then ${cfg.package}/bin/zellij; fi
+        '';
 
-    programs.fish.interactiveShellInit = mkIf (cfg.shellIntegration.enable && cfg.shellIntegration.enableFishIntegration) ''
-      ${cfg.package}/bin/zellij setup --generate-completion fish | source
-      # Commented out auto-launch to prevent shell loops
-      # if not set -q ZELLIJ; and status is-interactive; ${cfg.package}/bin/zellij; end
-    '';
+    programs.fish.interactiveShellInit =
+      mkIf (cfg.shellIntegration.enable && cfg.shellIntegration.enableFishIntegration)
+        ''
+          ${cfg.package}/bin/zellij setup --generate-completion fish | source
+          # Commented out auto-launch to prevent shell loops
+          # if not set -q ZELLIJ; and status is-interactive; ${cfg.package}/bin/zellij; end
+        '';
 
-    programs.nushell.extraConfig = mkIf (cfg.shellIntegration.enable && cfg.shellIntegration.enableNushellIntegration) ''
-      # Zellij completions for Nushell (disabled due to compatibility issues)
-      # You can manually generate completions if needed:
-      # zellij setup --generate-completion nushell | save ~/.cache/zellij-completion.nu
-    '';
+    programs.nushell.extraConfig =
+      mkIf (cfg.shellIntegration.enable && cfg.shellIntegration.enableNushellIntegration)
+        ''
+          # Zellij completions for Nushell (disabled due to compatibility issues)
+          # You can manually generate completions if needed:
+          # zellij setup --generate-completion nushell | save ~/.cache/zellij-completion.nu
+        '';
 
     # Create a desktop entry (optional, useful for rofi/launchers)
     xdg.desktopEntries.zellij = mkIf (cfg.enableDesktopEntry && pkgs.stdenv.isLinux) {
@@ -345,7 +382,10 @@ in {
       exec = "${cfg.package}/bin/zellij";
       icon = "terminal";
       terminal = true;
-      categories = [ "System" "TerminalEmulator" ];
+      categories = [
+        "System"
+        "TerminalEmulator"
+      ];
     };
   };
 }

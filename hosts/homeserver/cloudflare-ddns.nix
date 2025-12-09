@@ -1,5 +1,10 @@
 # modules/cloudflare-ddns.nix
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   apiKeyFile = config.sops.secrets."API_KEY".path;
 in
@@ -15,7 +20,8 @@ in
     extraOptions = [
       "--dns=1.1.1.1"
       "--dns=1.0.0.1"
-      "-v" "${apiKeyFile}:/run/secrets/API_KEY:ro"
+      "-v"
+      "${apiKeyFile}:/run/secrets/API_KEY:ro"
     ];
   };
 }

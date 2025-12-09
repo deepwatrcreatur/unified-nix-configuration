@@ -1,5 +1,5 @@
 { config, pkgs, ... }:
 {
-  imports = [../../../../modules/nh.nix];
-  
+  imports = [ ../../../../modules/nh.nix ];
+
 }
