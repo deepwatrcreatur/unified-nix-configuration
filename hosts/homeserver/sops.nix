@@ -1,5 +1,10 @@
 # ./hosts/homeserver/modules/sops.nix
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   # This is the central SOPS configuration for this host.

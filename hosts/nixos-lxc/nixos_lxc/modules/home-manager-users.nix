@@ -1,4 +1,10 @@
-{ config, pkgs, lib, inputs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 
 let
   # Define shared packages to extend home.packages
@@ -15,23 +21,25 @@ in
 
     users.deepwatrcreatur = {
       imports = [
-        ../../../../users/deepwatrcreatur 
+        ../../../../users/deepwatrcreatur
         ../../../../users/deepwatrcreatur/hosts/nixos-lxc/nixos_lxc
         ../../../../modules/home-manager
-                                     
+
       ];
-      home.packages = (config.home.packages or []) ++ sharedPackages ++ [        
-      ];
+      home.packages =
+        (config.home.packages or [ ])
+        ++ sharedPackages;
     };
 
     users.root = {
       imports = [
-       ../../../../users/root
+        ../../../../users/root
         ../../../../modules/home-manager # Ensure this doesn't try to load gnupg
       ];
-      home.packages = (config.home.packages or []) ++ sharedPackages ++ [
-      ];
+      home.packages =
+        (config.home.packages or [ ])
+        ++ sharedPackages;
     };
   };
-  
+
 }

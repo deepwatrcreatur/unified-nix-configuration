@@ -1,5 +1,10 @@
 # Configuration for KDE Plasma with Garuda Dragonized theming elements
-{ config, pkgs, inputs, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
   # Import plasma-manager for home-manager integration
@@ -11,15 +16,15 @@
   # System packages for theming
   environment.systemPackages = with pkgs; [
     # Icon themes (these work across desktop environments)
-    beauty-line-icon-theme  # Main Garuda icon theme
-    candy-icons            # Complementary icons
-    
+    beauty-line-icon-theme # Main Garuda icon theme
+    candy-icons # Complementary icons
+
     # Cursor themes
-    capitaine-cursors      # Clean cursor theme
-    
+    capitaine-cursors # Clean cursor theme
+
     # Wallpapers and assets (manual download needed)
     # garuda-wallpapers would go here if packaged
-    
+
     # KDE applications and tools
     kdePackages.plasma-desktop
     kdePackages.systemsettings
@@ -27,10 +32,10 @@
     kdePackages.kate
     kdePackages.dolphin
     kdePackages.konsole
-    
+
     # Additional tools for theming
-    dconf-editor          # For GTK app theming
-    
+    dconf-editor # For GTK app theming
+
     # Fonts that match Garuda's aesthetic
     # jetbrains-mono  # Temporarily commented out due to build issues
     fira-code
@@ -53,22 +58,22 @@
 
   # GTK theming for applications
   programs.dconf.enable = true;
-  
+
   # Icon theme configuration (system-wide)
   environment.variables = {
     # This may help with icon theme detection
     ICON_THEME = "BeautyLine";
   };
-  
+
   # XDG portals for better desktop integration
   xdg.portal = {
     enable = true;
-    extraPortals = [ 
-      pkgs.xdg-desktop-portal-gtk 
+    extraPortals = [
+      pkgs.xdg-desktop-portal-gtk
       pkgs.kdePackages.xdg-desktop-portal-kde
     ];
   };
-  
+
   # Fonts configuration
   fonts = {
     packages = with pkgs; [
@@ -78,10 +83,10 @@
       fira-code
       fira-code-symbols
     ];
-    
+
     fontconfig = {
       defaultFonts = {
-        monospace = [ "Fira Code" ];  # Removed JetBrains Mono due to build issues
+        monospace = [ "Fira Code" ]; # Removed JetBrains Mono due to build issues
         sansSerif = [ "Noto Sans" ];
         serif = [ "Noto Serif" ];
         emoji = [ "Noto Color Emoji" ];

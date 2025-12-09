@@ -22,7 +22,7 @@
       TrackpadPinch = true;
       TrackpadRotate = true;
       TrackpadScroll = true;
-      TrackpadFourFingerVertSwipeGesture = 2;  # Mission Control
+      TrackpadFourFingerVertSwipeGesture = 2; # Mission Control
       TrackpadFourFingerHorizSwipeGesture = 2; # App Expose
       TrackpadThreeFingerVertSwipeGesture = 2; # App Expose
       TrackpadThreeFingerHorizSwipeGesture = 2; # Swipe between pages

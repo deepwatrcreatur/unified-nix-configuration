@@ -1,5 +1,10 @@
 # users/root/hosts/nixos_lxc/default.nix
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   imports = [

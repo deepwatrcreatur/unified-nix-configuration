@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -11,9 +16,12 @@ in
 
     packages = mkOption {
       type = types.listOf types.str;
-      default = [];
+      default = [ ];
       description = "List of snap packages to install";
-      example = [ "raindrop" "spotify" ];
+      example = [
+        "raindrop"
+        "spotify"
+      ];
     };
   };
 
@@ -28,20 +36,25 @@ in
 
     # Install snap packages using systemd oneshot services
     # This runs after snapd is started
-    systemd.services = builtins.listToAttrs (map (snapPkg: {
-      name = "snap-install-${snapPkg}";
-      value = {
-        description = "Install snap package: ${snapPkg}";
-        after = [ "snapd.service" "snapd.socket" ];
-        requires = [ "snapd.service" ];
-        wantedBy = [ "multi-user.target" ];
-        serviceConfig = {
-          Type = "oneshot";
-          RemainAfterExit = true;
-          ExecCondition = "${pkgs.bash}/bin/bash -c '! /run/current-system/sw/bin/snap list ${snapPkg} &>/dev/null'";
-          ExecStart = "/run/current-system/sw/bin/snap install ${snapPkg}";
+    systemd.services = builtins.listToAttrs (
+      map (snapPkg: {
+        name = "snap-install-${snapPkg}";
+        value = {
+          description = "Install snap package: ${snapPkg}";
+          after = [
+            "snapd.service"
+            "snapd.socket"
+          ];
+          requires = [ "snapd.service" ];
+          wantedBy = [ "multi-user.target" ];
+          serviceConfig = {
+            Type = "oneshot";
+            RemainAfterExit = true;
+            ExecCondition = "${pkgs.bash}/bin/bash -c '! /run/current-system/sw/bin/snap list ${snapPkg} &>/dev/null'";
+            ExecStart = "/run/current-system/sw/bin/snap install ${snapPkg}";
+          };
         };
-      };
-    }) cfg.packages);
+      }) cfg.packages
+    );
   };
 }

@@ -1,4 +1,10 @@
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
 
@@ -6,7 +12,7 @@
     enable = true;
     enableBashIntegration = true;
     enableZshIntegration = true;
-    enableFishIntegration = true;  
-    enableNushellIntegration = true; 
+    enableFishIntegration = true;
+    enableNushellIntegration = true;
   };
 }

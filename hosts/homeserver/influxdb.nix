@@ -1,5 +1,10 @@
 # modules/nixos/services/influxdb.nix
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   sops.secrets.influxdb_password = {

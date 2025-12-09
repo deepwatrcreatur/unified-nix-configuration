@@ -7,4 +7,3 @@
     enableZshIntegration = true;
   };
 }
-

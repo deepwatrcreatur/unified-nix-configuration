@@ -1,5 +1,13 @@
 # modules/home-manager/git.nix
-{ config, pkgs, lib, inputs, hostName, isDesktop ? false, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  hostName,
+  isDesktop ? false,
+  ...
+}:
 let
   # Define shell aliases for reuse across shells
   shellAliases = {
@@ -42,8 +50,10 @@ let
     "gfa" = "git fetch --all --prune";
     "gfg" = "git ls-files | grep";
     "glo" = "git log --oneline --decorate";
-    "glols" = "git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --stat";
-    "glola" = "git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --all";
+    "glols" =
+      "git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --stat";
+    "glola" =
+      "git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --all";
     "glog" = "git log --oneline --decorate --graph";
     "gloga" = "git log --oneline --decorate --graph --all";
     "gm" = "git merge";
@@ -90,12 +100,16 @@ let
 
   # Convert shellAliases to Nushell alias commands with proper external command syntax
   # Filter out aliases that contain dangerous multi-command syntax
-  filteredShellAliases = lib.filterAttrs (name: value:
+  filteredShellAliases = lib.filterAttrs (
+    name: value:
     # Only include simple single-command aliases - exclude anything with:
-    !lib.hasInfix ";" value &&   # No semicolons
-    !lib.hasInfix "&&" value &&  # No double ampersands
-    !lib.hasInfix "|" value &&   # No pipes
-    !lib.hasInfix "(" value      # No subcommands
+    !lib.hasInfix ";" value
+    # No semicolons
+    && !lib.hasInfix "&&" value
+    # No double ampersands
+    && !lib.hasInfix "|" value
+    # No pipes
+    && !lib.hasInfix "(" value # No subcommands
   ) shellAliases;
 
   # Simple, safe single-command aliases for nushell
@@ -134,14 +148,13 @@ let
     }
   '';
 
-  nushellAliases = lib.concatStringsSep "\n" (
-    (lib.mapAttrsToList (name: value:
-      "alias ${name} = ^${value}"
-    ) filteredShellAliases) ++
-    (lib.mapAttrsToList (name: value:
-      "alias ${name} = ^${value}"
-    ) nushellSafeAliases)
-  ) + "\n\n" + nushellFunctions;
+  nushellAliases =
+    lib.concatStringsSep "\n" (
+      (lib.mapAttrsToList (name: value: "alias ${name} = ^${value}") filteredShellAliases)
+      ++ (lib.mapAttrsToList (name: value: "alias ${name} = ^${value}") nushellSafeAliases)
+    )
+    + "\n\n"
+    + nushellFunctions;
 in
 {
   options.programs.git.gui = {
@@ -177,13 +190,16 @@ in
       ${nushellAliases}
     '';
 
-    home.packages = with pkgs; [
-      delta
-      mergiraf
-      gh
-      lazygit
-      difftastic # Add difftastic to the list of packages
-    ] ++ lib.optionals isDesktop [ meld ];
+    home.packages =
+      with pkgs;
+      [
+        delta
+        mergiraf
+        gh
+        lazygit
+        difftastic # Add difftastic to the list of packages
+      ]
+      ++ lib.optionals isDesktop [ meld ];
 
     programs.git = {
       enable = true;
@@ -236,12 +252,11 @@ in
           graph = "mergiraf";
         };
         url."ssh://git@github.com/".insteadOf = "https://github.com/";
-      } // lib.optionalAttrs isDesktop {
+      }
+      // lib.optionalAttrs isDesktop {
         diff.guitool = "meld";
         merge.guitool = "meld";
       };
-
-
 
       lfs.enable = true;
     };

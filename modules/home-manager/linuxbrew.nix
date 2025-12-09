@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -8,7 +13,7 @@ let
 in
 {
   # Add Homebrew environment variables (PATH handled in env.nix)
-  
+
   home.sessionVariables = {
     HOMEBREW_PREFIX = brewPrefix;
     HOMEBREW_CELLAR = "${brewPrefix}/Cellar";
@@ -46,7 +51,7 @@ in
     text = ''
       #!${pkgs.bash}/bin/bash
       set -eu
-      
+
       # Install Homebrew if not present
       if [ ! -f "${brewPrefix}/bin/brew" ]; then
         echo "Installing Homebrew to ${brewPrefix}..."
@@ -63,15 +68,17 @@ in
       export HOMEBREW_PREFIX="${brewPrefix}"
       export HOMEBREW_CELLAR="${brewPrefix}/Cellar"
       export HOMEBREW_REPOSITORY="${brewPrefix}/Homebrew"
-      
+
       # Install common packages
-      ${concatStringsSep "\n" (map (formula: ''
-        if ! "${brewPrefix}/bin/brew" list "${formula}" &>/dev/null; then
-          echo "Installing formula: ${formula}"
-          "${brewPrefix}/bin/brew" install "${formula}"
-        fi
-      '') commonBrews)}
-      
+      ${concatStringsSep "\n" (
+        map (formula: ''
+          if ! "${brewPrefix}/bin/brew" list "${formula}" &>/dev/null; then
+            echo "Installing formula: ${formula}"
+            "${brewPrefix}/bin/brew" install "${formula}"
+          fi
+        '') commonBrews
+      )}
+
       echo "All common brew packages installed!"
     '';
     executable = true;

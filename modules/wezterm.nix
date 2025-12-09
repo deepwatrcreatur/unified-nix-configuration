@@ -1,5 +1,10 @@
 # modules/wezterm.nix - Home Manager module
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -7,10 +12,11 @@ let
   cfg = config.programs.wezterm;
 
   # Platform detection
-  isDarwin = pkgs.stdenv.isDarwin;
-  isLinux = pkgs.stdenv.isLinux;
+  inherit (pkgs.stdenv) isDarwin;
+  inherit (pkgs.stdenv) isLinux;
 
-in {
+in
+{
   options.programs.wezterm = {
     enable = mkEnableOption "Wezterm terminal emulator";
 
@@ -23,7 +29,7 @@ in {
     font = {
       name = mkOption {
         type = types.str;
-        default = "Fira Code";  # Changed from JetBrains Mono due to build issues
+        default = "Fira Code"; # Changed from JetBrains Mono due to build issues
         description = "Font family name";
       };
 
@@ -54,13 +60,22 @@ in {
       };
 
       decorations = mkOption {
-        type = types.enum [ "TITLE" "NONE" "RESIZE" "TITLE | RESIZE" ];
+        type = types.enum [
+          "TITLE"
+          "NONE"
+          "RESIZE"
+          "TITLE | RESIZE"
+        ];
         default = "TITLE | RESIZE";
         description = "Window decorations";
       };
 
       closeConfirmation = mkOption {
-        type = types.enum [ "AlwaysPrompt" "CloseOnCleanExit" "NeverPrompt" ];
+        type = types.enum [
+          "AlwaysPrompt"
+          "CloseOnCleanExit"
+          "NeverPrompt"
+        ];
         default = "AlwaysPrompt";
         description = "Window close confirmation behavior";
       };
@@ -125,56 +140,71 @@ in {
       };
     };
 
-
     keyBindings = mkOption {
-      type = types.listOf (types.submodule {
-        options = {
-          key = mkOption {
-            type = types.str;
-            description = "Key to bind";
-          };
+      type = types.listOf (
+        types.submodule {
+          options = {
+            key = mkOption {
+              type = types.str;
+              description = "Key to bind";
+            };
 
-          mods = mkOption {
-            type = types.str;
-            default = "";
-            description = "Modifiers (CTRL, ALT, SHIFT, SUPER)";
-          };
+            mods = mkOption {
+              type = types.str;
+              default = "";
+              description = "Modifiers (CTRL, ALT, SHIFT, SUPER)";
+            };
 
-          action = mkOption {
-            type = types.str;
-            description = "Action to perform";
+            action = mkOption {
+              type = types.str;
+              description = "Action to perform";
+            };
           };
-        };
-      });
+        }
+      );
       default = [
-        { key = "t"; mods = "CTRL|SHIFT"; action = "SpawnTab 'CurrentPaneDomain'"; }
-        { key = "w"; mods = "CTRL|SHIFT"; action = "CloseCurrentTab { confirm = true }"; }
-        { key = "n"; mods = "CTRL|SHIFT"; action = "SpawnWindow"; }
+        {
+          key = "t";
+          mods = "CTRL|SHIFT";
+          action = "SpawnTab 'CurrentPaneDomain'";
+        }
+        {
+          key = "w";
+          mods = "CTRL|SHIFT";
+          action = "CloseCurrentTab { confirm = true }";
+        }
+        {
+          key = "n";
+          mods = "CTRL|SHIFT";
+          action = "SpawnWindow";
+        }
       ];
       description = "Custom key bindings";
     };
 
     mouseBindings = mkOption {
-      type = types.listOf (types.submodule {
-        options = {
-          event = mkOption {
-            type = types.str;
-            description = "Mouse event (e.g., 'Up = { streak = 1, button = \"Left\" }')";
-          };
+      type = types.listOf (
+        types.submodule {
+          options = {
+            event = mkOption {
+              type = types.str;
+              description = "Mouse event (e.g., 'Up = { streak = 1, button = \"Left\" }')";
+            };
 
-          mods = mkOption {
-            type = types.str;
-            default = "";
-            description = "Modifiers (CTRL, ALT, SHIFT, SUPER)";
-          };
+            mods = mkOption {
+              type = types.str;
+              default = "";
+              description = "Modifiers (CTRL, ALT, SHIFT, SUPER)";
+            };
 
-          action = mkOption {
-            type = types.str;
-            description = "Action to perform";
+            action = mkOption {
+              type = types.str;
+              description = "Action to perform";
+            };
           };
-        };
-      });
-      default = [];
+        }
+      );
+      default = [ ];
       description = "Mouse bindings";
     };
 
@@ -198,70 +228,82 @@ in {
     ];
 
     # Home Manager configuration for all users
-    home-manager.sharedModules = [{
-      home.file.".config/wezterm/wezterm.lua".text = ''
-        local wezterm = require 'wezterm'
-        local config = wezterm.config_builder()
+    home-manager.sharedModules = [
+      {
+        home.file.".config/wezterm/wezterm.lua".text = ''
+          local wezterm = require 'wezterm'
+          local config = wezterm.config_builder()
 
-        -- Font configuration
-        config.font = wezterm.font('${cfg.font.name}', { weight = '${cfg.font.weight}' })
-        config.font_size = ${toString cfg.font.size}
+          -- Font configuration
+          config.font = wezterm.font('${cfg.font.name}', { weight = '${cfg.font.weight}' })
+          config.font_size = ${toString cfg.font.size}
 
-        -- Color scheme
-        config.color_scheme = '${cfg.colorScheme}'
+          -- Color scheme
+          config.color_scheme = '${cfg.colorScheme}'
 
-        -- Window configuration
-        config.window_background_opacity = ${toString cfg.window.opacity}
-        config.window_decorations = '${cfg.window.decorations}'
-        config.window_close_confirmation = '${cfg.window.closeConfirmation}'
-        config.adjust_window_size_when_changing_font_size = ${boolToString cfg.window.adjustSizeWhenChangingFont}
+          -- Window configuration
+          config.window_background_opacity = ${toString cfg.window.opacity}
+          config.window_decorations = '${cfg.window.decorations}'
+          config.window_close_confirmation = '${cfg.window.closeConfirmation}'
+          config.adjust_window_size_when_changing_font_size = ${boolToString cfg.window.adjustSizeWhenChangingFont}
 
-        -- Tab configuration
-        config.enable_tab_bar = ${boolToString cfg.tabs.enable}
-        config.hide_tab_bar_if_only_one_tab = ${boolToString cfg.tabs.hideIfOnlyOne}
-        config.tab_bar_at_bottom = ${boolToString cfg.tabs.atBottom}
+          -- Tab configuration
+          config.enable_tab_bar = ${boolToString cfg.tabs.enable}
+          config.hide_tab_bar_if_only_one_tab = ${boolToString cfg.tabs.hideIfOnlyOne}
+          config.tab_bar_at_bottom = ${boolToString cfg.tabs.atBottom}
 
-        -- Scrollback configuration
-        config.scrollback_lines = ${toString cfg.scrollbackLines}
+          -- Scrollback configuration
+          config.scrollback_lines = ${toString cfg.scrollbackLines}
 
-        ${optionalString isDarwin ''
-        -- macOS specific settings
-        config.native_macos_fullscreen_mode = ${boolToString cfg.macos.nativeFullscreen}
-        config.send_composed_key_when_left_alt_is_pressed = ${boolToString cfg.macos.leftAltComposed}
-        config.send_composed_key_when_right_alt_is_pressed = ${boolToString cfg.macos.rightAltComposed}
-        ${optionalString (cfg.macos.windowBackgroundBlur > 0) ''
-        config.macos_window_background_blur = ${toString cfg.macos.windowBackgroundBlur}
-        ''}
-        ''}
+          ${optionalString isDarwin ''
+            -- macOS specific settings
+            config.native_macos_fullscreen_mode = ${boolToString cfg.macos.nativeFullscreen}
+            config.send_composed_key_when_left_alt_is_pressed = ${boolToString cfg.macos.leftAltComposed}
+            config.send_composed_key_when_right_alt_is_pressed = ${boolToString cfg.macos.rightAltComposed}
+            ${optionalString (cfg.macos.windowBackgroundBlur > 0) ''
+              config.macos_window_background_blur = ${toString cfg.macos.windowBackgroundBlur}
+            ''}
+          ''}
 
 
-        -- Key bindings
-        config.keys = {
-        ${concatStringsSep ",\n        " (filter (s: s != "") (map (binding:
-          let
-            modsStr = if binding.mods != "" then ", mods = '${binding.mods}'" else "";
-          in
-            "{ key = '${binding.key}'${modsStr}, action = wezterm.action.${binding.action} }"
-        ) cfg.keyBindings))}
-        }
+          -- Key bindings
+          config.keys = {
+          ${concatStringsSep ",\n        " (
+            filter (s: s != "") (
+              map (
+                binding:
+                let
+                  modsStr = if binding.mods != "" then ", mods = '${binding.mods}'" else "";
+                in
+                "{ key = '${binding.key}'${modsStr}, action = wezterm.action.${binding.action} }"
+              ) cfg.keyBindings
+            )
+          )}
+          }
 
-        ${optionalString (cfg.mouseBindings != []) ''
-        -- Mouse bindings  
-        config.mouse_bindings = {
-        ${concatStringsSep ",\n        " (filter (s: s != "") (map (binding:
-          let
-            modsStr = if binding.mods != "" then ", mods = '${binding.mods}'" else "";
-          in
-            "{ event = { ${binding.event} }${modsStr}, action = wezterm.action.${binding.action} }"
-        ) cfg.mouseBindings))}
-        }
-        ''}
+          ${optionalString (cfg.mouseBindings != [ ]) ''
+            -- Mouse bindings  
+            config.mouse_bindings = {
+            ${concatStringsSep ",\n        " (
+              filter (s: s != "") (
+                map (
+                  binding:
+                  let
+                    modsStr = if binding.mods != "" then ", mods = '${binding.mods}'" else "";
+                  in
+                  "{ event = { ${binding.event} }${modsStr}, action = wezterm.action.${binding.action} }"
+                ) cfg.mouseBindings
+              )
+            )}
+            }
+          ''}
 
-        -- Custom configuration
-        ${cfg.extraConfig}
+          -- Custom configuration
+          ${cfg.extraConfig}
 
-        return config
-      '';
-    }];
+          return config
+        '';
+      }
+    ];
   };
 }

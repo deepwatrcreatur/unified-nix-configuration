@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -9,7 +14,10 @@ in
   options.programs.ripgrep-enhanced = {
     enable = mkEnableOption "ripgrep with enhanced configuration" // {
       default = true;
-      arguments = [ "--smart-case" "--follow" ];
+      arguments = [
+        "--smart-case"
+        "--follow"
+      ];
     };
 
     package = mkOption {
@@ -21,14 +29,18 @@ in
 
     arguments = mkOption {
       type = types.listOf types.str;
-      default = [];
-      example = [ "--smart-case" "--follow" "--hidden" ];
+      default = [ ];
+      example = [
+        "--smart-case"
+        "--follow"
+        "--hidden"
+      ];
       description = "Default arguments to pass to ripgrep.";
     };
 
     aliases = mkOption {
       type = types.attrsOf types.str;
-      default = {};
+      default = { };
       example = {
         rgf = "rg --files";
         rgh = "rg --hidden";
@@ -96,11 +108,34 @@ in
       type = types.attrsOf (types.listOf types.str);
       default = {
         nix = [ "*.nix" ];
-        markdown = [ "*.md" "*.markdown" "*.mdown" "*.mkd" ];
+        markdown = [
+          "*.md"
+          "*.markdown"
+          "*.mdown"
+          "*.mkd"
+        ];
         org = [ "*.org" ];
-        config = [ "*.conf" "*.cfg" "*.ini" "*.toml" "*.yaml" "*.yml" ];
-        script = [ "*.sh" "*.bash" "*.zsh" "*.fish" ];
-        docker = [ "Dockerfile" "Dockerfile.*" "*.dockerfile" "docker-compose*.yml" "docker-compose*.yaml" ];
+        config = [
+          "*.conf"
+          "*.cfg"
+          "*.ini"
+          "*.toml"
+          "*.yaml"
+          "*.yml"
+        ];
+        script = [
+          "*.sh"
+          "*.bash"
+          "*.zsh"
+          "*.fish"
+        ];
+        docker = [
+          "Dockerfile"
+          "Dockerfile.*"
+          "*.dockerfile"
+          "docker-compose*.yml"
+          "docker-compose*.yaml"
+        ];
       };
       description = "Custom file type definitions for ripgrep.";
     };
@@ -134,75 +169,92 @@ in
     home.packages = [ cfg.package ];
 
     # Create ripgrep config file
-    home.file.".ripgreprc" = mkIf (cfg.arguments != [] || cfg.typeDefinitions != {}) {
+    home.file.".ripgreprc" = mkIf (cfg.arguments != [ ] || cfg.typeDefinitions != { }) {
       text = ''
         # Default arguments
         ${concatStringsSep "\n" cfg.arguments}
-        
+
         # Custom type definitions
-        ${concatStringsSep "\n" (mapAttrsToList (name: patterns: 
-          "--type-add\n${name}:${concatStringsSep "," patterns}"
-        ) cfg.typeDefinitions)}
+        ${concatStringsSep "\n" (
+          mapAttrsToList (
+            name: patterns: "--type-add\n${name}:${concatStringsSep "," patterns}"
+          ) cfg.typeDefinitions
+        )}
       '';
     };
 
     # Create or use global ignore file
     home.file.".rgignore" = mkIf (cfg.createIgnoreFile || cfg.ignoreFile != null) (
-      if cfg.ignoreFile != null then {
-        source = cfg.ignoreFile;
-      } else {
-        text = concatStringsSep "\n" cfg.ignorePatterns;
-      }
+      if cfg.ignoreFile != null then
+        {
+          source = cfg.ignoreFile;
+        }
+      else
+        {
+          text = concatStringsSep "\n" cfg.ignorePatterns;
+        }
     );
 
     # Environment variable to use the config file
-    home.sessionVariables = mkIf (cfg.arguments != [] || cfg.typeDefinitions != {}) {
+    home.sessionVariables = mkIf (cfg.arguments != [ ] || cfg.typeDefinitions != { }) {
       RIPGREP_CONFIG_PATH = "${config.home.homeDirectory}/.ripgreprc";
     };
 
     # Shell aliases (combine custom and default)
     programs.bash.shellAliases = mkIf cfg.enableBashIntegration (
-      if cfg.aliases != {} then cfg.aliases else {
-        rgf = "rg --files";
-        rgi = "rg --no-ignore";
-        rgh = "rg --hidden";
-        rgz = "rg --search-zip";
-        rgt = "rg --type-list";
-        rgp = "rg --pretty";
-      }
+      if cfg.aliases != { } then
+        cfg.aliases
+      else
+        {
+          rgf = "rg --files";
+          rgi = "rg --no-ignore";
+          rgh = "rg --hidden";
+          rgz = "rg --search-zip";
+          rgt = "rg --type-list";
+          rgp = "rg --pretty";
+        }
     );
 
     programs.zsh.shellAliases = mkIf cfg.enableZshIntegration (
-      if cfg.aliases != {} then cfg.aliases else {
-        rgf = "rg --files";
-        rgi = "rg --no-ignore";
-        rgh = "rg --hidden";
-        rgz = "rg --search-zip";
-        rgt = "rg --type-list";
-        rgp = "rg --pretty";
-      }
+      if cfg.aliases != { } then
+        cfg.aliases
+      else
+        {
+          rgf = "rg --files";
+          rgi = "rg --no-ignore";
+          rgh = "rg --hidden";
+          rgz = "rg --search-zip";
+          rgt = "rg --type-list";
+          rgp = "rg --pretty";
+        }
     );
 
     programs.fish.shellAliases = mkIf cfg.enableFishIntegration (
-      if cfg.aliases != {} then cfg.aliases else {
-        rgf = "rg --files";
-        rgi = "rg --no-ignore";
-        rgh = "rg --hidden";
-        rgz = "rg --search-zip";
-        rgt = "rg --type-list";
-        rgp = "rg --pretty";
-      }
+      if cfg.aliases != { } then
+        cfg.aliases
+      else
+        {
+          rgf = "rg --files";
+          rgi = "rg --no-ignore";
+          rgh = "rg --hidden";
+          rgz = "rg --search-zip";
+          rgt = "rg --type-list";
+          rgp = "rg --pretty";
+        }
     );
 
     programs.nushell.shellAliases = mkIf cfg.enableNushellIntegration (
-      if cfg.aliases != {} then cfg.aliases else {
-        rgf = "rg --files";
-        rgi = "rg --no-ignore";
-        rgh = "rg --hidden";
-        rgz = "rg --search-zip";
-        rgt = "rg --type-list";
-        rgp = "rg --pretty";
-      }
+      if cfg.aliases != { } then
+        cfg.aliases
+      else
+        {
+          rgf = "rg --files";
+          rgi = "rg --no-ignore";
+          rgh = "rg --hidden";
+          rgz = "rg --search-zip";
+          rgt = "rg --type-list";
+          rgp = "rg --pretty";
+        }
     );
 
     # Shell functions for enhanced functionality
@@ -259,20 +311,20 @@ in
     '';
 
     programs.fish.functions = mkIf cfg.enableFishIntegration {
-    rgfzf = ''
-      if test (count $argv) -eq 0
-      echo "Usage: rgfzf <search_pattern> [rg_options...]"
-    return 1
-    end
-    rg --color=always --line-number --no-heading --smart-case $argv | fzf --ansi --color "hl:-1:underline,hl+:-1:underline:reverse" --delimiter : --preview 'bat --color=always {1} --highlight-line {2}' --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' --bind 'enter:become(nvim {1} +{2})'
-    '';
-    rge = ''
-    set -l result (rg --no-heading --line-number $argv[1] | fzf --delimiter=: --preview 'bat --color=always --line-range {2}: {1}')
-    if test -n "$result"
-    set -l file (echo $result | cut -d: -f1)
-    set -l line (echo $result | cut -d: -f2)
-    $EDITOR $file +$line
-      end
+      rgfzf = ''
+          if test (count $argv) -eq 0
+          echo "Usage: rgfzf <search_pattern> [rg_options...]"
+        return 1
+        end
+        rg --color=always --line-number --no-heading --smart-case $argv | fzf --ansi --color "hl:-1:underline,hl+:-1:underline:reverse" --delimiter : --preview 'bat --color=always {1} --highlight-line {2}' --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' --bind 'enter:become(nvim {1} +{2})'
+      '';
+      rge = ''
+        set -l result (rg --no-heading --line-number $argv[1] | fzf --delimiter=: --preview 'bat --color=always --line-range {2}: {1}')
+        if test -n "$result"
+        set -l file (echo $result | cut -d: -f1)
+        set -l line (echo $result | cut -d: -f2)
+        $EDITOR $file +$line
+          end
       '';
     };
 
@@ -307,7 +359,7 @@ in
           print $"No matches found for pattern: ($pattern)"
         }
       }
-      
+
       # Search and get file statistics
       def rgstats [pattern: string, ...args] {
         rg --stats $pattern ...$args | lines | parse "{key}: {value}" | where key != "" and value != ""

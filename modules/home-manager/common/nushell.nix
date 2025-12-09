@@ -1,5 +1,10 @@
 # modules/home-manager/common/nushell.nix
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 {
   programs.nushell = {
     enable = true;

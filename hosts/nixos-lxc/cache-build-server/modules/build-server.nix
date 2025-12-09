@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   # Sops secret for attic server token
@@ -48,20 +53,24 @@
     # Override common settings for build server use
     max-jobs = "auto";
     cores = 0; # Use all available cores
-    
+
     # Build server optimizations
     builders-use-substitutes = true;
     substitute = true;
-    trusted-users = [ "root" "@wheel" "nixbuilder" ];
-    
+    trusted-users = [
+      "root"
+      "@wheel"
+      "nixbuilder"
+    ];
+
     # Build cache settings
     keep-outputs = true;
     keep-derivations = true;
-    
+
     # Increase timeout for large packages
     timeout = 7200; # 2 hours
   };
-  
+
   # More aggressive garbage collection for build server
   nix.gc = {
     automatic = true;
@@ -115,7 +124,10 @@
   systemd.services.attic-init = {
     description = "Initialize Attic cache";
     wantedBy = [ "multi-user.target" ];
-    after = [ "atticd.service" "sops-nix.service" ];
+    after = [
+      "atticd.service"
+      "sops-nix.service"
+    ];
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
@@ -206,18 +218,23 @@
     upstreams = {
       "nix-serve-backend" = {
         servers = {
-          "127.0.0.1:5000" = {};
+          "127.0.0.1:5000" = { };
         };
       };
       "nixos-cache" = {
         servers = {
-          "cache.nixos.org:443" = {};
+          "cache.nixos.org:443" = { };
         };
       };
     };
 
     virtualHosts."cache-server" = {
-      listen = [ { addr = "0.0.0.0"; port = 8080; } ];
+      listen = [
+        {
+          addr = "0.0.0.0";
+          port = 8080;
+        }
+      ];
       locations = {
         # Serve local cache with proper caching headers
         "/" = {
@@ -235,7 +252,12 @@
 
     # Attic cache server proxy
     virtualHosts."attic-cache" = {
-      listen = [ { addr = "0.0.0.0"; port = 8081; } ];
+      listen = [
+        {
+          addr = "0.0.0.0";
+          port = 8081;
+        }
+      ];
       locations = {
         "/" = {
           proxyPass = "http://127.0.0.1:5001";
@@ -262,7 +284,7 @@
     group = "atticd";
   };
 
-  users.groups.atticd = {};
+  users.groups.atticd = { };
 
   # User and group for nix-serve
   users.users.nix-serve = {
@@ -270,7 +292,7 @@
     group = "nix-serve";
   };
 
-  users.groups.nix-serve = {};
+  users.groups.nix-serve = { };
 
   # Generate signing keys for nix-serve
   systemd.services.nix-serve-keys = {
@@ -310,7 +332,13 @@
   # Firewall - SSH, nix-serve, attic, and nginx cache proxies
   networking.firewall = {
     enable = true;
-    allowedTCPPorts = [ 22 5000 5001 8080 8081 ];
+    allowedTCPPorts = [
+      22
+      5000
+      5001
+      8080
+      8081
+    ];
   };
 
   # System monitoring for build server
@@ -318,7 +346,6 @@
     SystemMaxUse=2G
     MaxRetentionSec=1month
   '';
-
 
   systemd.services."nix-serve" = {
     serviceConfig.StateDirectory = "nix-serve";
@@ -335,8 +362,7 @@
   ];
 
   environment.etc."attic/config.toml" = {
-    text = ''
-    '';
+    text = '''';
     user = "atticd";
     group = "atticd";
     mode = "0644";

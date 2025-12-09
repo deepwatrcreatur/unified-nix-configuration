@@ -1,5 +1,10 @@
 # Defining a Home Manager module for Zed editor
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   programs.zed-editor = {
@@ -11,10 +16,10 @@
     # User settings for Zed, written to ~/.config/zed/settings.json
     userSettings = {
       # General editor settings
-      theme = "Dracula"; 
-      vim_mode = true; 
-      relative_line_numbers = true; 
-      buffer_font_size = 15; 
+      theme = "Dracula";
+      vim_mode = true;
+      relative_line_numbers = true;
+      buffer_font_size = 15;
       buffer_font_family = "Fira Code";
       buffer_line_height = "comfortable"; # Line height for readability (1.618)
 
@@ -22,7 +27,7 @@
       ui_font_size = 16;
       tab_bar.show = true; # Always show tab bar
       scrollbar.show = "never"; # Hide scrollbar for cleaner look
-      indent_guides.enabled = true; 
+      indent_guides.enabled = true;
       indent_guides.coloring = "indent_aware"; # Color based on indent level
 
       # Git integration

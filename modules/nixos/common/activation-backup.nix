@@ -1,7 +1,12 @@
 # modules/nixos/common/activation-backup.nix
 # Automatically backup existing files that would block system activation
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   # Backup existing files during activation instead of failing

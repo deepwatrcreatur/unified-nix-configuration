@@ -8,7 +8,10 @@
   networking.hostName = "homeserver";
 
   networking.firewall = {
-    allowedTCPPorts = [ 22 5201 ];
+    allowedTCPPorts = [
+      22
+      5201
+    ];
     allowedUDPPorts = [ 53 ];
   };
 

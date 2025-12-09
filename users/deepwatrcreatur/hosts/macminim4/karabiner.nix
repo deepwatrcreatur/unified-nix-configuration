@@ -1,5 +1,10 @@
 # karabiner.nix
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   inherit (lib.strings) toJSON;
@@ -9,11 +14,11 @@ let
   simple_modifications = [
     {
       from.key_code = "caps_lock";
-      to = [{ key_code = "escape"; }];
+      to = [ { key_code = "escape"; } ];
     }
     {
       from.key_code = "escape";
-      to = [{ key_code = "caps_lock"; }];
+      to = [ { key_code = "caps_lock"; } ];
     }
   ];
 
@@ -27,22 +32,22 @@ let
         {
           from.key_code = "h";
           from.modifiers.mandatory = [ "caps_lock" ];
-          to = [{ key_code = "left_arrow"; }];
+          to = [ { key_code = "left_arrow"; } ];
         }
         {
           from.key_code = "j";
           from.modifiers.mandatory = [ "caps_lock" ];
-          to = [{ key_code = "down_arrow"; }];
+          to = [ { key_code = "down_arrow"; } ];
         }
         {
           from.key_code = "k";
           from.modifiers.mandatory = [ "caps_lock" ];
-          to = [{ key_code = "up_arrow"; }];
+          to = [ { key_code = "up_arrow"; } ];
         }
         {
           from.key_code = "l";
           from.modifiers.mandatory = [ "caps_lock" ];
-          to = [{ key_code = "right_arrow"; }];
+          to = [ { key_code = "right_arrow"; } ];
         }
       ];
     }
@@ -51,18 +56,22 @@ let
   karabinerConfig = {
     global.show_in_menu_bar = false;
 
-    profiles = [{
-      inherit complex_modifications simple_modifications;
+    profiles = [
+      {
+        inherit complex_modifications simple_modifications;
 
-      name = "Default";
-      selected = true;
+        name = "Default";
+        selected = true;
 
-      virtual_hid_keyboard.keyboard_type_v2 = "ansi";
+        virtual_hid_keyboard.keyboard_type_v2 = "ansi";
 
-      devices = [{
-        identifiers.is_keyboard = true;
-      }];
-    }];
+        devices = [
+          {
+            identifiers.is_keyboard = true;
+          }
+        ];
+      }
+    ];
   };
 in
 {

@@ -6,6 +6,9 @@
     hostPath = ../hosts/homeserver;
     extraModules = [
       ../hosts/nixos/default.nix
-    ] ++ (if builtins.pathExists /etc/nixos/local-secrets.nix then [ /etc/nixos/local-secrets.nix ] else []);
+    ]
+    ++ (
+      if builtins.pathExists /etc/nixos/local-secrets.nix then [ /etc/nixos/local-secrets.nix ] else [ ]
+    );
   };
 }

@@ -7,7 +7,7 @@
     hostPath = ../hosts/nixos/inference-vm/hosts/inference1;
   };
 
-  # Inference VM 2  
+  # Inference VM 2
   nixosConfigurations.inference2 = helpers.mkNixosSystem {
     system = "x86_64-linux";
     hostPath = ../hosts/nixos/inference-vm/hosts/inference2;

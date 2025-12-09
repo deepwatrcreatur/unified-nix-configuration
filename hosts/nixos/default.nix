@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   time.timeZone = "America/Toronto";
@@ -6,4 +11,3 @@
   programs.fish.enable = true;
   zramSwap.enable = true;
 }
-

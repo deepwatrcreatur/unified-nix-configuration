@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   # CephFS configuration (disabled until ceph server is configured)
@@ -6,7 +11,7 @@
   #   [global]
   #   mon_host = 10.10.11.55:6789
   # '';
-  # 
+  #
   # environment.etc."ceph/ceph.keyring".text = ''
   #   AQBIfuZn15t6BhAACU50sq1eO62VEBzMXpq5HQ==
   # '';
@@ -27,7 +32,11 @@
   fileSystems."/ollama" = {
     device = "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi1";
     fsType = "ext4";
-    options = [ "defaults" "rw" "nofail" ];
+    options = [
+      "defaults"
+      "rw"
+      "nofail"
+    ];
   };
 
   # Add ceph client to system packages

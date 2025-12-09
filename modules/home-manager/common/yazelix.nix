@@ -1,5 +1,10 @@
 # modules/home-manager/yazelix.nix
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -40,7 +45,7 @@ in
 
     settings = mkOption {
       type = types.attrs;
-      default = {};
+      default = { };
       description = "Yazi configuration settings";
     };
 
@@ -52,7 +57,7 @@ in
 
     plugins = mkOption {
       type = types.attrsOf types.package;
-      default = {};
+      default = { };
       description = "Yazi plugins to install";
     };
   };
@@ -96,7 +101,7 @@ in
     # Yazi configuration optimized for helix integration
     programs.yazi = {
       enable = true;
-      package = cfg.package;
+      inherit (cfg) package;
       enableBashIntegration = cfg.enableShellIntegration;
       enableZshIntegration = cfg.enableShellIntegration;
       enableFishIntegration = cfg.enableShellIntegration;
@@ -114,35 +119,127 @@ in
         };
         opener = {
           edit = [
-            { run = ''hx "$@"''; block = true; for = "unix"; }
+            {
+              run = ''hx "$@"'';
+              block = true;
+              for = "unix";
+            }
           ];
           open = [
-            { run = ''${if pkgs.stdenv.isLinux then "xdg-open" else "open"} "$@"''; desc = "Open"; }
+            {
+              run = ''${if pkgs.stdenv.isLinux then "xdg-open" else "open"} "$@"'';
+              desc = "Open";
+            }
           ];
         };
         open = {
           rules = [
-            { name = "*/"; use = [ "edit" "open" "reveal" ]; }
-            { mime = "text/*"; use = [ "edit" "reveal" ]; }
-            { mime = "image/*"; use = [ "open" "reveal" ]; }
-            { mime = "video/*"; use = [ "play" "reveal" ]; }
-            { mime = "audio/*"; use = [ "play" "reveal" ]; }
-            { mime = "inode/x-empty"; use = [ "edit" "reveal" ]; }
+            {
+              name = "*/";
+              use = [
+                "edit"
+                "open"
+                "reveal"
+              ];
+            }
+            {
+              mime = "text/*";
+              use = [
+                "edit"
+                "reveal"
+              ];
+            }
+            {
+              mime = "image/*";
+              use = [
+                "open"
+                "reveal"
+              ];
+            }
+            {
+              mime = "video/*";
+              use = [
+                "play"
+                "reveal"
+              ];
+            }
+            {
+              mime = "audio/*";
+              use = [
+                "play"
+                "reveal"
+              ];
+            }
+            {
+              mime = "inode/x-empty";
+              use = [
+                "edit"
+                "reveal"
+              ];
+            }
           ];
         };
       } cfg.settings;
 
       keymap = {
         mgr.prepend_keymap = [
-          { on = [ "g" "h" ]; run = "cd ~"; desc = "Go to home directory"; }
-          { on = [ "g" "c" ]; run = "cd ~/.config"; desc = "Go to config directory"; }
-          { on = [ "g" "d" ]; run = "cd ~/Downloads"; desc = "Go to downloads"; }
-          { on = [ "g" "D" ]; run = "cd ~/Documents"; desc = "Go to documents"; }
-          { on = [ "g" "p" ]; run = "cd ~/Projects"; desc = "Go to projects"; }
-          { on = [ "<C-s>" ]; run = "search fd"; desc = "Search files with fd"; }
-          { on = [ "<C-f>" ]; run = "search rg"; desc = "Search content with ripgrep"; }
-          { on = [ "T" ]; run = "plugin --sync smart-enter"; desc = "Enter hovered directory or open file"; }
-        ] ++ (if cfg.keymap != "" then lib.strings.splitString "\n" cfg.keymap else []);
+          {
+            on = [
+              "g"
+              "h"
+            ];
+            run = "cd ~";
+            desc = "Go to home directory";
+          }
+          {
+            on = [
+              "g"
+              "c"
+            ];
+            run = "cd ~/.config";
+            desc = "Go to config directory";
+          }
+          {
+            on = [
+              "g"
+              "d"
+            ];
+            run = "cd ~/Downloads";
+            desc = "Go to downloads";
+          }
+          {
+            on = [
+              "g"
+              "D"
+            ];
+            run = "cd ~/Documents";
+            desc = "Go to documents";
+          }
+          {
+            on = [
+              "g"
+              "p"
+            ];
+            run = "cd ~/Projects";
+            desc = "Go to projects";
+          }
+          {
+            on = [ "<C-s>" ];
+            run = "search fd";
+            desc = "Search files with fd";
+          }
+          {
+            on = [ "<C-f>" ];
+            run = "search rg";
+            desc = "Search content with ripgrep";
+          }
+          {
+            on = [ "T" ];
+            run = "plugin --sync smart-enter";
+            desc = "Enter hovered directory or open file";
+          }
+        ]
+        ++ (if cfg.keymap != "" then lib.strings.splitString "\n" cfg.keymap else [ ]);
       };
 
       theme = mkIf (cfg.theme != "") cfg.theme;
@@ -164,7 +261,7 @@ in
           };
         }) cfg.plugins
       ))
-      
+
       # Yazelix Zellij Layout
       {
         "zellij/layouts/yazelix.kdl" = {

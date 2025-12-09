@@ -1,6 +1,10 @@
-
 # home/deepwatrcreatur.nix
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 {
   imports = [ ../modules/home/fish-shared.nix ];
 

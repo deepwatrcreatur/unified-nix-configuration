@@ -1,5 +1,11 @@
 # modules/home-manager/gpg-cli.nix
-{ config, pkgs, lib, inputs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 
 {
   # This enables the gpg command-line tool

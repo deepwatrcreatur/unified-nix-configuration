@@ -1,4 +1,11 @@
-{ config, pkgs, lib, inputs, ... }: {
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
+{
 
   environment.systemPackages = with pkgs; [
     # cached-nix-shell  # Broken on macOS due to nokogiri compilation issues

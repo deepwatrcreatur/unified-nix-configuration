@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   # Build server packages
@@ -10,23 +15,23 @@
     iotop
     lsof
     strace
-    
+
     # Build tools
     gcc
     binutils
     gnumake
     pkg-config
-    
+
     # Archive tools
     gzip
     bzip2
     xz
-    
+
     # Network tools
     curl
     wget
     rsync
-    
+
     # Nix tools
     nix-prefetch-git
     nix-prefetch-github
@@ -34,7 +39,7 @@
 
     # Cache management
     attic-client
-    
+
     # Monitoring
   ];
 }

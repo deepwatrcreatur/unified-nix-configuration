@@ -1,4 +1,10 @@
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
   # User configuration
@@ -6,8 +12,12 @@
     isNormalUser = true;
     description = "Anwer Khan";
     home = "/home/deepwatrcreatur";
-    extraGroups = [ "networkmanager" "wheel" "ollama" ];
-    packages = with pkgs; [];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "ollama"
+    ];
+    packages = with pkgs; [ ];
     shell = pkgs.fish;
     # SSH keys managed via SOPS if needed
   };

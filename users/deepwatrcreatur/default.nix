@@ -1,4 +1,10 @@
-{ config, pkgs, lib, inputs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 
 {
   imports = [
@@ -32,10 +38,10 @@
   ];
 
   home.file.".gnupg/public-key.asc" = {
-    source = ./gpg-public-key.asc;  # Remove toString, just use the path directly
+    source = ./gpg-public-key.asc; # Remove toString, just use the path directly
   };
 
-  home.activation.mySopsActivation = lib.hm.dag.entryAfter ["writeBoundary"] ''
+  home.activation.mySopsActivation = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     export SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
     export PATH="${lib.makeBinPath [ pkgs.sops ]}:$PATH"
 
@@ -61,4 +67,3 @@
     chmod 600 "$HOME/.config/sops/attic-client-token"
   '';
 }
-

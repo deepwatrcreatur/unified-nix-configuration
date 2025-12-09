@@ -1,11 +1,17 @@
 # tplink-energy-monitor.nix
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 with lib;
 
 let
   cfg = config.services.tplink-energy-monitor;
-in {
+in
+{
   options.services.tplink-energy-monitor = {
     enable = mkEnableOption "Enable the TP-Link Energy Monitor Docker Compose service";
     port = mkOption {
@@ -20,10 +26,13 @@ in {
     };
   };
 
-config = mkIf cfg.enable {
+  config = mkIf cfg.enable {
     systemd.services.tplink-energy-monitor = {
       description = "TP-Link Energy Monitor Podman Compose Service";
-      after = [ "network.target" "podman.service" ];
+      after = [
+        "network.target"
+        "podman.service"
+      ];
       requires = [ "podman.service" ];
       serviceConfig = {
         ExecStart = "${pkgs.podman-compose}/bin/podman-compose -f /etc/tplink-energy-monitor/docker-compose.yml up";

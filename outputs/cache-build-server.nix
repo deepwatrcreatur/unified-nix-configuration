@@ -6,9 +6,9 @@
     hostPath = ../hosts/nixos-lxc/cache-build-server;
     isDesktop = false;
     extraModules = [
-      ../modules/nixos/lxc-modules.nix  # Use LXC-specific modules instead of regular ones
+      ../modules/nixos/lxc-modules.nix # Use LXC-specific modules instead of regular ones
       ../hosts/nixos-lxc/lxc-systemd-suppressions.nix
-      ../hosts/nixos  # Base NixOS config
+      ../hosts/nixos # Base NixOS config
     ];
   };
 }

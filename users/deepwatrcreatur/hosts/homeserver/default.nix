@@ -1,5 +1,10 @@
 # users/deepwatrcreatur/hosts/homeserver/default.nix
-{ config, pkgs, lib,  ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   imports = [
@@ -13,17 +18,17 @@
   ];
 
   # Set home directory for Home Manager
-  home.homeDirectory = "/home/deepwatrcreatur"; 
+  home.homeDirectory = "/home/deepwatrcreatur";
 
-  home.file.".justfile".source = ./justfile; 
+  home.file.".justfile".source = ./justfile;
 
   # Add packages
   home.packages = [
   ];
 
   # Configure programs
-  programs.bash.enable = true; 
-  
+  programs.bash.enable = true;
+
   # Let Home Manager manage itself if you want the `home-manager` command available
   programs.home-manager.enable = true;
 

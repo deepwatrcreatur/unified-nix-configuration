@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   users.users.root.shell = pkgs.fish;
@@ -8,7 +13,11 @@
     shell = pkgs.fish;
     description = "Anwer Khan";
     home = "/home/deepwatrcreatur";
-    extraGroups = [ "networkmanager" "wheel" "docker" ];
-    packages = with pkgs; [];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "docker"
+    ];
+    packages = with pkgs; [ ];
   };
 }

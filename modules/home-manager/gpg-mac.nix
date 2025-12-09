@@ -1,5 +1,11 @@
 # modules/home-manager/gpg-mac.nix
-{ config, pkgs, lib, inputs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 
 {
   programs.gpg.enable = true;

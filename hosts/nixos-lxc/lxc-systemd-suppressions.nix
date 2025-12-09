@@ -1,5 +1,5 @@
 # LXC systemd suppressions for units that are not available/needed in containers
-{ ... }:
+_:
 {
   systemd.suppressedSystemUnits = [
     "dev-mqueue.mount"

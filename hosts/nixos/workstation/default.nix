@@ -1,12 +1,18 @@
-{ config, pkgs, inputs, lib, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  lib,
+  ...
+}:
 
 {
   imports = [
     ./hardware-configuration.nix
     ./networking.nix
-    ../../../modules/nixos/common  # Common NixOS modules (SSH keys, etc.)
-    ../../../modules/nixos/attic-client.nix  # Attic cache client
-    ../../../modules/nixos/snap.nix  # Snap package manager support
+    ../../../modules/nixos/common # Common NixOS modules (SSH keys, etc.)
+    ../../../modules/nixos/attic-client.nix # Attic cache client
+    ../../../modules/nixos/snap.nix # Snap package manager support
     ../../../modules/wezterm-config.nix
     # Desktop Environment - uncomment one:
     # ../../../modules/nixos/sessions/garuda-themed-kde.nix
@@ -25,8 +31,8 @@
   # Enable Homebrew
   programs.homebrew = {
     enable = true;
-    brews = (import ../../../modules/common-brew-packages.nix).brews;
-    casks = (import ../../../modules/common-brew-packages.nix).casks;
+    inherit ((import ../../../modules/common-brew-packages.nix)) brews;
+    inherit ((import ../../../modules/common-brew-packages.nix)) casks;
   };
 
   # Linux-specific wezterm configuration
@@ -43,10 +49,9 @@
 
   # Enable AMD GPU firmware
   hardware.enableRedistributableFirmware = true;
-  
-  # Configure keyboard - let input-leap handle caps lock synchronization  
-  # services.xserver.xkb.options = "caps:none"; # Disabled - using input-leap fix instead
 
+  # Configure keyboard - let input-leap handle caps lock synchronization
+  # services.xserver.xkb.options = "caps:none"; # Disabled - using input-leap fix instead
 
   security.rtkit.enable = true;
   services.pipewire = {
@@ -67,11 +72,15 @@
   services.logind.settings.Login.HandleLidSwitch = "ignore";
 
   security.sudo.wheelNeedsPassword = false;
-  
+
   # Define your user account (SSH keys managed by common/ssh-keys.nix)
   users.users.deepwatrcreatur = {
     isNormalUser = true;
-    extraGroups = [ "networkmanager" "wheel" "lp" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "lp"
+    ];
     shell = pkgs.fish;
   };
 
@@ -79,32 +88,31 @@
   services.printing.enable = true;
 
   home-manager.users.deepwatrcreatur = {
-    imports = [ 
+    imports = [
       ../../../users/deepwatrcreatur/hosts/workstation
     ];
   };
-
 
   # Additional system packages
   environment.systemPackages = with pkgs; [
     at-spi2-core # Accessibility framework for deskflow clipboard
     filezilla
     git
-    nushell  # Stopgap: Add nushell at system level for ghostty compatibility
-    nvtopPackages.amd  # GPU monitoring tool for AMD GPUs
+    nushell # Stopgap: Add nushell at system level for ghostty compatibility
+    nvtopPackages.amd # GPU monitoring tool for AMD GPUs
     pavucontrol
     rclone-browser
     usbutils
     vim
-    vscode.fhs  # VSCode with FHS environment
+    vscode.fhs # VSCode with FHS environment
     inputs.zen-browser.packages.${pkgs.system}.default
   ];
 
   # Enable nix-ld for running dynamically linked executables (like homebrew packages)
   programs.nix-ld.enable = true;
   myModules.attic-client = {
-    enable = true;  # Robust post-build hook that never fails builds
-    tokenFile = ../../../secrets/attic-client-token.yaml.enc;  # Use global token file
+    enable = true; # Robust post-build hook that never fails builds
+    tokenFile = ../../../secrets/attic-client-token.yaml.enc; # Use global token file
   };
 
   # Enable snap support
@@ -113,7 +121,10 @@
     packages = [ "icloud-for-linux" ];
   };
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
   nixpkgs.config.allowUnfree = true;
 
   system.stateVersion = "25.05";

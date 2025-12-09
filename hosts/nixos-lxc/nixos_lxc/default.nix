@@ -1,14 +1,19 @@
-
-{ config, lib, inputs, ... }: 
+{
+  config,
+  lib,
+  inputs,
+  ...
+}:
 let
   nixpkgsLib = inputs.nixpkgs.lib;
-  importAllModulesInDir = dir:
+  importAllModulesInDir =
+    dir:
     let
       items = builtins.readDir dir;
       isNixFile = name: type: type == "regular" && nixpkgsLib.hasSuffix ".nix" name;
       nixFileNames = nixpkgsLib.attrNames (nixpkgsLib.filterAttrs isNixFile items);
     in
-      map (fileName: dir + "/${fileName}") nixFileNames;
+    map (fileName: dir + "/${fileName}") nixFileNames;
 in
 {
   imports = [
@@ -20,7 +25,7 @@ in
   ++ (importAllModulesInDir (./. + "/../../../hosts/nixos_lxc/modules"));
 
   nixpkgs = {
-    overlays = [];
+    overlays = [ ];
     config = {
       allowUnfree = true;
     };

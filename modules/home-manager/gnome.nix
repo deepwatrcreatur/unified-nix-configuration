@@ -68,7 +68,7 @@
     };
 
     "org/gnome/desktop/session" = {
-      idle-delay = "uint32 0";  # Disable idle timeout
+      idle-delay = "uint32 0"; # Disable idle timeout
     };
 
     "org/gnome/settings-daemon/plugins/power" = {
@@ -94,9 +94,8 @@
     };
 
     "org/gnome/shell/extensions/blur-my-shell/applications" = {
-      blur = false;  # Don't blur application windows by default
+      blur = false; # Don't blur application windows by default
     };
-
 
   };
 
@@ -109,6 +108,9 @@
   services.gnome-keyring = {
     enable = true;
     # Disable the SSH component to avoid conflicts with other agents
-    components = ["pkcs11" "secrets"];
+    components = [
+      "pkcs11"
+      "secrets"
+    ];
   };
 }

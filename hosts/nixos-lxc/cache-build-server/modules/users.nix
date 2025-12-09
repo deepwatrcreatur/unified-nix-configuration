@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   users.users.root.shell = pkgs.fish;
@@ -12,6 +17,6 @@
     shell = pkgs.bash;
     # SSH keys will be managed via SOPS if needed
   };
-  
-  users.groups.nixbuilder = {};
+
+  users.groups.nixbuilder = { };
 }

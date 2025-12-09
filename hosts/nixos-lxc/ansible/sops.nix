@@ -1,4 +1,4 @@
-{ ... }:
+_:
 {
   systemd.tmpfiles.rules = [
     "d /var/lib/sops/age 0755 ansible ansible -"

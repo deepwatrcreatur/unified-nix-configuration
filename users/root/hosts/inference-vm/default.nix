@@ -1,4 +1,10 @@
-{ config, pkgs, lib, inputs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 
 {
   # Inference VM specific configuration for root
@@ -11,17 +17,17 @@
     # Network tools for debugging
     netcat
     tcpdump
-    
+
     # System administration (lsof, strace likely in common)
-    
+
     # CUDA debugging tools
     cudaPackages.cuda_gdb
   ];
 
-  # Root shell aliases for inference administration  
+  # Root shell aliases for inference administration
   programs.nushell.shellAliases = {
     ollama-restart = "systemctl restart ollama";
-    ollama-status = "systemctl status ollama";  
+    ollama-status = "systemctl status ollama";
     ollama-logs = "journalctl -u ollama -n 50";
     gpu-status = "nvidia-smi";
     gpu-processes = "nvidia-smi pmon";

@@ -1,5 +1,10 @@
 # ./modules/nixos/services/nginx-proxy-manager.nix
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.services.nginx-proxy-manager;
@@ -26,7 +31,7 @@ in
         "/var/lib/nginx-proxy-manager/data:/data"
         "/var/lib/nginx-proxy-manager/letsencrypt:/etc/letsencrypt"
       ];
-    extraOptions = [ "--network=host" ];
+      extraOptions = [ "--network=host" ];
     };
 
     systemd.tmpfiles.rules = [

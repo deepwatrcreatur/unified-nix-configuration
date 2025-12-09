@@ -1,5 +1,10 @@
 # users/deepwatrcreatur/hosts/nixos_lxc/default.nix
-{ config, pkgs, lib,  ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   imports = [
@@ -20,8 +25,8 @@
   ];
 
   # Configure programs
-  programs.bash.enable = true; 
-  
+  programs.bash.enable = true;
+
   # Let Home Manager manage itself if you want the `home-manager` command available
   programs.home-manager.enable = true;
 

@@ -11,6 +11,7 @@ let
   modules = lib.filterAttrs (name: type: type == "regular" && lib.hasSuffix ".nix" name) commonFiles;
   moduleImports = lib.mapAttrsToList (name: _: import (commonDir + "/${name}")) modules;
 
-in {
+in
+{
   imports = moduleImports;
 }

@@ -1,5 +1,10 @@
 # modules/nixos/services/iperf3.nix
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   systemd.services.iperf3 = {

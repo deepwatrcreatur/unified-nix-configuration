@@ -8,7 +8,10 @@
     # Firewall configuration
     firewall = {
       enable = true;
-      allowedTCPPorts = [ 24800 631 ];  # Deskflow server and CUPS
+      allowedTCPPorts = [
+        24800
+        631
+      ]; # Deskflow server and CUPS
     };
   };
 
