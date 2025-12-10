@@ -16,7 +16,7 @@
   ];
 
   # Disable attic-client for root (no SOPS secrets configured)
-  services.attic-client.enable = false;
+  programs.attic-client.enable = false;
 
   # Add packages
   home.packages = [
