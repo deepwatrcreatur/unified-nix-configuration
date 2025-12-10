@@ -87,10 +87,22 @@ in
         # Wrap everything in a try-catch to never fail the build
         {
           echo "Attic: Attempting to push to cache '${cfg.cache}'..." >&2
+          echo "Attic: Server endpoint: ${cfg.server}" >&2
+          echo "Attic: Cache name: ${cfg.cache}" >&2
+          echo "Attic: Token file exists: $(test -f "$token_file" && echo 'yes' || echo 'no')" >&2
+          echo "Attic: Token length: $(echo -n "$token" | wc -c) characters" >&2
+
           if ${pkgs.attic-client}/bin/attic --config "$temp_config" push ${cfg.cache} $OUT_PATHS; then
             echo "Attic: Successfully pushed paths" >&2
           else
-            echo "Attic: Push failed (server unavailable or auth error?), continuing anyway" >&2
+            echo "Attic: Push failed - checking server connectivity..." >&2
+            # Test server connectivity
+            if ${pkgs.curl}/bin/curl -s -f --max-time 10 "${cfg.server}/_attic/v1/cache/${cfg.cache}/info" -H "Authorization: Bearer $token" >/dev/null 2>&1; then
+              echo "Attic: Server reachable, likely permission issue" >&2
+            else
+              echo "Attic: Server unreachable or auth failed - check network/server status" >&2
+            fi
+            echo "Attic: Continuing build despite push failure" >&2
           fi
         } || {
           echo "Attic: Upload hook failed unexpectedly, but build continues" >&2

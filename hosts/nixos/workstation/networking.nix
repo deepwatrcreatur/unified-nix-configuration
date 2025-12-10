@@ -18,7 +18,7 @@
   # Enable Avahi for service discovery (e.g., printers)
   services.avahi = {
     enable = true;
-    nssmdns = true;
+    nssmdns4 = true;
     openFirewall = true;
   };
 
