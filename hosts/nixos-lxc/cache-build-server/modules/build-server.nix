@@ -166,7 +166,7 @@
 
       # Login using the SOPS-managed token
       echo "Attempting to login to Attic server..."
-      if ${pkgs.attic-client}/bin/attic login local http://localhost:5001 "$ATTIC_TOKEN" --set-default; then
+      if ${pkgs.attic-client}/bin/attic login local http://cache-build-server:5001 "$ATTIC_TOKEN" --set-default; then
         echo "Successfully logged into Attic server"
 
         # Create cache if it doesn't exist

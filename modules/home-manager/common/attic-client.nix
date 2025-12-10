@@ -56,7 +56,7 @@ in
           endpoint = "http://cache-build-server:5001";
         };
         cache-build-server-local = {
-          endpoint = "http://localhost:5001";
+          endpoint = "http://cache-build-server:5001";
         };
       };
       description = "Default Attic servers (can be overridden)";
