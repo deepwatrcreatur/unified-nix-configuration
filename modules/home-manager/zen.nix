@@ -1,8 +1,6 @@
 { config, pkgs, lib, inputs, ... }:
 
 let
-  inherit (lib) disabled;
-
   lockedAs =
     Value: attrs:
     attrs
@@ -182,8 +180,7 @@ in
 
   config = lib.mkIf config.programs.zen-browser.enable {
     home.packages = [ config.programs.zen-browser.package ];
-    programs.zen-browser = disabled {
-      inherit (config.programs.zen-browser) policies;
-    };
+    # Note: policies would need to be applied via the package or system-level configuration
+    # The zen-browser flake package handles its own configuration
   };
 }
