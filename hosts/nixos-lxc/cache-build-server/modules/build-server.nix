@@ -120,6 +120,11 @@
 
   };
 
+  # Override atticd service to ensure correct api-endpoint
+  systemd.services.atticd.serviceConfig.Environment = [
+    "ATTIC_SERVER_API_ENDPOINT=http://cache-build-server:5001/"
+  ];
+
   # Initialize Attic cache and configure upstream
   systemd.services.attic-init = {
     description = "Initialize Attic cache";
