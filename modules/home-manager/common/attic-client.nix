@@ -6,10 +6,10 @@
 }:
 
 let
-  cfg = config.services.attic-client;
+  cfg = config.programs.attic-client;
 in
 {
-  options.services.attic-client = {
+  options.programs.attic-client = {
     enable = lib.mkEnableOption "Attic binary cache client" // {
       default = false;
       description = "Whether to enable Attic binary cache client with SOPS-managed authentication";
@@ -68,7 +68,7 @@ in
     home.packages = [ pkgs.attic-client ];
 
     # Merge default servers with user-specified servers
-    services.attic-client.servers = lib.mkDefault cfg.defaultServers;
+    programs.attic-client.servers = lib.mkDefault cfg.defaultServers;
 
     # Create Attic client configuration template
     home.file.".config/attic/config.toml".text =
