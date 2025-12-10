@@ -97,7 +97,7 @@
     settings = {
       listen = "[::]:5001";
       # allowed-hosts = [ "localhost" "127.0.0.1" "*.deepwatercreature.com" "10.10.*" ];  # Disabled to allow all hosts
-      api-endpoint = "http://localhost:5001/";
+      api-endpoint = "http://cache-build-server:5001/";
 
       # Database
       database.url = "sqlite:///var/lib/atticd/server.db?mode=rwc";
