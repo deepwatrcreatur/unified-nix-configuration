@@ -2,6 +2,3 @@
 
 update:
   nixos-rebuild switch --flake /root/unified-nix-configuration
-
-nh-update:
-  nh os switch /root/unified-nix-configuration
