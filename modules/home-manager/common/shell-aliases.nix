@@ -28,7 +28,7 @@ in
   programs = {
     bash = {
       shellAliases = aliases;
-      initExtra = ''
+      initContent = ''
         # Start SSH agent if not already running
         if [ -z "$SSH_AUTH_SOCK" ] || ! ssh-add -l >/dev/null 2>&1; then
           eval "$(ssh-agent -s)" >/dev/null
@@ -39,25 +39,21 @@ in
             fi
           done
         fi
-
-        
       '';
     };
     zsh = {
       shellAliases = aliases;
-      initExtra = ''
+      initContent = ''
         # Start SSH agent if not already running
-        if [[ -z $SSH_AUTH_SOCK ]] || ! ssh-add -l >/dev/null 2>&1; then
+        if [ -z "$SSH_AUTH_SOCK" ] || ! ssh-add -l >/dev/null 2>&1; then
           eval "$(ssh-agent -s)" >/dev/null
           # Try to add common SSH keys
           for key in ~/.ssh/id_ed25519 ~/.ssh/id_rsa; do
-            if [[ -f $key ]]; then
+            if [ -f "$key" ]; then
               ssh-add "$key" >/dev/null 2>&1
             fi
           done
         fi
-
-        
       '';
     };
     fish = {
