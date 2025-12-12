@@ -28,7 +28,7 @@ in
   programs = {
     bash = {
       shellAliases = aliases;
-      initContent = ''
+      initExtra = ''
         # Start SSH agent if not already running
         if [ -z "$SSH_AUTH_SOCK" ] || ! ssh-add -l >/dev/null 2>&1; then
           eval "$(ssh-agent -s)" >/dev/null
