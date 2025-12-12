@@ -24,6 +24,7 @@
   # Launch with Ctrl+Space (configurable in Ulauncher preferences)
   environment.systemPackages = with pkgs; [
     ulauncher
+    deskflow
   ];
 
   # Enable Ulauncher to start on login
