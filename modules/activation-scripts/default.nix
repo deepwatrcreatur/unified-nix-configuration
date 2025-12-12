@@ -10,40 +10,14 @@
 
 let
   cfg = config.custom.activation-scripts;
-  
-  # Auto-import all activation script modules
-  darwinDir = ./darwin;
-  linuxDir = ./linux;
-  
-  darwinModules = builtins.readDir darwinDir;
-  linuxModules = builtins.readDir linuxDir;
-  
-  darwinImports = lib.mapAttrsToList (name: type: 
-    if type == "regular" && lib.hasSuffix ".nix" name 
-    then darwinDir + "/${name}" 
-    else if type == "directory" 
-    then darwinDir + "/${name}/default.nix" 
-    else null
-  ) darwinModules;
-  
-  linuxImports = lib.mapAttrsToList (name: type: 
-    if type == "regular" && lib.hasSuffix ".nix" name 
-    then linuxDir + "/${name}" 
-    else if type == "directory" 
-    then linuxDir + "/${name}/default.nix" 
-    else null
-  ) linuxModules;
-  
-  # Filter out null values
-  validDarwinImports = lib.filter (path: path != null) darwinImports;
-  validLinuxImports = lib.filter (path: path != null) linuxImports;
 in
 {
-  imports = 
+  imports = [
     # Only import Darwin modules on Darwin systems
-    (lib.optionals pkgs.stdenv.isDarwin validDarwinImports) ++
+    (lib.mkIf pkgs.stdenv.isDarwin ./darwin)
     # Only import Linux modules on Linux systems  
-    (lib.optionals pkgs.stdenv.isLinux validLinuxImports);
+    (lib.mkIf pkgs.stdenv.isLinux ./linux)
+  ];
 
   options.custom.activation-scripts = {
     enable = lib.mkEnableOption "All activation scripts bundle" // {
