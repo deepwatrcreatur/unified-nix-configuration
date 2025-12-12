@@ -23,12 +23,15 @@
       xdg-desktop-portal-gnome
       xdg-desktop-portal-gtk
     ];
-    # The cosmic portal implementation for screen capture is not working correctly.
-    # As a workaround, we explicitly tell xdg-desktop-portal to use the gtk backend
-    # for screen sharing.
+    # Portal configuration for COSMIC with workarounds:
+    # - ScreenCast: Use gtk backend (cosmic's implementation has issues)
+    # - InputCapture: Use gnome backend (cosmic doesn't implement it yet)
+    #   This is required for Deskflow/Input Leap to work on Wayland
     config = {
       common = {
         "org.freedesktop.impl.portal.ScreenCast" = "gtk";
+        "org.freedesktop.impl.portal.InputCapture" = "gnome";
+        "org.freedesktop.impl.portal.RemoteDesktop" = "gnome";
       };
     };
   };
