@@ -2,7 +2,7 @@
 
 # NixOS - use nixos-rebuild or nh
 update:
-  sudo nixos-rebuild switch --flake $NH_FLAKE#{{`hostname`}}
+  /run/wrappers/bin/sudo nixos-rebuild switch --flake $NH_FLAKE#{{`hostname`}}
 
 nh-update:
   nh os switch
