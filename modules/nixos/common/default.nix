@@ -8,5 +8,6 @@
     ./nh.nix
     ./ssh-keys.nix
     ./sops.nix
+    # ../../activation-scripts
   ];
 }

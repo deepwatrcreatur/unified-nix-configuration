@@ -16,7 +16,7 @@
     ../../../modules/wezterm-config.nix
     # Desktop Environment - choose one option:
     # Option 1: Multi-DE (test multiple DEs without rebuilding - switch at login screen)
-    ../../../modules/nixos/sessions/multi-de.nix
+    # ../../../modules/nixos/sessions/multi-de.nix
     # Option 2: Single DE (uncomment one, comment out multi-de.nix above)
     # ../../../modules/nixos/sessions/garuda-themed-kde.nix
     # ../../../modules/nixos/sessions/garuda-themed-gnome.nix # GNOME with X11 for deskflow compatibility
@@ -24,7 +24,7 @@
     # ../../../modules/nixos/sessions/kde-x11.nix # KDE with X11 for deskflow compatibility
     # ../../../modules/nixos/sessions/cosmic.nix # COSMIC desktop environment (no InputCapture portal yet)
     # ../../../modules/nixos/sessions/xfce.nix
-    # ../../../modules/nixos/sessions/cinnamon.nix
+    ../../../modules/nixos/sessions/cinnamon.nix
     # ../../../modules/nixos/sessions/mate.nix
     # ../../../modules/nixos/sessions/lxde.nix
     ../../../modules/linux/linuxbrew-system.nix

@@ -13,6 +13,11 @@
       GNUPGHOME = "${config.home.homeDirectory}/.gnupg";
       SOPS_AGE_KEY_FILE = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
       NH_FLAKE = "${config.home.homeDirectory}/unified-nix-configuration";
+      # Node.js settings to prevent EventEmitter warnings
+      NODE_OPTIONS = "--max-old-space-size=4096 --max-event-listeners=30";
+      # Terminal compatibility settings
+      TERM = "xterm-256color";
+      COLORTERM = "truecolor";
     };
     shellAliases = {
       rename = "^rename -n";
@@ -71,6 +76,8 @@
       } else if ($env.SSH_AUTH_SOCK? | is-empty) and ("/run/current-system/sw/bin/gpgconf" | path exists) {
         $env.SSH_AUTH_SOCK = (^/run/current-system/sw/bin/gpgconf --list-dirs agent-ssh-socket | str trim)
       }
+
+
 
       # Starship prompt integration
       $env.STARSHIP_SHELL = "nu"

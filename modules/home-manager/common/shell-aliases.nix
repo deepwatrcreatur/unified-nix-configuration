@@ -23,6 +23,8 @@ let
   };
 in
 {
+  
+
   programs = {
     bash = {
       shellAliases = aliases;
@@ -37,6 +39,8 @@ in
             fi
           done
         fi
+
+        
       '';
     };
     zsh = {
@@ -52,6 +56,8 @@ in
             fi
           done
         fi
+
+        
       '';
     };
     fish = {
@@ -68,6 +74,7 @@ in
           end
         end
       '';
+      
     };
   };
 
@@ -96,6 +103,22 @@ in
             ssh-add $key
           }
         }
+      }
+
+      # KiloCode launcher with proper terminal settings
+      def kilocode [...args] {
+        # Set environment variables for better terminal compatibility
+        $env.TERM = "xterm-256color"
+        $env.COLORTERM = "truecolor"
+        $env.NODE_OPTIONS = "--max-old-space-size=4096"
+        $env.NODE_NO_WARNINGS = "1"
+        # Fix backspace and terminal input issues
+        $env.STTY = "erase ^?"
+        $env.LC_ALL = "en_US.UTF-8"
+        $env.LANG = "en_US.UTF-8"
+        
+        # Launch KiloCode with cleaned environment
+        ^kilocode ...$args
       }
     '';
   };
