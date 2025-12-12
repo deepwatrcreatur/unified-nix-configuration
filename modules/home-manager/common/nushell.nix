@@ -13,8 +13,6 @@
       GNUPGHOME = "${config.home.homeDirectory}/.gnupg";
       SOPS_AGE_KEY_FILE = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
       NH_FLAKE = "${config.home.homeDirectory}/unified-nix-configuration";
-      # Node.js settings to prevent EventEmitter warnings
-      NODE_OPTIONS = "--max-old-space-size=4096 --max-event-listeners=30";
       # Terminal compatibility settings
       TERM = "xterm-256color";
       COLORTERM = "truecolor";

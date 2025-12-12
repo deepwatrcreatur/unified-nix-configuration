@@ -66,7 +66,6 @@
         # Launch KiloCode with proper terminal settings for Ghostty compatibility
         set -gx TERM xterm-256color
         set -gx COLORTERM truecolor
-        set -gx NODE_OPTIONS "--max-old-space-size=4096 --max-event-listeners=30"
         command kilocode $argv
       '';
     };
