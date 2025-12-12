@@ -23,9 +23,5 @@
     };
   };
 
-  # Also set limits during system activation as a fallback
-  system.activationScripts.extraActivation.text = ''
-    echo "Setting launchctl file descriptor limits..."
-    /bin/launchctl limit maxfiles 65536 200000 2>/dev/null || true
-  '';
+  
 }

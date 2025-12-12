@@ -13,5 +13,5 @@ let
 
 in
 {
-  imports = moduleImports;
+  imports = moduleImports ++ [ ../activation-scripts ];
 }

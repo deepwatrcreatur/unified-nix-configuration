@@ -20,6 +20,7 @@ in
     # Explicit imports that don't belong in common
     ../wezterm-config.nix
     ./system-limits.nix
+    ../activation-scripts
   ];
 
   # Import darwin-specific home-manager modules for all users
@@ -45,9 +46,5 @@ in
     };
   };
 
-  system.activationScripts.postActivation.text = ''
-    /usr/bin/defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticCheckEnabled -bool false
-    /usr/bin/defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticallyInstallMacOSUpdates -bool false
-    /usr/bin/defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticDownload -bool false
-  '';
+  
 }
