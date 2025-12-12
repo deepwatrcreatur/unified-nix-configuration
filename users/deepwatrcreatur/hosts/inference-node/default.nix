@@ -19,7 +19,7 @@
 
   home.packages = with pkgs; [
     # GPU utilities that work well with Nix
-    glxinfo # OpenGL info
+    mesa-demos # OpenGL info
     vulkan-tools # Vulkan utilities
 
     # Note: For GPU monitoring tools like nvtop, use system packages:
