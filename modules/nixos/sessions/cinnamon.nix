@@ -7,6 +7,15 @@
   # Enable the Cinnamon desktop environment.
   services.xserver.desktopManager.cinnamon.enable = true;
 
+  # Enable LightDM display manager for Cinnamon
+  services.xserver.displayManager.lightdm.enable = true;
+
+  # Enable autologin
+  services.xserver.displayManager.autoLogin = {
+    enable = true;
+    user = "deepwatrcreatur";
+  };
+
   # Cinnamon's panel can be configured to act as a dock, so no extra package
   # is needed. It also includes a workspace switcher with previews and
   # supports moving windows between workspaces with the mouse.
