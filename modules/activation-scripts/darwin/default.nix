@@ -39,6 +39,7 @@ in
     post-activation.enable = lib.mkEnableOption "Post-activation script" // { default = true; };
     extra-activation.enable = lib.mkEnableOption "Extra activation script" // { default = true; };
     nix-mount.enable = lib.mkEnableOption "Nix mount activation scripts" // { default = false; };
+    fix-homebrew-taps.enable = lib.mkEnableOption "Fix broken Homebrew Taps symlink" // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {
@@ -46,5 +47,6 @@ in
     custom.activation-scripts.darwin.post-activation.enable = lib.mkDefault cfg.post-activation.enable;
     custom.activation-scripts.darwin.extra-activation.enable = lib.mkDefault cfg.extra-activation.enable;
     custom.activation-scripts.darwin.nix-mount.enable = lib.mkDefault cfg.nix-mount.enable;
+    custom.activation-scripts.darwin.fix-homebrew-taps.enable = lib.mkDefault cfg.fix-homebrew-taps.enable;
   };
 }
