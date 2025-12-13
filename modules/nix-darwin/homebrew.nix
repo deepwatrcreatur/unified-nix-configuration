@@ -36,6 +36,8 @@ in
         autoUpdate = false; # Temporarily disabled due to git permission issues
         cleanup = "uninstall"; # Changed from "zap" to avoid git operations
       };
+      taps = (import ../common-brew-packages.nix).taps
+        ++ config.homebrew.hostSpecific.taps;
       brews = [
         "cmake"
         "fish"
