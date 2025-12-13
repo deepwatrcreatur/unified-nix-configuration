@@ -9,6 +9,31 @@ with lib;
 
 let
   cfg = config.programs.homebrew;
+
+  # Essential tools that brew needs
+  brewDeps = with pkgs; [
+    coreutils
+    findutils
+    gnugrep
+    gnused
+    gawk
+    git
+    openssh
+    curl
+    gnutar
+    gzip
+    xz
+    gcc
+    gnumake
+    patch
+    diffutils
+  ];
+
+  # Create a directory with symlinks to all essential binaries
+  brewToolsDir = pkgs.symlinkJoin {
+    name = "brew-tools";
+    paths = brewDeps;
+  };
 in
 {
   options.programs.homebrew = {
@@ -64,10 +89,10 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      curl
-      git
-      gcc
+    environment.systemPackages = brewDeps ++ [
+      pkgs.curl
+      pkgs.git
+      pkgs.gcc
     ];
 
     # Add Homebrew to PATH and set environment variables
@@ -91,6 +116,64 @@ in
       "${cfg.brewPrefix}/sbin"
     ];
 
-    
+    # Create symlinks in /usr/bin for tools that brew expects
+    # This is needed because brew's internal scripts look for tools in standard locations
+    system.activationScripts.brewSymlinks = {
+      text = ''
+        # Create /usr/bin if it doesn't exist
+        mkdir -p /usr/bin
+        
+        # Create symlinks for essential tools brew needs
+        for tool in cp ln mv rm mkdir rmdir cat ls chmod chown touch head tail tr cut sort uniq wc basename dirname readlink realpath mktemp env test expr printf install stat date sleep tee xargs; do
+          if [ ! -e "/usr/bin/$tool" ] && [ -e "${pkgs.coreutils}/bin/$tool" ]; then
+            ln -sf "${pkgs.coreutils}/bin/$tool" "/usr/bin/$tool"
+          fi
+        done
+        
+        # Git and SSH
+        if [ ! -e "/usr/bin/git" ]; then
+          ln -sf "${pkgs.git}/bin/git" "/usr/bin/git"
+        fi
+        if [ ! -e "/usr/bin/ssh" ]; then
+          ln -sf "${pkgs.openssh}/bin/ssh" "/usr/bin/ssh"
+        fi
+        
+        # Other essential tools
+        if [ ! -e "/usr/bin/find" ]; then
+          ln -sf "${pkgs.findutils}/bin/find" "/usr/bin/find"
+        fi
+        if [ ! -e "/usr/bin/xargs" ] && [ -e "${pkgs.findutils}/bin/xargs" ]; then
+          ln -sf "${pkgs.findutils}/bin/xargs" "/usr/bin/xargs"
+        fi
+        if [ ! -e "/usr/bin/grep" ]; then
+          ln -sf "${pkgs.gnugrep}/bin/grep" "/usr/bin/grep"
+        fi
+        if [ ! -e "/usr/bin/sed" ]; then
+          ln -sf "${pkgs.gnused}/bin/sed" "/usr/bin/sed"
+        fi
+        if [ ! -e "/usr/bin/awk" ]; then
+          ln -sf "${pkgs.gawk}/bin/awk" "/usr/bin/awk"
+        fi
+        if [ ! -e "/usr/bin/tar" ]; then
+          ln -sf "${pkgs.gnutar}/bin/tar" "/usr/bin/tar"
+        fi
+        if [ ! -e "/usr/bin/gzip" ]; then
+          ln -sf "${pkgs.gzip}/bin/gzip" "/usr/bin/gzip"
+        fi
+        if [ ! -e "/usr/bin/curl" ]; then
+          ln -sf "${pkgs.curl}/bin/curl" "/usr/bin/curl"
+        fi
+        if [ ! -e "/usr/bin/make" ]; then
+          ln -sf "${pkgs.gnumake}/bin/make" "/usr/bin/make"
+        fi
+        if [ ! -e "/usr/bin/patch" ]; then
+          ln -sf "${pkgs.patch}/bin/patch" "/usr/bin/patch"
+        fi
+        if [ ! -e "/usr/bin/diff" ]; then
+          ln -sf "${pkgs.diffutils}/bin/diff" "/usr/bin/diff"
+        fi
+      '';
+      deps = [ ];
+    };
   };
 }
