@@ -14,6 +14,7 @@
     ../../../modules/nixos/attic-client.nix # Attic cache client
     ../../../modules/nixos/snap.nix # Snap package manager support
     ../../../modules/wezterm-config.nix
+    ../../../modules/activation-scripts # Activation scripts for system setup
     # Desktop Environment - choose one option:
     # Option 1: Multi-DE (test multiple DEs without rebuilding - switch at login screen)
     # ../../../modules/nixos/sessions/multi-de.nix
@@ -31,12 +32,16 @@
     ../../../modules/linux/linuxbrew.nix
   ];
 
-  # Enable Homebrew
+  # Enable Homebrew with automatic installation via activation script
   programs.homebrew = {
     enable = true;
     inherit ((import ../../../modules/common-brew-packages.nix)) brews;
     inherit ((import ../../../modules/common-brew-packages.nix)) casks;
+    inherit ((import ../../../modules/common-brew-packages.nix)) taps;
   };
+
+  # Enable homebrew activation script to auto-install packages on rebuild
+  custom.activation-scripts.linux.homebrew.enable = true;
 
   # Linux-specific wezterm configuration
   programs.wezterm.extraConfig = lib.mkAfter ''

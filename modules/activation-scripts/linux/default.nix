@@ -34,17 +34,8 @@ in
       default = true;
       description = "Enable/disable all Linux activation scripts. Individual scripts can be controlled separately.";
     };
-    
-    # Individual script options with defaults
-    homebrew.enable = lib.mkEnableOption "Homebrew activation script" // { default = false; };
-    linuxbrew-system.enable = lib.mkEnableOption "Linuxbrew system setup script" // { default = false; };
-    lxc-sh-wrapper.enable = lib.mkEnableOption "LXC /bin/sh wrapper script" // { default = false; };
+    # Individual script enable options are defined in their respective modules
   };
 
-  config = lib.mkIf cfg.enable {
-    # Enable individual scripts when bundle is enabled
-    custom.activation-scripts.linux.homebrew.enable = lib.mkDefault cfg.homebrew.enable;
-    custom.activation-scripts.linux.linuxbrew-system.enable = lib.mkDefault cfg.linuxbrew-system.enable;
-    custom.activation-scripts.linux.lxc-sh-wrapper.enable = lib.mkDefault cfg.lxc-sh-wrapper.enable;
-  };
+  # No need to set defaults here - each module handles its own enable option
 }

@@ -12,11 +12,10 @@ let
   cfg = config.custom.activation-scripts;
 in
 {
+  # Import both platform modules unconditionally - they will use mkIf internally
+  # to only apply their configs on the appropriate platform
   imports = [
-    # Only import Darwin modules on Darwin systems
-    (lib.mkIf pkgs.stdenv.isDarwin ./darwin)
-    # Only import Linux modules on Linux systems  
-    (lib.mkIf pkgs.stdenv.isLinux ./linux)
+    ./linux
   ];
 
   options.custom.activation-scripts = {
@@ -24,17 +23,10 @@ in
       default = true;
       description = "Enable/disable all activation scripts. Individual scripts can be controlled separately.";
     };
-    
-    darwin = {
-      enable = lib.mkEnableOption "Darwin activation scripts bundle" // {
-        default = pkgs.stdenv.isDarwin;
-        description = "Enable/disable all Darwin activation scripts.";
-      };
-    };
-    
+
     linux = {
       enable = lib.mkEnableOption "Linux activation scripts bundle" // {
-        default = pkgs.stdenv.isLinux;
+        default = true;
         description = "Enable/disable all Linux activation scripts.";
       };
     };
@@ -42,7 +34,6 @@ in
 
   config = lib.mkIf cfg.enable {
     # Enable platform-specific bundles when main bundle is enabled
-    custom.activation-scripts.darwin.enable = lib.mkDefault (pkgs.stdenv.isDarwin && cfg.darwin.enable);
-    custom.activation-scripts.linux.enable = lib.mkDefault (pkgs.stdenv.isLinux && cfg.linux.enable);
+    custom.activation-scripts.linux.enable = lib.mkDefault cfg.linux.enable;
   };
 }
