@@ -38,7 +38,8 @@
       ../../modules/home-manager
     ];
     programs.attic-client.enable = true;
-    home-manager.backupFileExtension = "backup";
   };
+
+  home-manager.backupFileExtension = "backup";
   system.stateVersion = 6;
 }
