@@ -1,4 +1,14 @@
 
+# Global SSH settings for all hosts
+Host *
+    SendEnv LANG LC_*
+    MACs hmac-md5,hmac-sha1
+    ForwardX11 no
+    ForwardAgent yes
+    AddressFamily inet
+    ServerAliveInterval 15
+    ConnectTimeout 20
+
 Host opnsense
     Hostname 10.10.10.1
     user root
