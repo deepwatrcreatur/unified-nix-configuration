@@ -116,7 +116,7 @@ in
         # Try to add common SSH keys
         for key in [$"($env.HOME)/.ssh/id_ed25519" $"($env.HOME)/.ssh/id_rsa"] {
           if ($key | path exists) {
-            ssh-add $key
+            ssh-add $key | ignore
           }
         }
       }
