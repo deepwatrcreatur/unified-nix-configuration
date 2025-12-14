@@ -254,15 +254,21 @@ in
 
     extraKeybinds = mkOption {
       type = types.lines;
-      default =
-        if pkgs.stdenv.isDarwin then
-          ''
-            shared_except "locked" {
-                bind "Ctrl c" { Copy; }
-            }
-          ''
-        else
-          "";
+      default = ''
+        // Unbind Ctrl+C from zellij actions so it passes through to shell for SIGINT
+        // Use Ctrl+Shift+C for copy instead (or select with mouse and it auto-copies)
+        shared_except "locked" {
+            unbind "Ctrl c"
+        }
+        ${if pkgs.stdenv.isDarwin then ''
+        // On macOS, Cmd+C handles copy in most terminals, so we don't need Ctrl+C
+        '' else ''
+        // Use Ctrl+Shift+C for copy on Linux (most terminals support this)
+        shared_except "locked" {
+            bind "Ctrl Shift c" { Copy; }
+        }
+        ''}
+      '';
       description = "Extra keybind configuration in KDL format.";
       example = ''
         normal {
