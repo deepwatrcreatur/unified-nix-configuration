@@ -104,8 +104,15 @@ in
     extraConfig = ''
       # Start SSH agent if not already running
       if (not ($env | get SSH_AUTH_SOCK | is-empty)) or (do { ssh-add -l } | complete | get exit_code) != 0 {
-        ^ssh-agent -c | save -f /tmp/ssh-agent.fish
-        source /tmp/ssh-agent.fish
+        let ssh_agent_output = (^ssh-agent -c | str trim)
+        # Parse the csh-style output to extract environment variables
+        for line in ($ssh_agent_output | lines) {
+          if ($line | str starts-with "setenv SSH_AUTH_SOCK") {
+            $env.SSH_AUTH_SOCK = ($line | str replace "setenv SSH_AUTH_SOCK " "" | str replace ";" "")
+          } else if ($line | str starts-with "setenv SSH_AGENT_PID") {
+            $env.SSH_AGENT_PID = ($line | str replace "setenv SSH_AGENT_PID " "" | str replace ";" "")
+          }
+        }
         # Try to add common SSH keys
         for key in [~/.ssh/id_ed25519 ~/.ssh/id_rsa] {
           if ($key | path exists) {
