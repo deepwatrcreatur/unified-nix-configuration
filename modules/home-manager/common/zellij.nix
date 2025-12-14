@@ -319,7 +319,7 @@ in
 
       enableZshIntegration = mkOption {
         type = types.bool;
-        default = false;  # Disabled due to completion function errors during startup
+        default = true;
         description = "Enable Zsh integration.";
       };
 
@@ -361,7 +361,15 @@ in
     programs.zsh.initContent =
       mkIf (cfg.shellIntegration.enable && cfg.shellIntegration.enableZshIntegration)
         ''
-          eval "$(${cfg.package}/bin/zellij setup --generate-completion zsh)"
+          # Zellij completion setup - defer to avoid calling completion functions during startup
+          if command -v zellij >/dev/null 2>&1; then
+            # Use a function to defer completion loading until needed
+            _zellij_completion() {
+              eval "$(${cfg.package}/bin/zellij setup --generate-completion zsh)"
+            }
+            # Register the completion function
+            compdef _zellij_completion zellij
+          fi
           if [[ -z "$ZELLIJ" && -o INTERACTIVE ]]; then ${cfg.package}/bin/zellij; fi
         '';
 
