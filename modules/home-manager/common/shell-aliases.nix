@@ -6,7 +6,8 @@
   ...
 }:
 let
-  aliases = {
+  # Base aliases without grc
+  baseAliases = {
     ls = "lsd";
     ll = "lsd -l";
     la = "lsd -a";
@@ -21,12 +22,19 @@ let
   // lib.optionalAttrs pkgs.stdenv.isDarwin {
     xcode = "open -a Xcode";
   };
+
+  # Merge base aliases with grc aliases
+  aliases = baseAliases // config.custom.grc.aliases;
 in
 {
+  imports = [
+    ./grc.nix
+  ];
   
 
   programs = {
     bash = {
+      enable = true;
       shellAliases = aliases;
       initExtra = ''
         # Start SSH agent if not already running
@@ -74,21 +82,26 @@ in
     };
   };
 
-  # Handle nushell separately with proper syntax
+  # Handle nushell - use shellAliases for grc commands
   programs.nushell = {
-    extraConfig = ''
-      alias ls = ^lsd
-      alias ll = ^lsd -l
-      alias la = ^lsd -a
-      alias lla = ^lsd -la
-      alias bp = ^bat --paging=never --plain
-      alias ".." = cd ..
-      alias update = ^just --justfile ~/.justfile update
-      alias nh-update = ^just --justfile ~/.justfile nh-update
-      alias ssh-nocheck = ^ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
-      alias rsync = ^/run/current-system/sw/bin/rsync
-      ${lib.optionalString pkgs.stdenv.isDarwin "alias xcode = ^open -a Xcode"}
+    # Add grc aliases to nushell's shellAliases (use mkForce to override conflicts)
+    shellAliases = lib.mkForce (config.custom.grc.nushellAliases // {
+      # Base aliases with ^ prefix for external commands
+      ls = "^lsd";
+      ll = "^lsd -l";
+      la = "^lsd -a";
+      lla = "^lsd -la";
+      bp = "^bat --paging=never --plain";
+      ".." = "cd ..";
+      update = "^just --justfile ~/.justfile update";
+      nh-update = "^just --justfile ~/.justfile nh-update";
+      ssh-nocheck = "^ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null";
+      rsync = "^/run/current-system/sw/bin/rsync";
+    } // lib.optionalAttrs pkgs.stdenv.isDarwin {
+      xcode = "^open -a Xcode";
+    });
 
+    extraConfig = ''
       # Start SSH agent if not already running
       if (not ($env | get SSH_AUTH_SOCK | is-empty)) or (do { ssh-add -l } | complete | get exit_code) != 0 {
         ^ssh-agent -c | save -f /tmp/ssh-agent.fish
