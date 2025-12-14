@@ -31,7 +31,7 @@ in
 
   config = {
     homebrew = {
-      enable = false; # Temporarily disabled due to hanging issues
+      enable = true;
       onActivation = {
         autoUpdate = false; # Temporarily disabled due to git permission issues
         cleanup = "uninstall"; # Changed from "zap" to avoid git operations
@@ -54,6 +54,7 @@ in
         "raycast"
         "rustdesk"
       ]
+      ++ (import ../common-brew-packages.nix).casks
       ++ config.homebrew.hostSpecific.casks;
     };
 
