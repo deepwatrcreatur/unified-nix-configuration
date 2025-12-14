@@ -319,7 +319,7 @@ in
 
       enableZshIntegration = mkOption {
         type = types.bool;
-        default = true;
+        default = false;  # Disabled due to completion function errors during startup
         description = "Enable Zsh integration.";
       };
 
