@@ -80,10 +80,10 @@
       # Starship prompt integration
       $env.STARSHIP_SHELL = "nu"
       $env.PROMPT_COMMAND = { ||
-          ^/usr/local/bin/starship prompt --cmd-duration $env.CMD_DURATION_MS $"--status=($env.LAST_EXIT_CODE)"
+          ^starship prompt --cmd-duration $env.CMD_DURATION_MS $"--status=($env.LAST_EXIT_CODE)"
       }
       $env.PROMPT_COMMAND_RIGHT = { ||
-          ^/usr/local/bin/starship prompt --right --cmd-duration $env.CMD_DURATION_MS $"--status=($env.LAST_EXIT_CODE)"
+          ^starship prompt --right --cmd-duration $env.CMD_DURATION_MS $"--status=($env.LAST_EXIT_CODE)"
       }
     '';
     envFile.text = ''
