@@ -12,6 +12,11 @@ in
       default = true;
       description = "Enable rclone with sync scripts for cloud storage";
     };
+
+    secretsPath = mkOption {
+      type = types.path;
+      description = "Path to the secrets directory for rclone config";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -39,5 +44,16 @@ in
         rclone sync "$1" "mega:$2" --progress --verbose --metadata --filter-from ~/.config/rclone/filter.txt
       '')
     ];
+
+    home.activation.rcloneSecretsActivation = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      export SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
+      export PATH="${lib.makeBinPath [ pkgs.sops ]}:$PATH"
+
+      # Decrypt rclone.conf
+      mkdir -p "$HOME/.config/rclone"
+      rm -f "$HOME/.config/rclone/rclone.conf"
+      sops -d "${toString cfg.secretsPath}/rclone.conf.enc" > "$HOME/.config/rclone/rclone.conf"
+      chmod 600 "$HOME/.config/rclone/rclone.conf"
+    '';
   };
 }
