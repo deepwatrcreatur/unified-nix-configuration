@@ -43,7 +43,5 @@ in
     };
   };
 
-  config = {
-    custom.toolAliases.aliases = toolAliases // darwinAliases;
-  };
+  
 }

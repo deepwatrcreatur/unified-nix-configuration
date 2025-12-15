@@ -27,7 +27,5 @@ in
     };
   };
 
-  config = {
-    custom.navigationAliases.aliases = navigationAliases;
-  };
+  
 }

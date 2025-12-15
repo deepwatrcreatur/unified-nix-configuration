@@ -111,7 +111,5 @@ in
     };
   };
 
-  config = {
-    custom.gitAliases.aliases = gitAliases;
-  };
+  
 }

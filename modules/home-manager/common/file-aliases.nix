@@ -46,8 +46,4 @@ in
       readOnly = true;
     };
   };
-
-  config = {
-    custom.fileAliases.aliases = fileAliases;
-  };
 }
