@@ -2,7 +2,7 @@
 
 # macOS - use darwin-rebuild or nh
 update:
-  sudo darwin-rebuild switch --flake $NH_FLAKE#macminim4
+  ulimit -n 65536; sudo /nix/var/nix/profiles/system/sw/bin/darwin-rebuild switch --flake $NH_FLAKE#macminim4
 
 nh-update:
   nh darwin switch
