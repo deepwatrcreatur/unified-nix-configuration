@@ -35,6 +35,22 @@
     chezmoi
     stow
     mix2nix
+    (writeShellScriptBin "onedrive-sync" ''
+      #!/bin/bash
+      if [ $# -ne 2 ]; then
+          echo "Usage: $0 <local_dir> <remote_dir>"
+          exit 1
+      fi
+      rclone sync "$1" "OneDrive:$2" --progress --verbose --metadata --filter-from ~/.config/rclone/filter.txt
+    '')
+    (writeShellScriptBin "mega-rclone" ''
+      #!/bin/bash
+      if [ $# -ne 2 ]; then
+          echo "Usage: $0 <local_dir> <remote_dir>"
+          exit 1
+      fi
+      rclone sync "$1" "mega:$2" --progress --verbose --metadata --filter-from ~/.config/rclone/filter.txt
+    '')
   ];
 
   home.file.".gnupg/public-key.asc" = {
