@@ -1,33 +1,23 @@
 # modules/home-manager/shell-aliases.nix
 {
   config,
-  pkgs,
   lib,
   ...
 }:
 let
-  # Base aliases without grc
-  baseAliases = {
-    ls = "lsd";
-    ll = "lsd -l";
-    la = "lsd -a";
-    lla = "lsd -la";
-    ".." = "cd ..";
-    bp = "bat --paging=never --plain";
-    update = "just --justfile ~/.justfile update";
-    nh-update = "just --justfile ~/.justfile nh-update";
-    ssh-nocheck = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ";
-    rsync = "/run/current-system/sw/bin/rsync";
-  }
-  // lib.optionalAttrs pkgs.stdenv.isDarwin {
-    xcode = "open -a Xcode";
-  };
-
-  # Merge base aliases with grc aliases
-  aliases = baseAliases // config.custom.grc.aliases;
+  # Merge all alias modules
+  aliases = config.custom.fileAliases.aliases
+    // config.custom.gitAliases.aliases
+    // config.custom.navigationAliases.aliases
+    // config.custom.toolAliases.aliases
+    // config.custom.grc.aliases;
 in
 {
   imports = [
+    ./file-aliases.nix
+    ./git-aliases.nix
+    ./navigation-aliases.nix
+    ./tool-aliases.nix
     ./grc.nix
   ];
   
@@ -82,24 +72,17 @@ in
     };
   };
 
-  # Handle nushell - use shellAliases for grc commands
+  # Handle nushell - use shellAliases for all commands
   programs.nushell = {
-    # Add grc aliases to nushell's shellAliases (use mkForce to override conflicts)
-    shellAliases = lib.mkForce (config.custom.grc.nushellAliases // {
-      # Base aliases with ^ prefix for external commands
-      ls = "^lsd";
-      ll = "^lsd -l";
-      la = "^lsd -a";
-      lla = "^lsd -la";
-      bp = "^bat --paging=never --plain";
-      ".." = "cd ..";
-      update = "^just --justfile ~/.justfile update";
-      nh-update = "^just --justfile ~/.justfile nh-update";
-      ssh-nocheck = "^ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null";
-      rsync = "^/run/current-system/sw/bin/rsync";
-    } // lib.optionalAttrs pkgs.stdenv.isDarwin {
-      xcode = "^open -a Xcode";
-    });
+    # Merge all aliases for nushell (use mkForce to override conflicts)
+    shellAliases = lib.mkForce (
+      # Convert bash/zsh style aliases to nushell format
+      (lib.mapAttrs (name: value: "^${value}") config.custom.fileAliases.aliases) //
+      (lib.mapAttrs (name: value: "^${value}") config.custom.gitAliases.aliases) //
+      (lib.mapAttrs (name: value: value) config.custom.navigationAliases.aliases) // # Navigation doesn't need ^
+      (lib.mapAttrs (name: value: "^${value}") config.custom.toolAliases.aliases) //
+      config.custom.grc.nushellAliases
+    );
 
     extraConfig = ''
       # Start SSH agent if not already running
