@@ -7,7 +7,11 @@ let
 in
 {
   options.programs.rclone-scripts = {
-    enable = mkEnableOption "rclone with sync scripts for cloud storage";
+    enable = mkOption {
+      type = types.bool;
+      default = true;
+      description = "Enable rclone with sync scripts for cloud storage";
+    };
   };
 
   config = mkIf cfg.enable {

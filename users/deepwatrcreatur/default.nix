@@ -23,8 +23,6 @@
     enable = true;
   };
 
-  programs.rclone-scripts.enable = true;
-
   home.username = "deepwatrcreatur";
 
   home.packages = with pkgs; [
