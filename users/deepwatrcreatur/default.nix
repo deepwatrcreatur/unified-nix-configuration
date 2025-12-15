@@ -15,6 +15,7 @@
     ./env.nix
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/bitwarden-cli.nix
+    ../../modules/home-manager/rclone-scripts.nix
     ../../modules/home-manager
   ];
 
@@ -22,11 +23,7 @@
     enable = true;
   };
 
-  programs.rclone.enable = true;
-
-  home.file.".config/rclone/filter.txt" = {
-    source = ./rclone-filter.txt;
-  };
+  programs.rclone-scripts.enable = true;
 
   home.username = "deepwatrcreatur";
 
@@ -35,22 +32,6 @@
     chezmoi
     stow
     mix2nix
-    (writeShellScriptBin "onedrive-sync" ''
-      #!/bin/bash
-      if [ $# -ne 2 ]; then
-          echo "Usage: $0 <local_dir> <remote_dir>"
-          exit 1
-      fi
-      rclone sync "$1" "OneDrive:$2" --progress --verbose --metadata --filter-from ~/.config/rclone/filter.txt
-    '')
-    (writeShellScriptBin "mega-rclone" ''
-      #!/bin/bash
-      if [ $# -ne 2 ]; then
-          echo "Usage: $0 <local_dir> <remote_dir>"
-          exit 1
-      fi
-      rclone sync "$1" "mega:$2" --progress --verbose --metadata --filter-from ~/.config/rclone/filter.txt
-    '')
   ];
 
   home.file.".gnupg/public-key.asc" = {
