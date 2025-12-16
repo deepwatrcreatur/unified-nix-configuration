@@ -7,7 +7,6 @@
 
 {
   environment.systemPackages = with pkgs; [
-    nix-inspect
     compose2nix
     docker
     docker-compose
@@ -16,6 +15,5 @@
     curl
     git
     htop
-    nh
   ];
 }

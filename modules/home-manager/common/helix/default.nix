@@ -13,7 +13,6 @@
     extraPackages = with pkgs; [
       nil
       nixd
-      nixpkgs-fmt
       elixir-ls
       yaml-language-server
       pyright
