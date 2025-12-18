@@ -2,9 +2,6 @@
 # ghostty +list-themes
 
 # Font
-freetype-load-flags            = no-hinting
-freetype-load-flags            = no-force-autohint
-
 font-family                    = Symbols Nerd Font Mono
 font-family                    = Iosevka Custom
 window-title-font-family       = Iosevka Custom
