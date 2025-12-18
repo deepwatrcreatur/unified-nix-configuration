@@ -60,7 +60,7 @@
 
       aws = {
         format = "[$symbol($profile )(\\(region: $region\\) )]($style)";
-        disabled = false;
+        disabled = true;
         style = "blue";
         symbol = " ";
       };
