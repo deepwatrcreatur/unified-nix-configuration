@@ -8,6 +8,7 @@
       # Default command when 'just' is run without arguments
       default = "help";
 
+      # Display help
       help = {
         docs = "Display help and available commands";
         command = ''
