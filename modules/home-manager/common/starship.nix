@@ -62,10 +62,6 @@
         format = "([\\[$all_status\\]]($style) )";
       };
 
-      git_ahead_behind = {
-        disabled = false;
-      };
-
       time = {
         disabled = false;
         format = "[$time]($style)";  # Simplified, no "at " prefix needed
@@ -83,11 +79,9 @@
       status = {
         disabled = false;
         format = "[$symbol$status]($style) ";
+        symbol = "❌";
         success_symbol = "✅";
-        error_symbol = "❌";
-        style = "bold";
-        success_format = "[$symbol]($style) ";
-        error_format = "[$symbol$status]($style) ";
+        style = "bold red";
       };
 
       memory_usage = {
