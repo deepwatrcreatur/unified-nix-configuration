@@ -13,6 +13,8 @@
     ../../../../modules/home-manager/gpg-desktop-linux.nix
     ../../../../modules/home-manager/ghostty
     ../../../../modules/home-manager/linuxbrew.nix
+    ../../../../modules/home-manager/common/just.nix
+    ../../../../modules/home-manager/common/just-nixos.nix
     #../../../../modules/home-manager/gnome.nix
     ../../../../modules/home-manager/zed.nix
 
@@ -81,7 +83,7 @@
 
 
 
-  home.file.".justfile".source = ./justfile; # Directly link the justfile
+  # Justfile now managed by home-manager just modules
 
   home.file.".config/deskflow/deskflow.conf".text = ''
     clipboardSharing = true

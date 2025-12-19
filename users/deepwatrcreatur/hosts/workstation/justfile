@@ -1,8 +1,0 @@
-# users/deepwatrcreatur/hosts/workstation/justfile
-
-# NixOS - use nixos-rebuild or nh
-update:
-  /run/wrappers/bin/sudo nixos-rebuild switch --flake $NH_FLAKE#workstation
-
-nh-update:
-  nh os switch

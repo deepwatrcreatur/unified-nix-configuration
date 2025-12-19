@@ -13,6 +13,8 @@
     ../../../../modules/home-manager/git.nix
     ../../../../modules/home-manager/gpg-cli.nix
     ../../../../modules/home-manager/linuxbrew.nix
+    ../../../../modules/home-manager/common/just.nix
+    ../../../../modules/home-manager/common/just-nixos.nix
     ../.. # default module for user
     #../../../../modules/home-manager/rclone.nix
   ];

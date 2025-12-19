@@ -13,6 +13,7 @@
     btop
     gcc
     bun
+    just
     cloc
     comma
     curl

@@ -13,6 +13,8 @@
     ./nh.nix
     ./rbw.nix
     ../../../../modules/home-manager/git.nix
+    ../../../../modules/home-manager/just.nix
+    ../../../../modules/home-manager/just-nixos.nix
     ../../../../modules/home-manager/gpg-cli.nix
   ];
 

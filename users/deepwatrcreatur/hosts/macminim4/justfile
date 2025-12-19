@@ -1,9 +1,0 @@
-# users/deepwatrcreatur/hosts/macminim4/justfile
-
-# macOS - use darwin-rebuild or nh
-update:
-  ulimit -n 65536; sudo /nix/var/nix/profiles/system/sw/bin/darwin-rebuild switch --flake $NH_FLAKE#macminim4
-
-nh-update:
-  nh darwin switch
-
