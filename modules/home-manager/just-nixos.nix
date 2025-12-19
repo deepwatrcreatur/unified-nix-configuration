@@ -1,75 +1,45 @@
 # modules/home-manager/just-nixos.nix - NixOS-specific Justfile commands
-{ pkgs, lib, config, ... }:
-let
-  hostname = config.networking.hostName;
-in
+{ pkgs, lib, hostName, ... }:
 {
-  programs.just.settings = {
-    # NixOS-specific commands
-    [group "nixos"]
-    nixos = {
-      docs = "NixOS system operations";
-    };
+  # Append NixOS-specific commands to the base justfile
+  xdg.configFile."just/justfile".text = lib.mkAfter ''
+    # NixOS Commands
+    # ==============
 
-    # Your preserved recipes with important features
-    update = {
-      docs = "Update NixOS system using nixos-rebuild";
-      command = "/run/wrappers/bin/sudo nixos-rebuild switch --flake $NH_FLAKE#{{hostname}}";
-    };
+    # Update NixOS system using nixos-rebuild
+    update:
+        /run/wrappers/bin/sudo nixos-rebuild switch --flake $NH_FLAKE#${hostName}
 
-    "nh-update" = {
-      docs = "Update NixOS system using nh helper";
-      command = "nh os switch";
-    };
+    # Update NixOS system using nh helper (requires sudo alias or PATH setup)
+    # Note: nh invokes sudo internally; ensure /run/wrappers/bin is first in PATH
+    nh-update:
+        PATH="/run/wrappers/bin:$PATH" nh os switch
 
-    # Additional NixOS commands
-    "build:nixos" = {
-      docs = "Build NixOS system without switching";
-      command = "/run/wrappers/bin/sudo nixos-rebuild build --flake $NH_FLAKE#{{hostname}}";
-    };
+    # Build NixOS system without switching
+    build-nixos:
+        /run/wrappers/bin/sudo nixos-rebuild build --flake $NH_FLAKE#${hostName}
 
-    "test:nixos" = {
-      docs = "Test NixOS configuration";
-      command = "/run/wrappers/bin/sudo nixos-rebuild test --flake $NH_FLAKE#{{hostname}}";
-    };
+    # Test NixOS configuration
+    test-nixos:
+        /run/wrappers/bin/sudo nixos-rebuild test --flake $NH_FLAKE#${hostName}
 
-    # NixOS-specific helpers
-    "nixos:version" = {
-      docs = "Show NixOS version";
-      command = "cat /etc/nixos-version";
-    };
+    # Show NixOS version
+    nixos-version:
+        cat /etc/nixos-version
 
-    "nixos:options" = {
-      docs = "Show available NixOS options";
-      command = "nixos-option";
-    };
+    # Search NixOS options
+    nixos-search query:
+        man configuration.nix | grep -i {{query}}
 
-    "nixos:search" = {
-      docs = "Search NixOS options";
-      args = ["query"];
-      command = "man configuration.nix | grep -i {{query}}";
-    };
+    # Garbage collect Nix store
+    system-gc:
+        /run/wrappers/bin/sudo nix-collect-garbage -d
 
-    # System management
-    "system:gc" = {
-      docs = "Garbage collect Nix store";
-      command = "/run/wrappers/bin/sudo nix-collect-garbage -d";
-    };
+    # Optimize Nix store
+    system-optimize:
+        /run/wrappers/bin/sudo nix-store --optimise
 
-    "system:optimize" = {
-      docs = "Optimize Nix store";
-      command = "/run/wrappers/bin/sudo nix-store --optimise";
-    };
-
-    # Quick aliases
-    switch = {
-      docs = "Quick switch (alias for update)";
-      command = "just update";
-    };
-
-    test = {
-      docs = "Quick test (alias for test:nixos)";
-      command = "just test:nixos";
-    };
-  };
+    # Quick switch (alias for update)
+    switch: update
+  '';
 }

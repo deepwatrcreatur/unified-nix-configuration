@@ -1,90 +1,61 @@
 # modules/home-manager/just.nix - Base Justfile with common commands
 { pkgs, lib, ... }:
 {
-  programs.just = {
-    enable = true;
-    enableFishIntegration = true;
-    settings = {
-      # Default command when 'just' is run without arguments
-      default = "help";
+  home.packages = [ pkgs.just ];
 
-      # Display help
-      help = {
-        docs = "Display help and available commands";
-        command = ''
-          @printf "\nRun 'just -n <command>' to print what would be executed...\n\n"
-          @just --list --unsorted
-          @printf "\n...by running 'just <command>'.\n"
-          @printf "This message is printed by 'just help' and just 'just'.\n"
-        '';
-      };
+  # Base justfile content - platform modules will append to this
+  xdg.configFile."just/justfile".text = lib.mkBefore ''
+    # Default command when 'just' is run without arguments
+    default: help
 
-      "-n" = {
-        docs = "Print what would be executed without running";
-        private = true;
-      };
+    # Display help and available commands
+    help:
+        @printf "\nRun 'just -n <command>' to print what would be executed...\n\n"
+        @just --list --unsorted
+        @printf "\n...by running 'just <command>'.\n"
+        @printf "This message is printed by 'just help' and just 'just'.\n"
 
-      # Common Nix operations
-      [group "nix"]
-      nix = {
-        docs = "Nix flake operations";
-      };
+    # Print nix flake inputs and outputs
+    nix-io:
+        nix flake metadata
 
-      "nix:io" = {
-        docs = "Print nix flake inputs and outputs";
-        command = "nix flake metadata";
-      };
+    # Update nix flake lock file
+    nix-update:
+        nix flake update
 
-      "nix:update" = {
-        docs = "Update nix flake lock file";
-        command = "nix flake update";
-      };
+    # Format Nix files
+    nix-fmt:
+        nix fmt
 
-      "nix:fmt" = {
-        docs = "Format Nix files";
-        command = "nix fmt";
-      };
+    # Check nix flake configuration
+    nix-check:
+        nix flake check
 
-      "nix:check" = {
-        docs = "Check nix flake configuration";
-        command = "nix flake check";
-      };
+    # Show system information
+    info:
+        nix flake metadata && nix path-info nixpkgs
 
-      info = {
-        docs = "Show system information";
-        command = "nix flake metadata && nix path-info nixpkgs";
-      };
+    # Run tests
+    test:
+        nix flake check
 
-      test = {
-        docs = "Run tests";
-        command = "nix flake check";
-      };
+    # Test build process
+    test-build:
+        nix build --dry-run
 
-      "test:build" = {
-        docs = "Test build process";
-        command = "nix build --dry-run";
-      };
+    # Remove build output links
+    clean:
+        rm -f ./result
 
-      clean = {
-        docs = "Remove build output links";
-        command = "rm -f ./result";
-      };
+    # Full cleanup including garbage collection
+    clean-all:
+        rm -f ./result && nix store gc
 
-      "clean:all" = {
-        docs = "Full cleanup including garbage collection";
-        command = "rm -f ./result && nix store gc";
-      };
+    # Format Nix files (alias)
+    fmt: nix-fmt
 
-      # Quick aliases
-      fmt = {
-        docs = "Format Nix files";
-        command = "nix fmt";
-      };
+    # Check flake configuration (alias)
+    check: nix-check
 
-      check = {
-        docs = "Check flake configuration";
-        command = "nix flake check";
-      };
-    };
-  };
+  '';
 }

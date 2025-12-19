@@ -15,8 +15,8 @@ let
     less = "bat --plain";
 
     # Just (command runner)
-    update = "just --justfile ~/.justfile update";
-    nh-update = "just --justfile ~/.justfile nh-update";
+    update = "just --justfile ~/.config/just/justfile update";
+    nh-update = "just --justfile ~/.config/just/justfile nh-update";
 
     # SSH
     ssh-nocheck = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ";
