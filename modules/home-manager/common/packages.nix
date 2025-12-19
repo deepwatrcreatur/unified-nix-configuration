@@ -11,6 +11,7 @@
     bandwhich
     bottom
     btop
+    gcc
     bun
     cloc
     comma

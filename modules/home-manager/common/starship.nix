@@ -8,13 +8,17 @@
     enableBashIntegration = true;
     enableZshIntegration = true;
     settings = {
-      add_newline = false;
-      # Enhanced left prompt with user, host, os, directory, git, and character
-      format = "[($username@)]($style)[($hostname)]($style)[$os]($style)[$directory]($style)[$git_branch]($style)$character";
+      add_newline = true;
+      # Line 1: os + directory + git + cmd_duration + status + memory + fill + time, then Line 2: user@host + arrow
+      format = "[$os$directory$git_branch$git_status$cmd_duration$status$memory_usage$fill$time]($style)\n[$username@$hostname]($style) $character";
       palette = "catppuccin_mocha";
-      # Move the rest of the prompt to the right with time
-      right_format = "$all$time";
       command_timeout = 1000;
+
+      # Enable fill module (spaces out to right margin on line 1)
+      fill = {
+        symbol = " ";
+        style = "base";  # Invisible background color
+      };
 
       character = {
         vicmd_symbol = "[N] >>>";
@@ -24,8 +28,8 @@
 
       directory = {
         style = "cyan bold";
-        truncation_length = 3;
-        truncate_to_repo = true;
+        truncation_length = 0;
+        truncate_to_repo = false;
       };
 
       username = {
@@ -55,7 +59,43 @@
       git_status = {
         disabled = false;
         style = "red bold";
-        format = "([\\[$all_status$ahead_behind\\]]($style) )";
+        format = "([\\[$all_status\\]]($style) )";
+      };
+
+      git_ahead_behind = {
+        disabled = false;
+      };
+
+      time = {
+        disabled = false;
+        format = "[$time]($style)";  # Simplified, no "at " prefix needed
+        style = "yellow";
+        time_format = "%I:%M %p";
+      };
+
+      cmd_duration = {
+        disabled = false;
+        format = "took [$duration]($style) ";
+        style = "green";
+        min_time = 2000;
+      };
+
+      status = {
+        disabled = false;
+        format = "[$symbol$status]($style) ";
+        success_symbol = "✅";
+        error_symbol = "❌";
+        style = "bold";
+        success_format = "[$symbol]($style) ";
+        error_format = "[$symbol$status]($style) ";
+      };
+
+      memory_usage = {
+        disabled = false;
+        format = "$symbol[$ram]($style) ";
+        symbol = "🧠";
+        style = "blue bold";
+        threshold = 0;
       };
 
       aws = {
@@ -81,13 +121,6 @@
 
       docker_context = {
         disabled = true;
-      };
-
-      time = {
-        disabled = false;
-        format = "at [$time]($style) ";
-        style = "yellow";
-        time_format = "%I:%M %p";
       };
 
       bun = {
