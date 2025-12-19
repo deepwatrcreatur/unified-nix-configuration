@@ -19,6 +19,7 @@ in
       type = lib.types.listOf lib.types.str;
       default = [
         "http://cache-build-server:5001/cache-local"
+        "http://cache.deepwatercreature.com:5000/"
         "https://cache.nixos.org"
       ];
       description = "List of binary cache substituters";
@@ -27,6 +28,7 @@ in
     trustedPublicKeys = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [
+        "cache.local:ZgbuAAq3bKHgggdHXaru261sRQE/wZ55teTSYMxWqxY="
         "cache-local:63xryK76L6y/NphTP/iS63yiYqldoWvVlWI0N8rgvBw="
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       ];
@@ -59,6 +61,14 @@ in
 
   config = lib.mkIf cfg.enable {
 
+    # Write user nix.conf with substituters and trusted keys
+    xdg.configFile."nix/nix.conf".text = ''
+      # User Nix configuration managed by home-manager
+      experimental-features = ${lib.concatStringsSep " " cfg.experimentalFeatures}
+      extra-substituters = ${lib.concatStringsSep " " cfg.substituters}
+      extra-trusted-public-keys = ${lib.concatStringsSep " " cfg.trustedPublicKeys}
+    '';
+
     # Create netrc file in Determinate Nix's managed location
     home.activation.nix-netrc = lib.mkIf (cfg.netrcMachine != null) (
       lib.hm.dag.entryAfter [ "writeBoundary" ] ''
@@ -75,7 +85,7 @@ in
                                   tee -a "$netrc_file" > /dev/null <<EOF
         machine ${cfg.netrcMachine}
         password $token
-        EOF
+EOF
                         echo "Added netrc authentication for ${cfg.netrcMachine} to Determinate Nix's netrc"
                       fi
                     else
