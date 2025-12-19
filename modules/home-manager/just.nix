@@ -1,10 +1,11 @@
-# modules/home-manager/common/just.nix - Base Justfile with common commands
+# modules/home-manager/just.nix - Base Justfile with common commands
 { pkgs, lib, ... }:
 {
   programs.just = {
     enable = true;
     enableFishIntegration = true;
     settings = {
+      # Default command when 'just' is run without arguments
       default = "help";
 
       help = {
@@ -23,7 +24,7 @@
       };
 
       # Common Nix operations
-      [group("nix")]
+      [group "nix"]
       nix = {
         docs = "Nix flake operations";
       };
@@ -56,6 +57,11 @@
       test = {
         docs = "Run tests";
         command = "nix flake check";
+      };
+
+      "test:build" = {
+        docs = "Test build process";
+        command = "nix build --dry-run";
       };
 
       clean = {

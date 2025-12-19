@@ -1,4 +1,4 @@
-# modules/home-manager/common/just-darwin.nix - macOS-specific Justfile commands
+# modules/home-manager/just-darwin.nix - macOS-specific Justfile commands
 { pkgs, lib, config, ... }:
 let
   hostname = config.networking.hostName;
@@ -6,7 +6,7 @@ in
 {
   programs.just.settings = {
     # macOS-specific commands
-    [group("darwin")]
+    [group "darwin"]
     darwin = {
       docs = "macOS system operations";
     };

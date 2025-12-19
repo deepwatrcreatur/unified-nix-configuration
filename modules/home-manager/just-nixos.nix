@@ -1,4 +1,4 @@
-# modules/home-manager/common/just-nixos.nix - NixOS-specific Justfile commands
+# modules/home-manager/just-nixos.nix - NixOS-specific Justfile commands
 { pkgs, lib, config, ... }:
 let
   hostname = config.networking.hostName;
@@ -6,7 +6,7 @@ in
 {
   programs.just.settings = {
     # NixOS-specific commands
-    [group("nixos")]
+    [group "nixos"]
     nixos = {
       docs = "NixOS system operations";
     };
@@ -31,11 +31,6 @@ in
     "test:nixos" = {
       docs = "Test NixOS configuration";
       command = "/run/wrappers/bin/sudo nixos-rebuild test --flake $NH_FLAKE#{{hostname}}";
-    };
-
-    "boot:nixos" = {
-      docs = "Update NixOS system and set as boot default";
-      command = "/run/wrappers/bin/sudo nixos-rebuild boot --flake $NH_FLAKE#{{hostname}}";
     };
 
     # NixOS-specific helpers
