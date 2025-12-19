@@ -13,8 +13,8 @@ imports = [
     #../../../../modules/home-manager/zed.nix
     ../../../../modules/home-manager/gpg-mac.nix
     ../../../../modules/home-manager/env-darwin.nix
-    ../../../../modules/home-manager/common/just.nix
-    ../../../../modules/home-manager/common/just-darwin.nix
+    ../../../../modules/home-manager/just.nix
+    ../../../../modules/home-manager/just-darwin.nix
     ./nh.nix
     ./karabiner.nix
     ../../xbar.nix
