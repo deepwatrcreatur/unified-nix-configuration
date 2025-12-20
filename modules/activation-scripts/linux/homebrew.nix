@@ -15,22 +15,37 @@ let
   taps = if cfg.taps != [ ] then cfg.taps else brewCfg.taps;
   brewPrefix = if cfg.brewPrefix != "/home/linuxbrew/.linuxbrew" then cfg.brewPrefix else brewCfg.brewPrefix;
   
+  # Build PATH with nix tools for brew operations
+  nixToolsPath = lib.concatStringsSep ":" [
+    "${pkgs.git}/bin"
+    "${pkgs.openssh}/bin"
+    "${pkgs.curl}/bin"
+    "${pkgs.coreutils}/bin"
+    "${pkgs.findutils}/bin"
+    "${pkgs.gnugrep}/bin"
+    "${pkgs.gnused}/bin"
+    "${pkgs.gawk}/bin"
+    "${pkgs.gnutar}/bin"
+    "${pkgs.gzip}/bin"
+  ];
+  
   homebrewScript = pkgs.writeShellScript "homebrew-activation.sh" ''
     set -e
     
-    # Ensure essential tools are available
-    export PATH="/usr/bin:${pkgs.git}/bin:${pkgs.openssh}/bin:${pkgs.curl}/bin:${pkgs.coreutils}/bin:${pkgs.findutils}/bin:${pkgs.gnugrep}/bin:${pkgs.gnused}/bin:${pkgs.gawk}/bin:${pkgs.gnutar}/bin:${pkgs.gzip}/bin:$PATH"
+    # Ensure essential tools are available - export for child processes
+    export NIX_TOOLS_PATH="${nixToolsPath}"
+    export PATH="/usr/bin:$NIX_TOOLS_PATH:$PATH"
     
-    runuser -u ${config.users.users.deepwatrcreatur.name} -- /bin/bash -c "$(cat <<'EOF'
+    runuser -u ${config.users.users.deepwatrcreatur.name} --preserve-environment -- /bin/bash -c '
       set -e
       
       # Ensure essential tools are available for brew operations
-      export PATH="/usr/bin:${pkgs.git}/bin:${pkgs.openssh}/bin:${pkgs.curl}/bin:${pkgs.coreutils}/bin:${pkgs.findutils}/bin:${pkgs.gnugrep}/bin:${pkgs.gnused}/bin:${pkgs.gawk}/bin:${pkgs.gnutar}/bin:${pkgs.gzip}/bin:$PATH"
+      export PATH="/usr/bin:$NIX_TOOLS_PATH:$PATH"
       
       # Install Homebrew if not present
       if [ ! -f "${brewPrefix}/bin/brew" ]; then
         echo "Installing Homebrew..."
-        NONINTERACTIVE=1 /bin/bash -c "$(${pkgs.curl}/bin/curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       fi
 
       # Set up environment for this script
@@ -59,9 +74,9 @@ let
       # Helper function to create gcc symlinks if needed
       create_gcc_symlinks() {
         if [ ! -e "${brewPrefix}/bin/gcc" ]; then
-          GCC_BIN=$(ls "${brewPrefix}/bin/gcc-"* 2>/dev/null | grep -E 'gcc-[0-9]+$' | head -1)
+          GCC_BIN=$(ls "${brewPrefix}/bin/gcc-"* 2>/dev/null | grep -E "gcc-[0-9]+$" | head -1)
           if [ -n "$GCC_BIN" ]; then
-            GCC_VERSION=$(basename "$GCC_BIN" | sed 's/gcc-//')
+            GCC_VERSION=$(basename "$GCC_BIN" | sed "s/gcc-//")
             echo "Creating gcc symlinks to gcc-$GCC_VERSION..."
             ln -sf "${brewPrefix}/bin/gcc-$GCC_VERSION" "${brewPrefix}/bin/gcc"
             ln -sf "${brewPrefix}/bin/g++-$GCC_VERSION" "${brewPrefix}/bin/g++" 2>/dev/null || true
@@ -108,8 +123,7 @@ let
       ''}
       
       echo "Homebrew activation complete."
-    EOF
-    )"
+    '
   '';
 in
 {
