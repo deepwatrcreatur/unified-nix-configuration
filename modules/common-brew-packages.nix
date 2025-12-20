@@ -1,9 +1,9 @@
 # Common Homebrew packages used across multiple hosts
 {
   brews = [
+    "gcc" # GCC compiler - must come first for packages that need compilation
     "bd" # Steve Yegge's beads project - bd command (requires steveyegge/beads tap)
     "ccat" # Colorized cat - not easily found in nixpkgs
-    "gcc" # GCC compiler for Homebrew packages that need it
     "doggo" # DNS lookup tool (different from nixpkgs sharing the name)
     "silicon" # Code screenshot generator (the one in nixpkgs is a different thing)
   ];
