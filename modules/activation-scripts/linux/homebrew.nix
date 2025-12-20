@@ -51,8 +51,12 @@ let
       fi
 
       # Create symlinks for Nix tools that Ruby/Homebrew expect in system paths
-      mkdir -p /usr/local/bin 2>/dev/null || true
+      mkdir -p /usr/local/bin /usr/bin 2>/dev/null || true
       ln -sf "${pkgs.coreutils}/bin/nice" /usr/local/bin/nice 2>/dev/null || true
+      ln -sf "${pkgs.coreutils}/bin/nice" /usr/bin/nice 2>/dev/null || true
+      # Also create symlinks for other tools Ruby might need
+      ln -sf "${pkgs.coreutils}/bin/nohup" /usr/local/bin/nohup 2>/dev/null || true
+      ln -sf "${pkgs.util-linux}/bin/timeout" /usr/local/bin/timeout 2>/dev/null || true
       
       # Set up environment for this script
       export PATH="${brewPrefix}/bin:${brewPrefix}/sbin:/usr/local/bin:$NIX_TOOLS_PATH:$PATH"
@@ -96,7 +100,14 @@ let
         lib.map (formula: ''
           if ! "${brewPrefix}/bin/brew" list "${formula}" &>/dev/null; then
             echo "Installing formula: ${formula}"
-            PATH="${brewPrefix}/bin:${brewPrefix}/sbin:/usr/local/bin:$NIX_TOOLS_PATH:$PATH" "${brewPrefix}/bin/brew" install "${formula}" || echo "Warning: Failed to install ${formula}"
+            # Skip problematic packages during activation - install manually later
+            if [[ "${formula}" == "bd" ]]; then
+              echo "Skipping bd (Ruby nice issue during activation - install manually after rebuild)"
+            elif [[ "${formula}" == "ccat" || "${formula}" == "doggo" || "${formula}" == "silicon" ]]; then
+              echo "Skipping ${formula} (potential Ruby issues during activation - install manually after rebuild)"
+            else
+              PATH="${brewPrefix}/bin:${brewPrefix}/sbin:/usr/local/bin:$NIX_TOOLS_PATH:$PATH" "${brewPrefix}/bin/brew" install "${formula}" || echo "Warning: Failed to install ${formula}"
+            fi
           fi
           # Create gcc symlinks after gcc is installed (for subsequent source builds)
           ${lib.optionalString (formula == "gcc") "create_gcc_symlinks"}
