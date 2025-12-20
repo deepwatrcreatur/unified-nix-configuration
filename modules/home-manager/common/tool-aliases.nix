@@ -28,10 +28,11 @@ let
     asr = "atuin script run";
   };
 
-  # Darwin-specific aliases
-  darwinAliases = lib.optionalAttrs pkgs.stdenv.isDarwin {
+    # Darwin-specific aliases
+  darwinAliases = lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
     xcode = "open -a Xcode";
     gcc = "/usr/bin/gcc";
+    test-platform = "Platform detection: " + (if pkgs.stdenv.hostPlatform.isDarwin then "Darwin" else "Not Darwin");
   };
 in
 {
