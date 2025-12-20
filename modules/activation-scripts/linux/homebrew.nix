@@ -36,10 +36,11 @@ let
     export NIX_TOOLS_PATH="${nixToolsPath}"
     export PATH="/usr/bin:$NIX_TOOLS_PATH:$PATH"
     
-    runuser -u ${config.users.users.deepwatrcreatur.name} --preserve-environment -- /bin/bash -c '
+    runuser -u ${config.users.users.deepwatrcreatur.name} -- /bin/bash -c '
       set -e
       
-      # Ensure essential tools are available for brew operations
+      # Set essential environment variables
+      export HOME="/home/${config.users.users.deepwatrcreatur.name}"
       export PATH="/usr/bin:$NIX_TOOLS_PATH:$PATH"
       
       # Install Homebrew if not present
