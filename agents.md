@@ -63,4 +63,21 @@ hostname
 # For Darwin: darwin-rebuild switch --flake .#hostname
 # use --no-gpg-sign when committing to avoid problems with password dialog
 ```
+
+### Remote Testing Workflow
+For testing changes across hosts (especially build failures):
+1. **Check hostname** on local machine first
+2. **SSH to remote host** if needed:
+   ```bash
+   ssh user@hostname "rebuild command"
+   ```
+3. **Use tmux or multiplexers** for maintaining remote sessions
+4. **Test platform-specific issues** by reproducing on relevant host type
+
+### Git Workflow
+Before pushing changes that affect remote hosts:
+1. **Check local files exist** with `git status`
+2. **Pull remote changes first** with `git pull` to avoid conflicts
+3. **Test locally** if needed with SSH commands
+4. **Then push** with `git push`
 ```
