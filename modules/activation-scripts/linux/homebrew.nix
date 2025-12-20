@@ -59,16 +59,21 @@ let
         ${pkgs.coreutils}/bin/nice --version >/dev/null
       }
       
-      # Create symlinks in all locations Ruby might search
-      mkdir -p /usr/local/bin /usr/bin
-      ln -sf ${pkgs.coreutils}/bin/nice /usr/local/bin/nice
-      ln -sf ${pkgs.coreutils}/bin/nice /usr/bin/nice
-      ln -sf ${pkgs.coreutils}/bin/nohup /usr/local/bin/nohup
-      ln -sf ${pkgs.coreutils}/bin/timeout /usr/local/bin/timeout
-      ln -sf ${pkgs.coreutils}/bin/timeout /usr/bin/timeout
+# Create symlinks in user-writable locations that Ruby searches
+      mkdir -p $HOME/.local/bin
+      
+      # Symlink coreutils commands to user local bin (Ruby searches user local binaries)
+      ln -sf ${pkgs.coreutils}/bin/nice $HOME/.local/bin/nice
+      ln -sf ${pkgs.coreutils}/bin/nohup $HOME/.local/bin/nohup
+      ln -sf ${pkgs.util-linux}/bin/timeout $HOME/.local/bin/timeout
+      
+      # Also create symlinks in system locations if possible (as fallback)
+      mkdir -p /usr/local/bin /usr/bin 2>/dev/null || true
+      ln -sf ${pkgs.coreutils}/bin/nice /usr/local/bin/nice 2>/dev/null || true
+      ln -sf ${pkgs.coreutils}/bin/nice /usr/bin/nice 2>/dev/null || true
       
       # Verify symlinks were created
-      echo "Coreutils symlinks created: $(ls /usr/local/bin/nice /usr/bin/nice 2>/dev/null || echo "FAILED")"
+      echo "Coreutils symlinks created: $(ls $HOME/.local/bin/nice /usr/local/bin/nice 2>/dev/null || echo "PARTIAL SUCCESS")"
       
       # Give system time to recognize coreutils
       sleep 2
@@ -96,33 +101,15 @@ let
         '') taps
       )}
 
-      # Helper function to create gcc symlinks if needed
-      create_gcc_symlinks() {
-        if [ ! -e "${brewPrefix}/bin/gcc" ]; then
-          GCC_BIN=$(ls "${brewPrefix}/bin/gcc-"* 2>/dev/null | grep -E "gcc-[0-9]+$" | head -1)
-          if [ -n "$GCC_BIN" ]; then
-            GCC_VERSION=$(basename "$GCC_BIN" | sed "s/gcc-//")
-            echo "Creating gcc symlinks to gcc-$GCC_VERSION..."
-            ln -sf "${brewPrefix}/bin/gcc-$GCC_VERSION" "${brewPrefix}/bin/gcc"
-            ln -sf "${brewPrefix}/bin/g++-$GCC_VERSION" "${brewPrefix}/bin/g++" 2>/dev/null || true
-            ln -sf "${brewPrefix}/bin/cpp-$GCC_VERSION" "${brewPrefix}/bin/cpp" 2>/dev/null || true
-          fi
-        fi
-      }
+      
 
 # Install formulae
       ${lib.concatStringsSep "\n" (
         lib.map (formula: ''
           if ! "${brewPrefix}/bin/brew" list "${formula}" &>/dev/null; then
             echo "Installing formula: ${formula}"
-            # Skip bd (known Ruby issue during activation - install manually)
-            if [[ "${formula}" == "bd" ]]; then
-              echo "Skipping bd (Ruby nice issue during activation - install manually with: brew install bd)"
-            else
-              "${brewPrefix}/bin/brew" install "${formula}" || echo "Warning: Failed to install ${formula}"
-            fi
-          # Create gcc symlinks after gcc is installed (for subsequent source builds)
-          ${lib.optionalString (formula == "gcc") "create_gcc_symlinks"}
+            "${brewPrefix}/bin/brew" install "${formula}" || echo "Warning: Failed to install ${formula}"
+          fi
         '') brews
       )}
 
