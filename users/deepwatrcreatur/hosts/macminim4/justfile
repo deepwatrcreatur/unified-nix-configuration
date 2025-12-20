@@ -1,7 +1,0 @@
-# users/deepwatrcreatur/hosts/macminim4/justfile
-
-update dir="/Users/deepwatrcreatur/unified-nix-configuration":
-  ulimit -n 65536; darwin-rebuild switch --flake {{dir}}#macminim4
-
-nh-update:
-  nh darwin switch
