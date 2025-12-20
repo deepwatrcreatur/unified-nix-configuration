@@ -51,19 +51,9 @@ let
         NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       fi
 
-# Install system coreutils to make commands available to Ruby
+# Install system coreutils system-wide for Ruby compatibility
       echo "Installing system coreutils for Ruby compatibility..."
-      # Create symlinks for core system commands directly in activation script
-      mkdir -p /usr/local/bin /usr/bin
-      
-      # Symlink coreutils commands to system locations Ruby expects
-      ln -sf /run/current-system/sw/bin/nice /usr/local/bin/nice
-      ln -sf /run/current-system/sw/bin/nice /usr/bin/nice
-      ln -sf /run/current-system/sw/bin/nohup /usr/local/bin/nohup
-      ln -sf /run/current-system/sw/bin/timeout /usr/local/bin/timeout
-      ln -sf /run/current-system/sw/bin/timeout /usr/bin/timeout
-      ln -sf /run/current-system/sw/bin/find /usr/local/bin/find
-      ln -sf /run/current-system/sw/bin/find /usr/bin/find
+      pkgs.coreutils  # Make coreutils available system-wide
       
       # Verify symlinks were created
       echo "Coreutils symlinks created: $(ls /usr/local/bin/nice /usr/bin/nice 2>/dev/null || echo "FAILED")"
