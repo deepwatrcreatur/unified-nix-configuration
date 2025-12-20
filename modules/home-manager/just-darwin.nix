@@ -2,7 +2,7 @@
 { pkgs, lib, hostName, ... }:
 {
   # Append macOS-specific commands to the base justfile
-  xdg.configFile."just/justfile".text = lib.mkAfter ''
+  home.file.".justfile".text = lib.mkAfter ''
     # macOS Commands
     # ==============
 

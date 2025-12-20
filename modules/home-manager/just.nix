@@ -3,8 +3,9 @@
 {
   home.packages = [ pkgs.just ];
 
-  # Base justfile content - platform modules will append to this
-  xdg.configFile."just/justfile".text = lib.mkBefore ''
+  # Create justfile in home directory for auto-discovery by Just
+  # Just only searches current directory and parents, not ~/.config/just
+  home.file.".justfile".text = lib.mkBefore ''
     # Default command when 'just' is run without arguments
     default: help
 
