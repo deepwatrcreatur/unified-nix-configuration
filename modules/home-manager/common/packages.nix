@@ -11,7 +11,6 @@
     bandwhich
     bottom
     btop
-    gcc
     bun
     just
     cloc
