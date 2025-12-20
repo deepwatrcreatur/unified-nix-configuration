@@ -1,34 +1,15 @@
 # modules/home-manager/common/gcc-wrapper.nix - Generic GCC wrapper for mixed environments
-{ pkgs, lib, ... }:
+{ pkgs, lib, config, ... }:
 
 let
   gccWrapper = pkgs.writeShellScriptBin "gcc" ''
     # Prefer Homebrew GCC if available (for Homebrew packages)
     if command -v brew >/dev/null 2>&1; then
-      # Try different Homebrew GCC locations
-      for gcc_cmd in \
-        "$(brew --prefix gcc)/bin/gcc" \
-        "/usr/local/bin/gcc-"* \
-        "/opt/homebrew/bin/gcc-"* \
-        "$(brew --prefix)/bin/gcc-"*; do
-        if [ -f "$gcc_cmd" ] && [ -x "$gcc_cmd" ]; then
-          # Find the first actual gcc executable
-          for cmd in $gcc_cmd; do
-            if [ -f "$cmd" ] && [ -x "$cmd" ]; then
-              exec "$cmd" "$@"
-            fi
-          done
-        fi
-      done
+      # Use platform helper to find Homebrew GCC
+      homebrew_gcc="${pkgs.platformHelpers.homebrewGcc}"
       
-      # Fallback to find any gcc in Homebrew bin
-      HOMEBREW_BIN="''${HOMEBREW_PREFIX:-$(brew --prefix 2>/dev/null)}/bin"
-      if [ -d "$HOMEBREW_BIN" ]; then
-        for gcc in "$HOMEBREW_BIN"/gcc-*; do
-          if [ -f "$gcc" ] && [ -x "$gcc" ]; then
-            exec "$gcc" "$@"
-          fi
-        done
+      if [ -f "$homebrew_gcc" ] && [ -x "$homebrew_gcc" ]; then
+        exec "$homebrew_gcc" "$@"
       fi
     fi
     
