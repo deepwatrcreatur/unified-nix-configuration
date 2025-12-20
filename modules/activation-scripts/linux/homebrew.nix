@@ -50,8 +50,12 @@ let
         NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       fi
 
+      # Create symlinks for Nix tools that Ruby/Homebrew expect in system paths
+      mkdir -p /usr/local/bin 2>/dev/null || true
+      ln -sf "${pkgs.coreutils}/bin/nice" /usr/local/bin/nice 2>/dev/null || true
+      
       # Set up environment for this script
-      export PATH="${brewPrefix}/bin:${brewPrefix}/sbin:$NIX_TOOLS_PATH:$PATH"
+      export PATH="${brewPrefix}/bin:${brewPrefix}/sbin:/usr/local/bin:$NIX_TOOLS_PATH:$PATH"
       export HOMEBREW_PREFIX="${brewPrefix}"
       export HOMEBREW_CELLAR="${brewPrefix}/Cellar"
       export HOMEBREW_REPOSITORY="${brewPrefix}/Homebrew"
@@ -68,7 +72,7 @@ let
         lib.map (tap: ''
           if ! "${brewPrefix}/bin/brew" tap | grep -q "^${tap}$"; then
             echo "Adding tap: ${tap}"
-            PATH="${brewPrefix}/bin:${brewPrefix}/sbin:$NIX_TOOLS_PATH:$PATH" "${brewPrefix}/bin/brew" tap "${tap}" || echo "Warning: Failed to tap ${tap}"
+            PATH="${brewPrefix}/bin:${brewPrefix}/sbin:/usr/local/bin:$NIX_TOOLS_PATH:$PATH" "${brewPrefix}/bin/brew" tap "${tap}" || echo "Warning: Failed to tap ${tap}"
           fi
         '') taps
       )}
@@ -87,13 +91,12 @@ let
         fi
       }
 
-      # Install formulae
+# Install formulae
       ${lib.concatStringsSep "\n" (
         lib.map (formula: ''
           if ! "${brewPrefix}/bin/brew" list "${formula}" &>/dev/null; then
             echo "Installing formula: ${formula}"
-            # Ensure proper PATH for each brew command
-            PATH="${brewPrefix}/bin:${brewPrefix}/sbin:$NIX_TOOLS_PATH:$PATH" "${brewPrefix}/bin/brew" install "${formula}" || echo "Warning: Failed to install ${formula}"
+            PATH="${brewPrefix}/bin:${brewPrefix}/sbin:/usr/local/bin:$NIX_TOOLS_PATH:$PATH" "${brewPrefix}/bin/brew" install "${formula}" || echo "Warning: Failed to install ${formula}"
           fi
           # Create gcc symlinks after gcc is installed (for subsequent source builds)
           ${lib.optionalString (formula == "gcc") "create_gcc_symlinks"}
