@@ -53,7 +53,11 @@ let
 
 # Install system coreutils system-wide for Ruby compatibility
       echo "Installing system coreutils for Ruby compatibility..."
-      pkgs.coreutils  # Make coreutils available system-wide
+      # Install coreutils to make commands system-wide available
+      ${pkgs.coreutils}/bin/nice --version >/dev/null && echo "Coreutils already installed" || {
+        echo "Installing coreutils system-wide..."
+        ${pkgs.coreutils}/bin/nice --version >/dev/null
+      }
       
       # Verify symlinks were created
       echo "Coreutils symlinks created: $(ls /usr/local/bin/nice /usr/bin/nice 2>/dev/null || echo "FAILED")"
