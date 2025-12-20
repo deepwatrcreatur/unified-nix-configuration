@@ -124,6 +124,29 @@ Each host/user combination has justfiles with common commands. The `just` comman
 **Problem**: `HTTP error 401` from cache servers
 **Solution**: Usually harmless - occurs when cache token isn't available, falls back to public caches
 
+## Testing Before Committing
+
+### CRITICAL: Always Test Changes Before Committing
+**Never commit changes without proper testing.** Common mistakes to avoid:
+
+#### Build Testing Checklist
+- **Run build commands first** (nixos-rebuild test, darwin-rebuild test, etc.)
+- **Analyze ALL output** - not just final success message
+- **Look for:**
+  - Warning messages (even if marked as non-fatal)
+  - Permission errors during activation scripts  
+  - Scripts that failed to run silently
+  - Package installation failures
+- **Verify specific functionality** you intended to fix
+- **Test edge cases** that might have been introduced
+
+#### Example: Homebrew Ruby Issue
+If you're fixing a package installation error:
+1. Test the specific package that was failing
+2. Try to reproduce the exact error
+3. Verify your fix resolves the actual issue
+4. Don't assume "build succeeded" means "installation worked"
+
 ### Commit without signing
 **Problem**: git commit opens password dialog that is difficult to handle in TUI
 **Solution**: use --no-gpg-sign option
