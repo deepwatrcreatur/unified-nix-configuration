@@ -40,9 +40,10 @@ let
     runuser -u ${config.users.users.deepwatrcreatur.name} -- /bin/bash -c '
       set -e
       
-      # Set essential environment variables
+      # Set comprehensive environment variables matching working CLI setup
       export HOME="/home/${config.users.users.deepwatrcreatur.name}"
-      export PATH="/usr/bin:$NIX_TOOLS_PATH:$PATH"
+      export PATH="${brewPrefix}/bin:${brewPrefix}/sbin:/usr/local/bin:/usr/bin:$NIX_TOOLS_PATH:$PATH"
+      export SHELL="/bin/bash"
       
       # Install Homebrew if not present
       if [ ! -f "${brewPrefix}/bin/brew" ]; then
@@ -50,20 +51,27 @@ let
         NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       fi
 
-      # Create symlinks for Nix tools that Ruby/Homebrew expect in system paths
+      # Create comprehensive system environment for Homebrew during activation
       mkdir -p /usr/local/bin /usr/bin 2>/dev/null || true
+      
+      # Create symlinks for all core system tools Ruby expects
       ln -sf "${pkgs.coreutils}/bin/nice" /usr/local/bin/nice 2>/dev/null || true
       ln -sf "${pkgs.coreutils}/bin/nice" /usr/bin/nice 2>/dev/null || true
-      # Also create symlinks for other tools Ruby might need
       ln -sf "${pkgs.coreutils}/bin/nohup" /usr/local/bin/nohup 2>/dev/null || true
-      ln -sf "${pkgs.util-linux}/bin/timeout" /usr/local/bin/timeout 2>/dev/null || true
+      ln -sf "${pkgs.coreutils}/bin/timeout" /usr/local/bin/timeout 2>/dev/null || true
+      ln -sf "${pkgs.coreutils}/bin/timeout" /usr/bin/timeout 2>/dev/null || true
       
-      # Set up environment for this script
-      export PATH="${brewPrefix}/bin:${brewPrefix}/sbin:/usr/local/bin:$NIX_TOOLS_PATH:$PATH"
+      # Also create common tool symlinks
+      ln -sf "${pkgs.findutils}/bin/find" /usr/local/bin/find 2>/dev/null || true
+      ln -sf "${pkgs.findutils}/bin/find" /usr/bin/find 2>/dev/null || true
+      
+      # Set up environment that matches working CLI setup
+      export PATH="/usr/local/bin:/usr/bin:${brewPrefix}/bin:${brewPrefix}/sbin:$NIX_TOOLS_PATH:$PATH"
       export HOMEBREW_PREFIX="${brewPrefix}"
       export HOMEBREW_CELLAR="${brewPrefix}/Cellar"
       export HOMEBREW_REPOSITORY="${brewPrefix}/Homebrew"
       export HOMEBREW_NO_AUTO_UPDATE=1
+      export SHELL="/bin/bash"  # Ensure consistent shell
 
       # Auto-update if requested
       ${lib.optionalString cfg.onActivation.autoUpdate ''
@@ -100,14 +108,7 @@ let
         lib.map (formula: ''
           if ! "${brewPrefix}/bin/brew" list "${formula}" &>/dev/null; then
             echo "Installing formula: ${formula}"
-            # Skip problematic packages during activation - install manually later
-            if [[ "${formula}" == "bd" ]]; then
-              echo "Skipping bd (Ruby nice issue during activation - install manually after rebuild)"
-            elif [[ "${formula}" == "ccat" || "${formula}" == "doggo" || "${formula}" == "silicon" ]]; then
-              echo "Skipping ${formula} (potential Ruby issues during activation - install manually after rebuild)"
-            else
-              PATH="${brewPrefix}/bin:${brewPrefix}/sbin:/usr/local/bin:$NIX_TOOLS_PATH:$PATH" "${brewPrefix}/bin/brew" install "${formula}" || echo "Warning: Failed to install ${formula}"
-            fi
+            "${brewPrefix}/bin/brew" install "${formula}" || echo "Warning: Failed to install ${formula}"
           fi
           # Create gcc symlinks after gcc is installed (for subsequent source builds)
           ${lib.optionalString (formula == "gcc") "create_gcc_symlinks"}
@@ -140,6 +141,19 @@ let
       ''}
       
       echo "Homebrew activation complete."
+      
+      # Install user-level packages that failed during activation
+      echo "Installing user-level packages (post-activation)..."
+      ${lib.concatStringsSep "\n" (
+        lib.filter (formula: 
+          formula == "bd" || formula == "ccat" || formula == "doggo" || formula == "silicon"
+        ) brews
+      ) (formula: ''
+        if ! "${brewPrefix}/bin/brew" list "${formula}" &>/dev/null; then
+          echo "User-level install: ${formula}"
+          su - ${config.users.users.deepwatrcreatur.name} -c "PATH=${brewPrefix}/bin:${brewPrefix}/sbin:\$PATH HOMEBREW_PREFIX=${brewPrefix} HOMEBREW_CELLAR=${brewPrefix}/Cellar HOMEBREW_REPOSITORY=${brewPrefix}/Homebrew ${brewPrefix}/bin/brew install ${formula}" || echo "Warning: User install of ${formula} failed"
+        fi
+      '')}
     '
   '';
 in
