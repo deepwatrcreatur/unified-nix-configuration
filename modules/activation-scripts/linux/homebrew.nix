@@ -144,16 +144,23 @@ let
       
       # Install user-level packages that failed during activation
       echo "Installing user-level packages (post-activation)..."
-      ${lib.concatStringsSep "\n" (
-        lib.filter (formula: 
-          formula == "bd" || formula == "ccat" || formula == "doggo" || formula == "silicon"
-        ) brews
-      ) (formula: ''
-        if ! "${brewPrefix}/bin/brew" list "${formula}" &>/dev/null; then
-          echo "User-level install: ${formula}"
-          su - ${config.users.users.deepwatrcreatur.name} -c "PATH=${brewPrefix}/bin:${brewPrefix}/sbin:\$PATH HOMEBREW_PREFIX=${brewPrefix} HOMEBREW_CELLAR=${brewPrefix}/Cellar HOMEBREW_REPOSITORY=${brewPrefix}/Homebrew ${brewPrefix}/bin/brew install ${formula}" || echo "Warning: User install of ${formula} failed"
-        fi
-      '')}
+      # Simple approach to avoid Nix syntax issues
+      if ! "${brewPrefix}/bin/brew" list "bd" &>/dev/null; then
+        echo "User-level install: bd"
+        su - ${config.users.users.deepwatrcreatur.name} -c "PATH=${brewPrefix}/bin:${brewPrefix}/sbin:\$PATH HOMEBREW_PREFIX=${brewPrefix} HOMEBREW_CELLAR=${brewPrefix}/Cellar HOMEBREW_REPOSITORY=${brewPrefix}/Homebrew ${brewPrefix}/bin/brew install bd" || echo "Warning: User install of bd failed"
+      fi
+      if ! "${brewPrefix}/bin/brew" list "ccat" &>/dev/null; then
+        echo "User-level install: ccat"
+        su - ${config.users.users.deepwatrcreatur.name} -c "PATH=${brewPrefix}/bin:${brewPrefix}/sbin:\$PATH HOMEBREW_PREFIX=${brewPrefix} HOMEBREW_CELLAR=${brewPrefix}/Cellar HOMEBREW_REPOSITORY=${brewPrefix}/Homebrew ${brewPrefix}/bin/brew install ccat" || echo "Warning: User install of ccat failed"
+      fi
+      if ! "${brewPrefix}/bin/brew" list "doggo" &>/dev/null; then
+        echo "User-level install: doggo"
+        su - ${config.users.users.deepwatrcreatur.name} -c "PATH=${brewPrefix}/bin:${brewPrefix}/sbin:\$PATH HOMEBREW_PREFIX=${brewPrefix} HOMEBREW_CELLAR=${brewPrefix}/Cellar HOMEBREW_REPOSITORY=${brewPrefix}/Homebrew ${brewPrefix}/bin/brew install doggo" || echo "Warning: User install of doggo failed"
+      fi
+      if ! "${brewPrefix}/bin/brew" list "silicon" &>/dev/null; then
+        echo "User-level install: silicon"
+        su - ${config.users.users.deepwatrcreatur.name} -c "PATH=${brewPrefix}/bin:${brewPrefix}/sbin:\$PATH HOMEBREW_PREFIX=${brewPrefix} HOMEBREW_CELLAR=${brewPrefix}/Cellar HOMEBREW_REPOSITORY=${brewPrefix}/Homebrew ${brewPrefix}/bin/brew install silicon" || echo "Warning: User install of silicon failed"
+      fi
     '
   '';
 in
