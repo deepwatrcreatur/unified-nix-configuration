@@ -59,6 +59,14 @@ let
         ${pkgs.coreutils}/bin/nice --version >/dev/null
       }
       
+      # Create symlinks in all locations Ruby might search
+      mkdir -p /usr/local/bin /usr/bin
+      ln -sf ${pkgs.coreutils}/bin/nice /usr/local/bin/nice
+      ln -sf ${pkgs.coreutils}/bin/nice /usr/bin/nice
+      ln -sf ${pkgs.coreutils}/bin/nohup /usr/local/bin/nohup
+      ln -sf ${pkgs.coreutils}/bin/timeout /usr/local/bin/timeout
+      ln -sf ${pkgs.coreutils}/bin/timeout /usr/bin/timeout
+      
       # Verify symlinks were created
       echo "Coreutils symlinks created: $(ls /usr/local/bin/nice /usr/bin/nice 2>/dev/null || echo "FAILED")"
       
@@ -141,12 +149,12 @@ let
       
       echo "Homebrew activation complete."
       
-      # Install user-level packages that failed during activation
+# Install user-level packages that failed during activation
       echo "Installing user-level packages (post-activation)..."
       # Simple approach to avoid Nix syntax issues
-      if ! "${brewPrefix}/bin/brew" list "bd" &>/dev/null; then
-        echo "User-level install: bd"
-        su - ${config.users.users.deepwatrcreatur.name} -c "PATH=${brewPrefix}/bin:${brewPrefix}/sbin:\$PATH HOMEBREW_PREFIX=${brewPrefix} HOMEBREW_CELLAR=${brewPrefix}/Cellar HOMEBREW_REPOSITORY=${brewPrefix}/Homebrew ${brewPrefix}/bin/brew install bd" || echo "Warning: User install of bd failed"
+      if ! "${brewPrefix}/bin/brew" list "ccat" &>/dev/null; then
+        echo "User-level install: ccat"
+        /run/wrappers/bin/su - ${config.users.users.deepwatrcreatur.name} -c "PATH=${brewPrefix}/bin:${brewPrefix}/sbin:\$PATH HOMEBREW_PREFIX=${brewPrefix} HOMEBREW_CELLAR=${brewPrefix}/Cellar HOMEBREW_REPOSITORY=${brewPrefix}/Homebrew ${brewPrefix}/bin/brew install ccat" || echo "Warning: User install of ccat failed"
       fi
       if ! "${brewPrefix}/bin/brew" list "ccat" &>/dev/null; then
         echo "User-level install: ccat"
