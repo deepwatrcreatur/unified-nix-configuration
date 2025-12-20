@@ -56,6 +56,20 @@ let
         '') taps
       )}
 
+      # Helper function to create gcc symlinks if needed
+      create_gcc_symlinks() {
+        if [ ! -e "${brewPrefix}/bin/gcc" ]; then
+          GCC_BIN=$(ls "${brewPrefix}/bin/gcc-"* 2>/dev/null | grep -E 'gcc-[0-9]+$' | head -1)
+          if [ -n "$GCC_BIN" ]; then
+            GCC_VERSION=$(basename "$GCC_BIN" | sed 's/gcc-//')
+            echo "Creating gcc symlinks to gcc-$GCC_VERSION..."
+            ln -sf "${brewPrefix}/bin/gcc-$GCC_VERSION" "${brewPrefix}/bin/gcc"
+            ln -sf "${brewPrefix}/bin/g++-$GCC_VERSION" "${brewPrefix}/bin/g++" 2>/dev/null || true
+            ln -sf "${brewPrefix}/bin/cpp-$GCC_VERSION" "${brewPrefix}/bin/cpp" 2>/dev/null || true
+          fi
+        fi
+      }
+
       # Install formulae
       ${lib.concatStringsSep "\n" (
         lib.map (formula: ''
@@ -63,6 +77,8 @@ let
             echo "Installing formula: ${formula}"
             "${brewPrefix}/bin/brew" install "${formula}" || echo "Warning: Failed to install ${formula}"
           fi
+          # Create gcc symlinks after gcc is installed (for subsequent source builds)
+          ${lib.optionalString (formula == "gcc") "create_gcc_symlinks"}
         '') brews
       )}
 
