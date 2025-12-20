@@ -17,16 +17,17 @@ let
   
   # Build PATH with nix tools for brew operations
   nixToolsPath = lib.concatStringsSep ":" [
+    "${pkgs.coreutils}/bin"
+    "${pkgs.findutils}/bin"
     "${pkgs.git}/bin"
     "${pkgs.openssh}/bin"
     "${pkgs.curl}/bin"
-    "${pkgs.coreutils}/bin"
-    "${pkgs.findutils}/bin"
     "${pkgs.gnugrep}/bin"
     "${pkgs.gnused}/bin"
     "${pkgs.gawk}/bin"
     "${pkgs.gnutar}/bin"
     "${pkgs.gzip}/bin"
+    "${pkgs.which}/bin"
   ];
   
   homebrewScript = pkgs.writeShellScript "homebrew-activation.sh" ''
@@ -67,7 +68,7 @@ let
         lib.map (tap: ''
           if ! "${brewPrefix}/bin/brew" tap | grep -q "^${tap}$"; then
             echo "Adding tap: ${tap}"
-            "${brewPrefix}/bin/brew" tap "${tap}" || echo "Warning: Failed to tap ${tap}"
+            PATH="${brewPrefix}/bin:${brewPrefix}/sbin:$NIX_TOOLS_PATH:$PATH" "${brewPrefix}/bin/brew" tap "${tap}" || echo "Warning: Failed to tap ${tap}"
           fi
         '') taps
       )}
@@ -91,7 +92,8 @@ let
         lib.map (formula: ''
           if ! "${brewPrefix}/bin/brew" list "${formula}" &>/dev/null; then
             echo "Installing formula: ${formula}"
-            "${brewPrefix}/bin/brew" install "${formula}" || echo "Warning: Failed to install ${formula}"
+            # Ensure proper PATH for each brew command
+            PATH="${brewPrefix}/bin:${brewPrefix}/sbin:$NIX_TOOLS_PATH:$PATH" "${brewPrefix}/bin/brew" install "${formula}" || echo "Warning: Failed to install ${formula}"
           fi
           # Create gcc symlinks after gcc is installed (for subsequent source builds)
           ${lib.optionalString (formula == "gcc") "create_gcc_symlinks"}
