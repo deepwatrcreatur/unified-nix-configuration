@@ -31,6 +31,7 @@ let
   # Darwin-specific aliases
   darwinAliases = lib.optionalAttrs pkgs.stdenv.isDarwin {
     xcode = "open -a Xcode";
+    gcc = "/opt/homebrew/bin/gcc-15";
   };
 in
 {
