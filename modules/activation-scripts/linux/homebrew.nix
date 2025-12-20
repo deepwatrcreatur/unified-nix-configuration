@@ -50,7 +50,7 @@ let
       fi
 
       # Set up environment for this script
-      export PATH="${brewPrefix}/bin:${brewPrefix}/sbin:$PATH"
+      export PATH="${brewPrefix}/bin:${brewPrefix}/sbin:$NIX_TOOLS_PATH:$PATH"
       export HOMEBREW_PREFIX="${brewPrefix}"
       export HOMEBREW_CELLAR="${brewPrefix}/Cellar"
       export HOMEBREW_REPOSITORY="${brewPrefix}/Homebrew"
