@@ -115,8 +115,12 @@ let
         lib.map (formula: ''
           if ! "${brewPrefix}/bin/brew" list "${formula}" &>/dev/null; then
             echo "Installing formula: ${formula}"
-            "${brewPrefix}/bin/brew" install "${formula}" || echo "Warning: Failed to install ${formula}"
-          fi
+            # Skip bd (known Ruby issue during activation - install manually)
+            if [[ "${formula}" == "bd" ]]; then
+              echo "Skipping bd (Ruby nice issue during activation - install manually with: brew install bd)"
+            else
+              "${brewPrefix}/bin/brew" install "${formula}" || echo "Warning: Failed to install ${formula}"
+            fi
           # Create gcc symlinks after gcc is installed (for subsequent source builds)
           ${lib.optionalString (formula == "gcc") "create_gcc_symlinks"}
         '') brews
