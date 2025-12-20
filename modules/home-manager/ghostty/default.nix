@@ -1,6 +1,6 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, config, ... }:
 let
-  shellCommand = if pkgs.stdenv.isDarwin then "/opt/homebrew/bin/fish" else "${pkgs.fish}/bin/fish";
+  shellCommand = if config.platform.isDarwin then "${config.platform.homebrewPrefix}/bin/fish" else "${pkgs.fish}/bin/fish";
 
   configFile = pkgs.substitute {
     src = ./config;
@@ -15,11 +15,11 @@ in
 {
   # Set environment variables for system integration
   home.sessionVariables =
-    lib.optionalAttrs pkgs.stdenv.isLinux { TERMINAL = "ghostty"; }
-    // lib.optionalAttrs pkgs.stdenv.isDarwin { TERM_PROGRAM = "ghostty"; };
+    lib.optionalAttrs config.platform.isLinux { TERMINAL = "ghostty"; }
+    // lib.optionalAttrs config.platform.isDarwin { TERM_PROGRAM = "ghostty"; };
 
   # Install Ghostty on Linux (handle macOS separately if needed)
-  home.packages = lib.optionals pkgs.stdenv.isLinux [
+  home.packages = lib.optionals config.platform.isLinux [
     pkgs.ghostty
   ];
 
@@ -41,15 +41,15 @@ in
 
   programs.ghostty = {
     enable = true;
-    package = lib.mkIf pkgs.stdenv.isDarwin null;
-    installBatSyntax = !pkgs.stdenv.isDarwin;
+    package = lib.mkIf config.platform.isDarwin null;
+    installBatSyntax = !config.platform.isDarwin;
     # Don't set settings here since we're using the config file
   };
 
   programs.fish.enable = lib.mkDefault true;
 
   # Optional: Add ghostty to desktop entries on Linux
-  xdg.desktopEntries = lib.mkIf pkgs.stdenv.isLinux {
+  xdg.desktopEntries = lib.mkIf config.platform.isLinux {
     ghostty = {
       name = "Ghostty";
       comment = "Fast, feature-rich, and cross-platform terminal emulator";

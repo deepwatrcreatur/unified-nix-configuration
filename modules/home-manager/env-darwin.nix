@@ -7,7 +7,7 @@
 }:
 {
   home.sessionPath = [
-    "/opt/homebrew/bin"
+    "${config.platform.homebrewPrefix}/bin"
     "/usr/bin"
     "/bin"
     "/usr/sbin"
@@ -40,15 +40,15 @@
       # Add nix-darwin per-user profile (CRITICAL for SSH sessions)
       fish_add_path --prepend --move /etc/profiles/per-user/${config.home.username}/bin
       # Add macOS-specific paths
-      fish_add_path --prepend --move /opt/homebrew/bin
+      fish_add_path --prepend --move ${config.platform.homebrewPrefix}/bin
       fish_add_path --prepend --move /usr/local/bin
     '';
 
     interactiveShellInit = ''
       set -gx GNUPGHOME ${config.home.homeDirectory}/.gnupg
       set -gx SOPS_AGE_KEY_FILE ${config.home.homeDirectory}/.config/sops/age/keys.txt
-      if test -z "$SSH_AUTH_SOCK" -a -x /opt/homebrew/bin/gpgconf
-        set -gx SSH_AUTH_SOCK (/opt/homebrew/bin/gpgconf --list-dirs agent-ssh-socket | str trim)
+      if test -z "$SSH_AUTH_SOCK" -a -x ${config.platform.homebrewPrefix}/bin/gpgconf
+        set -gx SSH_AUTH_SOCK (${config.platform.homebrewPrefix}/bin/gpgconf --list-dirs agent-ssh-socket | str trim)
       else if test -z "$SSH_AUTH_SOCK" -a -x /run/current-system/sw/bin/gpgconf
         set -gx SSH_AUTH_SOCK (/run/current-system/sw/bin/gpgconf --list-dirs agent-ssh-socket | str trim)
       end
