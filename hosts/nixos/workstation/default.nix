@@ -33,11 +33,11 @@
   ];
 
   # Enable Homebrew with automatic installation via activation script
+  # Note: beads requires manual install due to Ruby/nice issue in activation environment
+  #       brew tap steveyegge/beads && brew install beads
   programs.homebrew = {
     enable = true;
     inherit ((import ../../../modules/common-brew-packages.nix)) brews;
-    inherit ((import ../../../modules/common-brew-packages.nix)) casks;
-    inherit ((import ../../../modules/common-brew-packages.nix)) taps;
   };
 
   # Enable homebrew activation script to auto-install packages on rebuild
