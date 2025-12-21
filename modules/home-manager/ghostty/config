@@ -2,8 +2,7 @@
 # ghostty +list-themes
 
 # Font
-font-family                    = Symbols Nerd Font Mono
-font-family                    = Iosevka Custom
+font-family                    = Cascadia Code
 window-title-font-family       = Iosevka Custom
 
 font-feature                   = calt
