@@ -13,16 +13,14 @@
     ../../../../modules/home-manager/git.nix
     ../../../../modules/home-manager/gpg-cli.nix
     ../../../../modules/home-manager/linuxbrew.nix
-    ../../../../modules/home-manager/common/just.nix
-    ../../../../modules/home-manager/common/just-nixos.nix
+    ../../../../modules/home-manager/just.nix
+    ../../../../modules/home-manager/just-nixos.nix
     ../.. # default module for user
     #../../../../modules/home-manager/rclone.nix
   ];
 
   # Set home directory for Home Manager
   home.homeDirectory = "/home/deepwatrcreatur";
-
-  home.file.".justfile".source = ./justfile;
 
   # Add packages
   home.packages = [
