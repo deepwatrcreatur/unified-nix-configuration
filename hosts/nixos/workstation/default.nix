@@ -28,20 +28,14 @@
     ../../../modules/nixos/sessions/cinnamon.nix
     # ../../../modules/nixos/sessions/mate.nix
     # ../../../modules/nixos/sessions/lxde.nix
-    ../../../modules/linux/linuxbrew-system.nix
-    ../../../modules/linux/linuxbrew.nix
   ];
 
-  # Enable Homebrew with automatic installation via activation script
-  # Note: beads requires manual install due to Ruby/nice issue in activation environment
-  #       brew tap steveyegge/beads && brew install beads
-  programs.homebrew = {
-    enable = true;
-    inherit ((import ../../../modules/common-brew-packages.nix)) brews;
-  };
-
-  # Enable homebrew activation script to auto-install packages on rebuild
-  custom.activation-scripts.linux.homebrew.enable = true;
+  # Homebrew is managed via home-manager (modules/home-manager/linuxbrew.nix)
+  # Symlink nice to /usr/bin for Homebrew's Ruby (needed by some formulae like bd)
+  system.activationScripts.homebrewCompat = ''
+    mkdir -p /usr/bin
+    ln -sf ${pkgs.coreutils}/bin/nice /usr/bin/nice
+  '';
 
   # Linux-specific wezterm configuration
   programs.wezterm.extraConfig = lib.mkAfter ''
