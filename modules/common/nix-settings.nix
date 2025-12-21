@@ -64,7 +64,6 @@ in
 
       substituters = [
         "http://cache-build-server:5001/cache-local" # Attic cache (preferred)
-        "http://cache.deepwatercreature.com:5000/" # Legacy nix-serve
         "https://cache.nixos.org/"
         "https://cuda-maintainers.cachix.org"
         "https://cache.garnix.io/"
@@ -73,7 +72,6 @@ in
       ];
 
       trusted-public-keys = [
-        "cache.local:ZgbuAAq3bKHgggdHXaru261sRQE/wZ55teTSYMxWqxY="
         "cache-local:63xryK76L6y/NphTP/iS63yiYqldoWvVlWI0N8rgvBw=" # Attic cache-local public key
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
         "cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="

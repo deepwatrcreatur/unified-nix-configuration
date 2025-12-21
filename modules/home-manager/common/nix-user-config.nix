@@ -19,7 +19,6 @@ in
       type = lib.types.listOf lib.types.str;
       default = [
         "http://cache-build-server:5001/cache-local"
-        "http://cache.deepwatercreature.com:5000/"
         "https://cache.nixos.org"
       ];
       description = "List of binary cache substituters";
@@ -28,11 +27,8 @@ in
     trustedPublicKeys = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [
-        # Attic cache keys (from system config)
-        "cache-local:T46h1aFk4n1+btRK4Sl+D+DOku3si5RVltctJrJd77E="
-        "main:DjD95BUTemX5XOQPiZbUwii+6ApnRl5mKdvwBLEau3A="
-        # Legacy nix-serve cache key (from system config)
-        "cache.local:ZgbuAAq3bKHgggdHXaru261sRQE/wZ55teTSYMxWqxY="
+        # Attic cache keys
+        "cache-local:63xryK76L6y/NphTP/iS63yiYqldoWvVlWI0N8rgvBw="
         # Official cache key
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       ];
