@@ -40,8 +40,7 @@
     enable = true;
   };
 
-  # Customize tmux sessionx path (tmux-enhanced enabled by default)
-  programs.tmux-enhanced.sessionxPath = "~/unified-nix-configuration";
+  # Tmux-enhanced is enabled by default via common modules
 
   # Enable enhanced yazelix with custom improvements (commented out due to nixpkgs issue)
 # programs.yazelix-enhanced = {
