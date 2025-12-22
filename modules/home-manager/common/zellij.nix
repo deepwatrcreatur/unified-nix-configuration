@@ -375,11 +375,11 @@ in
 
     programs.fish.interactiveShellInit =
       mkIf (cfg.shellIntegration.enable && cfg.shellIntegration.enableFishIntegration)
-        ''
+        (lib.mkAfter ''
           ${cfg.package}/bin/zellij setup --generate-completion fish | source
           # Commented out auto-launch to prevent shell loops
           # if not set -q ZELLIJ; and status is-interactive; ${cfg.package}/bin/zellij; end
-        '';
+        '');
 
     programs.nushell.extraConfig =
       mkIf (cfg.shellIntegration.enable && cfg.shellIntegration.enableNushellIntegration)

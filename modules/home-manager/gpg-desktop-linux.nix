@@ -22,7 +22,7 @@
     export GPG_TTY=$(tty)
   '';
 
-  programs.fish.shellInit = ''
+  programs.fish.shellInit = lib.mkAfter ''
     set -gx GPG_TTY (tty)
   '';
 

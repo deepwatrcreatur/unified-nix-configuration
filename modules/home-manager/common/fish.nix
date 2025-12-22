@@ -38,7 +38,7 @@
     ];
 
     # shellInit runs for ALL shells (login and non-login) - critical for SSH
-    shellInit = ''
+    shellInit = lib.mkAfter ''
       # Prioritize Homebrew binaries
       fish_add_path --prepend --move /home/linuxbrew/.linuxbrew/bin
 
@@ -48,7 +48,7 @@
       fish_add_path --prepend --move /run/current-system/sw/bin
     '';
 
-    interactiveShellInit = ''
+    interactiveShellInit = lib.mkAfter ''
       # Set GPG_TTY for all systems
       set -gx GPG_TTY (tty)
 
