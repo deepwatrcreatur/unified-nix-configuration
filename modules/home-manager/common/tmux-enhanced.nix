@@ -220,7 +220,12 @@ in
       zoxide   # Optional but recommended for sessionx
       
       # Enhanced terminal color support
-      terminfo-ncurses
+    terminfo-ncurses
+      terminfo-terminfo
+      terminfo-xterm-256color
+      pkgs.ncurses
+      terminfo
+      pkgs.ncurses
       terminfo-terminfo
       terminfo-xterm-256color
     ];
