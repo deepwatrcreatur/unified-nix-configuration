@@ -7,7 +7,7 @@
     brewPrefix = if cfg.brewPrefix != "/home/linuxbrew/.linuxbrew" then cfg.brewPrefix else "/home/linuxbrew/.linuxbrew";
     commonBrews = (import ../common-brew-packages.nix).brews;
     brewCfg = config.programs.homebrew;
-    
+
     # Build PATH with nix tools for brew operations
     nixToolsPath = lib.concatStringsSep ":" [
       "${pkgs.coreutils}/bin"
@@ -22,17 +22,10 @@
       "${pkgs.gzip}/bin"
       "${pkgs.which}/bin"
     ];
-
-    # Install system-wide coreutils for Ruby compatibility
-    pkgs.coreutils
-
-    # Create user-writable symlinks for Ruby compatibility
-    pkgs.coreutils
 in
-
-    # Add Homebrew module
-    home-manager.users.deepwatrcreatur.home.packages = with pkgs; [
-      (import ../../common-brew-packages.nix)
-    ];
-  };
+{
+  # Add Homebrew module
+  home.packages = with pkgs; [
+    (import ../../common-brew-packages.nix)
+  ];
 }
