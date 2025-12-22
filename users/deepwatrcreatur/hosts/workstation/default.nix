@@ -40,7 +40,7 @@
     enable = true;
   };
 
-  # Tmux-enhanced is enabled by default via common modules
+  # Basic tmux configuration without problematic enhancements
 
   # Enable enhanced yazelix with custom improvements (commented out due to nixpkgs issue)
 # programs.yazelix-enhanced = {
