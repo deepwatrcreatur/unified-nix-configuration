@@ -61,7 +61,6 @@ hostname
 # Then use appropriate rebuild commands:
 # For NixOS: sudo nixos-rebuild switch --flake .#hostname
 # For Darwin: darwin-rebuild switch --flake .#hostname
-# use --no-gpg-sign when committing to avoid problems with password dialog
 ```
 
 ### Remote Testing Workflow
@@ -78,6 +77,14 @@ For testing changes across hosts (especially build failures):
 Before pushing changes that affect remote hosts:
 1. **Check local files exist** with `git status`
 2. **Pull remote changes first** with `git pull` to avoid conflicts
-3. **Test locally** if needed with SSH commands
-4. **Then push** with `git push`
+3. **Test locally** (rebuild/switch) before committing when possible
+4. **Commit WITHOUT GPG signing** (agents cannot reliably handle pinentry prompts):
+   ```bash
+   git commit --no-gpg-sign -m "feat: ..."
+   ```
+   If you need to disable signing for multiple commits in this repo:
+   ```bash
+   git config commit.gpgsign false
+   ```
+5. **Then push** with `git push`
 ```

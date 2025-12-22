@@ -54,7 +54,7 @@ in
       name = "Ghostty";
       comment = "Fast, feature-rich, and cross-platform terminal emulator";
       icon = "ghostty";
-      exec = "ghostty";
+      exec = "${pkgs.ghostty}/bin/ghostty";
       categories = [
         "System"
         "TerminalEmulator"

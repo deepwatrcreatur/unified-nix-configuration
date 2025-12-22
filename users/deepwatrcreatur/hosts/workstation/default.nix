@@ -9,15 +9,11 @@
   imports = [
     ../../default.nix
     ./nh.nix
+
     ../../../../modules/home-manager
-    ../../../../modules/home-manager/gpg-desktop-linux.nix
     ../../../../modules/home-manager/ghostty
-    ../../../../modules/home-manager/linuxbrew.nix
-    ../../../../modules/home-manager/just.nix
-    ../../../../modules/home-manager/just-nixos.nix
     #../../../../modules/home-manager/gnome.nix
     ../../../../modules/home-manager/zed.nix
-
   ];
 
   home.homeDirectory = "/home/deepwatrcreatur";
