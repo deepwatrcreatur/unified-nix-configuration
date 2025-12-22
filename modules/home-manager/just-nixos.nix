@@ -1,7 +1,7 @@
 # modules/home-manager/just-nixos.nix - NixOS-specific Justfile commands
 # Note: Use simpler tmux configuration without problematic enhancements
 # Note: Only import if host platform matches (condition handled in default.nix)
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, hostName, ... }:
 
 {
   # Append NixOS-specific commands to base justfile
@@ -31,9 +31,8 @@
     # Search NixOS options
     nixos-search query:
       man configuration.nix | grep -i {{query}}
-    '';
-  
-  # Garbage collect Nix store
+    
+    # Garbage collect Nix store
     system-gc:
       /run/current-system/sw/bin/sudo /nix-collect-garbage --delete-old
     
