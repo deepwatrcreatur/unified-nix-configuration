@@ -1,4 +1,5 @@
 # modules/home-manager/common/tmux-enhanced.nix
+# Inspired by https://github.com/omerxx/dotfiles/tree/master/tmux
 {
   config,
   lib,
@@ -15,7 +16,7 @@ in
   options.programs.tmux-enhanced = {
     enable = mkOption {
       type = types.bool;
-      default = false;
+      default = true;
       description = "Enable enhanced tmux configuration with catppuccin theming and plugins";
     };
 
@@ -37,13 +38,19 @@ in
       description = "Enable catppuccin theme";
     };
 
+    sessionxPath = mkOption {
+      type = types.str;
+      default = "~/projects";
+      description = "Path for sessionx to search for projects";
+    };
+
     extraConfig = mkOption {
       type = types.lines;
       default = "";
       description = "Additional tmux configuration";
     };
 
-    plugins = mkOption {
+    extraPlugins = mkOption {
       type = types.listOf types.package;
       default = [];
       description = "Additional tmux plugins to install";
@@ -76,20 +83,20 @@ in
         set -g @fzf-url-fzf-options '-p 60%,30% --prompt="   " --border-label=" Open URL "'
         set -g @fzf-url-history-limit '2000'
 
-        # Catppuccin theme configuration
+        # Catppuccin theme configuration (omerxx style)
         ${lib.optionalString cfg.enableCatppuccin ''
-        set -g @catppuccin_window_left_separator " "
+        set -g @catppuccin_window_left_separator ""
         set -g @catppuccin_window_right_separator " "
         set -g @catppuccin_window_middle_separator " █"
         set -g @catppuccin_window_number_position "right"
         set -g @catppuccin_window_default_fill "number"
         set -g @catppuccin_window_default_text "#W"
         set -g @catppuccin_window_current_fill "number"
-        set -g @catppuccin_window_current_text "#W#{?window_zoomed_flag,( ),}"
+        set -g @catppuccin_window_current_text "#W#{?window_zoomed_flag,(),}"
         set -g @catppuccin_status_modules_right "directory"
         set -g @catppuccin_status_modules_left "session"
-        set -g @catppuccin_status_left_separator  "  "
-        set -g @catppuccin_status_right_separator "  "
+        set -g @catppuccin_status_left_separator  " "
+        set -g @catppuccin_status_right_separator " "
         set -g @catppuccin_status_right_separator_inverse "no"
         set -g @catppuccin_status_fill "icon"
         set -g @catppuccin_status_connect_separator "no"
@@ -104,16 +111,18 @@ in
         set -g @floax-bind 'p'
         set -g @floax-change-path 'true'
 
-        # Sessionx configuration
+        # Sessionx configuration (fuzzy session manager)
         set -g @sessionx-bind-zo-new-window 'ctrl-y'
         set -g @sessionx-auto-accept 'off'
         set -g @sessionx-bind 'o'
-        set -g @sessionx-x-path '~/dotfiles'
+        set -g @sessionx-x-path '${cfg.sessionxPath}'
         set -g @sessionx-window-height '85%'
         set -g @sessionx-window-width '75%'
         set -g @sessionx-zoxide-mode 'on'
         set -g @sessionx-custom-paths-subdirectories 'false'
         set -g @sessionx-filter-current 'false'
+        set -g @sessionx-preview-location 'right'
+        set -g @sessionx-preview-ratio '55%'
 
         # Continuum and resurrect settings
         set -g @continuum-restore 'on'
@@ -160,24 +169,26 @@ in
 
       # Enhanced plugin list
       plugins = with pkgs.tmuxPlugins; [
-        tpm
-        sensible
-        yank
-        resurrect
-        continuum
-        thumbs
-        fzf
-        tmux-fzf-url
-        (mkIf cfg.enableCatppuccin catppuccin)
-        sessionx
-        floax
-      ] ++ cfg.plugins;
+        sensible        # Sensible defaults
+        yank            # Copy to system clipboard
+        resurrect       # Save/restore sessions
+        continuum       # Auto-save sessions
+        tmux-thumbs     # Quick copy visible text with hints
+        tmux-fzf        # Fzf integration for tmux commands
+        fzf-tmux-url    # Open URLs from tmux with fzf
+        tmux-sessionx   # Fuzzy session manager
+        tmux-floax      # Floating pane manager
+      ]
+      ++ lib.optional cfg.enableCatppuccin catppuccin
+      ++ cfg.extraPlugins;
     };
 
-    # Install tmux with better terminfo support
+    # Install dependencies for plugins
     home.packages = with pkgs; [
-      tmux
-      ncurses  # For better terminfo support
+      ncurses  # Better terminfo support
+      fzf      # Required by sessionx, fzf-tmux-url, tmux-fzf
+      bat      # Required by sessionx for preview
+      zoxide   # Optional but recommended for sessionx
     ];
   };
 }
