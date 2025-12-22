@@ -1,4 +1,5 @@
 # modules/home-manager/just-nixos.nix - NixOS-specific Justfile commands
+# Note: Use simpler tmux configuration without problematic enhancements
 # Note: Only import if host platform matches (condition handled in default.nix)
 { pkgs, lib, config, ... }:
 
