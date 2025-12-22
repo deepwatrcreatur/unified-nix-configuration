@@ -68,7 +68,11 @@ in
       
       # Custom configuration combining your existing setup with new theming
       extraConfig = ''
-        # Basic settings from your tmux.conf
+        # Environment variables for enhanced color support
+        set-environment -g COLORTERM "truecolor"
+        set-environment -g TERM "${cfg.terminal}"
+        
+        # Basic settings from your tmux.conf with enhanced colors
         set-option -g default-terminal '${cfg.terminal}'
         set-option -g terminal-overrides ',xterm-256color:RGB'
         set -g detach-on-destroy off
@@ -76,15 +80,29 @@ in
         set -g set-clipboard on
         set -g status-position top
         setw -g mode-keys vi
-        set -g pane-active-border-style 'fg=magenta,bg=default'
-        set -g pane-border-style 'fg=brightblack,bg=default'
+        
+        # Enhanced pane borders with vibrant colors
+        set -g pane-active-border-style 'fg=#89b4fa,bg=#1e1e2e'
+        set -g pane-border-style 'fg=#45475a,bg=#1e1e2e'
+        
+        # Enhanced status bar colors
+        set -g status-style 'bg=#1e1e2e,fg=#cdd6f4'
+        set -g status-left-style 'bg=#313244,fg=#cdd6f4'
+        set -g status-right-style 'bg=#313244,fg=#cdd6f4'
+        
+        # Window styling with rounded corners effect
+        set -g window-status-current-style 'fg=#89b4fa,bg=#313244'
+        set -g window-status-style 'fg=#9399a2,bg=#1e1e2e'
+        set -g window-status-activity-style 'fg=#f38ba8,bg=#1e1e2e'
+        set -g window-status-bell-style 'fg=#f9e2af,bg=#1e1e2e'
 
         # Plugin configuration
         set -g @fzf-url-fzf-options '-p 60%,30% --prompt="   " --border-label=" Open URL "'
         set -g @fzf-url-history-limit '2000'
 
-        # Catppuccin theme configuration (omerxx style)
+        # Catppuccin theme configuration (omerxx style with enhanced colors)
         ${lib.optionalString cfg.enableCatppuccin ''
+        # Enhanced window styling with vibrant colors
         set -g @catppuccin_window_left_separator ""
         set -g @catppuccin_window_right_separator " "
         set -g @catppuccin_window_middle_separator " █"
@@ -101,6 +119,17 @@ in
         set -g @catppuccin_status_fill "icon"
         set -g @catppuccin_status_connect_separator "no"
         set -g @catppuccin_directory_text "#{b:pane_current_path}"
+        
+        # Enhanced color scheme for better visibility
+        set -g @catppuccin_window_status_style "bg=default"
+        set -g @catppuccin_window_current_status_style "bg=default"
+        set -g @catppuccin_window_activity_style "bg=default"
+        set -g @catppuccin_window_bell_style "bg=default"
+        set -g @catppuccin_window_border_style "bg=default"
+        set -g @catppuccin_window_border_status_style "bg=default"
+        set -g @catppuccin_window_border_current_status_style "bg=default"
+        set -g @catppuccin_window_border_activity_style "bg=default"
+        set -g @catppuccin_window_border_bell_style "bg=default"
         ''}
 
         # Floax configuration (floating window manager)
@@ -189,6 +218,11 @@ in
       fzf      # Required by sessionx, fzf-tmux-url, tmux-fzf
       bat      # Required by sessionx for preview
       zoxide   # Optional but recommended for sessionx
+      
+      # Enhanced terminal color support
+      terminfo-ncurses
+      terminfo-terminfo
+      terminfo-xterm-256color
     ];
   };
 }
