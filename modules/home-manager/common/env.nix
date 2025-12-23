@@ -9,6 +9,8 @@
     EDITOR = "hx";
     VISUAL = "hx";
     GPG_TTY = "(tty)";
+    # Include user terminfo directory for ghostty and other custom terminals
+    TERMINFO_DIRS = "${config.home.homeDirectory}/.terminfo:/usr/share/terminfo";
   };
   home.sessionPath = [
     "/run/wrappers/bin" # NixOS security wrappers (sudo, etc.) must come first
