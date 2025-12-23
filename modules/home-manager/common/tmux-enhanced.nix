@@ -15,13 +15,6 @@ let
   
   # Catppuccin plugin path for manual loading
   catppuccinPlugin = pkgs.tmuxPlugins.catppuccin;
-  
-  # Platform-aware fish path
-  # On macOS: use homebrew fish (more reliable if nix store is on external drive)
-  # On Linux: use nix fish
-  fishPath = if pkgs.stdenv.isDarwin
-    then "${config.platform.homebrewPrefix}/bin/fish"
-    else "${pkgs.fish}/bin/fish";
 in
 {
   options.programs.tmux-enhanced = {
@@ -94,7 +87,7 @@ in
       escapeTime = 0;
       baseIndex = 1;
       keyMode = "vi";
-      shell = if cfg.shell != null then cfg.shell else fishPath;
+      shell = if cfg.shell != null then cfg.shell else "${pkgs.fish}/bin/fish";
       
       # Note: We DON'T include catppuccin in plugins list because we need to
       # control when it loads (after config options are set)
@@ -113,10 +106,9 @@ in
       # Configuration - catppuccin options MUST be set before plugin loads
       extraConfig = ''
         # Default shell - ensure fish is used for new windows/panes
-        # On macOS: uses homebrew fish (reliable even if nix store unmounted)
-        # On Linux: uses nix fish
-        set-option -g default-shell "${fishPath}"
-        set-option -g default-command "${fishPath}"
+        # This is set explicitly in case the home-manager shell option doesn't work
+        set-option -g default-shell "${pkgs.fish}/bin/fish"
+        set-option -g default-command "${pkgs.fish}/bin/fish"
         
         # Basic terminal settings
         # Use screen-256color for maximum compatibility (works over SSH)
