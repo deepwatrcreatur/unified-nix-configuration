@@ -44,14 +44,14 @@
       # Include paths for both Linux and macOS
       set -gx TERMINFO_DIRS "${config.home.homeDirectory}/.terminfo:/usr/share/terminfo:/opt/homebrew/share/terminfo"
       
-      # On macOS, ncurses doesn't respect TERMINFO_DIRS, so we need to override TERM
-      # for terminals like ghostty that aren't in the system terminfo database
-      # This ensures tmux and other ncurses apps work over SSH
-      if test (uname) = "Darwin"
-        if string match -q "xterm-ghostty" "$TERM"; or string match -q "ghostty" "$TERM"
-          set -gx TERM xterm-256color
-          set -gx COLORTERM truecolor
-        end
+      # Override TERM for ghostty to ensure compatibility with apps that don't
+      # have ghostty terminfo (like kilocode, some ncurses apps)
+      # On macOS: ncurses doesn't respect TERMINFO_DIRS at all
+      # On Linux: some apps still have issues with xterm-ghostty
+      # Setting COLORTERM=truecolor preserves true color support
+      if string match -q "xterm-ghostty" "$TERM"; or string match -q "ghostty" "$TERM"
+        set -gx TERM xterm-256color
+        set -gx COLORTERM truecolor
       end
       
       # Prioritize Homebrew binaries
