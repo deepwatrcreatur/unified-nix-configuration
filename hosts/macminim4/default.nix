@@ -17,7 +17,8 @@
 
   nix.enable = false; # Required for Determinate Nix Installer
 
-  environment.systemPackages = [
+  environment.systemPackages = with pkgs; [
+    fish  # Ensure fish is available in nix store for tmux
   ];
 
   programs.fish.enable = true;
