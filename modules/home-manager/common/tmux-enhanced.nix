@@ -26,8 +26,14 @@ in
 
     terminal = mkOption {
       type = types.str;
-      default = "tmux-256color";
-      description = "Terminal type to use";
+      default = "screen-256color";
+      description = "Terminal type to use (screen-256color is most compatible)";
+    };
+
+    shell = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "Default shell for new tmux windows (null = use system default)";
     };
 
     prefix = mkOption {
@@ -81,6 +87,7 @@ in
       escapeTime = 0;
       baseIndex = 1;
       keyMode = "vi";
+      shell = if cfg.shell != null then cfg.shell else "${pkgs.fish}/bin/fish";
       
       # Note: We DON'T include catppuccin in plugins list because we need to
       # control when it loads (after config options are set)
@@ -99,8 +106,13 @@ in
       # Configuration - catppuccin options MUST be set before plugin loads
       extraConfig = ''
         # Basic terminal settings
+        # Use screen-256color for maximum compatibility (works over SSH)
         set-option -g default-terminal '${cfg.terminal}'
-        set-option -g terminal-overrides ',xterm-256color:RGB'
+        # Terminal overrides for true color support in various terminals
+        set-option -sa terminal-overrides ',xterm-256color:RGB'
+        set-option -sa terminal-overrides ',xterm-ghostty:RGB'
+        set-option -sa terminal-overrides ',ghostty:RGB'
+        set-option -sa terminal-overrides ',*-256color:RGB'
         set -g detach-on-destroy off
         set -g renumber-windows on
         set -g set-clipboard on
