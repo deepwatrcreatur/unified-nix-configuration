@@ -41,6 +41,7 @@ in
       brews = [
         "cmake"
         "fish"
+        "mactop"
         "powerlevel10k"
         "bitwarden-cli"
       ]
