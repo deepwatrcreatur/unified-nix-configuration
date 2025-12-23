@@ -16,6 +16,8 @@
       # Terminal compatibility settings
       TERM = "xterm-256color";
       COLORTERM = "truecolor";
+      # Include user terminfo directory for ghostty and other custom terminals
+      TERMINFO_DIRS = "${config.home.homeDirectory}/.terminfo:/usr/share/terminfo";
     };
     shellAliases = {
       rename = "^rename -n";

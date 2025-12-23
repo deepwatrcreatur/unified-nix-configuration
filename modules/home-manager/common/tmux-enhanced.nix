@@ -105,6 +105,11 @@ in
       
       # Configuration - catppuccin options MUST be set before plugin loads
       extraConfig = ''
+        # Default shell - ensure fish is used for new windows/panes
+        # This is set explicitly in case the home-manager shell option doesn't work
+        set-option -g default-shell "${pkgs.fish}/bin/fish"
+        set-option -g default-command "${pkgs.fish}/bin/fish"
+        
         # Basic terminal settings
         # Use screen-256color for maximum compatibility (works over SSH)
         set-option -g default-terminal '${cfg.terminal}'

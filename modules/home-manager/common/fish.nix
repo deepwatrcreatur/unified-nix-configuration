@@ -39,6 +39,10 @@
 
     # shellInit runs for ALL shells (login and non-login) - critical for SSH
     shellInit = lib.mkAfter ''
+      # Set TERMINFO_DIRS early for SSH sessions with custom terminals (ghostty, kitty)
+      # This must be set before tmux or other programs try to use terminfo
+      set -gx TERMINFO_DIRS "${config.home.homeDirectory}/.terminfo:/usr/share/terminfo"
+      
       # Prioritize Homebrew binaries
       fish_add_path --prepend --move /home/linuxbrew/.linuxbrew/bin
 
