@@ -26,8 +26,10 @@
     sessionVariables = {
     };
     initExtra = ''
-      # Determinate nixd completion
-      eval "$(determinate-nixd --nix-bin /nix/var/nix/profiles/default/bin completion bash)"
+      # Determinate nixd completion (if available)
+      if command -v determinate-nixd &>/dev/null; then
+        eval "$(determinate-nixd --nix-bin /nix/var/nix/profiles/default/bin completion bash)"
+      fi
     '';
   };
   programs.nushell = {
@@ -38,8 +40,10 @@
     enable = true;
     shellInit = ''
 
-      # Determinate nixd completion
-      eval "$(determinate-nixd --nix-bin /nix/var/nix/profiles/default/bin completion fish)"
+      # Determinate nixd completion (if available)
+      if command -v determinate-nixd &>/dev/null
+        eval "$(determinate-nixd --nix-bin /nix/var/nix/profiles/default/bin completion fish)"
+      end
     '';
   };
 
@@ -47,8 +51,10 @@
   programs.zsh = {
     enable = true;
     initContent = ''
-      # Determinate nixd completion
-      eval "$(determinate-nixd --nix-bin /nix/var/nix/profiles/default/bin completion zsh)"
+      # Determinate nixd completion (if available)
+      if command -v determinate-nixd &>/dev/null; then
+        eval "$(determinate-nixd --nix-bin /nix/var/nix/profiles/default/bin completion zsh)"
+      fi
     '';
   };
 }

@@ -43,7 +43,7 @@
       # This must be set before tmux or other programs try to use terminfo
       # Include paths for both Linux and macOS
       set -gx TERMINFO_DIRS "${config.home.homeDirectory}/.terminfo:/usr/share/terminfo:/opt/homebrew/share/terminfo"
-      
+
       # Override TERM for ghostty to ensure compatibility with apps that don't
       # have ghostty terminfo (like kilocode, some ncurses apps)
       # On macOS: ncurses doesn't respect TERMINFO_DIRS at all
@@ -53,14 +53,22 @@
         set -gx TERM xterm-256color
         set -gx COLORTERM truecolor
       end
-      
-      # Prioritize Homebrew binaries
-      fish_add_path --prepend --move /home/linuxbrew/.linuxbrew/bin
+
+      # Prioritize Homebrew binaries (if available)
+      if test -d /home/linuxbrew/.linuxbrew/bin
+        fish_add_path --prepend --move /home/linuxbrew/.linuxbrew/bin
+      end
 
       # Ensure Nix paths are in PATH early for ALL sessions (especially SSH)
-      fish_add_path --prepend --move ${config.home.homeDirectory}/.nix-profile/bin
-      fish_add_path --prepend --move /nix/var/nix/profiles/default/bin
-      fish_add_path --prepend --move /run/current-system/sw/bin
+      if test -d ${config.home.homeDirectory}/.nix-profile/bin
+        fish_add_path --prepend --move ${config.home.homeDirectory}/.nix-profile/bin
+      end
+      if test -d /nix/var/nix/profiles/default/bin
+        fish_add_path --prepend --move /nix/var/nix/profiles/default/bin
+      end
+      if test -d /run/current-system/sw/bin
+        fish_add_path --prepend --move /run/current-system/sw/bin
+      end
     '';
 
     interactiveShellInit = lib.mkAfter ''
