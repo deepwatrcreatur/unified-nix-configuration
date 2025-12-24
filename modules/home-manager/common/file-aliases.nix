@@ -8,11 +8,7 @@
 let
   # File listing and navigation aliases
   fileAliases = {
-    # LSD aliases (if available)
-    ls = "lsd";
-    ll = "lsd -l";
-    la = "lsd -a";
-    lla = "lsd -la";
+    # Note: LSD provides built-in aliases via shell integration
 
     # FD aliases (enhanced find)
     fda = "fd --hidden --no-ignore";

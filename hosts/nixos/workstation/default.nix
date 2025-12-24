@@ -98,6 +98,7 @@
   # Additional system packages
   environment.systemPackages = with pkgs; [
     at-spi2-core # Accessibility framework for deskflow clipboard
+    distrobox
     filezilla
     git
     nushell # Stopgap: Add nushell at system level for ghostty compatibility
@@ -112,6 +113,9 @@
 
   # Enable nix-ld for running dynamically linked executables (like homebrew packages)
   programs.nix-ld.enable = true;
+
+  # Enable Podman for distrobox
+  virtualisation.podman.enable = true;
   myModules.attic-client = {
     enable = true; # Robust post-build hook that never fails builds
     tokenFile = ../../../secrets/attic-client-token.yaml.enc; # Use global token file
