@@ -15,19 +15,6 @@
     ../../../modules/nixos/snap.nix # Snap package manager support
     ../../../modules/wezterm-config.nix
     ../../../modules/activation-scripts # Activation scripts for system setup
-    # Desktop Environment - choose one option:
-    # Option 1: Multi-DE (test multiple DEs without rebuilding - switch at login screen)
-    # ../../../modules/nixos/sessions/multi-de.nix
-    # Option 2: Single DE (uncomment one, comment out multi-de.nix above)
-    # ../../../modules/nixos/sessions/garuda-themed-kde.nix
-    # ../../../modules/nixos/sessions/garuda-themed-gnome.nix # GNOME with X11 for deskflow compatibility
-    # ../../../modules/nixos/sessions/x11-session-support.nix # Force X11 for deskflow compatibility
-    # ../../../modules/nixos/sessions/kde-x11.nix # KDE with X11 for deskflow compatibility
-    # ../../../modules/nixos/sessions/cosmic.nix # COSMIC desktop environment (no InputCapture portal yet)
-    # ../../../modules/nixos/sessions/xfce.nix
-    ../../../modules/nixos/sessions/cinnamon.nix
-    # ../../../modules/nixos/sessions/mate.nix
-    # ../../../modules/nixos/sessions/lxde.nix
   ];
 
   # Homebrew is managed via home-manager (modules/home-manager/linuxbrew.nix)
@@ -116,6 +103,13 @@
 
   # Enable Podman for distrobox
   virtualisation.podman.enable = true;
+
+  # Enable Fedora distrobox setup
+  myModules.distrobox.fedora = {
+    enable = true;
+    enableAutoStart = true;
+  };
+
   myModules.attic-client = {
     enable = true; # Robust post-build hook that never fails builds
     tokenFile = ../../../secrets/attic-client-token.yaml.enc; # Use global token file
