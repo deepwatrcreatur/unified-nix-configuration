@@ -109,9 +109,9 @@ in
 
     theme = mkOption {
       type = types.str;
-      default = "default";
+      default = "kanagawa";
       description = "Theme to use for Zellij.";
-      example = "catppuccin-mocha";
+      example = "kanagawa";
     };
 
     defaultShell = mkOption {
