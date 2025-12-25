@@ -1,11 +1,15 @@
 { config, pkgs, ... }:
 
 {
-  # Enable the X11 windowing system.
+  # Enable X11 windowing system.
   services.xserver.enable = true;
 
-  # Enable the Cinnamon desktop environment.
+  # Enable Cinnamon desktop environment.
   services.xserver.desktopManager.cinnamon.enable = true;
+
+  # Configure autorepeat for Proxmox guest to prevent stuck keypresses
+  services.xserver.autoRepeatDelay = 300;
+  services.xserver.autoRepeatInterval = 40;
 
   # Enable LightDM display manager for Cinnamon
   services.xserver.displayManager.lightdm.enable = true;
