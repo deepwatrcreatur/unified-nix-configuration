@@ -168,7 +168,7 @@ in
     enable = lib.mkEnableOption "Zen Browser" // { default = true; };
     package = lib.mkOption {
       type = lib.types.package;
-      default = inputs.zen-browser.packages.${pkgs.system}.default;
+      default = inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default;
       description = "Zen Browser package";
     };
     policies = lib.mkOption {
