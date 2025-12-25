@@ -28,7 +28,7 @@ let
     asr = "atuin script run";
   };
 
-    # Darwin-specific aliases
+  # Darwin-specific aliases
   darwinAliases = lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
     xcode = "open -a Xcode";
     gcc = "/usr/bin/gcc";
@@ -37,13 +37,20 @@ let
 in
 {
   options.custom.toolAliases = {
+    enable = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Enable custom tool aliases";
+    };
+
     aliases = lib.mkOption {
       type = lib.types.attrsOf lib.types.str;
       default = toolAliases // darwinAliases;
-      description = "Tool and utility aliases";
-      readOnly = true;
+      description = "Set of shell aliases for tools and utilities";
     };
   };
 
-  
+  config = lib.mkIf config.custom.toolAliases.enable {
+    home.shellAliases = config.custom.toolAliases.aliases;
+  };
 }

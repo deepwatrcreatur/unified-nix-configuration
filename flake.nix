@@ -89,7 +89,7 @@
           }
         )
         (final: prev: {
-          inherit (inputs.nixpkgs-stable.legacyPackages.${prev.hostPlatform.system}) tailscale;
+          inherit (inputs.nixpkgs-stable.legacyPackages.${prev.stdenv.hostPlatform.system}) tailscale;
         })
         # Grok CLI overlay
         (final: prev: {

@@ -15,7 +15,7 @@
   services.xserver.displayManager.lightdm.enable = true;
 
   # Enable autologin
-  services.xserver.displayManager.autoLogin = {
+  services.displayManager.autoLogin = {
     enable = true;
     user = "deepwatrcreatur";
   };

@@ -2,10 +2,11 @@
 # Provides platform detection options for cross-platform home-manager modules
 {
   config,
-  pkgs,
   lib,
+  pkgs,
   ...
 }:
+
 let
   # Detect platform from pkgs.stdenv
   isDarwin = pkgs.stdenv.isDarwin;
@@ -17,8 +18,8 @@ let
       (if pkgs.stdenv.hostPlatform.isAarch64 then "/opt/homebrew" else "/usr/local")
     else
       "/home/linuxbrew/.linuxbrew"; # Linuxbrew path for Linux
-in
-{
+
+in {
   options.platform = {
     isDarwin = lib.mkOption {
       type = lib.types.bool;
