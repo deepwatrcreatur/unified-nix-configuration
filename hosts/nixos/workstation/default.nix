@@ -14,6 +14,7 @@
     ../../../modules/nixos/attic-client.nix # Attic cache client
     ../../../modules/nixos/snap.nix # Snap package manager support
     ../../../modules/nixos/sessions/cinnamon.nix # Cinnamon desktop environment
+    ../../../modules/nixos/keyboard-glitches.nix # Fix for stuck keyboard presses in Proxmox VM
     ../../../modules/wezterm-config.nix
     ../../../modules/activation-scripts # Activation scripts for system setup
   ];
@@ -119,6 +120,9 @@
     enable = true;
     packages = [ "icloud-for-linux" ];
   };
+
+  # Enable fixes for stuck keyboard presses in Proxmox VM
+  myModules.keyboardGlitches.enable = true;
 
   nix.settings.experimental-features = [
     "nix-command"
