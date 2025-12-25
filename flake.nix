@@ -264,7 +264,7 @@
           }:
           inputs.home-manager.lib.homeManagerConfiguration {
             pkgs = import inputs.nixpkgs {
-              inherit system;
+              system = system;
               config = commonNixpkgsConfig;
               overlays = commonOverlays;
             };
