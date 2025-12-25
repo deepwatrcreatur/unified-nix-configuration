@@ -79,7 +79,7 @@
           final: prev:
           let
             stable = import inputs.nixpkgs-stable {
-              inherit (prev) system;
+              system = prev.stdenv.hostPlatform.system;
               config = commonNixpkgsConfig;
             };
           in

@@ -97,7 +97,7 @@
     usbutils
     vim
     vscode.fhs # VSCode with FHS environment
-    inputs.zen-browser.packages.${pkgs.system}.default
+    inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 
   # Enable nix-ld for running dynamically linked executables (like homebrew packages)
