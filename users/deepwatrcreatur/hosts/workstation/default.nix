@@ -9,7 +9,8 @@
   imports = [
     ../../default.nix
     ./nh.nix
-
+    ./distrobox.nix
+ 
     ../../../../modules/home-manager
     ../../../../modules/home-manager/ghostty
     ../../../../modules/home-manager/just.nix
@@ -19,6 +20,8 @@
   ];
 
   home.homeDirectory = "/home/deepwatrcreatur";
+
+  programs.distrobox.fedora.enable = true;
 
   home.packages = with pkgs; [
     bitwarden-desktop

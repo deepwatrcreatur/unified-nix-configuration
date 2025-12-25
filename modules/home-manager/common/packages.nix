@@ -14,7 +14,6 @@
     bun
     just
     cloc
-    comma
     curl
     difftastic
     dig
