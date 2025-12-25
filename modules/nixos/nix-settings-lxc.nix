@@ -12,7 +12,7 @@
       experimental-features = [
         "nix-command"
         "flakes"
-        # Remove newer experimental features that might not be supported in LXC
+        "cgroups"          # Process isolation for builds - available in this LXC
       ];
 
       # Performance settings
@@ -21,10 +21,10 @@
       max-jobs = "auto";
       cores = 0;
 
-      # Build settings (remove newer settings)
+      # Build settings
       builders-use-substitutes = true;
       sandbox = false; # Required for LXC containers
-      # Removed: use-cgroups, lazy-trees - not supported in older Nix versions
+      use-cgroups = true;               # Better build isolation - cgroups available
       # auto-optimise-store = false; # Uncomment if needed for very old Nix versions
 
       # Garbage collection and derivation settings
