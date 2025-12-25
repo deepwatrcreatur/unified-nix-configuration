@@ -13,6 +13,7 @@
     ../../../modules/nixos/common # Common NixOS modules (SSH keys, etc.)
     ../../../modules/nixos/attic-client.nix # Attic cache client
     ../../../modules/nixos/snap.nix # Snap package manager support
+    ../../../modules/nixos/sessions/cinnamon.nix # Cinnamon desktop environment
     ../../../modules/wezterm-config.nix
     ../../../modules/activation-scripts # Activation scripts for system setup
   ];
@@ -104,12 +105,10 @@
   # Enable Podman for distrobox
   virtualisation.podman.enable = true;
 
-  # Enable Fedora distrobox setup
-  myModules.distrobox.fedora = {
-    enable = true;
-    enableAutoStart = true;
-  };
+  # Enable QEMU guest agent for Proxmox integration
+  services.qemuGuest.enable = true;
 
+  # Enable Fedora distrobox setup
   myModules.attic-client = {
     enable = true; # Robust post-build hook that never fails builds
     tokenFile = ../../../secrets/attic-client-token.yaml.enc; # Use global token file
