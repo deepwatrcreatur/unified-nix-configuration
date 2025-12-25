@@ -31,7 +31,7 @@ let
   # Darwin-specific aliases
   darwinAliases = lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
     xcode = "open -a Xcode";
-    gcc = "/usr/bin/gcc";
+    gcc = lib.mkForce "/usr/bin/gcc";
     test-platform = "Platform detection: " + (if pkgs.stdenv.hostPlatform.isDarwin then "Darwin" else "Not Darwin");
   };
 in
@@ -50,7 +50,6 @@ in
     };
   };
 
-  config = lib.mkIf config.custom.toolAliases.enable {
-    home.shellAliases = config.custom.toolAliases.aliases;
-  };
+  # Note: Aliases are merged through shell-aliases.nix, not set directly here
+  # to avoid conflicts with programs.bash.shellAliases
 }
