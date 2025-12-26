@@ -27,10 +27,10 @@
     # This ensures compatibility with your system NVIDIA drivers
   ];
 
-  # Set environment variables to help find system NVIDIA libraries
-  home.sessionVariables = {
-    LD_LIBRARY_PATH = "/usr/lib/x86_64-linux-gnu:\${LD_LIBRARY_PATH}";
-  };
+  # Note: Do NOT set LD_LIBRARY_PATH globally - it breaks Nix binaries by
+  # making them load system libraries (e.g., wrong OpenSSL version).
+  # For NVIDIA/CUDA, use nixGL wrappers or run GPU apps with:
+  #   LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH ./gpu-app
 
   home.stateVersion = "24.11";
 
