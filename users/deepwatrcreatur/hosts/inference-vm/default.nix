@@ -32,7 +32,7 @@
     # Additional tools for inference work
     httpie # jq is already in common packages
 
-    # CUDA debugging and monitoring tools (temporarily disabled)
+    # CUDA debugging and monitoring tools (temporarily disabled due to build issues)
     # cudaPackages.cuda_gdb
   ];
 

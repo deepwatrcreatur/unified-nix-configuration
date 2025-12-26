@@ -24,8 +24,8 @@
 
     # System administration (lsof, strace likely in common)
 
-    # CUDA debugging tools
-    cudaPackages.cuda_gdb
+    # CUDA debugging tools (temporarily disabled due to build issues)
+    # cudaPackages.cuda_gdb
   ];
 
   # Enable Ollama home-manager integration for root
