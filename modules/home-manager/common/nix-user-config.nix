@@ -27,8 +27,10 @@ in
     trustedPublicKeys = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [
-        # Attic cache keys
+        # Attic cache key
         "cache-local:63xryK76L6y/NphTP/iS63yiYqldoWvVlWI0N8rgvBw="
+        # nix-serve cache key
+        "cache.local:92faFQnuzuYUJ4ta3EYpqIaCMIZGenDoaPktsBucTe4="
         # Official cache key
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       ];
@@ -59,19 +61,20 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
+  config = lib.mkIf cfg.enable (lib.mkMerge [
+    {
+      # Write user nix.conf with substituters and trusted keys
+      xdg.configFile."nix/nix.conf".text = ''
+        # User Nix configuration managed by home-manager
+        experimental-features = ${lib.concatStringsSep " " cfg.experimentalFeatures}
+        extra-substituters = ${lib.concatStringsSep " " cfg.substituters}
+        extra-trusted-public-keys = ${lib.concatStringsSep " " cfg.trustedPublicKeys}
+      '';
+    }
 
-    # Write user nix.conf with substituters and trusted keys
-    xdg.configFile."nix/nix.conf".text = ''
-      # User Nix configuration managed by home-manager
-      experimental-features = ${lib.concatStringsSep " " cfg.experimentalFeatures}
-      extra-substituters = ${lib.concatStringsSep " " cfg.substituters}
-      extra-trusted-public-keys = ${lib.concatStringsSep " " cfg.trustedPublicKeys}
-    '';
-
-    # Create netrc file in Determinate Nix's managed location
-    home.activation.nix-netrc = lib.mkIf (cfg.netrcMachine != null) (
-      lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    # Create netrc file in Determinate Nix's managed location (only if netrcMachine is set)
+    (lib.mkIf (cfg.netrcMachine != null) {
+      home.activation.nix-netrc = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
                 netrc_file="/nix/var/determinate/netrc"
                 token_file="${cfg.netrcTokenPath}"
 
@@ -95,7 +98,7 @@ EOF
                     echo "Warning: Token file empty at $token_file" >&2
                   fi
                 fi
-      ''
-    );
-  };
+      '';
+    })
+  ]);
 }

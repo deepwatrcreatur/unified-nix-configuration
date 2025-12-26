@@ -97,7 +97,7 @@
     usbutils
     vim
     vscode.fhs # VSCode with FHS environment
-    inputs.zen-browser.packages.${pkgs.system}.default
+    inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 
   # Enable nix-ld for running dynamically linked executables (like homebrew packages)
@@ -109,10 +109,10 @@
   # Enable QEMU guest agent for Proxmox integration
   services.qemuGuest.enable = true;
 
-  # Enable Fedora distrobox setup
+  # Attic cache client for automatic build uploads
   myModules.attic-client = {
-    enable = true; # Robust post-build hook that never fails builds
-    tokenFile = ../../../secrets/attic-client-token.yaml.enc; # Use global token file
+    enable = true;
+    tokenFile = ../../../secrets/attic-client-token.yaml.enc;
   };
 
   # Enable snap support

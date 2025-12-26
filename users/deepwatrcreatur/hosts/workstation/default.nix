@@ -15,7 +15,7 @@
     ../../../../modules/home-manager/ghostty
     ../../../../modules/home-manager/just.nix
     ../../../../modules/home-manager/just-nixos.nix
-    #../../../../modules/home-manager/gnome.nix
+    ../../../../modules/home-manager/gpg-cli.nix
     ../../../../modules/home-manager/zed.nix
   ];
 
@@ -42,51 +42,6 @@
   programs.google-chrome = {
     enable = true;
   };
-
-  # Basic tmux configuration without problematic enhancements
-
-  # Enable enhanced yazelix with custom improvements (commented out due to nixpkgs issue)
-# programs.yazelix-enhanced = {
-#   enable = true;
-#   enableShellIntegration = true;
-#   editor = "hx";
-#   extraPackages = with pkgs; [
-#     eza
-#     fd
-#     ripgrep
-#     fzf
-#     zoxide
-#   ];
-#   customKeybinds = ''
-#     [manager.prepend_keymap]
-#     on = [ "g", "h" ]
-#     run = "cd ~"
-#     desc = "Go to home directory"
-
-#     [manager.prepend_keymap]
-#     on = [g", "c" ]
-#     run = "cd ~/.config"
-#     desc = "Go to config directory"
-
-#     [manager.prepend_keymap]
-#     on = [g", "d" ]
-#     run = "cd ~/Downloads"
-#     desc = "Go to downloads"
-
-#     [manager.prepend_keymap]
-#     on = [g", "c" ]
-#     run = "search fd"
-#     desc = "Search files with fd"
-#     [manager.prepend_keymap]
-#     on = [C-s" ]
-#     run = "search rg"
-#     desc = "Search content with ripgrep"
-#   '';
-#   };
-
-
-
-  # Justfile now managed by home-manager just modules
 
   home.file.".config/deskflow/deskflow.conf".text = ''
     clipboardSharing = true

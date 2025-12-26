@@ -32,7 +32,8 @@
         ];
       }
       # NOTE: Excluded inputs.determinate.nixosModules.default for LXC compatibility
-      ../modules/nixos/lxc-modules.nix # Custom modules that exclude regular nix-settings
+      inputs.nix-snapd.nixosModules.default
+      ../modules # Common modules (nix-settings.nix is now container-aware)
       ../hosts/nixos # Base NixOS config
     ]
     ++ (importAllModulesInDir ../hosts/nixos-lxc/nixos_lxc/modules);

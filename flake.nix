@@ -79,7 +79,7 @@
           final: prev:
           let
             stable = import inputs.nixpkgs-stable {
-              inherit (prev) system;
+              system = prev.stdenv.hostPlatform.system;
               config = commonNixpkgsConfig;
             };
           in
@@ -264,7 +264,7 @@
           }:
           inputs.home-manager.lib.homeManagerConfiguration {
             pkgs = import inputs.nixpkgs {
-              inherit system;
+              system = system;
               config = commonNixpkgsConfig;
               overlays = commonOverlays;
             };
