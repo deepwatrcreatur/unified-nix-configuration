@@ -10,7 +10,11 @@
   # Inference VM specific configuration for deepwatrcreatur
   imports = [
     ../.. # Import default user config
+    ../../../../modules/home-manager
     ../../../../modules/home-manager/gpg-cli.nix
+    ../../../../modules/home-manager/just.nix
+    ../../../../modules/home-manager/just-nixos.nix
+    ../../../../modules/home-manager/inference-ollama.nix
   ];
 
   # Set home-manager state version
@@ -28,22 +32,24 @@
     # Additional tools for inference work
     httpie # jq is already in common packages
 
-    # CUDA debugging and monitoring tools
-    cudaPackages.cuda_gdb
+    # CUDA debugging and monitoring tools (temporarily disabled)
+    # cudaPackages.cuda_gdb
   ];
 
-  # Inference-specific shell aliases (nushell aliases handled by common modules)
+  # Enable Ollama home-manager integration
+  programs.inference-ollama = {
+    enable = true;
+    isRoot = false;
+  };
+
+  # Inference-specific shell aliases (non-Ollama)
   programs.nushell.shellAliases = {
-    ollama-status = "systemctl status ollama";
-    ollama-logs = "journalctl -u ollama -f";
     gpu-status = "nvidia-smi";
-    models = "ls -la /models/";
     inference-monitor = "nvtop";
   };
 
-  # Environment variables for inference
+  # Environment variables for inference (non-Ollama)
   home.sessionVariables = {
-    OLLAMA_HOST = "0.0.0.0:11434";
     CUDA_VISIBLE_DEVICES = "0"; # Use first GPU
   };
 

@@ -14,8 +14,9 @@
   imports = [
     # Import all common inference VM modules
     ../../../hosts/nixos/inference-vm/modules/configuration.nix
-    ../../../hosts/nixos/inference-vm/modules/gpu-nvidia.nix
-    ../../../hosts/nixos/inference-vm/modules/ollama.nix
+    # GPU and ollama now handled by modular system in configuration.nix
+    # ../../../hosts/nixos/inference-vm/modules/gpu-nvidia.nix
+    # ../../../hosts/nixos/inference-vm/modules/ollama.nix
     ../../../hosts/nixos/inference-vm/modules/storage.nix
     ../../../hosts/nixos/inference-vm/modules/users.nix
     ../../../hosts/nixos/inference-vm/modules/packages.nix

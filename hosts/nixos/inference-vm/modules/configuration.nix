@@ -8,39 +8,48 @@
 {
   imports = [
     ../../../../modules/common/nix-settings.nix
+    ./gpu-infrastructure.nix
+    ./ollama.nix
+    ./llama-cpp.nix
   ];
 
-  # Custom overlay to rebuild Ollama with Tesla P40 support (CUDA compute capability 6.1)
+  # Nixpkgs configuration
   nixpkgs = {
-    overlays = [
-      (final: prev: {
-        ollama = prev.ollama.overrideAttrs (old: {
-          # Enable broader CUDA architecture support including Pascal (6.1) for Tesla P40
-          cmakeFlags = (old.cmakeFlags or [ ]) ++ [
-            "-DGGML_CUDA_ARCHITECTURES=61;70;75;80;86;89;90"
-          ];
-
-          # Ensure CUDA support is properly enabled with additional dependencies
-          buildInputs = (old.buildInputs or [ ]) ++ [
-            prev.cudaPackages.cuda_nvcc
-            prev.cudaPackages.cuda_cudart
-            prev.cudaPackages.libcublas
-            prev.cudaPackages.libcusparse
-            prev.cudaPackages.libcurand
-          ];
-
-          # Set specific CMake variables for CUDA compilation in preConfigure
-          preConfigure = (old.preConfigure or "") + ''
-            export CUDA_PATH=${prev.cudaPackages.cudatoolkit}
-            export CUDACXX=${prev.cudaPackages.cuda_nvcc}/bin/nvcc
-          '';
-        });
-      })
-    ];
     config.allowUnfree = true;
     config.allowUnsupportedSystem = true; # Allow unsupported packages like cuDNN
-    config.cudaSupport = true;
-    config.cudaPackages = pkgs.cudaPackages_12_6;
+  };
+
+  # GPU Infrastructure configuration
+  # TODO: Re-enable after base system is stable
+  inference.gpu = {
+    enable = false; # Temporarily disabled
+    nvidia.enable = false;
+    cuda = {
+      enable = false;
+      enableTeslaP40 = false; # Will enable after base system works
+    };
+    monitoring.enable = false;
+  };
+
+  # Ollama configuration (depends on GPU infrastructure)
+  # TODO: Re-enable after base system is stable
+  inference.ollama = {
+    enable = false; # Temporarily disabled
+    customBuild = {
+      enable = false;
+      # cudaArchitectures will include Tesla P40 (6.1) when gpu.cuda.enableTeslaP40 = true
+    };
+  };
+
+  # llama.cpp configuration (alternative/complementary to Ollama)
+  # TODO: Re-enable after base system is stable
+  inference.llama-cpp = {
+    enable = false; # Temporarily disabled
+    server.enable = false;
+    customBuild = {
+      enable = false;
+      cudaSupport = false; # Will be enabled when GPU infrastructure is enabled
+    };
   };
 
   # Base VM configuration for inference machines
@@ -89,26 +98,7 @@
   systemd.services."getty@tty1".enable = false;
   systemd.services."autovt@tty1".enable = false;
 
-  # NVIDIA driver support
-  services.xserver.videoDrivers = [ "nvidia" ];
-  hardware.graphics = {
-    enable = true;
-    enable32Bit = true;
-  };
-
-  hardware.nvidia = {
-    modesetting.enable = true;
-    powerManagement.enable = false;
-    powerManagement.finegrained = false;
-    open = false; # Use proprietary driver
-    nvidiaSettings = true;
-    package = config.boot.kernelPackages.nvidiaPackages.stable;
-  };
-
-  # Add NVIDIA utilities to system packages
-  environment.systemPackages = with pkgs; [
-    # nvidia-smi comes with driver
-  ];
+  # GPU/NVIDIA configuration moved to gpu-infrastructure.nix module
 
   security.sudo.wheelNeedsPassword = false;
 
