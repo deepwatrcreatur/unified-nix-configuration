@@ -13,6 +13,9 @@
     ../../../../modules/home-manager/gpg-cli.nix
   ];
 
+  # Set home-manager state version
+  home.stateVersion = "25.11";
+
   # Inference-specific packages (only what's not in common)
   home.packages = with pkgs; [
     # AI/ML tools

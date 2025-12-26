@@ -12,6 +12,9 @@
     ../.. # Import default root config
   ];
 
+  # Set home-manager state version
+  home.stateVersion = "25.11";
+
   # Root-specific packages for inference management (only what's not in common)
   home.packages = with pkgs; [
     # Network tools for debugging

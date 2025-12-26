@@ -38,6 +38,7 @@
       })
     ];
     config.allowUnfree = true;
+    config.allowUnsupportedSystem = true; # Allow unsupported packages like cuDNN
     config.cudaSupport = true;
     config.cudaPackages = pkgs.cudaPackages_12_6;
   };
@@ -90,9 +91,9 @@
 
   # NVIDIA driver support
   services.xserver.videoDrivers = [ "nvidia" ];
-  hardware.opengl = {
+  hardware.graphics = {
     enable = true;
-    driSupport32Bit = true;
+    enable32Bit = true;
   };
 
   hardware.nvidia = {
@@ -111,9 +112,12 @@
 
   security.sudo.wheelNeedsPassword = false;
 
+  # Enable fish shell for users
+  programs.fish.enable = true;
+
   # Networking
   networking.networkmanager.enable = true;
   networking.firewall.enable = false;
 
-  system.stateVersion = "25.05";
+  system.stateVersion = "25.11";
 }
