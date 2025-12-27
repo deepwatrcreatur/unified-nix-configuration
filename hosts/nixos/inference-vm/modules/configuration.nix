@@ -14,6 +14,7 @@
   # TODO: Re-enable after base system is stable
   # Custom overlay to rebuild Ollama with Tesla P40 support (CUDA compute capability 6.1)
   nixpkgs = {
+    config.cudaSupport = false; # Force disable CUDA to allow minimal build
     # overlays = [
     #   (final: prev: {
     #     ollama = prev.ollama.overrideAttrs (old: {

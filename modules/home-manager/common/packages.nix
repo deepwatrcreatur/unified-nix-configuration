@@ -42,7 +42,7 @@
     nmap
     ouch
     pstree
-    python3
+    # python3  # Temporarily disabled to resolve version conflicts
     sad
     sshs
     tmux
