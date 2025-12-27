@@ -14,39 +14,45 @@
     ../../../../modules/home-manager/gpg-cli.nix
     ../../../../modules/home-manager/just.nix
     ../../../../modules/home-manager/just-nixos.nix
+    # Temporarily disable to fix home-manager startup failure
+    # ../../../../modules/home-manager/inference-ollama.nix
   ];
 
-  # Set home-manager state version
+  # Set home-manager state version (match current working generation)
   home.stateVersion = lib.mkForce "25.05";
 
-  # Inference-specific packages (only what's not in common)
+  # Inference-specific packages (minimal, conservative versions)
   home.packages = with pkgs; [
-    # AI/ML tools
+    # Use Python 3.12 for better compatibility (matches working Ubuntu setups)
     python312
     python312Packages.pip
-    # python312Packages.torch  # Temporarily disabled - builds with CUDA
     python312Packages.numpy
     python312Packages.matplotlib
 
     # Additional tools for inference work
     httpie # jq is already in common packages
 
-    # CUDA debugging and monitoring tools (temporarily disabled)
+    # AI/ML tools - install via pip in venv for better compatibility
+    # python312Packages.torch  # Install via pip instead
+    # CUDA debugging tools - re-enable after base system is stable
     # cudaPackages.cuda_gdb
   ];
 
-  # Inference-specific shell aliases (nushell aliases handled by common modules)
+  # Temporarily disable Ollama home-manager integration to fix startup failure
+  # programs.inference-ollama = {
+  #   enable = true;
+  #   isRoot = false;
+  # };
+
+  # Inference-specific shell aliases (non-Ollama)
   programs.nushell.shellAliases = {
-    ollama-status = "systemctl status ollama";
-    ollama-logs = "journalctl -u ollama -f";
-    gpu-status = "nvidia-smi";
-    models = "ls -la /models/";
-    inference-monitor = "nvtop";
+    # Temporarily disable GPU tools that require CUDA packages
+    # gpu-status = "nvidia-smi";
+    # inference-monitor = "nvtop";
   };
 
-  # Environment variables for inference
+  # Environment variables for inference (non-Ollama)
   home.sessionVariables = {
-    OLLAMA_HOST = "0.0.0.0:11434";
     CUDA_VISIBLE_DEVICES = "0"; # Use first GPU
   };
 

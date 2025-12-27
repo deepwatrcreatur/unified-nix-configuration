@@ -10,36 +10,39 @@
     ../../../../modules/common/nix-settings.nix
   ];
 
+  # Temporarily disable CUDA overlay to get base system working
+  # TODO: Re-enable after base system is stable
   # Custom overlay to rebuild Ollama with Tesla P40 support (CUDA compute capability 6.1)
   nixpkgs = {
-    overlays = [
-      (final: prev: {
-        ollama = prev.ollama.overrideAttrs (old: {
-          # Enable broader CUDA architecture support including Pascal (6.1) for Tesla P40
-          cmakeFlags = (old.cmakeFlags or [ ]) ++ [
-            "-DGGML_CUDA_ARCHITECTURES=61;70;75;80;86;89;90"
-          ];
-
-          # Ensure CUDA support is properly enabled with additional dependencies
-          buildInputs = (old.buildInputs or [ ]) ++ [
-            prev.cudaPackages.cuda_nvcc
-            prev.cudaPackages.cuda_cudart
-            prev.cudaPackages.libcublas
-            prev.cudaPackages.libcusparse
-            prev.cudaPackages.libcurand
-          ];
-
-          # Set specific CMake variables for CUDA compilation in preConfigure
-          preConfigure = (old.preConfigure or "") + ''
-            export CUDA_PATH=${prev.cudaPackages.cudatoolkit}
-            export CUDACXX=${prev.cudaPackages.cuda_nvcc}/bin/nvcc
-          '';
-        });
-      })
-    ];
+    # overlays = [
+    #   (final: prev: {
+    #     ollama = prev.ollama.overrideAttrs (old: {
+    #       # Enable broader CUDA architecture support including Pascal (6.1) for Tesla P40
+    #       cmakeFlags = (old.cmakeFlags or [ ]) ++ [
+    #         "-DGGML_CUDA_ARCHITECTURES=61;70;75;80;86;89;90"
+    #       ];
+    #
+    #       # Ensure CUDA support is properly enabled with additional dependencies
+    #       buildInputs = (old.buildInputs or [ ]) ++ [
+    #         prev.cudaPackages.cuda_nvcc
+    #         prev.cudaPackages.cuda_cudart
+    #         prev.cudaPackages.libcublas
+    #         prev.cudaPackages.libcusparse
+    #         prev.cudaPackages.libcurand
+    #       ];
+    #
+    #       # Set specific CMake variables for CUDA compilation in preConfigure
+    #       preConfigure = (old.preConfigure or "") + ''
+    #         export CUDA_PATH=${prev.cudaPackages.cudatoolkit}
+    #         export CUDACXX=${prev.cudaPackages.cuda_nvcc}/bin/nvcc
+    #       '';
+    #     });
+    #   })
+    # ];
     config.allowUnfree = true;
-    config.cudaSupport = true;
-    config.cudaPackages = pkgs.cudaPackages_12_6;
+    config.allowUnsupportedSystem = true; # Allow unsupported packages like cuDNN
+    # config.cudaSupport = true;
+    # config.cudaPackages = pkgs.cudaPackages_12_6;
   };
 
   # Base VM configuration for inference machines
@@ -90,9 +93,9 @@
 
   # NVIDIA driver support
   services.xserver.videoDrivers = [ "nvidia" ];
-  hardware.opengl = {
+  hardware.graphics = {
     enable = true;
-    driSupport32Bit = true;
+    enable32Bit = true;
   };
 
   hardware.nvidia = {
@@ -111,9 +114,12 @@
 
   security.sudo.wheelNeedsPassword = false;
 
+  # Enable fish shell for users
+  programs.fish.enable = true;
+
   # Networking
   networking.networkmanager.enable = true;
   networking.firewall.enable = false;
 
-  system.stateVersion = "25.05";
+  system.stateVersion = "25.11";
 }

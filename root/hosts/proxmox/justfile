@@ -1,0 +1,8 @@
+# users/root/hosts/proxmox/justfile
+
+# Proxmox (Debian) - use home-manager or nh for home-only config
+update:
+  home-manager switch --flake $NH_FLAKE#proxmox-root
+
+nh-update:
+  nh home switch $NH_FLAKE#homeConfigurations.proxmox-root.activationPackage

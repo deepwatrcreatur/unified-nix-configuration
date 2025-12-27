@@ -33,7 +33,7 @@
 
     # Development tools
     git
-    gitAndTools.gh
+    gh
     elixir
     erlang
     tigerbeetle

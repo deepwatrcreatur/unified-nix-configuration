@@ -45,7 +45,7 @@
     LD_LIBRARY_PATH = lib.makeLibraryPath [
       "${pkgs.cudaPackages_12_6.cudatoolkit}/lib64"
       "${pkgs.cudaPackages_12_6.cudatoolkit}/lib"
-      pkgs.cudaPackages_12_6.cuda_cudart.lib
+      pkgs.cudaPackages_12_6.cuda_cudart
       config.boot.kernelPackages.nvidiaPackages.stable
       pkgs.stdenv.cc.cc.lib
     ];

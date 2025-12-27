@@ -10,9 +10,11 @@
   # Inference VM specific configuration for root
   imports = [
     ../.. # Import default root config
+    # Temporarily disable to fix home-manager startup failure
+    # ../../../../modules/home-manager/inference-ollama.nix
   ];
 
-  # Set home-manager state version
+  # Set home-manager state version (match current working generation)
   home.stateVersion = lib.mkForce "25.05";
 
   # Root-specific packages for inference management (only what's not in common)
@@ -23,24 +25,24 @@
 
     # System administration (lsof, strace likely in common)
 
-    # CUDA debugging tools
-    cudaPackages.cuda_gdb
+    # CUDA debugging tools (temporarily disabled due to build issues)
+    # cudaPackages.cuda_gdb
   ];
 
-  # Root shell aliases for inference administration
+  # Temporarily disable Ollama home-manager integration to fix startup failure
+  # programs.inference-ollama = {
+  #   enable = true;
+  #   isRoot = true;
+  # };
+
+  # Root shell aliases for inference administration (non-Ollama)
   programs.nushell.shellAliases = {
-    ollama-restart = "systemctl restart ollama";
-    ollama-status = "systemctl status ollama";
-    ollama-logs = "journalctl -u ollama -n 50";
     gpu-status = "nvidia-smi";
     gpu-processes = "nvidia-smi pmon";
-    models-space = "df -h /models";
-    inference-services = "systemctl list-units --type=service | grep -E 'ollama|nvidia'";
   };
 
-  # Root environment for inference administration
+  # Root environment for inference administration (non-Ollama)
   home.sessionVariables = {
-    OLLAMA_HOST = "0.0.0.0:11434";
     NVIDIA_VISIBLE_DEVICES = "all";
   };
 }

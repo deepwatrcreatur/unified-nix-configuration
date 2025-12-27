@@ -93,8 +93,14 @@ in
     # Access tokens - only on non-cache-server hosts
     access-tokens = lib.optionals (!isCacheServer) [
       "cache-build-server:5001 = /run/nix/attic-token-bearer"
-    ] ++ lib.optionals (builtins.pathExists githubTokenPath) [
-      "github.com=${builtins.readFile githubTokenPath}"
+    ]
+    # Only try to read GitHub token if it's a SOPS secret (avoid file system access during evaluation)
+    ++ lib.optionals (
+      config ? sops
+      && config.sops.secrets ? "github-token-root"
+      && config.sops.secrets."github-token-root" != null
+    ) [
+      "github.com=${builtins.readFile config.sops.secrets."github-token-root".path}"
     ];
   };
 

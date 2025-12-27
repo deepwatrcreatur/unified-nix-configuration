@@ -1,0 +1,36 @@
+# users/deepwatrcreatur/hosts/homeserver/default.nix
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+
+{
+  imports = [
+    ./nh.nix
+    ./rbw.nix
+    ../../../../modules/home-manager/git.nix
+    ../../../../modules/home-manager/gpg-cli.nix
+    ../../../../modules/home-manager/linuxbrew.nix
+    ../../../../modules/home-manager/just.nix
+    ../../../../modules/home-manager/just-nixos.nix
+    ../.. # default module for user
+    #../../../../modules/home-manager/rclone.nix
+  ];
+
+  # Set home directory for Home Manager
+  home.homeDirectory = "/home/deepwatrcreatur";
+
+  # Add packages
+  home.packages = [
+  ];
+
+  # Configure programs
+  programs.bash.enable = true;
+
+  # Let Home Manager manage itself if you want the `home-manager` command available
+  programs.home-manager.enable = true;
+
+  home.stateVersion = "24.11";
+}

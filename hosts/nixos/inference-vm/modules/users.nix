@@ -15,7 +15,7 @@
     extraGroups = [
       "networkmanager"
       "wheel"
-      "ollama"
+      # "ollama"  # Temporarily disabled
     ];
     packages = with pkgs; [ ];
     shell = pkgs.fish;
