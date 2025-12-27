@@ -38,8 +38,8 @@ in
       "impure-derivations"
       "ca-derivations"
       "pipe-operators"
-    ] ++ lib.optionals (!isContainer) [
-      "cgroups" # Process isolation for builds - not available in containers
+    ] ++ [
+      "cgroups" # Process isolation for builds - re-enabled
     ];
 
     # Performance settings
@@ -63,7 +63,7 @@ in
     trusted-users = [
       "root"
       "@wheel"
-    ] ++ lib.optionals (!isContainer) [
+    ] ++ [
       "@build"
       "@admin"
       "deepwatrcreatur"
@@ -106,5 +106,8 @@ in
 
   # Container-specific settings
   nix.settings.sandbox = lib.mkIf isContainer false;
-  nix.settings.use-cgroups = lib.mkIf (!isContainer) true;
+  nix.settings.use-cgroups = lib.mkIf (!isContainer) true; # Re-enabled
+
+  # Fix for determinate nix daemon experimental features
+  systemd.services.nix-daemon.environment.NIX_CONFIG = "experimental-features = nix-command flakes cgroups";
 }
