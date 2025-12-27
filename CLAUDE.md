@@ -155,6 +155,17 @@ If you're fixing a package installation error:
 ### Shell Environment
 - **Default shell is Fish**: Use Fish shell syntax for all commands to ensure compatibility with coding agents
 - **Avoid Nushell**: While Nushell is configured, Fish is set as default to prevent agent compatibility issues
+- **Use tmux for persistent sessions**: When debugging complex issues or running long operations on remote hosts, use tmux to maintain persistent SSH sessions that won't be lost on disconnection:
+  ```bash
+  # Start a new tmux session
+  ssh host "tmux new-session -d -s debug 'cd /path && exec bash'"
+
+  # Attach to existing session
+  ssh -t host "tmux attach-session -t debug"
+
+  # Send commands to session
+  ssh host "tmux send-keys -t debug 'command here' Enter"
+  ```
 ### Multi-Host Configuration Awareness
 - **Always check hostname first**: Start by running `hostname` to identify which host you're working on
 - **Host-specific commands**: Use appropriate commands based on the host type:
