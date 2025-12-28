@@ -24,12 +24,6 @@
 
   # Inference-specific packages (minimal, conservative versions)
   home.packages = with pkgs; [
-    # Use Python 3.12 for better compatibility (matches working Ubuntu setups)
-    python312
-    python312Packages.pip
-    python312Packages.numpy
-    python312Packages.matplotlib
-
     # Additional tools for inference work
     httpie # jq is already in common packages
 
