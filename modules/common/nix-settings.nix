@@ -38,6 +38,8 @@ in
       "impure-derivations"
       "ca-derivations"
       "pipe-operators"
+    ] ++ lib.optionals (!isContainer) [
+      "cgroups" # Process isolation for builds - not available in containers
     ];
 
     # Performance settings
@@ -104,8 +106,8 @@ in
 
   # Container-specific settings
   nix.settings.sandbox = lib.mkIf isContainer false;
-  # Removed use-cgroups as it requires cgroups experimental feature and isn't essential
+  nix.settings.use-cgroups = lib.mkIf (!isContainer) true;
 
   # Fix for determinate nix daemon experimental features
-  systemd.services.nix-daemon.environment.NIX_CONFIG = lib.mkForce "experimental-features = nix-command flakes impure-derivations ca-derivations pipe-operators";
+  systemd.services.nix-daemon.environment.NIX_CONFIG = lib.mkForce "experimental-features = nix-command flakes impure-derivations ca-derivations pipe-operators cgroups";
 }
