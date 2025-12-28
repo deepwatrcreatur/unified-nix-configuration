@@ -63,6 +63,61 @@ hostname
 # For Darwin: darwin-rebuild switch --flake .#hostname
 ```
 
+### tmux Session Management for Remote Work
+When working with remote hosts or running long-duration operations, use tmux to maintain persistent sessions:
+
+#### Basic tmux Usage
+```bash
+# Create a named session for your work
+ssh host "tmux new-session -d -s inference-test"
+
+# Attach to session (interactive)
+ssh -t host "tmux attach-session -t inference-test"
+
+# Send commands to session without attaching
+ssh host "tmux send-keys -t inference-test 'cd /path/to/work' Enter"
+ssh host "tmux send-keys -t inference-test 'ollama serve' Enter"
+
+# Check if session exists
+ssh host "tmux list-sessions | grep inference-test"
+
+# Kill session when done
+ssh host "tmux kill-session -t inference-test"
+```
+
+#### Multiple Windows in tmux
+```bash
+# Create windows for different tasks
+ssh host "tmux new-window -t inference-test -n 'server'"
+ssh host "tmux new-window -t inference-test -n 'testing'"
+
+# Send commands to specific windows
+ssh host "tmux send-keys -t inference-test:server 'ollama serve' Enter"
+ssh host "tmux send-keys -t inference-test:testing 'ollama list' Enter"
+
+# List windows in session
+ssh host "tmux list-windows -t inference-test"
+```
+
+#### Background Process Management
+```bash
+# Start background processes that persist across SSH disconnections
+ssh host "tmux send-keys -t session-name 'nohup command > output.log 2>&1 &' Enter"
+
+# Monitor background processes
+ssh host "tmux send-keys -t session-name 'ps aux | grep process-name' Enter"
+
+# Check process logs
+ssh host "tmux send-keys -t session-name 'tail -f output.log' Enter"
+```
+
+#### Best Practices for Agents
+- **Always use named sessions**: Makes it easier to reconnect and manage multiple concurrent tasks
+- **Create task-specific sessions**: e.g., "inference-test", "build-debug", "service-monitor"
+- **Use multiple windows**: Separate concerns like server processes, testing, and monitoring
+- **Check session existence**: Before creating, verify if session already exists to avoid conflicts
+- **Clean up**: Kill sessions when work is complete to avoid resource accumulation
+
 ### Remote Testing Workflow
 For testing changes across hosts (especially build failures):
 1. **Check hostname** on local machine first
@@ -70,7 +125,7 @@ For testing changes across hosts (especially build failures):
    ```bash
    ssh user@hostname "rebuild command"
    ```
-3. **Use tmux or multiplexers** for maintaining remote sessions
+3. **Use tmux sessions** for maintaining persistent remote sessions (see tmux section above)
 4. **Test platform-specific issues** by reproducing on relevant host type
 
 ### Git Workflow
