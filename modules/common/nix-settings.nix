@@ -38,9 +38,7 @@ in
       "impure-derivations"
       "ca-derivations"
       "pipe-operators"
-    ] ++ lib.optionals (!isContainer) [
-      "cgroups" # Process isolation for builds - not available in containers
-    ];
+    ]; # Temporarily removed cgroups to fix build
 
     # Performance settings
     download-buffer-size = 1048576000;
@@ -109,5 +107,5 @@ in
   nix.settings.use-cgroups = lib.mkIf (!isContainer) true;
 
   # Fix for determinate nix daemon experimental features
-  systemd.services.nix-daemon.environment.NIX_CONFIG = lib.mkForce "experimental-features = nix-command flakes cgroups impure-derivations ca-derivations pipe-operators";
+  systemd.services.nix-daemon.environment.NIX_CONFIG = lib.mkForce "experimental-features = nix-command flakes impure-derivations ca-derivations pipe-operators";
 }
