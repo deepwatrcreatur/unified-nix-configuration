@@ -14,38 +14,43 @@
     ../../../../modules/home-manager/gpg-cli.nix
     ../../../../modules/home-manager/just.nix
     ../../../../modules/home-manager/just-nixos.nix
-    ../../../../modules/home-manager/inference-ollama.nix
+    ../../../../modules/home-manager/gpu-monitoring.nix
+    # Temporarily disable to fix home-manager startup failure
+    # ../../../../modules/home-manager/inference-ollama.nix
   ];
 
-  # Set home-manager state version
-  home.stateVersion = "25.11";
+  # Set home-manager state version (match current working generation)
+  home.stateVersion = lib.mkForce "25.05";
 
-  # Inference-specific packages (only what's not in common)
+  # Inference-specific packages (minimal, conservative versions)
   home.packages = with pkgs; [
-    # AI/ML tools
-    python3
-    python3Packages.pip
-    python3Packages.torch
-    python3Packages.numpy
-    python3Packages.matplotlib
+    # Use Python 3.12 for better compatibility (matches working Ubuntu setups)
+    python312
+    python312Packages.pip
+    python312Packages.numpy
+    python312Packages.matplotlib
 
     # Additional tools for inference work
     httpie # jq is already in common packages
 
-    # CUDA debugging and monitoring tools (temporarily disabled due to build issues)
+    # GPU monitoring tools provided by gpu-monitoring.nix module
+
+    # AI/ML tools - install via pip in venv for better compatibility
+    # python312Packages.torch  # Install via pip instead
+    # CUDA debugging tools - re-enable after base system is stable
     # cudaPackages.cuda_gdb
   ];
 
-  # Enable Ollama home-manager integration
-  programs.inference-ollama = {
-    enable = true;
-    isRoot = false;
-  };
+  # Temporarily disable Ollama home-manager integration to fix startup failure
+  # programs.inference-ollama = {
+  #   enable = true;
+  #   isRoot = false;
+  # };
 
-  # Inference-specific shell aliases (non-Ollama)
+  # GPU monitoring aliases provided by gpu-monitoring.nix module
+  # Inference-specific shell aliases (non-GPU, non-Ollama)
   programs.nushell.shellAliases = {
-    gpu-status = "nvidia-smi";
-    inference-monitor = "nvtop";
+    # Add other inference-specific aliases here
   };
 
   # Environment variables for inference (non-Ollama)
