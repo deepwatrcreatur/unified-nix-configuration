@@ -108,7 +108,6 @@
     filezilla
     git
     gnome-session # X11 session manager
-    gnome-session-ctraced # Traced session for debugging
     gnome-shell # Required for GNOME desktop
     nushell # Stopgap: Add nushell at system level for ghostty compatibility
     nvtopPackages.amd # GPU monitoring tool for AMD GPUs
@@ -117,7 +116,7 @@
     usbutils
     vim
     vscode.fhs # VSCode with FHS environment
-    inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform}.default
+    inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
     xdg-desktop-portal-gnome # Desktop portal for GNOME
     xdg-desktop-portal-gtk # GTK desktop portal
   ];
