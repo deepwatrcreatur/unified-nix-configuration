@@ -10,13 +10,14 @@
     ../../default.nix
     ./nh.nix
     ./distrobox.nix
- 
+
     ../../../../modules/home-manager
     ../../../../modules/home-manager/ghostty
     ../../../../modules/home-manager/just.nix
     ../../../../modules/home-manager/just-nixos.nix
     ../../../../modules/home-manager/gpg-cli.nix
     ../../../../modules/home-manager/zed.nix
+    ../../../../modules/home-manager/cinnamon.nix
   ];
 
   home.homeDirectory = "/home/deepwatrcreatur";

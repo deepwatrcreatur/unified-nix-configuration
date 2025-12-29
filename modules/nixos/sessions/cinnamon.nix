@@ -1,6 +1,10 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
+  # ===========================================
+  # Base Configuration
+  # ===========================================
+
   # Enable X11 windowing system.
   services.xserver.enable = true;
 
@@ -20,19 +24,61 @@
     user = "deepwatrcreatur";
   };
 
-  # Cinnamon's panel can be configured to act as a dock, so no extra package
-  # is needed. It also includes a workspace switcher with previews and
-  # supports moving windows between workspaces with the mouse.
+  # ===========================================
+  # Import Shared WhiteSur Theme Module
+  # ===========================================
+  # This provides:
+  # - WhiteSur GTK theme, icons, cursor
+  # - Plank dock (auto-start)
+  # - Font configuration
+  # - Environment variables
 
-  # Application launcher - Ulauncher (similar to Spotlight/Alfred)
-  # Launch with Ctrl+Space (configurable in Ulauncher preferences)
-  environment.systemPackages = with pkgs; [
-    ulauncher
-    deskflow
+  imports = [
+    ./whitesur-theme.nix
   ];
 
+  # ===========================================
+  # Cinnamon-Specific Packages
+  # ===========================================
+
+  environment.systemPackages = with pkgs; [
+    # Application launcher - Ulauncher (similar to Spotlight/Alfred)
+    # Launch with Ctrl+Space (configurable in Ulauncher preferences)
+    ulauncher
+    deskflow
+    
+    # Audio system tools for macOS-like volume control
+    pulseaudio-ctl
+    pavucontrol  # Audio GUI similar to macOS audio preferences
+    
+    # Additional tools for macOS-like workflow
+    flameshot  # Screenshot tool similar to macOS
+    copyq  # Clipboard manager (macOS-like clipboard history)
+    
+    # Compositor for transparency effects
+    picom
+    
+    # Configuration tools
+    dconf  # Settings backend
+  ];
+
+  # ===========================================
+  # XDG Portals for Cinnamon
+  # ===========================================
+
+  xdg.portal = {
+    enable = true;
+    extraPortals = [
+      pkgs.xdg-desktop-portal-gtk
+    ];
+  };
+
+  # ===========================================
+  # Ulauncher Configuration
+  # ===========================================
+
   # Enable Ulauncher to start on login
-  systemd.user.services.ulauncher = {
+  systemd.user.services.ulauncher = lib.mkIf config.services.xserver.enable {
     description = "Ulauncher application launcher";
     wantedBy = [ "graphical-session.target" ];
     after = [ "graphical-session.target" ];
@@ -42,4 +88,88 @@
       Restart = "on-failure";
     };
   };
+
+  # Auto-start Ulauncher configuration script
+  systemd.user.services.ulauncher-config = lib.mkIf config.services.xserver.enable {
+    description = "Configure Ulauncher for macOS-like behavior";
+    wantedBy = [ "graphical-session.target" ];
+    after = [ "ulauncher.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.bash}/bin/bash ${./cinnamon/ulauncher-config.sh}";
+      RemainAfterExit = true;
+    };
+  };
+
+  # Auto-start audio configuration
+  systemd.user.services.audio-config = lib.mkIf config.services.xserver.enable {
+    description = "Configure audio for macOS-like behavior";
+    wantedBy = [ "graphical-session.target" ];
+    after = [ "pulseaudio.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.bash}/bin/bash ${./cinnamon/audio-setup.sh}";
+      RemainAfterExit = true;
+    };
+  };
+
+  # Auto-start Cinnamon desktop configuration
+  systemd.user.services.cinnamon-config = lib.mkIf config.services.xserver.enable {
+    description = "Configure Cinnamon for macOS-like behavior";
+    wantedBy = [ "graphical-session.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.bash}/bin/bash ${./cinnamon/cinnamon-config.sh}";
+      RemainAfterExit = true;
+    };
+  };
+
+  # Auto-start keyboard shortcuts configuration
+  systemd.user.services.keybinds-config = lib.mkIf config.services.xserver.enable {
+    description = "Configure macOS-like keyboard shortcuts";
+    wantedBy = [ "graphical-session.target" ];
+    after = [ "cinnamon-config.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.bash}/bin/bash ${./cinnamon/keybinds-config.sh}";
+      RemainAfterExit = true;
+    };
+  };
+
+  # ===========================================
+  # Compositor for macOS-like Transparency Effects
+  # ===========================================
+  # NOTE: Picom is disabled because Cinnamon has its own compositor (Muffin)
+  # Running both causes conflicts. Cinnamon's built-in compositor provides
+  # transparency and compositing effects.
+
+  # services.picom.enable = false;  # Disabled - conflicts with Cinnamon's Muffin
+
+  # ===========================================
+  # Touchpad Configuration for macOS-like Gestures
+  # ===========================================
+
+  # Configure touchpad for natural scrolling (macOS behavior)
+  services.libinput = {
+    enable = true;
+    touchpad = {
+      tapping = true;
+      naturalScrolling = true;  # macOS-like scrolling
+      clickMethod = "clickfinger";
+    };
+  };
+
+  # ===========================================
+  # Cinnamon-Specific Theme Configuration
+  # ===========================================
+  # NOTE: Theme and appearance settings are now configured via Home Manager
+  # See: modules/home-manager/cinnamon.nix
+  # This provides declarative dconf settings that properly apply on rebuild
+
+  # System message on first login
+  system.activationScripts.cinnamonMacosSetup = lib.mkAfter ''
+    mkdir -p /etc/cinnamon-macos-config
+    echo "macOS-like Cinnamon configuration initialized" > /etc/cinnamon-macos-config/status
+    echo "Theme settings configured via Home Manager (modules/home-manager/cinnamon.nix)" >> /etc/cinnamon-macos-config/status
+  '';
 }

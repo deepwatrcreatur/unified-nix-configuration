@@ -13,7 +13,11 @@
     ../../../modules/nixos/common # Common NixOS modules (SSH keys, etc.)
     ../../../modules/nixos/attic-client.nix # Attic cache client
     ../../../modules/nixos/snap.nix # Snap package manager support
-    ../../../modules/nixos/sessions/cinnamon.nix # Cinnamon desktop environment
+
+    # Desktop environment (uncomment one):
+    ../../../modules/nixos/sessions/cinnamon.nix # Current: Cinnamon (transparent panels but can't shrink)
+    # ../../../modules/nixos/sessions/garuda-themed-gnome.nix # Alternative: GNOME (floating dock, customizable)
+
     ../../../modules/nixos/keyboard-glitches.nix # Fix for stuck keyboard presses in Proxmox VM
     ../../../modules/wezterm-config.nix
     ../../../modules/activation-scripts # Activation scripts for system setup
