@@ -421,14 +421,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1767035373,
-        "narHash": "sha256-gzvCaojddWoOYDB4mB0buh/kA5MFnpMblIy7g6i7O0k=",
-        "path": "/home/deepwatrcreatur/nix-whitesur-config",
-        "type": "path"
+        "lastModified": 1767035367,
+        "narHash": "sha256-dHSwu0LBSqbMqJQW/5L5hJ2KciTDB6h83iWTVI3gcEM=",
+        "owner": "deepwatrcreatur",
+        "repo": "nix-whitesur-config",
+        "rev": "a374aa647c56d7c7e9754dbadd014a7c4dd75cb0",
+        "type": "github"
       },
       "original": {
-        "path": "/home/deepwatrcreatur/nix-whitesur-config",
-        "type": "path"
+        "owner": "deepwatrcreatur",
+        "repo": "nix-whitesur-config",
+        "type": "github"
       }
     },
     "nixpkgs": {
