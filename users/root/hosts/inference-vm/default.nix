@@ -30,7 +30,7 @@
 
   # Enable Ollama home-manager integration for root
   programs.inference-ollama = {
-    enable = false; # Keep disabled until ollama service is enabled
+    enable = true; # Enable with ollama service
     isRoot = true;
   };
 

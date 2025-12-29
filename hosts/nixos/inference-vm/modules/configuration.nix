@@ -19,23 +19,35 @@
     config.allowUnsupportedSystem = true; # Allow unsupported packages like cuDNN
   };
 
-  # GPU Infrastructure configuration - start with minimal setup
+  # GPU Infrastructure configuration - Tesla P40 optimized
   inference.gpu = {
-    enable = false; # Keep disabled until storage issue resolved
-    nvidia.enable = false;
-    cuda = {
-      enable = false;
-      enableTeslaP40 = false; # Will enable after base system works
+    enable = true;
+    nvidia = {
+      enable = true;
+      powerManagement = {
+        enable = false; # Disable power management for Tesla P40 stability
+        finegrained = false;
+      };
+      useOpenDriver = false; # Use proprietary driver for Tesla P40
     };
-    monitoring.enable = false;
+    cuda = {
+      enable = true;
+      enableTeslaP40 = true; # Enable Tesla P40 specific optimizations
+      package = config.boot.kernelPackages.nvidiaPackages.production; # Use production driver
+    };
+    monitoring.enable = true; # Enable GPU monitoring
   };
 
-  # Ollama configuration (depends on GPU infrastructure)
+  # Ollama configuration with Tesla P40 CUDA support
   inference.ollama = {
-    enable = false; # Keep disabled until GPU infrastructure is ready
+    enable = true;
     customBuild = {
-      enable = false;
-      # cudaArchitectures will include Tesla P40 (6.1) when gpu.cuda.enableTeslaP40 = true
+      enable = true;
+      # Tesla P40 compute capability 6.1 will be automatically included
+    };
+    webui = {
+      enable = true; # Enable OpenWebUI
+      port = 3000;   # Standard OpenWebUI port
     };
   };
 
