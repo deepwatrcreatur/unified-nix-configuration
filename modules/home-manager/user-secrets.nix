@@ -20,10 +20,21 @@ in
       export SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
       export PATH="${lib.makeBinPath [ pkgs.sops ]}:$PATH"
 
-      # Decrypt attic-client-token
+      # Decrypt attic-client-token - with error handling
       mkdir -p "$HOME/.config/sops"
-      sops -d "${toString cfg.secretsPath}/attic-client-token.yaml.enc" > "$HOME/.config/sops/attic-client-token"
-      chmod 600 "$HOME/.config/sops/attic-client-token"
+
+      SECRETS_PATH="${toString cfg.secretsPath}"
+      ATTIC_TOKEN_ENC="$SECRETS_PATH/attic-client-token.yaml.enc"
+
+      if [ -f "$ATTIC_TOKEN_ENC" ]; then
+        if [ -f "$SOPS_AGE_KEY_FILE" ]; then
+          sops -d "$ATTIC_TOKEN_ENC" > "$HOME/.config/sops/attic-client-token" 2>/dev/null && chmod 600 "$HOME/.config/sops/attic-client-token" || true
+        else
+          echo "Warning: SOPS age key not found at $SOPS_AGE_KEY_FILE, skipping attic-client-token decryption"
+        fi
+      else
+        echo "Warning: attic-client-token.yaml.enc not found at $ATTIC_TOKEN_ENC, skipping decryption"
+      fi
     '';
   };
 }
