@@ -33,7 +33,7 @@ in
 
     acceleration = lib.mkOption {
       type = lib.types.enum [ "auto" "cuda" "rocm" "cpu" ];
-      default = if gpuCfg.cuda.enable then "cuda" else "auto";
+      default = "auto"; # Let Ollama auto-detect to avoid circular dependency
       description = "Hardware acceleration backend for Ollama";
     };
 
@@ -42,13 +42,8 @@ in
 
       cudaArchitectures = lib.mkOption {
         type = lib.types.listOf lib.types.str;
-        default =
-          let
-            baseArchs = gpuCfg.cuda.architectures or [ "70" "75" "80" "86" "89" "90" ];
-            teslaArch = lib.optionals (gpuCfg.cuda.enableTeslaP40 or false) [ "61" ];
-          in
-          baseArchs ++ teslaArch;
-        description = "CUDA compute architectures to build for";
+        default = [ "61" "70" "75" "80" "86" "89" "90" ]; # Include Tesla P40 (6.1) by default
+        description = "CUDA compute capabilities to compile for";
       };
     };
   };
