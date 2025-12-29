@@ -114,7 +114,6 @@
   networking.firewall.enable = false;
 
   system.stateVersion = "25.05"; # Match current working generation
-n  # Basic NVIDIA driver support for Tesla P40
   services.xserver.videoDrivers = [ "nvidia" ];
   hardware.nvidia = {
     modesetting.enable = true;
