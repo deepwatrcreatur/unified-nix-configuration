@@ -17,7 +17,9 @@
     ../../../../modules/home-manager/just-nixos.nix
     ../../../../modules/home-manager/gpg-cli.nix
     ../../../../modules/home-manager/zed.nix
-    ../../../../modules/home-manager/cinnamon.nix
+    # Desktop session configuration (uncomment one):
+    # ../../../../modules/home-manager/cinnamon.nix
+    ../../../../modules/home-manager/gnome-whitesur.nix
   ];
 
   home.homeDirectory = "/home/deepwatrcreatur";
