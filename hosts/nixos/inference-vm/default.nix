@@ -13,7 +13,9 @@ let
     let
       items = builtins.readDir dir;
       isNixFile = name: type: type == "regular" && lib.hasSuffix ".nix" name;
-      nixFileNames = lib.attrNames (lib.filterAttrs isNixFile items);
+      excludeList = [ "gpu-infrastructure.nix" "ollama.nix" "llama-cpp.nix" ];
+      shouldInclude = name: !(builtins.elem name excludeList);
+      nixFileNames = lib.filter shouldInclude (lib.attrNames (lib.filterAttrs isNixFile items));
     in
     map (fileName: dir + "/${fileName}") nixFileNames;
 in

@@ -8,9 +8,6 @@
 {
   imports = [
     ../../../../modules/common/nix-settings.nix
-    ./gpu-infrastructure.nix
-    ./ollama.nix
-    ./llama-cpp.nix
   ];
 
   # Nixpkgs configuration
@@ -20,7 +17,6 @@
   };
 
   # GPU Infrastructure configuration - Tesla P40 optimized
-  inference.gpu = {
     enable = true;
     nvidia = {
       enable = true;
@@ -39,7 +35,6 @@
   };
 
   # Ollama configuration with Tesla P40 CUDA support
-  inference.ollama = {
     enable = true;
     acceleration = "cuda"; # Explicitly enable CUDA acceleration
     customBuild = {
@@ -49,7 +44,6 @@
   };
 
   # llama.cpp configuration (alternative/complementary to Ollama)
-  inference.llama-cpp = {
     enable = false; # Keep disabled until GPU infrastructure is ready
     server.enable = false;
     customBuild = {
@@ -109,7 +103,6 @@
   systemd.services."getty@tty1".enable = false;
   systemd.services."autovt@tty1".enable = false;
 
-  # GPU/NVIDIA configuration moved to gpu-infrastructure.nix module
 
   security.sudo.wheelNeedsPassword = false;
 
@@ -121,4 +114,13 @@
   networking.firewall.enable = false;
 
   system.stateVersion = "25.05"; # Match current working generation
+n  # Basic NVIDIA driver support for Tesla P40
+  services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.nvidia = {
+    modesetting.enable = true;
+    powerManagement.enable = false; # Disable for Tesla P40 stability
+    open = false; # Use proprietary driver
+  };
+  hardware.graphics.enable = true;
 }
+
