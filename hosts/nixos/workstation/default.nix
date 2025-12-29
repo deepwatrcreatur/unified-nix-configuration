@@ -14,6 +14,7 @@
     ../../../modules/nixos/attic-client.nix # Attic cache client
     ../../../modules/nixos/snap.nix # Snap package manager support
     inputs.nix-whitesur-config.nixosModules.default # WhiteSur theming flake
+    ../../../modules/nixos/sessions/x11-session-support.nix # GNOME X11 session support
 
     ../../../modules/nixos/keyboard-glitches.nix # Fix for stuck keyboard presses in Proxmox VM
     ../../../modules/wezterm-config.nix
@@ -45,6 +46,8 @@
   # Configure keyboard - let input-leap handle caps lock synchronization
   # services.xserver.xkb.options = "caps:none"; # Disabled - using input-leap fix instead
   # GNOME configuration is handled by nix-whitesur-config flake
+  services.xserver.enable = true;
+  services.desktopManager.gnome.enable = true;
 
   security.rtkit.enable = true;
   services.pipewire = {
@@ -93,6 +96,7 @@
     distrobox
     filezilla
     git
+    gnome-shell # Required for GNOME desktop
     nushell # Stopgap: Add nushell at system level for ghostty compatibility
     nvtopPackages.amd # GPU monitoring tool for AMD GPUs
     pavucontrol
