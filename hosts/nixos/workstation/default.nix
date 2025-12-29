@@ -54,10 +54,13 @@
     wayland = false;
   };
 
-  # Auto-login for faster access
+  # Set GNOME as default session
+  services.displayManager.defaultSession = "gnome";
+
+  # Auto-login disabled - causes GDM to crash with SIGTRAP/g_assert
+  # See commit 4119f1f2 - auto-login triggers extension loading during GDM startup
   services.displayManager.autoLogin = {
-    enable = true;
-    user = "deepwatrcreatur";
+    enable = false;
   };
 
   security.rtkit.enable = true;
