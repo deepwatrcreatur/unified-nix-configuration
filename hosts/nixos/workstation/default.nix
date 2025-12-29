@@ -13,18 +13,11 @@
     ../../../modules/nixos/common # Common NixOS modules (SSH keys, etc.)
     ../../../modules/nixos/attic-client.nix # Attic cache client
     ../../../modules/nixos/snap.nix # Snap package manager support
-
-    # Desktop environment (uncomment one):
-    #../../../modules/nixos/sessions/cinnamon.nix # Current: Cinnamon (transparent panels but can't shrink)
-    ../../../modules/nixos/sessions/whitesur-gnome.nix
-    # ../../../modules/nixos/sessions/garuda-themed-gnome.nix # Alternative: GNOME (floating dock, customizable)
+    inputs.nix-whitesur-config.nixosModules.default # WhiteSur theming flake
 
     ../../../modules/nixos/keyboard-glitches.nix # Fix for stuck keyboard presses in Proxmox VM
     ../../../modules/wezterm-config.nix
     ../../../modules/activation-scripts # Activation scripts for system setup
-
-    # MODULAR THEMING: Uncomment to use modular theming system (replaces whitesur-theme.nix)
-    # ./test-modular-integration.nix
   ];
 
   # Homebrew is managed via home-manager (modules/home-manager/linuxbrew.nix)
@@ -51,6 +44,7 @@
 
   # Configure keyboard - let input-leap handle caps lock synchronization
   # services.xserver.xkb.options = "caps:none"; # Disabled - using input-leap fix instead
+  # GNOME configuration is handled by nix-whitesur-config flake
 
   security.rtkit.enable = true;
   services.pipewire = {
@@ -88,6 +82,7 @@
 
   home-manager.users.deepwatrcreatur = {
     imports = [
+      inputs.nix-whitesur-config.homeManagerModules.default
       ../../../users/deepwatrcreatur/hosts/workstation
     ];
   };
@@ -131,6 +126,19 @@
 
   # Enable fixes for stuck keyboard presses in Proxmox VM
   myModules.keyboardGlitches.enable = true;
+
+  # WhiteSur theming configuration
+  whitesur = {
+    enable = true;
+    gnome = {
+      enable = true;
+      user = "deepwatrcreatur";
+      autoRepeatDelay = 300;
+      autoRepeatInterval = 40;
+      wayland = false; # Enable X11 for DeskFlow compatibility
+    };
+    fonts.enable = true;
+  };
 
   nix.settings.experimental-features = [
     "nix-command"

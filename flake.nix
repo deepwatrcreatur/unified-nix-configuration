@@ -62,6 +62,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-whitesur-config = {
+      url = "github:deepwatrcreatur/nix-whitesur-config";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs =

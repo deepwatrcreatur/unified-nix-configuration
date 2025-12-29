@@ -17,12 +17,17 @@
     ../../../../modules/home-manager/just-nixos.nix
     ../../../../modules/home-manager/gpg-cli.nix
     ../../../../modules/home-manager/zed.nix
-    # Desktop session configuration (uncomment one):
-    # ../../../../modules/home-manager/cinnamon.nix
-    ../../../../modules/home-manager/gnome-whitesur.nix
+    inputs.nix-whitesur-config.homeManagerModules.gnome
   ];
 
   home.homeDirectory = "/home/deepwatrcreatur";
+
+  # WhiteSur theming
+  whitesur = {
+    enable = true;
+    gnome.enable = true;
+    gtk.enable = true;
+  };
 
   programs.distrobox.fedora.enable = true;
 
@@ -36,6 +41,7 @@
     obsidian
     obsidian-export
     virt-viewer
+    xorg.xhost # X11 host access control for DeskFlow
   ];
 
   programs.firefox = {
@@ -50,12 +56,29 @@
     clipboardSharing = true
   '';
 
+  # X11 display setup for DeskFlow
+  systemd.user.services.xhost-deskflow = {
+    Unit = {
+      Description = "X11 host access for DeskFlow";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.xorg.xhost}/bin/xhost +local:";
+      RemainAfterExit = true;
+    };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
+  };
+
   # Deskflow server service
   systemd.user.services.deskflow = {
     Unit = {
       Description = "Deskflow Server";
-      After = [ "graphical-session.target" ];
-      Wants = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" "xhost-deskflow.service" ];
+      Wants = [ "graphical-session.target" "xhost-deskflow.service" ];
     };
     Service = {
       Type = "simple";
@@ -64,6 +87,10 @@
       '';
       Restart = "on-failure";
       RestartSec = "5";
+      Environment = [
+        "DISPLAY=:0"
+        "XAUTHORITY=${config.xdg.cacheHome}/.Xauthority"
+      ];
     };
     Install = {
       WantedBy = [ "graphical-session.target" ];
