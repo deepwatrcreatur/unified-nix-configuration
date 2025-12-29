@@ -2,6 +2,21 @@
 { config, pkgs, ... }:
 
 {
+  # Enable GNOME desktop environment
+  services.xserver.enable = true;
+  services.desktopManager.gnome.enable = true;
+  services.displayManager.gdm = {
+    enable = true;
+    wayland = false; # Force X11 to avoid AMD GPU issues
+  };
+  services.displayManager.autoLogin = {
+    enable = true;
+    user = "deepwatrcreatur";
+  };
+
+  # GTK theming for applications
+  programs.dconf.enable = true;
+
   # System packages for theming
   environment.systemPackages = with pkgs; [
     # Icon themes (these work across desktop environments)
@@ -10,6 +25,10 @@
 
     # Cursor themes
     capitaine-cursors # Clean cursor theme
+
+    # Additional themes
+    arc-theme
+    adwaita-icon-theme
 
     # GNOME applications and tools
     gnome-tweaks
@@ -30,21 +49,6 @@
     fira-code
     noto-fonts-color-emoji
   ];
-
-  # Enable GNOME desktop environment
-  services.xserver.enable = true;
-  services.desktopManager.gnome.enable = true;
-  services.displayManager.gdm = {
-    enable = true;
-    wayland = false; # Force X11 to avoid AMD GPU issues
-  };
-  services.displayManager.autoLogin = {
-    enable = true;
-    user = "deepwatrcreatur";
-  };
-
-  # GTK theming for applications
-  programs.dconf.enable = true;
 
   # Icon theme configuration (system-wide)
   environment.variables = {

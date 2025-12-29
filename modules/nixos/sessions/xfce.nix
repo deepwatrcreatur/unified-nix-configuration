@@ -1,19 +1,59 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
-  # Enable the X11 windowing system.
+  # ===========================================
+  # Base Configuration
+  # ===========================================
+
+  # Enable X11 windowing system.
   services.xserver.enable = true;
 
-  # Enable the XFCE desktop environment.
+  # Enable XFCE desktop environment.
   services.xserver.desktopManager.xfce.enable = true;
 
-  # Install plank, a simple and elegant dock.
-  environment.systemPackages = with pkgs; [
-    plank
+  # ===========================================
+  # Import Shared WhiteSur Theme Module
+  # ===========================================
+  # This provides:
+  # - WhiteSur GTK theme, icons, cursor
+  # - Plank dock (auto-start)
+  # - Font configuration
+  # - Environment variables
+
+  imports = [
+    ./whitesur-theme.nix
   ];
 
-  # XFCE's window manager, xfwm4, provides workspace previews and the
-  # ability to drag windows between workspaces out of the box. You may
-  # need to add the "Workspace Switcher" item to your panel and configure
-  # it to show previews.
+  # ===========================================
+  # XFCE-Specific Packages
+  # ===========================================
+
+  environment.systemPackages = with pkgs; [
+    xfce.xfce4-settings-plugin
+  ];
+
+  # ===========================================
+  # XDG Portals for XFCE
+  # ===========================================
+
+  xdg.portal = {
+    enable = true;
+    extraPortals = [
+      pkgs.xdg-desktop-portal-gtk
+      pkgs.xdg-desktop-portal-xfce
+    ];
+  };
+
+  # ===========================================
+  # XFCE Panel Notes
+  # ===========================================
+  # XFCE's window manager, xfwm4, provides workspace previews and
+  # ability to drag windows between workspaces out of box.
+  #
+  # Panel Customization for macOS Look:
+  # 1. Settings → Panel → Add new panel (top)
+  # 2. Set panel size to small (24-32px)
+  # 3. Enable panel transparency
+  # 4. Center panel items
+  # 5. Use WhiteSur-dark theme for transparent panel effect
 }
