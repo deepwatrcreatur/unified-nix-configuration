@@ -63,6 +63,9 @@
     enable = false;
   };
 
+  # Fix GDM crash - give it a writable home directory for dconf cache
+  users.users.gdm.home = lib.mkForce "/var/lib/gdm";
+
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
