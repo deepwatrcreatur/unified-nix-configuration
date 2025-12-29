@@ -25,7 +25,7 @@
   # WhiteSur theming
   whitesur = {
     enable = true;
-    gnome.enable = true;
+    gnome.enable = false;  # Disabled due to GDM crash with extension settings
     gtk.enable = true;
   };
 

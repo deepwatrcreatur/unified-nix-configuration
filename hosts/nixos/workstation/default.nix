@@ -85,14 +85,6 @@
       inputs.nix-whitesur-config.homeManagerModules.default
       ../../../users/deepwatrcreatur/hosts/workstation
     ];
-
-    # Override problematic GNOME extension settings that cause GDM crashes
-    # Keep other dconf settings but disable extensions that might conflict with GDM startup
-    dconf.settings = lib.mkForce {
-      "org/gnome/shell" = {
-        enabled-extensions = [];  # Disable all extensions - they can be re-enabled after GDM boots
-      };
-    };
   };
 
   # Additional system packages
@@ -140,7 +132,7 @@
     enable = true;
     gnome = {
       enable = true;
-      user = "deepwatrcreatur";
+      user = "";  # Disable auto-login - may be causing GDM crash
       autoRepeatDelay = 300;
       autoRepeatInterval = 40;
       wayland = false; # Enable X11 for DeskFlow compatibility
