@@ -14,7 +14,6 @@
     ../../../modules/nixos/attic-client.nix # Attic cache client
     ../../../modules/nixos/snap.nix # Snap package manager support
     inputs.nix-whitesur-config.nixosModules.default # WhiteSur theming flake
-    ../../../modules/nixos/sessions/x11-session-support.nix # GNOME X11 session support
 
     ../../../modules/nixos/keyboard-glitches.nix # Fix for stuck keyboard presses in Proxmox VM
     ../../../modules/wezterm-config.nix
@@ -48,6 +47,18 @@
   # GNOME configuration is handled by nix-whitesur-config flake
   services.xserver.enable = true;
   services.desktopManager.gnome.enable = true;
+
+  # GDM with X11 (Wayland disabled for DeskFlow clipboard sharing)
+  services.displayManager.gdm = {
+    enable = true;
+    wayland = false;
+  };
+
+  # Auto-login for faster access
+  services.displayManager.autoLogin = {
+    enable = true;
+    user = "deepwatrcreatur";
+  };
 
   security.rtkit.enable = true;
   services.pipewire = {
@@ -96,6 +107,8 @@
     distrobox
     filezilla
     git
+    gnome-session # X11 session manager
+    gnome-session-ctraced # Traced session for debugging
     gnome-shell # Required for GNOME desktop
     nushell # Stopgap: Add nushell at system level for ghostty compatibility
     nvtopPackages.amd # GPU monitoring tool for AMD GPUs
@@ -104,7 +117,9 @@
     usbutils
     vim
     vscode.fhs # VSCode with FHS environment
-    inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
+    inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform}.default
+    xdg-desktop-portal-gnome # Desktop portal for GNOME
+    xdg-desktop-portal-gtk # GTK desktop portal
   ];
 
   # Enable nix-ld for running dynamically linked executables (like homebrew packages)
@@ -139,7 +154,7 @@
       user = "";  # Disable auto-login - may be causing GDM crash
       autoRepeatDelay = 300;
       autoRepeatInterval = 40;
-      wayland = false; # Enable X11 for DeskFlow compatibility
+      wayland = false; # X11 required for DeskFlow clipboard sharing
     };
     fonts.enable = true;
   };
