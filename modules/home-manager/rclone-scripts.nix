@@ -49,11 +49,23 @@ in
       export SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
       export PATH="${lib.makeBinPath [ pkgs.sops ]}:$PATH"
 
-      # Decrypt rclone.conf
+      # Decrypt rclone.conf - with error handling
       mkdir -p "$HOME/.config/rclone"
       rm -f "$HOME/.config/rclone/rclone.conf"
-      sops -d "${toString cfg.secretsPath}/rclone.conf.enc" > "$HOME/.config/rclone/rclone.conf"
-      chmod 600 "$HOME/.config/rclone/rclone.conf"
+
+      # Check if the secrets path and file exist before trying to decrypt
+      SECRETS_PATH="${toString cfg.secretsPath}"
+      RCLONE_ENC="$SECRETS_PATH/rclone.conf.enc"
+
+      if [ -f "$RCLONE_ENC" ]; then
+        if [ -f "$SOPS_AGE_KEY_FILE" ]; then
+          sops -d "$RCLONE_ENC" > "$HOME/.config/rclone/rclone.conf" 2>/dev/null && chmod 600 "$HOME/.config/rclone/rclone.conf" || true
+        else
+          echo "Warning: SOPS age key not found at $SOPS_AGE_KEY_FILE, skipping rclone secrets decryption"
+        fi
+      else
+        echo "Warning: rclone.conf.enc not found at $RCLONE_ENC, skipping rclone secrets decryption"
+      fi
     '';
   };
 }
