@@ -19,10 +19,9 @@
     config.allowUnsupportedSystem = true; # Allow unsupported packages like cuDNN
   };
 
-  # GPU Infrastructure configuration
-  # TODO: Re-enable after base system is stable
+  # GPU Infrastructure configuration - start with minimal setup
   inference.gpu = {
-    enable = false; # Temporarily disabled
+    enable = false; # Keep disabled until storage issue resolved
     nvidia.enable = false;
     cuda = {
       enable = false;
@@ -32,9 +31,8 @@
   };
 
   # Ollama configuration (depends on GPU infrastructure)
-  # TODO: Re-enable after base system is stable
   inference.ollama = {
-    enable = false; # Temporarily disabled
+    enable = false; # Keep disabled until GPU infrastructure is ready
     customBuild = {
       enable = false;
       # cudaArchitectures will include Tesla P40 (6.1) when gpu.cuda.enableTeslaP40 = true
@@ -42,9 +40,8 @@
   };
 
   # llama.cpp configuration (alternative/complementary to Ollama)
-  # TODO: Re-enable after base system is stable
   inference.llama-cpp = {
-    enable = false; # Temporarily disabled
+    enable = false; # Keep disabled until GPU infrastructure is ready
     server.enable = false;
     customBuild = {
       enable = false;
@@ -109,5 +106,5 @@
   networking.networkmanager.enable = true;
   networking.firewall.enable = false;
 
-  system.stateVersion = "25.11";
+  system.stateVersion = "25.05"; # Match current working generation
 }

@@ -152,9 +152,34 @@ If you're fixing a package installation error:
 **Solution**: use --no-gpg-sign option
 
 ## Agent Instructions
+
+### Additional Resources
+For comprehensive Nix agent workflows and advanced patterns, see the [Nix Agent Guides](https://github.com/deepwatrcreatur/nix-agent-guides) repository. The patterns below are customized implementations used specifically in this project.
+
 ### Shell Environment
 - **Default shell is Fish**: Use Fish shell syntax for all commands to ensure compatibility with coding agents
 - **Avoid Nushell**: While Nushell is configured, Fish is set as default to prevent agent compatibility issues
+
+### Git Worktrees for This Project
+This project uses git worktrees for parallel development of different configuration approaches:
+
+#### Current Worktree Setup (inference1 VM example)
+```bash
+# Navigate to any worktree from home directory
+~/nix-main/          # Stable configuration (main branch)
+~/nix-cuda/          # GPU/CUDA development (ollama-cuda-working)
+~/nix-minimal/       # Lightweight testing (inference-minimal-rebuild)
+
+# Switch between configurations easily
+cd ~/nix-cuda && sudo nixos-rebuild test --flake .#inference1
+cd ~/nix-main && sudo nixos-rebuild test --flake .#inference1
+```
+
+#### Benefits for This Project
+- **Parallel testing**: Test CUDA vs CPU configurations simultaneously
+- **Safe experimentation**: Keep stable config while testing GPU acceleration
+- **Configuration comparison**: Easily diff different approaches
+- **No context switching**: Each worktree maintains its own working state
 
 ### tmux Session Management for Remote Work
 When working with remote hosts or running long-duration operations, use tmux to maintain persistent sessions:
@@ -210,6 +235,26 @@ ssh host "tmux send-keys -t session-name 'tail -f output.log' Enter"
 - **Use multiple windows**: Separate concerns like server processes, testing, and monitoring
 - **Check session existence**: Before creating, verify if session already exists to avoid conflicts
 - **Clean up**: Kill sessions when work is complete to avoid resource accumulation
+
+#### Project-Specific tmux Sessions
+Standard sessions used in this project:
+
+```bash
+# Inference VM development (primary use case)
+ssh 10.10.10.18 "tmux new-session -d -s inference-test"
+ssh 10.10.10.18 "tmux new-window -t inference-test -n server"    # For ollama serve
+ssh 10.10.10.18 "tmux new-window -t inference-test -n testing"   # For model testing
+ssh 10.10.18 "tmux new-window -t inference-test -n monitoring" # For nvitop/gpu monitoring
+
+# Multi-host sessions
+ssh homeserver "tmux new-session -d -s homeserver-work"
+ssh workstation "tmux new-session -d -s workstation-work"
+
+# Development per worktree
+tmux new-session -d -s main-dev -c ~/nix-main
+tmux new-session -d -s cuda-dev -c ~/nix-cuda
+tmux new-session -d -s minimal-dev -c ~/nix-minimal
+```
 ### Multi-Host Configuration Awareness
 - **Always check hostname first**: Start by running `hostname` to identify which host you're working on
 - **Host-specific commands**: Use appropriate commands based on the host type:

@@ -28,16 +28,9 @@
   #   ];
   # };
 
-  # Local storage mount for ollama data (optional - will fail silently if disk doesn't exist)
-  fileSystems."/ollama" = {
-    device = "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi1";
-    fsType = "ext4";
-    options = [
-      "defaults"
-      "rw"
-      "nofail"
-    ];
-  };
+  # Local storage mount for ollama data (drive-scsi1 doesn't exist on this VM)
+  # Only drive-scsi0 exists, which is the main system disk
+  # TODO: Add additional storage disk if needed for ollama data
 
   # Add ceph client to system packages
   environment.systemPackages = with pkgs; [

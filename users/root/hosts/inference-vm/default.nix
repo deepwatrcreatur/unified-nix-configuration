@@ -13,8 +13,8 @@
     ../../../../modules/home-manager/inference-ollama.nix
   ];
 
-  # Set home-manager state version
-  home.stateVersion = "25.11";
+  # Set home-manager state version (match current working generation)
+  home.stateVersion = lib.mkForce "25.05";
 
   # Root-specific packages for inference management (only what's not in common)
   home.packages = with pkgs; [
@@ -30,7 +30,7 @@
 
   # Enable Ollama home-manager integration for root
   programs.inference-ollama = {
-    enable = true;
+    enable = false; # Keep disabled until ollama service is enabled
     isRoot = true;
   };
 
