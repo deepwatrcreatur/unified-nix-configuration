@@ -15,12 +15,16 @@
     ../../../modules/nixos/snap.nix # Snap package manager support
 
     # Desktop environment (uncomment one):
-    ../../../modules/nixos/sessions/cinnamon.nix # Current: Cinnamon (transparent panels but can't shrink)
+    #../../../modules/nixos/sessions/cinnamon.nix # Current: Cinnamon (transparent panels but can't shrink)
+    ../../../modules/nixos/sessions/whitesur-gnome.nix
     # ../../../modules/nixos/sessions/garuda-themed-gnome.nix # Alternative: GNOME (floating dock, customizable)
 
     ../../../modules/nixos/keyboard-glitches.nix # Fix for stuck keyboard presses in Proxmox VM
     ../../../modules/wezterm-config.nix
     ../../../modules/activation-scripts # Activation scripts for system setup
+
+    # MODULAR THEMING: Uncomment to use modular theming system (replaces whitesur-theme.nix)
+    # ./test-modular-integration.nix
   ];
 
   # Homebrew is managed via home-manager (modules/home-manager/linuxbrew.nix)
