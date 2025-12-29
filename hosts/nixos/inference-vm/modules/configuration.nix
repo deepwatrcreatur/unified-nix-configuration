@@ -41,13 +41,10 @@
   # Ollama configuration with Tesla P40 CUDA support
   inference.ollama = {
     enable = true;
+    acceleration = "cuda"; # Explicitly enable CUDA acceleration
     customBuild = {
       enable = true;
-      # Tesla P40 compute capability 6.1 will be automatically included
-    };
-    webui = {
-      enable = true; # Enable OpenWebUI
-      port = 3000;   # Standard OpenWebUI port
+      # Tesla P40 compute capability 6.1 included in default architectures
     };
   };
 
@@ -63,6 +60,16 @@
 
   # Base VM configuration for inference machines
   services = {
+    # OpenWebUI for web interface to Ollama
+    open-webui = {
+      enable = true;
+      port = 3000;
+      host = "0.0.0.0"; # Allow external connections
+      environment = {
+        OLLAMA_BASE_URL = "http://localhost:11434";
+      };
+    };
+
     # Enable QEMU Guest Agent for better VM management
     qemuGuest.enable = true;
     openssh.enable = true;
