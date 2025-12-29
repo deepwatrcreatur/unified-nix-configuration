@@ -75,7 +75,7 @@ in
 
       packages = lib.mkOption {
         type = lib.types.listOf lib.types.package;
-        default = with pkgs; [ nvtop ];
+        default = with pkgs; [ nvitop ]; # Use nvitop instead of nvtop
         description = "Additional GPU monitoring packages";
       };
     };

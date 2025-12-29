@@ -58,18 +58,13 @@
     };
   };
 
+  # Add OpenWebUI package for web interface to Ollama
+  environment.systemPackages = with pkgs; [
+    open-webui # Web interface for Ollama
+  ];
+
   # Base VM configuration for inference machines
   services = {
-    # OpenWebUI for web interface to Ollama
-    open-webui = {
-      enable = true;
-      port = 3000;
-      host = "0.0.0.0"; # Allow external connections
-      environment = {
-        OLLAMA_BASE_URL = "http://localhost:11434";
-      };
-    };
-
     # Enable QEMU Guest Agent for better VM management
     qemuGuest.enable = true;
     openssh.enable = true;
