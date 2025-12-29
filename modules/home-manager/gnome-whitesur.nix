@@ -64,22 +64,39 @@
     };
 
     # ===========================================
-    # Dash to Dock Configuration (macOS-like dock)
+    # Dash to Dock Configuration (macOS-like floating dock)
     # ===========================================
     "org/gnome/shell/extensions/dash-to-dock" = {
-      dock-position = "BOTTOM";
-      dock-fixed = false;
-      autohide = true;
-      autohide-in-fullscreen = true;
-      intellihide = true;
-      show-apps-at-top = false;
+      # Position and size
+      dock-position = "RIGHT";  # Vertical dock on right edge
+      dock-fixed = false;  # Floating dock (not spanning full edge)
+      extend-height = false;  # Don't extend to full height
+      dock-alignment = "CENTER";  # Center the dock vertically
+
+      # Auto-hide behavior
+      autohide = false;  # Always visible with transparency
+      intellihide = false;  # Don't hide when windows overlap
+
+      # Transparency
       transparency-mode = "DYNAMIC";
       background-opacity = 0.3;
       customize-alphas = true;
       min-alpha = 0.2;
       max-alpha = 0.8;
+
+      # Icon configuration
       icon-size-fixed = true;
       dash-max-icon-size = 48;
+      show-apps-at-top = false;
+
+      # Behavior
+      click-action = "minimize-or-previews";  # macOS-like click behavior
+      scroll-action = "cycle-windows";
+
+      # Appearance
+      apply-custom-theme = true;
+      custom-theme-shrink = false;
+      running-indicator-style = "DOTS";  # Show dots for running apps (macOS style)
     };
 
     # ===========================================

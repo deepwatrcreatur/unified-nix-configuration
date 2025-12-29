@@ -33,13 +33,16 @@
     # GNOME applications and tools
     gnome-tweaks
     gnome-shell-extensions
-    # gnomeExtensions.dash-to-dock
+
+    # GNOME Extensions for macOS-like experience
+    gnomeExtensions.dash-to-dock  # Floating, auto-sizing dock
+    gnomeExtensions.blur-my-shell  # Transparency effects for panel and dock
+    gnomeExtensions.clipboard-indicator  # Clipboard manager
+
+    # Optional extensions (commented out for minimal setup)
     # gnomeExtensions.gsconnect
-    # gnomeExtensions.clipboard-indicator
-    # gnomeExtensions.pop-shell  # Excellent tiling window manager
-    # gnomeExtensions.transparent-window-moving  # For window transparency
-    # gnomeExtensions.blur-my-shell  # For shell transparency effects
-    # gnomeExtensions.weather-oclock
+    # gnomeExtensions.pop-shell  # Tiling window manager
+    # gnomeExtensions.transparent-window-moving
 
     # Additional tools for theming
     dconf-editor # For GTK app theming
