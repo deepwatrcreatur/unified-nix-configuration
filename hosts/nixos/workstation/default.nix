@@ -44,27 +44,19 @@
 
   # Configure keyboard - let input-leap handle caps lock synchronization
   # services.xserver.xkb.options = "caps:none"; # Disabled - using input-leap fix instead
-  # GNOME configuration is handled by nix-whitesur-config flake
-  services.xserver.enable = true;
-  services.desktopManager.gnome.enable = true;
 
-  # GDM with X11 (Wayland disabled for DeskFlow clipboard sharing)
-  services.displayManager.gdm = {
+  # GNOME with Wayland and WhiteSur theming via nix-whitesur-config flake
+  whitesur = {
     enable = true;
-    wayland = false;
+    gnome = {
+      enable = true;
+      user = "deepwatrcreatur";  # Auto-login with Wayland
+      autoRepeatDelay = 300;
+      autoRepeatInterval = 40;
+      wayland = true;  # Use Wayland (required for GNOME 49+)
+    };
+    fonts.enable = true;
   };
-
-  # Set GNOME as default session
-  services.displayManager.defaultSession = "gnome";
-
-  # Auto-login disabled - causes GDM to crash with SIGTRAP/g_assert
-  # See commit 4119f1f2 - auto-login triggers extension loading during GDM startup
-  services.displayManager.autoLogin = {
-    enable = false;
-  };
-
-  # Fix GDM crash - give it a writable home directory for dconf cache
-  users.users.gdm.home = lib.mkForce "/var/lib/gdm";
 
   security.rtkit.enable = true;
   services.pipewire = {
@@ -150,19 +142,6 @@
 
   # Enable fixes for stuck keyboard presses in Proxmox VM
   myModules.keyboardGlitches.enable = true;
-
-  # WhiteSur theming configuration
-  whitesur = {
-    enable = true;
-    gnome = {
-      enable = true;
-      user = "";  # Disable auto-login - may be causing GDM crash
-      autoRepeatDelay = 300;
-      autoRepeatInterval = 40;
-      wayland = false; # X11 required for DeskFlow clipboard sharing
-    };
-    fonts.enable = true;
-  };
 
   nix.settings.experimental-features = [
     "nix-command"

@@ -17,6 +17,7 @@
     ../../../../modules/home-manager/just-nixos.nix
     ../../../../modules/home-manager/gpg-cli.nix
     ../../../../modules/home-manager/zed.nix
+    inputs.nix-whitesur-config.homeManagerModules.gnome
   ];
 
   home.homeDirectory = "/home/deepwatrcreatur";
@@ -24,16 +25,8 @@
   # WhiteSur theming
   whitesur = {
     enable = true;
-    gnome.enable = false;  # Disabled due to GDM crash with extension settings
+    gnome.enable = true;  # Re-enabled with Wayland
     gtk.enable = true;
-  };
-
-  # Disable GNOME extensions to prevent GDM crashes with SIGTRAP
-  # Extensions can be re-enabled after successful boot
-  dconf.settings = {
-    "org/gnome/shell" = {
-      enabled-extensions = [];
-    };
   };
 
   programs.distrobox.fedora.enable = true;
