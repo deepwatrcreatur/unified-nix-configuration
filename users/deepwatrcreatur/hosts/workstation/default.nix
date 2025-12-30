@@ -17,15 +17,14 @@
     ../../../../modules/home-manager/just-nixos.nix
     ../../../../modules/home-manager/gpg-cli.nix
     ../../../../modules/home-manager/zed.nix
-    inputs.nix-whitesur-config.homeManagerModules.gnome
+    ../../../../modules/home-manager/mate.nix
   ];
 
   home.homeDirectory = "/home/deepwatrcreatur";
 
-  # WhiteSur theming
+  # WhiteSur theming for MATE
   whitesur = {
     enable = true;
-    gnome.enable = true;  # Re-enabled with Wayland
     gtk.enable = true;
   };
 

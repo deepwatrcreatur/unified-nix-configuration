@@ -13,7 +13,7 @@
     ../../../modules/nixos/common # Common NixOS modules (SSH keys, etc.)
     ../../../modules/nixos/attic-client.nix # Attic cache client
     ../../../modules/nixos/snap.nix # Snap package manager support
-    inputs.nix-whitesur-config.nixosModules.default # WhiteSur theming flake
+    ../../../modules/nixos/sessions/mate.nix # MATE with WhiteSur theming
 
     ../../../modules/nixos/keyboard-glitches.nix # Fix for stuck keyboard presses in Proxmox VM
     ../../../modules/wezterm-config.nix
@@ -45,17 +45,10 @@
   # Configure keyboard - let input-leap handle caps lock synchronization
   # services.xserver.xkb.options = "caps:none"; # Disabled - using input-leap fix instead
 
-  # GNOME with Wayland and WhiteSur theming via nix-whitesur-config flake
-  whitesur = {
+  # X11 with MATE and WhiteSur theming
+  services.xserver = {
     enable = true;
-    gnome = {
-      enable = true;
-      user = "deepwatrcreatur";  # Auto-login with Wayland
-      autoRepeatDelay = 300;
-      autoRepeatInterval = 40;
-      wayland = true;  # Use Wayland (required for GNOME 49+)
-    };
-    fonts.enable = true;
+    xkb.options = "caps:none";  # Let input-leap handle caps lock synchronization
   };
 
   security.rtkit.enable = true;
@@ -105,8 +98,6 @@
     distrobox
     filezilla
     git
-    gnome-session # X11 session manager
-    gnome-shell # Required for GNOME desktop
     nushell # Stopgap: Add nushell at system level for ghostty compatibility
     nvtopPackages.amd # GPU monitoring tool for AMD GPUs
     pavucontrol
@@ -115,7 +106,6 @@
     vim
     vscode.fhs # VSCode with FHS environment
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
-    xdg-desktop-portal-gnome # Desktop portal for GNOME
     xdg-desktop-portal-gtk # GTK desktop portal
   ];
 
