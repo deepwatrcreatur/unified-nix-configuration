@@ -1,6 +1,16 @@
 { config, pkgs, lib, ... }:
 
 {
+  imports = [
+    ./whitesur-theme.nix
+    ./whitesur-desktops.nix
+  ];
+
+  # Configure MATE specific settings
+  modules.desktop.sessions.whitesur-desktops = {
+    enable = true;
+  };
+
   # Enable X11 windowing system.
   services.xserver.enable = true;
 
@@ -20,33 +30,19 @@
     user = "deepwatrcreatur";
   };
 
-  # Import Shared WhiteSur Theme Module
-  imports = [
-    ./whitesur-theme.nix
-  ];
-
-  # MATE-Specific Packages
+  # Packages for MATE with WhiteSur theming
   environment.systemPackages = with pkgs; [
-    # MATE-specific settings plugins
-    mate.mate-settings-daemon
-    
-    # Application launcher - Ulauncher (similar to Spotlight/Alfred)
-    ulauncher
+    # Common WhiteSur desktop packages
     deskflow
-    
-    # Audio system tools for macOS-like volume control
     pulseaudio-ctl
-    pavucontrol  # Audio GUI similar to macOS audio preferences
+    pavucontrol
+    flameshot
+    copyq
+    dconf
     
-    # Additional tools for macOS-like workflow
-    flameshot  # Screenshot tool similar to macOS
-    copyq  # Clipboard manager (macOS-like clipboard history)
-    
-    # Compositor for transparency effects
-    picom
-    
-    # Configuration tools
-    dconf  # Settings backend
+    # MATE-specific packages
+    mate.mate-settings-daemon
+    ulauncher
   ];
 
   # XDG Portals for MATE

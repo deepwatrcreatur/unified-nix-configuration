@@ -12,8 +12,7 @@
     ../.. # Import default user config
     ../../../../modules/home-manager
     ../../../../modules/home-manager/gpg-cli.nix
-    ../../../../modules/home-manager/just.nix
-    ../../../../modules/home-manager/just-nixos.nix
+    ./just.nix
     ../../../../modules/home-manager/gpu-monitoring.nix
     # Temporarily disable to fix home-manager startup failure
     # ../../../../modules/home-manager/inference-ollama.nix

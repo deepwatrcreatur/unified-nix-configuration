@@ -1,5 +1,7 @@
 # users/deepwatrcreatur/hosts/inference-node/justfile
+# Custom justfile for inference-node - uses Home Manager rebuilds instead of system rebuilds
 
+# Custom commands specific to inference-node
 update:
   home-manager switch --flake /home/deepwatrcreatur/unified-nix-configuration#deepwatrcreatur-inference-node
 

@@ -1,6 +1,17 @@
 { config, pkgs, lib, ... }:
 
 {
+  imports = [
+    ./whitesur-common.nix
+    ./whitesur-desktops.nix
+  ];
+
+  # Configure Cinnamon specific settings
+  modules.desktop.sessions.whitesur-common = {
+    enable = true;
+    desktopManager = "cinnamon";
+  };
+
   # ===========================================
   # Base Configuration
   # ===========================================
@@ -25,19 +36,6 @@
   };
 
   # ===========================================
-  # Import Shared WhiteSur Theme Module
-  # ===========================================
-  # This provides:
-  # - WhiteSur GTK theme, icons, cursor
-  # - Plank dock (auto-start)
-  # - Font configuration
-  # - Environment variables
-
-  imports = [
-    ./whitesur-theme.nix
-  ];
-
-  # ===========================================
   # Cinnamon-Specific Packages
   # ===========================================
 
@@ -45,29 +43,17 @@
     # Application launcher - Ulauncher (similar to Spotlight/Alfred)
     # Launch with Ctrl+Space (configurable in Ulauncher preferences)
     ulauncher
-    deskflow
-    
-    # Audio system tools for macOS-like volume control
-    pulseaudio-ctl
-    pavucontrol  # Audio GUI similar to macOS audio preferences
-    
-    # Additional tools for macOS-like workflow
-    flameshot  # Screenshot tool similar to macOS
-    copyq  # Clipboard manager (macOS-like clipboard history)
-    
-    # Compositor for transparency effects
-    picom
     
     # Configuration tools
     dconf  # Settings backend
   ];
 
   # ===========================================
-  # XDG Portals for Cinnamon
+  # Cinnamon-Specific XDG Portals
   # ===========================================
+  # Note: Common XDG portals are configured in whitesur-common.nix
 
   xdg.portal = {
-    enable = true;
     extraPortals = [
       pkgs.xdg-desktop-portal-gtk
     ];
@@ -89,34 +75,11 @@
     };
   };
 
-  # Auto-start Ulauncher configuration script
-  systemd.user.services.ulauncher-config = lib.mkIf config.services.xserver.enable {
-    description = "Configure Ulauncher for macOS-like behavior";
-    wantedBy = [ "graphical-session.target" ];
-    after = [ "ulauncher.service" ];
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = "${pkgs.bash}/bin/bash ${./cinnamon/ulauncher-config.sh}";
-      RemainAfterExit = true;
-    };
-  };
-
-  # Auto-start audio configuration
-  systemd.user.services.audio-config = lib.mkIf config.services.xserver.enable {
-    description = "Configure audio for macOS-like behavior";
-    wantedBy = [ "graphical-session.target" ];
-    after = [ "pulseaudio.service" ];
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = "${pkgs.bash}/bin/bash ${./cinnamon/audio-setup.sh}";
-      RemainAfterExit = true;
-    };
-  };
-
   # Auto-start Cinnamon desktop configuration
   systemd.user.services.cinnamon-config = lib.mkIf config.services.xserver.enable {
     description = "Configure Cinnamon for macOS-like behavior";
     wantedBy = [ "graphical-session.target" ];
+    after = [ "ulauncher.service" ];
     serviceConfig = {
       Type = "oneshot";
       ExecStart = "${pkgs.bash}/bin/bash ${./cinnamon/cinnamon-config.sh}";
@@ -137,27 +100,17 @@
   };
 
   # ===========================================
-  # Compositor for macOS-like Transparency Effects
+  # Compositor Configuration
   # ===========================================
-  # NOTE: Picom is disabled because Cinnamon has its own compositor (Muffin)
-  # Running both causes conflicts. Cinnamon's built-in compositor provides
-  # transparency and compositing effects.
-
-  # services.picom.enable = false;  # Disabled - conflicts with Cinnamon's Muffin
+  # NOTE: Picom is disabled for Cinnamon because it has its own compositor (Muffin)
+  # Running both causes conflicts. Common picom configuration is in whitesur-common.nix
+  
+  services.picom.enable = false;  # Disabled - conflicts with Cinnamon's Muffin
 
   # ===========================================
-  # Touchpad Configuration for macOS-like Gestures
+  # Touchpad Configuration
   # ===========================================
-
-  # Configure touchpad for natural scrolling (macOS behavior)
-  services.libinput = {
-    enable = true;
-    touchpad = {
-      tapping = true;
-      naturalScrolling = true;  # macOS-like scrolling
-      clickMethod = "clickfinger";
-    };
-  };
+  # Note: Common touchpad configuration is in whitesur-common.nix
 
   # ===========================================
   # Cinnamon-Specific Theme Configuration

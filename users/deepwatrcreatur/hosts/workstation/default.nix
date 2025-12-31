@@ -13,8 +13,6 @@
 
     ../../../../modules/home-manager
     ../../../../modules/home-manager/ghostty
-    ../../../../modules/home-manager/just.nix
-    ../../../../modules/home-manager/just-nixos.nix
     ../../../../modules/home-manager/gpg-cli.nix
     ../../../../modules/home-manager/zed.nix
     ../../../../modules/home-manager/mate.nix
@@ -76,8 +74,14 @@
   systemd.user.services.deskflow = {
     Unit = {
       Description = "Deskflow Server";
-      After = [ "graphical-session.target" "xhost-deskflow.service" ];
-      Wants = [ "graphical-session.target" "xhost-deskflow.service" ];
+      After = [
+        "graphical-session.target"
+        "xhost-deskflow.service"
+      ];
+      Wants = [
+        "graphical-session.target"
+        "xhost-deskflow.service"
+      ];
     };
     Service = {
       Type = "simple";
