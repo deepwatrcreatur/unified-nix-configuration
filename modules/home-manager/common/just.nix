@@ -3,6 +3,7 @@
   config,
   pkgs,
   lib,
+  hostName ? "",
   ...
 }:
 
@@ -17,11 +18,11 @@ let
       "unknown";
 
   # System hostname for flake references
-  # On NixOS: use config.networking.hostName
-  # On Darwin: use config.home.username (no networking config available)
+  # Passed via extraSpecialArgs from flake.nix for NixOS/Darwin systems
+  # Falls back to config.home.username if not provided
   hostname =
-    if platform == "nixos" then
-      config.networking.hostName or config.home.username
+    if hostName != "" then
+      hostName
     else
       config.home.username;
 
