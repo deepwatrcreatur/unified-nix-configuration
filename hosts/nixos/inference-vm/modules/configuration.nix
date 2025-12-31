@@ -8,6 +8,7 @@
 {
   imports = [
     ../../../../modules/common/nix-settings.nix
+    ../../../../modules/nixos/inference-vm-nix-overrides.nix
   ];
 
   # Enable fish shell since users set it as default
