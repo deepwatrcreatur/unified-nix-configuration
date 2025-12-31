@@ -1,5 +1,5 @@
 # users/deepwatrcreatur/hosts/inference-vm/just.nix
-# Just module override for inference-vm with custom justfile
+# Custom justfile for inference-vm (overrides unified module)
 {
   config,
   pkgs,
@@ -8,8 +8,7 @@
 }:
 
 {
-  # Import of unified just module with platform auto-detection
-  imports = [ ../../../../modules/home-manager/common/just.nix ];
-  # Override with host-specific justfile
+  home.packages = [ pkgs.just ];
+  # Use host-specific custom justfile instead of unified module
   home.file.".justfile".source = ./justfile;
 }

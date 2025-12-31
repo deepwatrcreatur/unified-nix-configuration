@@ -29,16 +29,5 @@
   # required to enable some recently-added functionality
   system.primaryUser = "deepwatrcreatur";
 
-  users.users.deepwatrcreatur = {
-    name = "deepwatrcreatur";
-    home = "/Users/deepwatrcreatur";
-  };
-
-  home-manager.users.deepwatrcreatur = {
-    imports = [
-      ../../modules/home-manager
-    ];
-    programs.attic-client.enable = true;
-  };
   system.stateVersion = 6;
 }

@@ -23,7 +23,10 @@
       inputs.sops-nix.nixosModules.sops
       inputs.home-manager.nixosModules.home-manager
       {
-        home-manager.extraSpecialArgs = homeManagerModuleArgs;
+        home-manager.extraSpecialArgs = homeManagerModuleArgs // {
+          hostName = "nixos_lxc_without_determinate";
+          isDesktop = false;
+        };
         home-manager.useGlobalPkgs = true;
         home-manager.useUserPackages = true;
         home-manager.sharedModules = [
