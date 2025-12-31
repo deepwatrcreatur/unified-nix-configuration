@@ -318,6 +318,42 @@
             ]
             ++ modules;
           };
+
+        # Output builder for single NixOS configuration
+        mkNixosOutput =
+          {
+            name,
+            system ? "x86_64-linux",
+            hostPath,
+            modules ? [ ],
+            extraModules ? [ ],
+            isDesktop ? false,
+            includeSnapd ? true,
+          }:
+          nixpkgsLib.setAttrByPath [ "nixosConfigurations" name ] (
+            helpers.mkNixosSystem {
+              inherit system hostPath modules extraModules isDesktop includeSnapd;
+            }
+          );
+
+        # Output builder for single Darwin configuration
+        mkDarwinOutput =
+          {
+            name,
+            system ? "aarch64-darwin",
+            hostPath,
+            username,
+            modules ? [ ],
+            isDesktop ? true,
+          }:
+          nixpkgsLib.setAttrByPath [ "darwinConfigurations" name ] (
+            helpers.mkDarwinSystem {
+              inherit system hostPath username modules isDesktop;
+            }
+          );
+
+        # Merge multiple output configurations (used for files with multiple hosts)
+        mergeOutputs = outputs: nixpkgsLib.foldl' (acc: out: acc // out) { } outputs;
       };
 
       # Helper to load and merge all output configurations

@@ -1,13 +1,12 @@
 # outputs/cache-build-server.nix - NixOS Build Server LXC Container
 { helpers, ... }:
-{
-  nixosConfigurations.cache-build-server = helpers.mkNixosSystem {
-    system = "x86_64-linux";
-    hostPath = ../hosts/nixos-lxc/cache-build-server;
-    isDesktop = false;
-    extraModules = [
-      ../hosts/nixos-lxc/lxc-systemd-suppressions.nix
-      ../hosts/nixos # Base NixOS config
-    ];
-  };
-}
+(helpers.mkNixosOutput {
+  name = "cache-build-server";
+  system = "x86_64-linux";
+  hostPath = ../hosts/nixos-lxc/cache-build-server;
+  isDesktop = false;
+  extraModules = [
+    ../hosts/nixos-lxc/lxc-systemd-suppressions.nix
+    ../hosts/nixos # Base NixOS config
+  ];
+})
