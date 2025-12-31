@@ -17,6 +17,9 @@
 
   networking.hostName = "nixos_lxc";
 
+  # Enable fish shell since it's used by users
+  programs.fish.enable = true;
+
   security.sudo.enable = true;
   security.sudo.wheelNeedsPassword = false;
 

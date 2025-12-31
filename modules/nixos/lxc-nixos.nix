@@ -8,7 +8,8 @@
 {
   # LXC Container specific settings
   boot.isContainer = true;
-  boot.loader.initScript.enable = true;
+  # lxc-container.nix module handles the bootloader, don't set initScript here
+  boot.loader.initScript.enable = false;
 
   # Disable services not needed in containers
   services.udisks2.enable = false;

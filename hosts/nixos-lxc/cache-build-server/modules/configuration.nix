@@ -12,6 +12,9 @@
     ../../../../modules/nixos/networking.nix
   ];
 
+  # Enable fish shell since users set it as default
+  programs.fish.enable = true;
+
   # SOPS configuration for secrets management
   sops.age.keyFile = "/var/lib/sops/age/keys.txt";
 

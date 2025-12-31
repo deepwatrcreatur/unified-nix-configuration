@@ -13,6 +13,9 @@
     ../nixos-lxc/lxc-systemd-suppressions.nix
   ];
 
+  # Enable fish shell since users set it as default
+  programs.fish.enable = true;
+
   # Ensure SSH is enabled for SOPS
   services.openssh.enable = true;
   services.nginx-proxy-manager.enable = true;

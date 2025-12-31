@@ -10,6 +10,9 @@
     ../../../../modules/common/nix-settings.nix
   ];
 
+  # Enable fish shell since users set it as default
+  programs.fish.enable = true;
+
   # Nixpkgs configuration
   nixpkgs = {
     config.allowUnfree = true;

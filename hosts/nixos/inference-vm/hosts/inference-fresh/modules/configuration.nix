@@ -43,6 +43,9 @@
   # Remove ceph module since ceph is not currently configured
   # boot.kernelModules = [ "ceph" ];
 
+  # Enable fish shell since users set it as default
+  programs.fish.enable = true;
+
   # Time zone
   time.timeZone = "America/Toronto";
 
