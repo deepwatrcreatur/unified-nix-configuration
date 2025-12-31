@@ -17,7 +17,13 @@ let
       "unknown";
 
   # System hostname for flake references
-  hostname = config.networking.hostName or config.home.username;
+  # On NixOS: use config.networking.hostName
+  # On Darwin: use config.home.username (no networking config available)
+  hostname =
+    if platform == "nixos" then
+      config.networking.hostName or config.home.username
+    else
+      config.home.username;
 
   # Base justfile content (common commands)
   baseJustfile = ''
