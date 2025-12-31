@@ -129,6 +129,25 @@
         in
         map (fileName: dir + "/${fileName}") nixFileNames;
 
+      # Helper to auto-import all .nix files and directories from a common directory
+      # Used by module default.nix files to automatically load all modules from a common subdirectory
+      autoImportCommon =
+        {
+          commonDir,
+          lib,
+          includeDirectories ? true,
+          excludeFiles ? [ ],
+        }:
+        let
+          items = builtins.readDir commonDir;
+          # Filter to include .nix files and optionally directories
+          isValidItem = name: type:
+            (type == "regular" && nixpkgsLib.hasSuffix ".nix" name && !nixpkgsLib.elem name excludeFiles)
+            || (includeDirectories && type == "directory");
+          validItems = nixpkgsLib.filterAttrs isValidItem items;
+        in
+        nixpkgsLib.mapAttrsToList (name: _: commonDir + "/${name}") validItems;
+
       # Helper functions to reduce boilerplate in individual host files
       helpers = {
         # Standard NixOS system builder

@@ -6,13 +6,14 @@
   ...
 }:
 let
-  # Helper to import all .nix files from common directory
+  # Auto-import all .nix files and directories from common directory
   commonDir = ./common;
-  commonItems = builtins.readDir commonDir;
-  commonModules = lib.filterAttrs (
-    name: type: (type == "regular" && lib.hasSuffix ".nix" name) || type == "directory"
-  ) commonItems;
-  commonImports = lib.mapAttrsToList (name: _: commonDir + "/${name}") commonModules;
+  commonImports = lib.mapAttrsToList
+    (name: _: commonDir + "/${name}")
+    (lib.filterAttrs
+      (name: type: (type == "regular" && lib.hasSuffix ".nix" name) || type == "directory")
+      (builtins.readDir commonDir)
+    );
 in
 {
   imports = commonImports;
