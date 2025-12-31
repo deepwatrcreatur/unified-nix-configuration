@@ -353,7 +353,8 @@
           );
 
         # Merge multiple output configurations (used for files with multiple hosts)
-        mergeOutputs = outputs: nixpkgsLib.foldl' (acc: out: acc // out) { } outputs;
+        # Use recursiveUpdate to properly merge nested nixosConfigurations
+        mergeOutputs = outputs: nixpkgsLib.foldl' (acc: out: nixpkgsLib.recursiveUpdate acc out) { } outputs;
       };
 
       # Helper to load and merge all output configurations
