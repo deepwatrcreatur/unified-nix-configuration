@@ -7,6 +7,7 @@ let
     "default.nix"
     "common"
     "inference-vm"
+    "inference-vm-nix-overrides.nix"
     "sessions"
     "garuda-themed-gnome.nix"
     "garuda-themed-kde.nix"
