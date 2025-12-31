@@ -20,53 +20,31 @@
   };
 
   # GPU Infrastructure configuration - Tesla P40 optimized
-    enable = true;
-    nvidia = {
-      enable = true;
-      powerManagement = {
-        enable = false; # Disable power management for Tesla P40 stability
-        finegrained = false;
-      };
-      useOpenDriver = false; # Use proprietary driver for Tesla P40
-    };
-    cuda = {
-      enable = true;
-      enableTeslaP40 = true; # Enable Tesla P40 specific optimizations
-      package = config.boot.kernelPackages.nvidiaPackages.production; # Use production driver
-    };
-    monitoring.enable = true; # Enable GPU monitoring
+  hardware.nvidia = {
+    modesetting.enable = true;
+    powerManagement.enable = false; # Disable for Tesla P40 stability
+    open = false; # Use proprietary driver
   };
-
-  # Ollama configuration with Tesla P40 CUDA support
-    enable = true;
-    acceleration = "cuda"; # Explicitly enable CUDA acceleration
-    customBuild = {
-      enable = true;
-      # Tesla P40 compute capability 6.1 included in default architectures
-    };
-  };
-
-  # llama.cpp configuration (alternative/complementary to Ollama)
-    enable = false; # Keep disabled until GPU infrastructure is ready
-    server.enable = false;
-    customBuild = {
-      enable = false;
-      cudaSupport = false; # Will be enabled when GPU infrastructure is enabled
-    };
-  };
+  hardware.graphics.enable = true;
 
   # Add OpenWebUI package for web interface to Ollama
   environment.systemPackages = with pkgs; [
     open-webui # Web interface for Ollama
   ];
 
-  # Base VM configuration for inference machines
+  # Base VM configuration for inference machines and services
   services = {
     # Enable QEMU Guest Agent for better VM management
     qemuGuest.enable = true;
     openssh.enable = true;
     netdata.enable = true;
     tailscale.enable = true;
+
+    # Ollama configuration with Tesla P40 CUDA support
+    ollama = {
+      enable = true;
+      # CUDA acceleration will be available via hardware.nvidia configuration
+    };
   };
 
   # Boot loader configuration for UEFI with systemd-boot
@@ -106,11 +84,7 @@
   systemd.services."getty@tty1".enable = false;
   systemd.services."autovt@tty1".enable = false;
 
-
   security.sudo.wheelNeedsPassword = false;
-
-  # Enable fish shell for users
-  programs.fish.enable = true;
 
   # Networking
   networking.networkmanager.enable = true;
@@ -118,11 +92,5 @@
 
   system.stateVersion = "25.05"; # Match current working generation
   services.xserver.videoDrivers = [ "nvidia" ];
-  hardware.nvidia = {
-    modesetting.enable = true;
-    powerManagement.enable = false; # Disable for Tesla P40 stability
-    open = false; # Use proprietary driver
-  };
-  hardware.graphics.enable = true;
 }
 
