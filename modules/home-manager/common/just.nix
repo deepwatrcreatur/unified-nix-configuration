@@ -16,6 +16,9 @@ let
     else
       "unknown";
 
+  # Username for justfile commands
+  username = config.home.username;
+
   # Base justfile content (common commands)
   baseJustfile = ''
     # Default command when 'just' is run without arguments
@@ -78,7 +81,7 @@ let
 
     # Update macOS system using darwin-rebuild
     update:
-        ulimit -n 65536; sudo /nix/var/nix/profiles/system/sw/bin/darwin-rebuild switch --flake $NH_FLAKE#''${config.home.username}
+        ulimit -n 65536; sudo /nix/var/nix/profiles/system/sw/bin/darwin-rebuild switch --flake $NH_FLAKE#${username}
 
     # Update macOS system using nh helper
     nh-update:
@@ -86,11 +89,11 @@ let
 
     # Build macOS system without switching
     build-darwin:
-        ulimit -n 65536; sudo /nix/var/nix/profiles/system/sw/bin/darwin-rebuild build --flake $NH_FLAKE#''${config.home.username}
+        ulimit -n 65536; sudo /nix/var/nix/profiles/system/sw/bin/darwin-rebuild build --flake $NH_FLAKE#${username}
 
     # Test macOS configuration
     test-darwin:
-        ulimit -n 65536; sudo /nix/var/nix/profiles/system/sw/bin/darwin-rebuild test --flake $NH_FLAKE#''${config.home.username}
+        ulimit -n 65536; sudo /nix/var/nix/profiles/system/sw/bin/darwin-rebuild test --flake $NH_FLAKE#${username}
 
     # Show macOS version
     darwin-version:
@@ -126,7 +129,7 @@ let
 
     # Update NixOS system using nixos-rebuild
     update:
-        /run/current-system/sw/bin/sudo nixos-rebuild switch --flake $NH_FLAKE#''${config.home.username}
+        /run/current-system/sw/bin/sudo nixos-rebuild switch --flake $NH_FLAKE#${username}
 
     # Update NixOS system using nh helper
     nh-update:
@@ -134,11 +137,11 @@ let
 
     # Build NixOS system without switching
     build-nixos:
-        /run/current-system/sw/bin/sudo nixos-rebuild build --flake $NH_FLAKE#''${config.home.username}
+        /run/current-system/sw/bin/sudo nixos-rebuild build --flake $NH_FLAKE#${username}
 
     # Test NixOS configuration
     test-nixos:
-        /run/current-system/sw/bin/sudo nixos-rebuild test --flake $NH_FLAKE#''${config.home.username}
+        /run/current-system/sw/bin/sudo nixos-rebuild test --flake $NH_FLAKE#${username}
 
     # Show NixOS version
     nixos-version:
