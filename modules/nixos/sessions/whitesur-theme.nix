@@ -21,7 +21,7 @@
     # Font packages for macOS-like appearance
     noto-fonts
     noto-fonts-cjk-sans
-    noto-fonts-emoji
+    noto-fonts-color-emoji
     
     # Plank dock for macOS-like dock experience
     plank
@@ -34,7 +34,7 @@
     packages = with pkgs; [
       noto-fonts
       noto-fonts-cjk-sans
-      noto-fonts-emoji
+      noto-fonts-color-emoji
     ];
     
     fontconfig = {
