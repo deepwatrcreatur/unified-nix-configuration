@@ -18,13 +18,19 @@ let
     # Don't use set -e; we want to continue even if some packages fail
     set -u
 
+    # Skip linuxbrew setup in LXC containers - it's not compatible
+    if [ -f /.dockerenv ] || grep -q 'lxc' /proc/1/cgroup 2>/dev/null; then
+      echo "Skipping linuxbrew setup in container environment"
+      exit 0
+    fi
+
     # Install Homebrew if not present
     if [ ! -f "${brewPrefix}/bin/brew" ]; then
       echo "Installing Homebrew to ${brewPrefix}..."
-      
+
       # Set up comprehensive PATH for homebrew installer on NixOS
       export PATH="${pkgs.coreutils}/bin:${pkgs.util-linux}/bin:${pkgs.gnugrep}/bin:${pkgs.gawk}/bin:${pkgs.git}/bin:${pkgs.curl}/bin:${pkgs.glibc.bin}/bin:${pkgs.findutils}/bin:${pkgs.gnused}/bin:${pkgs.gnutar}/bin:${pkgs.gzip}/bin:${pkgs.which}/bin:${pkgs.ruby}/bin:/nix/var/nix/profiles/default/bin:/run/current-system/sw/bin:$PATH"
-      
+
       # Run the installer with proper environment
       NONINTERACTIVE=1 ${pkgs.bash}/bin/bash -c "$(${pkgs.curl}/bin/curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
@@ -46,16 +52,19 @@ let
     )}
 
     # Install and link common packages (continue on failure)
-    ${concatStringsSep "\n" (
-      map (formula: ''
-        if ! "${brewPrefix}/bin/brew" list "${formula}" &>/dev/null; then
-          echo "Installing formula: ${formula}"
-          "${brewPrefix}/bin/brew" install "${formula}" || echo "Warning: Failed to install ${formula}"
-        fi
-        # Ensure package is linked (overwrite stale links)
-        "${brewPrefix}/bin/brew" link --overwrite "${formula}" 2>/dev/null || true
-      '') commonBrews
-    )}
+    # Only try to install if not in a container environment
+    if ! ([ -f /.dockerenv ] || grep -q 'lxc' /proc/1/cgroup 2>/dev/null); then
+      ${concatStringsSep "\n" (
+        map (formula: ''
+          if ! "${brewPrefix}/bin/brew" list "${formula}" &>/dev/null; then
+            echo "Installing formula: ${formula}"
+            "${brewPrefix}/bin/brew" install "${formula}" || echo "Warning: Failed to install ${formula}"
+          fi
+          # Ensure package is linked (overwrite stale links)
+          "${brewPrefix}/bin/brew" link --overwrite "${formula}" 2>/dev/null || true
+        '') commonBrews
+      )}
+    fi
 
     echo "Homebrew setup complete!"
     echo "Run 'brew upgrade' to update outdated packages"
