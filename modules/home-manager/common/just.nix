@@ -129,7 +129,7 @@ let
 
     # Update NixOS system using nixos-rebuild
     update:
-        /run/current-system/sw/bin/sudo nixos-rebuild switch --flake $NH_FLAKE#${username}
+        /run/wrappers/bin/sudo nixos-rebuild switch --flake $NH_FLAKE#${username}
 
     # Update NixOS system using nh helper
     nh-update:
@@ -137,11 +137,11 @@ let
 
     # Build NixOS system without switching
     build-nixos:
-        /run/current-system/sw/bin/sudo nixos-rebuild build --flake $NH_FLAKE#${username}
+        /run/wrappers/bin/sudo nixos-rebuild build --flake $NH_FLAKE#${username}
 
     # Test NixOS configuration
     test-nixos:
-        /run/current-system/sw/bin/sudo nixos-rebuild test --flake $NH_FLAKE#${username}
+        /run/wrappers/bin/sudo nixos-rebuild test --flake $NH_FLAKE#${username}
 
     # Show NixOS version
     nixos-version:
