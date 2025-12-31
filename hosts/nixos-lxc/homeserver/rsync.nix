@@ -6,7 +6,7 @@
 }:
 
 {
-  imports = [ ../../modules/nixos/rsync-enhanced.nix ];
+  imports = [ ../../../modules/nixos/rsync-enhanced.nix ];
 
   services.rsync-enhanced = {
     enable = true;

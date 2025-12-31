@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ../../modules/nixos/networking.nix
+    ../../../modules/nixos/networking.nix
   ];
 
   networking.hostName = "homeserver";

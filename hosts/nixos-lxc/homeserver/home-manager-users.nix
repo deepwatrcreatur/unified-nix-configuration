@@ -21,9 +21,9 @@ in
 
     users.deepwatrcreatur = {
       imports = [
-        ../../users/deepwatrcreatur
-        ../../users/deepwatrcreatur/hosts/homeserver
-        ../../modules/home-manager
+        ../../../users/deepwatrcreatur
+        ../../../users/deepwatrcreatur/hosts/homeserver
+        ../../../modules/home-manager
 
       ];
       home.packages =

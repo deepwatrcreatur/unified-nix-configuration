@@ -9,8 +9,8 @@
 {
   imports = [
     "${modulesPath}/virtualisation/lxc-container.nix"
-    ../../modules/nixos/services/iperf3.nix
-    ../nixos-lxc/lxc-systemd-suppressions.nix
+    ../../../modules/nixos/services/iperf3.nix
+    ../lxc-systemd-suppressions.nix
   ];
 
   # Enable fish shell since users set it as default
