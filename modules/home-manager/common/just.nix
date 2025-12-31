@@ -3,22 +3,19 @@
   config,
   pkgs,
   lib,
-  hostName ? config.home.username,
-  platform ? null,
-  hostSpecificJustfile ? null,
   ...
 }:
 
 let
-  # Auto-detect platform if not specified
-  detectedPlatform =
+  # Auto-detect platform
+  platform =
     if pkgs.stdenv.isDarwin then
       "darwin"
     else if pkgs.stdenv.isLinux then
       "nixos"
     else
       "unknown";
-  currentPlatform = platform;
+
   # Base justfile content (common commands)
   baseJustfile = ''
     # Default command when 'just' is run without arguments
@@ -81,7 +78,7 @@ let
 
     # Update macOS system using darwin-rebuild
     update:
-        ulimit -n 65536; sudo /nix/var/nix/profiles/system/sw/bin/darwin-rebuild switch --flake $NH_FLAKE#${hostName}
+        ulimit -n 65536; sudo /nix/var/nix/profiles/system/sw/bin/darwin-rebuild switch --flake $NH_FLAKE#''${config.home.username}
 
     # Update macOS system using nh helper
     nh-update:
@@ -89,11 +86,11 @@ let
 
     # Build macOS system without switching
     build-darwin:
-        ulimit -n 65536; sudo /nix/var/nix/profiles/system/sw/bin/darwin-rebuild build --flake $NH_FLAKE#${hostName}
+        ulimit -n 65536; sudo /nix/var/nix/profiles/system/sw/bin/darwin-rebuild build --flake $NH_FLAKE#''${config.home.username}
 
     # Test macOS configuration
     test-darwin:
-        ulimit -n 65536; sudo /nix/var/nix/profiles/system/sw/bin/darwin-rebuild test --flake $NH_FLAKE#${hostName}
+        ulimit -n 65536; sudo /nix/var/nix/profiles/system/sw/bin/darwin-rebuild test --flake $NH_FLAKE#''${config.home.username}
 
     # Show macOS version
     darwin-version:
@@ -129,20 +126,19 @@ let
 
     # Update NixOS system using nixos-rebuild
     update:
-        /run/current-system/sw/bin/sudo nixos-rebuild switch --flake $NH_FLAKE#${hostName}
+        /run/current-system/sw/bin/sudo nixos-rebuild switch --flake $NH_FLAKE#''${config.home.username}
 
     # Update NixOS system using nh helper
-    # Note: nh invokes sudo internally; ensure /run/current-system/sw/bin is first in PATH
     nh-update:
         PATH="/run/current-system/sw/bin:$PATH" nh os switch
 
     # Build NixOS system without switching
     build-nixos:
-        /run/current-system/sw/bin/sudo nixos-rebuild build --flake $NH_FLAKE#${hostName}
+        /run/current-system/sw/bin/sudo nixos-rebuild build --flake $NH_FLAKE#''${config.home.username}
 
     # Test NixOS configuration
     test-nixos:
-        /run/current-system/sw/bin/sudo nixos-rebuild test --flake $NH_FLAKE#${hostName}
+        /run/current-system/sw/bin/sudo nixos-rebuild test --flake $NH_FLAKE#''${config.home.username}
 
     # Show NixOS version
     nixos-version:
@@ -159,7 +155,7 @@ let
     # Optimize Nix store
     system-optimize:
         /run/current-system/sw/bin/sudo nix-store --optimise
-      
+
     # Show available memory
     memory-stats:
         free -h
@@ -181,9 +177,9 @@ let
   fullJustfile =
     baseJustfile
     + (
-      if currentPlatform == "darwin" then
+      if platform == "darwin" then
         darwinExtension
-      else if currentPlatform == "nixos" then
+      else if platform == "nixos" then
         nixosExtension
       else
         ""
@@ -194,7 +190,5 @@ in
   home.packages = [ pkgs.just ];
 
   # Create justfile in home directory
-  # Use host-specific justfile if provided, otherwise use generated one
-  home.file.".justfile".text =
-    if hostSpecificJustfile != null then hostSpecificJustfile else fullJustfile;
+  home.file.".justfile".text = fullJustfile;
 }
