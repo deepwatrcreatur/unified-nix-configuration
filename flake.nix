@@ -148,6 +148,32 @@
         in
         nixpkgsLib.mapAttrsToList (name: _: commonDir + "/${name}") validItems;
 
+      # Common module configurations shared across all system builders
+      commonSystemModules = [
+        {
+          nixpkgs.overlays = commonOverlays;
+          nixpkgs.config = commonNixpkgsConfig;
+        }
+      ];
+
+      # Home Manager configuration for NixOS systems (used by mkNixosSystem)
+      nixosHomeManagerConfig = { hostName, isDesktop }:
+        {
+          home-manager.extraSpecialArgs = homeManagerModuleArgs // {
+            inherit hostName isDesktop;
+          };
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+        };
+
+      # Home Manager configuration for Omarchy systems (minimal variant)
+      omarchyHomeManagerConfig =
+        {
+          home-manager.extraSpecialArgs = homeManagerModuleArgs;
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+        };
+
       # Helper functions to reduce boilerplate in individual host files
       helpers = {
         # Standard NixOS system builder
@@ -158,37 +184,27 @@
             modules ? [ ],
             extraModules ? [ ],
             isDesktop ? false,
+            includeSnapd ? true,
           }:
           let
             hostName = builtins.baseNameOf (toString hostPath);
+            baseModules = commonSystemModules ++ [
+              inputs.sops-nix.nixosModules.sops
+              inputs.home-manager.nixosModules.home-manager
+              (nixosHomeManagerConfig { inherit hostName isDesktop; })
+              inputs.determinate.nixosModules.default
+            ];
+            snapdModules = nixpkgsLib.optionals includeSnapd [
+              inputs.nix-snapd.nixosModules.default
+            ];
           in
           inputs.nixpkgs.lib.nixosSystem {
             inherit system;
             specialArgs = systemSpecialArgs;
-            modules = [
-              {
-                nixpkgs.overlays = commonOverlays;
-                nixpkgs.config = commonNixpkgsConfig;
-              }
-              inputs.sops-nix.nixosModules.sops
-              inputs.home-manager.nixosModules.home-manager
-              {
-                home-manager.extraSpecialArgs = homeManagerModuleArgs // {
-                  inherit hostName isDesktop;
-                };
-                home-manager.useGlobalPkgs = true;
-                home-manager.useUserPackages = true;
-                # home-manager.sharedModules = [
-                #   inputs.sops-nix.homeManagerModules.sops
-                # ];
-              }
-              inputs.determinate.nixosModules.default
-              inputs.nix-snapd.nixosModules.default
+            modules = baseModules ++ snapdModules ++ [
               ./modules
               hostPath
-            ]
-            ++ modules
-            ++ extraModules;
+            ] ++ modules ++ extraModules;
           };
 
         # Standard Darwin system builder
@@ -201,7 +217,6 @@
             isDesktop ? true,
           }:
           let
-            # Extract just the hostname from the path for user config
             hostName = builtins.baseNameOf (toString hostPath);
           in
           inputs.nix-darwin.lib.darwinSystem {
@@ -209,12 +224,7 @@
             specialArgs = systemSpecialArgs // {
               inherit (inputs) nix-homebrew;
             };
-            modules = [
-              {
-                nixpkgs.overlays = commonOverlays;
-                nixpkgs.config = commonNixpkgsConfig;
-              }
-              # inputs.sops-nix.darwinModules.sops
+            modules = commonSystemModules ++ [
               ./modules
               hostPath
               inputs.home-manager.darwinModules.home-manager
@@ -233,10 +243,11 @@
                   };
                   home-manager.useGlobalPkgs = true;
                   home-manager.useUserPackages = true;
-                  home-manager.sharedModules = [
-                    # inputs.sops-nix.homeManagerModules.sops
-                  ];
-
+                }
+              )
+              (
+                { pkgs, ... }:
+                {
                   users.users.${username} = {
                     name = username;
                     home = "/Users/${username}";
@@ -244,8 +255,7 @@
                   };
                 }
               )
-            ]
-            ++ modules;
+            ] ++ modules;
           };
 
         mkOmarchySystem =
@@ -255,27 +265,20 @@
             modules ? [ ],
             extraModules ? [ ],
           }:
+          let
+            hostName = builtins.baseNameOf (toString hostPath);
+          in
           inputs.nixpkgs.lib.nixosSystem {
             inherit system;
             specialArgs = systemSpecialArgs;
-            modules = [
-              {
-                nixpkgs.overlays = commonOverlays;
-                nixpkgs.config = commonNixpkgsConfig;
-              }
+            modules = commonSystemModules ++ [
               inputs.sops-nix.nixosModules.sops
               inputs.home-manager.nixosModules.home-manager
               inputs.determinate.nixosModules.default
-              {
-                home-manager.extraSpecialArgs = homeManagerModuleArgs;
-                home-manager.useGlobalPkgs = true;
-                home-manager.useUserPackages = true;
-              }
+              omarchyHomeManagerConfig
               ./modules
               hostPath
-            ]
-            ++ modules
-            ++ extraModules;
+            ] ++ modules ++ extraModules;
           };
 
         # Standard Home Manager configuration builder
