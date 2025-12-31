@@ -148,6 +148,18 @@
         in
         nixpkgsLib.mapAttrsToList (name: _: commonDir + "/${name}") validItems;
 
+      # Helper to create platform-specific modules with base + platform-specific extensions
+      # Usage: mkPlatformModule { base = "..."; darwin = "..."; nixos = "..."; }
+      mkPlatformModule = pkgs: {
+        base ? "",
+        darwin ? "",
+        nixos ? "",
+      }:
+        base
+        + (if pkgs.stdenv.isDarwin then darwin
+           else if pkgs.stdenv.isLinux then nixos
+           else "");
+
       # Common module configurations shared across all system builders
       commonSystemModules = [
         {
