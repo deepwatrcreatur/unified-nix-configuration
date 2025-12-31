@@ -3,7 +3,7 @@
 (helpers.mkNixosOutput {
   name = "homeserver";
   system = "x86_64-linux";
-  hostPath = ../hosts/homeserver;
+  hostPath = ../hosts/nixos-lxc/homeserver;
   extraModules = [
     ../hosts/nixos/default.nix
   ]
