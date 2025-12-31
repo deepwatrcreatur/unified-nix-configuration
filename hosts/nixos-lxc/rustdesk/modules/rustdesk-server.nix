@@ -16,6 +16,17 @@
     # - 21118: TCP (keyboard/mouse)
     # - 21119: TCP (clipboard)
     # - 5443: TCP (relay)
+
+    # Signal server configuration
+    signal = {
+      enable = true;
+      relayHosts = [ "127.0.0.1" ]; # Use localhost as relay server
+    };
+
+    # Relay server configuration
+    relay = {
+      enable = true;
+    };
   };
 
   # Open necessary ports for RustDesk
@@ -25,7 +36,7 @@
     21117 # Audio
     21118 # Keyboard/mouse
     21119 # Clipboard
-    5443  # Relay
+    5443 # Relay
   ];
 
   # Ensure hbbs (ID/Relay Server) service is running
