@@ -10,7 +10,7 @@
   # ===========================================
   # GTK Theme Configuration
   # ===========================================
-  gtk = {
+  gtk = lib.mkDefault {
     enable = true;
 
     theme = {

@@ -2,15 +2,8 @@
 
 {
   imports = [
-    ./whitesur-common.nix
-    ./whitesur-desktops.nix
+    ./whitesur-theme.nix
   ];
-
-  # Configure Cinnamon specific settings
-  modules.desktop.sessions.whitesur-common = {
-    enable = true;
-    desktopManager = "cinnamon";
-  };
 
   # ===========================================
   # Base Configuration
@@ -51,7 +44,6 @@
   # ===========================================
   # Cinnamon-Specific XDG Portals
   # ===========================================
-  # Note: Common XDG portals are configured in whitesur-common.nix
 
   xdg.portal = {
     extraPortals = [
@@ -103,14 +95,13 @@
   # Compositor Configuration
   # ===========================================
   # NOTE: Picom is disabled for Cinnamon because it has its own compositor (Muffin)
-  # Running both causes conflicts. Common picom configuration is in whitesur-common.nix
-  
+  # Running both causes conflicts.
+
   services.picom.enable = false;  # Disabled - conflicts with Cinnamon's Muffin
 
   # ===========================================
   # Touchpad Configuration
   # ===========================================
-  # Note: Common touchpad configuration is in whitesur-common.nix
 
   # ===========================================
   # Cinnamon-Specific Theme Configuration

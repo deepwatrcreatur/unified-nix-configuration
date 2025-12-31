@@ -15,7 +15,6 @@
     ../../../../modules/home-manager/ghostty
     ../../../../modules/home-manager/gpg-cli.nix
     ../../../../modules/home-manager/zed.nix
-    ../../../../modules/home-manager/mate.nix
   ];
 
   home.homeDirectory = "/home/deepwatrcreatur";

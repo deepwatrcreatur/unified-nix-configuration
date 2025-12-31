@@ -83,7 +83,7 @@
   # ===========================================
   # GTK Theme Configuration (fallback)
   # ===========================================
-  gtk = {
+  gtk = lib.mkDefault {
     enable = true;
 
     theme = {

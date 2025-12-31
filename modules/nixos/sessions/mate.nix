@@ -3,13 +3,7 @@
 {
   imports = [
     ./whitesur-theme.nix
-    ./whitesur-desktops.nix
   ];
-
-  # Configure MATE specific settings
-  modules.desktop.sessions.whitesur-desktops = {
-    enable = true;
-  };
 
   # Enable X11 windowing system.
   services.xserver.enable = true;
@@ -45,12 +39,11 @@
     ulauncher
   ];
 
-  # XDG Portals for MATE
+  # XDG Portals for MATE (uses GTK)
   xdg.portal = {
     enable = true;
     extraPortals = [
       pkgs.xdg-desktop-portal-gtk
-      pkgs.xdg-desktop-portal-mate
     ];
   };
 
