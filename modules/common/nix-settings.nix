@@ -107,7 +107,4 @@ in
   # Container-specific settings
   nix.settings.sandbox = lib.mkIf isContainer false;
   nix.settings.use-cgroups = lib.mkIf (!isContainer) true;
-
-  # Fix for determinate nix daemon experimental features
-  systemd.services.nix-daemon.environment.NIX_CONFIG = lib.mkForce "experimental-features = nix-command flakes impure-derivations ca-derivations pipe-operators cgroups";
 }
