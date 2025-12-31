@@ -18,8 +18,13 @@
   # SOPS configuration for secrets management
   sops.age.keyFile = "/var/lib/sops/age/keys.txt";
 
-  # Enable OpenSSH (also satisfies sops-nix requirement)
+  # Enable OpenSSH with password auth and root login (matching cache-build-server)
   services.openssh.enable = true;
+  services.openssh.settings = {
+    PasswordAuthentication = true;
+    PermitRootLogin = "yes";
+    X11Forwarding = false;
+  };
 
   networking.hostName = "rustdesk";
 
