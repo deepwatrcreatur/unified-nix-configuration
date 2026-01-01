@@ -176,7 +176,6 @@
           };
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          home-manager.backupFileExtension = "backup";
         };
 
       # Home Manager configuration for Omarchy systems (minimal variant)
