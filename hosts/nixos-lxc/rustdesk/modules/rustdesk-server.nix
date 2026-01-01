@@ -55,6 +55,12 @@
       ExecStart = "${pkgs.rustdesk-server}/bin/hbbr";
       Restart = "on-failure";
       RestartSec = "5s";
+      # Increase bandwidth limits for gigabit networks
+      Environment = [
+        "LIMIT_SPEED=1000Mb/s"
+        "TOTAL_BANDWIDTH=10000Mb/s"
+        "SINGLE_BANDWIDTH=1000Mb/s"
+      ];
     };
   };
 
