@@ -44,7 +44,10 @@
     # Ollama configuration with Tesla P40 CUDA support
     ollama = {
       enable = true;
-      # CUDA acceleration will be available via hardware.nvidia configuration
+      acceleration = "cuda"; # Explicitly use CUDA for GPU acceleration
+      environmentVariables = {
+        OLLAMA_CPU_ENABLED = "true"; # Enable CPU fallback when GPU unavailable
+      };
     };
   };
 
@@ -94,4 +97,3 @@
   system.stateVersion = "25.05"; # Match current working generation
   services.xserver.videoDrivers = [ "nvidia" ];
 }
-
