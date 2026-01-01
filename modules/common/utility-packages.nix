@@ -38,9 +38,13 @@
     curl
     wget
     rsync
-    netcat-openbsd
     nmap
     openssl
+  ]
+  ++ lib.optionals pkgs.stdenv.isLinux [
+    netcat-openbsd
+  ]
+  ++ [
 
     # Nix tools
     nix-prefetch-git
