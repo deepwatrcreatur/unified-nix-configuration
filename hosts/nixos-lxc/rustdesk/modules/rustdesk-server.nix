@@ -6,40 +6,62 @@
 }:
 
 {
-  # RustDesk Server configuration
-  services.rustdesk-server = {
-    enable = true;
-    # Default ports:
-    # - 21115: TCP (control)
-    # - 21116: TCP (file transfer)
-    # - 21117: TCP (audio)
-    # - 21118: TCP (keyboard/mouse)
-    # - 21119: TCP (clipboard)
-    # - 5443: TCP (relay)
+  # RustDesk Server - manually configured systemd services
+  # hbbs: ID/Signal server (listens on port 21115)
+  # hbbr: Relay server (listens on port 5443)
 
-    # Signal server configuration
-    signal = {
-      enable = true;
-      relayHosts = [ "127.0.0.1" ]; # Use localhost as relay server
+  # Create rustdesk user for service
+  users.users.rustdesk = {
+    isSystemUser = true;
+    group = "rustdesk";
+    home = "/var/lib/rustdesk";
+    createHome = true;
+  };
+  users.groups.rustdesk = {};
+
+  # RustDesk ID/Signal Server (hbbs)
+  systemd.services.hbbs = {
+    description = "RustDesk ID/Signal Server";
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
+    wantedBy = [ "multi-user.target" ];
+
+    serviceConfig = {
+      Type = "simple";
+      User = "rustdesk";
+      Group = "rustdesk";
+      WorkingDirectory = "/var/lib/rustdesk";
+      ExecStart = "${pkgs.rustdesk-server}/bin/hbbs -r 127.0.0.1:21116";
+      Restart = "on-failure";
+      RestartSec = "5s";
     };
+  };
 
-    # Relay server configuration
-    relay = {
-      enable = true;
+  # RustDesk Relay Server (hbbr)
+  systemd.services.hbbr = {
+    description = "RustDesk Relay Server";
+    after = [ "network-online.target" "hbbs.service" ];
+    wants = [ "network-online.target" ];
+    wantedBy = [ "multi-user.target" ];
+
+    serviceConfig = {
+      Type = "simple";
+      User = "rustdesk";
+      Group = "rustdesk";
+      WorkingDirectory = "/var/lib/rustdesk";
+      ExecStart = "${pkgs.rustdesk-server}/bin/hbbr";
+      Restart = "on-failure";
+      RestartSec = "5s";
     };
   };
 
   # Open necessary ports for RustDesk
   networking.firewall.allowedTCPPorts = [
-    21115 # Control
+    21115 # Control/Signal
     21116 # File transfer
     21117 # Audio
     21118 # Keyboard/mouse
     21119 # Clipboard
     5443 # Relay
   ];
-
-  # Ensure hbbs (ID/Relay Server) service is running
-  systemd.services.rustdesk-server.after = [ "network-online.target" ];
-  systemd.services.rustdesk-server.wants = [ "network-online.target" ];
 }
