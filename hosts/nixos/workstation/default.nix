@@ -40,6 +40,9 @@
   boot.loader.limine.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  # Generate boot.json for limine bootloader compatibility
+  boot.bootspec.enable = true;
+
   # Enable AMD GPU firmware
   hardware.enableRedistributableFirmware = true;
 
