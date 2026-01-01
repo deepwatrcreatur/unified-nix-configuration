@@ -38,6 +38,7 @@
 
   # Boot loader configuration
   boot.loader.systemd-boot.enable = true;
+  boot.loader.limine.enable = false;
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Enable AMD GPU firmware
