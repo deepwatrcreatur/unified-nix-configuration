@@ -17,9 +17,7 @@
 
     users.root = {
       imports = [
-        ../../../../modules/home-manager/git.nix
-        ../../../../modules/home-manager/common/starship.nix
-        ../../../../modules/home-manager/common/shell-aliases.nix
+        ../../../../modules/home-manager
       ];
 
       home.username = "root";
