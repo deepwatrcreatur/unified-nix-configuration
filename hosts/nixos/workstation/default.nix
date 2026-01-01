@@ -11,6 +11,7 @@
     ./hardware-configuration.nix
     ./networking.nix
     ../../../modules/nixos/common # Common NixOS modules (SSH keys, etc.)
+    ../../../modules/nixos/utility-packages.nix # Common utility packages
     ../../../modules/nixos/attic-client.nix # Attic cache client
     ../../../modules/nixos/snap.nix # Snap package manager support
     ../../../modules/nixos/sessions/mate.nix # MATE with WhiteSur theming
@@ -92,18 +93,16 @@
     ];
   };
 
-  # Additional system packages
+  # Additional system packages (utility-packages provides: git, vim, curl, wget, rsync, nmap, openssl, etc.)
   environment.systemPackages = with pkgs; [
     at-spi2-core # Accessibility framework for deskflow clipboard
     distrobox
     filezilla
-    git
     nushell # Stopgap: Add nushell at system level for ghostty compatibility
     nvtopPackages.amd # GPU monitoring tool for AMD GPUs
     pavucontrol
     rclone-browser
     usbutils
-    vim
     vscode.fhs # VSCode with FHS environment
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
     xdg-desktop-portal-gtk # GTK desktop portal

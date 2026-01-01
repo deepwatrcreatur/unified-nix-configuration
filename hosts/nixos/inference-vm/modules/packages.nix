@@ -6,6 +6,10 @@
 }:
 
 {
+  imports = [
+    ../../../../modules/nixos/utility-packages.nix
+  ];
+
   # System packages for inference VMs
   environment.systemPackages = with pkgs; [
     # Editors
@@ -22,13 +26,10 @@
 
     # System monitoring
     netdata
-    htop
     btop
 
     # Network tools
     tailscale
-    wget
-    curl
     iperf3
 
     # Development tools

@@ -3,6 +3,7 @@
 {
   imports = [
     "${modulesPath}/virtualisation/lxc-container.nix"
+    ../modules/nixos/utility-packages.nix
   ];
 
   # Ensure /bin/sh is bash
@@ -73,8 +74,6 @@
     nano
     neovim
     helix
-    curl
-    git
     gh
     podman
     podman-compose

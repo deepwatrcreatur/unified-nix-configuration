@@ -1,5 +1,9 @@
 { config, pkgs, ... }:
 {
+  imports = [
+    ../../../modules/nixos/utility-packages.nix
+  ];
+
   boot.isContainer = true;
   networking.hostName = "ansible";
   services.openssh.enable = true;
@@ -10,6 +14,5 @@
   };
   environment.systemPackages = with pkgs; [
     ansible
-    git
   ];
 }
