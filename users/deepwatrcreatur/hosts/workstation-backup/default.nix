@@ -19,7 +19,11 @@
 
   home.homeDirectory = "/home/deepwatrcreatur";
 
-  # COSMIC desktop (no WhiteSur theming needed)
+  # WhiteSur theming for COSMIC
+  whitesur = {
+    enable = true;
+    gtk.enable = true;
+  };
 
   programs.distrobox.fedora.enable = true;
 

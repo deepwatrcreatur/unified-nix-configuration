@@ -6,13 +6,46 @@
 }:
 
 {
+  imports = [
+    ./whitesur-theme.nix
+  ];
+
   services.desktopManager.cosmic.enable = true;
 
   services.displayManager.cosmic-greeter.enable = true;
 
-  # Only add packages not automatically included by cosmic desktop manager
+  # Compositor for macOS-like transparency effects
+  services.picom = {
+    enable = true;
+    fade = true;
+    fadeDelta = 5;
+    fadeSteps = [ 0.01 0.0125 ];
+    shadow = true;
+    shadowOffsets = [ (-15) (-15) ];
+    shadowOpacity = 0.25;
+    backend = "glx";
+    vSync = true;
+  };
+
+  # Touchpad configuration for macOS-like gestures
+  services.libinput = {
+    enable = true;
+    touchpad = {
+      tapping = true;
+      naturalScrolling = true;
+      clickMethod = "clickfinger";
+    };
+  };
+
+  # System packages for COSMIC with WhiteSur theming
   environment.systemPackages = with pkgs; [
-    # No extra cosmic extensions for now, as they might be outdated
+    deskflow
+    pulseaudio-ctl
+    pavucontrol
+    flameshot
+    copyq
+    dconf
+    ulauncher
   ];
 
   # Enable XDG portals for COSMIC
@@ -33,6 +66,29 @@
         "org.freedesktop.impl.portal.InputCapture" = "gnome";
         "org.freedesktop.impl.portal.RemoteDesktop" = "gnome";
       };
+    };
+  };
+
+  # Ulauncher application launcher
+  systemd.user.services.ulauncher = lib.mkIf config.services.xserver.enable {
+    description = "Ulauncher application launcher";
+    wantedBy = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = "${pkgs.ulauncher}/bin/ulauncher --hide-window";
+      Restart = "on-failure";
+    };
+  };
+
+  # Auto-start COSMIC configuration for workspace switcher and transparent panel
+  systemd.user.services.cosmic-config = lib.mkIf config.services.xserver.enable {
+    description = "Configure COSMIC for macOS-like behavior";
+    wantedBy = [ "graphical-session.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.bash}/bin/bash -c 'sleep 2 && gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false || true'";
+      RemainAfterExit = true;
     };
   };
 }
