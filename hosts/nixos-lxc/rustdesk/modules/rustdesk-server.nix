@@ -20,11 +20,6 @@
   };
   users.groups.rustdesk = {};
 
-  # Ensure /var/lib/rustdesk exists with proper permissions
-  systemd.tmpfiles.rules = [
-    "d /var/lib/rustdesk 0700 rustdesk rustdesk - -"
-  ];
-
   # RustDesk ID/Signal Server (hbbs)
   systemd.services.hbbs = {
     description = "RustDesk ID/Signal Server";
@@ -36,7 +31,7 @@
       Type = "simple";
       User = "rustdesk";
       Group = "rustdesk";
-      WorkingDirectory = "/var/lib/rustdesk";
+      StateDirectory = "rustdesk";
       ExecStart = "${pkgs.rustdesk-server}/bin/hbbs -r 127.0.0.1:21116";
       Restart = "on-failure";
       RestartSec = "5s";
@@ -54,7 +49,7 @@
       Type = "simple";
       User = "rustdesk";
       Group = "rustdesk";
-      WorkingDirectory = "/var/lib/rustdesk";
+      StateDirectory = "rustdesk";
       ExecStart = "${pkgs.rustdesk-server}/bin/hbbr";
       Restart = "on-failure";
       RestartSec = "5s";
