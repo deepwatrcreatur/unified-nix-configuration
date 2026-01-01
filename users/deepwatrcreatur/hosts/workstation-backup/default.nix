@@ -15,6 +15,7 @@
     ../../../../modules/home-manager/ghostty
     ../../../../modules/home-manager/gpg-cli.nix
     ../../../../modules/home-manager/zed.nix
+    inputs.nix-whitesur-config.homeManagerModules.default
   ];
 
   home.homeDirectory = "/home/deepwatrcreatur";
