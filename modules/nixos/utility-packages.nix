@@ -10,11 +10,13 @@
   # Used by: cache-build-server, rustdesk, and other utility hosts
   environment.systemPackages = with pkgs; [
     # System tools
+    broot
     git
-    vim
+    hyperfine
     htop
     iotop
     lsof
+    procs
     strace
 
     # Build tools
