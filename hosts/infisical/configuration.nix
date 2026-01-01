@@ -3,7 +3,7 @@
 {
   imports = [
     "${modulesPath}/virtualisation/lxc-container.nix"
-    ../modules/nixos/utility-packages.nix
+    ../modules/common/utility-packages.nix
   ];
 
   # Ensure /bin/sh is bash

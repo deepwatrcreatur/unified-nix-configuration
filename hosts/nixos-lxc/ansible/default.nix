@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 {
   imports = [
-    ../../../modules/nixos/utility-packages.nix
+    ../../../modules/common/utility-packages.nix
   ];
 
   boot.isContainer = true;

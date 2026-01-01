@@ -7,7 +7,7 @@
 
 {
   imports = [
-    ../../../modules/nixos/utility-packages.nix
+    ../../../modules/common/utility-packages.nix
   ];
 
   environment.systemPackages = with pkgs; [

@@ -11,7 +11,7 @@
     ./hardware-configuration.nix
     ./networking.nix
     ../../../modules/nixos/common # Common NixOS modules (SSH keys, etc.)
-    ../../../modules/nixos/utility-packages.nix # Common utility packages
+    ../../../modules/common/utility-packages.nix # Common utility packages
     ../../../modules/nixos/attic-client.nix # Attic cache client
     ../../../modules/nixos/snap.nix # Snap package manager support
     ../../../modules/nixos/sessions/mate.nix # MATE with WhiteSur theming
