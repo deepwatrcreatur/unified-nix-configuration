@@ -14,7 +14,7 @@
     ../../../modules/nixos/utility-packages.nix # Common utility packages
     ../../../modules/nixos/attic-client.nix # Attic cache client
     ../../../modules/nixos/snap.nix # Snap package manager support
-    ../../../modules/nixos/sessions/mate.nix # MATE with WhiteSur theming
+    ../../../modules/nixos/sessions/cosmic.nix # COSMIC desktop
 
     ../../../modules/nixos/keyboard-glitches.nix # Fix for stuck keyboard presses in Proxmox VM
     ../../../modules/wezterm-config.nix
@@ -46,7 +46,7 @@
   # Configure keyboard - let input-leap handle caps lock synchronization
   # services.xserver.xkb.options = "caps:none"; # Disabled - using input-leap fix instead
 
-  # X11 with MATE and WhiteSur theming
+  # X11 with COSMIC desktop
   services.xserver = {
     enable = true;
     xkb.options = "caps:none";  # Let input-leap handle caps lock synchronization
