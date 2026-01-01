@@ -32,6 +32,7 @@
       User = "rustdesk";
       Group = "rustdesk";
       StateDirectory = "rustdesk";
+      WorkingDirectory = "/var/lib/rustdesk";
       ExecStart = "${pkgs.rustdesk-server}/bin/hbbs -r 127.0.0.1:21116";
       Restart = "on-failure";
       RestartSec = "5s";
@@ -50,6 +51,7 @@
       User = "rustdesk";
       Group = "rustdesk";
       StateDirectory = "rustdesk";
+      WorkingDirectory = "/var/lib/rustdesk";
       ExecStart = "${pkgs.rustdesk-server}/bin/hbbr";
       Restart = "on-failure";
       RestartSec = "5s";
