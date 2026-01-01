@@ -24,11 +24,15 @@
       home.homeDirectory = "/root";
       home.stateVersion = "25.11";
       programs.home-manager.enable = true;
+    };
 
-      # RustDesk server management packages
-      home.packages = with pkgs; [
-        just
+    # Deepwatrcreatur user with full home-manager setup
+    users.deepwatrcreatur = {
+      imports = [
+        ../../../../users/deepwatrcreatur/hosts/rustdesk
       ];
+
+      home.homeDirectory = "/home/deepwatrcreatur";
     };
   };
 }

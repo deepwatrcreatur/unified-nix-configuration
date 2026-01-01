@@ -36,6 +36,7 @@
     megacmd
     obsidian
     obsidian-export
+    rustdesk
     virt-viewer
     xorg.xhost # X11 host access control for DeskFlow
   ];
@@ -69,7 +70,8 @@
     };
   };
 
-  # Deskflow server service
+  # Deskflow server service (disabled in favor of RustDesk)
+  # Start manually with: systemctl --user start deskflow
   systemd.user.services.deskflow = {
     Unit = {
       Description = "Deskflow Server";
@@ -95,7 +97,7 @@
       ];
     };
     Install = {
-      WantedBy = [ "graphical-session.target" ];
+      # Disabled: WantedBy = [ "graphical-session.target" ];
     };
   };
 

@@ -15,6 +15,7 @@
       "gitkraken"
       "karabiner-elements"
       "krita"
+      "rustdesk"
       "telegram"
       "visual-studio-code"
       "vlc"
