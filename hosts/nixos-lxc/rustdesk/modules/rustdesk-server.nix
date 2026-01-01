@@ -16,8 +16,14 @@
     group = "rustdesk";
     home = "/var/lib/rustdesk";
     createHome = true;
+    homeMode = "0700";
   };
   users.groups.rustdesk = {};
+
+  # Ensure /var/lib/rustdesk exists with proper permissions
+  systemd.tmpfiles.rules = [
+    "d /var/lib/rustdesk 0700 rustdesk rustdesk - -"
+  ];
 
   # RustDesk ID/Signal Server (hbbs)
   systemd.services.hbbs = {
