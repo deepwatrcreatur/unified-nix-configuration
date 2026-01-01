@@ -14,11 +14,15 @@
     git
     hyperfine
     htop
-    iotop
     lsof
     procs
+  ]
+  ++ lib.optionals pkgs.stdenv.isLinux [
+    # Linux-only system tools
+    iotop
     strace
-
+  ]
+  ++ [
     # Build tools
     gcc
     binutils
