@@ -37,11 +37,8 @@
   nixpkgs.hostPlatform = "x86_64-linux";
 
   # Boot loader configuration
-  boot.loader.limine.enable = true;
+  boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-
-  # Generate boot.json for limine bootloader compatibility
-  boot.bootspec.enable = true;
 
   # Enable AMD GPU firmware
   hardware.enableRedistributableFirmware = true;
