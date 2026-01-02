@@ -12,11 +12,6 @@
     ../../../../modules/nixos/inference-vm-nix-overrides.nix
   ];
 
-  # Note on GPU acceleration:
-  # The tesla-inference-flake overlays require CUDA compilation which is broken in nixpkgs.
-  # Ollama can still access GPUs at runtime if CUDA libraries are available.
-  # Set CUDA_VISIBLE_DEVICES to allow ollama to detect available GPUs.
-
   # Enable fish shell since users set it as default
   programs.fish.enable = true;
 
@@ -47,15 +42,10 @@
     netdata.enable = true;
     tailscale.enable = true;
 
-    # Ollama configuration with Tesla P40 support
+    # Ollama configuration with Tesla P40 CUDA support
     ollama = {
       enable = true;
-      # Note: acceleration = "cuda" causes CUDA compilation which fails in nixpkgs
-      # Instead, rely on CUDA libraries being available in the system and set CUDA_VISIBLE_DEVICES
-      environmentVariables = {
-        CUDA_VISIBLE_DEVICES = "0";
-        OLLAMA_CPU_ENABLED = "true"; # Enable CPU fallback when GPU unavailable
-      };
+      # CUDA acceleration will be available via hardware.nvidia configuration
     };
   };
 
