@@ -50,7 +50,7 @@
   # X11 with MATE and WhiteSur theming
   services.xserver = {
     enable = true;
-    xkb.options = "caps:none";  # Let input-leap handle caps lock synchronization
+    xkb.options = "caps:none"; # Let input-leap handle caps lock synchronization
   };
 
   security.rtkit.enable = true;
@@ -103,6 +103,8 @@
     nvtopPackages.amd # GPU monitoring tool for AMD GPUs
     pavucontrol
     rclone-browser
+    remmina # Remote desktop client for VNC, RDP, and other protocols
+    realvnc-vnc-viewer # RealVNC VNC Viewer for connecting to macOS screen sharing
     usbutils
     vscode.fhs # VSCode with FHS environment
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
