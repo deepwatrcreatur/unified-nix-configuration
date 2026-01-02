@@ -10,14 +10,6 @@
   imports = [
     ../../../../modules/common/nix-settings.nix
     ../../../../modules/nixos/inference-vm-nix-overrides.nix
-    inputs.tesla-inference-flake.nixosModules.tesla-inference
-  ];
-
-  # Apply Tesla inference CUDA overlays to get GPU-accelerated packages
-  nixpkgs.overlays = [
-    inputs.tesla-inference-flake.overlays.ollama-cuda
-    inputs.tesla-inference-flake.overlays.llama-cpp-tesla
-    inputs.tesla-inference-flake.overlays.gpu-tools
   ];
 
   # Enable fish shell since users set it as default
@@ -30,33 +22,12 @@
   };
 
   # GPU Infrastructure configuration - Tesla P40 optimized
-  tesla-inference = {
-    enable = true;
-    gpu = "P40"; # Optimize for Tesla P40 (compute 6.1)
-
-    # Ollama service configuration
-    ollama = {
-      enable = true;
-      port = 11434;
-      host = "0.0.0.0"; # Listen on all interfaces for VM accessibility
-      modelsPath = "/var/lib/ollama"; # Working directory for ollama service
-    };
-
-    # GPU monitoring (disabled due to missing gpu-monitoring-tools package)
-    monitoring.enable = false;
+  hardware.nvidia = {
+    modesetting.enable = true;
+    powerManagement.enable = false; # Disable for Tesla P40 stability
+    open = false; # Use proprietary driver
   };
-
-  # Override ollama service to fix directory permissions
-  # The tesla-inference-flake uses DynamicUser=true which creates issues with /var/lib/private/ollama
-  systemd.services.ollama.serviceConfig.DynamicUser = lib.mkForce false;
-  systemd.services.ollama.serviceConfig.User = "root";
-  systemd.services.ollama.serviceConfig.Group = "root";
-
-  # Ensure ollama directories have correct permissions
-  systemd.tmpfiles.rules = [
-    "d /var/lib/ollama 0755 root root -"
-    "d /var/lib/ollama/models 0755 root root -"
-  ];
+  hardware.graphics.enable = true;
 
   # Add OpenWebUI package for web interface to Ollama
   environment.systemPackages = with pkgs; [
@@ -70,6 +41,15 @@
     openssh.enable = true;
     netdata.enable = true;
     tailscale.enable = true;
+
+    # Ollama configuration with Tesla P40 CUDA support
+    ollama = {
+      enable = true;
+      acceleration = "cuda"; # Explicitly use CUDA for GPU acceleration
+      environmentVariables = {
+        OLLAMA_CPU_ENABLED = "true"; # Enable CPU fallback when GPU unavailable
+      };
+    };
   };
 
   # Boot loader configuration for UEFI with systemd-boot
@@ -117,4 +97,5 @@
   networking.firewall.enable = false;
 
   system.stateVersion = "25.05"; # Match current working generation
+  services.xserver.videoDrivers = [ "nvidia" ];
 }
