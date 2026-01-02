@@ -45,6 +45,12 @@
   systemd.services.ollama.serviceConfig.User = "root";
   systemd.services.ollama.serviceConfig.Group = "root";
 
+  # Ensure ollama directories have correct permissions
+  systemd.tmpfiles.rules = [
+    "d /var/lib/ollama 0755 root root -"
+    "d /var/lib/ollama/models 0755 root root -"
+  ];
+
   # Add OpenWebUI package for web interface to Ollama
   environment.systemPackages = with pkgs; [
     open-webui # Web interface for Ollama
