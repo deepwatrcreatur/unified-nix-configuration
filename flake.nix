@@ -107,6 +107,8 @@
             doCheck = false;
           });
         })
+        # Tesla inference CUDA optimization overlay
+        inputs.tesla-inference-flake.overlays.ollama-cuda
       ];
 
       # SpecialArgs for NixOS and Darwin SYSTEM modules.
