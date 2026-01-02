@@ -18,6 +18,10 @@
     inputs.tesla-inference-flake.overlays.ollama-cuda
     inputs.tesla-inference-flake.overlays.llama-cpp-tesla
     inputs.tesla-inference-flake.overlays.gpu-tools
+    # Override default ollama with CUDA-accelerated P40 variant
+    (final: prev: {
+      ollama = final.ollama-cuda-tesla-p40;
+    })
   ];
 
   # Enable fish shell since users set it as default
