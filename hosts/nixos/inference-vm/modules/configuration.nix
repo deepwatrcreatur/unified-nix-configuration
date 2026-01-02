@@ -102,6 +102,7 @@
   systemd.services."getty@tty1".enable = false;
   systemd.services."autovt@tty1".enable = false;
 
+  security.sudo.enable = true;
   security.sudo.wheelNeedsPassword = false;
 
   # Networking
