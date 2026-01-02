@@ -42,11 +42,13 @@
     netdata.enable = true;
     tailscale.enable = true;
 
-    # Ollama configuration with Tesla P40 CUDA support
+    # Ollama configuration with Tesla P40 support
     ollama = {
       enable = true;
-      acceleration = "cuda"; # Explicitly use CUDA for GPU acceleration
+      # Note: acceleration = "cuda" causes CUDA compilation which fails in nixpkgs
+      # Instead, rely on CUDA libraries being available in the system and set CUDA_VISIBLE_DEVICES
       environmentVariables = {
+        CUDA_VISIBLE_DEVICES = "0";
         OLLAMA_CPU_ENABLED = "true"; # Enable CPU fallback when GPU unavailable
       };
     };
