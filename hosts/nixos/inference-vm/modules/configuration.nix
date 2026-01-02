@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 
@@ -9,6 +10,9 @@
   imports = [
     ../../../../modules/common/nix-settings.nix
     ../../../../modules/nixos/inference-vm-nix-overrides.nix
+    inputs.tesla-inference-flake.nixosModules.gpu-infrastructure
+    inputs.tesla-inference-flake.nixosModules.ollama
+    inputs.tesla-inference-flake.nixosModules.llama-cpp
   ];
 
   # Enable fish shell since users set it as default
@@ -21,12 +25,37 @@
   };
 
   # GPU Infrastructure configuration - Tesla P40 optimized
-  hardware.nvidia = {
-    modesetting.enable = true;
-    powerManagement.enable = false; # Disable for Tesla P40 stability
-    open = false; # Use proprietary driver
+  inference.gpu = {
+    enable = true;
+    nvidia = {
+      enable = true;
+      package = config.boot.kernelPackages.nvidiaPackages.stable;
+      powerManagement.enable = false; # Disable for Tesla P40 stability
+      useOpenDriver = false; # Use proprietary driver
+    };
+    cuda = {
+      enable = true;
+      architectures = [ "61" "70" "75" "80" "86" "89" "90" ]; # Include Tesla P40 (6.1)
+    };
+    monitoring.enable = true;
   };
-  hardware.graphics.enable = true;
+
+  # Ollama configuration with Tesla P40 CUDA support
+  inference.ollama = {
+    enable = true;
+    acceleration = "cuda"; # Explicitly use CUDA for GPU acceleration
+    customBuild = {
+      enable = true;
+      cudaArchitectures = [ "61" "70" "75" "80" "86" "89" "90" ]; # Include Tesla P40
+    };
+  };
+
+  # llama.cpp configuration (alternative/complementary to Ollama)
+  inference.llama-cpp = {
+    enable = false; # Keep disabled until testing shows it's needed
+    server.enable = false;
+    acceleration = "cuda";
+  };
 
   # Add OpenWebUI package for web interface to Ollama
   environment.systemPackages = with pkgs; [
@@ -40,15 +69,6 @@
     openssh.enable = true;
     netdata.enable = true;
     tailscale.enable = true;
-
-    # Ollama configuration with Tesla P40 CUDA support
-    ollama = {
-      enable = true;
-      acceleration = "cuda"; # Explicitly use CUDA for GPU acceleration
-      environmentVariables = {
-        OLLAMA_CPU_ENABLED = "true"; # Enable CPU fallback when GPU unavailable
-      };
-    };
   };
 
   # Boot loader configuration for UEFI with systemd-boot
@@ -95,5 +115,4 @@
   networking.firewall.enable = false;
 
   system.stateVersion = "25.05"; # Match current working generation
-  services.xserver.videoDrivers = [ "nvidia" ];
 }

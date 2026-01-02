@@ -14,7 +14,7 @@
     ../../../modules/common/utility-packages.nix # Common utility packages
     ../../../modules/nixos/attic-client.nix # Attic cache client
     ../../../modules/nixos/snap.nix # Snap package manager support
-    ../../../modules/nixos/sessions/mate.nix # MATE with WhiteSur theming
+    ../../../modules/nixos/sessions/cinnamon.nix # MATE with WhiteSur theming
 
     ../../../modules/nixos/keyboard-glitches.nix # Fix for stuck keyboard presses in Proxmox VM
     ../../../modules/wezterm-config.nix
