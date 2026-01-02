@@ -10,9 +10,9 @@
   imports = [
     ../../../../modules/common/nix-settings.nix
     ../../../../modules/nixos/inference-vm-nix-overrides.nix
-    inputs.tesla-inference-flake.nixosModules.gpu-infrastructure
-    inputs.tesla-inference-flake.nixosModules.ollama
-    inputs.tesla-inference-flake.nixosModules.llama-cpp
+    inputs.tesla-inference-flake.nixosModules.tesla-inference
+    inputs.tesla-inference-flake.nixosModules.ollama-cuda-service
+    inputs.tesla-inference-flake.nixosModules.gpu-monitoring
   ];
 
   # Enable fish shell since users set it as default
@@ -25,36 +25,20 @@
   };
 
   # GPU Infrastructure configuration - Tesla P40 optimized
-  inference.gpu = {
+  tesla-inference = {
     enable = true;
-    nvidia = {
-      enable = true;
-      package = config.boot.kernelPackages.nvidiaPackages.stable;
-      powerManagement.enable = false; # Disable for Tesla P40 stability
-      useOpenDriver = false; # Use proprietary driver
-    };
-    cuda = {
-      enable = true;
-      architectures = [ "61" "70" "75" "80" "86" "89" "90" ]; # Include Tesla P40 (6.1)
-    };
-    monitoring.enable = true;
-  };
+    gpu = "P40"; # Optimize for Tesla P40 (compute 6.1)
 
-  # Ollama configuration with Tesla P40 CUDA support
-  inference.ollama = {
-    enable = true;
-    acceleration = "cuda"; # Explicitly use CUDA for GPU acceleration
-    customBuild = {
+    # Ollama service configuration
+    ollama = {
       enable = true;
-      cudaArchitectures = [ "61" "70" "75" "80" "86" "89" "90" ]; # Include Tesla P40
+      port = 11434;
+      host = "0.0.0.0"; # Listen on all interfaces for VM accessibility
+      modelsPath = "/var/lib/ollama/models";
     };
-  };
 
-  # llama.cpp configuration (alternative/complementary to Ollama)
-  inference.llama-cpp = {
-    enable = false; # Keep disabled until testing shows it's needed
-    server.enable = false;
-    acceleration = "cuda";
+    # GPU monitoring (disabled due to missing gpu-monitoring-tools package)
+    monitoring.enable = false;
   };
 
   # Add OpenWebUI package for web interface to Ollama
