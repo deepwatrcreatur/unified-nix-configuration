@@ -12,6 +12,15 @@
     ../../../../modules/nixos/inference-vm-nix-overrides.nix
   ];
 
+  # Apply CUDA overlays from tesla-inference-flake to provide GPU-accelerated ollama
+  nixpkgs.overlays = [
+    inputs.tesla-inference-flake.overlays.ollama-cuda
+    # Override default ollama with CUDA-accelerated version for Tesla GPUs
+    (final: prev: {
+      ollama = final.ollama-cuda-tesla;
+    })
+  ];
+
   # Enable fish shell since users set it as default
   programs.fish.enable = true;
 
