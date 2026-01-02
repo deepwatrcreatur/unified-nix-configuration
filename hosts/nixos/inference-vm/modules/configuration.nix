@@ -11,8 +11,6 @@
     ../../../../modules/common/nix-settings.nix
     ../../../../modules/nixos/inference-vm-nix-overrides.nix
     inputs.tesla-inference-flake.nixosModules.tesla-inference
-    inputs.tesla-inference-flake.nixosModules.ollama-cuda-service
-    inputs.tesla-inference-flake.nixosModules.gpu-monitoring
   ];
 
   # Enable fish shell since users set it as default
@@ -34,7 +32,7 @@
       enable = true;
       port = 11434;
       host = "0.0.0.0"; # Listen on all interfaces for VM accessibility
-      modelsPath = "/var/lib/ollama/models";
+      modelsPath = "/var/lib/ollama"; # Working directory for ollama service
     };
 
     # GPU monitoring (disabled due to missing gpu-monitoring-tools package)
