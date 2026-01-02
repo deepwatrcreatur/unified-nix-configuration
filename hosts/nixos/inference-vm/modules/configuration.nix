@@ -13,6 +13,13 @@
     inputs.tesla-inference-flake.nixosModules.tesla-inference
   ];
 
+  # Apply Tesla inference CUDA overlays to get GPU-accelerated packages
+  nixpkgs.overlays = [
+    inputs.tesla-inference-flake.overlays.ollama-cuda
+    inputs.tesla-inference-flake.overlays.llama-cpp-tesla
+    inputs.tesla-inference-flake.overlays.gpu-tools
+  ];
+
   # Enable fish shell since users set it as default
   programs.fish.enable = true;
 
