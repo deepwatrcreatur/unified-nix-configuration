@@ -59,6 +59,12 @@
     };
   };
 
+  # Ensure ollama service waits for tmpfiles to create directories before starting
+  systemd.services.ollama = {
+    after = [ "systemd-tmpfiles-setup.service" ];
+    wants = [ "systemd-tmpfiles-setup.service" ];
+  };
+
   # Base VM configuration for inference machines
   services = {
     # OpenWebUI for web interface to Ollama
