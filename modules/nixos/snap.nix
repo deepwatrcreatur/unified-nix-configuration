@@ -17,10 +17,20 @@ in
     packages = mkOption {
       type = types.listOf types.str;
       default = [ ];
-      description = "List of snap packages to install";
+      description = "List of snap packages to install with strict confinement";
       example = [
         "raindrop"
         "spotify"
+      ];
+    };
+
+    classicPackages = mkOption {
+      type = types.listOf types.str;
+      default = [ ];
+      description = "List of snap packages to install with --classic confinement";
+      example = [
+        "icloud-for-linux"
+        "code"
       ];
     };
   };
@@ -34,27 +44,42 @@ in
       export PATH="$PATH:/snap/bin"
     '';
 
+    # Some portals and desktop files expect snap at /usr/bin/snap
+    system.activationScripts.snap-compat = ''
+      if [ ! -d /usr/bin ]; then
+        mkdir -p /usr/bin
+      fi
+      ln -sf /run/current-system/sw/bin/snap /usr/bin/snap
+    '';
+
     # Install snap packages using systemd oneshot services
-    # This runs after snapd is started
-    systemd.services = builtins.listToAttrs (
-      map (snapPkg: {
-        name = "snap-install-${snapPkg}";
-        value = {
-          description = "Install snap package: ${snapPkg}";
-          after = [
-            "snapd.service"
-            "snapd.socket"
-          ];
-          requires = [ "snapd.service" ];
-          wantedBy = [ "multi-user.target" ];
-          serviceConfig = {
-            Type = "oneshot";
-            RemainAfterExit = true;
-            ExecCondition = "${pkgs.bash}/bin/bash -c '! /run/current-system/sw/bin/snap list ${snapPkg} &>/dev/null'";
-            ExecStart = "/run/current-system/sw/bin/snap install ${snapPkg}";
+    # This runs after snapd and network are available
+    systemd.services = 
+      let
+        mkSnapService = snapPkg: isClassic: {
+          name = "snap-install-${snapPkg}";
+          value = {
+            description = "Install snap package: ${snapPkg}${if isClassic then " (classic)" else ""}";
+            after = [
+              "snapd.service"
+              "snapd.socket"
+              "network-online.target"
+            ];
+            wants = [ "network-online.target" ];
+            requires = [ "snapd.service" ];
+            wantedBy = [ "multi-user.target" ];
+            serviceConfig = {
+              Type = "oneshot";
+              RemainAfterExit = true;
+              ExecCondition = "${pkgs.bash}/bin/bash -c '! /run/current-system/sw/bin/snap list ${snapPkg} &>/dev/null'";
+              ExecStart = "/run/current-system/sw/bin/snap install ${snapPkg}${if isClassic then " --classic" else ""}";
+            };
           };
         };
-      }) cfg.packages
-    );
+      in
+      builtins.listToAttrs (
+        (map (pkg: mkSnapService pkg false) cfg.packages) ++
+        (map (pkg: mkSnapService pkg true) cfg.classicPackages)
+      );
   };
 }
