@@ -107,6 +107,10 @@
             doCheck = false;
           });
         })
+        # Tesla inference CUDA overlays for GPU optimization
+        inputs.tesla-inference-flake.overlays.ollama-cuda
+        inputs.tesla-inference-flake.overlays.llama-cpp-tesla
+        inputs.tesla-inference-flake.overlays.gpu-tools
       ];
 
       # SpecialArgs for NixOS and Darwin SYSTEM modules.
@@ -210,6 +214,7 @@
               inputs.home-manager.nixosModules.home-manager
               (nixosHomeManagerConfig { inherit hostName isDesktop; })
               inputs.determinate.nixosModules.default
+              inputs.tesla-inference-flake.nixosModules.tesla-inference
             ];
             snapdModules = nixpkgsLib.optionals includeSnapd [
               inputs.nix-snapd.nixosModules.default

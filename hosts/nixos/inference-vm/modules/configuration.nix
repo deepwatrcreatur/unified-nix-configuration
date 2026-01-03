@@ -12,6 +12,13 @@
     ../../../../modules/nixos/inference-vm-nix-overrides.nix
   ];
 
+  # Apply Tesla inference CUDA overlays to get GPU-accelerated packages
+  nixpkgs.overlays = [
+    inputs.tesla-inference-flake.overlays.ollama-cuda
+    inputs.tesla-inference-flake.overlays.llama-cpp-tesla
+    inputs.tesla-inference-flake.overlays.gpu-tools
+  ];
+
   # Enable fish shell since users set it as default
   programs.fish.enable = true;
 
@@ -21,13 +28,26 @@
     config.allowUnsupportedSystem = true; # Allow unsupported packages like cuDNN
   };
 
-  # GPU Infrastructure configuration - Tesla P40 optimized
-  hardware.nvidia = {
-    modesetting.enable = true;
-    powerManagement.enable = false; # Disable for Tesla P40 stability
-    open = false; # Use proprietary driver
+  # Tesla Inference Configuration - P40 GPU optimized
+  # Uses tesla-inference-flake NixOS module with pre-built CUDA packages
+  tesla-inference = {
+    enable = true;
+    gpu = "P40"; # Tesla P40 (compute capability 6.1)
+
+    # Ollama service with CUDA acceleration
+    ollama = {
+      enable = true;
+      modelsPath = "/models/ollama";
+      port = 11434;
+      host = "0.0.0.0";
+      environmentVariables = {
+        OLLAMA_CPU_ENABLED = "true"; # Allow CPU inference as fallback
+      };
+    };
+
+    # GPU monitoring tools
+    monitoring.enable = true;
   };
-  hardware.graphics.enable = true;
 
   # Add OpenWebUI package for web interface to Ollama
   environment.systemPackages = with pkgs; [
@@ -41,12 +61,6 @@
     openssh.enable = true;
     netdata.enable = true;
     tailscale.enable = true;
-
-    # Ollama configuration with Tesla P40 CUDA support
-    ollama = {
-      enable = true;
-      # CUDA acceleration will be available via hardware.nvidia configuration
-    };
   };
 
   # Boot loader configuration for UEFI with systemd-boot
@@ -94,5 +108,4 @@
   networking.firewall.enable = false;
 
   system.stateVersion = "25.05"; # Match current working generation
-  services.xserver.videoDrivers = [ "nvidia" ];
 }
