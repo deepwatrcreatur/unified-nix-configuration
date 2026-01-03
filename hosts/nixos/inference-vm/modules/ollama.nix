@@ -103,10 +103,13 @@ in
       StateDirectory = lib.mkForce "";
     };
 
-    # Ensure models directory exists with correct permissions
+    # Ensure models directory and state directories exist with correct permissions
     systemd.tmpfiles.rules = [
       "d ${cfg.modelsPath} 0755 ollama ollama -"
       "d ${cfg.modelsPath}/models 0755 ollama ollama -"
+      # Also ensure /var/lib/ollama exists since ollama internally tries to create it
+      # even though we override it to use ${cfg.modelsPath}
+      "d /var/lib/ollama 0755 ollama ollama -"
     ];
 
     # Add ollama user to system if not already present
