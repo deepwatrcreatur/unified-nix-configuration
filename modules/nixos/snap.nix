@@ -47,12 +47,9 @@ in
       export SNAP=/snap
       export SNAP_COMMON=/var/snap
       export SNAP_DATA=/var/lib/snapd
-      # Portal environment for snap access
-      export XDG_DESKTOP_PORTAL_DIR=/run/current-system/sw/share/xdg-desktop-portal/portals
     '';
 
     # Some portals and desktop files expect snap at /usr/bin/snap
-    # Also ensure snap is available in standard locations for portal access
     system.activationScripts.snap-compat = ''
       # Create directories if they don't exist
       mkdir -p /usr/bin /usr/local/bin
@@ -63,18 +60,18 @@ in
 
       # Ensure snap directories exist
       mkdir -p /snap /var/lib/snapd/snap
+
+      # Fix snap permissions for portal access
+      chmod 755 /usr/bin/snap
     '';
 
     # XDG portal configuration for snap access
-    xdg.portal.extraPortals = with pkgs; [
-      # Ensure snap portals are available for desktop integration
-      (pkgs.writeTextDir "share/xdg-desktop-portal/portals/snap.portal" ''
-        [portal]
-        DBusName=org.freedesktop.impl.portal.desktop.snap
-        Interfaces=org.freedesktop.impl.portal.Snap;
-        UseIn=gnome;cosmic;plasma
-      '')
-    ];
+    xdg.portal.config = {
+      common = {
+        # Ensure snap can be used by portals
+        preferred = "gtk;cosmic";
+      };
+    };
 
     # Install snap packages using systemd oneshot services
     # This runs after snapd and network are available
