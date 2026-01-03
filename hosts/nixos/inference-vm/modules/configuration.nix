@@ -49,13 +49,28 @@
     };
   };
 
-  # System packages
-  environment.systemPackages = with pkgs; [
-    open-webui # Web interface for Ollama
-  ];
+  # llama.cpp configuration (alternative/complementary to Ollama)
+  inference.llama-cpp = {
+    enable = false; # Keep disabled until GPU infrastructure is ready
+    server.enable = false;
+    customBuild = {
+      enable = false;
+      cudaSupport = false; # Will be enabled when GPU infrastructure is enabled
+    };
+  };
 
-  # Base VM configuration for inference machines and services
+  # Base VM configuration for inference machines
   services = {
+    # OpenWebUI for web interface to Ollama
+    open-webui = {
+      enable = true;
+      port = 3000;
+      host = "0.0.0.0"; # Allow external connections
+      environment = {
+        OLLAMA_BASE_URL = "http://localhost:11434";
+      };
+    };
+
     # Enable QEMU Guest Agent for better VM management
     qemuGuest.enable = true;
     openssh.enable = true;
@@ -100,13 +115,16 @@
   systemd.services."getty@tty1".enable = false;
   systemd.services."autovt@tty1".enable = false;
 
-  security.sudo.enable = true;
+  # GPU/NVIDIA configuration moved to gpu-infrastructure.nix module
+
   security.sudo.wheelNeedsPassword = false;
+
+  # Enable fish shell for users
+  programs.fish.enable = true;
 
   # Networking
   networking.networkmanager.enable = true;
   networking.firewall.enable = false;
 
   system.stateVersion = "25.05"; # Match current working generation
-  services.xserver.videoDrivers = [ "nvidia" ];
 }
