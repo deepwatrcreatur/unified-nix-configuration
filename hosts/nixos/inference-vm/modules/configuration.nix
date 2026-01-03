@@ -28,8 +28,8 @@
 
     ollama = {
       enable = true;
-      modelsPath = "/var/lib/ollama";  # Use default ollama path
-      host = "127.0.0.1";
+      # Use default ollama path managed by the service
+      host = "0.0.0.0";
       port = 11434;
     };
 
