@@ -21,13 +21,20 @@
     config.allowUnsupportedSystem = true; # Allow unsupported packages like cuDNN
   };
 
-  # GPU Infrastructure configuration - Tesla P40 optimized
-  hardware.nvidia = {
-    modesetting.enable = true;
-    powerManagement.enable = false; # Disable for Tesla P40 stability
-    open = false; # Use proprietary driver
+  # Tesla Inference configuration - provides CUDA-optimized ollama for P40 GPU
+  tesla-inference = {
+    enable = true;
+    gpu = "P40"; # Tesla P40 with compute capability 6.1
+
+    ollama = {
+      enable = true;
+      modelsPath = "/var/lib/ollama";  # Use default ollama path
+      host = "127.0.0.1";
+      port = 11434;
+    };
+
+    monitoring.enable = true;
   };
-  hardware.graphics.enable = true;
 
   # System packages
   environment.systemPackages = with pkgs; [
@@ -40,12 +47,6 @@
     openssh.enable = true;
     netdata.enable = true;
     tailscale.enable = true;
-
-    # Ollama configuration with Tesla P40 CUDA support
-    ollama = {
-      enable = true;
-      # CUDA acceleration will be available via hardware.nvidia configuration
-    };
   };
 
   # Boot loader configuration for UEFI with systemd-boot
