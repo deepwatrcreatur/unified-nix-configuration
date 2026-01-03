@@ -59,12 +59,6 @@
     };
   };
 
-  # Disable ollama service during first activation to allow tmpfiles to create directories
-  # The service will be manually started after reboot when directories exist
-  systemd.services.ollama = {
-    enable = false;
-    wantedBy = lib.mkForce [];
-  };
 
   # Add OpenWebUI package for web interface to Ollama
   environment.systemPackages = with pkgs; [

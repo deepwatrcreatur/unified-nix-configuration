@@ -96,11 +96,17 @@ in
     };
 
     # Custom model storage path configuration
-    systemd.services.ollama.environment.HOME = lib.mkForce cfg.modelsPath;
-    systemd.services.ollama.serviceConfig = {
-      ReadWritePaths = lib.mkForce [ cfg.modelsPath ];
-      WorkingDirectory = lib.mkForce cfg.modelsPath;
-      StateDirectory = lib.mkForce "";
+    systemd.services.ollama = {
+      environment.HOME = lib.mkForce cfg.modelsPath;
+      serviceConfig = {
+        ReadWritePaths = lib.mkForce [ cfg.modelsPath ];
+        WorkingDirectory = lib.mkForce cfg.modelsPath;
+        StateDirectory = lib.mkForce "";
+      };
+      # Don't start during activation - allow reboot to handle service startup
+      # This avoids read-only filesystem errors when tmpfiles hasn't created directories yet
+      after = [ "multi-user.target" ];
+      wantedBy = lib.mkForce [ "multi-user.target" ];
     };
 
     # Ensure models directory and state directories exist with correct permissions
