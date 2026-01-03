@@ -65,8 +65,6 @@ in
     # CUDA toolkit and libraries, plus GPU monitoring tools
     environment.systemPackages =
       (lib.optionals cfg.cuda.enable [
-        cfg.cuda.package.cuda_toolkit
-        pkgs.cuda-toolkit_12
         pkgs.cudatoolkit
         pkgs.libcublas
         pkgs.libcusparse
@@ -79,8 +77,8 @@ in
 
     # Environment variables for CUDA
     environment.variables = lib.mkIf cfg.cuda.enable {
-      CUDA_PATH = "${cfg.cuda.package.cudatoolkit}";
-      CUDA_HOME = "${cfg.cuda.package.cudatoolkit}";
+      CUDA_PATH = "${pkgs.cudatoolkit}";
+      CUDA_HOME = "${pkgs.cudatoolkit}";
     };
 
     # Allow unfree packages (NVIDIA drivers and CUDA)
