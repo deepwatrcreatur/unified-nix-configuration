@@ -7,11 +7,9 @@
 
 let
   # Helper function to disable transparency for specific windows (AppImage, WhatsApp)
-  disableOpacityFor = windows: {
-    opacityRule = [
-      "100:class_g ?= '${windows}'"
-    ];
-  };
+  disableOpacityFor = windows: [
+    "100:class_g ?= '${windows}'"
+  ];
 
 in
 {
@@ -38,82 +36,22 @@ in
         '';
       }
     ];
-    displayManager = {
-      sddm = {
-        enable = true;
-        theme = "WhiteSur";
-        settings = {
-          Theme = {
-            Current = "WhiteSur";
-            CursorTheme = "WhiteSur-cursors";
-            Font = "JetBrainsMono Nerd Font 10";
-            Face = "${config.users.users.deepwatrcreatur.home}/.face";
-          };
-        };
-      };
-    };
-    windowManager = {
-      picom = {
-        enable = true;
-        fade = true;
-        fadeDelta = 5;
-        fadeSteps = [
-          0.01
-          0.0125
-        ];
-        shadow = true;
-        shadowOffsets = [
-          (-15)
-          (-15)
-        ];
-        shadowOpacity = 0.25;
-        backend = "glx";
-        vSync = true;
-        settings = {
-          # Disable opacity for AppImage and WhatsApp to prevent white windows
-          opacityRules =
-            (disableOpacityFor "appimage")
-            ++ (disableOpacityFor "whatsapp")
-            ++ [
-              "100:class_g ?= 'Gimp'"
-              "100:class_g ?= 'Google-chrome'"
-              "100:class_g ?= 'firefox'"
-              "100:class_g ?= 'TelegramDesktop'"
-              "100:name ?= 'screenshot'"
-              "100:name ?= 'rofi'"
-              "100:name ?= 'dmenu'"
-              "100:name ?= 'figma'"
-              "100:name ?= 'maim'"
-              "100:name ?= ' Flameshot'"
-              "100:class_g ?= 'Pavucontrol'"
-              "100:class_g ?= 'copyq'"
-            ];
-          corner-radius = 12;
-          blur = {
-            method = "gaussian";
-            size = 5;
-            deviation = 3.0;
-          };
-          shadow = {
-            offset = -15;
-            opacity = 0.25;
-            ignore-shaped = true;
-            blur-strength = 5;
-          };
-          transition = {
-            method = "exponential-out";
-            duration = 0.2;
-          };
+  };
+
+  services.displayManager = {
+    sddm = {
+      enable = true;
+      theme = "WhiteSur";
+      settings = {
+        Theme = {
+          Current = "WhiteSur";
+          CursorTheme = "WhiteSur-cursors";
+          Font = "JetBrainsMono Nerd Font 10";
+          Face = "${config.users.users.deepwatrcreatur.home}/.face";
         };
       };
     };
   };
-
-  # Enable sound system
-  hardware.pulseaudio.enable = true;
-
-  # Enable GNOME Keyring for secure credential storage (needed by Mailspring and other apps)
-  services.gnome.gnome-keyring.enable = true;
 
   # Compositor for macOS-like transparency effects
   services.picom = {
@@ -132,9 +70,46 @@ in
     shadowOpacity = 0.25;
     backend = "glx";
     vSync = true;
+    settings = {
+      # Disable opacity for AppImage and WhatsApp to prevent white windows
+      opacity-rule =
+        (disableOpacityFor "appimage")
+        ++ (disableOpacityFor "whatsapp")
+        ++ [
+          "100:class_g ?= 'Gimp'"
+          "100:class_g ?= 'Google-chrome'"
+          "100:class_g ?= 'firefox'"
+          "100:class_g ?= 'TelegramDesktop'"
+          "100:name ?= 'screenshot'"
+          "100:name ?= 'rofi'"
+          "100:name ?= 'dmenu'"
+          "100:name ?= 'figma'"
+          "100:name ?= 'maim'"
+          "100:name ?= ' Flameshot'"
+          "100:class_g ?= 'Pavucontrol'"
+          "100:class_g ?= 'copyq'"
+        ];
+      corner-radius = 12;
+      blur = {
+        method = "gaussian";
+        size = 5;
+        deviation = 3.0;
+      };
+      shadow-exclude = [
+        "name = 'Notification'"
+        "class_g = 'Conky'"
+        "class_g ?= 'Notify-osd'"
+        "class_g = 'Cairo-clock'"
+        "_GTK_FRAME_EXTENTS@:c"
+      ];
+      transition = {
+        method = "exponential-out";
+        duration = 0.2;
+      };
+    };
   };
 
-  # Touchpad configuration for macOS-like gestures
+  # Enable sound system
   services.libinput = {
     enable = true;
     touchpad = {
@@ -154,13 +129,11 @@ in
     dconf
     ulauncher
     plank
-    # Mail clients with unified inbox support (Apple Mail-like)
+    # Mail client with unified inbox support (Apple Mail-like)
     thunderbird # BEST unified inbox + iCloud/Gmail
-    geary # Modern unified inbox
-    evolution # Advanced unified inbox with PIM features
     # System tray support for Thunderbird notifications
     libappindicator-gtk3
-    # Mailspring dependencies for secure credential storage
+    # GNOME Keyring for secure credential storage
     libsecret
     gnome-keyring
     glib
@@ -170,24 +143,12 @@ in
   # Enable XDG portals for COSMIC
   xdg.portal = {
     enable = true;
+    config.common.default = "*";
     extraPortals = with pkgs; [
       xdg-desktop-portal-cosmic
       xdg-desktop-portal-gnome
       xdg-desktop-portal-gtk
     ];
-  };
-
-  # Auto-start COSMIC panel and dock
-  systemd.user.services.cosmic-panel = lib.mkIf config.services.xserver.enable {
-    description = "COSMIC panel for desktop management";
-    wantedBy = [ "graphical-session.target" ];
-    after = [ "graphical-session.target" ];
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${pkgs.deskflow}/bin/cosmic-panel";
-      Restart = "on-failure";
-      RestartSec = 5;
-    };
   };
 
   # Ulauncher application launcher
@@ -214,14 +175,14 @@ in
     };
   };
 
-  # Plank dock service for COSMIC - macOS-like transparent dock on the right side
+  # Plank dock service for COSMIC - macOS-like dock on the right side
   systemd.user.services.plank = lib.mkIf config.services.xserver.enable {
     description = "Plank macOS-like dock";
     wantedBy = [ "graphical-session.target" ];
     after = [ "graphical-session-pre.target" ];
     serviceConfig = {
       Type = "simple";
-      ExecStart = "${pkgs.plank}/bin/plank";
+      ExecStart = "${pkgs.bash}/bin/bash -c 'gsettings set net.launchpad.plank.docks:/net/launchpad/plank/docks/dock1/ alignment \"right\" && gsettings set net.launchpad.plank.docks:/net/launchpad/plank/docks/dock1/ hide-mode \"window-dodge\" && ${pkgs.plank}/bin/plank'";
       Restart = "on-failure";
       RestartSec = 5;
     };
@@ -276,16 +237,6 @@ in
 
     [org/gnome/desktop/lockdown]
     disable-lock-screen=true
-  '';
-
-  # COSMIC panel configuration for system tray support
-  environment.etc."dconf/db/local.d/00-cosmic-panel".text = ''
-    [com/laptopbatteryscaling/applet/panel]
-    show-tray=true
-
-    [org/pop_os/shell]
-    show-tray=true
-    enable-widgets=true
   '';
 
   # Thunderbird Apple Mail-like unified inbox configuration

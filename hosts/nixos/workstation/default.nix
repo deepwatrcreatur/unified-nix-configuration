@@ -44,6 +44,9 @@
   # Enable AMD GPU firmware
   hardware.enableRedistributableFirmware = true;
 
+  # NVIDIA driver configuration for version >= 560
+  hardware.nvidia.open = false;
+
   # Configure keyboard - let input-leap handle caps lock synchronization
   # services.xserver.xkb.options = "caps:none"; # Disabled - using input-leap fix instead
 
@@ -129,7 +132,7 @@
   # Enable snap support
   myModules.snap = {
     enable = true;
-    packages = [ "icloud-for-linux" ];
+    classicPackages = [ "icloud-for-linux" ];
   };
 
   # Enable fixes for stuck keyboard presses in Proxmox VM

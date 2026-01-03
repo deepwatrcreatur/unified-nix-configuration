@@ -125,7 +125,7 @@
   # Enable snap support
   myModules.snap = {
     enable = true;
-    packages = [ "icloud-for-linux" ];
+    classicPackages = [ "icloud-for-linux" ];
   };
 
   # Enable fixes for stuck keyboard presses in Proxmox VM
