@@ -62,21 +62,20 @@ in
       package = cfg.cuda.package;
     };
 
-    # CUDA toolkit and libraries
-    environment.systemPackages = lib.optionals cfg.cuda.enable [
-      cfg.cuda.package.cuda_toolkit
-      pkgs.cuda-toolkit_12
-      pkgs.cudatoolkit
-      pkgs.libcublas
-      pkgs.libcusparse
-      pkgs.libcurand
-    ];
-
-    # GPU monitoring tools
-    environment.systemPackages = lib.optionals cfg.monitoring.enable [
-      pkgs.nvitop  # Modern GPU monitoring tool
-      pkgs.gpu-burn
-    ];
+    # CUDA toolkit and libraries, plus GPU monitoring tools
+    environment.systemPackages =
+      (lib.optionals cfg.cuda.enable [
+        cfg.cuda.package.cuda_toolkit
+        pkgs.cuda-toolkit_12
+        pkgs.cudatoolkit
+        pkgs.libcublas
+        pkgs.libcusparse
+        pkgs.libcurand
+      ])
+      ++ (lib.optionals cfg.monitoring.enable [
+        pkgs.nvitop  # Modern GPU monitoring tool
+        pkgs.gpu-burn
+      ]);
 
     # Environment variables for CUDA
     environment.variables = lib.mkIf cfg.cuda.enable {
