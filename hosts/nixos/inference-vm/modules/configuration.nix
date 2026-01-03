@@ -36,8 +36,15 @@
     monitoring.enable = true;
   };
 
+  # Override ollama service to fix directory permissions
+  # The tesla-inference-flake uses DynamicUser=true which creates issues with /var/lib/private/ollama
+  systemd.services.ollama.serviceConfig.DynamicUser = lib.mkForce false;
+  systemd.services.ollama.serviceConfig.User = "root";
+  systemd.services.ollama.serviceConfig.Group = "root";
+
   # System packages
   environment.systemPackages = with pkgs; [
+    open-webui # Web interface for Ollama
   ];
 
   # Base VM configuration for inference machines and services
