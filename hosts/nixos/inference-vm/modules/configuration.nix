@@ -8,7 +8,6 @@
 {
   imports = [
     ../../../../modules/common/nix-settings.nix
-    ../../../../modules/nixos/inference-vm-nix-overrides.nix
     ./gpu-infrastructure.nix
     ./ollama.nix
     ./llama-cpp.nix
@@ -43,7 +42,6 @@
   inference.ollama = {
     enable = true;
     acceleration = "cuda"; # Explicitly enable CUDA acceleration
-    modelsPath = "/models/ollama"; # Use /models instead of /var/lib to avoid read-only mount issues
     customBuild = {
       enable = true;
       # Tesla P40 compute capability 6.1 included in default architectures

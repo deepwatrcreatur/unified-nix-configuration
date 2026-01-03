@@ -83,58 +83,30 @@ in
       })
     ];
 
-    # Don't use the nixpkgs ollama service module - manage our own service
-    # This allows us to completely control the startup behavior
-    services.ollama.enable = false;
-
-    # Manually define the ollama service with proper startup ordering
-    # Note: enable=false to prevent activation during nixos-rebuild
-    systemd.services.ollama = {
-      description = "Server for local large language models";
-      enable = false;  # Disabled during rebuild, timer will start it after boot
-      wantedBy = [ ];  # Don't auto-start via normal boot
-      after = [ "network.target" "systemd-tmpfiles-setup.service" ];
-      serviceConfig = {
-        Type = "notify";
-        ExecStart = "${pkgs.ollama}/bin/ollama serve";
-        User = "ollama";
-        Group = "ollama";
-        WorkingDirectory = cfg.modelsPath;
-        ReadWritePaths = [ cfg.modelsPath ];
-        Restart = "always";
-        RestartSec = 3;
-        StandardOutput = "journal";
-        StandardError = "journal";
-        # Prevent service from failing hard if modelspath doesn't exist yet
-        ExecStartPre = "${pkgs.coreutils}/bin/mkdir -p ${cfg.modelsPath}/models/blobs";
-      };
-      environment = {
+    # Ollama service configuration
+    services.ollama = {
+      enable = true;
+      host = cfg.host;
+      port = cfg.port;
+      acceleration = cfg.acceleration;
+      environmentVariables = {
         OLLAMA_HOST = "${cfg.host}:${toString cfg.port}";
         OLLAMA_MODELS = "${cfg.modelsPath}/models";
-        HOME = cfg.modelsPath;
       };
     };
 
-    # Create a timer to start ollama after everything is ready
-    systemd.timers.ollama-startup = {
-      description = "Start ollama service after system boot";
-      wantedBy = [ "timers.target" ];
-      timerConfig = {
-        OnBootSec = "3s";
-        Unit = "ollama.service";
-        Persistent = true;
-      };
+    # Custom model storage path configuration
+    systemd.services.ollama.environment.HOME = lib.mkForce cfg.modelsPath;
+    systemd.services.ollama.serviceConfig = {
+      ReadWritePaths = lib.mkForce [ cfg.modelsPath ];
+      WorkingDirectory = lib.mkForce cfg.modelsPath;
+      StateDirectory = lib.mkForce "";
     };
 
     # Ensure models directory exists with correct permissions
     systemd.tmpfiles.rules = [
       "d ${cfg.modelsPath} 0755 ollama ollama -"
       "d ${cfg.modelsPath}/models 0755 ollama ollama -"
-      # Also ensure /var/lib/ollama and subdirectories exist since ollama internally tries to create them
-      # even though we override environment variables
-      "d /var/lib/ollama 0755 ollama ollama -"
-      "d /var/lib/ollama/models 0755 ollama ollama -"
-      "d /var/lib/ollama/models/blobs 0755 ollama ollama -"
     ];
 
     # Add ollama user to system if not already present
