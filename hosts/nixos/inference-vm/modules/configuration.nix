@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  inputs,
   ...
 }:
 
@@ -10,10 +9,10 @@
   imports = [
     ../../../../modules/common/nix-settings.nix
     ../../../../modules/nixos/inference-vm-nix-overrides.nix
+    ./gpu-infrastructure.nix
+    ./ollama.nix
+    ./llama-cpp.nix
   ];
-
-  # Enable fish shell since users set it as default
-  programs.fish.enable = true;
 
   # Nixpkgs configuration
   nixpkgs = {
@@ -21,26 +20,34 @@
     config.allowUnsupportedSystem = true; # Allow unsupported packages like cuDNN
   };
 
-  # Tesla Inference configuration - provides CUDA-optimized ollama for P40 GPU
-  tesla-inference = {
+  # GPU Infrastructure configuration - Tesla P40 optimized
+  inference.gpu = {
     enable = true;
-    gpu = "P40"; # Tesla P40 with compute capability 6.1
-
-    ollama = {
+    nvidia = {
       enable = true;
-      # Use default ollama path managed by the service
-      host = "0.0.0.0";
-      port = 11434;
+      powerManagement = {
+        enable = false; # Disable power management for Tesla P40 stability
+        finegrained = false;
+      };
+      useOpenDriver = false; # Use proprietary driver for Tesla P40
     };
-
-    monitoring.enable = true;
+    cuda = {
+      enable = true;
+      enableTeslaP40 = true; # Enable Tesla P40 specific optimizations
+      package = config.boot.kernelPackages.nvidiaPackages.production; # Use production driver
+    };
+    monitoring.enable = true; # Enable GPU monitoring
   };
 
-  # Override ollama service to fix directory permissions
-  # The tesla-inference-flake uses DynamicUser=true which creates issues with /var/lib/private/ollama
-  systemd.services.ollama.serviceConfig.DynamicUser = lib.mkForce false;
-  systemd.services.ollama.serviceConfig.User = "root";
-  systemd.services.ollama.serviceConfig.Group = "root";
+  # Ollama configuration with Tesla P40 CUDA support
+  inference.ollama = {
+    enable = true;
+    acceleration = "cuda"; # Explicitly enable CUDA acceleration
+    customBuild = {
+      enable = true;
+      # Tesla P40 compute capability 6.1 included in default architectures
+    };
+  };
 
   # System packages
   environment.systemPackages = with pkgs; [
