@@ -10,13 +10,9 @@
   imports = [
     ../../../../modules/common/nix-settings.nix
     ../../../../modules/nixos/inference-vm-nix-overrides.nix
-  ];
-
-  # Apply Tesla inference CUDA overlays to get GPU-accelerated packages
-  nixpkgs.overlays = [
-    inputs.tesla-inference-flake.overlays.ollama-cuda
-    inputs.tesla-inference-flake.overlays.llama-cpp-tesla
-    inputs.tesla-inference-flake.overlays.gpu-tools
+    ./gpu-infrastructure.nix
+    ./ollama.nix
+    ./llama-cpp.nix
   ];
 
   # Enable fish shell since users set it as default
@@ -28,25 +24,43 @@
     config.allowUnsupportedSystem = true; # Allow unsupported packages like cuDNN
   };
 
-  # Tesla Inference Configuration - P40 GPU optimized
-  # Uses tesla-inference-flake NixOS module with pre-built CUDA packages
-  tesla-inference = {
+  # GPU Infrastructure configuration - Tesla P40 optimized
+  inference.gpu = {
     enable = true;
-    gpu = "P40"; # Tesla P40 (compute capability 6.1)
-
-    # Ollama service with CUDA acceleration
-    ollama = {
+    nvidia = {
       enable = true;
-      modelsPath = "/models/ollama";
-      port = 11434;
-      host = "0.0.0.0";
-      environmentVariables = {
-        OLLAMA_CPU_ENABLED = "true"; # Allow CPU inference as fallback
+      powerManagement = {
+        enable = false; # Disable power management for Tesla P40 stability
+        finegrained = false;
       };
+      useOpenDriver = false; # Use proprietary driver for Tesla P40
     };
+    cuda = {
+      enable = true;
+      enableTeslaP40 = true; # Enable Tesla P40 specific optimizations
+      package = config.boot.kernelPackages.nvidiaPackages.production; # Use production driver
+    };
+    monitoring.enable = true; # Enable GPU monitoring
+  };
 
-    # GPU monitoring tools
-    monitoring.enable = true;
+  # Ollama configuration with Tesla P40 CUDA support
+  inference.ollama = {
+    enable = true;
+    acceleration = "cuda"; # Explicitly enable CUDA acceleration
+    customBuild = {
+      enable = true;
+      # Tesla P40 compute capability 6.1 included in default architectures
+    };
+  };
+
+  # llama.cpp configuration (alternative/complementary to Ollama)
+  inference.llama-cpp = {
+    enable = false; # Keep disabled until GPU infrastructure is ready
+    server.enable = false;
+    customBuild = {
+      enable = false;
+      cudaSupport = false; # Will be enabled when GPU infrastructure is enabled
+    };
   };
 
   # Add OpenWebUI package for web interface to Ollama
