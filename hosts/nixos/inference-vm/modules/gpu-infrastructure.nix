@@ -62,24 +62,13 @@ in
       package = cfg.cuda.package;
     };
 
-    # CUDA toolkit and libraries, plus GPU monitoring tools
-    environment.systemPackages =
-      (lib.optionals cfg.cuda.enable [
-        pkgs.cudatoolkit
-        pkgs.libcublas
-        pkgs.libcusparse
-        pkgs.libcurand
-      ])
-      ++ (lib.optionals cfg.monitoring.enable [
-        pkgs.nvitop  # Modern GPU monitoring tool
-        pkgs.gpu-burn
-      ]);
+    # CUDA toolkit and GPU monitoring tools
+    environment.systemPackages = lib.optionals cfg.monitoring.enable [
+      pkgs.nvitop  # Modern GPU monitoring tool
+      pkgs.gpu-burn
+    ];
 
-    # Environment variables for CUDA
-    environment.variables = lib.mkIf cfg.cuda.enable {
-      CUDA_PATH = "${pkgs.cudatoolkit}";
-      CUDA_HOME = "${pkgs.cudatoolkit}";
-    };
+    # CUDA build tools are handled by the nvidia package configuration
 
     # Allow unfree packages (NVIDIA drivers and CUDA)
     nixpkgs.config.allowUnfree = true;
