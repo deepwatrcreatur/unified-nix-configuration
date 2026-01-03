@@ -88,9 +88,10 @@ in
     services.ollama.enable = false;
 
     # Manually define the ollama service with proper startup ordering
+    # Note: enable=false to prevent activation during nixos-rebuild
     systemd.services.ollama = {
       description = "Server for local large language models";
-      enable = true;
+      enable = false;  # Disabled during rebuild, timer will start it after boot
       wantedBy = [ ];  # Don't auto-start via normal boot
       after = [ "network.target" "systemd-tmpfiles-setup.service" ];
       serviceConfig = {
