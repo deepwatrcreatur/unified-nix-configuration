@@ -49,6 +49,7 @@
     copyq
     dconf
     ulauncher
+    plank
   ];
 
   # Enable XDG portals for COSMIC
@@ -94,4 +95,23 @@
       RemainAfterExit = true;
     };
   };
+
+  # Plank dock service for COSMIC - macOS-like transparent dock on the right side
+  systemd.user.services.plank = lib.mkIf config.services.xserver.enable {
+    description = "Plank macOS-like dock";
+    wantedBy = [ "graphical-session.target" ];
+    after = [ "graphical-session-pre.target" ];
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = "${pkgs.plank}/bin/plank";
+      Restart = "on-failure";
+      RestartSec = 5;
+    };
+  };
+
+  # Cursor size configuration for COSMIC
+  environment.etc."dconf/db/local.d/00-cursor-size".text = ''
+    [org/gnome/desktop/interface]
+    cursor-size=48
+  '';
 }
