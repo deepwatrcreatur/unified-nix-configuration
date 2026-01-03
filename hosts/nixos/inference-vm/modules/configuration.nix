@@ -59,11 +59,9 @@
     };
   };
 
-  # Ensure ollama service waits for tmpfiles to create directories before starting
-  systemd.services.ollama = {
-    after = [ "systemd-tmpfiles-setup.service" ];
-    wants = [ "systemd-tmpfiles-setup.service" ];
-  };
+  # Disable ollama service during first activation to allow tmpfiles to create directories
+  # The service will be manually started after reboot when directories exist
+  systemd.services.ollama.wantedBy = lib.mkForce [];
 
   # Add OpenWebUI package for web interface to Ollama
   environment.systemPackages = with pkgs; [
