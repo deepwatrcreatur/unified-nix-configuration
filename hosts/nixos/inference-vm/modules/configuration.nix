@@ -10,9 +10,6 @@
   imports = [
     ../../../../modules/common/nix-settings.nix
     ../../../../modules/nixos/inference-vm-nix-overrides.nix
-    ./gpu-infrastructure.nix
-    ./ollama.nix
-    ./llama-cpp.nix
   ];
 
   # Enable fish shell since users set it as default
@@ -24,48 +21,27 @@
     config.allowUnsupportedSystem = true; # Allow unsupported packages like cuDNN
   };
 
-  # GPU Infrastructure configuration - Tesla P40 optimized
-  inference.gpu = {
+  # Tesla Inference configuration for P40 GPU
+  tesla-inference = {
     enable = true;
-    nvidia = {
+    gpu = "P40";
+
+    ollama = {
       enable = true;
-      powerManagement = {
-        enable = false; # Disable power management for Tesla P40 stability
-        finegrained = false;
+      modelsPath = "/models/ollama";
+      host = "0.0.0.0";  # Listen on all interfaces
+      port = 11434;
+      environmentVariables = {
+        OLLAMA_NUM_GPU = "1";  # Use GPU 0
       };
-      useOpenDriver = false; # Use proprietary driver for Tesla P40
     };
-    cuda = {
-      enable = true;
-      enableTeslaP40 = true; # Enable Tesla P40 specific optimizations
-      package = config.boot.kernelPackages.nvidiaPackages.production; # Use production driver
-    };
-    monitoring.enable = true; # Enable GPU monitoring
+
+    monitoring.enable = true;
   };
 
-  # Ollama configuration with Tesla P40 CUDA support
-  inference.ollama = {
-    enable = true;
-    acceleration = "cuda"; # Explicitly enable CUDA acceleration
-    customBuild = {
-      enable = true;
-      # Tesla P40 compute capability 6.1 included in default architectures
-    };
-  };
-
-  # llama.cpp configuration (alternative/complementary to Ollama)
-  inference.llama-cpp = {
-    enable = false; # Keep disabled until GPU infrastructure is ready
-    server.enable = false;
-    customBuild = {
-      enable = false;
-      cudaSupport = false; # Will be enabled when GPU infrastructure is enabled
-    };
-  };
-
-  # Add OpenWebUI package for web interface to Ollama
+  # System packages
+  # Removed open-webui due to dependency issues - can be installed separately if needed
   environment.systemPackages = with pkgs; [
-    open-webui # Web interface for Ollama
   ];
 
   # Base VM configuration for inference machines and services
