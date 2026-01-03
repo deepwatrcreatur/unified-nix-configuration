@@ -103,11 +103,22 @@ in
       StateDirectory = lib.mkForce "";
     };
 
-    # Don't start during activation - allow systemd to handle it after boot
-    # This avoids read-only filesystem errors when tmpfiles hasn't created directories yet
+    # Don't start during activation - prevent nixos-rebuild from starting service
+    # systemd will start it normally after boot when filesystem is writable
     systemd.services.ollama = {
-      after = [ "multi-user.target" ];
-      wantedBy = [ "multi-user.target" ];
+      enable = true;
+      wantedBy = lib.mkForce [];
+    };
+
+    # Create a timer to start ollama after everything is ready
+    systemd.timers.ollama-startup = {
+      description = "Start ollama service after system boot";
+      timerConfig = {
+        OnBootSec = "2s";
+        Unit = "ollama.service";
+        Persistent = true;
+      };
+      wantedBy = [ "timers.target" ];
     };
 
     # Ensure models directory exists with correct permissions
