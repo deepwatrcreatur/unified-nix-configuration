@@ -22,9 +22,15 @@
     enable = true;
     fade = true;
     fadeDelta = 5;
-    fadeSteps = [ 0.01 0.0125 ];
+    fadeSteps = [
+      0.01
+      0.0125
+    ];
     shadow = true;
-    shadowOffsets = [ (-15) (-15) ];
+    shadowOffsets = [
+      (-15)
+      (-15)
+    ];
     shadowOpacity = 0.25;
     backend = "glx";
     vSync = true;
@@ -109,9 +115,40 @@
     };
   };
 
+  # COSMIC idle configuration service - ensures proper screen timing settings
+  systemd.user.services.cosmic-idle-config = lib.mkIf config.services.xserver.enable {
+    description = "Configure COSMIC idle settings: 2min dim, 10min screensaver, 60min screen off, no lock";
+    wantedBy = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.bash}/bin/bash -c 'sleep 3 && gsettings set org.gnome.desktop.screensaver lock-enabled false && gsettings set org.gnome.desktop.session idle-delay 600 && gsettings set org.gnome.desktop.lockdown disable-lock-screen true && gsettings set org.gnome.settings-daemon.plugins.power idle-dim-timeout 120 && gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 3600 || true'";
+      RemainAfterExit = true;
+    };
+  };
+
   # Cursor size configuration for COSMIC
   environment.etc."dconf/db/local.d/00-cursor-size".text = ''
     [org/gnome/desktop/interface]
     cursor-size=48
+  '';
+
+  # Disable lock screen with custom timing: 2min dim, 10min screensaver, 60min screen off
+  environment.etc."dconf/db/local.d/00-cosmic-screen-settings".text = ''
+    [org/gnome/desktop/screensaver]
+    lock-enabled=false
+    lock-delay=uint32 0
+    ubuntu-lock-on-suspend=false
+
+    [org/gnome/desktop/session]
+    idle-delay=uint32 600
+
+    [org/gnome/settings-daemon/plugins/power]
+    sleep-inactive-ac-timeout=uint32 3600
+    sleep-inactive-battery-timeout=uint32 3600
+    idle-dim-timeout=uint32 120
+
+    [org/gnome/desktop/lockdown]
+    disable-lock-screen=true
   '';
 }
