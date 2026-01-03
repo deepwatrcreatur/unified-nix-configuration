@@ -59,7 +59,6 @@
     };
   };
 
-
   # Add OpenWebUI package for web interface to Ollama
   environment.systemPackages = with pkgs; [
     open-webui # Web interface for Ollama

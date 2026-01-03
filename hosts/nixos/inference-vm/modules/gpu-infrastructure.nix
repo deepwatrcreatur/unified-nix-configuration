@@ -123,8 +123,26 @@ in
         allowUnfree = true; # CUDA packages are unfree
       };
 
-      # Note: CUDA packages are made available to build processes via overlays in ollama.nix
-      # and llama-cpp.nix. The actual CUDA compilation is done there, not in the base system.
+      # Make CUDA available system-wide
+      environment.systemPackages = with cfg.cuda.package; [
+        cuda_runtime
+        cuda_nvcc
+        libcublas
+        libcufft
+        libcurand
+        libcusolver
+        libcusparse
+        cudnn
+      ];
+
+      # CUDA environment variables
+      environment.variables = {
+        CUDA_PATH = "${cfg.cuda.package.cudatoolkit}";
+        CUDA_ROOT = "${cfg.cuda.package.cudatoolkit}";
+        CUDNN_PATH = "${cfg.cuda.package.cudnn}";
+      };
+
+      # Note: computeArchitectures will be available to other modules via cfg.cuda.architectures
     })
   ];
 }

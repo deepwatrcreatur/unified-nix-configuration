@@ -96,27 +96,17 @@ in
     };
 
     # Custom model storage path configuration
-    systemd.services.ollama = {
-      environment.HOME = lib.mkForce cfg.modelsPath;
-      serviceConfig = {
-        ReadWritePaths = lib.mkForce [ cfg.modelsPath ];
-        WorkingDirectory = lib.mkForce cfg.modelsPath;
-        StateDirectory = lib.mkForce "";
-      };
-      # Don't start during activation - allow reboot to handle service startup
-      # This avoids read-only filesystem errors when tmpfiles hasn't created directories yet
-      after = [ "multi-user.target" ];
-      wantedBy = lib.mkForce [ "multi-user.target" ];
+    systemd.services.ollama.environment.HOME = lib.mkForce cfg.modelsPath;
+    systemd.services.ollama.serviceConfig = {
+      ReadWritePaths = lib.mkForce [ cfg.modelsPath ];
+      WorkingDirectory = lib.mkForce cfg.modelsPath;
+      StateDirectory = lib.mkForce "";
     };
 
-    # Ensure models directory and state directories exist with correct permissions
+    # Ensure models directory exists with correct permissions
     systemd.tmpfiles.rules = [
       "d ${cfg.modelsPath} 0755 ollama ollama -"
       "d ${cfg.modelsPath}/models 0755 ollama ollama -"
-      # Also ensure /var/lib/ollama and subdirectories exist since ollama internally tries to create them
-      # even though we override it to use ${cfg.modelsPath}
-      "d /var/lib/ollama 0755 ollama ollama -"
-      "d /var/lib/ollama/models 0755 ollama ollama -"
     ];
 
     # Add ollama user to system if not already present

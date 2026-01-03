@@ -11,91 +11,165 @@ let
 in
 {
   options.inference.llama-cpp = {
-    enable = lib.mkEnableOption "llama.cpp inference framework with optional CUDA support";
+    enable = lib.mkEnableOption "llama.cpp inference server with GPU acceleration";
+
+    package = lib.mkOption {
+      type = lib.types.package;
+      default = pkgs.llama-cpp;
+      description = "llama.cpp package to use";
+    };
 
     server = {
-      enable = lib.mkEnableOption "llama.cpp HTTP server";
+      enable = lib.mkEnableOption "llama.cpp server daemon";
+
+      host = lib.mkOption {
+        type = lib.types.str;
+        default = "0.0.0.0";
+        description = "Host address for llama.cpp server";
+      };
 
       port = lib.mkOption {
         type = lib.types.port;
-        default = 8000;
-        description = "Port for llama.cpp HTTP server";
+        default = 8080;
+        description = "Port for llama.cpp server";
       };
 
-      modelPath = lib.mkOption {
+      modelsPath = lib.mkOption {
         type = lib.types.str;
         default = "/models/llama-cpp";
-        description = "Path to llama.cpp models directory";
+        description = "Path where llama.cpp models are stored";
+      };
+
+      extraArgs = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [ ];
+        description = "Additional arguments to pass to llama.cpp server";
       };
     };
 
+    acceleration = lib.mkOption {
+      type = lib.types.enum [ "auto" "cuda" "rocm" "vulkan" "cpu" ];
+      default = if gpuCfg.cuda.enable then "cuda" else "auto";
+      description = "Hardware acceleration backend for llama.cpp";
+    };
+
     customBuild = {
-      enable = lib.mkEnableOption "Custom llama.cpp build with CUDA support";
+      enable = lib.mkEnableOption "Custom llama.cpp build with specific acceleration support";
 
-      cudaSupport = lib.mkEnableOption "Build llama.cpp with CUDA acceleration";
+      cudaSupport = lib.mkOption {
+        type = lib.types.bool;
+        default = gpuCfg.cuda.enable;
+        description = "Build with CUDA support";
+      };
 
-      cudaArchitectures = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        default = [ "61" ]; # Tesla P40
-        description = "CUDA compute capabilities to compile for";
+      rocmSupport = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Build with ROCm support";
+      };
+
+      vulkanSupport = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Build with Vulkan support";
+      };
+
+      openblasSupport = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Build with OpenBLAS support for CPU optimization";
       };
     };
   };
 
   config = lib.mkIf cfg.enable {
-    # Only configure if GPU infrastructure is available
-    assertions = [
-      {
-        assertion = !cfg.customBuild.cudaSupport || gpuCfg.cuda.enable;
-        message = "llama.cpp CUDA support requires GPU infrastructure to be enabled";
-      }
-    ];
+    # Ensure GPU infrastructure is enabled if using CUDA
+    inference.gpu = lib.mkIf (cfg.acceleration == "cuda") {
+      enable = lib.mkDefault true;
+      nvidia.enable = lib.mkDefault true;
+      cuda.enable = lib.mkDefault true;
+    };
 
-    # Custom llama.cpp overlay with CUDA support
-    nixpkgs.overlays = lib.optionals (cfg.customBuild.enable && cfg.customBuild.cudaSupport) [
+    # Custom package build with specific acceleration support
+    nixpkgs.overlays = lib.optionals cfg.customBuild.enable [
       (final: prev: {
-        llama-cpp = prev.llama-cpp.overrideAttrs (old: {
-          # Enable CUDA compute capabilities
-          cmakeFlags = (old.cmakeFlags or [ ]) ++ [
-            "-DLLAMA_CUDA=ON"
-            "-DCMAKE_CUDA_ARCHITECTURES=${lib.concatStringsSep ";" cfg.customBuild.cudaArchitectures}"
-          ];
-
-          # Add CUDA dependencies
-          buildInputs = (old.buildInputs or [ ]) ++ [
-            gpuCfg.cuda.package.cuda_nvcc
-            gpuCfg.cuda.package.cuda_cudart
-            gpuCfg.cuda.package.libcublas
-          ];
-
-          # Set CUDA environment
-          preConfigure = (old.preConfigure or "") + ''
-            export CUDA_PATH=${gpuCfg.cuda.package.cudatoolkit}
-            export CUDACXX=${gpuCfg.cuda.package.cuda_nvcc}/bin/nvcc
-          '';
-        });
+        llama-cpp = prev.llama-cpp.override {
+          cudaSupport = cfg.customBuild.cudaSupport;
+          rocmSupport = cfg.customBuild.rocmSupport;
+          vulkanSupport = cfg.customBuild.vulkanSupport;
+          openblasSupport = cfg.customBuild.openblasSupport;
+        };
       })
     ];
 
-    # llama.cpp server service configuration
+    # Add llama.cpp to system packages
+    environment.systemPackages = [ cfg.package ];
+
+    # llama.cpp server service
     systemd.services.llama-cpp-server = lib.mkIf cfg.server.enable {
-      description = "llama.cpp HTTP inference server";
-      after = [ "network.target" ];
+      description = "llama.cpp inference server";
       wantedBy = [ "multi-user.target" ];
+      after = [ "network.target" ];
 
       serviceConfig = {
         Type = "simple";
-        ExecStart = "${pkgs.llama-cpp}/bin/server -m ${cfg.server.modelPath}/model.gguf --port ${toString cfg.server.port}";
-        Restart = "on-failure";
-        RestartSec = "10s";
-        StandardOutput = "journal";
-        StandardError = "journal";
+        User = "llama-cpp";
+        Group = "llama-cpp";
+        WorkingDirectory = cfg.server.modelsPath;
+        ExecStart = ''
+          ${cfg.package}/bin/llama-server \
+            --host ${cfg.server.host} \
+            --port ${toString cfg.server.port} \
+            --models-path ${cfg.server.modelsPath} \
+            ${lib.concatStringsSep " " cfg.server.extraArgs}
+        '';
+        Restart = "always";
+        RestartSec = 5;
+
+        # Security settings
+        NoNewPrivileges = true;
+        ProtectSystem = "strict";
+        ProtectHome = true;
+        ReadWritePaths = [ cfg.server.modelsPath ];
+        PrivateTmp = true;
+        PrivateDevices = lib.mkIf (cfg.acceleration == "cpu") true;
+
+        # Allow GPU access when using acceleration
+        DeviceAllow = lib.optionals (cfg.acceleration != "cpu") [
+          "/dev/nvidia*"
+          "/dev/dri/*"
+        ];
       };
+
+      environment = lib.mkMerge [
+        (lib.mkIf (cfg.acceleration == "cuda") {
+          CUDA_VISIBLE_DEVICES = "all";
+          LLAMA_CUDA = "1";
+        })
+      ];
     };
 
-    # Model storage directory
+    # User and group for llama.cpp service
+    users.users.llama-cpp = lib.mkIf cfg.server.enable {
+      isSystemUser = true;
+      group = "llama-cpp";
+      home = cfg.server.modelsPath;
+    };
+    users.groups.llama-cpp = lib.mkIf cfg.server.enable {};
+
+    # Ensure models directory exists
     systemd.tmpfiles.rules = lib.optionals cfg.server.enable [
-      "d ${cfg.server.modelPath} 0755 root root -"
+      "d ${cfg.server.modelsPath} 0755 llama-cpp llama-cpp -"
+    ];
+
+    # Global environment variables
+    environment.variables = lib.mkIf cfg.server.enable {
+      LLAMA_CPP_SERVER = "${cfg.server.host}:${toString cfg.server.port}";
+    };
+
+    # Firewall configuration
+    networking.firewall.allowedTCPPorts = lib.optionals cfg.server.enable [
+      cfg.server.port
     ];
   };
 }
