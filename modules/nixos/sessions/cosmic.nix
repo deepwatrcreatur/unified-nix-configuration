@@ -154,6 +154,8 @@ in
     dconf
     ulauncher
     plank
+    # Thunderbird for unified inbox with iCloud + Gmail
+    thunderbird
     # Mailspring dependencies for secure credential storage
     libsecret
     gnome-keyring
