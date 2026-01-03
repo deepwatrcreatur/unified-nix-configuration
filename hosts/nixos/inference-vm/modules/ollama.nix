@@ -83,42 +83,43 @@ in
       })
     ];
 
-    # Ollama service configuration
-    services.ollama = {
-      enable = true;
-      host = cfg.host;
-      port = cfg.port;
-      acceleration = cfg.acceleration;
-      environmentVariables = {
+    # Don't use the nixpkgs ollama service module - manage our own service
+    # This allows us to completely control the startup behavior
+    services.ollama.enable = false;
+
+    # Manually define the ollama service with proper startup ordering
+    systemd.services.ollama = {
+      description = "Server for local large language models";
+      wantedBy = [ ];  # Don't auto-start, use timer instead
+      after = [ "network.target" ];
+      serviceConfig = {
+        Type = "notify";
+        ExecStart = "${pkgs.ollama}/bin/ollama serve";
+        User = "ollama";
+        Group = "ollama";
+        WorkingDirectory = cfg.modelsPath;
+        ReadWritePaths = [ cfg.modelsPath ];
+        Restart = "always";
+        RestartSec = 3;
+        StandardOutput = "journal";
+        StandardError = "journal";
+      };
+      environment = {
         OLLAMA_HOST = "${cfg.host}:${toString cfg.port}";
         OLLAMA_MODELS = "${cfg.modelsPath}/models";
+        HOME = cfg.modelsPath;
       };
-    };
-
-    # Custom model storage path configuration
-    systemd.services.ollama.environment.HOME = lib.mkForce cfg.modelsPath;
-    systemd.services.ollama.serviceConfig = {
-      ReadWritePaths = lib.mkForce [ cfg.modelsPath ];
-      WorkingDirectory = lib.mkForce cfg.modelsPath;
-      StateDirectory = lib.mkForce "";
-    };
-
-    # Don't start during activation - prevent nixos-rebuild from starting service
-    # systemd will start it normally after boot when filesystem is writable
-    systemd.services.ollama = {
-      enable = true;
-      wantedBy = lib.mkForce [];
     };
 
     # Create a timer to start ollama after everything is ready
     systemd.timers.ollama-startup = {
       description = "Start ollama service after system boot";
+      wantedBy = [ "timers.target" ];
       timerConfig = {
-        OnBootSec = "2s";
+        OnBootSec = "3s";
         Unit = "ollama.service";
         Persistent = true;
       };
-      wantedBy = [ "timers.target" ];
     };
 
     # Ensure models directory exists with correct permissions
