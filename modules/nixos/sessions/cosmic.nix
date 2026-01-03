@@ -154,8 +154,12 @@ in
     dconf
     ulauncher
     plank
-    # Thunderbird for unified inbox with iCloud + Gmail
-    thunderbird
+    # Mail clients with unified inbox support (Apple Mail-like)
+    thunderbird # BEST unified inbox + iCloud/Gmail
+    geary # Modern unified inbox
+    evolution # Advanced unified inbox with PIM features
+    # System tray support for Thunderbird notifications
+    libappindicator-gtk3
     # Mailspring dependencies for secure credential storage
     libsecret
     gnome-keyring
@@ -272,5 +276,47 @@ in
 
     [org/gnome/desktop/lockdown]
     disable-lock-screen=true
+  '';
+
+  # COSMIC panel configuration for system tray support
+  environment.etc."dconf/db/local.d/00-cosmic-panel".text = ''
+    [com/laptopbatteryscaling/applet/panel]
+    show-tray=true
+
+    [org/pop_os/shell]
+    show-tray=true
+    enable-widgets=true
+  '';
+
+  # Thunderbird Apple Mail-like unified inbox configuration
+  environment.etc."thunderbird/prefs.js".text = ''
+    /* Unified Inbox Configuration - Apple Mail Experience */
+
+    // Enable Unified Inbox (Global Search Folder)
+    user_pref("mailnews.ui.global_search_folder", "mailbox://nobody?UnifiedInbox");
+
+    // Show unified inbox in folder pane
+    user_pref("mail.ui.folderpane.show_unified_inbox", true);
+
+    // Apple Mail-like threading and display
+    user_pref("mailnews.default_view", 0); // 0 = Unified Inbox view
+    user_pref("mail.thread_column", true);
+    user_pref("mailnews.show_message_source", false);
+
+    // Modern, clean interface like Apple Mail
+    user_pref("mail.pane_config.dynamic", 3); // 3 = Vertical layout
+    user_pref("mail.ui.show_message_preview", true);
+
+    // Cross-account message moving
+    user_pref("mail.ui.folderpane.show_toolbar", true);
+    user_pref("mailnews.ui.show_folder_mode", true);
+
+    // Smart folder behavior
+    user_pref("mailnews.default_sort_order", 18); // Date descending
+    user_pref("mailnews.default_sort_type", 18);    // Date
+
+    // Apple-like conversation view
+    user_pref("mailnews.show_preferred_panel", 1); // 1 = Message list panel
+    user_pref("mailnews.conversation_hack", true);
   '';
 }
