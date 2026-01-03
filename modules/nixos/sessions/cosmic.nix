@@ -1,18 +1,116 @@
 {
   config,
-  pkgs,
   lib,
+  pkgs,
   ...
 }:
 
+let
+  # Helper function to disable transparency for specific windows (AppImage, WhatsApp)
+  disableOpacityFor = windows: {
+    opacityRule = [
+      "100:class_g ?= '${windows}'"
+    ];
+  };
+
+in
 {
-  imports = [
-    ./whitesur-theme.nix
-  ];
+  # Enable X11 with Xwayland support and use available GPUs
+  services.xserver = {
+    enable = true;
+    videoDrivers = [
+      "amdgpu"
+      "nvidia"
+    ];
+    xrandrHeads = [
+      {
+        output = "DP-1";
+        monitorConfig = ''
+          Option "Position" "0 0"
+          Option "Enable" "true"
+        '';
+      }
+      {
+        output = "HDMI-A-1";
+        monitorConfig = ''
+          Option "Position" "2560 0"
+          Option "Enable" "true"
+        '';
+      }
+    ];
+    displayManager = {
+      sddm = {
+        enable = true;
+        theme = "WhiteSur";
+        settings = {
+          Theme = {
+            Current = "WhiteSur";
+            CursorTheme = "WhiteSur-cursors";
+            Font = "JetBrainsMono Nerd Font 10";
+            Face = "${config.users.users.deepwatrcreatur.home}/.face";
+          };
+        };
+      };
+    };
+    windowManager = {
+      picom = {
+        enable = true;
+        fade = true;
+        fadeDelta = 5;
+        fadeSteps = [
+          0.01
+          0.0125
+        ];
+        shadow = true;
+        shadowOffsets = [
+          (-15)
+          (-15)
+        ];
+        shadowOpacity = 0.25;
+        backend = "glx";
+        vSync = true;
+        settings = {
+          # Disable opacity for AppImage and WhatsApp to prevent white windows
+          opacityRules =
+            (disableOpacityFor "appimage")
+            ++ (disableOpacityFor "whatsapp")
+            ++ [
+              "100:class_g ?= 'Gimp'"
+              "100:class_g ?= 'Google-chrome'"
+              "100:class_g ?= 'firefox'"
+              "100:class_g ?= 'TelegramDesktop'"
+              "100:name ?= 'screenshot'"
+              "100:name ?= 'rofi'"
+              "100:name ?= 'dmenu'"
+              "100:name ?= 'figma'"
+              "100:name ?= 'maim'"
+              "100:name ?= ' Flameshot'"
+              "100:class_g ?= 'Pavucontrol'"
+              "100:class_g ?= 'copyq'"
+            ];
+          corner-radius = 12;
+          blur = {
+            method = "gaussian";
+            size = 5;
+            deviation = 3.0;
+          };
+          shadow = {
+            offset = -15;
+            opacity = 0.25;
+            ignore-shaped = true;
+            blur-strength = 5;
+          };
+          transition = {
+            method = "exponential-out";
+            duration = 0.2;
+          };
+        };
+      };
+    };
+  };
 
-  services.desktopManager.cosmic.enable = true;
-
-  services.displayManager.cosmic-greeter.enable = true;
+  # Enable sound system
+  hardware.pulseaudio.enable = true;
 
   # Enable GNOME Keyring for secure credential storage (needed by Mailspring and other apps)
   services.gnome.gnome-keyring.enable = true;
@@ -71,51 +169,16 @@
       xdg-desktop-portal-gnome
       xdg-desktop-portal-gtk
     ];
-    # Portal configuration for COSMIC with workarounds:
-    # - ScreenCast: Use gtk backend (cosmic's implementation has issues)
-    # - InputCapture: Use gnome backend (cosmic doesn't implement it yet)
-    #   This is required for Deskflow/Input Leap to work on Wayland
-    config = {
-      common = {
-        "org.freedesktop.impl.portal.ScreenCast" = "gtk";
-        "org.freedesktop.impl.portal.InputCapture" = "gnome";
-        "org.freedesktop.impl.portal.RemoteDesktop" = "gnome";
-      };
-    };
   };
 
-  # COSMIC idle configuration service - ensures proper screen timing settings
-  systemd.user.services.cosmic-idle-config = lib.mkIf config.services.xserver.enable {
-    description = "Configure COSMIC idle settings: 2min dim, 10min screensaver, 60min screen off, no lock";
+  # Auto-start COSMIC panel and dock
+  systemd.user.services.cosmic-panel = lib.mkIf config.services.xserver.enable {
+    description = "COSMIC panel for desktop management";
     wantedBy = [ "graphical-session.target" ];
     after = [ "graphical-session.target" ];
     serviceConfig = {
-      Type = "oneshot";
-      ExecStart = "${pkgs.bash}/bin/bash -c 'sleep 3 && gsettings set org.gnome.desktop.screensaver lock-enabled false && gsettings set org.gnome.desktop.session idle-delay 600 && gsettings set org.gnome.desktop.lockdown disable-lock-screen true && gsettings set org.gnome.settings-daemon.plugins.power idle-dim-timeout 120 && gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 3600 || true'";
-      RemainAfterExit = true;
-    };
-  };
-
-  # GNOME Keyring services for Mailspring secure credential storage
-  systemd.user.services.gnome-keyring-daemon = lib.mkIf config.services.xserver.enable {
-    description = "GNOME Keyring daemon for secure credential storage";
-    wantedBy = [ "graphical-session.target" ];
-    after = [ "graphical-session-pre.target" ];
-    serviceConfig = {
       Type = "simple";
-      ExecStart = "${pkgs.gnome-keyring}/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh";
-      Restart = "on-failure";
-      RestartSec = 5;
-    };
-  };
-
-  # D-Bus service for secret management
-  systemd.user.services.dbus-session-bus = lib.mkIf config.services.xserver.enable {
-    description = "D-Bus session bus service for secure communication";
-    wantedBy = [ "graphical-session.target" ];
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${pkgs.dbus}/bin/dbus-daemon --session --address=$DBUS_SESSION_BUS_ADDRESS";
+      ExecStart = "${pkgs.deskflow}/bin/cosmic-panel";
       Restart = "on-failure";
       RestartSec = 5;
     };
@@ -130,6 +193,7 @@
       Type = "simple";
       ExecStart = "${pkgs.ulauncher}/bin/ulauncher --hide-window";
       Restart = "on-failure";
+      RestartSec = 5;
     };
   };
 
@@ -166,6 +230,20 @@
       Type = "oneshot";
       ExecStart = "${pkgs.bash}/bin/bash -c 'sleep 3 && gsettings set org.gnome.desktop.screensaver lock-enabled false && gsettings set org.gnome.desktop.session idle-delay 600 && gsettings set org.gnome.desktop.lockdown disable-lock-screen true && gsettings set org.gnome.settings-daemon.plugins.power idle-dim-timeout 120 && gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 3600 || true'";
       RemainAfterExit = true;
+    };
+  };
+
+  # GNOME Keyring daemon for Mailspring secure credential storage
+  systemd.user.services.gnome-keyring-daemon = lib.mkIf config.services.xserver.enable {
+    description = "GNOME Keyring daemon for secure credential storage";
+    wantedBy = [ "graphical-session.target" ];
+    after = [ "dbus.service" ];
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = "${pkgs.gnome-keyring}/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh";
+      Restart = "on-failure";
+      RestartSec = 5;
+      Environment = "GNOME_KEYRING_CONTROL=/run/user/%u/keyring/control";
     };
   };
 
