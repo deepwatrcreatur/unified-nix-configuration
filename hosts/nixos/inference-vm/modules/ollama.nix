@@ -103,10 +103,22 @@ in
       StateDirectory = lib.mkForce "";
     };
 
+    # Don't start during activation - allow systemd to handle it after boot
+    # This avoids read-only filesystem errors when tmpfiles hasn't created directories yet
+    systemd.services.ollama = {
+      after = [ "multi-user.target" ];
+      wantedBy = [ "multi-user.target" ];
+    };
+
     # Ensure models directory exists with correct permissions
     systemd.tmpfiles.rules = [
       "d ${cfg.modelsPath} 0755 ollama ollama -"
       "d ${cfg.modelsPath}/models 0755 ollama ollama -"
+      # Also ensure /var/lib/ollama and subdirectories exist since ollama internally tries to create them
+      # even though we override environment variables
+      "d /var/lib/ollama 0755 ollama ollama -"
+      "d /var/lib/ollama/models 0755 ollama ollama -"
+      "d /var/lib/ollama/models/blobs 0755 ollama ollama -"
     ];
 
     # Add ollama user to system if not already present
