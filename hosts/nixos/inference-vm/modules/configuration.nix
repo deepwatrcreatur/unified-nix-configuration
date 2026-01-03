@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  inputs,
   ...
 }:
 
@@ -21,28 +20,15 @@
     config.allowUnsupportedSystem = true; # Allow unsupported packages like cuDNN
   };
 
-  # Tesla Inference configuration - provides CUDA-optimized ollama for P40 GPU
-  tesla-inference = {
-    enable = true;
-    gpu = "P40"; # Tesla P40 with compute capability 6.1
-
-    ollama = {
-      enable = true;
-      # Use default ollama path managed by the service
-      host = "0.0.0.0";
-      port = 11434;
-    };
-
-    monitoring.enable = true;
+  # GPU Infrastructure configuration - Tesla P40 optimized
+  hardware.nvidia = {
+    modesetting.enable = true;
+    powerManagement.enable = false; # Disable for Tesla P40 stability
+    open = false; # Use proprietary driver
   };
+  hardware.graphics.enable = true;
 
-  # Override ollama service to fix directory permissions
-  # The tesla-inference-flake uses DynamicUser=true which creates issues with /var/lib/private/ollama
-  systemd.services.ollama.serviceConfig.DynamicUser = lib.mkForce false;
-  systemd.services.ollama.serviceConfig.User = "root";
-  systemd.services.ollama.serviceConfig.Group = "root";
-
-  # System packages
+  # Add OpenWebUI package for web interface to Ollama
   environment.systemPackages = with pkgs; [
     open-webui # Web interface for Ollama
   ];
@@ -54,6 +40,15 @@
     openssh.enable = true;
     netdata.enable = true;
     tailscale.enable = true;
+
+    # Ollama configuration with Tesla P40 CUDA support
+    ollama = {
+      enable = true;
+      acceleration = "cuda"; # Explicitly use CUDA for GPU acceleration
+      environmentVariables = {
+        OLLAMA_CPU_ENABLED = "true"; # Enable CPU fallback when GPU unavailable
+      };
+    };
   };
 
   # Boot loader configuration for UEFI with systemd-boot
@@ -93,7 +88,6 @@
   systemd.services."getty@tty1".enable = false;
   systemd.services."autovt@tty1".enable = false;
 
-  security.sudo.enable = true;
   security.sudo.wheelNeedsPassword = false;
 
   # Networking
