@@ -14,6 +14,9 @@
 
   services.displayManager.cosmic-greeter.enable = true;
 
+  # Enable GNOME Keyring for secure credential storage (needed by Mailspring and other apps)
+  services.gnome.gnome-keyring.enable = true;
+
   # Compositor for macOS-like transparency effects
   services.picom = {
     enable = true;

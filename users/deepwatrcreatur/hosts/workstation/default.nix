@@ -32,6 +32,7 @@
     ffmpeg
     gitkraken
     deskflow
+    libsecret
     mailspring
     megacmd
     obsidian
