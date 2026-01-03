@@ -90,8 +90,9 @@ in
     # Manually define the ollama service with proper startup ordering
     systemd.services.ollama = {
       description = "Server for local large language models";
-      wantedBy = [ ];  # Don't auto-start, use timer instead
-      after = [ "network.target" ];
+      enable = true;
+      wantedBy = [ ];  # Don't auto-start via normal boot
+      after = [ "network.target" "systemd-tmpfiles-setup.service" ];
       serviceConfig = {
         Type = "notify";
         ExecStart = "${pkgs.ollama}/bin/ollama serve";
@@ -103,6 +104,8 @@ in
         RestartSec = 3;
         StandardOutput = "journal";
         StandardError = "journal";
+        # Prevent service from failing hard if modelspath doesn't exist yet
+        ExecStartPre = "${pkgs.coreutils}/bin/mkdir -p ${cfg.modelsPath}/models/blobs";
       };
       environment = {
         OLLAMA_HOST = "${cfg.host}:${toString cfg.port}";
