@@ -56,6 +56,11 @@
     dconf
     ulauncher
     plank
+    # Mailspring dependencies for secure credential storage
+    libsecret
+    gnome-keyring
+    glib
+    gsettings-desktop-schemas
   ];
 
   # Enable XDG portals for COSMIC
@@ -76,6 +81,43 @@
         "org.freedesktop.impl.portal.InputCapture" = "gnome";
         "org.freedesktop.impl.portal.RemoteDesktop" = "gnome";
       };
+    };
+  };
+
+  # COSMIC idle configuration service - ensures proper screen timing settings
+  systemd.user.services.cosmic-idle-config = lib.mkIf config.services.xserver.enable {
+    description = "Configure COSMIC idle settings: 2min dim, 10min screensaver, 60min screen off, no lock";
+    wantedBy = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.bash}/bin/bash -c 'sleep 3 && gsettings set org.gnome.desktop.screensaver lock-enabled false && gsettings set org.gnome.desktop.session idle-delay 600 && gsettings set org.gnome.desktop.lockdown disable-lock-screen true && gsettings set org.gnome.settings-daemon.plugins.power idle-dim-timeout 120 && gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 3600 || true'";
+      RemainAfterExit = true;
+    };
+  };
+
+  # GNOME Keyring services for Mailspring secure credential storage
+  systemd.user.services.gnome-keyring-daemon = lib.mkIf config.services.xserver.enable {
+    description = "GNOME Keyring daemon for secure credential storage";
+    wantedBy = [ "graphical-session.target" ];
+    after = [ "graphical-session-pre.target" ];
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = "${pkgs.gnome-keyring}/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh";
+      Restart = "on-failure";
+      RestartSec = 5;
+    };
+  };
+
+  # D-Bus service for secret management
+  systemd.user.services.dbus-session-bus = lib.mkIf config.services.xserver.enable {
+    description = "D-Bus session bus service for secure communication";
+    wantedBy = [ "graphical-session.target" ];
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = "${pkgs.dbus}/bin/dbus-daemon --session --address=$DBUS_SESSION_BUS_ADDRESS";
+      Restart = "on-failure";
+      RestartSec = 5;
     };
   };
 
