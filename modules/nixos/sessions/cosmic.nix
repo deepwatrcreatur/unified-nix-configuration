@@ -115,8 +115,9 @@
   # No device_name specified - auto-detected by start-evremap.sh script
   environment.etc."evremap/rofi.toml".text = ''
     # Remap Super+Space to launch rofi
+    # Note: evremap uses KEY_* prefix for keys (e.g., KEY_LEFTMETA for Super)
     [[remaps]]
-    remap = "SUPER+SPACE"
+    remap = "KEY_LEFTMETA+KEY_SPACE"
     action = "cmd"
     cmd = "${pkgs.rofi}/bin/rofi -show drun"
   '';
