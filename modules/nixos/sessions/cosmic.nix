@@ -28,6 +28,7 @@
     copyq
     dconf
     gnome-shell-extensions # For dash-to-dock extension
+    rofi # Application launcher
     # Mail client with unified inbox support (Apple Mail-like)
     thunderbird # BEST unified inbox + iCloud/Gmail
     # System tray support for Thunderbird notifications
@@ -58,6 +59,30 @@
     serviceConfig = {
       Type = "oneshot";
       ExecStart = "${pkgs.bash}/bin/bash -c 'sleep 2 && gsettings set org.gnome.shell.extensions.dash-to-dock dock-position \"right\" && gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false || true'";
+      RemainAfterExit = true;
+    };
+  };
+
+  # Configure visual appearance - transparent top bar, shadows, rounded corners
+  systemd.user.services.cosmic-visual-config = {
+    description = "Configure COSMIC visual appearance with macOS-like styling";
+    wantedBy = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.bash}/bin/bash -c 'sleep 3 && gsettings set org.gnome.desktop.interface gtk-application-prefer-dark-style true && gsettings set org.gnome.desktop.wm.preferences button-layout \":close,minimize,maximize\" || true'";
+      RemainAfterExit = true;
+    };
+  };
+
+  # Configure rofi launcher with Space bar keybinding
+  systemd.user.services.rofi-keybinding = {
+    description = "Configure rofi launcher with Space bar keybinding";
+    wantedBy = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.bash}/bin/bash -c 'sleep 3 && gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings \"['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/rofi/']\" && gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybindings:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/rofi/ name \"Launch rofi\" && gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybindings:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/rofi/ command \"${pkgs.rofi}/bin/rofi -show drun\" && gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybindings:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/rofi/ binding \"space\" || true'";
       RemainAfterExit = true;
     };
   };
