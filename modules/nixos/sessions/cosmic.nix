@@ -69,28 +69,51 @@
     };
   };
 
+  # Evremap service wrapper script for auto-detection
+  environment.etc."evremap/start-evremap.sh".source = pkgs.writeShellScript "evremap-start" ''
+    #!/usr/bin/env bash
+    # Auto-detect keyboard device and start evremap
+    # Prioritize AT keyboards (PS/2 style) or external USB keyboards
+
+    KEYBOARD=$(${pkgs.evremap}/bin/evremap list-devices 2>/dev/null | \
+      grep -E "^\s*Name:" | \
+      grep -iE "(keyboard|AT Translated|USB)" | \
+      head -1 | sed 's/Name: //; s/System Control//; s/Consumer Control//; s/Mouse//' | xargs)
+
+    if [ -z "$KEYBOARD" ]; then
+      # Fallback: try any keyboard-like device
+      KEYBOARD=$(${pkgs.evremap}/bin/evremap list-devices 2>/dev/null | \
+        grep -E "^\s*Name:" | grep -v "HDMI\|Speaker\|Mouse\|Tablet\|Power" | \
+        head -1 | sed 's/Name: //' | xargs)
+    fi
+
+    if [ -n "$KEYBOARD" ]; then
+      echo "[evremap] Found keyboard: $KEYBOARD" | logger -t evremap
+      exec ${pkgs.evremap}/bin/evremap remap /etc/evremap/rofi.toml --device-name "$KEYBOARD" --wait-for-device
+    else
+      echo "[evremap] No keyboard device found!" | logger -t evremap
+      exit 1
+    fi
+  '';
+
   # Evremap service for Super+Space -> rofi keybinding on Wayland
-  # Requires root access to /dev/input devices
   systemd.services.evremap-rofi = {
     description = "evremap hotkey daemon for rofi launcher (Super+Space)";
     after = [ "multi-user.target" ];
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
       Type = "simple";
-      ExecStart = "${pkgs.evremap}/bin/evremap remap /etc/evremap/rofi.toml --wait-for-device";
+      ExecStart = "/etc/evremap/start-evremap.sh";
       Restart = "on-failure";
-      RestartSec = 5;
+      RestartSec = 10;
       StandardOutput = "journal";
       StandardError = "journal";
     };
   };
 
   # Evremap configuration file for rofi launcher
-  # Note: device_name should be replaced with your actual keyboard name
-  # Run: sudo evremap list-devices to see available devices
+  # No device_name specified - auto-detected by start-evremap.sh script
   environment.etc."evremap/rofi.toml".text = ''
-    device_name = "Yiancar-Designs NK87"
-
     # Remap Super+Space to launch rofi
     [[remaps]]
     remap = "SUPER+SPACE"
