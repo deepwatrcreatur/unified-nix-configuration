@@ -18,12 +18,12 @@
 
     # COSMIC Panel - glossy/transparent top bar with macOS-like appearance
     "com/system76/CosmicPanel" = {
-      opacity = 0.90;
+      opacity = 0.95;
     };
 
     "com/system76/CosmicPanel/Panel" = {
-      opacity = 0.90;
-      background-opacity = 0.15;
+      opacity = 0.95;
+      background-opacity = 0.08;
       anchor-align = "center";
     };
 
