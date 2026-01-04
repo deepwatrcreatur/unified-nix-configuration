@@ -85,8 +85,12 @@
     };
   };
 
-  # Evremap configuration file
+  # Evremap configuration file for rofi launcher
+  # Note: device_name should be replaced with your actual keyboard name
+  # Run: evremap list-devices (as root) to see available devices
   environment.etc."evremap/rofi.toml".text = ''
+    device_name = "NK87"
+
     # Remap Super+Space to launch rofi
     [[remaps]]
     remap = "SUPER+SPACE"
