@@ -91,10 +91,8 @@
   };
 
   # Configure automatic login for deepwatrcreatur user
-  services.displayManager.cosmic-greeter.autoLogin = {
-    enable = true;
-    user = "deepwatrcreatur";
-  };
+  services.displayManager.autoLogin.enable = true;
+  services.displayManager.autoLogin.user = "deepwatrcreatur";
 
   # Enable printing
   services.printing.enable = true;
