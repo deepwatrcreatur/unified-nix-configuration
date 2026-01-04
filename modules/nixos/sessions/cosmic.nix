@@ -28,7 +28,6 @@
     dconf
     gnome-shell-extensions # For dash-to-dock extension
     rofi # Application launcher
-    evremap # Wayland keyboard remapper for Super+Space -> rofi binding
     # Mail client with unified inbox support (Apple Mail-like)
     thunderbird # BEST unified inbox + iCloud/Gmail
     # System tray support for Thunderbird notifications
@@ -69,58 +68,8 @@
     };
   };
 
-  # Evremap service wrapper script for auto-detection
-  environment.etc."evremap/start-evremap.sh".source = pkgs.writeShellScript "evremap-start" ''
-    #!/usr/bin/env bash
-    # Auto-detect keyboard device and start evremap
-    # Prioritize AT keyboards (PS/2 style) or external USB keyboards
-
-    KEYBOARD=$(${pkgs.evremap}/bin/evremap list-devices 2>/dev/null | \
-      grep -E "^\s*Name:" | \
-      grep -iE "(keyboard|AT Translated|USB)" | \
-      head -1 | sed 's/Name: //; s/System Control//; s/Consumer Control//; s/Mouse//' | xargs)
-
-    if [ -z "$KEYBOARD" ]; then
-      # Fallback: try any keyboard-like device
-      KEYBOARD=$(${pkgs.evremap}/bin/evremap list-devices 2>/dev/null | \
-        grep -E "^\s*Name:" | grep -v "HDMI\|Speaker\|Mouse\|Tablet\|Power" | \
-        head -1 | sed 's/Name: //' | xargs)
-    fi
-
-    if [ -n "$KEYBOARD" ]; then
-      echo "[evremap] Found keyboard: $KEYBOARD" | logger -t evremap
-      exec ${pkgs.evremap}/bin/evremap remap /etc/evremap/rofi.toml --device-name "$KEYBOARD" --wait-for-device
-    else
-      echo "[evremap] No keyboard device found!" | logger -t evremap
-      exit 1
-    fi
-  '';
-
-  # Evremap service for Super+Space -> rofi keybinding on Wayland
-  systemd.services.evremap-rofi = {
-    description = "evremap hotkey daemon for rofi launcher (Super+Space)";
-    after = [ "multi-user.target" ];
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "/etc/evremap/start-evremap.sh";
-      Restart = "on-failure";
-      RestartSec = 10;
-      StandardOutput = "journal";
-      StandardError = "journal";
-    };
-  };
-
-  # Evremap configuration file for rofi launcher
-  # No device_name specified - auto-detected by start-evremap.sh script
-  environment.etc."evremap/rofi.toml".text = ''
-    # Remap Super+Space to launch rofi
-    # Note: evremap uses KEY_* prefix for keys (e.g., KEY_LEFTMETA for Super)
-    [[remaps]]
-    remap = "KEY_LEFTMETA+KEY_SPACE"
-    action = "cmd"
-    cmd = "${pkgs.rofi}/bin/rofi -show drun"
-  '';
+  # Note: Keyboard keybindings are configured via home-manager dconf settings
+  # in modules/home-manager/cosmic-settings.nix using the standard GNOME keybindings schema
 
   # Thunderbird Apple Mail-like unified inbox configuration
   environment.etc."thunderbird/prefs.js".text = ''

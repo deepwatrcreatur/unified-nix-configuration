@@ -60,6 +60,20 @@
       action-double-click-titlebar = "maximize";
     };
 
+    # Custom keybindings for rofi launcher via COSMIC's keybinding system
+    "org/gnome/settings-daemon/plugins/media-keys" = {
+      custom-keybindings = [
+        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/rofi/"
+      ];
+    };
+
+    # Super+Space binding for rofi
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/rofi" = {
+      binding = "<Super>space";
+      command = "${pkgs.rofi}/bin/rofi -show drun";
+      name = "Rofi Application Launcher";
+    };
+
     # Screen lock and idle configuration
     "org/gnome/desktop/screensaver" = {
       lock-enabled = false;
