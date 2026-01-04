@@ -33,7 +33,6 @@
     ffmpeg
     gitkraken
     deskflow
-    mailspring
     megacmd
     obsidian
     obsidian-export

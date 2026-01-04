@@ -33,13 +33,11 @@
     gitkraken
     deskflow
     libsecret
-    mailspring
     megacmd
     obsidian
     obsidian-export
     rustdesk
     virt-viewer
-    xorg.xhost # X11 host access control for DeskFlow
   ];
 
   programs.firefox = {
