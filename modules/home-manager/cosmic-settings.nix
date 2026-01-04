@@ -16,14 +16,15 @@
       "enable-hot-corners" = false;
     };
 
-    # COSMIC Panel - glossy/transparent top bar
+    # COSMIC Panel - glossy/transparent top bar with macOS-like appearance
     "com/system76/CosmicPanel" = {
-      opacity = 0.85;
+      opacity = 0.90;
     };
 
     "com/system76/CosmicPanel/Panel" = {
-      opacity = 0.85;
-      background-opacity = 0.2;
+      opacity = 0.90;
+      background-opacity = 0.15;
+      anchor-align = "center";
     };
 
     # Dash-to-dock configuration for macOS-like right-aligned dock with enhanced styling
@@ -68,23 +69,6 @@
       action-right-click-titlebar = "menu";
       # Double-click title bar behavior (like macOS)
       action-double-click-titlebar = "maximize";
-    };
-
-    # Custom keybindings for rofi launcher via COSMIC's keybinding system
-    "org/gnome/settings-daemon/plugins/media-keys" = {
-      custom-keybindings = [
-        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/rofi/"
-      ];
-    };
-
-    # Super+Space binding for rofi
-    # Note: COSMIC may not respect gnome-settings-daemon keybindings
-    # Use COSMIC Settings GUI (Keyboard > Shortcuts > Custom Shortcuts) to bind:
-    # Super+Space -> rofi -show drun
-    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/rofi" = {
-      binding = "<Super>space";
-      command = "${pkgs.rofi}/bin/rofi -show drun";
-      name = "Rofi Application Launcher";
     };
 
     # Screen lock and idle configuration

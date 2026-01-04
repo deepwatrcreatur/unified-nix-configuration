@@ -27,7 +27,6 @@
     copyq
     dconf
     gnome-shell-extensions # For dash-to-dock extension
-    rofi # Application launcher
     # Mail client with unified inbox support (Apple Mail-like)
     thunderbird # BEST unified inbox + iCloud/Gmail
     # System tray support for Thunderbird notifications
