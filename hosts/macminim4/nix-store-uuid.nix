@@ -2,5 +2,8 @@
 { config, lib, ... }:
 
 {
-  custom.nix-mount.uuid = "B79433EC-DBA7-4BAB-949C-332CB282B0A9";
+  custom.nix-mount = {
+    enable = true;
+    uuid = "B79433EC-DBA7-4BAB-949C-332CB282B0A9";
+  };
 }

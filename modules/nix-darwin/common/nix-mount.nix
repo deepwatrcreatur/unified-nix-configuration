@@ -22,18 +22,25 @@ let
 in
 {
   options.custom.nix-mount = {
+    enable = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Enable mounting separate /nix volume (required for systems with external Nix store)";
+    };
+
     uuid = lib.mkOption {
       type = lib.types.str;
+      default = "";
       description = "UUID of the /nix volume to mount";
       example = "12345678-1234-1234-1234-1234567890AB";
     };
   };
 
-  config = {
+  config = lib.mkIf cfg.enable {
     assertions = [
       {
         assertion = cfg.uuid != "";
-        message = "custom.nix-mount.uuid must be set for nix-mount daemon";
+        message = "custom.nix-mount.uuid must be set when nix-mount is enabled";
       }
     ];
 
