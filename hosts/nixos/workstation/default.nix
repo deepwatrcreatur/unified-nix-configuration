@@ -40,6 +40,9 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.limine.enable = false;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.bootspec.enable = true;
+  boot.loader.timeout = 7;  # Increased from default 5 seconds for easier generation selection
+  boot.loader.systemd-boot.consoleMode = "auto";  # Auto-detect optimal resolution for smaller font
 
   # Enable AMD GPU firmware
   hardware.enableRedistributableFirmware = true;

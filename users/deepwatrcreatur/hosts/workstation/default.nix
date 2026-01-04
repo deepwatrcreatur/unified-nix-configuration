@@ -25,6 +25,9 @@
     gtk.enable = true;
   };
 
+  # Automatically back up clobbered config files by allowing overwrites
+  xdg.configFile."gtk-4.0/gtk.css".force = true;
+
   programs.distrobox.fedora.enable = true;
 
   home.packages = with pkgs; [
