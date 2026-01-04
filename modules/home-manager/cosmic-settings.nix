@@ -16,6 +16,16 @@
       "enable-hot-corners" = false;
     };
 
+    # COSMIC Panel - glossy/transparent top bar
+    "com/system76/CosmicPanel" = {
+      opacity = 0.85;
+    };
+
+    "com/system76/CosmicPanel/Panel" = {
+      opacity = 0.85;
+      background-opacity = 0.2;
+    };
+
     # Dash-to-dock configuration for macOS-like right-aligned dock with enhanced styling
     "org/gnome/shell/extensions/dash-to-dock" = {
       dock-position = "RIGHT";
@@ -68,6 +78,9 @@
     };
 
     # Super+Space binding for rofi
+    # Note: COSMIC may not respect gnome-settings-daemon keybindings
+    # Use COSMIC Settings GUI (Keyboard > Shortcuts > Custom Shortcuts) to bind:
+    # Super+Space -> rofi -show drun
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/rofi" = {
       binding = "<Super>space";
       command = "${pkgs.rofi}/bin/rofi -show drun";
