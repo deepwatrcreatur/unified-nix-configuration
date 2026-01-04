@@ -126,18 +126,34 @@
     }
   '';
 
-  # Keybinding for rofi using systemd user service as fallback
-  # This ensures keybinding works even if dconf doesn't apply properly
-  systemd.user.services.rofi-keybinding-monitor = {
+  # Evremap configuration for Super+Space -> rofi keybinding
+  # This works on Wayland (COSMIC's display server)
+  xdg.configFile."evremap/config.toml".text = ''
+    # Remap Super+Space to launch rofi
+    [[remaps]]
+    remap = "SUPER+SPACE"
+    action = "cmd"
+    cmd = "${pkgs.rofi}/bin/rofi -show drun"
+  '';
+
+  # Start evremap service
+  # Note: evremap requires access to /dev/input devices, typically needs root
+  # You may need to run: sudo evremap --device /dev/input/eventX ~/.config/evremap/config.toml
+  # Or configure systemd to run it with proper permissions
+  systemd.user.services.evremap-rofi = {
     Unit = {
-      Description = "Monitor and ensure rofi keybinding is active";
+      Description = "evremap hotkey daemon for rofi launcher";
       After = [ "graphical-session.target" ];
       PartOf = [ "graphical-session.target" ];
+      Documentation = "man:evremap(1)";
     };
     Service = {
-      Type = "oneshot";
-      ExecStart = "${pkgs.bash}/bin/bash -c 'sleep 2 && ${pkgs.dconf}/bin/dconf write /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/rofi-drun/binding \"<Super>space\" 2>/dev/null || true'";
-      RemainAfterExit = true;
+      Type = "simple";
+      ExecStart = "${pkgs.evremap}/bin/evremap --config ${config.xdg.configHome}/evremap/config.toml";
+      Restart = "on-failure";
+      RestartSec = 5;
+      StandardOutput = "journal";
+      StandardError = "journal";
     };
     Install = {
       WantedBy = [ "graphical-session.target" ];

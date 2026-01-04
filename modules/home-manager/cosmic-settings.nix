@@ -60,20 +60,6 @@
       action-double-click-titlebar = "maximize";
     };
 
-    # Custom keybindings for rofi launcher
-    "org/gnome/settings-daemon/plugins/media-keys" = {
-      custom-keybindings = [
-        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/rofi-drun/"
-      ];
-    };
-
-    # Rofi application launcher keybinding (Cmd/Super + Space = launcher)
-    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/rofi-drun" = {
-      binding = "<Super>space";
-      command = "${pkgs.rofi}/bin/rofi -show drun";
-      name = "Launch Application (rofi drun)";
-    };
-
     # Screen lock and idle configuration
     "org/gnome/desktop/screensaver" = {
       lock-enabled = false;
