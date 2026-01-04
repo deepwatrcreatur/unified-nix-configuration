@@ -19,6 +19,7 @@
       tokenize = true;
       scroll-method = 0; # Smooth scrolling
       terminal = "${pkgs.ghostty}/bin/ghostty";
+      theme = "${config.xdg.configHome}/rofi/theme.rasi";
     };
   };
 
