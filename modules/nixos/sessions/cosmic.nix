@@ -28,6 +28,7 @@
     dconf
     gnome-shell-extensions # For dash-to-dock extension
     rofi # Application launcher
+    evremap # Wayland keyboard remapper for Super+Space -> rofi binding
     # Mail client with unified inbox support (Apple Mail-like)
     thunderbird # BEST unified inbox + iCloud/Gmail
     # System tray support for Thunderbird notifications
@@ -92,11 +93,6 @@
     action = "cmd"
     cmd = "${pkgs.rofi}/bin/rofi -show drun"
   '';
-
-  # Add evremap to system packages
-  environment.systemPackages = with pkgs; [
-    evremap
-  ];
 
   # Thunderbird Apple Mail-like unified inbox configuration
   environment.etc."thunderbird/prefs.js".text = ''
