@@ -23,7 +23,7 @@
 
     "com/system76/CosmicPanel/Panel" = {
       opacity = 0.95;
-      background-opacity = 0.08;
+      background-opacity = 0.05;
       anchor-align = "center";
     };
 
