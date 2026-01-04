@@ -48,9 +48,8 @@
       # Font sizing and spacing
       font-name = "SF Pro Display 11";
       monospace-font-name = "SF Mono 10";
-      # Smooth cursor
-      cursor-theme = "Adwaita";
-      cursor-size = 24;
+      # Cursor size (cursor-theme is set by whitesur module)
+      cursor-size = 45;
     };
 
     # Window decoration - macOS-style button layout (right side, minimize-maximize-close order)
