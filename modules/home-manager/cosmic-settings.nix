@@ -45,10 +45,7 @@
     "org/gnome/desktop/interface" = {
       gtk-application-prefer-dark-style = true;
       color-scheme = "prefer-dark";
-      # Font sizing and spacing
-      font-name = "SF Pro Display 11";
-      monospace-font-name = "SF Mono 10";
-      # Cursor size (cursor-theme is set by whitesur module)
+      # Cursor size (fonts and cursor-theme are set by whitesur module)
       cursor-size = 45;
     };
 
