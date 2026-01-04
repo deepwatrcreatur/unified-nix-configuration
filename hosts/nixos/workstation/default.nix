@@ -90,6 +90,12 @@
     shell = pkgs.fish;
   };
 
+  # Configure automatic login for deepwatrcreatur user
+  services.displayManager.cosmic-greeter.autoLogin = {
+    enable = true;
+    user = "deepwatrcreatur";
+  };
+
   # Enable printing
   services.printing.enable = true;
 

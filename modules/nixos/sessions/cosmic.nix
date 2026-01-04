@@ -21,7 +21,6 @@
 
   # System packages for COSMIC
   environment.systemPackages = with pkgs; [
-    deskflow
     pulseaudio-ctl
     pavucontrol
     flameshot
@@ -51,42 +50,9 @@
     ];
   };
 
-  # Configure dash-to-dock extension for COSMIC (right-aligned dock)
-  systemd.user.services.cosmic-dock-config = {
-    description = "Configure dash-to-dock for macOS-like appearance on right side";
-    wantedBy = [ "graphical-session.target" ];
-    after = [ "graphical-session.target" ];
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = "${pkgs.bash}/bin/bash -c 'sleep 2 && gsettings set org.gnome.shell.extensions.dash-to-dock dock-position \"right\" && gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false || true'";
-      RemainAfterExit = true;
-    };
-  };
-
-  # Configure visual appearance - transparent top bar, shadows, rounded corners
-  systemd.user.services.cosmic-visual-config = {
-    description = "Configure COSMIC visual appearance with macOS-like styling";
-    wantedBy = [ "graphical-session.target" ];
-    after = [ "graphical-session.target" ];
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = "${pkgs.bash}/bin/bash -c 'sleep 3 && gsettings set org.gnome.desktop.interface gtk-application-prefer-dark-style true && gsettings set org.gnome.desktop.wm.preferences button-layout \":close,minimize,maximize\" || true'";
-      RemainAfterExit = true;
-    };
-  };
-
-
-  # COSMIC idle configuration service - ensures no lock screen
-  systemd.user.services.cosmic-idle-config = {
-    description = "Configure COSMIC idle settings: 2min dim, 10min screensaver, 60min screen off, no lock";
-    wantedBy = [ "graphical-session.target" ];
-    after = [ "graphical-session.target" ];
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = "${pkgs.bash}/bin/bash -c 'sleep 3 && gsettings set org.gnome.desktop.screensaver lock-enabled false && gsettings set org.gnome.desktop.session idle-delay 600 && gsettings set org.gnome.desktop.lockdown disable-lock-screen true && gsettings set org.gnome.settings-daemon.plugins.power idle-dim-timeout 120 && gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 3600 || true'";
-      RemainAfterExit = true;
-    };
-  };
+  # Desktop appearance, keybindings, and idle settings are now configured declaratively
+  # via home-manager dconf in modules/home-manager/cosmic-settings.nix
+  # This approach avoids timing issues and greeter conflicts with systemd services
 
   # GNOME Keyring daemon for credential storage
   systemd.user.services.gnome-keyring-daemon = {
