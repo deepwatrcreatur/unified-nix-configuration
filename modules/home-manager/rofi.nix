@@ -126,37 +126,7 @@
     }
   '';
 
-  # Evremap configuration for Super+Space -> rofi keybinding
-  # This works on Wayland (COSMIC's display server)
-  xdg.configFile."evremap/config.toml".text = ''
-    # Remap Super+Space to launch rofi
-    [[remaps]]
-    remap = "SUPER+SPACE"
-    action = "cmd"
-    cmd = "${pkgs.rofi}/bin/rofi -show drun"
-  '';
-
-  # Start evremap service
-  # Note: evremap requires access to /dev/input devices, typically needs root
-  # You may need to run: sudo evremap --device /dev/input/eventX ~/.config/evremap/config.toml
-  # Or configure systemd to run it with proper permissions
-  systemd.user.services.evremap-rofi = {
-    Unit = {
-      Description = "evremap hotkey daemon for rofi launcher";
-      After = [ "graphical-session.target" ];
-      PartOf = [ "graphical-session.target" ];
-      Documentation = "man:evremap(1)";
-    };
-    Service = {
-      Type = "simple";
-      ExecStart = "${pkgs.evremap}/bin/evremap --config ${config.xdg.configHome}/evremap/config.toml";
-      Restart = "on-failure";
-      RestartSec = 5;
-      StandardOutput = "journal";
-      StandardError = "journal";
-    };
-    Install = {
-      WantedBy = [ "graphical-session.target" ];
-    };
-  };
+  # Note: Super+Space keybinding is set up by evremap service configured
+  # in modules/nixos/sessions/cosmic.nix (system-level service)
+  # evremap is a Wayland-compatible keyboard remapper that works with COSMIC
 }

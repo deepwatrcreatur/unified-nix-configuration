@@ -68,6 +68,35 @@
     };
   };
 
+  # Evremap service for Super+Space -> rofi keybinding on Wayland
+  # Requires root access to /dev/input devices
+  systemd.services.evremap-rofi = {
+    description = "evremap hotkey daemon for rofi launcher (Super+Space)";
+    after = [ "multi-user.target" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = "${pkgs.evremap}/bin/evremap remap /etc/evremap/rofi.toml --wait-for-device";
+      Restart = "on-failure";
+      RestartSec = 5;
+      StandardOutput = "journal";
+      StandardError = "journal";
+    };
+  };
+
+  # Evremap configuration file
+  environment.etc."evremap/rofi.toml".text = ''
+    # Remap Super+Space to launch rofi
+    [[remaps]]
+    remap = "SUPER+SPACE"
+    action = "cmd"
+    cmd = "${pkgs.rofi}/bin/rofi -show drun"
+  '';
+
+  # Add evremap to system packages
+  environment.systemPackages = with pkgs; [
+    evremap
+  ];
 
   # Thunderbird Apple Mail-like unified inbox configuration
   environment.etc."thunderbird/prefs.js".text = ''

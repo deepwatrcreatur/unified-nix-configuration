@@ -43,7 +43,6 @@
     obsidian-export
     rustdesk
     virt-viewer
-    evremap # Wayland-compatible keyboard remapper for Super+Space -> rofi binding
   ];
 
   programs.firefox = {
