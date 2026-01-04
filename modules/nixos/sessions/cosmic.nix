@@ -75,17 +75,6 @@
     };
   };
 
-  # Configure rofi launcher with Space bar keybinding
-  systemd.user.services.rofi-keybinding = {
-    description = "Configure rofi launcher with Space bar keybinding";
-    wantedBy = [ "graphical-session.target" ];
-    after = [ "graphical-session.target" ];
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = "${pkgs.bash}/bin/bash -c 'sleep 3 && gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings \"['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/rofi/']\" && gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybindings:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/rofi/ name \"Launch rofi\" && gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybindings:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/rofi/ command \"${pkgs.rofi}/bin/rofi -show drun\" && gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybindings:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/rofi/ binding \"space\" || true'";
-      RemainAfterExit = true;
-    };
-  };
 
   # COSMIC idle configuration service - ensures no lock screen
   systemd.user.services.cosmic-idle-config = {
