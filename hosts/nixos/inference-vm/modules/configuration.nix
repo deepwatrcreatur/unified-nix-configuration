@@ -18,6 +18,7 @@
   nixpkgs = {
     config.allowUnfree = true;
     config.allowUnsupportedSystem = true; # Allow unsupported packages like cuDNN
+    config.cudaForwardCompat = false; # Skip cuda_compat build
   };
 
   # GPU Infrastructure configuration - Tesla P40 optimized
@@ -44,9 +45,13 @@
     # Ollama configuration with Tesla P40 CUDA support
     ollama = {
       enable = true;
-      acceleration = "cuda"; # Explicitly use CUDA for GPU acceleration
+      package = pkgs.ollama.override {
+        acceleration = "cuda";
+        cudaPackages = pkgs.cudaPackages_12_6;
+      };
       environmentVariables = {
-        OLLAMA_CPU_ENABLED = "true"; # Enable CPU fallback when GPU unavailable
+        CUDA_VISIBLE_DEVICES = "0";
+        OLLAMA_GPU_OVERHEAD = "0";
       };
     };
   };
@@ -56,13 +61,8 @@
     loader = {
       systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
-      limine.enable = false;
     };
   };
-  # Remove nomodeset to enable GPU drivers
-  # boot.kernelParams = [ "nomodeset" "vga=795" ];
-  # Remove ceph module since ceph is not currently configured
-  # boot.kernelModules = [ "ceph" ];
 
   # Time zone
   time.timeZone = "America/Toronto";
@@ -73,18 +73,7 @@
     LC_ALL = "en_US.UTF-8";
   };
 
-  # Disable X11 and GNOME for headless inference server
-  # services.xserver.enable = true;
-  # services.xserver.displayManager.gdm.enable = true;
-  # services.xserver.desktopManager.gnome.enable = true;
-
-  # Configure keymap (not needed without X11)
-  # services.xserver.xkb = {
-  #   layout = "us";
-  #   variant = "";
-  # };
-
-  # Enable console login (remove GNOME autologin workaround)
+  # Enable console login
   systemd.services."getty@tty1".enable = false;
   systemd.services."autovt@tty1".enable = false;
 
@@ -94,6 +83,6 @@
   networking.networkmanager.enable = true;
   networking.firewall.enable = false;
 
-  system.stateVersion = "25.05"; # Match current working generation
+  system.stateVersion = "25.05";
   services.xserver.videoDrivers = [ "nvidia" ];
 }
