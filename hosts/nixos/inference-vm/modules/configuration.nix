@@ -42,10 +42,13 @@
     netdata.enable = true;
     tailscale.enable = true;
 
-    # Ollama configuration with Tesla P40 CUDA support using official binaries
+    # Ollama configuration with Tesla P40 CUDA support
     ollama = {
       enable = true;
-      package = pkgs.ollama-official-binaries;
+      package = pkgs.ollama.override {
+        acceleration = "cuda";
+        cudaPackages = pkgs.cudaPackages_12_6;
+      };
       environmentVariables = {
         CUDA_VISIBLE_DEVICES = "0";
         OLLAMA_GPU_OVERHEAD = "0";
