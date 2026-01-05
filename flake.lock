@@ -813,8 +813,8 @@
       },
       "original": {
         "owner": "deepwatrcreatur",
-        "ref": "feature/add-official-binaries-option",
         "repo": "tesla-inference-flake",
+        "rev": "16af2e07ab5c74ee81a228e169597d422eb62ec4",
         "type": "github"
       }
     },
