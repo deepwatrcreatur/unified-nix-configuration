@@ -1,5 +1,5 @@
 {
   imports = [
-    ../../common/darwin-packages.nix
+    ../../default.nix # Import main user config (includes SSH keys and common modules)
   ];
 }
