@@ -52,6 +52,11 @@
     };
   };
 
+  # Clean up ollama state directory issues from failed GPU builds
+  systemd.tmpfiles.rules = [
+    "R  /var/lib/ollama - - - - -"
+  ];
+
   # Boot loader configuration for UEFI with systemd-boot
   boot = {
     loader = {
