@@ -42,16 +42,12 @@
     netdata.enable = true;
     tailscale.enable = true;
 
-    # Ollama configuration with Tesla P40 CUDA support
+    # Ollama configuration - GPU support temporarily disabled due to CUDA compat build issues
+    # TODO: Re-enable CUDA GPU inference once nixpkgs cuda_compat build is fixed
     ollama = {
       enable = true;
-      package = pkgs.ollama.override {
-        acceleration = "cuda";
-        cudaPackages = pkgs.cudaPackages_12_6;
-      };
       environmentVariables = {
         CUDA_VISIBLE_DEVICES = "0";
-        OLLAMA_GPU_OVERHEAD = "0";
       };
     };
   };
