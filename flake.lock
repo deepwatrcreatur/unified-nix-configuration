@@ -813,6 +813,7 @@
       },
       "original": {
         "owner": "deepwatrcreatur",
+        "ref": "main",
         "repo": "tesla-inference-flake",
         "type": "github"
       }
