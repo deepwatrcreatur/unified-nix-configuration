@@ -38,6 +38,7 @@
     deskflow
     libsecret
     megacmd
+    nomachine-client
     obsidian
     obsidian-export
     rustdesk
