@@ -49,7 +49,7 @@
       gtk-application-prefer-dark-style = true;
       color-scheme = "prefer-dark";
       # Cursor size (fonts and cursor-theme are set by whitesur module)
-      cursor-size = 45;
+      cursor-size = 60;
     };
 
     # Window decoration - macOS-style button layout (right side, minimize-maximize-close order)

@@ -99,9 +99,7 @@
         "XAUTHORITY=${config.xdg.cacheHome}/.Xauthority"
       ];
     };
-    Install = {
-      # Disabled: WantedBy = [ "graphical-session.target" ];
-    };
+    Install = {};
   };
 
   home.stateVersion = "24.11";
