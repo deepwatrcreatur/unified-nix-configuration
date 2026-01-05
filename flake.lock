@@ -804,15 +804,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1767595128,
-        "narHash": "sha256-Yo0GtB+HzpDKoB5v2D/tkklyzAsgshxrnBaZR1GgBCw=",
+        "lastModified": 1767593416,
+        "narHash": "sha256-4/gYNOBRnXuBQHP2qlVwePE2sxbiiFMZRQvEVXyKVgM=",
         "owner": "deepwatrcreatur",
         "repo": "tesla-inference-flake",
-        "rev": "40bd86a4f00280619bb9ee51b3106ff92cfd7555",
+        "rev": "16af2e07ab5c74ee81a228e169597d422eb62ec4",
         "type": "github"
       },
       "original": {
         "owner": "deepwatrcreatur",
+        "ref": "feature/add-official-binaries-option",
         "repo": "tesla-inference-flake",
         "type": "github"
       }
