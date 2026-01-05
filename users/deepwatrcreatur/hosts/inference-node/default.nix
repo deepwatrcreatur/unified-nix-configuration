@@ -10,6 +10,7 @@
   nixpkgs.config.allowUnfree = true;
   imports = [
     ../../default.nix
+    ../../../../modules/home-manager/linuxbrew.nix
     ./nh.nix
     ./just.nix
     ../../../../modules/home-manager/gpg-cli.nix
