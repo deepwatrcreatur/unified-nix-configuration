@@ -68,7 +68,7 @@
     };
 
     tesla-inference-flake = {
-      url = "github:deepwatrcreatur/tesla-inference-flake/main";
+      url = "github:deepwatrcreatur/tesla-inference-flake/feature/add-official-binaries-option";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
