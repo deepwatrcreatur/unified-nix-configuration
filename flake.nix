@@ -68,7 +68,7 @@
     };
 
     tesla-inference-flake = {
-      url = "github:deepwatrcreatur/tesla-inference-flake";
+      url = "github:deepwatrcreatur/tesla-inference-flake/feature/add-official-binaries-option";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -107,8 +107,8 @@
             doCheck = false;
           });
         })
-        # Tesla inference CUDA overlays for GPU optimization
-        inputs.tesla-inference-flake.overlays.ollama-cuda
+        # Tesla inference overlays for GPU optimization
+        inputs.tesla-inference-flake.overlays.ollama-official-binaries
         inputs.tesla-inference-flake.overlays.llama-cpp-tesla
         inputs.tesla-inference-flake.overlays.gpu-tools
       ];
