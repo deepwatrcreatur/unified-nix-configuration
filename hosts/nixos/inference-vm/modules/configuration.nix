@@ -8,68 +8,52 @@
 {
   imports = [
     ../../../../modules/common/nix-settings.nix
-    ./gpu-infrastructure.nix
-    ./ollama.nix
-    ./llama-cpp.nix
+    ../../../../modules/nixos/inference-vm-nix-overrides.nix
   ];
+
+  # Enable fish shell since users set it as default
+  programs.fish.enable = true;
 
   # Nixpkgs configuration
   nixpkgs = {
     config.allowUnfree = true;
     config.allowUnsupportedSystem = true; # Allow unsupported packages like cuDNN
+    config.cudaForwardCompat = false; # Skip cuda_compat build
   };
 
   # GPU Infrastructure configuration - Tesla P40 optimized
-  inference.gpu = {
-    enable = true;
-    nvidia = {
-      enable = true;
-      powerManagement = {
-        enable = false; # Disable power management for Tesla P40 stability
-        finegrained = false;
-      };
-      useOpenDriver = false; # Use proprietary driver for Tesla P40
-    };
-    cuda = {
-      enable = true;
-      enableTeslaP40 = true; # Enable Tesla P40 specific optimizations
-      package = config.boot.kernelPackages.nvidiaPackages.production; # Use production driver
-    };
-    monitoring.enable = true; # Enable GPU monitoring
+  hardware.nvidia = {
+    modesetting.enable = true;
+    powerManagement.enable = false; # Disable for Tesla P40 stability
+    open = false; # Use proprietary driver
   };
-
-  # Ollama configuration with Tesla P40 CUDA support
-  inference.ollama = {
-    enable = true;
-    acceleration = "cuda"; # Explicitly enable CUDA acceleration
-    customBuild = {
-      enable = true;
-      # Tesla P40 compute capability 6.1 included in default architectures
-    };
-  };
-
-  # llama.cpp configuration (alternative/complementary to Ollama)
-  inference.llama-cpp = {
-    enable = false; # Keep disabled until GPU infrastructure is ready
-    server.enable = false;
-    customBuild = {
-      enable = false;
-      cudaSupport = false; # Will be enabled when GPU infrastructure is enabled
-    };
-  };
+  hardware.graphics.enable = true;
 
   # Add OpenWebUI package for web interface to Ollama
   environment.systemPackages = with pkgs; [
     open-webui # Web interface for Ollama
   ];
 
-  # Base VM configuration for inference machines
+  # Base VM configuration for inference machines and services
   services = {
     # Enable QEMU Guest Agent for better VM management
     qemuGuest.enable = true;
     openssh.enable = true;
     netdata.enable = true;
     tailscale.enable = true;
+
+    # Ollama configuration with Tesla P40 CUDA support
+    ollama = {
+      enable = true;
+      package = pkgs.ollama.override {
+        acceleration = "cuda";
+        cudaPackages = pkgs.cudaPackages_12_6;
+      };
+      environmentVariables = {
+        CUDA_VISIBLE_DEVICES = "0";
+        OLLAMA_GPU_OVERHEAD = "0";
+      };
+    };
   };
 
   # Boot loader configuration for UEFI with systemd-boot
@@ -77,13 +61,8 @@
     loader = {
       systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
-      limine.enable = false;
     };
   };
-  # Remove nomodeset to enable GPU drivers
-  # boot.kernelParams = [ "nomodeset" "vga=795" ];
-  # Remove ceph module since ceph is not currently configured
-  # boot.kernelModules = [ "ceph" ];
 
   # Time zone
   time.timeZone = "America/Toronto";
@@ -94,31 +73,16 @@
     LC_ALL = "en_US.UTF-8";
   };
 
-  # Disable X11 and GNOME for headless inference server
-  # services.xserver.enable = true;
-  # services.xserver.displayManager.gdm.enable = true;
-  # services.xserver.desktopManager.gnome.enable = true;
-
-  # Configure keymap (not needed without X11)
-  # services.xserver.xkb = {
-  #   layout = "us";
-  #   variant = "";
-  # };
-
-  # Enable console login (remove GNOME autologin workaround)
+  # Enable console login
   systemd.services."getty@tty1".enable = false;
   systemd.services."autovt@tty1".enable = false;
 
-  # GPU/NVIDIA configuration moved to gpu-infrastructure.nix module
-
   security.sudo.wheelNeedsPassword = false;
-
-  # Enable fish shell for users
-  programs.fish.enable = true;
 
   # Networking
   networking.networkmanager.enable = true;
   networking.firewall.enable = false;
 
-  system.stateVersion = "25.05"; # Match current working generation
+  system.stateVersion = "25.05";
+  services.xserver.videoDrivers = [ "nvidia" ];
 }
