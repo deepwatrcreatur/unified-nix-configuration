@@ -804,11 +804,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1767595128,
-        "narHash": "sha256-Yo0GtB+HzpDKoB5v2D/tkklyzAsgshxrnBaZR1GgBCw=",
+        "lastModified": 1767056585,
+        "narHash": "sha256-11mxtBdYbMoElk57NDsrBv5GpY8eLGe8nmfHRHUjyos=",
         "owner": "deepwatrcreatur",
         "repo": "tesla-inference-flake",
-        "rev": "40bd86a4f00280619bb9ee51b3106ff92cfd7555",
+        "rev": "f9c15f1c1889537796a55f4814d373697efc30e1",
         "type": "github"
       },
       "original": {
