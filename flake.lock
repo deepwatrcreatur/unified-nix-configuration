@@ -804,8 +804,8 @@
         ]
       },
       "locked": {
-        "lastModified": 1767058216,
-        "narHash": "sha256-U8qI5VINXvWc+h2N+dE1yEXAMK7Vjrxoa4SkN6/QzLw=",
+        "lastModified": 1767593416,
+        "narHash": "sha256-4/gYNOBRnXuBQHP2qlVwePE2sxbiiFMZRQvEVXyKVgM=",
         "owner": "deepwatrcreatur",
         "repo": "tesla-inference-flake",
         "rev": "16af2e07ab5c74ee81a228e169597d422eb62ec4",
