@@ -68,7 +68,7 @@
     };
 
     tesla-inference-flake = {
-      url = "github:deepwatrcreatur/tesla-inference-flake";
+      url = "github:deepwatrcreatur/tesla-inference-flake/f9c15f1c1889537796a55f4814d373697efc30e1";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
