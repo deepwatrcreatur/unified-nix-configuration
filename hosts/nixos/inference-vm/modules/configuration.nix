@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  teslaInferenceOverlays ? { },
   ...
 }:
 
@@ -20,11 +19,6 @@
     config.allowUnfree = true;
     config.allowUnsupportedSystem = true; # Allow unsupported packages like cuDNN
     config.cudaForwardCompat = false; # Skip cuda_compat build
-    overlays = [
-      teslaInferenceOverlays.ollama-cuda
-      teslaInferenceOverlays.llama-cpp-tesla
-      teslaInferenceOverlays.gpu-tools
-    ];
   };
 
   # GPU Infrastructure configuration - Tesla P40 optimized

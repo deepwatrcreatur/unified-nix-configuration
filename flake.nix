@@ -68,7 +68,7 @@
     };
 
     tesla-inference-flake = {
-      url = "github:deepwatrcreatur/tesla-inference-flake/feature/add-official-binaries-option";
+      url = "github:deepwatrcreatur/tesla-inference-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -107,6 +107,10 @@
             doCheck = false;
           });
         })
+        # Tesla inference CUDA overlays for GPU optimization
+        inputs.tesla-inference-flake.overlays.ollama-cuda
+        inputs.tesla-inference-flake.overlays.llama-cpp-tesla
+        inputs.tesla-inference-flake.overlays.gpu-tools
       ];
 
       # SpecialArgs for NixOS and Darwin SYSTEM modules.
@@ -115,7 +119,6 @@
         inherit inputs;
         lib = nixpkgsLib;
         myModules = import ./modules;
-        teslaInferenceOverlays = inputs.tesla-inference-flake.overlays;
       };
 
       # SpecialArgs specifically for HOME MANAGER modules.
