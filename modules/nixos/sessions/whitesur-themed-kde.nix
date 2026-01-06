@@ -40,6 +40,10 @@
     kdePackages.dolphin
     kdePackages.konsole
 
+    # QML modules for KDE plasmoids (fixes missing module errors)
+    kdePackages.bluedevil
+    kdePackages.plasma-bluetooth
+
     # Utilities
     dconf-editor # For GTK app theme configuration
     libsecret
