@@ -12,7 +12,7 @@
     ./rbw.nix
     ./just.nix
     ../../../../modules/home-manager/git.nix
-    ../../../../modules/home-manager/gpg-cli.nix
+    ../../../../modules/home-manager/gpg-agent-ssh.nix
     ../../../../modules/home-manager/linuxbrew.nix
 
     ../.. # default module for user

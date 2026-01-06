@@ -13,7 +13,7 @@
     ../../../../modules/home-manager/linuxbrew.nix
     ./nh.nix
     ./just.nix
-    ../../../../modules/home-manager/gpg-cli.nix
+    ../../../../modules/home-manager/gpg-agent-ssh.nix
   ];
 
   home.homeDirectory = "/home/deepwatrcreatur";

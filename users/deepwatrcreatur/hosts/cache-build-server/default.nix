@@ -14,7 +14,7 @@
     ./rbw.nix
     ../../../../modules/home-manager/git.nix
 
-    ../../../../modules/home-manager/gpg-cli.nix
+    ../../../../modules/home-manager/gpg-agent-ssh.nix
   ];
 
   # Set home directory for Home Manager

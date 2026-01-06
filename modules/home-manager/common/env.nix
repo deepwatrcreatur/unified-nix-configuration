@@ -25,7 +25,14 @@
   programs.bash = {
     sessionVariables = {
     };
-    initExtra = ''
+    initExtra = lib.mkAfter ''
+      # CRITICAL: Set TERM to safe default if empty (happens in non-interactive SSH)
+      # This prevents TUI applications like opencode from failing with "invalid input message type" errors
+      if [ -z "$TERM" ]; then
+        export TERM=xterm-256color
+        export COLORTERM=truecolor
+      fi
+
       # Determinate nixd completion (if available)
       if command -v determinate-nixd &>/dev/null; then
         eval "$(determinate-nixd --nix-bin /nix/var/nix/profiles/default/bin completion bash)"
@@ -50,7 +57,14 @@
   # Add zsh configuration with determinate nixd completion
   programs.zsh = {
     enable = true;
-    initContent = ''
+    initContent = lib.mkAfter ''
+      # CRITICAL: Set TERM to safe default if empty (happens in non-interactive SSH)
+      # This prevents TUI applications like opencode from failing with "invalid input message type" errors
+      if [ -z "$TERM" ]; then
+        export TERM=xterm-256color
+        export COLORTERM=truecolor
+      fi
+
       # Determinate nixd completion (if available)
       if command -v determinate-nixd &>/dev/null; then
         eval "$(determinate-nixd --nix-bin /nix/var/nix/profiles/default/bin completion zsh)"

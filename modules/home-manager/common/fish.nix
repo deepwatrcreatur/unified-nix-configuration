@@ -44,6 +44,13 @@
       # Include paths for both Linux and macOS
       set -gx TERMINFO_DIRS "${config.home.homeDirectory}/.terminfo:/usr/share/terminfo:/opt/homebrew/share/terminfo"
 
+      # CRITICAL: Set TERM to safe default if empty (happens in non-interactive SSH)
+      # This prevents TUI applications like opencode from failing with "invalid input message type" errors
+      if test -z "$TERM"
+        set -gx TERM xterm-256color
+        set -gx COLORTERM truecolor
+      end
+
       # Override TERM for ghostty to ensure compatibility with apps that don't
       # have ghostty terminfo (like kilocode, some ncurses apps)
       # On macOS: ncurses doesn't respect TERMINFO_DIRS at all

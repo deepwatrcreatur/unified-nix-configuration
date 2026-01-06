@@ -13,7 +13,7 @@
 
     ../../../../modules/home-manager
     ../../../../modules/home-manager/ghostty
-    ../../../../modules/home-manager/gpg-cli.nix
+    ../../../../modules/home-manager/gpg-agent-cross-de.nix
     ../../../../modules/home-manager/zed.nix
     ../../../../modules/home-manager/cosmic-settings.nix
   ];

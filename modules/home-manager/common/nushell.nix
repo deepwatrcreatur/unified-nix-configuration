@@ -27,6 +27,13 @@
       ll = "ls -l";
     };
     configFile.text = ''
+      # CRITICAL: Set TERM to safe default if empty (happens in non-interactive SSH)
+      # This prevents TUI applications like opencode from failing with "invalid input message type" errors
+      if ($env.TERM | is-empty) or ($env.TERM == "") {
+        $env.TERM = "xterm-256color"
+        $env.COLORTERM = "truecolor"
+      }
+
       # Enhanced table display
       $env.config.table = {
         mode: rounded

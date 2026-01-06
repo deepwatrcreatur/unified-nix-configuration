@@ -15,7 +15,13 @@
     ../../../modules/nixos/attic-client.nix # Attic cache client
     ../../../modules/nixos/snap.nix # Snap package manager support
     #../../../modules/nixos/sessions/cinnamon.nix # MATE with WhiteSur theming
+
+    # Desktop environment - choose one:
+    # COSMIC (current): Clean GNOME-based, excellent Activities, no app badges
     ../../../modules/nixos/sessions/cosmic.nix
+    # KDE Plasma (testing): Powerful, app badges in system tray, Super+Space launcher, Desktop Grid
+    #../../../modules/nixos/sessions/whitesur-themed-kde.nix
+
     ../../../modules/nixos/keyboard-glitches.nix # Fix for stuck keyboard presses in Proxmox VM
     ../../../modules/wezterm-config.nix
     ../../../modules/activation-scripts # Activation scripts for system setup
