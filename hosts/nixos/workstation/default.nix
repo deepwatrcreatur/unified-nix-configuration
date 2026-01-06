@@ -17,10 +17,10 @@
     #../../../modules/nixos/sessions/cinnamon.nix # MATE with WhiteSur theming
 
     # Desktop environment - choose one:
-    # COSMIC (current): Clean GNOME-based, excellent Activities, no app badges
-    ../../../modules/nixos/sessions/cosmic.nix
+    # COSMIC: Clean GNOME-based, excellent Activities, no app badges
+    #../../../modules/nixos/sessions/cosmic.nix
     # KDE Plasma (testing): Powerful, app badges in system tray, Super+Space launcher, Desktop Grid
-    #../../../modules/nixos/sessions/whitesur-themed-kde.nix
+    ../../../modules/nixos/sessions/whitesur-themed-kde.nix
 
     ../../../modules/nixos/keyboard-glitches.nix # Fix for stuck keyboard presses in Proxmox VM
     ../../../modules/wezterm-config.nix

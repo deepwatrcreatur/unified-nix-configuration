@@ -11,7 +11,7 @@
 
   # Import plasma-manager for home-manager integration
   home-manager.sharedModules = [
-    inputs.plasma-manager.homeManagerModules.plasma-manager
+    inputs.plasma-manager.homeModules.plasma-manager
     ../../kde-plasma.nix
   ];
 
@@ -40,10 +40,6 @@
     kdePackages.dolphin
     kdePackages.konsole
 
-    # Theming
-    whitesur-icon-theme
-    whitesur-cursor-theme
-
     # Utilities
     dconf-editor # For GTK app theme configuration
     libsecret
@@ -52,10 +48,6 @@
     # Thunderbird and mail support
     thunderbird
     libappindicator-gtk3
-
-    # XDG portal support
-    xdg-desktop-portal-kde
-    xdg-desktop-portal-gtk
 
     # Fonts
     noto-fonts
@@ -69,18 +61,15 @@
 
   # WhiteSur theming configuration
   environment.variables = {
-    GTK_THEME = "WhiteSur-dark";
     ICON_THEME = "WhiteSur";
-    CURSOR_THEME = "WhiteSur-cursors";
   };
 
   # XDG portals for better desktop integration
   xdg.portal = {
     enable = true;
-    config.common.default = "*";
-    extraPortals = with pkgs; [
-      xdg-desktop-portal-kde
-      xdg-desktop-portal-gtk
+    extraPortals = [
+      pkgs.xdg-desktop-portal-gtk
+      pkgs.kdePackages.xdg-desktop-portal-kde
     ];
   };
 
@@ -103,17 +92,4 @@
     };
   };
 
-  # GNOME Keyring daemon for credential storage (works with KDE)
-  systemd.user.services.gnome-keyring-daemon = {
-    description = "GNOME Keyring daemon for secure credential storage";
-    wantedBy = [ "graphical-session.target" ];
-    after = [ "dbus.service" ];
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${pkgs.gnome-keyring}/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh";
-      Restart = "on-failure";
-      RestartSec = 5;
-      Environment = "GNOME_KEYRING_CONTROL=/run/user/%u/keyring/control";
-    };
-  };
 }

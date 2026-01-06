@@ -57,51 +57,51 @@
     clipboardSharing = true
   '';
 
-  # X11 display setup for DeskFlow
-  systemd.user.services.xhost-deskflow = {
-    Unit = {
-      Description = "X11 host access for DeskFlow";
-      After = [ "graphical-session.target" ];
-      PartOf = [ "graphical-session.target" ];
-    };
-    Service = {
-      Type = "oneshot";
-      ExecStart = "${pkgs.xorg.xhost}/bin/xhost +local:";
-      RemainAfterExit = true;
-    };
-    Install = {
-      WantedBy = [ "graphical-session.target" ];
-    };
-  };
+  # X11 display setup for DeskFlow (disabled)
+  # systemd.user.services.xhost-deskflow = {
+  #   Unit = {
+  #     Description = "X11 host access for DeskFlow";
+  #     After = [ "graphical-session.target" ];
+  #     PartOf = [ "graphical-session.target" ];
+  #   };
+  #   Service = {
+  #     Type = "oneshot";
+  #     ExecStart = "${pkgs.xorg.xhost}/bin/xhost +local:";
+  #     RemainAfterExit = true;
+  #   };
+  #   Install = {
+  #     WantedBy = [ "graphical-session.target" ];
+  #   };
+  # };
 
-  # Deskflow server service (disabled in favor of RustDesk)
+  # Deskflow server service (disabled to prevent autostart)
   # Start manually with: systemctl --user start deskflow
-  systemd.user.services.deskflow = {
-    Unit = {
-      Description = "Deskflow Server";
-      After = [
-        "graphical-session.target"
-        "xhost-deskflow.service"
-      ];
-      Wants = [
-        "graphical-session.target"
-        "xhost-deskflow.service"
-      ];
-    };
-    Service = {
-      Type = "simple";
-      ExecStart = ''
-        ${pkgs.deskflow}/bin/deskflow server --config ${config.home.homeDirectory}/.config/deskflow/deskflow.conf
-      '';
-      Restart = "on-failure";
-      RestartSec = "5";
-      Environment = [
-        "DISPLAY=:0"
-        "XAUTHORITY=${config.xdg.cacheHome}/.Xauthority"
-      ];
-    };
-    Install = {};
-  };
+  # systemd.user.services.deskflow = {
+  #   Unit = {
+  #     Description = "Deskflow Server";
+  #     After = [
+  #       "graphical-session.target"
+  #       "xhost-deskflow.service"
+  #     ];
+  #     Wants = [
+  #       "graphical-session.target"
+  #       "xhost-deskflow.service"
+  #     ];
+  #   };
+  #   Service = {
+  #     Type = "simple";
+  #     ExecStart = ''
+  #       ${pkgs.deskflow}/bin/deskflow server --config ${config.home.homeDirectory}/.config/deskflow/deskflow.conf
+  #     '';
+  #     Restart = "on-failure";
+  #     RestartSec = "5";
+  #     Environment = [
+  #       "DISPLAY=:0"
+  #       "XAUTHORITY=${config.xdg.cacheHome}/.Xauthority"
+  #     ];
+  #   };
+  #   Install = {};
+  # };
 
   home.stateVersion = "24.11";
 }
