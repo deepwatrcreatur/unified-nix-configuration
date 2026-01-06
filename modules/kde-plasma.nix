@@ -21,5 +21,19 @@
   # KDE-specific applications
   home.packages = with pkgs; [
     kdePackages.krunner
+    birdtray # System tray notification for Thunderbird
   ];
+
+  # Autostart birdtray for Thunderbird notifications
+  systemd.user.services.birdtray = {
+    Unit = {
+      Description = "Birdtray - Thunderbird system tray notification";
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      ExecStart = "${pkgs.birdtray}/bin/birdtray";
+      Restart = "on-failure";
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
 }
