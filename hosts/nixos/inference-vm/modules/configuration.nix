@@ -42,12 +42,15 @@
     netdata.enable = true;
     tailscale.enable = true;
 
-    # Ollama configuration - GPU support temporarily disabled due to CUDA compat build issues
-    # TODO: Re-enable CUDA GPU inference once nixpkgs cuda_compat build is fixed
+    # Ollama configuration with Tesla P40 CUDA support
+    # Using official binaries to avoid cuda_compat build error
     ollama = {
       enable = true;
+      package = pkgs.ollama-official-binaries;  # From tesla-inference-flake overlay
       environmentVariables = {
         CUDA_VISIBLE_DEVICES = "0";
+        OLLAMA_GPU_OVERHEAD = "0";
+        LD_LIBRARY_PATH = "/run/opengl-driver/lib";  # For bundled CUDA libraries
       };
     };
   };

@@ -68,7 +68,7 @@
     };
 
     tesla-inference-flake = {
-      url = "github:deepwatrcreatur/tesla-inference-flake/f9c15f1c1889537796a55f4814d373697efc30e1";
+      url = "github:deepwatrcreatur/tesla-inference-flake";  # Use latest main with official binaries
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -107,8 +107,8 @@
             doCheck = false;
           });
         })
-        # Tesla inference CUDA overlays for GPU optimization
-        inputs.tesla-inference-flake.overlays.ollama-cuda
+        # Tesla inference overlays for GPU optimization
+        inputs.tesla-inference-flake.overlays.ollama-official-binaries  # Use official binaries to avoid cuda_compat build error
         inputs.tesla-inference-flake.overlays.llama-cpp-tesla
         inputs.tesla-inference-flake.overlays.gpu-tools
       ];
