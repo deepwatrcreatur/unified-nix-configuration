@@ -20,6 +20,9 @@
 
   home.homeDirectory = "/home/deepwatrcreatur";
 
+  # Home Manager backup configuration
+  home-manager.backupFileExtension = "bak";
+
   # WhiteSur theming for MATE
   whitesur = {
     enable = true;
