@@ -42,23 +42,9 @@
     netdata.enable = true;
     tailscale.enable = true;
 
-    # Ollama configuration with Tesla P40 CUDA support
-    # Using official binaries to avoid cuda_compat build error
-    ollama = {
-      enable = true;
-      package = pkgs.ollama-official-binaries;  # From tesla-inference-flake overlay
-      environmentVariables = {
-        CUDA_VISIBLE_DEVICES = "0";
-        OLLAMA_GPU_OVERHEAD = "0";
-        LD_LIBRARY_PATH = "/run/opengl-driver/lib";  # For bundled CUDA libraries
-      };
-    };
+    # Ollama disabled in base config - configured per-host
+    # (e.g., inference1 uses custom build with official binaries)
   };
-
-  # Clean up ollama state directory issues from failed GPU builds
-  systemd.tmpfiles.rules = [
-    "R  /var/lib/ollama - - - - -"
-  ];
 
   # Boot loader configuration for UEFI with systemd-boot
   boot = {
