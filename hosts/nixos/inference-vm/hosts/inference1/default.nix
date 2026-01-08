@@ -74,15 +74,17 @@
   users.groups.ollama = { };
 
   systemd.services.ollama = {
-    environment.OLLAMA_MODELS = lib.mkForce "/models/ollama/models";
+    environment = {
+      OLLAMA_MODELS = lib.mkForce "/models/ollama/models";
+      HOME = lib.mkForce "/models/ollama";
+    };
     serviceConfig = {
-      # Remove StateDirectory completely - we manage /models/ollama via tmpfiles
-      StateDirectory = lib.mkForce [ ];
-      StateDirectoryMode = lib.mkForce "0755";
+      StateDirectory = lib.mkForce "";
       DynamicUser = lib.mkForce false;
-      ReadWritePaths = [ "/models/ollama" ];
-      # Disable ProtectHome so we can access /models
-      ProtectHome = lib.mkForce false;
+      ReadWritePaths = lib.mkForce [ "/models/ollama" ];
+      WorkingDirectory = lib.mkForce "/models/ollama";
+      # Allow access to the actual GPU device
+      DeviceAllow = [ "/dev/nvidia0" ];
     };
   };
 
@@ -92,8 +94,5 @@
     "d /models/ollama/models 0755 ollama ollama -"
     "d /models/ollama/models/blobs 0755 ollama ollama -"
     "d /models/ollama/models/manifests 0755 ollama ollama -"
-    # Clean up old state directory
-    "R /var/lib/ollama - - - - -"
-    "R /var/lib/private/ollama - - - - -"
   ];
 }
