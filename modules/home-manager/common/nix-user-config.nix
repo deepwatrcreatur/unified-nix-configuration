@@ -70,7 +70,7 @@ in
   config = lib.mkIf cfg.enable (lib.mkMerge [
     {
       # Write user nix.conf with substituters, trusted keys, and GitHub token
-      xdg.configFile."nix/nix.conf" = {
+      home.file.".config/nix/nix.conf" = {
         text = ''
           # User Nix configuration managed by home-manager
           experimental-features = ${lib.concatStringsSep " " cfg.experimentalFeatures}
@@ -85,16 +85,12 @@ in
         token_file="${cfg.githubTokenPath}"
 
         if [[ -n "${cfg.githubTokenPath}" && -f "$token_file" ]]; then
-          token=$(cat "$token_file" 2>/dev/null || echo "")
+          token=$(cat "$token_file" 2>/dev/null | tr -d '\n' || echo "")
           if [[ -n "$token" ]]; then
-            # Ensure file is writable
-            chmod u+w "$nix_conf" 2>/dev/null || true
-
-            # Remove any existing access-tokens line
-            sed -i '/^access-tokens = github.com:/d' "$nix_conf" 2>/dev/null || true
-
-            # Append the token
-            echo "access-tokens = github.com:$token" >> "$nix_conf"
+            # Remove any existing access-tokens line and append new one
+            grep -v "^access-tokens = github.com:" "$nix_conf" > "$nix_conf.tmp" 2>/dev/null || cp "$nix_conf" "$nix_conf.tmp"
+            echo "access-tokens = github.com:$token" >> "$nix_conf.tmp"
+            mv "$nix_conf.tmp" "$nix_conf"
             echo "Added GitHub token to $nix_conf"
           else
             echo "Warning: GitHub token file is empty at $token_file" >&2
