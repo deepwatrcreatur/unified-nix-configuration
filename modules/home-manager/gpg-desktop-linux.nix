@@ -8,9 +8,11 @@
 }:
 
 {
-  # Install pinentry package (gnome3 for GNOME desktop)
+  # Install pinentry-gtk2 for universal compatibility
+  # GTK2 works on Cosmic (GTK-based), over SSH, and as fallback for all environments
+  # More compatible than GNOME3 (GNOME-specific) or Qt (KDE-specific)
   home.packages = with pkgs; [
-    pinentry-gnome3
+    pinentry-gtk2
   ];
 
   programs.gpg = {
@@ -32,10 +34,8 @@
 
   services.gpg-agent = {
     enable = true;
-    # Choose one based on your desktop environment (e.g., GNOME, KDE, XFCE)
-    #pinentry.package = pkgs.pinentry-qt;
-    pinentry.package = pkgs.pinentry-gnome3;
-    # Try gtk2 pinentry which is more universally compatible
+    # Use GTK2 pinentry: universal compatibility (works locally and over SSH)
+    pinentry.package = pkgs.pinentry-gtk2;
     enableSshSupport = true;
   };
 }

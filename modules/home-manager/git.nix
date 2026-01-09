@@ -167,11 +167,25 @@ in
       if [ -f ~/.config/git/github-token ]; then
         export GITHUB_TOKEN="$(${pkgs.coreutils}/bin/cat ~/.config/git/github-token)"
       fi
+
+      # GPG settings for automated commits (prevents password prompts in CI/agents)
+      export GPG_TTY=$(tty 2>/dev/null || echo "")
+      # Allow automated tools to bypass pinentry when in non-interactive mode
+      if [ -z "$TERM" ] || [ "$TERM" = "dumb" ]; then
+        export GPG_TERMINAL_PROMPT_DISABLE=1
+      fi
     '';
 
     programs.zsh.initContent = lib.mkAfter ''
       if [ -f ~/.config/git/github-token ]; then
         export GITHUB_TOKEN="$(${pkgs.coreutils}/bin/cat ~/.config/git/github-token)"
+      fi
+
+      # GPG settings for automated commits (prevents password prompts in CI/agents)
+      export GPG_TTY=$(tty 2>/dev/null || echo "")
+      # Allow automated tools to bypass pinentry when in non-interactive mode
+      if [ -z "$TERM" ] || [ "$TERM" = "dumb" ]; then
+        export GPG_TERMINAL_PROMPT_DISABLE=1
       fi
     '';
 
@@ -179,12 +193,26 @@ in
       if test -f ~/.config/git/github-token
         set -gx GITHUB_TOKEN (${pkgs.coreutils}/bin/cat ~/.config/git/github-token)
       end
+
+      # GPG settings for automated commits (prevents password prompts in CI/agents)
+      set -gx GPG_TTY (tty 2>/dev/null; or echo "")
+      # Allow automated tools to bypass pinentry when in non-interactive mode
+      if test -z "$TERM" -o "$TERM" = "dumb"
+        set -gx GPG_TERMINAL_PROMPT_DISABLE 1
+      end
     '';
 
     programs.nushell.extraConfig = lib.mkAfter ''
       # Set GitHub token for API access
       if ("~/.config/git/github-token" | path exists) {
         $env.GITHUB_TOKEN = (open ~/.config/git/github-token | str trim)
+      }
+
+      # GPG settings for automated commits (prevents password prompts in CI/agents)
+      $env.GPG_TTY = (tty 2>/dev/null || echo "")
+      # Allow automated tools to bypass pinentry when in non-interactive mode
+      if ($env.TERM == "" or $env.TERM == "dumb") {
+        $env.GPG_TERMINAL_PROMPT_DISABLE = "1"
       }
 
       ${nushellAliases}
