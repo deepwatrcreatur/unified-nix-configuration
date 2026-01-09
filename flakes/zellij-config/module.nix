@@ -170,9 +170,8 @@ in {
     
                       border_enabled  "false"
     
-                      tab_normal   "#[fg=#6C7086] {index} {name} "
-                      tab_active   "#[bg=#a6e3a1,fg=#1e1e2e,bold]  {index} {name}  #[bg=#1e1e2e,fg=#a6e3a1] "
-    
+                  tab_normal   "#[fg=#6C7086] {index} {name} "
+                  tab_active   "#[fg=#a6e3a1,bold]#[bg=#a6e3a1,fg=#1e1e2e,bold]  {index} {name}  #[fg=#a6e3a1,bg=#181825] "    
                       datetime        "{format}"
                       datetime_format "%H:%M"
                       datetime_timezone "Europe/Berlin"
