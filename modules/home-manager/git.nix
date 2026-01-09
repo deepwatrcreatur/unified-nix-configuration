@@ -180,6 +180,8 @@ in
         export CI=true
         export TERM=linux
         export NO_COLOR=1
+        # Disable OpenCode plugins that cause issues over SSH
+        export OPENCODE_DISABLE_PLUGINS=1
       fi
     '';
 
@@ -200,6 +202,8 @@ in
         export CI=true
         export TERM=linux
         export NO_COLOR=1
+        # Disable OpenCode plugins that cause issues over SSH
+        export OPENCODE_DISABLE_PLUGINS=1
       fi
     '';
 
@@ -220,6 +224,8 @@ in
         set -gx CI true
         set -gx TERM linux
         set -gx NO_COLOR 1
+        # Disable OpenCode plugins that cause issues over SSH
+        set -gx OPENCODE_DISABLE_PLUGINS 1
       end
     '';
 
@@ -241,6 +247,8 @@ in
         $env.CI = "true"
         $env.TERM = "linux"
         $env.NO_COLOR = "1"
+        # Disable OpenCode plugins that cause issues over SSH
+        $env.OPENCODE_DISABLE_PLUGINS = "1"
       }
 
       ${nushellAliases}
