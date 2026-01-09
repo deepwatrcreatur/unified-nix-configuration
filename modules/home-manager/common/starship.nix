@@ -25,7 +25,7 @@
       # Directory shown at top of zellij pane (current working directory)
       # Keep it "colored text on dark background" (no solid background blocks).
       format =
-        "$nix$virtualenv$rust$nodejs$python$golang$git_branch$git_status$fill$cmd_duration$status\n$character";
+        "$nix$env_var$rust$nodejs$python$golang$git_branch$git_status$fill$cmd_duration$status\n$character";
 
       # Palettes
       palette = "kanagawa";
@@ -154,12 +154,11 @@
         format = "[$symbol$name]($style)";
       };
 
-      # Virtual environments - Python venv, Node nvm, etc.
-      virtualenv = {
-        disabled = false;
+      # Virtual environments - detects VIRTUAL_ENV when in Python venv
+      env_var.VIRTUAL_ENV = {
         symbol = "🐍 ";
         style = "fg:color_yellow";
-        format = "[$symbol$version]($style)";
+        format = "[$symbol($env_value)]($style)";
       };
 
       character = {
