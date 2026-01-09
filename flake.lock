@@ -895,11 +895,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1767944892,
-        "narHash": "sha256-xoxNDz6SZSyM7OWnecVx10gmPGRosDxpgvAzBFDZMPE=",
+        "lastModified": 1767945452,
+        "narHash": "sha256-M72EMn6FuHtG1AobhzgWK3XwHKBZti7Cim1avv2hgaY=",
         "owner": "deepwatrcreatur",
         "repo": "nix-zellij-vivid-rounded",
-        "rev": "67c2dea8e120deee2abf8e5320570b97318b0375",
+        "rev": "f73496a54026b6f9b0bfa3069a3f701d71955662",
         "type": "github"
       },
       "original": {
