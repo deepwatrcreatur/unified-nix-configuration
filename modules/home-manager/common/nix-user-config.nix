@@ -80,13 +80,17 @@ in
 
     # Add GitHub token to nix.conf via activation script (runtime, not build-time)
     (lib.mkIf (cfg.githubTokenPath != null) {
-      home.activation.github-nix-token = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      home.activation.github-nix-token = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
         nix_conf_file="$HOME/.config/nix/nix.conf"
         token_file="${cfg.githubTokenPath}"
 
         if [[ -f "$token_file" ]]; then
           token=$(cat "$token_file" 2>/dev/null || echo "")
           if [[ -n "$token" ]]; then
+            # Make file writable temporarily if needed
+            if [[ -f "$nix_conf_file" ]]; then
+              ${pkgs.coreutils}/bin/chmod u+w "$nix_conf_file"
+            fi
             # Remove any existing github access-tokens line
             ${pkgs.gnused}/bin/sed -i '/^access-tokens.*github\.com/d' "$nix_conf_file"
             # Add the token
