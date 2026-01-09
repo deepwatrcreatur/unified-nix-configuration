@@ -69,19 +69,33 @@ in
 
   config = lib.mkIf cfg.enable (lib.mkMerge [
     {
-      # Write user nix.conf with substituters, trusted keys, and GitHub token
-      xdg.configFile."nix/nix.conf" = lib.mkIf (cfg.githubTokenPath != null) {
-        text = let
-          githubToken = lib.fileContents cfg.githubTokenPath;
-        in ''
-          # User Nix configuration managed by home-manager
-          experimental-features = ${lib.concatStringsSep " " cfg.experimentalFeatures}
-          extra-substituters = ${lib.concatStringsSep " " cfg.substituters}
-          extra-trusted-public-keys = ${lib.concatStringsSep " " cfg.trustedPublicKeys}
-          access-tokens = github.com:${lib.removeSuffix "\n" githubToken}
-        '';
-      };
+      # Write user nix.conf with substituters and trusted keys
+      xdg.configFile."nix/nix.conf".text = ''
+        # User Nix configuration managed by home-manager
+        experimental-features = ${lib.concatStringsSep " " cfg.experimentalFeatures}
+        extra-substituters = ${lib.concatStringsSep " " cfg.substituters}
+        extra-trusted-public-keys = ${lib.concatStringsSep " " cfg.trustedPublicKeys}
+      '';
     }
+
+    # Add GitHub token to nix.conf via activation script (runtime, not build-time)
+    (lib.mkIf (cfg.githubTokenPath != null) {
+      home.activation.github-nix-token = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        nix_conf_file="$HOME/.config/nix/nix.conf"
+        token_file="${cfg.githubTokenPath}"
+
+        if [[ -f "$token_file" ]]; then
+          token=$(cat "$token_file" 2>/dev/null || echo "")
+          if [[ -n "$token" ]]; then
+            # Remove any existing github access-tokens line
+            ${pkgs.gnused}/bin/sed -i '/^access-tokens.*github\.com/d' "$nix_conf_file"
+            # Add the token
+            echo "access-tokens = github.com:$token" >> "$nix_conf_file"
+            echo "GitHub token added to nix.conf"
+          fi
+        fi
+      '';
+    })
 
     # Create netrc file in Determinate Nix's managed location (only if netrcMachine is set)
     (lib.mkIf (cfg.netrcMachine != null) {
