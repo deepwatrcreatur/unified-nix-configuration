@@ -51,6 +51,7 @@ in
       ++ (import ../common-brew-packages.nix).brews
       ++ config.homebrew.hostSpecific.brews;
       casks = [
+        "applite"
         "coteditor"
         "font-fira-code"
         "ghostty"
