@@ -59,17 +59,26 @@ in
       default = "${config.home.homeDirectory}/.config/sops/attic-client-token";
       description = "Path to the token file for netrc authentication";
     };
+
+    githubTokenPath = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = "${config.home.homeDirectory}/.config/sops-nix/secrets/github-token";
+      description = "Path to GitHub token file for API authentication (null to disable)";
+    };
   };
 
   config = lib.mkIf cfg.enable (lib.mkMerge [
     {
-      # Write user nix.conf with substituters and trusted keys
-      xdg.configFile."nix/nix.conf".text = ''
-        # User Nix configuration managed by home-manager
-        experimental-features = ${lib.concatStringsSep " " cfg.experimentalFeatures}
-        extra-substituters = ${lib.concatStringsSep " " cfg.substituters}
-        extra-trusted-public-keys = ${lib.concatStringsSep " " cfg.trustedPublicKeys}
-      '';
+      # Write user nix.conf with substituters, trusted keys, and GitHub token
+      xdg.configFile."nix/nix.conf" = lib.mkIf (cfg.githubTokenPath != null) {
+        text = ''
+          # User Nix configuration managed by home-manager
+          experimental-features = ${lib.concatStringsSep " " cfg.experimentalFeatures}
+          extra-substituters = ${lib.concatStringsSep " " cfg.substituters}
+          extra-trusted-public-keys = ${lib.concatStringsSep " " cfg.trustedPublicKeys}
+          access-tokens = github.com:$(${pkgs.coreutils}/bin/cat ${cfg.githubTokenPath})
+        '';
+      };
     }
 
     # Create netrc file in Determinate Nix's managed location (only if netrcMachine is set)
