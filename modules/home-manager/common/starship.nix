@@ -18,12 +18,14 @@
       command_timeout = 1000;
 
       # Two-line prompt:
-      # - Line 1: OS + user@host + git + memory ... right edge: cmd_duration then time
+      # - Line 1: language + git branch/status ... right edge: cmd_duration + exit_status
       # - Line 2: input character
       #
+      # Context moved to zellij top bar: OS + user@host + memory
+      # Directory shown at top of zellij pane (current working directory)
       # Keep it "colored text on dark background" (no solid background blocks).
       format =
-        "$os $username$hostname $git_branch$git_status $memory_usage$fill$cmd_duration $time\n$character";
+        "$rust$nodejs$python$golang$git_branch$git_status$fill$cmd_duration$status\n$character";
 
       # Palettes
       palette = "kanagawa";
@@ -60,28 +62,17 @@
         style = "fg:color_bg0";
       };
 
+      # OS, username, hostname moved to zellij top bar
       os = {
-        disabled = false;
-        style = "fg:color_blue";
-        format = "[$symbol]($style)";
-        symbols = {
-          Linux = "󰌽";
-          NixOS = "󱄅";
-          Macos = "󰀵";
-        };
+        disabled = true;
       };
 
       username = {
-        show_always = true;
-        style_user = "fg:color_yellow";
-        style_root = "fg:color_red";
-        format = "[$user]($style)";
+        disabled = true;
       };
 
       hostname = {
-        ssh_only = false;
-        style = "fg:color_blue";
-        format = "[@$hostname]($style)";
+        disabled = true;
       };
 
       git_branch = {
@@ -97,14 +88,12 @@
         format = "([ $all_status$ahead_behind ]($style))";
       };
 
+      # Memory moved to zellij top bar
       memory_usage = {
-        disabled = false;
-        threshold = 0;
-        symbol = "🧠 ";
-        style = "fg:color_green";
-        format = "[$symbol$ram]($style)";
+        disabled = true;
       };
 
+      # Command duration on right edge of starship
       cmd_duration = {
         disabled = false;
         min_time = 0;
@@ -113,11 +102,48 @@
         format = "[took $duration]($style)";
       };
 
-      time = {
+      # Exit status indicator (✓ or ✗ based on last command)
+      status = {
         disabled = false;
-        style = "fg:color_gray";
-        time_format = "%H:%M";
-        format = "[$time]($style)";
+        symbol = "✗";
+        success_symbol = "✓";
+        format = "[$symbol]($style)";
+        style = "fg:color_red";
+        map_symbol = true;
+      };
+
+      # Time moved to zellij top bar (redundant with desktop clock)
+      time = {
+        disabled = true;
+      };
+
+      # Language modules to show project context
+      rust = {
+        disabled = false;
+        symbol = "🦀 ";
+        style = "fg:color_red";
+        format = "[$symbol]($style)";
+      };
+
+      nodejs = {
+        disabled = false;
+        symbol = " ";
+        style = "fg:color_green";
+        format = "[$symbol]($style)";
+      };
+
+      python = {
+        disabled = false;
+        symbol = "🐍 ";
+        style = "fg:color_yellow";
+        format = "[$symbol]($style)";
+      };
+
+      golang = {
+        disabled = false;
+        symbol = "🐹 ";
+        style = "fg:color_blue";
+        format = "[$symbol]($style)";
       };
 
       character = {
