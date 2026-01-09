@@ -174,6 +174,13 @@ in
       if [ -z "$TERM" ] || [ "$TERM" = "dumb" ]; then
         export GPG_TERMINAL_PROMPT_DISABLE=1
       fi
+
+      # SSH environment: disable interactive TUI features over SSH
+      if [ -n "$SSH_CONNECTION" ]; then
+        export CI=true
+        export TERM=linux
+        export NO_COLOR=1
+      fi
     '';
 
     programs.zsh.initContent = lib.mkAfter ''
@@ -186,6 +193,13 @@ in
       # Allow automated tools to bypass pinentry when in non-interactive mode
       if [ -z "$TERM" ] || [ "$TERM" = "dumb" ]; then
         export GPG_TERMINAL_PROMPT_DISABLE=1
+      fi
+
+      # SSH environment: disable interactive TUI features over SSH
+      if [ -n "$SSH_CONNECTION" ]; then
+        export CI=true
+        export TERM=linux
+        export NO_COLOR=1
       fi
     '';
 
@@ -200,6 +214,13 @@ in
       if test -z "$TERM" -o "$TERM" = "dumb"
         set -gx GPG_TERMINAL_PROMPT_DISABLE 1
       end
+
+      # SSH environment: disable interactive TUI features over SSH
+      if test -n "$SSH_CONNECTION"
+        set -gx CI true
+        set -gx TERM linux
+        set -gx NO_COLOR 1
+      end
     '';
 
     programs.nushell.extraConfig = lib.mkAfter ''
@@ -213,6 +234,13 @@ in
       # Allow automated tools to bypass pinentry when in non-interactive mode
       if ($env.TERM == "" or $env.TERM == "dumb") {
         $env.GPG_TERMINAL_PROMPT_DISABLE = "1"
+      }
+
+      # SSH environment: disable interactive TUI features over SSH
+      if ($env.SSH_CONNECTION? != null) {
+        $env.CI = "true"
+        $env.TERM = "linux"
+        $env.NO_COLOR = "1"
       }
 
       ${nushellAliases}
