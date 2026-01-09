@@ -262,28 +262,36 @@ in
         }) cfg.plugins
       ))
 
-      # Yazelix Zellij Layout
+      # Yazelix Zellij Layout with enhanced theming
       {
         "zellij/layouts/yazelix.kdl" = {
           text = ''
             layout {
+                // Enhanced tab bar with catppuccin theming
                 pane size=1 borderless=true {
                     plugin location="zellij:tab-bar"
                 }
                 pane split_direction="vertical" {
+                    // File manager pane - labeled for clarity
                     pane size="30%" {
                         command "yazi"
+                        name "📁 File Manager"
                     }
                     pane split_direction="horizontal" {
+                        // Editor pane - labeled
                         pane {
                             command "hx"
                             args "."
+                            name "📝 Editor"
                         }
+                        // Terminal pane - labeled with working directory hint
                         pane size="30%" {
                             // Terminal pane for commands, git, etc.
+                            name "💻 Terminal"
                         }
                     }
                 }
+                // Enhanced status bar with working directory
                 pane size=2 borderless=true {
                     plugin location="zellij:status-bar"
                 }

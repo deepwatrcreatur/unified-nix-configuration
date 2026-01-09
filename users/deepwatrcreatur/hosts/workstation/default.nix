@@ -18,6 +18,17 @@
     ../../../../modules/home-manager/cosmic-settings.nix
   ];
 
+  # Enable zellij with vivid colors, rounded tabs, and Ctrl-Alt keybindings
+  programs.zellij-vivid-rounded = {
+    enable = true;
+  };
+
+  # Enable yazelix with catppuccin theming
+  programs.yazelix = {
+    enable = true;
+    enableShellIntegration = true;
+  };
+
   home.homeDirectory = "/home/deepwatrcreatur";
 
   # WhiteSur theming for MATE

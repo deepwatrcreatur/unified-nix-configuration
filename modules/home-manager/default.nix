@@ -3,6 +3,7 @@
   config,
   pkgs,
   lib,
+  inputs,
   ...
 }:
 let
@@ -16,7 +17,9 @@ let
     );
 in
 {
-  imports = commonImports;
+  imports = commonImports ++ [
+    inputs.zellij-vivid-rounded.homeManagerModules.default
+  ];
 
   # Copy .terminfo files into place
   home.file.".terminfo" = {
