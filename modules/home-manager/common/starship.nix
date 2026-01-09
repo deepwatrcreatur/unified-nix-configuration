@@ -25,7 +25,7 @@
       # Directory shown at top of zellij pane (current working directory)
       # Keep it "colored text on dark background" (no solid background blocks).
       format =
-        "$rust$nodejs$python$golang$git_branch$git_status$fill$cmd_duration$status\n$character";
+        "$nix$virtualenv$rust$nodejs$python$golang$git_branch$git_status$fill$cmd_duration$status\n$character";
 
       # Palettes
       palette = "kanagawa";
@@ -144,6 +144,22 @@
         symbol = "🐹 ";
         style = "fg:color_blue";
         format = "[$symbol]($style)";
+      };
+
+      # Nix development environment - shows when in nix develop/nix shell
+      nix_shell = {
+        disabled = false;
+        symbol = "❄️  ";
+        style = "fg:color_aqua";
+        format = "[$symbol$name]($style)";
+      };
+
+      # Virtual environments - Python venv, Node nvm, etc.
+      virtualenv = {
+        disabled = false;
+        symbol = "🐍 ";
+        style = "fg:color_yellow";
+        format = "[$symbol$version]($style)";
       };
 
       character = {
