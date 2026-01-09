@@ -817,11 +817,11 @@
     "tap-sst": {
       "flake": false,
       "locked": {
-        "lastModified": 1767918737,
-        "narHash": "sha256-KYSiJB99tvEn31Wn/dF4wqTva6+Kyl27KCWETCr5GGs=",
+        "lastModified": 1767996728,
+        "narHash": "sha256-8y5OyP/latYgfXPMSkY6a0Je38f3U52NaS6ut+zpLjQ=",
         "owner": "sst",
         "repo": "homebrew-tap",
-        "rev": "d3642e564e1df75acd6f43a315e82915f0572f0f",
+        "rev": "e3dcb4d101a16dda44834a8cfa681f9cc8fd4f2b",
         "type": "github"
       },
       "original": {
@@ -895,11 +895,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1767983997,
-        "narHash": "sha256-scn+8yHlValoMYQh08yj/Oapc/7ZsM163mOZxMx5ap4=",
+        "lastModified": 1767997057,
+        "narHash": "sha256-eF0fM9EU+DUWgVhpf4ECKcoSgB3/ThdKAGDkM0yPdTY=",
         "owner": "deepwatrcreatur",
         "repo": "nix-zellij-vivid-rounded",
-        "rev": "54d2400971b69a6c15b14bef5a7bbf298d86bb3f",
+        "rev": "6a8373639b5219f00b07391bd8cf4cc6fb7f2b39",
         "type": "github"
       },
       "original": {

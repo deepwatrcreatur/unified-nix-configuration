@@ -69,37 +69,26 @@ in
 
   config = lib.mkIf cfg.enable (lib.mkMerge [
     {
-      # Write user nix.conf with substituters and trusted keys
-      xdg.configFile."nix/nix.conf".text = ''
+      # Write user nix.conf with substituters, trusted keys, and GitHub token
+      xdg.configFile."nix/nix.conf".text = let
+        # Read the token file if it exists and is not null
+        tokenLine = if cfg.githubTokenPath != null && builtins.pathExists cfg.githubTokenPath
+          then
+            let
+              token = lib.removeSuffix "\n" (builtins.readFile cfg.githubTokenPath);
+            in
+              "access-tokens = github.com:${token}\n"
+          else
+            "";
+      in
+      ''
         # User Nix configuration managed by home-manager
         experimental-features = ${lib.concatStringsSep " " cfg.experimentalFeatures}
         extra-substituters = ${lib.concatStringsSep " " cfg.substituters}
         extra-trusted-public-keys = ${lib.concatStringsSep " " cfg.trustedPublicKeys}
+        ${tokenLine}
       '';
     }
-
-    # Add GitHub token to nix.conf via activation script (runtime, not build-time)
-    (lib.mkIf (cfg.githubTokenPath != null) {
-      home.activation.github-nix-token = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-        nix_conf_file="$HOME/.config/nix/nix.conf"
-        token_file="${cfg.githubTokenPath}"
-
-        if [[ -f "$token_file" ]]; then
-          token=$(cat "$token_file" 2>/dev/null || echo "")
-          if [[ -n "$token" ]]; then
-            # Make file writable temporarily if needed
-            if [[ -f "$nix_conf_file" ]]; then
-              ${pkgs.coreutils}/bin/chmod u+w "$nix_conf_file"
-            fi
-            # Remove any existing github access-tokens line
-            ${pkgs.gnused}/bin/sed -i '/^access-tokens.*github\.com/d' "$nix_conf_file"
-            # Add the token
-            echo "access-tokens = github.com:$token" >> "$nix_conf_file"
-            echo "GitHub token added to nix.conf"
-          fi
-        fi
-      '';
-    })
 
     # Create netrc file in Determinate Nix's managed location (only if netrcMachine is set)
     (lib.mkIf (cfg.netrcMachine != null) {
