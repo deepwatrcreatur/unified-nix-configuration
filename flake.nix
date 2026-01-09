@@ -73,7 +73,7 @@
     };
 
     zellij-vivid-rounded = {
-      url = "github:deepwatrcreatur/nix-zellij-vivid-rounded/a158c75";
+      url = "github:deepwatrcreatur/nix-zellij-vivid-rounded/dd6e96c";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
