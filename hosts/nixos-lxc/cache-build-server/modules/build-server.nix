@@ -226,11 +226,6 @@
           "127.0.0.1:5000" = { };
         };
       };
-      "nixos-cache" = {
-        servers = {
-          "cache.nixos.org:443" = { };
-        };
-      };
     };
 
     virtualHosts."cache-server" = {
