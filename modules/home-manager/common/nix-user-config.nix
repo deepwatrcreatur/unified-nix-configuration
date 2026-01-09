@@ -70,13 +70,14 @@ in
   config = lib.mkIf cfg.enable (lib.mkMerge [
     {
       # Write user nix.conf with substituters, trusted keys, and GitHub token
-      xdg.configFile."nix/nix.conf".text =
-      ''
-        # User Nix configuration managed by home-manager
-        experimental-features = ${lib.concatStringsSep " " cfg.experimentalFeatures}
-        extra-substituters = ${lib.concatStringsSep " " cfg.substituters}
-        extra-trusted-public-keys = ${lib.concatStringsSep " " cfg.trustedPublicKeys}
-      '';
+      xdg.configFile."nix/nix.conf" = {
+        text = ''
+          # User Nix configuration managed by home-manager
+          experimental-features = ${lib.concatStringsSep " " cfg.experimentalFeatures}
+          extra-substituters = ${lib.concatStringsSep " " cfg.substituters}
+          extra-trusted-public-keys = ${lib.concatStringsSep " " cfg.trustedPublicKeys}
+        '';
+      };
 
       # Read GitHub token at runtime and append to nix.conf
       home.activation.nixConfigToken = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
@@ -86,8 +87,12 @@ in
         if [[ -n "${cfg.githubTokenPath}" && -f "$token_file" ]]; then
           token=$(cat "$token_file" 2>/dev/null || echo "")
           if [[ -n "$token" ]]; then
+            # Ensure file is writable
+            chmod u+w "$nix_conf" 2>/dev/null || true
+
             # Remove any existing access-tokens line
-            sed -i '/^access-tokens = github.com:/d' "$nix_conf"
+            sed -i '/^access-tokens = github.com:/d' "$nix_conf" 2>/dev/null || true
+
             # Append the token
             echo "access-tokens = github.com:$token" >> "$nix_conf"
             echo "Added GitHub token to $nix_conf"
