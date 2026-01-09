@@ -71,12 +71,14 @@ in
     {
       # Write user nix.conf with substituters, trusted keys, and GitHub token
       xdg.configFile."nix/nix.conf" = lib.mkIf (cfg.githubTokenPath != null) {
-        text = ''
+        text = let
+          githubToken = lib.fileContents cfg.githubTokenPath;
+        in ''
           # User Nix configuration managed by home-manager
           experimental-features = ${lib.concatStringsSep " " cfg.experimentalFeatures}
           extra-substituters = ${lib.concatStringsSep " " cfg.substituters}
           extra-trusted-public-keys = ${lib.concatStringsSep " " cfg.trustedPublicKeys}
-          access-tokens = github.com:$(${pkgs.coreutils}/bin/cat ${cfg.githubTokenPath})
+          access-tokens = github.com:${lib.removeSuffix "\n" githubToken}
         '';
       };
     }
