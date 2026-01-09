@@ -190,6 +190,27 @@ in
       ${nushellAliases}
     '';
 
+    # Setup .netrc for GitHub authentication in nix flake operations
+    home.activation.setupGitHubNetrc = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      if [ -f ~/.config/git/github-token ]; then
+        TOKEN=$(${pkgs.coreutils}/bin/cat ~/.config/git/github-token)
+        ${pkgs.coreutils}/bin/install -m 600 /dev/null ~/.netrc 2>/dev/null || true
+        # Add or update github.com entry in .netrc
+        if grep -q "machine github.com" ~/.netrc 2>/dev/null; then
+          # Update existing entry (remove old entry and add new one)
+          grep -v "machine github.com" ~/.netrc > ~/.netrc.tmp 2>/dev/null || true
+          ${pkgs.coreutils}/bin/mv ~/.netrc.tmp ~/.netrc 2>/dev/null || true
+        fi
+        ${pkgs.coreutils}/bin/cat >> ~/.netrc << EOF
+machine github.com
+login deepwatrcreatur
+password $TOKEN
+EOF
+        ${pkgs.coreutils}/bin/chmod 600 ~/.netrc
+        $verbose && echo "GitHub authentication configured in ~/.netrc for nix flake operations"
+      fi
+    '';
+
     home.packages =
       with pkgs;
       [
