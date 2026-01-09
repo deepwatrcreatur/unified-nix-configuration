@@ -160,47 +160,48 @@ in {
 
     # Define an extended layout with rounded corners and vivid colors
         xdg.configFile."zellij/layouts/extended.kdl".text = ''
-          layout {
-              pane size=1 borderless=true {
-                  plugin location="file:${pkgs.zjstatus}/bin/zjstatus.wasm" {
-                      # Standard vivid bar at the top
-                      format_left   "#[bg=#89B4FA,fg=#1e1e2e,bold]   {session}  #[bg=#1e1e2e,fg=#89B4FA] {tabs}"
-                      format_right  "#[fg=#89B4FA,bold]#[bg=#89B4FA,fg=#1e1e2e,bold]  󰃭 {datetime}  "
-                      format_space  ""
-    
-                      border_enabled  "false"
-    
+      layout {
+          pane size=1 borderless=true {
+              plugin location="file:${pkgs.zjstatus}/bin/zjstatus.wasm" {
+                  # Standard vivid bar at the top
+                  format_left   "#[fg=#89B4FA,bold]#[bg=#89B4FA,fg=#1e1e2e,bold]   {session}  #[bg=#1e1e2e,fg=#89B4FA] {tabs}"
+                  format_right  "#[fg=#89B4FA,bold]#[bg=#89B4FA,fg=#1e1e2e,bold]  󰃭 {datetime}  #[fg=#89B4FA,bg=#181825]"
+                  format_space  ""
+
+                  border_enabled  "false"
+
                   tab_normal   "#[fg=#6C7086] {index} {name} "
-                  tab_active   "#[fg=#a6e3a1,bold]#[bg=#a6e3a1,fg=#1e1e2e,bold]  {index} {name}  #[fg=#a6e3a1,bg=#181825] "    
-                      datetime        "{format}"
-                      datetime_format "%H:%M"
-                      datetime_timezone "Europe/Berlin"
-                  }
-              }
-              pane
-              pane size=2 borderless=true {
-                  plugin location="file:${pkgs.zjstatus}/bin/zjstatus.wasm" {
-                      # Vivid Guide/Status bar at the bottom with Ctrl+Alt hints
-                      format_left   "{mode}"
-                      format_center "#[fg=#89B4FA,bold]Ctrl+Alt: [t]ab [p]ane [s]plit [v]ert [h/j/k/l]focus [f]ull [q]uit"
-                      format_right  "#[fg=#cba6f7,bold]#[bg=#cba6f7,fg=#1e1e2e,bold]   {command_git_branch}  "
-                      format_space  ""
-    
-                      mode_normal  "#[bg=#89B4FA,fg=#1e1e2e,bold]  NORMAL  #[bg=#1e1e2e,fg=#89B4FA]"
-                      mode_locked  "#[bg=#f38ba8,fg=#1e1e2e,bold]  LOCKED  #[bg=#1e1e2e,fg=#f38ba8]"
-                      mode_resize  "#[bg=#f9e2af,fg=#1e1e2e,bold]  RESIZE  #[bg=#1e1e2e,fg=#f9e2af]"
-                      mode_pane    "#[bg=#cba6f7,fg=#1e1e2e,bold]  PANE  #[bg=#1e1e2e,fg=#cba6f7]"
-                      mode_tab     "#[bg=#a6e3a1,fg=#1e1e2e,bold]  TAB  #[bg=#1e1e2e,fg=#a6e3a1]"
-                      mode_scroll  "#[bg=#fab387,fg=#1e1e2e,bold]  SCROLL  #[bg=#1e1e2e,fg=#fab387]"
-                      mode_session "#[bg=#cba6f7,fg=#1e1e2e,bold]  SESSION  #[bg=#1e1e2e,fg=#cba6f7]"
-    
-                      command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
-                      command_git_branch_format      "{stdout}"
-                      command_git_branch_interval    "10"
-                      command_git_branch_rendermode  "static"
-                  }
+                  tab_active   "#[fg=#a6e3a1,bold]#[bg=#a6e3a1,fg=#1e1e2e,bold]  {index} {name}  #[fg=#a6e3a1,bg=#181825] "
+
+                  datetime        "{format}"
+                  datetime_format "%H:%M"
+                  datetime_timezone "Europe/Berlin"
               }
           }
-        '';
+          pane
+          pane size=2 borderless=true {
+              plugin location="file:${pkgs.zjstatus}/bin/zjstatus.wasm" {
+                  # Vivid Guide/Status bar at the bottom with Ctrl+Alt hints
+                  format_left   "{mode}"
+                  format_center "#[fg=#89B4FA,bold]Ctrl+Alt: [t]ab [p]ane [s]plit [v]ert [h/j/k/l]focus [f]ull [q]uit"
+                  format_right  "#[fg=#cba6f7,bold]#[bg=#cba6f7,fg=#1e1e2e,bold]   {command_git_branch}  #[fg=#cba6f7,bg=#181825]"
+                  format_space  ""
+
+                  mode_normal  "#[fg=#89B4FA,bold]#[bg=#89B4FA,fg=#1e1e2e,bold]  NORMAL  #[bg=#1e1e2e,fg=#89B4FA]"
+                  mode_locked  "#[fg=#f38ba8,bold]#[bg=#f38ba8,fg=#1e1e2e,bold]  LOCKED  #[bg=#1e1e2e,fg=#f38ba8]"
+                  mode_resize  "#[fg=#f9e2af,bold]#[bg=#f9e2af,fg=#1e1e2e,bold]  RESIZE  #[bg=#1e1e2e,fg=#f9e2af]"
+                  mode_pane    "#[fg=#cba6f7,bold]#[bg=#cba6f7,fg=#1e1e2e,bold]  PANE  #[bg=#1e1e2e,fg=#cba6f7]"
+                  mode_tab     "#[fg=#a6e3a1,bold]#[bg=#a6e3a1,fg=#1e1e2e,bold]  TAB  #[bg=#1e1e2e,fg=#a6e3a1]"
+                  mode_scroll  "#[fg=#fab387,bold]#[bg=#fab387,fg=#1e1e2e,bold]  SCROLL  #[bg=#1e1e2e,fg=#fab387]"
+                  mode_session "#[fg=#cba6f7,bold]#[bg=#cba6f7,fg=#1e1e2e,bold]  SESSION  #[bg=#1e1e2e,fg=#cba6f7]"
+
+                  command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
+                  command_git_branch_format      "{stdout}"
+                  command_git_branch_interval    "10"
+                  command_git_branch_rendermode  "static"
+              }
+          }
+      }
+    '';
   };
 }
