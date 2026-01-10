@@ -817,11 +817,11 @@
     "tap-sst": {
       "flake": false,
       "locked": {
-        "lastModified": 1767996728,
-        "narHash": "sha256-8y5OyP/latYgfXPMSkY6a0Je38f3U52NaS6ut+zpLjQ=",
+        "lastModified": 1768010068,
+        "narHash": "sha256-fSm3RQxTs5B7V04kOwGuNm718hUz8H8cY1WcJMKQmfg=",
         "owner": "sst",
         "repo": "homebrew-tap",
-        "rev": "e3dcb4d101a16dda44834a8cfa681f9cc8fd4f2b",
+        "rev": "3e11012d9434a6f3a07f055702caccf003c2c594",
         "type": "github"
       },
       "original": {
