@@ -261,20 +261,25 @@ in
     home.activation.setupGitHubNetrc = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       if [ -f ~/.config/nix/nix.conf ]; then
         TOKEN=$(grep 'access-tokens.*github.com:' ~/.config/nix/nix.conf | sed 's/access-tokens = github.com://')
-        ${pkgs.coreutils}/bin/install -m 600 /dev/null ~/.netrc 2>/dev/null || true
-        # Add or update github.com entry in .netrc
-        if grep -q "machine github.com" ~/.netrc 2>/dev/null; then
-          # Update existing entry (remove old entry and add new one)
-          grep -v "machine github.com" ~/.netrc > ~/.netrc.tmp 2>/dev/null || true
-          ${pkgs.coreutils}/bin/mv ~/.netrc.tmp ~/.netrc 2>/dev/null || true
-        fi
-        ${pkgs.coreutils}/bin/cat >> ~/.netrc << EOF
+        if [ -n "$TOKEN" ]; then
+          netrc_file="$HOME/.netrc"
+          ${pkgs.coreutils}/bin/install -m 600 /dev/null "$netrc_file" 2>/dev/null || true
+          # Remove any existing github.com entry
+          if grep -q "machine github.com" "$netrc_file" 2>/dev/null; then
+            grep -v "machine github.com" "$netrc_file" > "$netrc_file.tmp" 2>/dev/null || true
+            ${pkgs.coreutils}/bin/mv "$netrc_file.tmp" "$netrc_file" 2>/dev/null || true
+          fi
+          # Add github.com entry with token
+          ${pkgs.coreutils}/bin/cat >> "$netrc_file" << 'NETRC'
 machine github.com
-login deepwatrcreatur
+login git
 password $TOKEN
-EOF
-        ${pkgs.coreutils}/bin/chmod 600 ~/.netrc
-        $verbose && echo "GitHub authentication configured in ~/.netrc for nix flake operations"
+NETRC
+          # Replace $TOKEN with actual value
+          sed -i "s/\$TOKEN/$TOKEN/g" "$netrc_file"
+          ${pkgs.coreutils}/bin/chmod 600 "$netrc_file"
+          $verbose && echo "GitHub authentication configured in $netrc_file for nix flake operations"
+        fi
       fi
     '';
 
