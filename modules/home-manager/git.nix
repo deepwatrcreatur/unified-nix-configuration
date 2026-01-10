@@ -259,16 +259,17 @@ in
 
     # Setup .netrc for GitHub authentication in nix flake operations
     home.activation.setupGitHubNetrc = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      if [ -f ~/.config/nix/nix.conf ]; then
-        TOKEN=$(grep 'access-tokens.*github.com:' ~/.config/nix/nix.conf | sed 's/.*github.com://' | head -1)
+      token_file="$HOME/.config/git/github-token"
+      if [ -f "$token_file" ]; then
+        TOKEN=$(${pkgs.coreutils}/bin/cat "$token_file" 2>/dev/null | tr -d '\n' || echo "")
         if [ -n "$TOKEN" ]; then
           netrc_file="$HOME/.netrc"
-          # Create temporary netrc without github.com entry
+          # Remove any existing github.com entry
           if [ -f "$netrc_file" ]; then
             grep -v "^machine github.com" "$netrc_file" > "$netrc_file.tmp" 2>/dev/null || true
             ${pkgs.coreutils}/bin/mv "$netrc_file.tmp" "$netrc_file" 2>/dev/null || true
           fi
-          # Append github.com entry with token (using bash variable substitution, not sed)
+          # Append github.com entry with token
           {
             echo "machine github.com"
             echo "login git"
@@ -276,11 +277,7 @@ in
           } >> "$netrc_file"
           ${pkgs.coreutils}/bin/chmod 600 "$netrc_file"
           $verbose && echo "GitHub authentication configured in $netrc_file for nix flake operations"
-        else
-          $verbose && echo "Warning: No GitHub token found in ~/.config/nix/nix.conf - skipping .netrc setup"
         fi
-      else
-        $verbose && echo "Warning: ~/.config/nix/nix.conf not found - skipping .netrc setup"
       fi
     '';
 
