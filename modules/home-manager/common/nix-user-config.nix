@@ -77,6 +77,7 @@ in
           extra-substituters = ${lib.concatStringsSep " " cfg.substituters}
           extra-trusted-public-keys = ${lib.concatStringsSep " " cfg.trustedPublicKeys}
         '';
+        force = true;  # Overwrite existing backups to avoid clobbering errors
       };
 
       # Read GitHub token at runtime and append to nix.conf
