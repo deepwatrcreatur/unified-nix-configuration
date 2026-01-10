@@ -33,7 +33,7 @@
 
   programs.nushell.extraConfig = lib.mkAfter ''
     # Set GPG_TTY for Nushell
-    $env.GPG_TTY = (tty 2>/dev/null | str trim) or "unknown"
+    $env.GPG_TTY = (try { tty } catch { "unknown" })
   '';
 
   # GPG agent configuration with long cache TTL
