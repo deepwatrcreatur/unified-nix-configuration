@@ -164,8 +164,8 @@ in
   config = {
     # Shell configurations that merge with existing configs from other modules
     programs.bash.initExtra = lib.mkAfter ''
-      if [ -f ~/.config/git/github-token ]; then
-        export GITHUB_TOKEN="$(${pkgs.coreutils}/bin/cat ~/.config/git/github-token)"
+      if [ -f ~/.config/nix/nix.conf ]; then
+        export GITHUB_TOKEN="$(grep 'access-tokens.*github.com:' ~/.config/nix/nix.conf | sed 's/access-tokens = github.com://')"
       fi
 
       # GPG settings for automated commits (prevents password prompts in CI/agents)
@@ -186,8 +186,8 @@ in
     '';
 
     programs.zsh.initContent = lib.mkAfter ''
-      if [ -f ~/.config/git/github-token ]; then
-        export GITHUB_TOKEN="$(${pkgs.coreutils}/bin/cat ~/.config/git/github-token)"
+      if [ -f ~/.config/nix/nix.conf ]; then
+        export GITHUB_TOKEN="$(grep 'access-tokens.*github.com:' ~/.config/nix/nix.conf | sed 's/access-tokens = github.com://')"
       fi
 
       # GPG settings for automated commits (prevents password prompts in CI/agents)
@@ -208,8 +208,8 @@ in
     '';
 
     programs.fish.interactiveShellInit = lib.mkAfter ''
-      if test -f ~/.config/git/github-token
-        set -gx GITHUB_TOKEN (${pkgs.coreutils}/bin/cat ~/.config/git/github-token)
+      if test -f ~/.config/nix/nix.conf
+        set -gx GITHUB_TOKEN (grep 'access-tokens.*github.com:' ~/.config/nix/nix.conf | sed 's/access-tokens = github.com://')
       end
 
       # GPG settings for automated commits (prevents password prompts in CI/agents)
@@ -259,8 +259,8 @@ in
 
     # Setup .netrc for GitHub authentication in nix flake operations
     home.activation.setupGitHubNetrc = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      if [ -f ~/.config/git/github-token ]; then
-        TOKEN=$(${pkgs.coreutils}/bin/cat ~/.config/git/github-token)
+      if [ -f ~/.config/nix/nix.conf ]; then
+        TOKEN=$(grep 'access-tokens.*github.com:' ~/.config/nix/nix.conf | sed 's/access-tokens = github.com://')
         ${pkgs.coreutils}/bin/install -m 600 /dev/null ~/.netrc 2>/dev/null || true
         # Add or update github.com entry in .netrc
         if grep -q "machine github.com" ~/.netrc 2>/dev/null; then
