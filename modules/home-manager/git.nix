@@ -230,13 +230,16 @@ in
     '';
 
     programs.nushell.extraConfig = lib.mkAfter ''
-      # Set GitHub token for API access
-      if ("~/.config/git/github-token" | path exists) {
-        $env.GITHUB_TOKEN = (open ~/.config/git/github-token | str trim)
+      # Set GitHub token for API access (from nix.conf)
+      if ("~/.config/nix/nix.conf" | path exists) {
+        let token = (open ~/.config/nix/nix.conf | grep "access-tokens.*github.com:" | str replace "access-tokens = github.com:" "" | str trim)
+        if ($token != "") {
+          $env.GITHUB_TOKEN = $token
+        }
       }
 
       # GPG settings for automated commits (prevents password prompts in CI/agents)
-      $env.GPG_TTY = (tty 2>/dev/null || echo "")
+      $env.GPG_TTY = (try { tty } catch { "" })
       # Allow automated tools to bypass pinentry when in non-interactive mode
       if ($env.TERM == "" or $env.TERM == "dumb") {
         $env.GPG_TERMINAL_PROMPT_DISABLE = "1"
