@@ -98,8 +98,8 @@ in
           # Copy the template
           cp "$config_file" "$temp_file"
 
-          # Try to get token from fnox
-          fnox_token=$(fnox get ATTIC_CLIENT_JWT_TOKEN 2>/dev/null || echo "")
+        # Try to get token from fnox
+        fnox_token=$(fnox get -c "$HOME/fnox.toml" ATTIC_CLIENT_JWT_TOKEN 2>/dev/null || echo "")
 
           ${lib.concatStringsSep "\n        " (
             lib.mapAttrsToList (name: server: ''

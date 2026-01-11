@@ -90,9 +90,9 @@ in
           export PATH="${pkgs.fnox}/bin:$PATH"
           export FNOX_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
 
-          if command -v fnox &> /dev/null && [ -f "$FNOX_AGE_KEY_FILE" ]; then
+          if command -v fnox &> /dev/null && [ -f "$HOME/fnox.toml" ]; then
             # Try to get token from fnox
-            token=$(fnox get GITHUB_TOKEN 2>/dev/null || echo "")
+            token=$(fnox get -c "$HOME/fnox.toml" GITHUB_TOKEN 2>/dev/null || echo "")
             
             if [[ -n "$token" ]]; then
               # Remove any existing access-tokens line and append new one
@@ -119,8 +119,8 @@ in
                           export FNOX_AGE_KEY_FILE="${config.home.homeDirectory}/.config/sops/age/keys.txt"
 
                           token=""
-                          if command -v fnox &> /dev/null && [ -f "$FNOX_AGE_KEY_FILE" ]; then
-                             token=$(fnox get ATTIC_CLIENT_JWT_TOKEN 2>/dev/null || echo "")
+                          if command -v fnox &> /dev/null && [ -f "$HOME/fnox.toml" ]; then
+                             token=$(fnox get -c "$HOME/fnox.toml" ATTIC_CLIENT_JWT_TOKEN 2>/dev/null || echo "")
                           fi
                           
                           if [[ -z "$token" && -f "${cfg.netrcTokenPath}" ]]; then
