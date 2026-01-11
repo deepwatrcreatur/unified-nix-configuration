@@ -29,7 +29,6 @@ in
 
     sops = {
       age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
-      secretsDir = "${config.home.homeDirectory}/.config/sops/secrets";
 
       secrets."oauth_creds" = {
         sopsFile = "${sopsSecretsDir}/oauth_creds.json.enc";
