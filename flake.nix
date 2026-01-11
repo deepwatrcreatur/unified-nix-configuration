@@ -123,76 +123,14 @@
         inputs.tesla-inference-flake.overlays.ollama-official-binaries # Use official binaries to avoid cuda_compat build error
         inputs.tesla-inference-flake.overlays.llama-cpp-tesla
         inputs.tesla-inference-flake.overlays.gpu-tools
-        # fnox: use release tarball on Linux (avoids openssl/perl build)
+        # Try to use fnox from nixpkgs first, fallback to flake input if not available
         (final: prev: {
           fnox =
             if prev.stdenv.isLinux && prev.stdenv.isx86_64 then
-              prev.stdenv.mkDerivation {
-                pname = "fnox";
-                version = "1.7.0";
-
-                src = prev.fetchurl {
-                  url = "https://github.com/jdx/fnox/releases/download/v1.7.0/fnox-x86_64-unknown-linux-gnu.tar.gz";
-                  sha256 = "d593b853806212a75db74048d4cb27ac70f6811e591c1e29f496fb8af38475f3";
-                };
-
-                dontUnpack = true;
-                dontConfigure = true;
-                dontBuild = true;
-
-                installPhase = ''
-                  runHook preInstall
-
-                  tmpdir="$(mktemp -d)"
-                  tar -xzf "$src" -C "$tmpdir"
-
-                  mkdir -p "$out/bin"
-                  install -m755 "$tmpdir/fnox" "$out/bin/fnox"
-
-                  runHook postInstall
-                '';
-
-                meta = with prev.lib; {
-                  description = "A shell-agnostic secret manager";
-                  homepage = "https://github.com/jdx/fnox";
-                  license = licenses.mit;
-                  platforms = [ "x86_64-linux" ];
-                };
-              }
-            else if prev.stdenv.isLinux && prev.stdenv.isAarch64 then
-              prev.stdenv.mkDerivation {
-                pname = "fnox";
-                version = "1.7.0";
-
-                src = prev.fetchurl {
-                  url = "https://github.com/jdx/fnox/releases/download/v1.7.0/fnox-aarch64-unknown-linux-gnu.tar.gz";
-                  sha256 = "d38305aa3f0b187b169a767eb56af905f55b792b2df6cbf0377efb30d4879731";
-                };
-
-                dontUnpack = true;
-                dontConfigure = true;
-                dontBuild = true;
-
-                installPhase = ''
-                  runHook preInstall
-
-                  tmpdir="$(mktemp -d)"
-                  tar -xzf "$src" -C "$tmpdir"
-
-                  mkdir -p "$out/bin"
-                  install -m755 "$tmpdir/fnox" "$out/bin/fnox"
-
-                  runHook postInstall
-                '';
-
-                meta = with prev.lib; {
-                  description = "A shell-agnostic secret manager";
-                  homepage = "https://github.com/jdx/fnox";
-                  license = licenses.mit;
-                  platforms = [ "aarch64-linux" ];
-                };
-              }
+              # Try to get fnox from nixpkgs (should be pre-built in newer versions)
+              (prev.fnox or inputs.fnox.packages.${prev.stdenv.hostPlatform.system}.default)
             else
+              # Fallback to flake input for other platforms
               inputs.fnox.packages.${prev.stdenv.hostPlatform.system}.default;
         })
       ];

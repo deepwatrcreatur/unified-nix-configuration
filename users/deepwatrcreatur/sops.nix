@@ -11,16 +11,9 @@
 let
   sopsSecretsDir = toString (builtins.path { path = ./secrets; });
 
-  # Determine the target path for data.json based on the system
-  #bitwardenDataJsonPath = if pkgs.stdenv.isDarwin
-  #  then "${config.home.homeDirectory}/Library/Application Support/Bitwarden CLI/data.json"
-  #  else "${config.xdg.configHome}/Bitwarden CLI/data.json";
 in
 {
   # This is the single top-level attribute set for the module
-
-  # Imports must be declared here.
-  # imports = [ inputs.sops-nix.homeManagerModules.sops ];
 
   config = {
     home.packages = [ pkgs.sops ];
@@ -36,6 +29,7 @@ in
 
     sops = {
       age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
+      secretsDir = "${config.home.homeDirectory}/.config/sops/secrets";
 
       secrets."oauth_creds" = {
         sopsFile = "${sopsSecretsDir}/oauth_creds.json.enc";
