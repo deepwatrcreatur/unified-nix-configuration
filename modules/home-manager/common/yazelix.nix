@@ -3,6 +3,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 
@@ -10,6 +11,11 @@ with lib;
 
 let
   cfg = config.programs.yazelix;
+  # Fetch zjstatus wasm directly since it's not in nixpkgs
+  zjstatus-wasm = pkgs.fetchurl {
+    url = "https://github.com/dj95/zjstatus/releases/download/v0.17.0/zjstatus.wasm";
+    sha256 = "1rbvazam9qdj2z21fgzjvbyp5mcrxw28nprqsdzal4dqbm5dy112";
+  };
 in
 {
   options.programs.yazelix = {
@@ -267,9 +273,11 @@ in
         "zellij/layouts/yazelix.kdl" = {
           text = ''
             layout {
-                // Enhanced tab bar with catppuccin theming
+                // Enhanced tab bar with custom theming
                 pane size=1 borderless=true {
-                    plugin location="zellij:tab-bar"
+                    plugin location="file:${zjstatus-wasm}" {
+                        ${inputs.zellij-vivid-rounded.lib.topBar}
+                    }
                 }
                 pane split_direction="vertical" {
                     // File manager pane - labeled for clarity
@@ -293,7 +301,9 @@ in
                 }
                 // Enhanced status bar with working directory
                 pane size=2 borderless=true {
-                    plugin location="zellij:status-bar"
+                    plugin location="file:${zjstatus-wasm}" {
+                        ${inputs.zellij-vivid-rounded.lib.bottomBar}
+                    }
                 }
             }
           '';

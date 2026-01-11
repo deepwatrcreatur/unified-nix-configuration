@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 
@@ -67,66 +68,84 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable (lib.mkMerge [
-    {
-      # Write user nix.conf with substituters, trusted keys, and GitHub token
-      home.file.".config/nix/nix.conf" = {
-        text = ''
-          # User Nix configuration managed by home-manager
-          experimental-features = ${lib.concatStringsSep " " cfg.experimentalFeatures}
-          extra-substituters = ${lib.concatStringsSep " " cfg.substituters}
-          extra-trusted-public-keys = ${lib.concatStringsSep " " cfg.trustedPublicKeys}
-        '';
-        force = true;  # Overwrite existing backups to avoid clobbering errors
-      };
+  config = lib.mkIf cfg.enable (
+    lib.mkMerge [
+      {
+        # Write user nix.conf with substituters, trusted keys, and GitHub token
+        home.file.".config/nix/nix.conf" = {
+          text = ''
+            # User Nix configuration managed by home-manager
+            experimental-features = ${lib.concatStringsSep " " cfg.experimentalFeatures}
+            extra-substituters = ${lib.concatStringsSep " " cfg.substituters}
+            extra-trusted-public-keys = ${lib.concatStringsSep " " cfg.trustedPublicKeys}
+          '';
+          force = true; # Overwrite existing backups to avoid clobbering errors
+        };
 
-      # Read GitHub token at runtime and append to nix.conf
-      home.activation.nixConfigToken = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        nix_conf="$HOME/.config/nix/nix.conf"
-        token_file="${cfg.githubTokenPath}"
+        # Read GitHub token from fnox and append to nix.conf
+        home.activation.nixConfigToken = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          nix_conf="$HOME/.config/nix/nix.conf"
 
-        if [[ -n "${cfg.githubTokenPath}" && -f "$token_file" ]]; then
-          token=$(cat "$token_file" 2>/dev/null | tr -d '\n' || echo "")
-          if [[ -n "$token" ]]; then
-            # Remove any existing access-tokens line and append new one
-            grep -v "^access-tokens = github.com:" "$nix_conf" > "$nix_conf.tmp" 2>/dev/null || cp "$nix_conf" "$nix_conf.tmp"
-            echo "access-tokens = github.com:$token" >> "$nix_conf.tmp"
-            mv "$nix_conf.tmp" "$nix_conf"
-            echo "Added GitHub token to $nix_conf"
+          # Ensure fnox is available
+          export PATH="${inputs.fnox.packages.${pkgs.system}.default}/bin:$PATH"
+          export FNOX_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
+
+          if command -v fnox &> /dev/null && [ -f "$FNOX_AGE_KEY_FILE" ]; then
+            # Try to get token from fnox
+            token=$(fnox get GITHUB_TOKEN 2>/dev/null || echo "")
+            
+            if [[ -n "$token" ]]; then
+              # Remove any existing access-tokens line and append new one
+              grep -v "^access-tokens = github.com:" "$nix_conf" > "$nix_conf.tmp" 2>/dev/null || cp "$nix_conf" "$nix_conf.tmp"
+              echo "access-tokens = github.com:$token" >> "$nix_conf.tmp"
+              mv "$nix_conf.tmp" "$nix_conf"
+              echo "Added GitHub token from fnox to $nix_conf"
+            else
+              echo "Warning: Could not retrieve GITHUB_TOKEN from fnox" >&2
+            fi
           else
-            echo "Warning: GitHub token file is empty at $token_file" >&2
+             echo "Warning: fnox not found or age key missing, skipping GitHub token configuration" >&2
           fi
-        fi
-      '';
-    }
+        '';
+      }
 
-    # Create netrc file in Determinate Nix's managed location (only if netrcMachine is set)
-    (lib.mkIf (cfg.netrcMachine != null) {
-      home.activation.nix-netrc = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-                netrc_file="/nix/var/determinate/netrc"
-                token_file="${cfg.netrcTokenPath}"
+      # Create netrc file in Determinate Nix's managed location (only if netrcMachine is set)
+      (lib.mkIf (cfg.netrcMachine != null) {
+        home.activation.nix-netrc = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+                          netrc_file="/nix/var/determinate/netrc"
+                          
+                          # Ensure fnox is available
+                  export PATH="${pkgs.fnox}/bin:$PATH"
+                          export FNOX_AGE_KEY_FILE="${config.home.homeDirectory}/.config/sops/age/keys.txt"
 
-                # Only create netrc if we're the actual user and token exists
-                if [[ "$HOME" == "${config.home.homeDirectory}" && -f "$token_file" ]]; then
-                  token=$(cat "$token_file" 2>/dev/null || echo "")
-                  if [[ -n "$token" ]]; then
-                    # Append to Determinate Nix's netrc if not already present
-                              if [[ -w "$netrc_file" ]] || test -w "$(dirname "$netrc_file")" 2>/dev/null; then
-                                if ! grep -q "machine ${cfg.netrcMachine}" "$netrc_file" 2>/dev/null; then
-                                  tee -a "$netrc_file" > /dev/null <<EOF
-        machine ${cfg.netrcMachine}
-        password $token
-EOF
-                        echo "Added netrc authentication for ${cfg.netrcMachine} to Determinate Nix's netrc"
-                      fi
-                    else
-                      echo "Warning: Cannot write to Determinate Nix's netrc at $netrc_file" >&2
-                    fi
-                  else
-                    echo "Warning: Token file empty at $token_file" >&2
-                  fi
-                fi
-      '';
-    })
-  ]);
+                          token=""
+                          if command -v fnox &> /dev/null && [ -f "$FNOX_AGE_KEY_FILE" ]; then
+                             token=$(fnox get ATTIC_CLIENT_JWT_TOKEN 2>/dev/null || echo "")
+                          fi
+                          
+                          if [[ -z "$token" && -f "${cfg.netrcTokenPath}" ]]; then
+                             token=$(cat "${cfg.netrcTokenPath}" 2>/dev/null || echo "")
+                          fi
+
+                          # Only create netrc if we have a token
+                          if [[ -n "$token" ]]; then
+                            # Append to Determinate Nix's netrc if not already present
+                                      if [[ -w "$netrc_file" ]] || test -w "$(dirname "$netrc_file")" 2>/dev/null; then
+                                        if ! grep -q "machine ${cfg.netrcMachine}" "$netrc_file" 2>/dev/null; then
+                                          tee -a "$netrc_file" > /dev/null <<EOF
+                machine ${cfg.netrcMachine}
+                password $token
+          EOF
+                                echo "Added netrc authentication for ${cfg.netrcMachine} to Determinate Nix's netrc"
+                              fi
+                            else
+                              echo "Warning: Cannot write to Determinate Nix's netrc at $netrc_file" >&2
+                            fi
+                          else
+                            echo "Warning: No token found for netrc authentication (checked fnox and ${cfg.netrcTokenPath})" >&2
+                          fi
+        '';
+      })
+    ]
+  );
 }

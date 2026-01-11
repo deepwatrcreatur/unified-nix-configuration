@@ -164,10 +164,6 @@ in
   config = {
     # Shell configurations that merge with existing configs from other modules
     programs.bash.initExtra = lib.mkAfter ''
-      if [ -f ~/.config/nix/nix.conf ]; then
-        export GITHUB_TOKEN="$(grep 'access-tokens.*github.com:' ~/.config/nix/nix.conf | sed 's/access-tokens = github.com://')"
-      fi
-
       # GPG settings for automated commits (prevents password prompts in CI/agents)
       export GPG_TTY=$(tty 2>/dev/null || echo "")
       # Allow automated tools to bypass pinentry when in non-interactive mode
@@ -186,10 +182,6 @@ in
     '';
 
     programs.zsh.initContent = lib.mkAfter ''
-      if [ -f ~/.config/nix/nix.conf ]; then
-        export GITHUB_TOKEN="$(grep 'access-tokens.*github.com:' ~/.config/nix/nix.conf | sed 's/access-tokens = github.com://')"
-      fi
-
       # GPG settings for automated commits (prevents password prompts in CI/agents)
       export GPG_TTY=$(tty 2>/dev/null || echo "")
       # Allow automated tools to bypass pinentry when in non-interactive mode
@@ -208,10 +200,6 @@ in
     '';
 
     programs.fish.interactiveShellInit = lib.mkAfter ''
-      if test -f ~/.config/nix/nix.conf
-        set -gx GITHUB_TOKEN (grep 'access-tokens.*github.com:' ~/.config/nix/nix.conf | sed 's/access-tokens = github.com://')
-      end
-
       # GPG settings for automated commits (prevents password prompts in CI/agents)
       set -gx GPG_TTY (tty 2>/dev/null; or echo "")
       # Allow automated tools to bypass pinentry when in non-interactive mode
@@ -230,14 +218,6 @@ in
     '';
 
     programs.nushell.extraConfig = lib.mkAfter ''
-      # Set GitHub token for API access (from nix.conf)
-      if ("~/.config/nix/nix.conf" | path exists) {
-        let token = (open ~/.config/nix/nix.conf | grep "access-tokens.*github.com:" | str replace "access-tokens = github.com:" "" | str trim)
-        if ($token != "") {
-          $env.GITHUB_TOKEN = $token
-        }
-      }
-
       # GPG settings for automated commits (prevents password prompts in CI/agents)
       $env.GPG_TTY = (try { tty } catch { "" })
       # Allow automated tools to bypass pinentry when in non-interactive mode

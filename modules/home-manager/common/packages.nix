@@ -3,6 +3,7 @@
   config,
   pkgs,
   lib,
+  inputs,
   ...
 }:
 {
@@ -51,5 +52,6 @@
     xh
     yamllint
     yq
+    pkgs.fnox
   ];
 }

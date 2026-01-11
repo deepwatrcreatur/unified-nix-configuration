@@ -45,31 +45,6 @@ in
           bitwarden-cli
         ]
       );
-
-      # Configure BW_SESSION environment variable for all shells
-      programs.bash.initExtra = lib.mkIf (secretPath != null) ''
-        if [[ -f "${secretPath}" ]]; then
-          export BW_SESSION="$(${pkgs.coreutils}/bin/cat ${secretPath})"
-        fi
-      '';
-
-      programs.zsh.initContent = lib.mkIf (secretPath != null) ''
-        if [[ -f "${secretPath}" ]]; then
-          export BW_SESSION="$(${pkgs.coreutils}/bin/cat ${secretPath})"
-        fi
-      '';
-
-      programs.fish.interactiveShellInit = lib.mkIf (secretPath != null) ''
-        if test -f ${secretPath}
-          set -gx BW_SESSION (${pkgs.coreutils}/bin/cat ${secretPath})
-        end
-      '';
-
-      programs.nushell.extraConfig = lib.mkIf (secretPath != null) ''
-        if ("${secretPath}" | path exists) {
-          $env.BW_SESSION = (open "${secretPath}" | str trim)
-        }
-      '';
     }
   );
 }

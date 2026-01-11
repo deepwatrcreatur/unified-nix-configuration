@@ -68,8 +68,15 @@
     };
 
     tesla-inference-flake = {
-      url = "github:deepwatrcreatur/tesla-inference-flake";  # Use latest main with official binaries
+      url = "github:deepwatrcreatur/tesla-inference-flake"; # Use latest main with official binaries
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    fnox = {
+      url = "github:deepwatrcreatur/fnox-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+      # Ensure we get the latest commit
+      flake = true;
     };
 
     zellij-vivid-rounded = {
@@ -113,9 +120,19 @@
           });
         })
         # Tesla inference overlays for GPU optimization
-        inputs.tesla-inference-flake.overlays.ollama-official-binaries  # Use official binaries to avoid cuda_compat build error
+        inputs.tesla-inference-flake.overlays.ollama-official-binaries # Use official binaries to avoid cuda_compat build error
         inputs.tesla-inference-flake.overlays.llama-cpp-tesla
         inputs.tesla-inference-flake.overlays.gpu-tools
+        # Try to use fnox from nixpkgs first, fallback to flake input if not available
+        (final: prev: {
+          fnox =
+            if prev.stdenv.isLinux && prev.stdenv.isx86_64 then
+              # Try to get fnox from nixpkgs (should be pre-built in newer versions)
+              (prev.fnox or inputs.fnox.packages.${prev.stdenv.hostPlatform.system}.default)
+            else
+              # Fallback to flake input for other platforms
+              inputs.fnox.packages.${prev.stdenv.hostPlatform.system}.default;
+        })
       ];
 
       # SpecialArgs for NixOS and Darwin SYSTEM modules.
@@ -155,7 +172,8 @@
         let
           items = builtins.readDir commonDir;
           # Filter to include .nix files and optionally directories
-          isValidItem = name: type:
+          isValidItem =
+            name: type:
             (type == "regular" && nixpkgsLib.hasSuffix ".nix" name && !nixpkgsLib.elem name excludeFiles)
             || (includeDirectories && type == "directory");
           validItems = nixpkgsLib.filterAttrs isValidItem items;
@@ -164,15 +182,22 @@
 
       # Helper to create platform-specific modules with base + platform-specific extensions
       # Usage: mkPlatformModule { base = "..."; darwin = "..."; nixos = "..."; }
-      mkPlatformModule = pkgs: {
-        base ? "",
-        darwin ? "",
-        nixos ? "",
-      }:
+      mkPlatformModule =
+        pkgs:
+        {
+          base ? "",
+          darwin ? "",
+          nixos ? "",
+        }:
         base
-        + (if pkgs.stdenv.isDarwin then darwin
-           else if pkgs.stdenv.isLinux then nixos
-           else "");
+        + (
+          if pkgs.stdenv.isDarwin then
+            darwin
+          else if pkgs.stdenv.isLinux then
+            nixos
+          else
+            ""
+        );
 
       # Common module configurations shared across all system builders
       commonSystemModules = [
@@ -183,7 +208,8 @@
       ];
 
       # Home Manager configuration for NixOS systems (used by mkNixosSystem)
-      nixosHomeManagerConfig = { hostName, isDesktop }:
+      nixosHomeManagerConfig =
+        { hostName, isDesktop }:
         {
           home-manager.extraSpecialArgs = homeManagerModuleArgs // {
             inherit hostName isDesktop;
@@ -193,12 +219,11 @@
         };
 
       # Home Manager configuration for Omarchy systems (minimal variant)
-      omarchyHomeManagerConfig =
-        {
-          home-manager.extraSpecialArgs = homeManagerModuleArgs;
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-        };
+      omarchyHomeManagerConfig = {
+        home-manager.extraSpecialArgs = homeManagerModuleArgs;
+        home-manager.useGlobalPkgs = true;
+        home-manager.useUserPackages = true;
+      };
 
       # Helper functions to reduce boilerplate in individual host files
       helpers = {
@@ -228,10 +253,15 @@
           inputs.nixpkgs.lib.nixosSystem {
             inherit system;
             specialArgs = systemSpecialArgs;
-            modules = baseModules ++ snapdModules ++ [
-              ./modules
-              hostPath
-            ] ++ modules ++ extraModules;
+            modules =
+              baseModules
+              ++ snapdModules
+              ++ [
+                ./modules
+                hostPath
+              ]
+              ++ modules
+              ++ extraModules;
           };
 
         # Standard Darwin system builder
@@ -251,38 +281,41 @@
             specialArgs = systemSpecialArgs // {
               inherit (inputs) nix-homebrew;
             };
-            modules = commonSystemModules ++ [
-              ./modules
-              hostPath
-              inputs.home-manager.darwinModules.home-manager
-              (
-                { pkgs, ... }:
-                {
-                  home-manager.users.${username} = {
-                    imports = [
-                      ./users/${username}
-                      ./users/${username}/hosts/${hostName}
-                      ./modules/home-manager
-                    ];
-                  };
-                  home-manager.extraSpecialArgs = homeManagerModuleArgs // {
-                    inherit hostName isDesktop;
-                  };
-                  home-manager.useGlobalPkgs = true;
-                  home-manager.useUserPackages = true;
-                }
-              )
-              (
-                { pkgs, ... }:
-                {
-                  users.users.${username} = {
-                    name = username;
-                    home = "/Users/${username}";
-                    shell = pkgs.fish;
-                  };
-                }
-              )
-            ] ++ modules;
+            modules =
+              commonSystemModules
+              ++ [
+                ./modules
+                hostPath
+                inputs.home-manager.darwinModules.home-manager
+                (
+                  { pkgs, ... }:
+                  {
+                    home-manager.users.${username} = {
+                      imports = [
+                        ./users/${username}
+                        ./users/${username}/hosts/${hostName}
+                        ./modules/home-manager
+                      ];
+                    };
+                    home-manager.extraSpecialArgs = homeManagerModuleArgs // {
+                      inherit hostName isDesktop;
+                    };
+                    home-manager.useGlobalPkgs = true;
+                    home-manager.useUserPackages = true;
+                  }
+                )
+                (
+                  { pkgs, ... }:
+                  {
+                    users.users.${username} = {
+                      name = username;
+                      home = "/Users/${username}";
+                      shell = pkgs.fish;
+                    };
+                  }
+                )
+              ]
+              ++ modules;
           };
 
         mkOmarchySystem =
@@ -298,14 +331,18 @@
           inputs.nixpkgs.lib.nixosSystem {
             inherit system;
             specialArgs = systemSpecialArgs;
-            modules = commonSystemModules ++ [
-              inputs.sops-nix.nixosModules.sops
-              inputs.home-manager.nixosModules.home-manager
-              inputs.determinate.nixosModules.default
-              omarchyHomeManagerConfig
-              ./modules
-              hostPath
-            ] ++ modules ++ extraModules;
+            modules =
+              commonSystemModules
+              ++ [
+                inputs.sops-nix.nixosModules.sops
+                inputs.home-manager.nixosModules.home-manager
+                inputs.determinate.nixosModules.default
+                omarchyHomeManagerConfig
+                ./modules
+                hostPath
+              ]
+              ++ modules
+              ++ extraModules;
           };
 
         # Standard Home Manager configuration builder
@@ -347,7 +384,14 @@
           }:
           nixpkgsLib.setAttrByPath [ "nixosConfigurations" name ] (
             helpers.mkNixosSystem {
-              inherit system hostPath modules extraModules isDesktop includeSnapd;
+              inherit
+                system
+                hostPath
+                modules
+                extraModules
+                isDesktop
+                includeSnapd
+                ;
             }
           );
 
@@ -363,13 +407,20 @@
           }:
           nixpkgsLib.setAttrByPath [ "darwinConfigurations" name ] (
             helpers.mkDarwinSystem {
-              inherit system hostPath username modules isDesktop;
+              inherit
+                system
+                hostPath
+                username
+                modules
+                isDesktop
+                ;
             }
           );
 
         # Merge multiple output configurations (used for files with multiple hosts)
         # Use recursiveUpdate to properly merge nested nixosConfigurations
-        mergeOutputs = outputs: nixpkgsLib.foldl' (acc: out: nixpkgsLib.recursiveUpdate acc out) { } outputs;
+        mergeOutputs =
+          outputs: nixpkgsLib.foldl' (acc: out: nixpkgsLib.recursiveUpdate acc out) { } outputs;
       };
 
       # Helper to load and merge all output configurations

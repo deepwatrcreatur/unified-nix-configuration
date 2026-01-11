@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 
@@ -84,32 +85,42 @@ in
 
     # Home activation script to substitute tokens
     home.activation.attic-config = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.config/attic
+        $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.config/attic
 
-      if [[ -f ${config.home.homeDirectory}/.config/attic/config.toml ]]; then
-        config_file="${config.home.homeDirectory}/.config/attic/config.toml"
-        temp_file="/tmp/attic-config-$$.toml"
+      # Ensure fnox is available
+      export PATH="${pkgs.fnox}/bin:$PATH"
+        export FNOX_AGE_KEY_FILE="${config.home.homeDirectory}/.config/sops/age/keys.txt"
 
-        # Copy the template
-        cp "$config_file" "$temp_file"
+        if [[ -f ${config.home.homeDirectory}/.config/attic/config.toml ]]; then
+          config_file="${config.home.homeDirectory}/.config/attic/config.toml"
+          temp_file="/tmp/attic-config-$$.toml"
 
-        ${lib.concatStringsSep "\n        " (
-          lib.mapAttrsToList (name: server: ''
-            # Substitute token for ${name}
-            if [[ -f "${server.tokenPath}" ]]; then
-              token=$(cat "${server.tokenPath}")
+          # Copy the template
+          cp "$config_file" "$temp_file"
+
+          # Try to get token from fnox
+          fnox_token=$(fnox get ATTIC_CLIENT_JWT_TOKEN 2>/dev/null || echo "")
+
+          ${lib.concatStringsSep "\n        " (
+            lib.mapAttrsToList (name: server: ''
+              # Substitute token for ${name}
               placeholder="@ATTIC_CLIENT_TOKEN_${lib.toUpper (builtins.replaceStrings [ "-" ] [ "_" ] name)}@"
-              $DRY_RUN_CMD sed -i "s|$placeholder|$token|g" "$temp_file"
-            else
-              $VERBOSE_ECHO "Warning: Token file not found for ${name}: ${server.tokenPath}"
-            fi
-          '') (cfg.defaultServers // cfg.servers)
-        )}
 
-        # Move the configured file into place
-        $DRY_RUN_CMD mv "$temp_file" "$config_file"
-        $VERBOSE_ECHO "Attic client configuration updated with SOPS tokens"
-      fi
+              if [[ -n "$fnox_token" ]]; then
+                 $DRY_RUN_CMD sed -i "s|$placeholder|$fnox_token|g" "$temp_file"
+              elif [[ -f "${server.tokenPath}" ]]; then
+                token=$(cat "${server.tokenPath}")
+                $DRY_RUN_CMD sed -i "s|$placeholder|$token|g" "$temp_file"
+              else
+                $VERBOSE_ECHO "Warning: Token not found in fnox or file for ${name}: ${server.tokenPath}"
+              fi
+            '') (cfg.defaultServers // cfg.servers)
+          )}
+
+          # Move the configured file into place
+          $DRY_RUN_CMD mv "$temp_file" "$config_file"
+          $VERBOSE_ECHO "Attic client configuration updated with tokens"
+        fi
     '';
 
     # Add shell aliases for convenience

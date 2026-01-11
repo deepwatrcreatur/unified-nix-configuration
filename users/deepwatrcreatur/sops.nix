@@ -44,11 +44,6 @@ in
         mode = "0600";
       };
 
-      secrets."BW_SESSION" = {
-        sopsFile = "${sopsSecretsDir}/bitwarden.yaml";
-        format = "yaml";
-      };
-
       secrets."bitwarden_data_json" = {
         sopsFile = "${sopsSecretsDir}/data.json.enc";
         format = "binary";
