@@ -69,8 +69,6 @@
     xkb.options = "caps:none"; # Let input-leap handle caps lock synchronization
   };
   hardware.opengl.enable = true;
-  hardware.opengl.driSupport = true;
-  hardware.opengl.driSupport32Bit = true;
 
   security.rtkit.enable = true;
   services.pipewire = {
