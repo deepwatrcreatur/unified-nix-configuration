@@ -11,12 +11,28 @@
     # Point fnox to the sops age key
     FNOX_AGE_KEY_FILE = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
   };
+  # Bootstrap a writable fnox config in $HOME.
+  # - We only create it if missing/empty so user edits persist.
+  # - Keep config in ~/.config/fnox/config.toml and expose it as ~/fnox.toml
+  #   so fnox's default upward search finds it from any subdir.
+  home.activation.fnoxBootstrap = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        cfg_dir="$HOME/.config/fnox"
+        cfg_file="$cfg_dir/config.toml"
 
-  # NOTE: Do not manage fnox config contents via Nix.
-  # Users store/update secrets via `fnox set -g ...`, which writes to:
-  #   ~/.config/fnox/config.toml
-  # Make `fnox` discover it everywhere under $HOME by symlinking:
-  #   ~/fnox.toml -> ~/.config/fnox/config.toml
+        $DRY_RUN_CMD mkdir -p "$cfg_dir"
+
+        if [ ! -s "$cfg_file" ]; then
+          $DRY_RUN_CMD cat > "$cfg_file" <<'EOF'
+    [providers]
+    age = { type = "age", recipients = [
+      "age17mn5lnlh2mgttp950wc7a2nl9kphewa4jj8e0uhlv3svx68a54vqyngcyr",
+      "age1awqed0la6x3rr39et8fjruw42mf8v2sqct78mcjzx5d226gcx9nqrjdmjz",
+    ] }
+    EOF
+          $VERBOSE_ECHO "Initialized fnox config at $cfg_file"
+        fi
+  '';
+
   home.file."fnox.toml".source =
     config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/fnox/config.toml";
 
