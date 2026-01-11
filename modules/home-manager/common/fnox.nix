@@ -23,7 +23,7 @@
 
     [secrets.GITHUB_TOKEN]
     description = "GitHub Personal Access Token"
-    
+
     [secrets.GROK_API_KEY]
     description = "XAI Grok API Key"
 
@@ -32,7 +32,7 @@
 
     [secrets.ATTIC_CLIENT_JWT_TOKEN]
     description = "Attic Client JWT Token"
-    
+
     # We define the secret structure, but the value must be set manually
     # or migrated by the user using `fnox set <SECRET> <value>`
     [secrets.GITHUB_TOKEN.default]
@@ -48,28 +48,25 @@
     provider = "age"
   '';
 
-  # Shell integration to load secrets
+  # Shell integration: fnox v1.7 uses `activate`/`deactivate`, not `env`
   programs.bash.initExtra = ''
-    if command -v fnox &> /dev/null; then
-      eval "$(fnox env)"
+    if command -v fnox >/dev/null 2>&1; then
+      eval "$(fnox activate bash)"
     fi
   '';
 
   programs.zsh.initContent = ''
-    if command -v fnox &> /dev/null; then
-      eval "$(fnox env)"
+    if command -v fnox >/dev/null 2>&1; then
+      eval "$(fnox activate zsh)"
     fi
   '';
 
   programs.fish.interactiveShellInit = ''
-    if command -v fnox &> /dev/null
-      fnox env | source
+    if command -v fnox >/dev/null
+      fnox activate fish | source
     end
   '';
-  
-  programs.nushell.extraConfig = ''
-    if (which fnox | is-not-empty) {
-      fnox env | load-env
-    }
-  '';
+
+  # Nushell isn't listed in `fnox activate` help; keep it no-op for now.
+  programs.nushell.extraConfig = "";
 }
