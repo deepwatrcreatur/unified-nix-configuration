@@ -87,7 +87,7 @@ in
           nix_conf="$HOME/.config/nix/nix.conf"
 
           # Ensure fnox is available
-          export PATH="${inputs.fnox.packages.${pkgs.system}.default}/bin:$PATH"
+          export PATH="${pkgs.fnox}/bin:$PATH"
           export FNOX_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
 
           if command -v fnox &> /dev/null && [ -f "$FNOX_AGE_KEY_FILE" ]; then
