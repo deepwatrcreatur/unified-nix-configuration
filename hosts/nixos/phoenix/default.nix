@@ -8,7 +8,7 @@
 
 {
   imports = [
-    ./hardware-configuration.nix
+    (if builtins.pathExists ./_hardware.nix then ./_hardware.nix else {})
     ./networking.nix
     ../../../modules/nixos/common # Common NixOS modules (SSH keys, etc.)
     ../../../modules/common/utility-packages.nix # Common utility packages
