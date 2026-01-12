@@ -41,7 +41,7 @@ Host homeserver
     Hostname 10.10.11.69
     user deepwatrcreatur
 
-Host workstation
+Host phoenix
     Hostname 10.10.11.73
     user deepwatrcreatur
 
