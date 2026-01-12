@@ -14,8 +14,8 @@
     ../../../modules/common/utility-packages.nix # Common utility packages
     ../../../modules/nixos/attic-client.nix # Attic cache client
     ../../../modules/nixos/snap.nix # Snap package manager support
-    #../../../modules/nixos/sessions/cosmic.nix # COSMIC desktop
-    ../../../modules/nixos/sessions/cinnamon.nix
+    ../../../modules/nixos/sessions/cosmic.nix # COSMIC desktop
+    #../../../modules/nixos/sessions/cinnamon.nix
     ../../../modules/nixos/keyboard-glitches.nix # Fix for stuck keyboard presses in Proxmox VM
     ../../../modules/wezterm-config.nix
     ../../../modules/activation-scripts # Activation scripts for system setup
@@ -37,18 +37,19 @@
   nixpkgs.hostPlatform = "x86_64-linux";
 
   # Boot loader configuration
-  boot.loader.systemd-boot.enable = true;
+  boot.loader.limine.enable = true;
+  boot.loader.systemd-boot.enable = false;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.bootspec.enable = true;
 
-  # Virtual display (virtio-gpu) instead of GPU passthrough
-  services.xserver.videoDrivers = [ "amdgpu" "virtio" ];
+  # Virtual display (virtio-gpu) for Proxmox VM
+  hardware.graphics.enable = true;
+  hardware.enableRedistributableFirmware = true;
 
-  # Configure keyboard - let input-leap handle caps lock synchronization
-  # services.xserver.xkb.options = "caps:none"; # Disabled - using input-leap fix instead
-
-  # X11 with COSMIC desktop
+  # Configure keyboard and X11
   services.xserver = {
     enable = true;
+    videoDrivers = [ "amdgpu" ];
     xkb.options = "caps:none";  # Let input-leap handle caps lock synchronization
   };
 

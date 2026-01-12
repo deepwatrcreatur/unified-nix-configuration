@@ -50,11 +50,9 @@
   boot.loader.timeout = 7;  # Increased from default 5 seconds for easier generation selection
   boot.loader.systemd-boot.consoleMode = "auto";  # Auto-detect optimal resolution for smaller font
 
-  # Enable AMD GPU firmware
-  hardware.enableRedistributableFirmware = true;
-
-  # NVIDIA driver configuration for version >= 560
-  hardware.nvidia.open = false;
+  # QEMU/Proxmox VM Graphics Configuration
+  services.xserver.videoDrivers = [ "virtio" ];
+  hardware.opengl.enable = true;
 
   # Configure keyboard - let input-leap handle caps lock synchronization
   # services.xserver.xkb.options = "caps:none"; # Disabled - using input-leap fix instead

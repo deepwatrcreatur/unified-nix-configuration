@@ -15,6 +15,7 @@
     ../../../../modules/home-manager/ghostty
     ../../../../modules/home-manager/gpg-agent-cross-de.nix
     ../../../../modules/home-manager/zed.nix
+    ../../../../modules/home-manager/cosmic-settings.nix
     inputs.nix-whitesur-config.homeManagerModules.default
   ];
 
