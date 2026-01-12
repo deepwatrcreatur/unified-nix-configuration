@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   # COSMIC Desktop Environment - Home Manager dconf settings
@@ -18,10 +18,13 @@
 
     # Note: Panel opacity/transparency settings managed via COSMIC Settings GUI
     # (COSMIC Settings > Panel > Background opacity slider)
+    "org.gnome.shell.extensions.cosmic-panel" = {
+      background-opacity = 0.5;
+    };
 
     # Dash-to-dock configuration for macOS-like right-aligned dock with enhanced styling
     "org/gnome/shell/extensions/dash-to-dock" = {
-      dock-position = "RIGHT";
+      dock-position = "LEFT";
       dock-fixed = false;
       intellihide = true;
       autohide = true;
@@ -50,6 +53,9 @@
       color-scheme = "prefer-dark";
       # Cursor size (fonts and cursor-theme are set by whitesur module)
       cursor-size = 60;
+      gtk-theme = lib.mkForce "WhiteSur-dark";
+      icon-theme = lib.mkForce "WhiteSur";
+      cursor-theme = lib.mkForce "WhiteSur-cursors";
     };
 
     # Window decoration - macOS-style button layout (right side, minimize-maximize-close order)
