@@ -1,3 +1,4 @@
 /etc/nixos/local-secrets.nix
 flake.lock
 ruby
+hardware-configuration.nix

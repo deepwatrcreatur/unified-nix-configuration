@@ -32,6 +32,15 @@
 
     [secrets.ATTIC_CLIENT_JWT_TOKEN]
     description = "Attic Client JWT Token"
+
+    [secrets.OPENCODE_MODEL]
+    description = "OpenCode Model Name"
+
+    [secrets.OPENCODE_PROVIDER]
+    description = "OpenCode Provider Name"
+
+    [secrets.XAI_API_KEY]
+    description = "XAI API Key for OpenCode"
     
     # We define the secret structure, but the value must be set manually
     # or migrated by the user using `fnox set <SECRET> <value>`
@@ -45,6 +54,15 @@
     provider = "age"
 
     [secrets.ATTIC_CLIENT_JWT_TOKEN.default]
+    provider = "age"
+
+    [secrets.OPENCODE_MODEL.default]
+    provider = "age"
+
+    [secrets.OPENCODE_PROVIDER.default]
+    provider = "age"
+
+    [secrets.XAI_API_KEY.default]
     provider = "age"
   '';
 
