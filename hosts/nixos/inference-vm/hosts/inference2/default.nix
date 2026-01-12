@@ -13,6 +13,8 @@
     ../..
   ];
 
+  boot.growPartition = true;
+
   # Host-specific configuration
   networking.hostName = "inference2";
 }

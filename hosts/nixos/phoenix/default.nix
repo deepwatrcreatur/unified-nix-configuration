@@ -37,19 +37,20 @@
   nixpkgs.hostPlatform = "x86_64-linux";
 
   # Boot loader configuration
-  boot.loader.systemd-boot.enable = true;
+  boot.loader.limine.enable = true;
+  boot.loader.systemd-boot.enable = false;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.bootspec.enable = true;
   boot.growPartition = true;
 
-  # Virtual display (virtio-gpu) instead of GPU passthrough
-  services.xserver.videoDrivers = [ "amdgpu" ];
+  # Virtual display (virtio-gpu) for Proxmox VM
+  hardware.graphics.enable = true;
+  hardware.enableRedistributableFirmware = true;
 
-  # Configure keyboard - let input-leap handle caps lock synchronization
-  # services.xserver.xkb.options = "caps:none"; # Disabled - using input-leap fix instead
-
-  # X11 with COSMIC desktop
+  # Configure keyboard and X11
   services.xserver = {
     enable = true;
+    videoDrivers = [ "amdgpu" ];
     xkb.options = "caps:none";  # Let input-leap handle caps lock synchronization
   };
 
@@ -87,6 +88,12 @@
   # Enable printing
   services.printing.enable = true;
 
+  home-manager.users.deepwatrcreatur = {
+    imports = [
+      ../../../users/deepwatrcreatur/hosts/phoenix
+    ];
+  };
+
   # Additional system packages (utility-packages provides: git, vim, curl, wget, rsync, nmap, openssl, etc.)
   environment.systemPackages = with pkgs; [
     at-spi2-core # Accessibility framework for deskflow clipboard
@@ -108,7 +115,7 @@
   virtualisation.podman.enable = true;
 
   # Enable QEMU guest agent for Proxmox integration
-  services.qemuGuest.enable = false;
+  services.qemuGuest.enable = true;
 
   # Attic cache client for automatic build uploads
   myModules.attic-client = {

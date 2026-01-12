@@ -20,6 +20,8 @@
     ./modules/configuration.nix
   ];
 
+  boot.growPartition = true;
+
   # Host-specific configuration
   networking.hostName = "inference-fresh";
 }

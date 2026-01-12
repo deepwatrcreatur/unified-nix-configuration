@@ -35,5 +35,6 @@
   ];
 
   boot.initrd.systemd.fido2.enable = false;
+  boot.growPartition = true;
 
 }
