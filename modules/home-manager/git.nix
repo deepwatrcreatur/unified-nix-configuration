@@ -256,7 +256,7 @@ in
             echo "password $TOKEN"
           } >> "$netrc_file"
           ${pkgs.coreutils}/bin/chmod 600 "$netrc_file"
-          $verbose && echo "GitHub authentication configured in $netrc_file for nix flake operations"
+          [ -n "''${verbose-}" ] && echo "GitHub authentication configured in $netrc_file for nix flake operations"
         fi
       fi
     '';

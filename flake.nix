@@ -138,7 +138,7 @@
         dir:
         let
           items = builtins.readDir dir;
-          isNixFile = name: type: type == "regular" && nixpkgsLib.hasSuffix ".nix" name;
+          isNixFile = name: type: type == "regular" && nixpkgsLib.hasSuffix ".nix" name && !nixpkgsLib.hasPrefix "_" name;
           nixFileNames = nixpkgsLib.attrNames (nixpkgsLib.filterAttrs isNixFile items);
         in
         map (fileName: dir + "/${fileName}") nixFileNames;
