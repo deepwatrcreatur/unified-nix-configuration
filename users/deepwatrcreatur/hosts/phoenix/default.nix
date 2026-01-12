@@ -16,6 +16,7 @@
     ../../../../modules/home-manager/gpg-agent-cross-de.nix
     ../../../../modules/home-manager/zed.nix
     ../../../../modules/home-manager/cosmic-settings.nix
+    inputs.zellij-vivid-rounded.homeManagerModules.default
     inputs.nix-whitesur-config.homeManagerModules.default
   ];
 
@@ -25,6 +26,10 @@
   whitesur = {
     enable = true;
     gtk.enable = true;
+  };
+
+  programs.zellij-vivid-rounded = {
+    enable = true;
   };
 
   programs.distrobox.fedora.enable = true;
