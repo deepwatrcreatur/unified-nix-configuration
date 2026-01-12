@@ -52,6 +52,5 @@
     xh
     yamllint
     yq
-    pkgs.fnox
   ];
 }

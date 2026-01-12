@@ -21,6 +21,13 @@
     ../../../modules/activation-scripts # Activation scripts for system setup
   ];
 
+  home-manager.users.deepwatrcreatur = {
+    imports = [
+      inputs.nix-whitesur-config.homeManagerModules.default
+      ../../../users/deepwatrcreatur/hosts/workstation
+    ];
+  };
+
   # Homebrew is managed via home-manager (modules/home-manager/linuxbrew.nix)
   # Symlink nice to /usr/bin for Homebrew's Ruby (needed by some formulae like bd)
   system.activationScripts.homebrewCompat = ''

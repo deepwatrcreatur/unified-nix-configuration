@@ -82,29 +82,20 @@ in
           force = true; # Overwrite existing backups to avoid clobbering errors
         };
 
-        # Read GitHub token from fnox and append to nix.conf
+        # Read GitHub token from file and append to nix.conf
         home.activation.nixConfigToken = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           nix_conf="$HOME/.config/nix/nix.conf"
+          token_path="${cfg.githubTokenPath}"
 
-          # Ensure fnox is available
-          export PATH="${pkgs.fnox}/bin:$PATH"
-          export FNOX_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
-
-          if command -v fnox &> /dev/null && [ -f "$HOME/fnox.toml" ]; then
-            # Try to get token from fnox
-            token=$(fnox get -c "$HOME/fnox.toml" GITHUB_TOKEN 2>/dev/null || echo "")
-            
+          if [[ -f "$token_path" ]]; then
+            token=$(cat "$token_path")
             if [[ -n "$token" ]]; then
               # Remove any existing access-tokens line and append new one
               grep -v "^access-tokens = github.com:" "$nix_conf" > "$nix_conf.tmp" 2>/dev/null || cp "$nix_conf" "$nix_conf.tmp"
               echo "access-tokens = github.com:$token" >> "$nix_conf.tmp"
               mv "$nix_conf.tmp" "$nix_conf"
-              echo "Added GitHub token from fnox to $nix_conf"
-            else
-              echo "Warning: Could not retrieve GITHUB_TOKEN from fnox" >&2
+              echo "Added GitHub token from $token_path to $nix_conf"
             fi
-          else
-             echo "Warning: fnox not found or age key missing, skipping GitHub token configuration" >&2
           fi
         '';
       }
@@ -114,16 +105,8 @@ in
         home.activation.nix-netrc = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
                           netrc_file="/nix/var/determinate/netrc"
                           
-                          # Ensure fnox is available
-                  export PATH="${pkgs.fnox}/bin:$PATH"
-                          export FNOX_AGE_KEY_FILE="${config.home.homeDirectory}/.config/sops/age/keys.txt"
-
                           token=""
-                          if command -v fnox &> /dev/null && [ -f "$HOME/fnox.toml" ]; then
-                             token=$(fnox get -c "$HOME/fnox.toml" ATTIC_CLIENT_JWT_TOKEN 2>/dev/null || echo "")
-                          fi
-                          
-                          if [[ -z "$token" && -f "${cfg.netrcTokenPath}" ]]; then
+                          if [[ -f "${cfg.netrcTokenPath}" ]]; then
                              token=$(cat "${cfg.netrcTokenPath}" 2>/dev/null || echo "")
                           fi
 
@@ -142,7 +125,7 @@ in
                               echo "Warning: Cannot write to Determinate Nix's netrc at $netrc_file" >&2
                             fi
                           else
-                            echo "Warning: No token found for netrc authentication (checked fnox and ${cfg.netrcTokenPath})" >&2
+                            echo "Warning: No token found for netrc authentication (checked ${cfg.netrcTokenPath})" >&2
                           fi
         '';
       })

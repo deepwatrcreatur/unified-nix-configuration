@@ -24,7 +24,7 @@
     "sr_mod"
   ];
   boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-amd" ];
+  boot.kernelModules = [ "amdgpu" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" = {

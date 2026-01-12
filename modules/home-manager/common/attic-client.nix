@@ -87,10 +87,6 @@ in
     home.activation.attic-config = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.config/attic
 
-      # Ensure fnox is available
-      export PATH="${pkgs.fnox}/bin:$PATH"
-        export FNOX_AGE_KEY_FILE="${config.home.homeDirectory}/.config/sops/age/keys.txt"
-
         if [[ -f ${config.home.homeDirectory}/.config/attic/config.toml ]]; then
           config_file="${config.home.homeDirectory}/.config/attic/config.toml"
           temp_file="/tmp/attic-config-$$.toml"
@@ -98,21 +94,16 @@ in
           # Copy the template
           cp "$config_file" "$temp_file"
 
-        # Try to get token from fnox
-        fnox_token=$(fnox get -c "$HOME/fnox.toml" ATTIC_CLIENT_JWT_TOKEN 2>/dev/null || echo "")
-
           ${lib.concatStringsSep "\n        " (
             lib.mapAttrsToList (name: server: ''
               # Substitute token for ${name}
               placeholder="@ATTIC_CLIENT_TOKEN_${lib.toUpper (builtins.replaceStrings [ "-" ] [ "_" ] name)}@"
 
-              if [[ -n "$fnox_token" ]]; then
-                 $DRY_RUN_CMD sed -i "s|$placeholder|$fnox_token|g" "$temp_file"
-              elif [[ -f "${server.tokenPath}" ]]; then
+              if [[ -f "${server.tokenPath}" ]]; then
                 token=$(cat "${server.tokenPath}")
                 $DRY_RUN_CMD sed -i "s|$placeholder|$token|g" "$temp_file"
               else
-                $VERBOSE_ECHO "Warning: Token not found in fnox or file for ${name}: ${server.tokenPath}"
+                $VERBOSE_ECHO "Warning: Token not found for ${name}: ${server.tokenPath}"
               fi
             '') (cfg.defaultServers // cfg.servers)
           )}

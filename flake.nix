@@ -72,13 +72,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    fnox = {
-      url = "github:deepwatrcreatur/fnox-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-      # Ensure we get the latest commit
-      flake = true;
-    };
-
     zellij-vivid-rounded = {
       url = "github:deepwatrcreatur/nix-zellij-vivid-rounded";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -123,78 +116,6 @@
         inputs.tesla-inference-flake.overlays.ollama-official-binaries # Use official binaries to avoid cuda_compat build error
         inputs.tesla-inference-flake.overlays.llama-cpp-tesla
         inputs.tesla-inference-flake.overlays.gpu-tools
-        # fnox: use release tarball on Linux (avoids openssl/perl build)
-        (final: prev: {
-          fnox =
-            if prev.stdenv.isLinux && prev.stdenv.isx86_64 then
-              prev.stdenv.mkDerivation {
-                pname = "fnox";
-                version = "1.7.0";
-
-                src = prev.fetchurl {
-                  url = "https://github.com/jdx/fnox/releases/download/v1.7.0/fnox-x86_64-unknown-linux-gnu.tar.gz";
-                  sha256 = "d593b853806212a75db74048d4cb27ac70f6811e591c1e29f496fb8af38475f3";
-                };
-
-                dontUnpack = true;
-                dontConfigure = true;
-                dontBuild = true;
-
-                installPhase = ''
-                  runHook preInstall
-
-                  tmpdir="$(mktemp -d)"
-                  tar -xzf "$src" -C "$tmpdir"
-
-                  mkdir -p "$out/bin"
-                  install -m755 "$tmpdir/fnox" "$out/bin/fnox"
-
-                  runHook postInstall
-                '';
-
-                meta = with prev.lib; {
-                  description = "A shell-agnostic secret manager";
-                  homepage = "https://github.com/jdx/fnox";
-                  license = licenses.mit;
-                  platforms = [ "x86_64-linux" ];
-                };
-              }
-            else if prev.stdenv.isLinux && prev.stdenv.isAarch64 then
-              prev.stdenv.mkDerivation {
-                pname = "fnox";
-                version = "1.7.0";
-
-                src = prev.fetchurl {
-                  url = "https://github.com/jdx/fnox/releases/download/v1.7.0/fnox-aarch64-unknown-linux-gnu.tar.gz";
-                  sha256 = "d38305aa3f0b187b169a767eb56af905f55b792b2df6cbf0377efb30d4879731";
-                };
-
-                dontUnpack = true;
-                dontConfigure = true;
-                dontBuild = true;
-
-                installPhase = ''
-                  runHook preInstall
-
-                  tmpdir="$(mktemp -d)"
-                  tar -xzf "$src" -C "$tmpdir"
-
-                  mkdir -p "$out/bin"
-                  install -m755 "$tmpdir/fnox" "$out/bin/fnox"
-
-                  runHook postInstall
-                '';
-
-                meta = with prev.lib; {
-                  description = "A shell-agnostic secret manager";
-                  homepage = "https://github.com/jdx/fnox";
-                  license = licenses.mit;
-                  platforms = [ "aarch64-linux" ];
-                };
-              }
-            else
-              inputs.fnox.packages.${prev.stdenv.hostPlatform.system}.default;
-        })
       ];
 
       # SpecialArgs for NixOS and Darwin SYSTEM modules.
