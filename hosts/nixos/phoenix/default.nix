@@ -41,7 +41,7 @@
   boot.loader.systemd-boot.enable = false;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.bootspec.enable = true;
-  boot.growPartition = true;
+  boot.growPartition = false;
 
 
 

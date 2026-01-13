@@ -1,0 +1,19 @@
+{
+    "layer": "top",
+    "position": "left",
+    "width": 40,
+    "height": 1080,
+    "modules-top": ["custom-launcher", "custom-workspaces"],
+    "modules-bottom": [],
+
+    "custom-launcher": {
+        "format": "",
+        "on-click": "wofi --show drun",
+        "tooltip": true
+    },
+    "custom-workspaces": {
+        "format": "",
+        "on-click": "hyprctl dispatch overview",
+        "tooltip": true
+    }
+}

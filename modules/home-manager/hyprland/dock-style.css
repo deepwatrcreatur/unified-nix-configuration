@@ -1,0 +1,26 @@
+* {
+    border: none;
+    border-radius: 0;
+    font-family: 'Noto Sans';
+    font-size: 20px;
+    min-height: 0;
+}
+
+window#waybar {
+    background: rgba(255, 255, 255, 0.15);
+    color: #2e3440;
+    transition-property: all;
+    transition-duration: .5s;
+}
+
+window#waybar.hidden {
+    opacity: 0.0;
+}
+
+#custom-launcher, #custom-workspaces {
+    padding: 10px 5px;
+}
+
+#custom-launcher:hover, #custom-workspaces:hover {
+    background: rgba(0, 0, 0, 0.1);
+}

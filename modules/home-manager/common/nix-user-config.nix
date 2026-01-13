@@ -108,7 +108,6 @@ in
               mv "$nix_conf.tmp" "$nix_conf"
               echo "Added GitHub token from $token_path to $nix_conf"
             fi
-          fi
         '';
       }
 
