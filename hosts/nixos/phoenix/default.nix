@@ -8,7 +8,7 @@
 
 {
   imports = [
-    (if builtins.pathExists ./_hardware.nix then ./_hardware.nix else {})
+    ./hardware-configuration.nix
     ./networking.nix
     ../../../modules/nixos/common # Common NixOS modules (SSH keys, etc.)
     ../../../modules/common/utility-packages.nix # Common utility packages
@@ -42,6 +42,8 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.bootspec.enable = true;
   boot.growPartition = true;
+
+
 
   # Virtual display (virtio-gpu) for Proxmox VM
   hardware.graphics.enable = true;

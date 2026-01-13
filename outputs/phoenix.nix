@@ -9,4 +9,5 @@
   extraModules = [
     ../hosts/nixos/default.nix
   ];
+
 })
