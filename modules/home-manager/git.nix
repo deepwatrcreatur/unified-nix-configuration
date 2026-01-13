@@ -237,29 +237,6 @@ in
       ${nushellAliases}
     '';
 
-    # Setup .netrc for GitHub authentication in nix flake operations
-    home.activation.setupGitHubNetrc = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      token_file="$HOME/.config/git/github-token"
-      if [ -f "$token_file" ]; then
-        TOKEN=$(${pkgs.coreutils}/bin/cat "$token_file" 2>/dev/null | tr -d '\n' || echo "")
-        if [ -n "$TOKEN" ]; then
-          netrc_file="$HOME/.netrc"
-          # Remove any existing github.com entry
-          if [ -f "$netrc_file" ]; then
-            grep -v "^machine github.com" "$netrc_file" > "$netrc_file.tmp" 2>/dev/null || true
-            ${pkgs.coreutils}/bin/mv "$netrc_file.tmp" "$netrc_file" 2>/dev/null || true
-          fi
-          # Append github.com entry with token
-          {
-            echo "machine github.com"
-            echo "login git"
-            echo "password $TOKEN"
-          } >> "$netrc_file"
-          ${pkgs.coreutils}/bin/chmod 600 "$netrc_file"
-          [ -n "''${verbose-}" ] && echo "GitHub authentication configured in $netrc_file for nix flake operations"
-        fi
-      fi
-    '';
 
     home.packages =
       with pkgs;

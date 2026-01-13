@@ -14,8 +14,8 @@
     ../../../modules/common/utility-packages.nix # Common utility packages
     ../../../modules/nixos/attic-client.nix # Attic cache client
     ../../../modules/nixos/snap.nix # Snap package manager support
-    #../../../modules/nixos/sessions/cosmic.nix # COSMIC desktop
-    ../../../modules/nixos/sessions/cinnamon.nix
+    ../../../modules/nixos/sessions/cosmic.nix # COSMIC desktop
+    #../../../modules/nixos/sessions/cinnamon.nix
     ../../../modules/nixos/keyboard-glitches.nix # Fix for stuck keyboard presses in Proxmox VM
     ../../../modules/wezterm-config.nix
     ../../../modules/activation-scripts # Activation scripts for system setup
@@ -46,9 +46,10 @@
   # Boot loader configuration
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.growPartition = true;
 
   # Virtual display (virtio-gpu) instead of GPU passthrough
-  services.xserver.videoDrivers = [ "amdgpu" "virtio" ];
+  services.xserver.videoDrivers = [ "amdgpu" ];
 
   # Configure keyboard - let input-leap handle caps lock synchronization
   # services.xserver.xkb.options = "caps:none"; # Disabled - using input-leap fix instead
@@ -93,13 +94,6 @@
   # Enable printing
   services.printing.enable = true;
 
-  home-manager.users.deepwatrcreatur = {
-    imports = [
-      inputs.nix-whitesur-config.homeManagerModules.default
-      ../../../users/deepwatrcreatur/hosts/workstation
-    ];
-  };
-
   # Additional system packages (utility-packages provides: git, vim, curl, wget, rsync, nmap, openssl, etc.)
   environment.systemPackages = with pkgs; [
     at-spi2-core # Accessibility framework for deskflow clipboard
@@ -121,7 +115,7 @@
   virtualisation.podman.enable = true;
 
   # Enable QEMU guest agent for Proxmox integration
-  services.qemuGuest.enable = true;
+  services.qemuGuest.enable = false;
 
   # Attic cache client for automatic build uploads
   myModules.attic-client = {

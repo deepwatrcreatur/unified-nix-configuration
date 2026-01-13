@@ -83,7 +83,7 @@
       set -gx GPG_TTY (tty)
 
       # Set NH_FLAKE for nh helper
-      set -gx NH_FLAKE "${config.home.homeDirectory}/unified-nix-configuration"
+      set -gx NH_FLAKE "${config.home.homeDirectory}/flakes/unified-nix-configuration"
 
       # Ensure /run/wrappers/bin is at the front of PATH for NixOS security wrappers
       if test -d /run/wrappers/bin

@@ -94,16 +94,21 @@ in
           # Copy the template
           cp "$config_file" "$temp_file"
 
+          # Try to get token from fnox
+          fnox_token=$(fnox get ATTIC_CLIENT_JWT_TOKEN 2>/dev/null || echo "")
+
           ${lib.concatStringsSep "\n        " (
             lib.mapAttrsToList (name: server: ''
               # Substitute token for ${name}
               placeholder="@ATTIC_CLIENT_TOKEN_${lib.toUpper (builtins.replaceStrings [ "-" ] [ "_" ] name)}@"
 
-              if [[ -f "${server.tokenPath}" ]]; then
+              if [[ -n "$fnox_token" ]]; then
+                 $DRY_RUN_CMD sed -i "s|$placeholder|$fnox_token|g" "$temp_file"
+              elif [[ -f "${server.tokenPath}" ]]; then
                 token=$(cat "${server.tokenPath}")
                 $DRY_RUN_CMD sed -i "s|$placeholder|$token|g" "$temp_file"
               else
-                $VERBOSE_ECHO "Warning: Token not found for ${name}: ${server.tokenPath}"
+                $VERBOSE_ECHO "Warning: Token not found in fnox or file for ${name}: ${server.tokenPath}"
               fi
             '') (cfg.defaultServers // cfg.servers)
           )}

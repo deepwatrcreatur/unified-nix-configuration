@@ -87,9 +87,21 @@ in
           nix_conf="$HOME/.config/nix/nix.conf"
           token_path="${cfg.githubTokenPath}"
 
-          if [[ -f "$token_path" ]]; then
+          # Ensure fnox is available
+          export PATH="${inputs.fnox.packages.${pkgs.system}.default}/bin:$PATH"
+          export FNOX_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
+
+          token=""
+          if command -v fnox &> /dev/null && [ -f "$FNOX_AGE_KEY_FILE" ]; then
+            # Try to get token from fnox
+            token=$(fnox get GITHUB_TOKEN 2>/dev/null || echo "")
+          fi
+          
+          if [[ -z "$token" && -f "$token_path" ]]; then
             token=$(cat "$token_path")
-            if [[ -n "$token" ]]; then
+          fi
+
+          if [[ -n "$token" ]]; then
               # Remove any existing access-tokens line and append new one
               grep -v "^access-tokens = github.com:" "$nix_conf" > "$nix_conf.tmp" 2>/dev/null || cp "$nix_conf" "$nix_conf.tmp"
               echo "access-tokens = github.com:$token" >> "$nix_conf.tmp"
@@ -106,7 +118,15 @@ in
                           netrc_file="/nix/var/determinate/netrc"
                           
                           token=""
-                          if [[ -f "${cfg.netrcTokenPath}" ]]; then
+                          # Ensure fnox is available
+                          export PATH="${inputs.fnox.packages.${pkgs.system}.default}/bin:$PATH"
+                          export FNOX_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
+
+                          if command -v fnox &> /dev/null && [ -f "$FNOX_AGE_KEY_FILE" ]; then
+                             token=$(fnox get ATTIC_CLIENT_JWT_TOKEN 2>/dev/null || echo "")
+                          fi
+                          
+                          if [[ -z "$token" && -f "${cfg.netrcTokenPath}" ]]; then
                              token=$(cat "${cfg.netrcTokenPath}" 2>/dev/null || echo "")
                           fi
 

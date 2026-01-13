@@ -7,6 +7,6 @@
 
 {
   home.sessionVariables = {
-    NH_FLAKE = "${config.home.homeDirectory}/unified-nix-configuration";
+    NH_FLAKE = "${config.home.homeDirectory}/flakes/unified-nix-configuration";
   };
 }

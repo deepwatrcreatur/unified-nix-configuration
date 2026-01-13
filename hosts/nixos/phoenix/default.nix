@@ -41,6 +41,9 @@
   boot.loader.systemd-boot.enable = false;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.bootspec.enable = true;
+  boot.growPartition = true;
+
+
 
   # Virtual display (virtio-gpu) for Proxmox VM
   hardware.graphics.enable = true;

@@ -67,9 +67,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    tesla-inference-flake = {
-      url = "github:deepwatrcreatur/tesla-inference-flake"; # Use latest main with official binaries
-      inputs.nixpkgs.follows = "nixpkgs";
+    fnox = {
+      # Refer to the local flake by path
+      path = "../fnox-flake";
     };
 
     zellij-vivid-rounded = {
@@ -116,6 +116,16 @@
         inputs.tesla-inference-flake.overlays.ollama-official-binaries # Use official binaries to avoid cuda_compat build error
         inputs.tesla-inference-flake.overlays.llama-cpp-tesla
         inputs.tesla-inference-flake.overlays.gpu-tools
+        # Try to use fnox from nixpkgs first, fallback to flake input if not available
+        (final: prev: {
+          fnox =
+            if prev.stdenv.isLinux && prev.stdenv.isx86_64 then
+              # Try to get fnox from nixpkgs (should be pre-built in newer versions)
+              (prev.fnox or inputs.fnox.packages.${prev.stdenv.hostPlatform.system}.default)
+            else
+              # Fallback to flake input for other platforms
+              inputs.fnox.packages.${prev.stdenv.hostPlatform.system}.default;
+        })
       ];
 
       # SpecialArgs for NixOS and Darwin SYSTEM modules.

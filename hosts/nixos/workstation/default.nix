@@ -47,8 +47,12 @@
   boot.loader.limine.enable = false;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.bootspec.enable = true;
+  boot.growPartition = true;
   boot.loader.timeout = 7;  # Increased from default 5 seconds for easier generation selection
   boot.loader.systemd-boot.consoleMode = "auto";  # Auto-detect optimal resolution for smaller font
+
+  # Load AMD GPU driver
+  boot.kernelModules = [ "amdgpu" ];
 
   # Enable AMD GPU firmware
   hardware.enableRedistributableFirmware = true;
@@ -59,11 +63,13 @@
   # Configure keyboard - let input-leap handle caps lock synchronization
   # services.xserver.xkb.options = "caps:none"; # Disabled - using input-leap fix instead
 
-  # X11 with MATE and WhiteSur theming
+  # X11 with AMD GPU passthrough
   services.xserver = {
     enable = true;
+    videoDrivers = [ "amdgpu" ];
     xkb.options = "caps:none"; # Let input-leap handle caps lock synchronization
   };
+  hardware.opengl.enable = true;
 
   security.rtkit.enable = true;
   services.pipewire = {

@@ -12,6 +12,8 @@
     ../../../../../modules/nixos/attic-post-build-hook.nix
   ];
 
+  boot.growPartition = true;
+
   networking.hostName = "inference1";
 
   services.attic-post-build-hook = {
