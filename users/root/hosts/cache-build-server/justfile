@@ -1,4 +1,4 @@
 # users/root/hosts/cache-build-server/justfile
 
 update:
-  nixos-rebuild switch --flake /root/unified-nix-configuration
+  nixos-rebuild switch --flake /root/flakes/unified-nix-configuration

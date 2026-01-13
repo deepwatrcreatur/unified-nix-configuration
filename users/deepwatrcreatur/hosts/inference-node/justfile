@@ -3,7 +3,7 @@
 
 # Custom commands specific to inference-node
 update:
-  home-manager switch --flake /home/deepwatrcreatur/unified-nix-configuration#deepwatrcreatur-inference-node
+  home-manager switch --flake /home/deepwatrcreatur/flakes/unified-nix-configuration#deepwatrcreatur-inference-node
 
 nh-update:
-  nh home switch /home/deepwatrcreatur/unified-nix-configuration#deepwatrcreatur-inference-node
+  nh home switch /home/deepwatrcreatur/flakes/unified-nix-configuration#deepwatrcreatur-inference-node

@@ -73,7 +73,8 @@
     };
 
     fnox = {
-      url = "github:deepwatrcreatur/fnox-flake";
+      # Refer to the local flake by path
+      url = "../fnox-flake";
       inputs.nixpkgs.follows = "nixpkgs";
       # Ensure we get the latest commit
       flake = true;
