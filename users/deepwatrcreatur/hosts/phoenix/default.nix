@@ -16,28 +16,22 @@
     ../../../../modules/home-manager/ghostty
     ../../../../modules/home-manager/gpg-agent-cross-de.nix
     ../../../../modules/home-manager/zed.nix
-    ../../../../modules/home-manager/hyprland/default.nix # Hyprland configuration - TEMPORARILY DISABLED
-    #../../../../modules/home-manager/cosmic-settings.nix # Replaced with Hyprland
+    ../../../../modules/home-manager/cosmic-settings.nix # GNOME settings with COSMIC-like appearance
+    #../../../../modules/home-manager/hyprland/default.nix # Hyprland configuration (backup)
     # inputs.zellij-vivid-rounded.homeManagerModules.default # TEMPORARILY DISABLED
     inputs.nix-whitesur-config.homeManagerModules.default
   ];
 
   home.homeDirectory = "/home/deepwatrcreatur";
 
-  # Autostart Hyprland on tty1 (pairs with getty autologin)
-  programs.fish.interactiveShellInit = lib.mkAfter ''
-    if test -z "$WAYLAND_DISPLAY" -a -z "$DISPLAY" -a -z "$SSH_CONNECTION"
-      if test (tty) = "/dev/tty1"
-        exec ${pkgs.dbus}/bin/dbus-run-session Hyprland
-      end
-    end
-  '';
-
-  # WhiteSur theming for COSMIC
+  # WhiteSur theming for GNOME
   whitesur = {
     enable = true;
     gtk.enable = true;
   };
+
+  # Allow Home Manager to replace existing COSMIC gtk.css
+  xdg.configFile."gtk-4.0/gtk.css".force = true;
 
   # programs.zellij-vivid-rounded = { # TEMPORARILY DISABLED
   #   enable = true; # TEMPORARILY DISABLED
@@ -65,6 +59,9 @@
   programs.google-chrome = {
     enable = true;
   };
+
+  # Avoid dconf activation failures when no session bus is available during activation
+  home.activation.dconfSettings = lib.mkForce "";
 
   home.file.".config/deskflow/deskflow.conf".text = ''
     clipboardSharing = true

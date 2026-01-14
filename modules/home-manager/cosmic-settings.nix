@@ -1,9 +1,10 @@
 { config, pkgs, lib, ... }:
 
 {
-  # COSMIC Desktop Environment - Home Manager dconf settings
-  # Handles appearance, keybindings, dock configuration, and behavior
-  # System-level setup is in modules/nixos/sessions/cosmic.nix
+  # GNOME Desktop Environment with COSMIC-like Styling
+  # This module configures GNOME to look and behave like COSMIC
+  # Works with both GNOME and COSMIC desktop environments
+  # System-level setup is in modules/nixos/sessions/gnome.nix
 
   dconf.settings = {
     # GNOME/COSMIC shell extension configuration
@@ -93,5 +94,50 @@
     "org/gtk/settings/file-chooser" = {
       sort-directories-first = true;
     };
+
+    # Multi-monitor workspace configuration
+    # CRITICAL: Workspaces ONLY on primary (HDMI), secondary (DisplayPort) stays constant
+    # This allows DisplayPort to show same content while HDMI switches workspaces
+    "org/gnome/mutter" = {
+      workspaces-only-on-primary = true; # Workspaces only on primary monitor (HDMI)
+      dynamic-workspaces = true; # Dynamic workspaces (create/remove as needed)
+    };
+
+    # Wallpaper configuration - set for both monitors
+    "org/gnome/desktop/background" = {
+      picture-uri = "file:///home/deepwatrcreatur/flakes/unified-nix-configuration/users/deepwatrcreatur/hosts/phoenix/wallpaper.jpg";
+      picture-uri-dark = "file:///home/deepwatrcreatur/flakes/unified-nix-configuration/users/deepwatrcreatur/hosts/phoenix/wallpaper.jpg";
+      picture-options = "zoom"; # Zoom to fill screen
+      primary-color = "#1e1e2e";
+      secondary-color = "#1e1e2e";
+    };
+
+    # Monitor configuration
+    # CRITICAL: With workspaces-only-on-primary=true, the primary monitor gets workspaces
+    # To make HDMI switch workspaces while DisplayPort stays constant:
+    # 1. Open GNOME Settings > Displays
+    # 2. Click on HDMI monitor
+    # 3. Enable "Primary Display" toggle
+    # Result: HDMI = switches workspaces, DisplayPort = stays constant
   };
+
+  # Home activation reminder for monitor setup
+  home.activation.monitorSetupReminder = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    $DRY_RUN_CMD echo ""
+    $DRY_RUN_CMD echo "================================================"
+    $DRY_RUN_CMD echo " Multi-Monitor Workspace Configuration"
+    $DRY_RUN_CMD echo "================================================"
+    $DRY_RUN_CMD echo " YES, HDMI needs to be set as PRIMARY for workspaces"
+    $DRY_RUN_CMD echo ""
+    $DRY_RUN_CMD echo " To configure:"
+    $DRY_RUN_CMD echo "   1. Open Settings > Displays"
+    $DRY_RUN_CMD echo "   2. Click HDMI monitor"
+    $DRY_RUN_CMD echo "   3. Toggle 'Primary Display' ON"
+    $DRY_RUN_CMD echo ""
+    $DRY_RUN_CMD echo " Result:"
+    $DRY_RUN_CMD echo "   • HDMI = switches between workspaces"
+    $DRY_RUN_CMD echo "   • DisplayPort = shows same content (constant)"
+    $DRY_RUN_CMD echo "================================================"
+    $DRY_RUN_CMD echo ""
+  '';
 }

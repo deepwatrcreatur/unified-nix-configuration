@@ -14,7 +14,8 @@
     ../../../modules/common/utility-packages.nix # Common utility packages
     ../../../modules/nixos/attic-client.nix # Attic cache client
     ../../../modules/nixos/snap.nix # Snap package manager support
-    ../../../modules/nixos/sessions/hyprland/default.nix # Hyprland Wayland compositor
+    ../../../modules/nixos/sessions/gnome.nix # GNOME desktop with COSMIC-like styling (primary)
+    #../../../modules/nixos/sessions/hyprland/default.nix # Hyprland Wayland compositor (backup)
     #../../../modules/nixos/sessions/cosmic.nix # COSMIC desktop
     #../../../modules/nixos/sessions/cinnamon.nix
     ../../../modules/nixos/keyboard-glitches.nix # Fix for stuck keyboard presses in Proxmox VM
@@ -55,8 +56,16 @@
     xkb.options = "caps:none"; # Let input-leap handle caps lock synchronization
   };
 
-  # Autologin on tty1 (no display manager configured)
-  services.getty.autologinUser = "deepwatrcreatur";
+  # Autologin into GNOME via greetd (tty1) - bypasses GDM
+  services.greetd = {
+    enable = true;
+    settings = {
+      default_session = {
+        command = "dbus-run-session gnome-session";
+        user = "deepwatrcreatur";
+      };
+    };
+  };
 
   security.rtkit.enable = true;
   services.pipewire = {
@@ -91,6 +100,8 @@
 
   # Enable printing
   services.printing.enable = true;
+
+  home-manager.backupFileExtension = "hm-bak";
 
   home-manager.users.deepwatrcreatur = {
     imports = [

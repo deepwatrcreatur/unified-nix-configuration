@@ -1,3 +1,4 @@
+{ lib, ... }:
 {
-  home-manager.backupFileExtension = "bak";
+  home-manager.backupFileExtension = lib.mkDefault "bak";
 }

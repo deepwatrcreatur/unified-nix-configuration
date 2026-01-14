@@ -7,7 +7,8 @@
 {
   # Enable COSMIC desktop environment with native Wayland support
   services.desktopManager.cosmic.enable = true;
-  services.displayManager.cosmic-greeter.enable = true;
+  # Disable cosmic-greeter due to memory leaks - using greetd autologin instead
+  services.displayManager.cosmic-greeter.enable = false;
 
   # Touchpad configuration
   services.libinput = {

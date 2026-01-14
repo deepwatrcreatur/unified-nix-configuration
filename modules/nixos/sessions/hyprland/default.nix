@@ -33,6 +33,9 @@
     brightnessctl
     wl-clipboard # Clipboard tool for wayland
 
+    # Control center (COSMIC-like settings)
+    gnome-control-center
+
     # Themeing
     libsForQt5.qt5ct
 
@@ -50,9 +53,9 @@
     thunderbird
     libappindicator-gtk3
     libsecret
-    gnome-keyring
     glib
     gsettings-desktop-schemas
+    xcursor-themes
   ];
 
   # Fonts
@@ -66,6 +69,7 @@
   environment.variables = {
     XCURSOR_SIZE = "24";
     QT_QPA_PLATFORMTHEME = "qt5ct";
+    XCURSOR_THEME = "Adwaita";
   };
 
   # XDG Portals

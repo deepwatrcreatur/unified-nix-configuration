@@ -89,34 +89,31 @@
     ];
 
   home.packages = with pkgs; [
-    # Add any user-specific packages here
+    nwg-drawer # COSMIC-like app grid drawer
   ];
 
   wayland.windowManager.hyprland = {
     enable = true;
     extraConfig = ''
-      # See https://wiki.hyprland.org/Configuring/Monitors/
+      # Monitor configuration - dual monitors at native resolutions
+      # Use 'preferred' for native resolution, explicit positioning
       monitor=,preferred,auto,1
 
-      # See https://wiki.hyprland.org/Configuring/Keywords/ for more
+      # Cursor theme - Capitaine (conventional pointer cursor)
+      exec-once = hyprctl setcursor capitaine-cursors 24
+      env = XCURSOR_THEME,capitaine-cursors
+      env = XCURSOR_SIZE,24
 
-      # Execute your favorite apps at launch
-      exec-once = waybar -c ~/.config/waybar/mainBar.json &
-      exec-once = waybar -c ~/.config/waybar/dock.json &
-      exec-once = hyprpaper
-      exec-once = hypridle
-      exec-once = $terminal
-
-      # Source a file (multi-file configs)
-      # source = ~/.config/hypr/myColors.conf
+      # Transparent dock + panel
+      exec-once = waybar -c ~/.config/waybar/config -s ~/.config/waybar/style.css &
+      exec-once = sleep 1 && waybar -c ~/.config/waybar/dock-config.json -s ~/.config/waybar/dock-style.css &
 
       # Set programs that you use
       $terminal = wezterm
       $fileManager = thunar
-      $menu = wofi --show drun
+      $menu = nwg-drawer
 
-      # Some default env vars.
-      env = XCURSOR_SIZE,24
+      # Environment variables
       env = QT_QPA_PLATFORMTHEME,qt5ct
 
       # For all categories, see https://wiki.hyprland.org/Configuring/Variables/
@@ -141,9 +138,9 @@
 
           gaps_in = 5
           gaps_out = 20
-          border_size = 2
-          col.active_border = rgba(333333ee) rgba(000000ee) 45deg
-          col.inactive_border = rgba(595959aa)
+          border_size = 3
+          col.active_border = rgba(88c0d0ee) rgba(5e81acee) 45deg
+          col.inactive_border = rgba(3b4252aa)
 
           layout = dwindle
 
@@ -213,13 +210,32 @@
       # See https://wiki.hyprland.org/Configuring/Keywords/#executing-for-more
       $mainMod = SUPER
 
-      # Example binds, see https://wiki.hyprland.org/Configuring/Binds/ for more
+      # Application launches
       bind = $mainMod, Q, exec, $terminal
-      bind = $mainMod, C, killactive,
-      bind = $mainMod, M, exit,
       bind = $mainMod, E, exec, $fileManager
-      bind = $mainMod, V, togglefloating,
       bind = $mainMod, SPACE, exec, $menu
+
+      # Window management
+      bind = $mainMod, C, killactive,
+      bind = $mainMod, W, killactive,
+      bind = ALT, F4, killactive,
+      bind = $mainMod, V, togglefloating,
+      bind = $mainMod, F, fullscreen, 0
+      bind = $mainMod, M, exit,
+
+      # Volume controls (like COSMIC)
+      bind = , XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
+      bind = , XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+      bind = , XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+      bind = , XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
+
+      # Alternative volume controls (if media keys don't work)
+      bind = $mainMod, equal, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
+      bind = $mainMod, minus, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+
+      # Settings/Control center
+      bind = $mainMod, I, exec, pavucontrol
+      bind = $mainMod SHIFT, S, exec, gnome-control-center
 
       # Failsafes: usable even if $mainMod binds change
       bind = CTRL ALT, T, exec, $terminal
@@ -277,33 +293,28 @@
     '';
   };
 
-  programs.waybar = {
-    enable = true;
-    settings = {
-      mainBar = pkgs.lib.importJSON ./bar-config.json;
-      dock = pkgs.lib.importJSON ./dock-config.json;
-    };
-    style = pkgs.lib.readFile ./bar-style.css + "\n" + pkgs.lib.readFile ./dock-style.css;
-  };
+  xdg.configFile."waybar/config".text = builtins.readFile ./bar-config.json;
+  xdg.configFile."waybar/style.css".text = builtins.readFile ./bar-style.css;
+  xdg.configFile."waybar/dock-config.json".text = builtins.readFile ./dock-config.json;
+  xdg.configFile."waybar/dock-style.css".text = builtins.readFile ./dock-style.css;
 
   services.hypridle = {
+    enable = false;
+  };
+
+  services.hyprpaper = {
     enable = true;
     settings = {
-      general = {
-        after_sleep_cmd = "hyprctl dispatch dpms on";
-      };
-      listeners = [
-        # Screen locking disabled per user request
-        # {
-        #   timeout = 900;                                 # 15min
-        #   on_timeout = "swaylock-effects --effect-blank --noop";
-        #   on_resume = "";
-        # }
-        {
-          timeout = 3600; # 1hour
-          on_timeout = "hyprctl dispatch dpms off";
-          on_resume = "hyprctl dispatch dpms on";
-        }
+      ipc = "on";
+      splash = false;
+      # Set wallpaper on ALL monitors using wildcard
+      wallpaper = let
+        wallpaperPath = "${config.home.homeDirectory}/flakes/unified-nix-configuration/users/deepwatrcreatur/hosts/phoenix/wallpaper.jpg";
+      in [
+        ",${wallpaperPath}"  # Empty monitor name = apply to all monitors
+      ];
+      preload = [
+        "${config.home.homeDirectory}/flakes/unified-nix-configuration/users/deepwatrcreatur/hosts/phoenix/wallpaper.jpg"
       ];
     };
   };
@@ -346,11 +357,46 @@
           margin: 5px;
           border: none;
           color: #2e3440;
-      } 
+      }
 
       #entry:selected {
           background-color: rgba(0, 0, 0, 0.1);
       }
     '';
   };
+
+  # nwg-drawer configuration for COSMIC-like app grid
+  xdg.configFile."nwg-drawer/drawer.css".text = ''
+    window {
+      background-color: rgba(30, 30, 46, 0.95);
+      color: #eceff4;
+      font-family: 'Noto Sans', sans-serif;
+    }
+
+    #searchbox {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #eceff4;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 8px;
+      margin: 20px;
+    }
+
+    button {
+      background-color: transparent;
+      color: #eceff4;
+      border: none;
+      padding: 8px;
+      margin: 4px;
+      border-radius: 8px;
+    }
+
+    button:hover {
+      background-color: rgba(255, 255, 255, 0.15);
+    }
+
+    button:focus {
+      background-color: rgba(136, 192, 208, 0.3);
+    }
+  '';
 }

@@ -1,19 +1,59 @@
 {
-    "layer": "top",
-    "position": "left",
-    "width": 40,
-    "height": 1080,
-    "modules-top": ["custom-launcher", "custom-workspaces"],
-    "modules-bottom": [],
-
-    "custom-launcher": {
-        "format": "",
-        "on-click": "wofi --show drun",
-        "tooltip": true
-    },
-    "custom-workspaces": {
-        "format": "",
-        "on-click": "wofi --show run",
-        "tooltip": true
+  "layer": "top",
+  "position": "left",
+  "width": 38,
+  "height": 400,
+  "margin-top": 8,
+  "margin-bottom": 8,
+  "margin-left": 8,
+  "spacing": 4,
+  "modules-top": [
+    "custom/appdrawer",
+    "hyprland/workspaces"
+  ],
+  "modules-center": [],
+  "modules-bottom": [
+    "custom/firefox",
+    "custom/chrome",
+    "custom/terminal",
+    "custom/files"
+  ],
+  "custom/appdrawer": {
+    "format": "≣",
+    "on-click": "nwg-drawer",
+    "tooltip": true,
+    "tooltip-format": "Apps"
+  },
+  "hyprland/workspaces": {
+    "format": "{id}",
+    "on-click": "activate",
+    "all-outputs": false,
+    "persistent-workspaces": {
+      "*": 5
     }
+  },
+  "custom/firefox": {
+    "format": "F",
+    "on-click": "firefox",
+    "tooltip": true,
+    "tooltip-format": "Firefox"
+  },
+  "custom/chrome": {
+    "format": "C",
+    "on-click": "google-chrome-stable",
+    "tooltip": true,
+    "tooltip-format": "Chrome"
+  },
+  "custom/terminal": {
+    "format": "T",
+    "on-click": "wezterm",
+    "tooltip": true,
+    "tooltip-format": "Terminal"
+  },
+  "custom/files": {
+    "format": "📁",
+    "on-click": "thunar",
+    "tooltip": true,
+    "tooltip-format": "Files"
+  }
 }

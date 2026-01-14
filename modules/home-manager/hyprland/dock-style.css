@@ -1,26 +1,65 @@
 * {
     border: none;
     border-radius: 0;
-    font-family: 'Noto Sans';
-    font-size: 20px;
+    font-family: 'Noto Sans', sans-serif;
+    font-size: 24px;
     min-height: 0;
 }
 
 window#waybar {
+    background: rgba(30, 30, 46, 0.25);
+    color: #eceff4;
+    border-radius: 16px;
+    margin: 0;
+    padding: 6px 0;
+}
+
+#custom-appdrawer,
+#workspaces,
+#custom-firefox,
+#custom-chrome,
+#custom-terminal,
+#custom-files {
+    padding: 6px 0;
+    margin: 4px 0;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    min-width: 38px;
+    text-align: center;
+}
+
+#custom-appdrawer:hover,
+#workspaces button:hover,
+#custom-firefox:hover,
+#custom-chrome:hover,
+#custom-terminal:hover,
+#custom-files:hover {
     background: rgba(255, 255, 255, 0.15);
-    color: #2e3440;
-    transition-property: all;
-    transition-duration: .5s;
+    transition: all 0.2s ease-in-out;
 }
 
-window#waybar.hidden {
-    opacity: 0.0;
+#workspaces {
+    padding: 2px 0;
+    margin: 8px 0;
+    background: transparent;
 }
 
-#custom-launcher, #custom-workspaces {
-    padding: 10px 5px;
+#workspaces button {
+    padding: 5px 0;
+    margin: 2px 0;
+    background: rgba(255, 255, 255, 0.05);
+    color: #eceff4;
+    border-radius: 8px;
+    min-width: 38px;
 }
 
-#custom-launcher:hover, #custom-workspaces:hover {
-    background: rgba(0, 0, 0, 0.1);
+#workspaces button.active {
+    background: rgba(136, 192, 208, 0.4);
+    color: #88c0d0;
+    font-weight: bold;
+}
+
+#custom-appdrawer {
+    font-size: 26px;
+    margin-bottom: 6px;
 }

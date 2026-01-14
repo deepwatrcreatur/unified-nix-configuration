@@ -1,38 +1,72 @@
 * {
     border: none;
     border-radius: 0;
-    font-family: 'Noto Sans';
+    font-family: 'Noto Sans', sans-serif;
     font-size: 14px;
     min-height: 0;
 }
 
 window#waybar {
-    background: transparent;
-    color: #2e3440;
+    background: rgba(30, 30, 46, 0.5);
+    color: #eceff4;
+    border-radius: 16px;
+    margin: 6px 8px 0 8px;
+    padding: 2px 8px;
 }
 
 #workspaces,
 #clock,
 #pulseaudio,
 #network,
-#custom-power,
+#tray,
 #window {
-    background-color: rgba(255, 255, 255, 0.5);
-    padding: 2px 10px;
-    margin: 4px 4px;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 4px 12px;
+    margin: 2px 3px;
     border-radius: 10px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 #workspaces button {
-    padding: 0 5px;
-    color: #2e3440;
+    padding: 4px 10px;
+    color: #eceff4;
+    background: transparent;
+    border-radius: 8px;
+    min-width: 30px;
 }
 
 #workspaces button.active {
-    color: #5e81ac;
+    background: rgba(136, 192, 208, 0.3);
+    color: #88c0d0;
 }
 
 #workspaces button:hover {
-    background: rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.12);
+}
+
+#clock {
+    font-weight: 500;
+    padding: 6px 18px;
+}
+
+#pulseaudio,
+#network {
+    padding: 6px 12px;
+}
+
+#tray {
+    padding: 6px 10px;
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+    background-color: rgba(235, 160, 172, 0.3);
+}
+
+#window {
+    font-weight: normal;
+    color: #d8dee9;
 }
