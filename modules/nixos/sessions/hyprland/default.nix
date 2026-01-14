@@ -2,7 +2,6 @@
 
 {
   imports = [
-    ../../../home-manager/hyprland/default.nix
     ../whitesur-theme.nix
   ];
 
