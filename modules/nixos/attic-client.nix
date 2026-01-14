@@ -72,17 +72,21 @@ in
 
         token=$(cat "$token_file")
 
-        # Create a temporary config file for the push
-        temp_config=$(mktemp)
+        # Create a temporary config for attic.
+        # `attic` does not support a `--config` flag; it reads from XDG_CONFIG_HOME.
+        temp_dir=$(mktemp -d)
 
         # Ensure cleanup happens on exit
-        trap 'rm -f "$temp_config"' EXIT
+        trap 'rm -rf "$temp_dir"' EXIT
 
-        cat > "$temp_config" <<EOF
-        [servers.${cfg.cache}]
+        mkdir -p "$temp_dir/attic"
+        cat > "$temp_dir/attic/config.toml" <<EOF
+        [servers.cache-build-server]
         endpoint = "${cfg.server}"
         token = "$token"
         EOF
+
+        export XDG_CONFIG_HOME="$temp_dir"
 
         # Wrap everything in a try-catch to never fail the build
         {
@@ -92,7 +96,7 @@ in
           echo "Attic: Token file exists: $(test -f "$token_file" && echo 'yes' || echo 'no')" >&2
           echo "Attic: Token length: $(echo -n "$token" | wc -c) characters" >&2
 
-          if ${pkgs.attic-client}/bin/attic --config "$temp_config" push ${cfg.cache} $OUT_PATHS; then
+          if ${pkgs.attic-client}/bin/attic push cache-build-server:${cfg.cache} $OUT_PATHS; then
             echo "Attic: Successfully pushed paths" >&2
           else
             echo "Attic: Push failed - checking server connectivity..." >&2
