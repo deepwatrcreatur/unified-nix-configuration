@@ -87,16 +87,13 @@ in
           nix_conf="$HOME/.config/nix/nix.conf"
           token_path="${cfg.githubTokenPath}"
 
-          # Ensure fnox is available
-          export PATH="${inputs.fnox.packages.${pkgs.system}.default}/bin:$PATH"
-          export FNOX_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
-
           token=""
-          if command -v fnox &> /dev/null && [ -f "$FNOX_AGE_KEY_FILE" ]; then
-            # Try to get token from fnox
+          # Try fnox if available
+          if command -v fnox &> /dev/null && [ -f "$HOME/.config/sops/age/keys.txt" ]; then
+            export FNOX_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
             token=$(fnox get GITHUB_TOKEN 2>/dev/null || echo "")
           fi
-          
+
           if [[ -z "$token" && -f "$token_path" ]]; then
             token=$(cat "$token_path")
           fi
@@ -115,13 +112,11 @@ in
       (lib.mkIf (cfg.netrcMachine != null) {
         home.activation.nix-netrc = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
                           netrc_file="/nix/var/determinate/netrc"
-                          
-                          token=""
-                          # Ensure fnox is available
-                          export PATH="${inputs.fnox.packages.${pkgs.system}.default}/bin:$PATH"
-                          export FNOX_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
 
-                          if command -v fnox &> /dev/null && [ -f "$FNOX_AGE_KEY_FILE" ]; then
+                          token=""
+                          # Try fnox if available
+                          if command -v fnox &> /dev/null && [ -f "$HOME/.config/sops/age/keys.txt" ]; then
+                             export FNOX_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
                              token=$(fnox get ATTIC_CLIENT_JWT_TOKEN 2>/dev/null || echo "")
                           fi
                           

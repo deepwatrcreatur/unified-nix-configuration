@@ -6,14 +6,15 @@
 }:
 
 {
-  # Configure fnox environment variables
-  home.sessionVariables = {
+  # Configure fnox environment variables (only if fnox package is available)
+  home.sessionVariables = lib.mkIf (pkgs ? fnox) {
     # Point fnox to the sops age key
     FNOX_AGE_KEY_FILE = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
   };
 
-  # Create fnox configuration
-  xdg.configFile."fnox/fnox.toml".text = ''
+  # Create fnox configuration (only if fnox package is available)
+  xdg.configFile."fnox/fnox.toml" = lib.mkIf (pkgs ? fnox) {
+    text = ''
     [providers.age]
     type = "age"
     recipients = [
@@ -59,27 +60,28 @@
     [secrets.Z_AI_API_KEY.default]
     provider = "age"
   '';
+  };
 
-  # Shell integration to load secrets
-  programs.bash.initExtra = ''
+  # Shell integration to load secrets (only if fnox package is available)
+  programs.bash.initExtra = lib.mkIf (pkgs ? fnox) ''
     if command -v fnox &> /dev/null; then
       eval "$(fnox env)"
     fi
   '';
 
-  programs.zsh.initContent = ''
+  programs.zsh.initContent = lib.mkIf (pkgs ? fnox) ''
     if command -v fnox &> /dev/null; then
       eval "$(fnox env)"
     fi
   '';
 
-  programs.fish.interactiveShellInit = ''
+  programs.fish.interactiveShellInit = lib.mkIf (pkgs ? fnox) ''
     if command -v fnox &> /dev/null
       fnox env | source
     end
   '';
-  
-  programs.nushell.extraConfig = ''
+
+  programs.nushell.extraConfig = lib.mkIf (pkgs ? fnox) ''
     if (which fnox | is-not-empty) {
       fnox env | load-env
     }

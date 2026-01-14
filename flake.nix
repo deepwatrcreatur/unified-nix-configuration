@@ -123,25 +123,12 @@
         inputs.tesla-inference-flake.overlays.llama-cpp-tesla
         inputs.tesla-inference-flake.overlays.gpu-tools
         # Try to use fnox from nixpkgs first, fallback to flake input if not available
-        (final: prev: {
-          fnox =
-            if prev.stdenv.isLinux && prev.stdenv.isx86_64 then
-              # Try to get fnox from nixpkgs (should be pre-built in newer versions)
-              (prev.fnox or inputs.fnox.packages.${prev.stdenv.hostPlatform.system}.default)
-            else
-              # Fallback to flake input for other platforms
-              inputs.fnox.packages.${prev.stdenv.hostPlatform.system}.default;
-        })
-        # Try to use fnox from nixpkgs first, fallback to flake input if not available
-        (final: prev: {
-          fnox =
-            if prev.stdenv.isLinux && prev.stdenv.isx86_64 then
-              # Try to get fnox from nixpkgs (should be pre-built in newer versions)
-              (prev.fnox or inputs.fnox.packages.${prev.stdenv.hostPlatform.system}.default)
-            else
-              # Fallback to flake input for other platforms
-              inputs.fnox.packages.${prev.stdenv.hostPlatform.system}.default;
-        })
+        # Only available on Linux x86_64 due to fnox-flake limitations
+        (final: prev:
+          nixpkgsLib.optionalAttrs (prev.stdenv.isLinux && prev.stdenv.isx86_64) {
+            fnox = prev.fnox or inputs.fnox.packages.${prev.stdenv.hostPlatform.system}.default;
+          }
+        )
       ];
 
       # SpecialArgs for NixOS and Darwin SYSTEM modules.
