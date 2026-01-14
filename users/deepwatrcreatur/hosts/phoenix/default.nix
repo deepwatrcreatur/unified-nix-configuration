@@ -2,6 +2,7 @@
   config,
   pkgs,
   inputs,
+  lib,
   ...
 }:
 
@@ -22,6 +23,15 @@
   ];
 
   home.homeDirectory = "/home/deepwatrcreatur";
+
+  # Autostart Hyprland on tty1 (pairs with getty autologin)
+  programs.fish.interactiveShellInit = lib.mkAfter ''
+    if test -z "$WAYLAND_DISPLAY" -a -z "$DISPLAY" -a -z "$SSH_CONNECTION"
+      if test (tty) = "/dev/tty1"
+        exec ${pkgs.dbus}/bin/dbus-run-session Hyprland
+      end
+    end
+  '';
 
   # WhiteSur theming for COSMIC
   whitesur = {

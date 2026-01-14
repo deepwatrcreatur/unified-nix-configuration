@@ -44,8 +44,6 @@
   boot.bootspec.enable = true;
   boot.growPartition = false;
 
-
-
   # Virtual display (virtio-gpu) for Proxmox VM
   hardware.graphics.enable = true;
   hardware.enableRedistributableFirmware = true;
@@ -54,8 +52,11 @@
   services.xserver = {
     enable = true;
     videoDrivers = [ "amdgpu" ];
-    xkb.options = "caps:none";  # Let input-leap handle caps lock synchronization
+    xkb.options = "caps:none"; # Let input-leap handle caps lock synchronization
   };
+
+  # Autologin on tty1 (no display manager configured)
+  services.getty.autologinUser = "deepwatrcreatur";
 
   security.rtkit.enable = true;
   services.pipewire = {

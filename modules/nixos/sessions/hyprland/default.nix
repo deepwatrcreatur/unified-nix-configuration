@@ -21,11 +21,11 @@
 
     # Hyprland ecosystem
     hyprpaper # Wallpaper utility
-    hypridle  # Idle management daemon
-    hyprlock  # Screen locker
+    hypridle # Idle management daemon
+    hyprlock # Screen locker
     xdg-desktop-portal-hyprland # Required for screensharing/casting
     waybar # Status bar
-    wofi   # Application launcher
+    wofi # Application launcher
 
     # Utilities
     pavucontrol # Volume control
@@ -38,8 +38,8 @@
 
     # Fonts
     noto-fonts
-    noto-fonts-cjk
-    noto-fonts-emoji
+    noto-fonts-cjk-sans
+    noto-fonts-color-emoji
 
     # Apps from cosmic.nix
     pulseaudio-ctl
@@ -58,9 +58,8 @@
   # Fonts
   fonts.packages = with pkgs; [
     noto-fonts
-    noto-fonts-cjk
-    noto-fonts-emoji
-    (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
+    noto-fonts-cjk-sans
+    noto-fonts-color-emoji
   ];
 
   # Configure environment variables

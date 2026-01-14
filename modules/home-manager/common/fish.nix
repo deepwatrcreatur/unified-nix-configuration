@@ -61,20 +61,48 @@
         set -gx COLORTERM truecolor
       end
 
+      # Container awareness (distrobox/podman/docker)
+      set -l in_container 0
+      if test -f /.dockerenv; or test -n "$DISTROBOX_ENTER_PATH"; or test -n "$container"
+        set in_container 1
+      end
+
+      if test $in_container -eq 1
+        if test -d "${config.home.homeDirectory}/.local/bin"
+          fish_add_path --append --move "${config.home.homeDirectory}/.local/bin"
+        end
+      end
+
       # Prioritize Homebrew binaries (if available)
       if test -d /home/linuxbrew/.linuxbrew/bin
         fish_add_path --prepend --move /home/linuxbrew/.linuxbrew/bin
       end
 
       # Ensure Nix paths are in PATH early for ALL sessions (especially SSH)
-      if test -d ${config.home.homeDirectory}/.nix-profile/bin
-        fish_add_path --prepend --move ${config.home.homeDirectory}/.nix-profile/bin
-      end
-      if test -d /nix/var/nix/profiles/default/bin
-        fish_add_path --prepend --move /nix/var/nix/profiles/default/bin
-      end
-      if test -d /run/current-system/sw/bin
-        fish_add_path --prepend --move /run/current-system/sw/bin
+      # In containers: append as fallback (prefer RPM-provided tools).
+      if test $in_container -eq 1
+        if test -d /etc/profiles/per-user/$USER/bin
+          fish_add_path --append --move /etc/profiles/per-user/$USER/bin
+        end
+        if test -d ${config.home.homeDirectory}/.nix-profile/bin
+          fish_add_path --append --move ${config.home.homeDirectory}/.nix-profile/bin
+        end
+        if test -d /nix/var/nix/profiles/system/sw/bin
+          fish_add_path --append --move /nix/var/nix/profiles/system/sw/bin
+        end
+        if test -d /nix/var/nix/profiles/default/bin
+          fish_add_path --append --move /nix/var/nix/profiles/default/bin
+        end
+      else
+        if test -d ${config.home.homeDirectory}/.nix-profile/bin
+          fish_add_path --prepend --move ${config.home.homeDirectory}/.nix-profile/bin
+        end
+        if test -d /nix/var/nix/profiles/default/bin
+          fish_add_path --prepend --move /nix/var/nix/profiles/default/bin
+        end
+        if test -d /run/current-system/sw/bin
+          fish_add_path --prepend --move /run/current-system/sw/bin
+        end
       end
     '';
 
@@ -88,6 +116,19 @@
       # Ensure /run/wrappers/bin is at the front of PATH for NixOS security wrappers
       if test -d /run/wrappers/bin
         set -gx PATH /run/wrappers/bin $PATH
+      end
+
+      # Container-only interactive aliases + defaults
+      if test -f /.dockerenv; or test -n "$DISTROBOX_ENTER_PATH"; or test -n "$container"
+        alias ll 'ls -lah'
+
+        if type -q vim
+          set -gx EDITOR vim
+          set -gx VISUAL vim
+        else
+          set -gx EDITOR vi
+          set -gx VISUAL vi
+        end
       end
     '';
 

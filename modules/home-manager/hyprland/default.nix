@@ -41,11 +41,11 @@
       isBindLine =
         line:
         let
-          t = lib.strings.trimString line;
+          t = lib.strings.trim line;
         in
         lib.strings.hasPrefix "bind" t;
 
-      parseCsv = s: builtins.map lib.strings.trimString (lib.strings.splitString "," s);
+      parseCsv = s: builtins.map lib.strings.trim (lib.strings.splitString "," s);
 
       bindIssues =
         let
@@ -53,11 +53,11 @@
           issuesForLine =
             line:
             let
-              t = lib.strings.trimString line;
+              t = lib.strings.trim line;
               # Expect: "MODS, KEY, DISPATCHER, ..."; we don't validate mods.
               afterEq =
                 if lib.strings.hasInfix "=" t then
-                  lib.strings.trimString (lib.lists.last (lib.strings.splitString "=" t))
+                  lib.strings.trim (lib.lists.last (lib.strings.splitString "=" t))
                 else
                   "";
               parts = parseCsv afterEq;
@@ -196,10 +196,6 @@
           new_status = master
       }
 
-      gestures {
-          # See https://wiki.hyprland.org/Configuring/Variables/ for more
-          workspace_swipe = off
-      }
 
       misc {
           # See https://wiki.hyprland.org/Configuring/Variables/ for more
@@ -212,7 +208,7 @@
       # Example windowrule v2
       # windowrulev2 = float,class:^(kitty)$,title:^(kitty)$
       # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
-      windowrulev2 = nomaximizerequest, class:.* # Don't maximize windows.
+      windowrule = suppressevent maximize, class:.* # Ignore maximize requests.
 
       # See https://wiki.hyprland.org/Configuring/Keywords/#executing-for-more
       $mainMod = SUPER
