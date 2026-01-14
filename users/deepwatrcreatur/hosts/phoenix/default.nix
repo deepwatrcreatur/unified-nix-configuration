@@ -15,7 +15,8 @@
     ../../../../modules/home-manager/ghostty
     ../../../../modules/home-manager/gpg-agent-cross-de.nix
     ../../../../modules/home-manager/zed.nix
-    ../../../../modules/home-manager/cosmic-settings.nix
+    ../../../../modules/home-manager/hyprland/default.nix # Hyprland configuration
+    #../../../../modules/home-manager/cosmic-settings.nix # Replaced with Hyprland
     inputs.zellij-vivid-rounded.homeManagerModules.default
     inputs.nix-whitesur-config.homeManagerModules.default
   ];

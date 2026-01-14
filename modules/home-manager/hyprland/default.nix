@@ -129,11 +129,11 @@
 
       # Example binds, see https://wiki.hyprland.org/Configuring/Binds/ for more
       bind = $mainMod, Q, exec, $terminal
-      bind = $mainMod, C, killactive, 
-      bind = $mainMod, M, exit, 
+      bind = $mainMod, C, killactive,
+      bind = $mainMod, M, exit,
       bind = $mainMod, E, exec, $fileManager
-      bind = $mainMod, V, togglefloating, 
-      bind = $mainMod, R, exec, $menu
+      bind = $mainMod, V, togglefloating,
+      bind = $mainMod, exec, $menu  # Changed from R to just Super (like COSMIC launcher)
       bind = $mainMod, P, pseudo, # dwindle
       bind = $mainMod, J, togglesplit, # dwindle
 
@@ -203,12 +203,14 @@
           after_sleep_cmd = hyprctl dispatch dpms on
       }
 
-      listener {
-          timeout = 900                                 # 15min
-          on-timeout = swaylock-effects --effect-blank --noop
-          on-resume = 
-      }
-      
+      # Screen locking disabled per user request
+      # listener {
+      #     timeout = 900                                 # 15min
+      #     on-timeout = swaylock-effects --effect-blank --noop
+      #     on-resume =
+      # }
+
+      # Display will turn off after 1 hour of inactivity (no lock screen)
       listener {
           timeout = 3600                                # 1hour
           on-timeout = hyprctl dispatch dpms off

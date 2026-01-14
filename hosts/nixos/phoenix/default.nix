@@ -14,7 +14,8 @@
     ../../../modules/common/utility-packages.nix # Common utility packages
     ../../../modules/nixos/attic-client.nix # Attic cache client
     ../../../modules/nixos/snap.nix # Snap package manager support
-    ../../../modules/nixos/sessions/cosmic.nix # COSMIC desktop
+    ../../../modules/nixos/sessions/hyprland/default.nix # Hyprland Wayland compositor
+    #../../../modules/nixos/sessions/cosmic.nix # COSMIC desktop
     #../../../modules/nixos/sessions/cinnamon.nix
     ../../../modules/nixos/keyboard-glitches.nix # Fix for stuck keyboard presses in Proxmox VM
     ../../../modules/wezterm-config.nix
