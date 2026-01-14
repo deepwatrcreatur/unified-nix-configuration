@@ -13,7 +13,7 @@
     },
     "custom-workspaces": {
         "format": "",
-        "on-click": "hyprctl dispatch overview",
+        "on-click": "wofi --show run",
         "tooltip": true
     }
 }

@@ -1,6 +1,30 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
+  assertions =
+    let
+      extra = config.wayland.windowManager.hyprland.extraConfig or "";
+      deprecated = [
+        "drop_shadow"
+        "shadow_range"
+        "shadow_render_power"
+        "col.shadow"
+        "new_is_master"
+      ];
+      found = builtins.filter (k: lib.strings.hasInfix k extra) deprecated;
+    in
+    [
+      {
+        assertion = found == [ ];
+        message = "Hyprland config contains deprecated/removed keys: ${builtins.concatStringsSep ", " found}";
+      }
+    ];
+
   home.packages = with pkgs; [
     # Add any user-specific packages here
   ];
@@ -18,6 +42,7 @@
       exec-once = waybar -c ~/.config/waybar/dock.json &
       exec-once = hyprpaper
       exec-once = hypridle
+      exec-once = $terminal
 
       # Source a file (multi-file configs)
       # source = ~/.config/hypr/myColors.conf
@@ -67,17 +92,19 @@
           # See https://wiki.hyprland.org/Configuring/Variables/ for more
 
           rounding = 10
-          
+
           blur {
               enabled = true
               size = 3
               passes = 1
           }
 
-          drop_shadow = yes
-          shadow_range = 4
-          shadow_render_power = 3
-          col.shadow = rgba(1a1a1aee)
+          shadow {
+              enabled = true
+              range = 4
+              render_power = 3
+              color = rgba(1a1a1aee)
+          }
       }
 
       animations {
@@ -103,7 +130,7 @@
 
       master {
           # See https://wiki.hyprland.org/Configuring/Master-Layout/ for more
-          new_is_master = true
+          new_status = master
       }
 
       gestures {
@@ -133,11 +160,15 @@
       bind = $mainMod, M, exit,
       bind = $mainMod, E, exec, $fileManager
       bind = $mainMod, V, togglefloating,
-      bind = $mainMod, exec, $menu  # Changed from R to just Super (like COSMIC launcher)
+      bind = $mainMod, SPACE, exec, $menu
+
+      # Failsafes: usable even if $mainMod binds change
+      bind = CTRL ALT, T, exec, $terminal
+      bind = CTRL ALT, BackSpace, exit,
       bind = $mainMod, P, pseudo, # dwindle
       bind = $mainMod, J, togglesplit, # dwindle
 
-      bind = $mainMod, O, overview,
+      bind = $mainMod, O, exec, wofi --show run
 
       # Move focus with mainMod + arrow keys
       bind = $mainMod, left, movefocus, l
@@ -180,7 +211,7 @@
       # Move/resize windows with mainMod + LMB/RMB and dragging
       bindm = $mainMod, mouse:272, movewindow
       bindm = $mainMod, mouse:273, resizewindow
-      
+
       # Per-screen workspace switching
       bind = $mainMod, right, focusmonitor, +1
       bind = $mainMod, left, focusmonitor, -1
