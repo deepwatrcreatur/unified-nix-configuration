@@ -292,25 +292,24 @@
 
   services.hypridle = {
     enable = true;
-    extraConfig = ''
-      general {
-          after_sleep_cmd = hyprctl dispatch dpms on
-      }
-
-      # Screen locking disabled per user request
-      # listener {
-      #     timeout = 900                                 # 15min
-      #     on-timeout = swaylock-effects --effect-blank --noop
-      #     on-resume =
-      # }
-
-      # Display will turn off after 1 hour of inactivity (no lock screen)
-      listener {
-          timeout = 3600                                # 1hour
-          on-timeout = hyprctl dispatch dpms off
-          on-resume = hyprctl dispatch dpms on
-      }
-    '';
+    settings = {
+      general = {
+        after_sleep_cmd = "hyprctl dispatch dpms on";
+      };
+      listeners = [
+        # Screen locking disabled per user request
+        # {
+        #   timeout = 900;                                 # 15min
+        #   on_timeout = "swaylock-effects --effect-blank --noop";
+        #   on_resume = "";
+        # }
+        {
+          timeout = 3600; # 1hour
+          on_timeout = "hyprctl dispatch dpms off";
+          on_resume = "hyprctl dispatch dpms on";
+        }
+      ];
+    };
   };
 
   programs.wofi = {
