@@ -13,6 +13,12 @@ let
     cursor-cli
     gemini-cli
     opencode
+
+    # Factory.ai Droid (installed via the upstream install script)
+    (writeShellScriptBin "droid" ''
+      set -euo pipefail
+      exec "$HOME/.factory/bin/droid" "$@"
+    '')
   ];
 in
 {
