@@ -151,6 +151,80 @@
           worktrunk = inputs.worktrunk.packages.${prev.stdenv.hostPlatform.system}.default;
         })
 
+        # Factory.ai Droid CLI (prebuilt binary, patched on NixOS)
+        (
+          final: prev:
+          let
+            version = "0.48.1";
+            platform = if prev.stdenv.isDarwin then "darwin" else "linux";
+            arch = if prev.stdenv.hostPlatform.isAarch64 then "arm64" else "x64-baseline";
+            hashBySystem = {
+              "x86_64-linux" = "sha256-5QsvAvmcjVbplJB0JHhqfSKJtoCTAuVXXgj5cu57Q6M=";
+              "aarch64-linux" = "sha256-ZujFPpKUASj1xA/gNYxE2brw5ebAGtmyfB9M3mMc24k=";
+              "x86_64-darwin" = "sha256-qCt8fS8/IYm53UhOtDF6u831NzgSVbVdYUr7uToEGFE=";
+              "aarch64-darwin" = "sha256-M0QYX7u9GHqHcPbL9dR7+vC2QIUxrgN4N2cSAIAmmRE=";
+            };
+            src = prev.fetchurl {
+              url = "https://downloads.factory.ai/factory-cli/releases/${version}/${platform}/${arch}/droid";
+              hash = hashBySystem.${prev.stdenv.hostPlatform.system};
+            };
+          in
+          {
+            factory-droid = prev.stdenv.mkDerivation {
+              pname = "factory-droid";
+              inherit version src;
+              dontUnpack = true;
+
+              nativeBuildInputs = [
+                prev.autoPatchelfHook
+                prev.patchelf
+                prev.makeWrapper
+              ];
+              buildInputs = nixpkgsLib.optionals prev.stdenv.isLinux [
+                prev.stdenv.cc.cc.lib
+                prev.glibc
+              ];
+
+              installPhase = ''
+                runHook preInstall
+                mkdir -p "$out/bin"
+                install -m755 "$src" "$out/bin/droid"
+
+                if [ "${if prev.stdenv.isLinux then "1" else "0"}" = "1" ]; then
+                  patchelf --set-interpreter "$(cat ${prev.stdenv.cc}/nix-support/dynamic-linker)" "$out/bin/droid"
+                  autoPatchelf "$out/bin/droid" || true
+                fi
+
+                wrapProgram "$out/bin/droid" \
+                  --prefix PATH : "${
+                    prev.lib.makeBinPath (
+                      [
+                        prev.ripgrep
+                        prev.git
+                        prev.openssh
+                      ]
+                      ++ prev.lib.optionals prev.stdenv.isLinux [ prev.xdg-utils ]
+                    )
+                  }"
+
+                runHook postInstall
+              '';
+
+              meta = {
+                description = "Factory.ai Droid CLI";
+                homepage = "https://factory.ai";
+                mainProgram = "droid";
+                platforms = [
+                  "x86_64-linux"
+                  "aarch64-linux"
+                  "x86_64-darwin"
+                  "aarch64-darwin"
+                ];
+              };
+            };
+          }
+        )
+
         # Provide fnox + related wrappers (prefer flake input)
         (
           final: prev:
@@ -168,12 +242,52 @@
             else
               { }
           )
-          // (nixpkgsLib.optionalAttrs (fnoxPkgs ? opencode-zai) { opencode-zai = fnoxPkgs.opencode-zai; })
-          // (nixpkgsLib.optionalAttrs (fnoxPkgs ? opencode-claude) {
-            opencode-claude = fnoxPkgs.opencode-claude;
-          })
           // (nixpkgsLib.optionalAttrs (fnoxPkgs ? gh-fnox) { gh-fnox = fnoxPkgs.gh-fnox; })
           // (nixpkgsLib.optionalAttrs (fnoxPkgs ? bw-fnox) { bw-fnox = fnoxPkgs.bw-fnox; })
+        )
+
+        # Opencode wrappers must use our (unstable) opencode, not the fnox-flake baked one.
+        (
+          final: prev:
+          let
+            mkWrapped =
+              {
+                name,
+                providerEnv,
+                secretName,
+                keyEnv ? "OPENAI_API_KEY",
+              }:
+              prev.writeShellScriptBin name ''
+                set -euo pipefail
+
+                FNOX_CONFIG_PATH="''${FNOX_CONFIG:-$HOME/.config/fnox/config.toml}"
+                export FNOX_AGE_KEY_FILE="''${FNOX_AGE_KEY_FILE:-$HOME/.config/sops/age/keys.txt}"
+
+                value=$("${final.fnox}/bin/fnox" -c "$FNOX_CONFIG_PATH" get "${secretName}")
+                export ${keyEnv}="$value"
+
+                ${providerEnv}
+
+                exec "${final.opencode}/bin/opencode" "$@"
+              '';
+          in
+          {
+            opencode-zai = mkWrapped {
+              name = "opencode-zai";
+              secretName = "Z_AI_API_KEY";
+              providerEnv = ''
+                export OPENCODE_PROVIDER="z.ai"
+                export OPENCODE_MODEL="GLM 4.7"
+              '';
+            };
+
+            opencode-claude = mkWrapped {
+              name = "opencode-claude";
+              secretName = "ANTHROPIC_API_KEY";
+              keyEnv = "ANTHROPIC_API_KEY";
+              providerEnv = "";
+            };
+          }
         )
 
         # Tesla inference overlays for GPU optimization
