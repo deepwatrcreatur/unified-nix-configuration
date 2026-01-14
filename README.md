@@ -1,4 +1,6 @@
-I am combining nix configurations for different machines that were in separate repositories. Here is the planned structure:
+I am combining nix configurations for different machines that were in separate repositories.
+
+Here is the planned structure:
 
 ```text
 .
@@ -23,7 +25,7 @@ I am combining nix configurations for different machines that were in separate r
 │   │   │   ├── hardware-configuration.nix
 │   │   │   └── arch.nix
 │   │   └── ...                  # Other NixOS hosts
-│   └── darwin/                # For nix-darwin hosts (if you automate them too)
+│   └── darwin/                # For nix-darwin hosts
 │       └── macminim4/
 │           ├── default.nix
 │           └── arch.nix             # "aarch64-darwin"
@@ -46,3 +48,12 @@ I am combining nix configurations for different machines that were in separate r
 │       └── macminim4.nix
 │
 └── ...
+```
+
+## Worktrees (Recommended)
+
+Use `worktrunk` (`wt`) for parallel agent work in separate git worktrees.
+
+- Create/switch worktrees: `wt switch -c feat/my-change`
+- List worktrees: `wt list`
+- Remove a worktree: `wt remove`

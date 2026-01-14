@@ -128,12 +128,17 @@ For testing changes across hosts (especially build failures):
 3. **Use tmux sessions** for maintaining persistent remote sessions (see tmux section above)
 4. **Test platform-specific issues** by reproducing on relevant host type
 
+### Worktrees
+- Prefer `wt` (worktrunk) over `git worktree` when working in parallel.
+- Typical flow: `wt switch -c feat/my-change`, then run agent work in that worktree.
+
 ### Git Workflow
 Before pushing changes that affect remote hosts:
 1. **Check local files exist** with `git status`
 2. **Pull remote changes first** with `git pull` to avoid conflicts
 3. **Test locally** (rebuild/switch) before committing when possible
-4. **Commit WITHOUT GPG signing** (agents cannot reliably handle pinentry prompts):
+4. **Split commits into logical parts**: keep commits narrowly scoped (e.g., "secrets refactor" separate from "GNOME tweaks")
+5. **Commit WITHOUT GPG signing** (agents cannot reliably handle pinentry prompts):
    ```bash
    git commit --no-gpg-sign -m "feat: ..."
    ```
