@@ -14,6 +14,7 @@
       # System tools
       broot
       git
+      worktrunk
       hyperfine
       htop
       lsof

@@ -90,6 +90,12 @@
       inputs.flake-utils.follows = "flake-utils";
     };
 
+    worktrunk = {
+      url = "github:max-sixty/worktrunk";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+    };
+
   };
 
   outputs =
@@ -139,6 +145,11 @@
             opencode = unstable.opencode or prev.opencode;
           }
         )
+
+        # Worktrunk (git worktree management for parallel agents)
+        (final: prev: {
+          worktrunk = inputs.worktrunk.packages.${prev.stdenv.hostPlatform.system}.default;
+        })
 
         # Provide fnox + related wrappers (prefer flake input)
         (
