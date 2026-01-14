@@ -9,19 +9,82 @@
   assertions =
     let
       extra = config.wayland.windowManager.hyprland.extraConfig or "";
-      deprecated = [
+      lines = lib.strings.splitString "\n" extra;
+
+      deprecatedKeys = [
         "drop_shadow"
         "shadow_range"
         "shadow_render_power"
         "col.shadow"
         "new_is_master"
       ];
-      found = builtins.filter (k: lib.strings.hasInfix k extra) deprecated;
+      foundDeprecatedKeys = builtins.filter (k: lib.strings.hasInfix k extra) deprecatedKeys;
+
+      # Basic syntax sanity for binds: catches the common "bind = $mainMod, exec, ..." mistake.
+      dispatcherLike = [
+        "exec"
+        "execr"
+        "workspace"
+        "movetoworkspace"
+        "movetoworkspacesilent"
+        "togglefloating"
+        "fullscreen"
+        "killactive"
+        "exit"
+        "movefocus"
+        "movewindow"
+        "resizewindow"
+        "pin"
+        "togglespecialworkspace"
+      ];
+
+      isBindLine =
+        line:
+        let
+          t = lib.strings.trimString line;
+        in
+        lib.strings.hasPrefix "bind" t;
+
+      parseCsv = s: builtins.map lib.strings.trimString (lib.strings.splitString "," s);
+
+      bindIssues =
+        let
+          bindLines = builtins.filter isBindLine lines;
+          issuesForLine =
+            line:
+            let
+              t = lib.strings.trimString line;
+              # Expect: "MODS, KEY, DISPATCHER, ..."; we don't validate mods.
+              afterEq =
+                if lib.strings.hasInfix "=" t then
+                  lib.strings.trimString (lib.lists.last (lib.strings.splitString "=" t))
+                else
+                  "";
+              parts = parseCsv afterEq;
+              key = if builtins.length parts > 1 then builtins.elemAt parts 1 else "";
+            in
+            if afterEq == "" then
+              [ "bind missing '=': ${t}" ]
+            else if builtins.length parts < 3 then
+              [ "bind needs at least 3 fields (mods,key,dispatcher): ${t}" ]
+            else if key == "" then
+              [ "bind has empty key field: ${t}" ]
+            else if builtins.elem key dispatcherLike then
+              [ "bind key looks like a dispatcher (missing key?): ${t}" ]
+            else
+              [ ];
+        in
+        lib.lists.flatten (builtins.map issuesForLine bindLines);
+
     in
     [
       {
-        assertion = found == [ ];
-        message = "Hyprland config contains deprecated/removed keys: ${builtins.concatStringsSep ", " found}";
+        assertion = foundDeprecatedKeys == [ ];
+        message = "Hyprland config contains deprecated/removed keys: ${builtins.concatStringsSep ", " foundDeprecatedKeys}";
+      }
+      {
+        assertion = bindIssues == [ ];
+        message = "Hyprland config bind preflight failed:\n${builtins.concatStringsSep "\n" bindIssues}";
       }
     ];
 
