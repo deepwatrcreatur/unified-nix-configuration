@@ -84,6 +84,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-gnome-cosmic-ui = {
+      url = "github:deepwatrcreatur/nix-gnome-cosmic-ui";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+    };
+
   };
 
   outputs =
@@ -156,6 +162,7 @@
             opencode-claude = fnoxPkgs.opencode-claude;
           })
           // (nixpkgsLib.optionalAttrs (fnoxPkgs ? gh-fnox) { gh-fnox = fnoxPkgs.gh-fnox; })
+          // (nixpkgsLib.optionalAttrs (fnoxPkgs ? bw-fnox) { bw-fnox = fnoxPkgs.bw-fnox; })
         )
 
         # Tesla inference overlays for GPU optimization

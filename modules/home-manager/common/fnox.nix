@@ -17,6 +17,7 @@
     ++ lib.optionals (pkgs ? opencode-zai) [ pkgs.opencode-zai ]
     ++ lib.optionals (pkgs ? opencode-claude) [ pkgs.opencode-claude ]
     ++ lib.optionals (pkgs ? gh-fnox) [ pkgs.gh-fnox ]
+    ++ lib.optionals (pkgs ? bw-fnox) [ pkgs.bw-fnox ]
   );
 
   # Create fnox configuration (only if fnox package is available)
@@ -69,28 +70,9 @@
     '';
   };
 
-  # Shell integration to load secrets (only if fnox package is available)
-  programs.bash.initExtra = lib.mkIf (pkgs ? fnox) ''
-    if command -v fnox &> /dev/null; then
-      eval "$(fnox env)"
-    fi
-  '';
-
-  programs.zsh.initContent = lib.mkIf (pkgs ? fnox) ''
-    if command -v fnox &> /dev/null; then
-      eval "$(fnox env)"
-    fi
-  '';
-
-  programs.fish.interactiveShellInit = lib.mkIf (pkgs ? fnox) ''
-    if command -v fnox &> /dev/null
-      fnox env | source
-    end
-  '';
-
-  programs.nushell.extraConfig = lib.mkIf (pkgs ? fnox) ''
-    if (which fnox | is-not-empty) {
-      fnox env | load-env
-    }
-  '';
+  # Shell integration intentionally disabled.
+  #
+  # Some fnox builds do not provide a `fnox env` subcommand. We rely on explicit
+  # wrappers (e.g. `gh-fnox`, `opencode-zai`) to fetch only the secrets needed
+  # for that command via `fnox get ...`.
 }

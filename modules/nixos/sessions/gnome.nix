@@ -2,10 +2,13 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 
 {
+  imports = [ inputs."nix-gnome-cosmic-ui".nixosModules.default ];
+
   # Enable GNOME desktop environment
   # WhiteSur theming is handled by whitesur flake input in user's home-manager config
   services.desktopManager.gnome.enable = true;
@@ -13,7 +16,31 @@
   services.displayManager.autoLogin.enable = true;
   services.displayManager.autoLogin.user = "deepwatrcreatur";
 
-  programs.dconf.enable = true;
+  services.gnomeCosmicUi = {
+    enable = true;
+    user = "deepwatrcreatur";
+
+    # COSMIC-like top panel
+    panelOpacity = 0.15;
+    panelRadius = 18;
+    panelLength = -1; # shrink/dynamic
+    panelAnchor = "MIDDLE";
+    showTaskbar = false;
+
+    # Workspaces
+    spaceBarAlwaysShowNumbers = true;
+    spaceBarShowEmptyWorkspaces = false;
+    spaceBarToggleOverview = true; # click opens Overview (previews + move windows)
+    spaceBarPosition = "center";
+
+    # Dock
+    dockPosition = "BOTTOM";
+    dockOpacity = 0.15;
+    dockIconSize = 48;
+
+    # Tiling
+    tiling = "forge";
+  };
 
   # Exclude default GNOME applications we don't need
   environment.gnome.excludePackages = with pkgs; [
@@ -25,15 +52,12 @@
     simple-scan
   ];
 
-  # System packages for GNOME with COSMIC-like features
+  # System packages for GNOME
   environment.systemPackages = with pkgs; [
     # GNOME essentials
     gnome-tweaks
     gnome-shell-extensions
-    gnomeExtensions.dash-to-dock
     gnomeExtensions.appindicator
-    gnomeExtensions.space-bar
-    gnomeExtensions.transparent-top-bar
 
     # Audio/Volume control
     pulseaudio-ctl
@@ -89,82 +113,6 @@
       Restart = "on-failure";
       RestartSec = 5;
       Environment = "GNOME_KEYRING_CONTROL=/run/user/%u/keyring/control";
-    };
-  };
-
-  systemd.user.services.apply-gnome-cosmic-ui = {
-    description = "Apply COSMIC-like GNOME top bar and dock";
-    wantedBy = [ "graphical-session.target" ];
-    partOf = [ "graphical-session.target" ];
-    after = [
-      "graphical-session.target"
-      "dbus.service"
-    ];
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart =
-        let
-          script = pkgs.writeShellScript "apply-gnome-cosmic-ui" ''
-            set -eu
-
-            if [ "''${USER:-}" != "deepwatrcreatur" ]; then
-              exit 0
-            fi
-
-            DCONF="${pkgs.dconf}/bin/dconf"
-
-            if ! [ -x "$DCONF" ]; then
-              exit 0
-            fi
-
-            desired_extensions="dash-to-dock@micxgx.gmail.com space-bar@luchrioh transparent-top-bar@kamens.us"
-
-            current="$("$DCONF" read /org/gnome/shell/enabled-extensions 2>/dev/null || echo "[]")"
-            normalized=$(printf '%s' "$current" | tr -d "[]'" | tr ',' '\n' | sed 's/^ *//;s/ *$//' | sed '/^$/d' || true)
-
-            combined=""
-            for ext in $normalized; do
-              combined="$combined $ext"
-            done
-            for ext in $desired_extensions; do
-              case " $combined " in
-                *" $ext "*) ;;
-                *) combined="$combined $ext" ;;
-              esac
-            done
-
-            out="["
-            first=1
-            for ext in $combined; do
-              if [ $first -eq 1 ]; then
-                first=0
-              else
-                out="$out, "
-              fi
-              out="$out'$ext'"
-            done
-            out="$out]"
-
-            "$DCONF" write /org/gnome/shell/enabled-extensions "$out"
-            "$DCONF" write /org/gnome/shell/show-applications-button "false"
-            "$DCONF" write /org/gnome/shell/enable-hot-corners "false"
-
-            "$DCONF" write /org/gnome/shell/extensions/dash-to-dock/dock-position "'LEFT'"
-            "$DCONF" write /org/gnome/shell/extensions/dash-to-dock/dock-fixed "false"
-            "$DCONF" write /org/gnome/shell/extensions/dash-to-dock/intellihide "true"
-            "$DCONF" write /org/gnome/shell/extensions/dash-to-dock/autohide "true"
-            "$DCONF" write /org/gnome/shell/extensions/dash-to-dock/autohide-in-fullscreen "true"
-            "$DCONF" write /org/gnome/shell/extensions/dash-to-dock/show-apps-at-top "true"
-            "$DCONF" write /org/gnome/shell/extensions/dash-to-dock/transparency-mode "'FIXED'"
-            "$DCONF" write /org/gnome/shell/extensions/dash-to-dock/background-opacity "0.0"
-            "$DCONF" write /org/gnome/shell/extensions/dash-to-dock/custom-theme-shrink "true"
-            "$DCONF" write /org/gnome/shell/extensions/dash-to-dock/icon-size "48"
-            "$DCONF" write /org/gnome/shell/extensions/dash-to-dock/dash-max-icon-size "48"
-
-            "$DCONF" write /org/gnome/shell/extensions/transparent-top-bar/transparency "100"
-          '';
-        in
-        "${script}";
     };
   };
 

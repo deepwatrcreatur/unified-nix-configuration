@@ -446,6 +446,29 @@
         "type": "github"
       }
     },
+    "nix-gnome-cosmic-ui": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1768418865,
+        "narHash": "sha256-j7usXQCISjxzHCnarCQTAuSgxDA4syHXnpH2e9jASOA=",
+        "owner": "deepwatrcreatur",
+        "repo": "nix-gnome-cosmic-ui",
+        "rev": "a9585328ca983980d65d4fe71dd902dd449c1cd3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "deepwatrcreatur",
+        "repo": "nix-gnome-cosmic-ui",
+        "type": "github"
+      }
+    },
     "nix-homebrew": {
       "inputs": {
         "brew-src": "brew-src"
@@ -605,11 +628,11 @@
     },
     "nixpkgs-stable": {
       "locked": {
-        "lastModified": 1768242861,
-        "narHash": "sha256-F4IIxa5xDHjtrmMcayM8lHctUq1oGltfBQu2+oqDWP4=",
+        "lastModified": 1768323494,
+        "narHash": "sha256-yBXJLE6WCtrGo7LKiB6NOt6nisBEEkguC/lq/rP3zRQ=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "1327e798cb055f96f92685df444e9a2c326ab5ed",
+        "rev": "2c3e5ec5df46d3aeee2a1da0bfedd74e21f4bf3a",
         "type": "github"
       },
       "original": {
@@ -685,11 +708,11 @@
     },
     "nixpkgs_5": {
       "locked": {
-        "lastModified": 1768242861,
-        "narHash": "sha256-F4IIxa5xDHjtrmMcayM8lHctUq1oGltfBQu2+oqDWP4=",
+        "lastModified": 1768323494,
+        "narHash": "sha256-yBXJLE6WCtrGo7LKiB6NOt6nisBEEkguC/lq/rP3zRQ=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "1327e798cb055f96f92685df444e9a2c326ab5ed",
+        "rev": "2c3e5ec5df46d3aeee2a1da0bfedd74e21f4bf3a",
         "type": "github"
       },
       "original": {
@@ -730,6 +753,7 @@
         "home-manager": "home-manager",
         "mac-app-util": "mac-app-util",
         "nix-darwin": "nix-darwin",
+        "nix-gnome-cosmic-ui": "nix-gnome-cosmic-ui",
         "nix-homebrew": "nix-homebrew",
         "nix-index-database": "nix-index-database",
         "nix-snapd": "nix-snapd",
@@ -907,11 +931,11 @@
     "tap-sst": {
       "flake": false,
       "locked": {
-        "lastModified": 1768353676,
-        "narHash": "sha256-IoU6IU43eCqOqXhJHz2j6CtGmCtRbTzP1DB/vyrPZBE=",
+        "lastModified": 1768399747,
+        "narHash": "sha256-o6LzsBHw7LJBW4snr1HwkD58dx2y/iRm5z4iH06BjhA=",
         "owner": "sst",
         "repo": "homebrew-tap",
-        "rev": "e880a7cac11102be6758c8bf4b474867739474f5",
+        "rev": "670368cd4eed43ab103f19d2372c2ebb2c81fcf2",
         "type": "github"
       },
       "original": {

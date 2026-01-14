@@ -17,11 +17,13 @@ let
   rawAliasesPosix = {
     gh-raw = "command gh";
     opencode-raw = "command opencode";
+    bw-raw = "command bw";
   };
 
   rawAliasesNushell = {
     gh-raw = "^gh";
     opencode-raw = "^opencode";
+    bw-raw = "^bw";
   };
 in
 {
