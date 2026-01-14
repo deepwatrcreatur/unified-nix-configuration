@@ -276,7 +276,7 @@ in
                 // Enhanced tab bar with custom theming
                 pane size=1 borderless=true {
                     plugin location="file:${zjstatus-wasm}" {
-                        ${inputs.zellij-vivid-rounded.lib.topBar}
+                        ${if inputs ? zellij-vivid-rounded then inputs.zellij-vivid-rounded.lib.topBar else ""}
                     }
                 }
                 pane split_direction="vertical" {
@@ -302,7 +302,9 @@ in
                 // Enhanced status bar with working directory
                 pane size=2 borderless=true {
                     plugin location="file:${zjstatus-wasm}" {
-                        ${inputs.zellij-vivid-rounded.lib.bottomBar}
+                        ${
+                          if inputs ? zellij-vivid-rounded then inputs.zellij-vivid-rounded.lib.bottomBar else ""
+                        }
                     }
                 }
             }
