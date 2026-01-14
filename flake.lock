@@ -294,21 +294,39 @@
     "fnox": {
       "inputs": {
         "flake-utils": "flake-utils_2",
+        "fnox-src": "fnox-src",
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1768110299,
-        "narHash": "sha256-mqWhR+4NVDzSZgaZSqyUiMqJc1ay+V+ixjqctpZ4ThI=",
+        "lastModified": 1768415090,
+        "narHash": "sha256-rYDo/CccTFU/Y8AHMPFYzYtFfAZ/CV7CDIlzqrIozqM=",
         "owner": "deepwatrcreatur",
         "repo": "fnox-flake",
-        "rev": "de99e715bc2b79b5c9e8c10f134271ba8141cb34",
+        "rev": "aa3dfc3874b533982ac6128d3f86b6766eda8900",
         "type": "github"
       },
       "original": {
         "owner": "deepwatrcreatur",
         "repo": "fnox-flake",
+        "type": "github"
+      }
+    },
+    "fnox-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1764269156,
+        "narHash": "sha256-ThGs9KFbwVp80RtivKOiwnrzx52H1t0RDu+EhUXHCzw=",
+        "owner": "jdx",
+        "repo": "fnox",
+        "rev": "fe25084e61d21f2bd33305b9fa67136956d3ab9c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jdx",
+        "ref": "v1.7.0",
+        "repo": "fnox",
         "type": "github"
       }
     },
@@ -601,6 +619,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-unstable": {
+      "locked": {
+        "lastModified": 1768127708,
+        "narHash": "sha256-1Sm77VfZh3mU0F5OqKABNLWxOuDeHIlcFjsXeeiPazs=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "ffbc9f8cbaacfb331b6017d5a5abb21a492c9a38",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs_2": {
       "locked": {
         "lastModified": 1766736597,
@@ -702,6 +736,7 @@
         "nix-whitesur-config": "nix-whitesur-config",
         "nixpkgs": "nixpkgs_5",
         "nixpkgs-stable": "nixpkgs-stable",
+        "nixpkgs-unstable": "nixpkgs-unstable",
         "plasma-manager": "plasma-manager",
         "sops-nix": "sops-nix",
         "tap-gabe565": "tap-gabe565",
@@ -950,11 +985,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1768071838,
-        "narHash": "sha256-3VR+LaUJ2HiCsm8tpaOEOdOkTty2YS98qZAEsIMCCWA=",
+        "lastModified": 1768415095,
+        "narHash": "sha256-uqry4M69AKpgOqjAl8P4b1EP9KYjCxdzVAaiDZGF53w=",
         "owner": "deepwatrcreatur",
         "repo": "nix-zellij-vivid-rounded",
-        "rev": "ecea4dccae4eaa51465b3f9754f7a557188b3098",
+        "rev": "2fd4e305512e8bc297f45446570b7ad7e6697e56",
         "type": "github"
       },
       "original": {

@@ -6,11 +6,23 @@
 }:
 let
   # Merge all alias modules
-  aliases = config.custom.fileAliases.aliases
+  aliases =
+    config.custom.fileAliases.aliases
     // config.custom.gitAliases.aliases
     // config.custom.navigationAliases.aliases
     // config.custom.toolAliases.aliases
     // config.custom.grc.aliases;
+
+  # Raw variants that bypass wrapped aliases
+  rawAliasesPosix = {
+    gh-raw = "command gh";
+    opencode-raw = "command opencode";
+  };
+
+  rawAliasesNushell = {
+    gh-raw = "^gh";
+    opencode-raw = "^opencode";
+  };
 in
 {
   imports = [
@@ -20,12 +32,11 @@ in
     ./tool-aliases.nix
     ./grc.nix
   ];
-  
 
   programs = {
     bash = {
       enable = true;
-      shellAliases = aliases;
+      shellAliases = aliases // rawAliasesPosix;
       initExtra = ''
         # Start SSH agent if not already running
         if [ -z "$SSH_AUTH_SOCK" ] || ! ssh-add -l >/dev/null 2>&1; then
@@ -40,7 +51,7 @@ in
       '';
     };
     zsh = {
-      shellAliases = aliases;
+      shellAliases = aliases // rawAliasesPosix;
       initContent = ''
         # Start SSH agent if not already running
         if [ -z "$SSH_AUTH_SOCK" ] || ! ssh-add -l >/dev/null 2>&1; then
@@ -55,7 +66,7 @@ in
       '';
     };
     fish = {
-      shellAliases = aliases;
+      shellAliases = aliases // rawAliasesPosix;
       interactiveShellInit = ''
         # Start SSH agent if not already running
         if not set -q SSH_AUTH_SOCK; or not ssh-add -l >/dev/null 2>&1
@@ -68,7 +79,7 @@ in
           end
         end
       '';
-      
+
     };
   };
 
@@ -77,11 +88,13 @@ in
     # Merge all aliases for nushell (use mkForce to override conflicts)
     shellAliases = lib.mkForce (
       # Convert bash/zsh style aliases to nushell format
-      (lib.mapAttrs (name: value: "^${value}") config.custom.fileAliases.aliases) //
-      (lib.mapAttrs (name: value: "^${value}") config.custom.gitAliases.aliases) //
-      (lib.mapAttrs (name: value: value) config.custom.navigationAliases.aliases) // # Navigation doesn't need ^
-      (lib.mapAttrs (name: value: "^${value}") config.custom.toolAliases.aliases) //
-      config.custom.grc.nushellAliases
+      (lib.mapAttrs (name: value: "^${value}") config.custom.fileAliases.aliases)
+      // (lib.mapAttrs (name: value: "^${value}") config.custom.gitAliases.aliases)
+      // (lib.mapAttrs (name: value: value) config.custom.navigationAliases.aliases)
+      # Navigation doesn't need ^
+      // (lib.mapAttrs (name: value: "^${value}") config.custom.toolAliases.aliases)
+      // config.custom.grc.nushellAliases
+      // rawAliasesNushell
     );
 
     extraConfig = ''

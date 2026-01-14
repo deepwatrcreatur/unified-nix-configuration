@@ -32,8 +32,14 @@ let
   darwinAliases = lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
     xcode = "open -a Xcode";
     gcc = lib.mkForce "/usr/bin/gcc";
-    test-platform = "Platform detection: " + (if pkgs.stdenv.hostPlatform.isDarwin then "Darwin" else "Not Darwin");
+    test-platform =
+      "Platform detection: " + (if pkgs.stdenv.hostPlatform.isDarwin then "Darwin" else "Not Darwin");
   };
+
+  # Prefer explicit wrappers via aliases (raw remains available)
+  wrappedToolAliases =
+    (lib.optionalAttrs (pkgs ? gh-fnox) { gh = "gh-fnox"; })
+    // (lib.optionalAttrs (pkgs ? opencode-zai) { opencode = "opencode-zai"; });
 in
 {
   options.custom.toolAliases = {
@@ -45,7 +51,7 @@ in
 
     aliases = lib.mkOption {
       type = lib.types.attrsOf lib.types.str;
-      default = toolAliases // darwinAliases;
+      default = toolAliases // wrappedToolAliases // darwinAliases;
       description = "Set of shell aliases for tools and utilities";
     };
   };

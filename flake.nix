@@ -5,6 +5,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     nix-darwin.url = "github:LnL7/nix-darwin/nix-darwin-25.11";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
@@ -118,6 +119,45 @@
             doCheck = false;
           });
         })
+
+        # Prefer opencode from nixpkgs-unstable
+        (
+          final: prev:
+          let
+            unstable = import inputs.nixpkgs-unstable {
+              system = prev.stdenv.hostPlatform.system;
+              config = commonNixpkgsConfig;
+            };
+          in
+          {
+            opencode = unstable.opencode or prev.opencode;
+          }
+        )
+
+        # Provide fnox + related wrappers (prefer flake input)
+        (
+          final: prev:
+          let
+            system = prev.stdenv.hostPlatform.system;
+            flakeHasPkgs = builtins.hasAttr system inputs.fnox.packages;
+            fnoxPkgs = if flakeHasPkgs then inputs.fnox.packages.${system} else { };
+            flakeHasFnox = fnoxPkgs ? default;
+          in
+          (
+            if flakeHasFnox then
+              { fnox = fnoxPkgs.default; }
+            else if prev ? fnox then
+              { fnox = prev.fnox; }
+            else
+              { }
+          )
+          // (nixpkgsLib.optionalAttrs (fnoxPkgs ? opencode-zai) { opencode-zai = fnoxPkgs.opencode-zai; })
+          // (nixpkgsLib.optionalAttrs (fnoxPkgs ? opencode-claude) {
+            opencode-claude = fnoxPkgs.opencode-claude;
+          })
+          // (nixpkgsLib.optionalAttrs (fnoxPkgs ? gh-fnox) { gh-fnox = fnoxPkgs.gh-fnox; })
+        )
+
         # Tesla inference overlays for GPU optimization
         inputs.tesla-inference-flake.overlays.ollama-official-binaries # Use official binaries to avoid cuda_compat build error
         inputs.tesla-inference-flake.overlays.llama-cpp-tesla
