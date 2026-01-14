@@ -56,16 +56,8 @@
     xkb.options = "caps:none"; # Let input-leap handle caps lock synchronization
   };
 
-  # Autologin into GNOME via greetd (tty1) - bypasses GDM
-  services.greetd = {
-    enable = true;
-    settings = {
-      default_session = {
-        command = "dbus-run-session gnome-session";
-        user = "deepwatrcreatur";
-      };
-    };
-  };
+  # GDM and autologin now configured in modules/nixos/sessions/gnome.nix
+  # greetd disabled - GNOME requires GDM for proper systemd user session integration
 
   security.rtkit.enable = true;
   services.pipewire = {

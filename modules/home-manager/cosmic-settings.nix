@@ -6,11 +6,18 @@
   # Works with both GNOME and COSMIC desktop environments
   # System-level setup is in modules/nixos/sessions/gnome.nix
 
+  home.packages = with pkgs; [
+    gnomeExtensions.space-bar
+    gnomeExtensions.transparent-top-bar
+  ];
+
   dconf.settings = {
     # GNOME/COSMIC shell extension configuration
     "org/gnome/shell" = {
       enabled-extensions = [
         "dash-to-dock@micxgx.gmail.com"
+        "space-bar@luchrioh"
+        "transparent-top-bar@kamens.us"
       ];
       # Top bar styling for macOS-like appearance
       "show-applications-button" = false;
@@ -32,8 +39,8 @@
       autohide-in-fullscreen = true;
       show-apps-at-top = true;
       # Enhanced transparency for glossy appearance
-      transparency-mode = "DYNAMIC";
-      background-opacity = 0.15;
+      transparency-mode = "FIXED";
+      background-opacity = 0.0;
       icon-size-fixed = false;
       max-alpha = 0.95;
       min-alpha = 0.15;
@@ -46,6 +53,20 @@
       # Dock styling
       custom-theme-shrink = true;
       disable-overview-on-startup = false;
+    };
+
+    # Space Bar (Numbered Workspaces) configuration
+    "org/gnome/shell/extensions/space-bar/behavior" = {
+      show-empty-workspaces = false;
+    };
+    "org/gnome/shell/extensions/space-bar/shortcuts" = {
+      enable-activate-workspace-shortcuts = true;
+      enable-move-to-workspace-shortcuts = true;
+    };
+
+    # Transparent Top Bar configuration
+    "org/gnome/shell/extensions/transparent-top-bar" = {
+      transparency = 100;
     };
 
     # COSMIC visual appearance - macOS-like dark theme
