@@ -42,6 +42,38 @@
     tiling = "forge";
   };
 
+  # Make Night Light less aggressive.
+  # GNOME's default here was very warm (e.g. 2700K).
+  systemd.user.services.gnome-nightlight-tune = {
+    description = "Tune GNOME Night Light temperature";
+    wantedBy = [ "graphical-session.target" ];
+    partOf = [ "graphical-session.target" ];
+    after = [
+      "graphical-session.target"
+      "dbus.service"
+      "gnome-cosmic-ui-apply.service"
+    ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = pkgs.writeShellScript "gnome-nightlight-tune" ''
+        set -eu
+        if [ "''${USER:-}" != "deepwatrcreatur" ]; then
+          exit 0
+        fi
+
+        DCONF="${pkgs.dconf}/bin/dconf"
+        if ! [ -x "$DCONF" ]; then
+          exit 0
+        fi
+
+        # Less warm = less aggressive.
+        $DCONF write /org/gnome/settings-daemon/plugins/color/night-light-enabled true
+        $DCONF write /org/gnome/settings-daemon/plugins/color/night-light-temperature "uint32 3500"
+        $DCONF write /org/gnome/settings-daemon/plugins/color/night-light-schedule-automatic true
+      '';
+    };
+  };
+
   # Exclude default GNOME applications we don't need
   environment.gnome.excludePackages = with pkgs; [
     gnome-tour
