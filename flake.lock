@@ -456,11 +456,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1768418865,
-        "narHash": "sha256-j7usXQCISjxzHCnarCQTAuSgxDA4syHXnpH2e9jASOA=",
+        "lastModified": 1768426850,
+        "narHash": "sha256-0BDa/PTi9QHydkEQWGDmlhiVeXQpff/7xxiHCa/EUFk=",
         "owner": "deepwatrcreatur",
         "repo": "nix-gnome-cosmic-ui",
-        "rev": "a9585328ca983980d65d4fe71dd902dd449c1cd3",
+        "rev": "196f9ed611a93d813736b876f52fcbe3f43ba28d",
         "type": "github"
       },
       "original": {

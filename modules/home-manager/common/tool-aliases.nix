@@ -24,6 +24,10 @@ let
     # System tools
     rsync = "/run/current-system/sw/bin/rsync";
 
+    # Tailspin
+    tailspin = "tspin";
+    ts = "tspin";
+
     # Atuin (shell history)
     asr = "atuin script run";
   };
