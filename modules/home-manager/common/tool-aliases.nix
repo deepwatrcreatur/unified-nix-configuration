@@ -26,7 +26,6 @@ let
 
     # Tailspin
     tailspin = "tspin";
-    ts = "tspin";
 
     # Atuin (shell history)
     asr = "atuin script run";
