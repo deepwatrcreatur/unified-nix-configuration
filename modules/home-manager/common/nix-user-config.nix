@@ -100,10 +100,10 @@ in
 
           if [[ -n "$token" ]]; then
               # Remove any existing access-tokens line and append new one
-              grep -v "^access-tokens = github.com:" "$nix_conf" > "$nix_conf.tmp" 2>/dev/null || cp "$nix_conf" "$nix_conf.tmp"
-              echo "access-tokens = github.com:$token" >> "$nix_conf.tmp"
+              grep -v "^access-tokens = github.com=" "$nix_conf" > "$nix_conf.tmp" 2>/dev/null || cp "$nix_conf" "$nix_conf.tmp"
+              echo "access-tokens = github.com=$token" >> "$nix_conf.tmp"
               mv "$nix_conf.tmp" "$nix_conf"
-              echo "Added GitHub token from $token_path to $nix_conf"
+              echo "Configured GitHub access token in $nix_conf"
             fi
         '';
       }

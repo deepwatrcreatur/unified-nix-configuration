@@ -43,6 +43,13 @@ in
         path = "${config.xdg.configHome}/Bitwarden CLI/data.json";
         mode = "0600";
       };
+
+      secrets."github-token" = {
+        sopsFile = "${sopsSecretsDir}/github-token.txt.enc";
+        format = "json";
+        key = "data";
+        mode = "0600";
+      };
     };
   };
 }
