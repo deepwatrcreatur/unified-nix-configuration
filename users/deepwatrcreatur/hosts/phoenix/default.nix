@@ -17,8 +17,9 @@
     ../../../../modules/home-manager/gpg-agent-cross-de.nix
     ../../../../modules/home-manager/zed.nix
     ../../../../modules/home-manager/cosmic-settings.nix # GNOME settings with COSMIC-like appearance
+    ../../../../modules/home-manager/linuxbrew.nix
     #../../../../modules/home-manager/hyprland/default.nix # Hyprland configuration (backup)
-    # inputs.zellij-vivid-rounded.homeManagerModules.default # TEMPORARILY DISABLED
+    inputs.zellij-vivid-rounded.homeManagerModules.default
     inputs.nix-whitesur-config.homeManagerModules.default
   ];
 
@@ -33,9 +34,9 @@
   # Allow Home Manager to replace existing COSMIC gtk.css
   xdg.configFile."gtk-4.0/gtk.css".force = true;
 
-  # programs.zellij-vivid-rounded = { # TEMPORARILY DISABLED
-  #   enable = true; # TEMPORARILY DISABLED
-  # }; # TEMPORARILY DISABLED
+  programs.zellij-vivid-rounded = {
+    enable = true;
+  };
 
   programs.distrobox.fedora.enable = true;
 

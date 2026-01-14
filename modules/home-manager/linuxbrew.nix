@@ -28,6 +28,15 @@ let
     if [ ! -f "${brewPrefix}/bin/brew" ]; then
       echo "Installing Homebrew to ${brewPrefix}..."
 
+      # If we have a GitHub token, use it to avoid API rate limits
+      if command -v fnox &> /dev/null && [ -f "$HOME/.config/sops/age/keys.txt" ]; then
+        export FNOX_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
+        token=$(fnox get GITHUB_TOKEN 2>/dev/null || echo "")
+        if [ -n "$token" ]; then
+          export HOMEBREW_GITHUB_API_TOKEN="$token"
+        fi
+      fi
+
       # Set up comprehensive PATH for homebrew installer on NixOS
       export PATH="${pkgs.coreutils}/bin:${pkgs.util-linux}/bin:${pkgs.gnugrep}/bin:${pkgs.gawk}/bin:${pkgs.git}/bin:${pkgs.curl}/bin:${pkgs.glibc.bin}/bin:${pkgs.findutils}/bin:${pkgs.gnused}/bin:${pkgs.gnutar}/bin:${pkgs.gzip}/bin:${pkgs.which}/bin:${pkgs.ruby}/bin:/nix/var/nix/profiles/default/bin:/run/current-system/sw/bin:$PATH"
 

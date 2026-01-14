@@ -24,6 +24,9 @@
   ];
 
   # Homebrew is managed via home-manager (modules/home-manager/linuxbrew.nix)
+  # Create /home/linuxbrew with correct ownership for install.sh
+  custom.activation-scripts.linux.linuxbrew-system.enable = true;
+
   # Symlink nice to /usr/bin for Homebrew's Ruby (needed by some formulae like bd)
   system.activationScripts.homebrewCompat = ''
     mkdir -p /usr/bin
