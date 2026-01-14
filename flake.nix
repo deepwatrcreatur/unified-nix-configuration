@@ -57,10 +57,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # nix-index-database = { # TEMPORARILY DISABLED
-    #   url = "github:nix-community/nix-index-database"; # TEMPORARILY DISABLED
-    #   inputs.nixpkgs.follows = "nixpkgs"; # TEMPORARILY DISABLED
-    # }; # TEMPORARILY DISABLED
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     nix-whitesur-config = {
       url = "github:deepwatrcreatur/nix-whitesur-config";
@@ -72,16 +72,16 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # fnox = { # TEMPORARILY DISABLED
-    #   url = "github:deepwatrcreatur/fnox-flake"; # TEMPORARILY DISABLED
-    #   inputs.nixpkgs.follows = "nixpkgs"; # TEMPORARILY DISABLED
-    #   flake = true; # TEMPORARILY DISABLED
-    # }; # TEMPORARILY DISABLED
+    fnox = {
+      url = "github:deepwatrcreatur/fnox-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+      flake = true;
+    };
 
-    # zellij-vivid-rounded = { # TEMPORARILY DISABLED
-    #   url = "github:deepwatrcreatur/nix-zellij-vivid-rounded"; # TEMPORARILY DISABLED
-    #   inputs.nixpkgs.follows = "nixpkgs"; # TEMPORARILY DISABLED
-    # }; # TEMPORARILY DISABLED
+    zellij-vivid-rounded = {
+      url = "github:deepwatrcreatur/nix-zellij-vivid-rounded";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
   };
 
@@ -154,7 +154,8 @@
         dir:
         let
           items = builtins.readDir dir;
-          isNixFile = name: type: type == "regular" && nixpkgsLib.hasSuffix ".nix" name && !nixpkgsLib.hasPrefix "_" name;
+          isNixFile =
+            name: type: type == "regular" && nixpkgsLib.hasSuffix ".nix" name && !nixpkgsLib.hasPrefix "_" name;
           nixFileNames = nixpkgsLib.attrNames (nixpkgsLib.filterAttrs isNixFile items);
         in
         map (fileName: dir + "/${fileName}") nixFileNames;
@@ -239,9 +240,9 @@
           let
             hostName = builtins.baseNameOf (toString hostPath);
             baseModules = commonSystemModules ++ [
-              # inputs.sops-nix.nixosModules.sops # TEMPORARILY DISABLED
-              # inputs.home-manager.nixosModules.home-manager # TEMPORARILY DISABLED
-              # (nixosHomeManagerConfig { inherit hostName isDesktop; }) # TEMPORARILY DISABLED
+              inputs.sops-nix.nixosModules.sops
+              inputs.home-manager.nixosModules.home-manager
+              (nixosHomeManagerConfig { inherit hostName isDesktop; })
               # inputs.determinate.nixosModules.default # TEMPORARILY DISABLED
               inputs.tesla-inference-flake.nixosModules.tesla-inference
             ];

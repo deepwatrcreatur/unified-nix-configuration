@@ -13,8 +13,7 @@
   };
 
   # Enable pipewire for audio
-  sound.enable = true;
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -24,8 +23,8 @@
   };
 
   # Enable display manager
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true; # Required for GDM
+  services.displayManager.gdm.enable = true;
+  services.desktopManager.gnome.enable = true; # Required for GDM
 
   # System-level packages # TEMPORARILY DISABLED
   # environment.systemPackages = with pkgs; [ # TEMPORARILY DISABLED
@@ -38,21 +37,21 @@
   #   xdg-desktop-portal-hyprland # TEMPORARILY DISABLED
   #   waybar # Status bar # TEMPORARILY DISABLED
   #   wofi   # Application launcher # TEMPORARILY DISABLED
-    
+
   #   # Utilities # TEMPORARILY DISABLED
   #   pavucontrol # Volume control # TEMPORARILY DISABLED
   #   networkmanagerapplet # Network manager applet # TEMPORARILY DISABLED
   #   brightnessctl # TEMPORARILY DISABLED
   #   wl-clipboard # Clipboard tool for wayland # TEMPORARILY DISABLED
-    
+
   #   # Themeing # TEMPORARILY DISABLED
   #   libsForQt5.qt5ct # TEMPORARILY DISABLED
-    
+
   #   # Fonts # TEMPORARILY DISABLED
   #   noto-fonts # TEMPORARILY DISABLED
   #   noto-fonts-cjk # TEMPORARILY DISABLED
   #   noto-fonts-emoji # TEMPORARILY DISABLED
-    
+
   #   # Apps from cosmic.nix # TEMPORARILY DISABLED
   #   pulseaudio-ctl # TEMPORARILY DISABLED
   #   flameshot # TEMPORARILY DISABLED
@@ -74,13 +73,13 @@
   #   noto-fonts-emoji # TEMPORARILY DISABLED
   #   (nerdfonts.override { fonts = [ "JetBrainsMono" ]; }) # TEMPORARILY DISABLED
   # ]; # TEMPORARILY DISABLED
-  
+
   # # Configure environment variables # TEMPORARILY DISABLED
   # environment.variables = { # TEMPORARILY DISABLED
   #   XCURSOR_SIZE = "24"; # TEMPORARILY DISABLED
   #   QT_QPA_PLATFORMTHEME = "qt5ct"; # TEMPORARILY DISABLED
   # }; # TEMPORARILY DISABLED
-  
+
   # # XDG Portals # TEMPORARILY DISABLED
   # xdg.portal = { # TEMPORARILY DISABLED
   #   enable = false; # TEMPORARILY DISABLED

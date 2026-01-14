@@ -18,7 +18,7 @@
     #../../../../modules/home-manager/hyprland/default.nix # Hyprland configuration - TEMPORARILY DISABLED
     #../../../../modules/home-manager/cosmic-settings.nix # Replaced with Hyprland
     # inputs.zellij-vivid-rounded.homeManagerModules.default # TEMPORARILY DISABLED
-    # inputs.nix-whitesur-config.homeManagerModules.default # TEMPORARILY DISABLED
+    inputs.nix-whitesur-config.homeManagerModules.default
   ];
 
   home.homeDirectory = "/home/deepwatrcreatur";

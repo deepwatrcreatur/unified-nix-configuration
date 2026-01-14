@@ -3,6 +3,7 @@
   config,
   lib,
   pkgs,
+  options,
   ...
 }:
 
@@ -10,6 +11,7 @@ with lib;
 
 let
   cfg = config.programs.wezterm;
+  hasHomeManager = options ? home-manager;
 
   # Platform detection
   inherit (pkgs.stdenv) isDarwin;
@@ -215,95 +217,98 @@ in
     };
   };
 
-  config = mkIf cfg.enable {
-    # Install Wezterm package at system level
-    environment.systemPackages = [ cfg.package ];
+  config = mkIf cfg.enable (
+    {
+      # Install Wezterm package at system level
+      environment.systemPackages = [ cfg.package ];
 
-    # Font packages (useful for both platforms)
-    fonts.packages = with pkgs; [
-      # jetbrains-mono  # Temporarily commented out due to build issues
-      fira-code
-      source-code-pro
-      hack-font
-    ];
+      # Font packages (useful for both platforms)
+      fonts.packages = with pkgs; [
+        # jetbrains-mono  # Temporarily commented out due to build issues
+        fira-code
+        source-code-pro
+        hack-font
+      ];
+    }
+    // lib.optionalAttrs hasHomeManager {
+      # Home Manager configuration for all users
+      home-manager.sharedModules = [
+        {
+          home.file.".config/wezterm/wezterm.lua".text = ''
+            local wezterm = require 'wezterm'
+            local config = wezterm.config_builder()
 
-    # Home Manager configuration for all users
-    home-manager.sharedModules = [
-      {
-        home.file.".config/wezterm/wezterm.lua".text = ''
-          local wezterm = require 'wezterm'
-          local config = wezterm.config_builder()
+            -- Font configuration
+            config.font = wezterm.font('${cfg.font.name}', { weight = '${cfg.font.weight}' })
+            config.font_size = ${toString cfg.font.size}
 
-          -- Font configuration
-          config.font = wezterm.font('${cfg.font.name}', { weight = '${cfg.font.weight}' })
-          config.font_size = ${toString cfg.font.size}
+            -- Color scheme
+            config.color_scheme = '${cfg.colorScheme}'
 
-          -- Color scheme
-          config.color_scheme = '${cfg.colorScheme}'
+            -- Window configuration
+            config.window_background_opacity = ${toString cfg.window.opacity}
+            config.window_decorations = '${cfg.window.decorations}'
+            config.window_close_confirmation = '${cfg.window.closeConfirmation}'
+            config.adjust_window_size_when_changing_font_size = ${boolToString cfg.window.adjustSizeWhenChangingFont}
 
-          -- Window configuration
-          config.window_background_opacity = ${toString cfg.window.opacity}
-          config.window_decorations = '${cfg.window.decorations}'
-          config.window_close_confirmation = '${cfg.window.closeConfirmation}'
-          config.adjust_window_size_when_changing_font_size = ${boolToString cfg.window.adjustSizeWhenChangingFont}
+            -- Tab configuration
+            config.enable_tab_bar = ${boolToString cfg.tabs.enable}
+            config.hide_tab_bar_if_only_one_tab = ${boolToString cfg.tabs.hideIfOnlyOne}
+            config.tab_bar_at_bottom = ${boolToString cfg.tabs.atBottom}
 
-          -- Tab configuration
-          config.enable_tab_bar = ${boolToString cfg.tabs.enable}
-          config.hide_tab_bar_if_only_one_tab = ${boolToString cfg.tabs.hideIfOnlyOne}
-          config.tab_bar_at_bottom = ${boolToString cfg.tabs.atBottom}
+            -- Scrollback configuration
+            config.scrollback_lines = ${toString cfg.scrollbackLines}
 
-          -- Scrollback configuration
-          config.scrollback_lines = ${toString cfg.scrollbackLines}
-
-          ${optionalString isDarwin ''
-            -- macOS specific settings
-            config.native_macos_fullscreen_mode = ${boolToString cfg.macos.nativeFullscreen}
-            config.send_composed_key_when_left_alt_is_pressed = ${boolToString cfg.macos.leftAltComposed}
-            config.send_composed_key_when_right_alt_is_pressed = ${boolToString cfg.macos.rightAltComposed}
-            ${optionalString (cfg.macos.windowBackgroundBlur > 0) ''
-              config.macos_window_background_blur = ${toString cfg.macos.windowBackgroundBlur}
+            ${optionalString isDarwin ''
+              -- macOS specific settings
+              config.native_macos_fullscreen_mode = ${boolToString cfg.macos.nativeFullscreen}
+              config.send_composed_key_when_left_alt_is_pressed = ${boolToString cfg.macos.leftAltComposed}
+              config.send_composed_key_when_right_alt_is_pressed = ${boolToString cfg.macos.rightAltComposed}
+              ${optionalString (cfg.macos.windowBackgroundBlur > 0) ''
+                config.macos_window_background_blur = ${toString cfg.macos.windowBackgroundBlur}
+              ''}
             ''}
-          ''}
 
 
-          -- Key bindings
-          config.keys = {
-          ${concatStringsSep ",\n        " (
-            filter (s: s != "") (
-              map (
-                binding:
-                let
-                  modsStr = if binding.mods != "" then ", mods = '${binding.mods}'" else "";
-                in
-                "{ key = '${binding.key}'${modsStr}, action = wezterm.action.${binding.action} }"
-              ) cfg.keyBindings
-            )
-          )}
-          }
-
-          ${optionalString (cfg.mouseBindings != [ ]) ''
-            -- Mouse bindings  
-            config.mouse_bindings = {
-            ${concatStringsSep ",\n        " (
+            -- Key bindings
+            config.keys = {
+            ${concatStringsSep ",\n          " (
               filter (s: s != "") (
                 map (
                   binding:
                   let
                     modsStr = if binding.mods != "" then ", mods = '${binding.mods}'" else "";
                   in
-                  "{ event = { ${binding.event} }${modsStr}, action = wezterm.action.${binding.action} }"
-                ) cfg.mouseBindings
+                  "{ key = '${binding.key}'${modsStr}, action = wezterm.action.${binding.action} }"
+                ) cfg.keyBindings
               )
             )}
             }
-          ''}
 
-          -- Custom configuration
-          ${cfg.extraConfig}
+            ${optionalString (cfg.mouseBindings != [ ]) ''
+              -- Mouse bindings
+              config.mouse_bindings = {
+              ${concatStringsSep ",\n          " (
+                filter (s: s != "") (
+                  map (
+                    binding:
+                    let
+                      modsStr = if binding.mods != "" then ", mods = '${binding.mods}'" else "";
+                    in
+                    "{ event = { ${binding.event} }${modsStr}, action = wezterm.action.${binding.action} }"
+                  ) cfg.mouseBindings
+                )
+              )}
+              }
+            ''}
 
-          return config
-        '';
-      }
-    ];
-  };
+            -- Custom configuration
+            ${cfg.extraConfig}
+
+            return config
+          '';
+        }
+      ];
+    }
+  );
 }
