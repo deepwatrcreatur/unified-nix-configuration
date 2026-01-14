@@ -19,6 +19,7 @@
     #../../../modules/nixos/sessions/cosmic.nix # COSMIC desktop
     #../../../modules/nixos/sessions/cinnamon.nix
     ../../../modules/nixos/keyboard-glitches.nix # Fix for stuck keyboard presses in Proxmox VM
+    ../../../modules/nixos/snapper.nix # Btrfs snapshots via Snapper
     ../../../modules/wezterm-config.nix
     ../../../modules/activation-scripts # Activation scripts for system setup
   ];
