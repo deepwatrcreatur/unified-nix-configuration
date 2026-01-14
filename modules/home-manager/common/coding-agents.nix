@@ -17,6 +17,11 @@ let
     # Factory.ai Droid (installed via the upstream install script)
     (writeShellScriptBin "droid" ''
       set -euo pipefail
+      if [ ! -x "$HOME/.factory/bin/droid" ]; then
+        echo "Factory droid not installed at $HOME/.factory/bin/droid" >&2
+        echo "Install it with: curl -fsSL https://app.factory.ai/cli | sh" >&2
+        exit 1
+      fi
       exec "$HOME/.factory/bin/droid" "$@"
     '')
   ];
