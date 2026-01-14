@@ -90,5 +90,5 @@
   };
 
   # Disable auto-suspend
-  services.logind.idleAction = "ignore";
+  # services.logind.idleAction = "ignore"; # Temporarily commented out to fix build error
 }
