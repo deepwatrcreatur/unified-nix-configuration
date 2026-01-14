@@ -15,10 +15,10 @@
     ../../../../modules/home-manager/ghostty
     ../../../../modules/home-manager/gpg-agent-cross-de.nix
     ../../../../modules/home-manager/zed.nix
-    ../../../../modules/home-manager/hyprland/default.nix # Hyprland configuration
+    #../../../../modules/home-manager/hyprland/default.nix # Hyprland configuration - TEMPORARILY DISABLED
     #../../../../modules/home-manager/cosmic-settings.nix # Replaced with Hyprland
-    inputs.zellij-vivid-rounded.homeManagerModules.default
-    inputs.nix-whitesur-config.homeManagerModules.default
+    # inputs.zellij-vivid-rounded.homeManagerModules.default # TEMPORARILY DISABLED
+    # inputs.nix-whitesur-config.homeManagerModules.default # TEMPORARILY DISABLED
   ];
 
   home.homeDirectory = "/home/deepwatrcreatur";
@@ -29,9 +29,9 @@
     gtk.enable = true;
   };
 
-  programs.zellij-vivid-rounded = {
-    enable = true;
-  };
+  # programs.zellij-vivid-rounded = { # TEMPORARILY DISABLED
+  #   enable = true; # TEMPORARILY DISABLED
+  # }; # TEMPORARILY DISABLED
 
   programs.distrobox.fedora.enable = true;
 

@@ -2,14 +2,14 @@
 
 {
   imports = [
-    ../../home-manager/hyprland/default.nix
-    ../whitesur-theme.nix
+    # ../../home-manager/hyprland/default.nix # TEMPORARILY DISABLED
+    # ../whitesur-theme.nix # TEMPORARILY DISABLED
   ];
 
-  # Enable the Hyprland Wayland compositor
+  # Enable the Hyprland Wayland compositor # TEMPORARILY DISABLED
   programs.hyprland = {
-    enable = true;
-    xwayland.enable = true;
+    enable = false; # TEMPORARILY DISABLED
+    xwayland.enable = false; # TEMPORARILY DISABLED
   };
 
   # Enable pipewire for audio
@@ -27,67 +27,67 @@
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true; # Required for GDM
 
-  # System-level packages
-  environment.systemPackages = with pkgs; [
-    swaylock-effects
+  # System-level packages # TEMPORARILY DISABLED
+  # environment.systemPackages = with pkgs; [ # TEMPORARILY DISABLED
+  #   swaylock-effects # TEMPORARILY DISABLED
 
-    # Hyprland ecosystem
-    hyprpaper # Wallpaper utility
-    hypridle  # Idle management daemon
-    hyprlock  # Screen locker
-    xdg-desktop-portal-hyprland
-    waybar # Status bar
-    wofi   # Application launcher
+  #   # Hyprland ecosystem # TEMPORARILY DISABLED
+  #   hyprpaper # Wallpaper utility # TEMPORARILY DISABLED
+  #   hypridle  # Idle management daemon # TEMPORARILY DISABLED
+  #   hyprlock  # Screen locker # TEMPORARILY DISABLED
+  #   xdg-desktop-portal-hyprland # TEMPORARILY DISABLED
+  #   waybar # Status bar # TEMPORARILY DISABLED
+  #   wofi   # Application launcher # TEMPORARILY DISABLED
     
-    # Utilities
-    pavucontrol # Volume control
-    networkmanagerapplet # Network manager applet
-    brightnessctl
-    wl-clipboard # Clipboard tool for wayland
+  #   # Utilities # TEMPORARILY DISABLED
+  #   pavucontrol # Volume control # TEMPORARILY DISABLED
+  #   networkmanagerapplet # Network manager applet # TEMPORARILY DISABLED
+  #   brightnessctl # TEMPORARILY DISABLED
+  #   wl-clipboard # Clipboard tool for wayland # TEMPORARILY DISABLED
     
-    # Themeing
-    libsForQt5.qt5ct
+  #   # Themeing # TEMPORARILY DISABLED
+  #   libsForQt5.qt5ct # TEMPORARILY DISABLED
     
-    # Fonts
-    noto-fonts
-    noto-fonts-cjk
-    noto-fonts-emoji
+  #   # Fonts # TEMPORARILY DISABLED
+  #   noto-fonts # TEMPORARILY DISABLED
+  #   noto-fonts-cjk # TEMPORARILY DISABLED
+  #   noto-fonts-emoji # TEMPORARILY DISABLED
     
-    # Apps from cosmic.nix
-    pulseaudio-ctl
-    flameshot
-    copyq
-    dconf
-    gnome-shell-extensions
-    thunderbird
-    libappindicator-gtk3
-    libsecret
-    gnome-keyring
-    glib
-    gsettings-desktop-schemas
-  ];
+  #   # Apps from cosmic.nix # TEMPORARILY DISABLED
+  #   pulseaudio-ctl # TEMPORARILY DISABLED
+  #   flameshot # TEMPORARILY DISABLED
+  #   copyq # TEMPORARILY DISABLED
+  #   dconf # TEMPORARILY DISABLED
+  #   gnome-shell-extensions # TEMPORARILY DISABLED
+  #   thunderbird # TEMPORARILY DISABLED
+  #   libappindicator-gtk3 # TEMPORARILY DISABLED
+  #   libsecret # TEMPORARILY DISABLED
+  #   gnome-keyring # TEMPORARILY DISABLED
+  #   glib # TEMPORARILY DISABLED
+  #   gsettings-desktop-schemas # TEMPORARILY DISABLED
+  # ]; # TEMPORARILY DISABLED
 
-  # Fonts
-  fonts.packages = with pkgs; [
-    noto-fonts
-    noto-fonts-cjk
-    noto-fonts-emoji
-    (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
-  ];
+  # # Fonts # TEMPORARILY DISABLED
+  # fonts.packages = with pkgs; [ # TEMPORARILY DISABLED
+  #   noto-fonts # TEMPORARILY DISABLED
+  #   noto-fonts-cjk # TEMPORARILY DISABLED
+  #   noto-fonts-emoji # TEMPORARILY DISABLED
+  #   (nerdfonts.override { fonts = [ "JetBrainsMono" ]; }) # TEMPORARILY DISABLED
+  # ]; # TEMPORARILY DISABLED
   
-  # Configure environment variables
-  environment.variables = {
-    XCURSOR_SIZE = "24";
-    QT_QPA_PLATFORMTHEME = "qt5ct";
-  };
+  # # Configure environment variables # TEMPORARILY DISABLED
+  # environment.variables = { # TEMPORARILY DISABLED
+  #   XCURSOR_SIZE = "24"; # TEMPORARILY DISABLED
+  #   QT_QPA_PLATFORMTHEME = "qt5ct"; # TEMPORARILY DISABLED
+  # }; # TEMPORARILY DISABLED
   
-  # XDG Portals
-  xdg.portal = {
-    enable = true;
-    extraPortals = with pkgs; [
-      xdg-desktop-portal-gtk
-    ];
-  };
+  # # XDG Portals # TEMPORARILY DISABLED
+  # xdg.portal = { # TEMPORARILY DISABLED
+  #   enable = false; # TEMPORARILY DISABLED
+  #   extraPortals = with pkgs; [ # TEMPORARILY DISABLED
+  #     xdg-desktop-portal-gtk # TEMPORARILY DISABLED
+  #   ]; # TEMPORARILY DISABLED
+  # }; # TEMPORARILY DISABLED
 
   # Disable auto-suspend
   # services.logind.idleAction = "ignore"; # Temporarily commented out to fix build error

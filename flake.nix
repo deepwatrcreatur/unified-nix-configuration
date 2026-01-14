@@ -57,10 +57,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nix-index-database = {
-      url = "github:nix-community/nix-index-database";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # nix-index-database = { # TEMPORARILY DISABLED
+    #   url = "github:nix-community/nix-index-database"; # TEMPORARILY DISABLED
+    #   inputs.nixpkgs.follows = "nixpkgs"; # TEMPORARILY DISABLED
+    # }; # TEMPORARILY DISABLED
 
     nix-whitesur-config = {
       url = "github:deepwatrcreatur/nix-whitesur-config";
@@ -72,16 +72,16 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    fnox = {
-      url = "github:deepwatrcreatur/fnox-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-      flake = true;
-    };
+    # fnox = { # TEMPORARILY DISABLED
+    #   url = "github:deepwatrcreatur/fnox-flake"; # TEMPORARILY DISABLED
+    #   inputs.nixpkgs.follows = "nixpkgs"; # TEMPORARILY DISABLED
+    #   flake = true; # TEMPORARILY DISABLED
+    # }; # TEMPORARILY DISABLED
 
-    zellij-vivid-rounded = {
-      url = "github:deepwatrcreatur/nix-zellij-vivid-rounded";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # zellij-vivid-rounded = { # TEMPORARILY DISABLED
+    #   url = "github:deepwatrcreatur/nix-zellij-vivid-rounded"; # TEMPORARILY DISABLED
+    #   inputs.nixpkgs.follows = "nixpkgs"; # TEMPORARILY DISABLED
+    # }; # TEMPORARILY DISABLED
 
   };
 
@@ -123,12 +123,15 @@
         inputs.tesla-inference-flake.overlays.llama-cpp-tesla
         inputs.tesla-inference-flake.overlays.gpu-tools
         # Try to use fnox from nixpkgs first, fallback to flake input if not available
-        # Only available on Linux x86_64 due to fnox-flake limitations
-        (final: prev:
-          nixpkgsLib.optionalAttrs (prev.stdenv.isLinux && prev.stdenv.isx86_64) {
-            fnox = prev.fnox or inputs.fnox.packages.${prev.stdenv.hostPlatform.system}.default;
-          }
-        )
+        # (final: prev: {
+        #   fnox =
+        #     if prev.stdenv.isLinux && prev.stdenv.isx86_64 then
+        #       # Try to get fnox from nixpkgs (should be pre-built in newer versions)
+        #       (prev.fnox or inputs.fnox.packages.${prev.stdenv.hostPlatform.system}.default)
+        #     else
+        #       # Fallback to flake input for other platforms
+        #       inputs.fnox.packages.${prev.stdenv.hostPlatform.system}.default;
+        # })
       ];
 
       # SpecialArgs for NixOS and Darwin SYSTEM modules.
@@ -236,10 +239,10 @@
           let
             hostName = builtins.baseNameOf (toString hostPath);
             baseModules = commonSystemModules ++ [
-              inputs.sops-nix.nixosModules.sops
-              inputs.home-manager.nixosModules.home-manager
-              (nixosHomeManagerConfig { inherit hostName isDesktop; })
-              inputs.determinate.nixosModules.default
+              # inputs.sops-nix.nixosModules.sops # TEMPORARILY DISABLED
+              # inputs.home-manager.nixosModules.home-manager # TEMPORARILY DISABLED
+              # (nixosHomeManagerConfig { inherit hostName isDesktop; }) # TEMPORARILY DISABLED
+              # inputs.determinate.nixosModules.default # TEMPORARILY DISABLED
               inputs.tesla-inference-flake.nixosModules.tesla-inference
             ];
             snapdModules = nixpkgsLib.optionals includeSnapd [
