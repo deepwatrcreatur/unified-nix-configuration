@@ -18,6 +18,7 @@
       htop
       lsof
       procs
+      tailspin
     ]
     ++ lib.optionals pkgs.stdenv.isLinux [
       # Linux-only system tools

@@ -31,6 +31,29 @@
   system.activationScripts.homebrewCompat = ''
     mkdir -p /usr/bin
     ln -sf ${pkgs.coreutils}/bin/nice /usr/bin/nice
+
+    # Homebrew's installer uses absolute /bin/* and /usr/bin/* paths.
+    mkdir -p /bin /usr/bin
+    ln -sf ${pkgs.coreutils}/bin/mkdir /bin/mkdir
+    ln -sf ${pkgs.coreutils}/bin/chmod /bin/chmod
+    ln -sf ${pkgs.coreutils}/bin/chown /bin/chown
+    ln -sf ${pkgs.coreutils}/bin/chgrp /bin/chgrp
+    ln -sf ${pkgs.coreutils}/bin/touch /bin/touch
+    ln -sf ${pkgs.coreutils}/bin/readlink /bin/readlink
+    ln -sf ${pkgs.coreutils}/bin/cat /bin/cat
+    ln -sf ${pkgs.coreutils}/bin/sort /bin/sort
+    ln -sf ${pkgs.coreutils}/bin/mv /bin/mv
+    ln -sf ${pkgs.coreutils}/bin/rm /bin/rm
+    ln -sf ${pkgs.coreutils}/bin/sha256sum /bin/sha256sum
+    ln -sf ${pkgs.gnutar}/bin/tar /bin/tar
+    ln -sf ${pkgs.gzip}/bin/gzip /bin/gzip
+    ln -sf ${pkgs.gnugrep}/bin/grep /bin/grep
+    ln -sf ${pkgs.util-linux}/bin/flock /usr/bin/flock
+    ln -sf ${pkgs.bash}/bin/bash /bin/bash
+    ln -sf ${pkgs.coreutils}/bin/stat /usr/bin/stat
+    ln -sf ${pkgs.coreutils}/bin/cut /usr/bin/cut
+    ln -sf ${pkgs.coreutils}/bin/sha256sum /usr/bin/sha256sum
+    ln -sf ${pkgs.glibc.bin}/bin/ldd /usr/bin/ldd
   '';
 
   # Linux-specific wezterm configuration

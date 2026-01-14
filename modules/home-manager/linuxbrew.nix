@@ -42,13 +42,23 @@ let
 
       # Run the installer with proper environment
       NONINTERACTIVE=1 ${pkgs.bash}/bin/bash -c "$(${pkgs.curl}/bin/curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+      if [ ! -x "${brewPrefix}/bin/brew" ]; then
+        echo "Error: Homebrew installer did not produce ${brewPrefix}/bin/brew" >&2
+        exit 1
+      fi
     fi
 
     # Set up environment
-    export PATH="${brewPrefix}/bin:${brewPrefix}/sbin:$PATH"
+    # Homebrew expects common core utilities in PATH.
+    export PATH="${pkgs.coreutils}/bin:${pkgs.gnugrep}/bin:${pkgs.gawk}/bin:${pkgs.gnused}/bin:${pkgs.findutils}/bin:${pkgs.gnutar}/bin:${pkgs.gzip}/bin:${pkgs.which}/bin:${brewPrefix}/bin:${brewPrefix}/sbin:$PATH"
     export HOMEBREW_PREFIX="${brewPrefix}"
     export HOMEBREW_CELLAR="${brewPrefix}/Cellar"
     export HOMEBREW_REPOSITORY="${brewPrefix}/Homebrew"
+
+    # Prefer Nix-provided curl/git on NixOS.
+    export HOMEBREW_CURL_PATH="${pkgs.curl}/bin/curl"
+    export HOMEBREW_GIT_PATH="${pkgs.git}/bin/git"
 
     # Add taps (continue on failure)
     ${concatStringsSep "\n" (
