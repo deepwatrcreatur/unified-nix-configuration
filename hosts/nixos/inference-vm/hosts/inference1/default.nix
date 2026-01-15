@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
   ...
@@ -9,16 +10,32 @@
   imports = [
     ./hardware-configuration.nix
     ../..
-    ../../../../../modules/nixos/attic-post-build-hook.nix
+    inputs.nix-attic-infra.nixosModules.attic-post-build-hook
   ];
 
   boot.growPartition = true;
 
   networking.hostName = "inference1";
 
+  myModules.attic-client = {
+    enable = true;
+
+    # SOPS-encrypted token providing `ATTIC_CLIENT_JWT_TOKEN`
+    tokenFile = ../../../secrets/attic-client-token.yaml.enc;
+
+    server = "http://cache-build-server:5001";
+    cache = "cache-local";
+  };
+
   services.attic-post-build-hook = {
     enable = true;
-    cacheName = "cache-build-server";
+
+    serverName = "cache-build-server";
+    serverEndpoint = "http://cache-build-server:5001";
+    cacheName = "cache-local";
+
+    tokenFile = "/run/secrets/attic-client-token";
+
     user = "deepwatrcreatur";
   };
 
