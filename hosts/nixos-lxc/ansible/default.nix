@@ -1,18 +1,9 @@
-{ config, pkgs, ... }:
+# hosts/nixos-lxc/ansible/default.nix
 {
   imports = [
-    ../../../modules/common/utility-packages.nix
-  ];
-
-  boot.isContainer = true;
-  networking.hostName = "ansible";
-  services.openssh.enable = true;
-  users.users.ansible = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" ];
-    password = "secret"; # or use hashedPassword
-  };
-  environment.systemPackages = with pkgs; [
-    ansible
+    ./modules/configuration.nix
+    ./modules/packages.nix
+    ./modules/users.nix
+    ./modules/sops.nix
   ];
 }
