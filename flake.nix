@@ -151,77 +151,266 @@
           worktrunk = inputs.worktrunk.packages.${prev.stdenv.hostPlatform.system}.default;
         })
 
+        # ProxMenux (Proxmox VE interactive menu)
+        (final: prev: {
+          proxmenux = prev.stdenvNoCC.mkDerivation {
+            pname = "proxmenux";
+            version = "1.1.8";
+            src = prev.fetchFromGitHub {
+              owner = "MacRimi";
+              repo = "ProxMenux";
+              rev = "v1.1.8";
+              hash = "sha256-keeLFu594/Qg/HfbNayiMzvI7XgjoMr4D1QHMUdMJEc=";
+            };
+
+            dontBuild = true;
+
+            installPhase = ''
+              runHook preInstall
+
+              mkdir -p "$out/share/proxmenux" "$out/bin"
+
+              cp -r scripts "$out/share/proxmenux/scripts"
+              install -m644 version.txt "$out/share/proxmenux/version.txt"
+              install -m644 scripts/utils.sh "$out/share/proxmenux/utils.sh"
+
+              if [ -f json/cache.json ]; then
+                install -m644 json/cache.json "$out/share/proxmenux/default-cache.json"
+              else
+                echo '{}' > "$out/share/proxmenux/default-cache.json"
+              fi
+
+              cat > "$out/share/proxmenux/menu" <<'EOF'
+              #!${prev.bash}/bin/bash
+              set -euo pipefail
+
+              DATA_HOME="''${XDG_DATA_HOME:-$HOME/.local/share}"
+              BASE_DIR="''${PROXMENUX_BASE_DIR:-$DATA_HOME/proxmenux}"
+              LOCAL_SCRIPTS="$BASE_DIR/scripts"
+              CONFIG_FILE="$BASE_DIR/config.json"
+              CACHE_FILE="$BASE_DIR/cache.json"
+              UTILS_FILE="$BASE_DIR/utils.sh"
+              LOCAL_VERSION_FILE="$BASE_DIR/version.txt"
+
+              if [[ -f "$UTILS_FILE" ]]; then
+                source "$UTILS_FILE"
+              else
+                echo "ProxMenux not initialized (missing $UTILS_FILE)" >&2
+                exit 1
+              fi
+
+              main_menu() {
+                local MAIN_MENU="$LOCAL_SCRIPTS/menus/main_menu.sh"
+                exec bash "$MAIN_MENU"
+              }
+
+              load_language
+              initialize_cache
+              main_menu
+              EOF
+              chmod +x "$out/share/proxmenux/menu"
+
+              cat > "$out/bin/menu" <<'EOF'
+              #!${prev.bash}/bin/bash
+              set -euo pipefail
+
+              SELF="${prev.coreutils}/bin/readlink"
+              DIRNAME="${prev.coreutils}/bin/dirname"
+              MKDIR="${prev.coreutils}/bin/mkdir"
+              CP="${prev.coreutils}/bin/cp"
+              TEST="${prev.coreutils}/bin/test"
+
+              self_path="$($SELF -f "$0")"
+              bin_dir="$($DIRNAME "$self_path")"
+              prefix="$($DIRNAME "$bin_dir")"
+              seed_dir="$prefix/share/proxmenux"
+
+              data_home="''${XDG_DATA_HOME:-$HOME/.local/share}"
+              state_dir="$data_home/proxmenux"
+
+              export PATH="${
+                prev.lib.makeBinPath [
+                  prev.bash
+                  prev.coreutils
+                  prev.curl
+                  prev.wget
+                  prev.jq
+                  prev.newt
+                  prev.git
+                  prev.iproute2
+                ]
+              }:$PATH"
+
+              $MKDIR -p "$state_dir"
+
+              # Initialize or update seeded files (but never overwrite config).
+              if ! $TEST -e "$state_dir/scripts/menus/main_menu.sh"; then
+                $CP -r "$seed_dir/scripts" "$state_dir/scripts"
+              fi
+              if ! $TEST -e "$state_dir/utils.sh"; then
+                $CP "$seed_dir/utils.sh" "$state_dir/utils.sh"
+              fi
+              if ! $TEST -e "$state_dir/version.txt"; then
+                $CP "$seed_dir/version.txt" "$state_dir/version.txt"
+              fi
+              if ! $TEST -e "$state_dir/cache.json"; then
+                $CP "$seed_dir/default-cache.json" "$state_dir/cache.json"
+              fi
+              if ! $TEST -e "$state_dir/config.json"; then
+                echo '{"language":"en"}' > "$state_dir/config.json"
+              fi
+
+              export PROXMENUX_BASE_DIR="$state_dir"
+              exec bash "$seed_dir/menu" "$@"
+              EOF
+              chmod +x "$out/bin/menu"
+
+              runHook postInstall
+            '';
+
+            meta = {
+              description = "ProxMenux interactive menu for Proxmox VE";
+              homepage = "https://github.com/MacRimi/ProxMenux";
+              mainProgram = "menu";
+              platforms = [
+                "x86_64-linux"
+                "aarch64-linux"
+              ];
+            };
+          };
+        })
+
         # Factory.ai Droid CLI (prebuilt binary, patched on NixOS)
+        #
+        # Factory publishes both "x64" and "x64-baseline" for Linux. The baseline
+        # artifact currently appears to be Bun itself, while the "x64" artifact is
+        # the actual droid CLI. The official installer selects based on AVX2.
         (
           final: prev:
           let
             version = "0.48.1";
+            system = prev.stdenv.hostPlatform.system;
             platform = if prev.stdenv.isDarwin then "darwin" else "linux";
-            arch = if prev.stdenv.hostPlatform.isAarch64 then "arm64" else "x64-baseline";
+            isX86_64Linux = system == "x86_64-linux";
+
             hashBySystem = {
-              "x86_64-linux" = "sha256-5QsvAvmcjVbplJB0JHhqfSKJtoCTAuVXXgj5cu57Q6M=";
               "aarch64-linux" = "sha256-ZujFPpKUASj1xA/gNYxE2brw5ebAGtmyfB9M3mMc24k=";
               "x86_64-darwin" = "sha256-qCt8fS8/IYm53UhOtDF6u831NzgSVbVdYUr7uToEGFE=";
               "aarch64-darwin" = "sha256-M0QYX7u9GHqHcPbL9dR7+vC2QIUxrgN4N2cSAIAmmRE=";
             };
-            src = prev.fetchurl {
-              url = "https://downloads.factory.ai/factory-cli/releases/${version}/${platform}/${arch}/droid";
-              hash = hashBySystem.${prev.stdenv.hostPlatform.system};
+
+            # Working CLI on modern x86_64 Linux
+            srcX64Linux = prev.fetchurl {
+              url = "https://downloads.factory.ai/factory-cli/releases/${version}/linux/x64/droid";
+              hash = "sha256-gOGbOy9YQibgN8nJRDmOvNs8tVNpgKj86ckzTbGzZ2U=";
+            };
+
+            # Kept for completeness / older CPUs (selected at runtime)
+            srcX64BaselineLinux = prev.fetchurl {
+              url = "https://downloads.factory.ai/factory-cli/releases/${version}/linux/x64-baseline/droid";
+              hash = "sha256-5QsvAvmcjVbplJB0JHhqfSKJtoCTAuVXXgj5cu57Q6M=";
+            };
+
+            archGeneric = if prev.stdenv.hostPlatform.isAarch64 then "arm64" else "x64-baseline";
+            srcGeneric = prev.fetchurl {
+              url = "https://downloads.factory.ai/factory-cli/releases/${version}/${platform}/${archGeneric}/droid";
+              hash = hashBySystem.${system};
             };
           in
           {
-            factory-droid = prev.stdenv.mkDerivation {
-              pname = "factory-droid";
-              inherit version src;
-              dontUnpack = true;
+            factory-droid =
+              if isX86_64Linux then
+                let
+                  # The x64 droid binary behaves correctly when executed in an
+                  # FHS-ish runtime environment (as in the official installer).
+                  droidUnwrapped = prev.stdenvNoCC.mkDerivation {
+                    pname = "factory-droid-unwrapped";
+                    src = srcX64Linux;
+                    inherit version;
+                    dontUnpack = true;
 
-              nativeBuildInputs = [
-                prev.autoPatchelfHook
-                prev.patchelf
-                prev.makeWrapper
-              ];
-              buildInputs = nixpkgsLib.optionals prev.stdenv.isLinux [
-                prev.stdenv.cc.cc.lib
-                prev.glibc
-              ];
+                    installPhase = ''
+                      runHook preInstall
+                      mkdir -p "$out/bin"
+                      install -m755 "$src" "$out/bin/droid"
+                      runHook postInstall
+                    '';
+                  };
+                in
+                prev.buildFHSEnv {
+                  name = "droid";
+                  runScript = "${droidUnwrapped}/bin/droid";
+                  targetPkgs =
+                    pkgs:
+                    with pkgs;
+                    [
+                      git
+                      openssh
+                      ripgrep
+                    ]
+                    ++ pkgs.lib.optionals pkgs.stdenv.isLinux [ xdg-utils ];
+                  meta = {
+                    description = "Factory.ai Droid CLI";
+                    homepage = "https://factory.ai";
+                    mainProgram = "droid";
+                    platforms = [ "x86_64-linux" ];
+                  };
+                }
+              else
+                prev.stdenv.mkDerivation {
+                  pname = "factory-droid";
+                  src = srcGeneric;
+                  inherit version;
+                  dontUnpack = true;
 
-              installPhase = ''
-                runHook preInstall
-                mkdir -p "$out/bin"
-                install -m755 "$src" "$out/bin/droid"
+                  nativeBuildInputs = [
+                    prev.makeWrapper
+                  ]
+                  ++ nixpkgsLib.optionals prev.stdenv.isLinux [
+                    prev.autoPatchelfHook
+                    prev.patchelf
+                  ];
+                  buildInputs = nixpkgsLib.optionals prev.stdenv.isLinux [
+                    prev.stdenv.cc.cc.lib
+                    prev.glibc
+                  ];
 
-                if [ "${if prev.stdenv.isLinux then "1" else "0"}" = "1" ]; then
-                  patchelf --set-interpreter "$(cat ${prev.stdenv.cc}/nix-support/dynamic-linker)" "$out/bin/droid"
-                  autoPatchelf "$out/bin/droid" || true
-                fi
+                  installPhase = ''
+                    runHook preInstall
+                    mkdir -p "$out/bin"
+                    install -m755 "$src" "$out/bin/droid"
 
-                wrapProgram "$out/bin/droid" \
-                  --prefix PATH : "${
-                    prev.lib.makeBinPath (
-                      [
-                        prev.ripgrep
-                        prev.git
-                        prev.openssh
-                      ]
-                      ++ prev.lib.optionals prev.stdenv.isLinux [ prev.xdg-utils ]
-                    )
-                  }"
+                    if [ "${if prev.stdenv.isLinux then "1" else "0"}" = "1" ]; then
+                      patchelf --set-interpreter "$(cat ${prev.stdenv.cc}/nix-support/dynamic-linker)" "$out/bin/droid"
+                      autoPatchelf "$out/bin/droid" || true
+                    fi
 
-                runHook postInstall
-              '';
+                    wrapProgram "$out/bin/droid" \
+                      --prefix PATH : "${
+                        prev.lib.makeBinPath (
+                          [
+                            prev.ripgrep
+                            prev.git
+                            prev.openssh
+                          ]
+                          ++ prev.lib.optionals prev.stdenv.isLinux [ prev.xdg-utils ]
+                        )
+                      }"
 
-              meta = {
-                description = "Factory.ai Droid CLI";
-                homepage = "https://factory.ai";
-                mainProgram = "droid";
-                platforms = [
-                  "x86_64-linux"
-                  "aarch64-linux"
-                  "x86_64-darwin"
-                  "aarch64-darwin"
-                ];
-              };
-            };
+                    runHook postInstall
+                  '';
+
+                  meta = {
+                    description = "Factory.ai Droid CLI";
+                    homepage = "https://factory.ai";
+                    mainProgram = "droid";
+                    platforms = [
+                      "aarch64-linux"
+                      "x86_64-darwin"
+                      "aarch64-darwin"
+                    ];
+                  };
+                };
           }
         )
 
