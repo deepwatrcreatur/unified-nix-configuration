@@ -40,4 +40,5 @@
   # NixOS grow-partition relies on that, so disable it here.
   boot.growPartition = false;
 
+  system.stateVersion = "25.05";
 }
