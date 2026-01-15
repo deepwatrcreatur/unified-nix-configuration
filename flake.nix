@@ -139,6 +139,8 @@
             unstable = import inputs.nixpkgs-unstable {
               system = prev.stdenv.hostPlatform.system;
               config = commonNixpkgsConfig;
+              # Ensure any of our overlays (wrappers, etc.) still apply.
+              overlays = commonOverlays;
             };
           in
           {
