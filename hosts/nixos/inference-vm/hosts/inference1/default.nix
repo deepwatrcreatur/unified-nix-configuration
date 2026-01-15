@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
   ...
@@ -9,7 +10,7 @@
   imports = [
     ./hardware-configuration.nix
     ../..
-    ../../../../../modules/nixos/attic-post-build-hook.nix
+    inputs.nix-attic-infra.nixosModules.attic-post-build-hook
   ];
 
   boot.growPartition = true;
@@ -18,7 +19,14 @@
 
   services.attic-post-build-hook = {
     enable = true;
-    cacheName = "cache-build-server";
+
+    serverName = "cache-build-server";
+    serverEndpoint = "http://cache-build-server:5001";
+    cacheName = "cache-local";
+
+    # Provided by `myModules.attic-client` when enabled
+    tokenFile = "/run/secrets/attic-client-token";
+
     user = "deepwatrcreatur";
   };
 

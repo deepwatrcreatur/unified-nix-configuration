@@ -96,6 +96,12 @@
       inputs.flake-utils.follows = "flake-utils";
     };
 
+    nix-attic-infra = {
+      url = "github:deepwatrcreatur/nix-attic-infra/feat/attic-infra-layer";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+    };
+
   };
 
   outputs =
