@@ -35,6 +35,9 @@
   ];
 
   boot.initrd.systemd.fido2.enable = false;
-  boot.growPartition = true;
+
+  # LXC containers don't have a stable block device for `fileSystems."/".device`.
+  # NixOS grow-partition relies on that, so disable it here.
+  boot.growPartition = false;
 
 }
