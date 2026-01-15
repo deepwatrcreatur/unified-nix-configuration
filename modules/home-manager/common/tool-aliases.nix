@@ -42,7 +42,6 @@ let
   # Prefer explicit wrappers via aliases (raw remains available)
   wrappedToolAliases =
     (lib.optionalAttrs (pkgs ? gh-fnox) { gh = "gh-fnox"; })
-    // (lib.optionalAttrs (pkgs ? opencode-zai) { opencode = "opencode-zai"; })
     // (lib.optionalAttrs (pkgs ? bw-fnox) { bw = "bw-fnox"; });
 in
 {
