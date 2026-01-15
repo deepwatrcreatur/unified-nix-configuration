@@ -20,6 +20,13 @@
       lsof
       procs
       tailspin
+
+      # Agent/search tools
+      ripgrep
+      fd
+      jq
+      ast-grep
+      just
     ]
     ++ lib.optionals pkgs.stdenv.isLinux [
       # Linux-only system tools

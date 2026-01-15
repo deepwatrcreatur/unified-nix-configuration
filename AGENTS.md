@@ -130,7 +130,26 @@ For testing changes across hosts (especially build failures):
 
 ### Worktrees
 - Prefer `wt` (worktrunk) over `git worktree` when working in parallel.
-- Typical flow: `wt switch -c feat/my-change`, then run agent work in that worktree.
+- Quickstart:
+  - `wt list`
+  - `wt switch -c feat/my-change`
+  - `wt switch feat/my-change`
+  - `wt remove`
+- More detail: see `agent-guides/worktrunk.md`.
+
+### Agent Tooling
+These are installed across hosts (or intended to be):
+
+- `rg` (ripgrep): fast text search
+- `fd`: fast file search
+- `sg` (ast-grep): AST-aware search/replace
+- `jq`: JSON processing
+- `just`: command runner for repo tasks
+- `nh`, `nom` (nix-output-monitor), `nvd`, `nix-tree`: Nix debugging/inspection
+- `opencode`, `claude-code`, `gemini-cli`, `droid`: agent CLIs (host-dependent)
+
+**Recent additions**
+- Added `ast-grep` (`sg`) to the common tool set.
 
 ### Git Workflow
 Before pushing changes that affect remote hosts:
