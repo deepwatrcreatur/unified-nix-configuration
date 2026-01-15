@@ -109,11 +109,12 @@ let
 in
 {
   options.custom.motd = {
-    enable = lib.mkEnableOption "login motd banner";
+    enable = lib.mkEnableOption "login motd banner" // {
+      default = true;
+    };
   };
 
   config = lib.mkIf cfg.enable {
-    custom.motd.enable = lib.mkDefault true;
 
     home.packages = [ motdScript ];
 
