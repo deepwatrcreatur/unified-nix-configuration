@@ -7,7 +7,6 @@
 }:
 {
   imports = [
-    ../../../../modules/common/nix-settings.nix
     ./justfile.nix
     ./nh.nix
     ./proxmox-shell-extra.nix
@@ -23,7 +22,11 @@
   nix.package = pkgs.nix;
 
   home.packages = with pkgs; [
+    proxmenux
   ];
+  # Determinate Nix manages `/etc/nix/nix.conf`; we only add user extras.
+  services.nix-user-config.enable = true;
+
   # Allow root to manage Home Manager
   programs.home-manager.enable = true;
 
