@@ -17,6 +17,16 @@
 
   networking.hostName = "inference1";
 
+  myModules.attic-client = {
+    enable = true;
+
+    # SOPS-encrypted token providing `ATTIC_CLIENT_JWT_TOKEN`
+    tokenFile = ../../../secrets/attic-client-token.yaml.enc;
+
+    server = "http://cache-build-server:5001";
+    cache = "cache-local";
+  };
+
   services.attic-post-build-hook = {
     enable = true;
 
@@ -24,7 +34,6 @@
     serverEndpoint = "http://cache-build-server:5001";
     cacheName = "cache-local";
 
-    # Provided by `myModules.attic-client` when enabled
     tokenFile = "/run/secrets/attic-client-token";
 
     user = "deepwatrcreatur";
