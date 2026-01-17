@@ -155,6 +155,32 @@
           });
         })
 
+        # Prefer COSMIC packages from nixpkgs-unstable (Dec 11 fixes)
+        (final: prev: {
+          # Import specific COSMIC packages from unstable
+          inherit
+            (import inputs.nixpkgs-unstable {
+              system = prev.stdenv.hostPlatform.system;
+              config = commonNixpkgsConfig;
+            })
+            xdg-desktop-portal-cosmic
+            cosmic-greeter
+            cosmic-panel
+            cosmic-applets
+            cosmic-icons
+            cosmic-settings
+            cosmic-term
+            cosmic-store
+            cosmic-files
+            cosmic-randr
+            cosmic-edit
+            cosmic-screenshot
+            cosmic-bg
+            cosmic-comp
+            cosmic-session
+            ;
+        })
+
         # Prefer opencode from nixpkgs-unstable
         opencodeFromUnstableOverlay
 
