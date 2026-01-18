@@ -16,7 +16,8 @@
     ../../../../modules/home-manager/ghostty
     ../../../../modules/home-manager/gpg-agent-cross-de.nix
     ../../../../modules/home-manager/zed.nix
-    ../../../../modules/home-manager/cosmic-settings.nix # GNOME settings with COSMIC-like appearance
+    # COSMIC native desktop (cosmic-settings.nix is for GNOME with COSMIC-like theming)
+    #../../../../modules/home-manager/cosmic-settings.nix
     ../../../../modules/home-manager/linuxbrew.nix
     #../../../../modules/home-manager/hyprland/default.nix # Hyprland configuration (backup)
     inputs.zellij-vivid-rounded.homeManagerModules.default
@@ -25,14 +26,11 @@
 
   home.homeDirectory = "/home/deepwatrcreatur";
 
-  # WhiteSur theming for GNOME
+  # WhiteSur theming for GTK applications
   whitesur = {
     enable = true;
     gtk.enable = true;
   };
-
-  # Allow Home Manager to replace existing COSMIC gtk.css
-  xdg.configFile."gtk-4.0/gtk.css".force = true;
 
   programs.zellij-vivid-rounded = {
     enable = true;

@@ -14,7 +14,7 @@
     ../../../modules/common/utility-packages.nix # Common utility packages
     ../../../modules/nixos/attic-client.nix # Attic cache client
     ../../../modules/nixos/snap.nix # Snap package manager support
-    ../../../modules/nixos/sessions/gnome.nix # GNOME desktop with COSMIC-like styling (primary)
+    ../../../modules/nixos/sessions/cosmic.nix # COSMIC desktop with native Wayland
     #../../../modules/nixos/sessions/hyprland/default.nix # Hyprland Wayland compositor (backup)
     #../../../modules/nixos/sessions/cosmic.nix # COSMIC desktop
     #../../../modules/nixos/sessions/cinnamon.nix
@@ -170,6 +170,7 @@
     "nix-command"
     "flakes"
   ];
+
   nixpkgs.config.allowUnfree = true;
 
   system.stateVersion = "25.05";

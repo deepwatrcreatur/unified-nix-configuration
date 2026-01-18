@@ -7,8 +7,31 @@
 {
   # Enable COSMIC desktop environment with native Wayland support
   services.desktopManager.cosmic.enable = true;
-  # Disable cosmic-greeter due to memory leaks - using greetd autologin instead
-  services.displayManager.cosmic-greeter.enable = false;
+
+  # Avoid the historic COSMIC greeter memory leak by not using it.
+  # Instead, use greetd with gtkgreet and launch COSMIC as the session.
+  #
+  # NOTE: COSMIC packages (including cosmic-session) are still coming from your
+  # nixpkgs-unstable overlay in `flake.nix`.
+  services.displayManager.cosmic-greeter.enable = lib.mkForce false;
+
+  services.greetd = {
+    enable = true;
+    settings = {
+      # Auto-login into COSMIC (matches your previous setup).
+      # If the session exits, greetd will fall back to the greeter.
+      initial_session = {
+        command = lib.mkForce "${pkgs.cosmic-session}/bin/cosmic-session";
+        user = lib.mkForce "deepwatrcreatur";
+      };
+
+      # GTK greeter (not cosmic-greeter) to avoid greeter crashes/leaks.
+      default_session = {
+        command = lib.mkForce "${pkgs.gtkgreet}/bin/gtkgreet -c ${pkgs.cosmic-session}/bin/cosmic-session";
+        user = lib.mkForce "greeter";
+      };
+    };
+  };
 
   # Touchpad configuration
   services.libinput = {

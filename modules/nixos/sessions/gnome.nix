@@ -124,6 +124,31 @@
     };
   };
 
+  # Disable screen lock and idle to prevent memory leaks during long idle periods
+  # GNOME screensaver proxy can cause OOM crashes when locked for extended periods
+  systemd.user.services."org.gnome.SettingsDaemon.ScreensaverProxy".enable = false;
+
+  # System-level dconf overrides to disable all screen locking mechanisms
+  environment.etc."dconf/db/gdm.d/99-disable-lock.conf".text = ''
+    [org/gnome/desktop/screensaver]
+    lock-enabled=false
+    lock-delay=0
+    idle-activation-enabled=false
+
+    [org/gnome/desktop/session]
+    idle-delay=0
+
+    [org/gnome/settings-daemon/plugins/power]
+    idle-dim=false
+    sleep-inactive-ac-timeout=0
+    sleep-inactive-battery-timeout=0
+    sleep-inactive-ac-type='nothing'
+    sleep-inactive-battery-type='nothing'
+
+    [org/gnome/desktop/lockdown]
+    disable-lock-screen=true
+  '';
+
   # Enable XDG portals for GNOME
   xdg.portal = {
     enable = true;
