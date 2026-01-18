@@ -71,4 +71,4 @@ Host infisical
 
 Host casaos
     Hostname 10.10.11.77
-    user deepwatrcreatur
+    user root
