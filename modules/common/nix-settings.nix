@@ -120,7 +120,9 @@ in
   # This wrapper directly calls unstable opencode without importing entire channel
   environment.systemPackages = with pkgs; [
     (pkgs.writeShellScriptBin "opencode" ''
-      exec ${pkgs.nixos-rebuild}/bin/nix run github:NixOS/nixpkgs/nixos-unstable#opencode "$@"
+      # Use `nix` from PATH so the wrapper doesn't break
+      # when the `nixos-rebuild` store path gets replaced/GC'd.
+      exec nix run github:NixOS/nixpkgs/nixos-unstable#opencode "$@"
     '')
   ];
 }
