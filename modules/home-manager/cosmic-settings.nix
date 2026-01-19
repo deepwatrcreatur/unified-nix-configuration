@@ -153,6 +153,15 @@
     # Result: HDMI = switches workspaces, DisplayPort = stays constant
   };
 
+  # COSMIC idle / lock behavior
+  # COSMIC uses its own settings store under ~/.config/cosmic/...
+  # Setting these to "None" disables the idle actions (including screen off / lock).
+  xdg.configFile = {
+    "cosmic/com.system76.CosmicIdle/v1/screen_off_time".text = "None";
+    "cosmic/com.system76.CosmicIdle/v1/suspend_on_ac_time".text = "None";
+    "cosmic/com.system76.CosmicIdle/v1/suspend_on_battery_time".text = "None";
+  };
+
   # Home activation reminder for monitor setup
   home.activation.monitorSetupReminder = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     $DRY_RUN_CMD echo ""
