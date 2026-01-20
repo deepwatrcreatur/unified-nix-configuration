@@ -76,12 +76,10 @@
   hardware.graphics.enable = true;
   hardware.enableRedistributableFirmware = true;
 
-  # Configure keyboard and X11
-  services.xserver = {
-    enable = true;
-    videoDrivers = [ "amdgpu" ];
-    xkb.options = "caps:none"; # Let input-leap handle caps lock synchronization
-  };
+  # COSMIC runs natively on Wayland; avoid enabling X11 unless you need it.
+  # Enabling `services.xserver.enable` pulls in the X11 display-manager stack
+  # and can cause LightDM to be selected as a default when greetd is disabled.
+  services.xserver.enable = lib.mkForce false;
 
   # GDM and autologin now configured in modules/nixos/sessions/gnome.nix
   # greetd disabled - GNOME requires GDM for proper systemd user session integration
