@@ -8,25 +8,30 @@
   # Enable COSMIC desktop environment with native Wayland support
   services.desktopManager.cosmic.enable = true;
 
-  # Prefer COSMIC's native greeter again (from nixpkgs-unstable via overlay).
+  # Avoid the historic COSMIC greeter memory leak by not using it.
+  # Instead, use greetd with gtkgreet and launch COSMIC as the session.
   #
-  # This avoids the greetd + cosmic-session path that previously produced:
-  #   "Backend initialized without output"
-  # which can result in a blank screen if the compositor fails to bind outputs.
-  services.displayManager.cosmic-greeter.enable = lib.mkForce true;
+  # NOTE: COSMIC packages (including cosmic-session) are still coming from your
+  # nixpkgs-unstable overlay in `flake.nix`.
+  services.displayManager.cosmic-greeter.enable = lib.mkForce false;
 
-  # Ensure greetd is not fighting the display-manager stack.
-  services.greetd.enable = lib.mkForce false;
+  services.greetd = {
+    enable = true;
+    settings = {
+      # Auto-login into COSMIC.
+      # If the session exits, greetd will fall back to the greeter.
+      initial_session = {
+        command = lib.mkForce "${pkgs.cosmic-session}/bin/cosmic-session";
+        user = lib.mkForce "deepwatrcreatur";
+      };
 
-  # Autologin directly into COSMIC as deepwatrcreatur.
-  services.displayManager.autoLogin = {
-    enable = lib.mkForce true;
-    user = lib.mkForce "deepwatrcreatur";
+      # GTK greeter (not cosmic-greeter) to avoid greeter crashes/leaks.
+      default_session = {
+        command = lib.mkForce "${pkgs.gtkgreet}/bin/gtkgreet -c ${pkgs.cosmic-session}/bin/cosmic-session";
+        user = lib.mkForce "greeter";
+      };
+    };
   };
-
-  # Some builds ship a dbus policy referring to group "cosmic-greeter".
-  # Create it unconditionally to avoid startup warnings.
-  users.groups."cosmic-greeter" = { };
 
   # Disable screen locking / idle-triggered lock.
   # COSMIC's lock/idle implementation is still evolving; these overrides are
