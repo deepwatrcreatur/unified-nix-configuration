@@ -171,5 +171,19 @@
 
   nixpkgs.config.allowUnfree = true;
 
+  # Fallback boot option: GNOME session.
+  # Select via Limine/Systemd-boot specialisation entry if COSMIC misbehaves.
+  specialisation.gnome.configuration = {
+    imports = [ ../../../modules/nixos/sessions/gnome.nix ];
+
+    # Override COSMIC-first defaults.
+    services.desktopManager.cosmic.enable = lib.mkForce false;
+    services.greetd.enable = lib.mkForce false;
+
+    # COSMIC module forces these off; re-enable for GNOME.
+    services.xserver.enable = lib.mkForce true;
+    services.displayManager.gdm.enable = lib.mkForce true;
+  };
+
   system.stateVersion = "25.05";
 }
