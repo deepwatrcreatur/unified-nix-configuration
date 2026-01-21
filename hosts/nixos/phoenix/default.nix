@@ -181,8 +181,9 @@
     services.greetd.enable = lib.mkForce false;
 
     # COSMIC module forces these off; re-enable for GNOME.
-    services.xserver.enable = lib.mkForce true;
-    services.displayManager.gdm.enable = lib.mkForce true;
+    # Use a higher priority than mkForce to avoid merge conflicts.
+    services.xserver.enable = lib.mkOverride 40 true;
+    services.displayManager.gdm.enable = lib.mkOverride 40 true;
   };
 
   system.stateVersion = "25.05";
