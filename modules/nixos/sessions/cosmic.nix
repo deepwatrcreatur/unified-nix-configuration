@@ -8,6 +8,14 @@
   # Enable COSMIC desktop environment with native Wayland support
   services.desktopManager.cosmic.enable = true;
 
+  # COSMIC is a native Wayland session. Ensure we don't accidentally pull in
+  # an X11 display-manager stack (e.g. LightDM) which can break DRM master
+  # acquisition and lead to a black screen + blinking cursor.
+  services.xserver.enable = lib.mkForce false;
+  services.xserver.displayManager.lightdm.enable = lib.mkForce false;
+  services.displayManager.gdm.enable = lib.mkForce false;
+  services.displayManager.sddm.enable = lib.mkForce false;
+
   # Avoid the historic COSMIC greeter memory leak by not using it.
   # Instead, use greetd with gtkgreet and launch COSMIC as the session.
   #
@@ -25,13 +33,21 @@
         user = lib.mkForce "deepwatrcreatur";
       };
 
-      # GTK greeter (not cosmic-greeter) to avoid greeter crashes/leaks.
+      # Keep a greeter available for recovery. Avoid cosmic-greeter due to
+      # historical stability issues.
       default_session = {
-        command = lib.mkForce "${pkgs.gtkgreet}/bin/gtkgreet -c ${pkgs.cosmic-session}/bin/cosmic-session";
+        command = lib.mkForce "${pkgs.gtkgreet}/bin/gtkgreet";
         user = lib.mkForce "greeter";
       };
     };
   };
+
+  # Ensure the greetd user exists.
+  users.users.greeter = {
+    isSystemUser = true;
+    group = "greeter";
+  };
+  users.groups.greeter = { };
 
   # Disable screen locking / idle-triggered lock.
   # COSMIC's lock/idle implementation is still evolving; these overrides are
@@ -60,7 +76,15 @@
     pavucontrol
     flameshot
     copyq
+
+    # Needed for COSMIC settings and schema availability.
     dconf
+    glib
+    gsettings-desktop-schemas
+
+    # A lightweight greeter for manual login/recovery.
+    gtkgreet
+
     gnome-shell-extensions # For dash-to-dock extension
     # Mail client with unified inbox support (Apple Mail-like)
     thunderbird # BEST unified inbox + iCloud/Gmail
@@ -69,9 +93,10 @@
     # GNOME Keyring for secure credential storage
     libsecret
     gnome-keyring
-    glib
-    gsettings-desktop-schemas
   ];
+
+  # COSMIC uses gsettings/dconf; without this you get "No schemas installed".
+  programs.dconf.enable = true;
 
   # Enable XDG portals for COSMIC
   xdg.portal = {
