@@ -128,26 +128,37 @@
   # GNOME screensaver proxy can cause OOM crashes when locked for extended periods
   systemd.user.services."org.gnome.SettingsDaemon.ScreensaverProxy".enable = false;
 
-  # System-level dconf overrides to disable all screen locking mechanisms
-  environment.etc."dconf/db/gdm.d/99-disable-lock.conf".text = ''
-    [org/gnome/desktop/screensaver]
-    lock-enabled=false
-    lock-delay=0
-    idle-activation-enabled=false
+  # System-level dconf overrides to disable all screen locking mechanisms.
+  #
+  # NOTE: Do not use `environment.etc."dconf/..."` here because `programs.dconf.enable`
+  # installs `/etc/dconf` as a single immutable store path. Adding files under
+  # `/etc/dconf/*` would try to create directories under that symlink and fail
+  # during the `etc` derivation build.
+  programs.dconf.profiles.gdm.databases = lib.mkAfter [
+    {
+      settings."org/gnome/desktop/screensaver" = {
+        lock-enabled = false;
+        lock-delay = lib.gvariant.mkUint32 0;
+        idle-activation-enabled = false;
+      };
 
-    [org/gnome/desktop/session]
-    idle-delay=0
+      settings."org/gnome/desktop/session" = {
+        idle-delay = lib.gvariant.mkUint32 0;
+      };
 
-    [org/gnome/settings-daemon/plugins/power]
-    idle-dim=false
-    sleep-inactive-ac-timeout=0
-    sleep-inactive-battery-timeout=0
-    sleep-inactive-ac-type='nothing'
-    sleep-inactive-battery-type='nothing'
+      settings."org/gnome/settings-daemon/plugins/power" = {
+        idle-dim = false;
+        sleep-inactive-ac-timeout = lib.gvariant.mkInt32 0;
+        sleep-inactive-battery-timeout = lib.gvariant.mkInt32 0;
+        sleep-inactive-ac-type = "nothing";
+        sleep-inactive-battery-type = "nothing";
+      };
 
-    [org/gnome/desktop/lockdown]
-    disable-lock-screen=true
-  '';
+      settings."org/gnome/desktop/lockdown" = {
+        disable-lock-screen = true;
+      };
+    }
+  ];
 
   # Enable XDG portals for GNOME
   xdg.portal = {
