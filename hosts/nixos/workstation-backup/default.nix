@@ -12,7 +12,7 @@
     ./networking.nix
     ../../../modules/nixos/common # Common NixOS modules (SSH keys, etc.)
     ../../../modules/common/utility-packages.nix # Common utility packages
-    ../../../modules/nixos/attic-client.nix # Attic cache client
+    inputs.nix-attic-infra.nixosModules.attic-client # Attic cache client
     ../../../modules/nixos/snap.nix # Snap package manager support
     ../../../modules/nixos/sessions/cosmic.nix # COSMIC desktop
     #../../../modules/nixos/sessions/cinnamon.nix
@@ -57,7 +57,7 @@
   # X11 with COSMIC desktop
   services.xserver = {
     enable = true;
-    xkb.options = "caps:none";  # Let input-leap handle caps lock synchronization
+    xkb.options = "caps:none"; # Let input-leap handle caps lock synchronization
   };
 
   security.rtkit.enable = true;
@@ -117,10 +117,14 @@
   # Enable QEMU guest agent for Proxmox integration
   services.qemuGuest.enable = false;
 
-  # Attic cache client for automatic build uploads
-  myModules.attic-client = {
+  # Attic cache client (cache pulls + token provisioning)
+  services.attic-client = {
     enable = true;
     tokenFile = ../../../secrets/attic-client-token.yaml.enc;
+    server = "http://cache-build-server:5001";
+    cache = "cache-local";
+
+    enablePostBuildHook = false;
   };
 
   # Enable snap support

@@ -12,7 +12,7 @@
     ./networking.nix
     ../../../modules/nixos/common # Common NixOS modules (SSH keys, etc.)
     ../../../modules/common/utility-packages.nix # Common utility packages
-    ../../../modules/nixos/attic-client.nix # Attic cache client
+    inputs.nix-attic-infra.nixosModules.attic-client # Attic cache client
     ../../../modules/nixos/snap.nix # Snap package manager support
     ../../../modules/nixos/sessions/gnome.nix # GNOME desktop with COSMIC-like styling (primary)
     #../../../modules/nixos/sessions/hyprland/default.nix # Hyprland Wayland compositor (backup)
@@ -151,10 +151,14 @@
   # Enable QEMU guest agent for Proxmox integration
   services.qemuGuest.enable = true;
 
-  # Attic cache client for automatic build uploads
-  myModules.attic-client = {
+  # Attic cache client (cache pulls + token provisioning)
+  services.attic-client = {
     enable = true;
     tokenFile = ../../../secrets/attic-client-token.yaml.enc;
+    server = "http://cache-build-server:5001";
+    cache = "cache-local";
+
+    enablePostBuildHook = false;
   };
 
   # Enable snap support

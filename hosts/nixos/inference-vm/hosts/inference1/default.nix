@@ -11,20 +11,24 @@
     ./hardware-configuration.nix
     ../..
     inputs.nix-attic-infra.nixosModules.attic-post-build-hook
+    inputs.nix-attic-infra.nixosModules.attic-client
   ];
 
   boot.growPartition = true;
 
   networking.hostName = "inference1";
 
-  myModules.attic-client = {
+  services.attic-client = {
     enable = true;
 
     # SOPS-encrypted token providing `ATTIC_CLIENT_JWT_TOKEN`
-    tokenFile = ../../../secrets/attic-client-token.yaml.enc;
+    tokenFile = ../../../../../secrets/attic-client-token.yaml.enc;
 
     server = "http://cache-build-server:5001";
     cache = "cache-local";
+
+    # We'll use nix-attic-infra's dedicated post-build hook module instead.
+    enablePostBuildHook = false;
   };
 
   services.attic-post-build-hook = {
@@ -34,9 +38,7 @@
     serverEndpoint = "http://cache-build-server:5001";
     cacheName = "cache-local";
 
-    tokenFile = "/run/secrets/attic-client-token";
-
-    user = "deepwatrcreatur";
+    tokenFile = config.sops.secrets."attic-client-token".path;
   };
 
   # Custom ollama with CUDA using official binary
