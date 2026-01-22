@@ -15,6 +15,7 @@
     ../../../modules/nixos/attic-client.nix # Attic cache client
     ../../../modules/nixos/snap.nix # Snap package manager support
     ../../../modules/nixos/sessions/cosmic.nix # COSMIC desktop with native Wayland
+    ../../../modules/nixos/hp-print-scan.nix # HP printer/scanner support
     #../../../modules/nixos/sessions/hyprland/default.nix # Hyprland Wayland compositor (backup)
     #../../../modules/nixos/sessions/cosmic.nix # COSMIC desktop
     #../../../modules/nixos/sessions/cinnamon.nix
