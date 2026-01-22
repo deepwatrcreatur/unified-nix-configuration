@@ -36,6 +36,26 @@ let
       --remember \
       --cmd ${lib.escapeShellArg (toString cosmicSessionCommand)}
   '';
+
+  # Prefer a graphical greeter, but never get stuck:
+  # if `cage + gtkgreet` fails (or hangs), fall back to `tuigreet`.
+  greeterCommand = pkgs.writeShellScript "greetd-greeter" ''
+    set -eu
+
+    GTK_CMD=${lib.escapeShellArg (toString cosmicSessionCommand)}
+
+    # If the graphical greeter can't start, fall back quickly.
+    if ${pkgs.coreutils}/bin/timeout 8s \
+      ${pkgs.cage}/bin/cage -s -- \
+      ${pkgs.gtkgreet}/bin/gtkgreet -c "$GTK_CMD"; then
+      exit 0
+    fi
+
+    exec ${pkgs.tuigreet}/bin/tuigreet \
+      --time \
+      --remember \
+      --cmd ${lib.escapeShellArg (toString cosmicSessionCommand)}
+  '';
 in
 {
   # Enable COSMIC desktop environment with native Wayland support
@@ -67,7 +87,7 @@ in
 
       # Keep a greeter available for recovery.
       default_session = {
-        command = lib.mkForce (toString tuiGreeterCommand);
+        command = lib.mkForce (toString greeterCommand);
         user = lib.mkForce "greeter";
       };
     };
@@ -117,7 +137,10 @@ in
     glib
     gsettings-desktop-schemas
 
-    # Greeters. `tuigreet` is used for a reliable recovery login.
+    # Greeters.
+    # - `cage + gtkgreet` provides a graphical greeter
+    # - `tuigreet` is the always-works fallback
+    cage
     tuigreet
     gtkgreet
 
