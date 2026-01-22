@@ -4,20 +4,52 @@
   pkgs,
   ...
 }:
+
+let
+  # COSMIC sessions launched via greetd can start very early in boot.
+  # On some hardware that means the compositor comes up before DRM exposes
+  # outputs, leading to "Backend initialized without output" and a black screen.
+  #
+  # Wait briefly for DRM connectors, then launch COSMIC under a fresh D-Bus
+  # session bus.
+  cosmicSessionCommand = pkgs.writeShellScript "cosmic-session-greetd" ''
+    set -eu
+
+    # Wait up to ~10s for a connected DRM output.
+    for _ in $(seq 1 50); do
+      if ls /sys/class/drm/card*-*/status >/dev/null 2>&1 \
+        && rg -q "^connected$" /sys/class/drm/card*-*/status 2>/dev/null; then
+        break
+      fi
+      sleep 0.2
+    done
+
+    exec ${pkgs.dbus}/bin/dbus-run-session ${pkgs.cosmic-session}/bin/cosmic-session
+  '';
+
+  # Text-mode greeter that always works on a VT. This is intentionally boring
+  # but extremely reliable as a recovery path.
+  tuiGreeterCommand = pkgs.writeShellScript "tuigreet-greeter" ''
+    set -eu
+    exec ${pkgs.tuigreet}/bin/tuigreet \
+      --time \
+      --remember \
+      --cmd ${lib.escapeShellArg (toString cosmicSessionCommand)}
+  '';
+in
 {
   # Enable COSMIC desktop environment with native Wayland support
   services.desktopManager.cosmic.enable = true;
 
-  # COSMIC is a native Wayland session. Ensure we don't accidentally pull in
-  # an X11 display-manager stack (e.g. LightDM) which can break DRM master
-  # acquisition and lead to a black screen + blinking cursor.
-  services.xserver.enable = lib.mkForce false;
-  services.xserver.displayManager.lightdm.enable = lib.mkForce false;
-  services.displayManager.gdm.enable = lib.mkForce false;
-  services.displayManager.sddm.enable = lib.mkForce false;
+  # COSMIC is a native Wayland session. Prefer keeping X11 off, but do not use
+  # mkForce so specialisations (e.g. GNOME fallback) can override cleanly.
+  services.xserver.enable = lib.mkDefault false;
+  services.xserver.displayManager.lightdm.enable = lib.mkDefault false;
+  services.displayManager.gdm.enable = lib.mkDefault false;
+  services.displayManager.sddm.enable = lib.mkDefault false;
 
   # Avoid the historic COSMIC greeter memory leak by not using it.
-  # Instead, use greetd with gtkgreet and launch COSMIC as the session.
+  # Use greetd and launch COSMIC as the session.
   #
   # NOTE: COSMIC packages (including cosmic-session) are still coming from your
   # nixpkgs-unstable overlay in `flake.nix`.
@@ -29,14 +61,13 @@
       # Auto-login into COSMIC.
       # If the session exits, greetd will fall back to the greeter.
       initial_session = {
-        command = lib.mkForce "${pkgs.cosmic-session}/bin/cosmic-session";
+        command = lib.mkForce (toString cosmicSessionCommand);
         user = lib.mkForce "deepwatrcreatur";
       };
 
-      # Keep a greeter available for recovery. Avoid cosmic-greeter due to
-      # historical stability issues.
+      # Keep a greeter available for recovery.
       default_session = {
-        command = lib.mkForce "${pkgs.gtkgreet}/bin/gtkgreet";
+        command = lib.mkForce (toString tuiGreeterCommand);
         user = lib.mkForce "greeter";
       };
     };
@@ -46,6 +77,10 @@
   users.users.greeter = {
     isSystemUser = true;
     group = "greeter";
+    extraGroups = [
+      "video"
+      "input"
+    ];
   };
   users.groups.greeter = { };
 
@@ -82,8 +117,12 @@
     glib
     gsettings-desktop-schemas
 
-    # A lightweight greeter for manual login/recovery.
+    # Greeters. `tuigreet` is used for a reliable recovery login.
+    tuigreet
     gtkgreet
+
+    # COSMIC sessions started from greetd benefit from a known dbus-run-session.
+    dbus
 
     gnome-shell-extensions # For dash-to-dock extension
     # Mail client with unified inbox support (Apple Mail-like)
