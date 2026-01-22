@@ -8,6 +8,7 @@
     ./nh.nix
     ./ssh-keys.nix
     ./sops.nix
+    ./fstrim.nix
     # ../../activation-scripts
   ];
 }
