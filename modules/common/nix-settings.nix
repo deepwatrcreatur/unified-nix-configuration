@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 
@@ -116,13 +117,13 @@ in
   nix.settings.sandbox = lib.mkIf isContainer false;
   nix.settings.use-cgroups = lib.mkIf (!isContainer) true;
 
-  # Add opencode wrapper from unstable (avoids evaluation OOM)
-  # This wrapper directly calls unstable opencode without importing entire channel
+  # Add opencode wrapper from the pinned nixpkgs-unstable input.
+  # This avoids repeated downloads while still tracking “latest” via `nix flake update`.
   environment.systemPackages = with pkgs; [
     (pkgs.writeShellScriptBin "opencode" ''
       # Use `nix` from PATH so the wrapper doesn't break
       # when the `nixos-rebuild` store path gets replaced/GC'd.
-      exec nix run github:NixOS/nixpkgs/nixos-unstable#opencode "$@"
+      exec nix run "${inputs.nixpkgs-unstable}#opencode" "$@"
     '')
   ];
 }

@@ -9,6 +9,9 @@
   imports = [
     ../../../../modules/common/nix-settings.nix
     ../../../../modules/nixos/inference-vm-nix-overrides.nix
+
+    # Defines `myModules.attic-client` used by inference hosts
+    ../../../../modules/nixos/attic-client.nix
   ];
 
   # Enable fish shell since users set it as default

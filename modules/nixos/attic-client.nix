@@ -118,7 +118,8 @@ in
     };
 
     # 3. Configure Nix to use the post-build hook.
-    nix.settings.post-build-hook = "/etc/nix/attic-upload.sh";
+    # Use mkDefault so other modules can override (e.g. `nix-attic-infra`).
+    nix.settings.post-build-hook = mkDefault "/etc/nix/attic-upload.sh";
 
     # 4. Prepare the token for the Nix daemon for pulling from the cache.
     systemd.services.nix-attic-token = {
