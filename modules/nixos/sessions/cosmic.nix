@@ -4,11 +4,116 @@
   pkgs,
   ...
 }:
+
+let
+  # COSMIC sessions launched via greetd can start very early in boot.
+  # On some hardware that means the compositor comes up before DRM exposes
+  # outputs, leading to "Backend initialized without output" and a black screen.
+  #
+  # Wait briefly for DRM connectors, then launch COSMIC under a fresh D-Bus
+  # session bus.
+  cosmicSessionCommand = pkgs.writeShellScript "cosmic-session-greetd" ''
+    set -eu
+
+    # Wait up to ~10s for a connected DRM output.
+    for _ in $(seq 1 50); do
+      if ls /sys/class/drm/card*-*/status >/dev/null 2>&1 \
+        && rg -q "^connected$" /sys/class/drm/card*-*/status 2>/dev/null; then
+        break
+      fi
+      sleep 0.2
+    done
+
+    exec ${pkgs.dbus}/bin/dbus-run-session ${pkgs.cosmic-session}/bin/cosmic-session
+  '';
+
+  # Text-mode greeter that always works on a VT. This is intentionally boring
+  # but extremely reliable as a recovery path.
+  tuiGreeterCommand = pkgs.writeShellScript "tuigreet-greeter" ''
+    set -eu
+    exec ${pkgs.tuigreet}/bin/tuigreet \
+      --time \
+      --remember \
+      --cmd ${lib.escapeShellArg (toString cosmicSessionCommand)}
+  '';
+
+  # Prefer a graphical greeter, but never get stuck:
+  # if `cage + gtkgreet` fails (or hangs), fall back to `tuigreet`.
+  greeterCommand = pkgs.writeShellScript "greetd-greeter" ''
+    set -eu
+
+    GTK_CMD=${lib.escapeShellArg (toString cosmicSessionCommand)}
+
+    # If the graphical greeter can't start, fall back quickly.
+    if ${pkgs.coreutils}/bin/timeout 8s \
+      ${pkgs.cage}/bin/cage -s -- \
+      ${pkgs.gtkgreet}/bin/gtkgreet -c "$GTK_CMD"; then
+      exit 0
+    fi
+
+    exec ${pkgs.tuigreet}/bin/tuigreet \
+      --time \
+      --remember \
+      --cmd ${lib.escapeShellArg (toString cosmicSessionCommand)}
+  '';
+in
 {
   # Enable COSMIC desktop environment with native Wayland support
   services.desktopManager.cosmic.enable = true;
-  # Disable cosmic-greeter due to memory leaks - using greetd autologin instead
-  services.displayManager.cosmic-greeter.enable = false;
+
+  # COSMIC is a native Wayland session. Prefer keeping X11 off, but do not use
+  # mkForce so specialisations (e.g. GNOME fallback) can override cleanly.
+  services.xserver.enable = lib.mkDefault false;
+  services.xserver.displayManager.lightdm.enable = lib.mkDefault false;
+  services.displayManager.gdm.enable = lib.mkDefault false;
+  services.displayManager.sddm.enable = lib.mkDefault false;
+
+  # Avoid the historic COSMIC greeter memory leak by not using it.
+  # Use greetd and launch COSMIC as the session.
+  #
+  # NOTE: COSMIC packages (including cosmic-session) are still coming from your
+  # nixpkgs-unstable overlay in `flake.nix`.
+  services.displayManager.cosmic-greeter.enable = lib.mkForce false;
+
+  services.greetd = {
+    enable = true;
+    settings = {
+      # Auto-login into COSMIC.
+      # If the session exits, greetd will fall back to the greeter.
+      initial_session = {
+        command = lib.mkForce (toString cosmicSessionCommand);
+        user = lib.mkForce "deepwatrcreatur";
+      };
+
+      # Keep a greeter available for recovery.
+      default_session = {
+        command = lib.mkForce (toString greeterCommand);
+        user = lib.mkForce "greeter";
+      };
+    };
+  };
+
+  # Ensure the greetd user exists.
+  users.users.greeter = {
+    isSystemUser = true;
+    group = "greeter";
+    extraGroups = [
+      "video"
+      "input"
+    ];
+  };
+  users.groups.greeter = { };
+
+  # Disable screen locking / idle-triggered lock.
+  # COSMIC's lock/idle implementation is still evolving; these overrides are
+  # intentionally defensive.
+  services.logind.settings.Login = {
+    IdleAction = "ignore";
+    IdleActionSec = 0;
+  };
+
+  systemd.user.services.cosmic-idle.enable = lib.mkForce false;
+  systemd.user.services.cosmic-lock.enable = lib.mkForce false;
 
   # Touchpad configuration
   services.libinput = {
@@ -26,7 +131,22 @@
     pavucontrol
     flameshot
     copyq
+
+    # Needed for COSMIC settings and schema availability.
     dconf
+    glib
+    gsettings-desktop-schemas
+
+    # Greeters.
+    # - `cage + gtkgreet` provides a graphical greeter
+    # - `tuigreet` is the always-works fallback
+    cage
+    tuigreet
+    gtkgreet
+
+    # COSMIC sessions started from greetd benefit from a known dbus-run-session.
+    dbus
+
     gnome-shell-extensions # For dash-to-dock extension
     # Mail client with unified inbox support (Apple Mail-like)
     thunderbird # BEST unified inbox + iCloud/Gmail
@@ -35,9 +155,10 @@
     # GNOME Keyring for secure credential storage
     libsecret
     gnome-keyring
-    glib
-    gsettings-desktop-schemas
   ];
+
+  # COSMIC uses gsettings/dconf; without this you get "No schemas installed".
+  programs.dconf.enable = true;
 
   # Enable XDG portals for COSMIC
   xdg.portal = {

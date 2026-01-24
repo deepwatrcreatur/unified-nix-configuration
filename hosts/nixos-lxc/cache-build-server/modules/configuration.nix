@@ -36,9 +36,5 @@
     }
   ];
 
-  boot.initrd.systemd.fido2.enable = false;
-  # LXC root filesystem may not expose a block device for grow-partition.
-  boot.growPartition = false;
-
   system.stateVersion = "25.05";
 }

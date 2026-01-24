@@ -16,7 +16,7 @@
     ../../../../modules/home-manager/ghostty
     ../../../../modules/home-manager/gpg-agent-cross-de.nix
     ../../../../modules/home-manager/zed.nix
-    ../../../../modules/home-manager/cosmic-settings.nix # GNOME settings with COSMIC-like appearance
+    ../../../../modules/home-manager/cosmic-settings.nix
     ../../../../modules/home-manager/linuxbrew.nix
     #../../../../modules/home-manager/hyprland/default.nix # Hyprland configuration (backup)
     inputs.zellij-vivid-rounded.homeManagerModules.default
@@ -25,13 +25,13 @@
 
   home.homeDirectory = "/home/deepwatrcreatur";
 
-  # WhiteSur theming for GNOME
+  # WhiteSur theming for GTK applications
   whitesur = {
     enable = true;
     gtk.enable = true;
   };
 
-  # Allow Home Manager to replace existing COSMIC gtk.css
+  # WhiteSur can overwrite gtk-4.0 css; ensure HM wins.
   xdg.configFile."gtk-4.0/gtk.css".force = true;
 
   programs.zellij-vivid-rounded = {
@@ -61,8 +61,9 @@
     enable = true;
   };
 
-  # Avoid dconf activation failures when no session bus is available during activation
-  home.activation.dconfSettings = lib.mkForce "";
+  # Allow dconf activation so COSMIC/GNOME settings (theme/wallpaper) apply.
+  # If you see activation-time dconf errors again, we can gate this behind a
+  # `graphical-session.target` user service instead.
 
   home.file.".config/deskflow/deskflow.conf".text = ''
     clipboardSharing = true

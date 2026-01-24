@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 
@@ -38,7 +39,8 @@ in
       "impure-derivations"
       "ca-derivations"
       "pipe-operators"
-    ] ++ lib.optionals (!isContainer) [
+    ]
+    ++ lib.optionals (!isContainer) [
       "cgroups" # Process isolation for builds - not available in containers
     ];
 
@@ -63,22 +65,25 @@ in
     trusted-users = [
       "root"
       "@wheel"
-    ] ++ lib.optionals (!isContainer) [
+    ]
+    ++ lib.optionals (!isContainer) [
       "@build"
       "@admin"
       "deepwatrcreatur"
     ];
 
     # Substituters - exclude local cache on the cache server itself to avoid circular dependency
-    substituters = lib.optionals (!isCacheServer) [
-      "http://cache-build-server:5001/cache-local"
-    ] ++ [
-      "https://cache.nixos.org/"
-      "https://cuda-maintainers.cachix.org"
-      "https://cache.garnix.io/"
-      "https://nix-community.cachix.org/"
-      "https://hyprland.cachix.org/"
-    ];
+    substituters =
+      lib.optionals (!isCacheServer) [
+        "http://cache-build-server:5001/cache-local"
+      ]
+      ++ [
+        "https://cache.nixos.org/"
+        "https://cuda-maintainers.cachix.org"
+        "https://cache.garnix.io/"
+        "https://nix-community.cachix.org/"
+        "https://hyprland.cachix.org/"
+      ];
 
     trusted-public-keys = [
       "cache-local:63xryK76L6y/NphTP/iS63yiYqldoWvVlWI0N8rgvBw="
@@ -91,20 +96,34 @@ in
     ];
 
     # Access tokens - only on non-cache-server hosts
-    access-tokens = lib.optionals (!isCacheServer) [
-      "cache-build-server:5001 = /run/nix/attic-token-bearer"
-    ]
-    # Only try to read GitHub token if it's a SOPS secret (avoid file system access during evaluation)
-    ++ lib.optionals (
-      config ? sops
-      && config.sops.secrets ? "github-token-root"
-      && config.sops.secrets."github-token-root" != null
-    ) [
-      "github.com=${builtins.readFile config.sops.secrets."github-token-root".path}"
-    ];
+    access-tokens =
+      lib.optionals (!isCacheServer) [
+        "cache-build-server:5001 = /run/nix/attic-token-bearer"
+      ]
+      # Only try to read GitHub token if it's a SOPS secret (avoid file system access during evaluation)
+      ++
+        lib.optionals
+          (
+            config ? sops
+            && config.sops.secrets ? "github-token-root"
+            && config.sops.secrets."github-token-root" != null
+          )
+          [
+            "github.com=${builtins.readFile config.sops.secrets."github-token-root".path}"
+          ];
   };
 
   # Container-specific settings
   nix.settings.sandbox = lib.mkIf isContainer false;
   nix.settings.use-cgroups = lib.mkIf (!isContainer) true;
+
+  # Add opencode wrapper from the pinned nixpkgs-unstable input.
+  # This avoids repeated downloads while still tracking “latest” via `nix flake update`.
+  environment.systemPackages = with pkgs; [
+    (pkgs.writeShellScriptBin "opencode" ''
+      # Use `nix` from PATH so the wrapper doesn't break
+      # when the `nixos-rebuild` store path gets replaced/GC'd.
+      exec nix run "${inputs.nixpkgs-unstable}#opencode" "$@"
+    '')
+  ];
 }

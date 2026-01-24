@@ -31,8 +31,5 @@
     }
   ];
 
-  boot.initrd.systemd.fido2.enable = false;
-  boot.growPartition = true;
-
   system.stateVersion = "25.05";
 }

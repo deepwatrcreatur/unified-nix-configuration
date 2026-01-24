@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   # GNOME Desktop Environment with COSMIC-like Styling
@@ -91,9 +96,12 @@
       action-double-click-titlebar = "maximize";
     };
 
-    # Screen lock and idle configuration
+    # Screen lock and idle configuration - disabled to prevent memory leaks
     "org/gnome/desktop/screensaver" = {
       lock-enabled = false;
+      lock-delay = 0;
+      idle-activation-enabled = false;
+      ubuntu-lock-on-suspend = false;
     };
 
     "org/gnome/desktop/lockdown" = {
@@ -101,14 +109,17 @@
     };
 
     "org/gnome/desktop/session" = {
-      idle-delay = 600; # 10 minutes
+      idle-delay = 0; # Never idle
     };
 
-    # Power management - dims after 2 minutes, no sleep
+    # Power management - disable all idle actions to prevent memory leaks
     "org/gnome/settings-daemon/plugins/power" = {
-      idle-dim-timeout = 120;
-      sleep-inactive-ac-timeout = 3600; # 1 hour screen off
-      sleep-inactive-ac-type = "blank";
+      idle-dim = false;
+      idle-dim-timeout = 0;
+      sleep-inactive-ac-timeout = 0;
+      sleep-inactive-battery-timeout = 0;
+      sleep-inactive-ac-type = "nothing";
+      sleep-inactive-battery-type = "nothing";
     };
 
     # GTK settings for smooth appearance
@@ -142,8 +153,17 @@
     # Result: HDMI = switches workspaces, DisplayPort = stays constant
   };
 
+  # COSMIC idle / lock behavior
+  # COSMIC uses its own settings store under ~/.config/cosmic/...
+  # Setting these to "None" disables the idle actions (including screen off / lock).
+  xdg.configFile = {
+    "cosmic/com.system76.CosmicIdle/v1/screen_off_time".text = "None";
+    "cosmic/com.system76.CosmicIdle/v1/suspend_on_ac_time".text = "None";
+    "cosmic/com.system76.CosmicIdle/v1/suspend_on_battery_time".text = "None";
+  };
+
   # Home activation reminder for monitor setup
-  home.activation.monitorSetupReminder = lib.hm.dag.entryAfter ["writeBoundary"] ''
+  home.activation.monitorSetupReminder = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     $DRY_RUN_CMD echo ""
     $DRY_RUN_CMD echo "================================================"
     $DRY_RUN_CMD echo " Multi-Monitor Workspace Configuration"

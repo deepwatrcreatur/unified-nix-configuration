@@ -19,17 +19,51 @@ This document provides guidance for establishing X11 compatibility for desktop s
 
 ### Symptom: Only Boot Messages Visible (No Login Screen)
 
-**Cause:** GDM/X server not starting correctly.
+**Cause:** Display manager/greeter not starting (or none is enabled).
 
-**Check:**
+**Check (GDM):**
 ```bash
 # Check GDM status
 systemctl status gdm
 
-# Check Xorg logs
-journalctl -b | grep -i xorg
+# Check logs
 journalctl -b | grep -i gdm
+journalctl -b | grep -i xorg
 ```
+
+**Check (greetd/gtkgreet):**
+```bash
+# Check greetd status
+systemctl status greetd
+
+# Check greetd logs
+journalctl -b -u greetd --no-pager
+
+# Verify rendered config
+cat /etc/greetd/config.toml
+```
+
+## Emergency Recovery (TTY / Rollback)
+
+If a greeter change leaves you with a blank screen:
+
+1. Switch to a TTY: `Ctrl+Alt+F2` (or `F3/F4`)
+2. Log in as a local user
+3. Inspect greeter logs:
+   ```bash
+   sudo systemctl status greetd
+   sudo journalctl -b -u greetd --no-pager
+   ```
+4. Fastest way back to a working desktop is rolling back to the previous system generation:
+   ```bash
+   sudo nixos-rebuild switch --rollback
+   sudo reboot
+   ```
+   You can also reboot and pick an older generation from the bootloader menu.
+5. After you’re back in a working generation, adjust the session/greeter config and rebuild:
+   ```bash
+   sudo nixos-rebuild switch --flake .#<hostname>
+   ```
 
 ## Configuration Patterns
 
