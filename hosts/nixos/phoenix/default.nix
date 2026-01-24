@@ -12,7 +12,6 @@
     ./networking.nix
     ../../../modules/nixos/common # Common NixOS modules (SSH keys, etc.)
     ../../../modules/common/utility-packages.nix # Common utility packages
-    ../../../modules/nixos/attic-client.nix # Attic cache client
     ../../../modules/nixos/snap.nix # Snap package manager support
     ../../../modules/nixos/sessions/cosmic.nix # COSMIC desktop with native Wayland
     ../../../modules/nixos/hp-print-scan.nix # HP printer/scanner support
@@ -151,12 +150,6 @@
   # Enable QEMU guest agent for Proxmox integration
   services.qemuGuest.enable = true;
 
-  # Attic cache client for automatic build uploads
-  myModules.attic-client = {
-    enable = true;
-    tokenFile = ../../../secrets/attic-client-token.yaml.enc;
-  };
-
   # Enable snap support
   myModules.snap = {
     enable = true;
@@ -172,21 +165,6 @@
   ];
 
   nixpkgs.config.allowUnfree = true;
-
-  # Fallback boot option: GNOME session.
-  # Select via Limine/Systemd-boot specialisation entry if COSMIC misbehaves.
-  specialisation.gnome.configuration = {
-    imports = [ ../../../modules/nixos/sessions/gnome.nix ];
-
-    # Override COSMIC-first defaults.
-    services.desktopManager.cosmic.enable = lib.mkForce false;
-    services.greetd.enable = lib.mkForce false;
-
-    # COSMIC module forces these off; re-enable for GNOME.
-    # Use a higher priority than mkForce to avoid merge conflicts.
-    services.xserver.enable = lib.mkOverride 40 true;
-    services.displayManager.gdm.enable = lib.mkOverride 40 true;
-  };
 
   system.stateVersion = "25.05";
 }
