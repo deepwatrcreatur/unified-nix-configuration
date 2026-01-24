@@ -12,16 +12,41 @@
 
     # Defines `myModules.attic-client` used by inference hosts
     ../../../../modules/nixos/attic-client.nix
+
+    # Attic post-build hook module
+    ../../../../modules/nixos/attic-post-build-hook.nix
   ];
 
   # Enable fish shell since users set it as default
   programs.fish.enable = true;
+
+  sops.age.keyFile = lib.mkForce "/var/lib/sops/age/keys.txt";
 
   # Nixpkgs configuration
   nixpkgs = {
     config.allowUnfree = true;
     config.allowUnsupportedSystem = true; # Allow unsupported packages like cuDNN
     config.cudaForwardCompat = false; # Skip cuda_compat build
+  };
+
+  myModules.attic-client = {
+    enable = true;
+
+    # SOPS-encrypted token providing `ATTIC_CLIENT_JWT_TOKEN`
+    tokenFile = ../../../../secrets/attic-client-token.yaml.enc;
+
+    server = "http://cache-build-server:5001";
+    cache = "cache-local";
+  };
+
+  services.attic-post-build-hook = {
+    enable = true;
+
+    serverName = "cache-build-server";
+    serverEndpoint = "http://cache-build-server:5001";
+    cacheName = "cache-local";
+
+    tokenFile = "/run/secrets/attic-client-token";
   };
 
   # GPU Infrastructure configuration - Tesla P40 optimized

@@ -23,6 +23,8 @@
     ../../../modules/nixos/snapper.nix # Btrfs snapshots via Snapper
     ../../../modules/wezterm-config.nix
     ../../../modules/activation-scripts # Activation scripts for system setup
+    ../../../modules/nixos/attic-client.nix
+    ../../../modules/nixos/attic-post-build-hook.nix
   ];
 
   # Homebrew is managed via home-manager (modules/home-manager/linuxbrew.nix)
@@ -165,6 +167,26 @@
   ];
 
   nixpkgs.config.allowUnfree = true;
+
+  myModules.attic-client = {
+    enable = true;
+
+    # SOPS-encrypted token providing `ATTIC_CLIENT_JWT_TOKEN`
+    tokenFile = ../../../secrets/attic-client-token.yaml.enc;
+
+    server = "http://cache-build-server:5001";
+    cache = "cache-local";
+  };
+
+  services.attic-post-build-hook = {
+    enable = true;
+
+    serverName = "cache-build-server";
+    serverEndpoint = "http://cache-build-server:5001";
+    cacheName = "cache-local";
+
+    tokenFile = "/run/secrets/attic-client-token";
+  };
 
   system.stateVersion = "25.05";
 }
