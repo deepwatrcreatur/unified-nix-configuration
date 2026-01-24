@@ -16,6 +16,7 @@
     ../../../modules/nixos/snap.nix # Snap package manager support
     ../../../modules/nixos/sessions/cosmic.nix # COSMIC desktop with native Wayland
     ../../../modules/nixos/hp-print-scan.nix # HP printer/scanner support
+    ../../../modules/nixos/printers/phoenix-hp-m477.nix # HP M477 printer queue
     #../../../modules/nixos/sessions/hyprland/default.nix # Hyprland Wayland compositor (backup)
     #../../../modules/nixos/sessions/cosmic.nix # COSMIC desktop
     #../../../modules/nixos/sessions/cinnamon.nix
