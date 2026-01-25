@@ -12,9 +12,9 @@
       . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
     fi
 
-    # Add home-manager-path to PATH for tools like atuin, fnox, etc.
-    if [ -d /root/.nix-profile/bin ]; then
-      export PATH="$HOME/.nix-profile/bin:$PATH"
+    # Source home-manager activation script to ensure PATH is set correctly
+    if [ -e /nix/var/nix/profiles/per-user/root/home-manager/activate ]; then
+      . /nix/var/nix/profiles/per-user/root/home-manager/activate
     fi
   '';
 

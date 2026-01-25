@@ -28,3 +28,9 @@ cleanup_files:
   - /root/.nix-profile.backup
   - /root/.bashrc.backup
   - /root/.profile.backup
+
+# Config cleanup files (old home-manager generated configs to remove)
+config_cleanup_files:
+  - /root/.bashrc
+  - /root/.bash_profile
+  - /root/.profile

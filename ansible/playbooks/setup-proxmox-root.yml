@@ -87,12 +87,33 @@
       retries: 3
       delay: 5
 
-    - name: Remove conflicting files before home-manager activation
-      file:
-        path: "{{ item }}"
-        state: absent
-      loop: "{{ conflicting_files }}"
-      ignore_errors: yes
+    - name: Remove conflicting files and old configs before home-manager activation
+      block:
+        - name: Remove conflicting files (regular files)
+          file:
+              path: "{{ item }}"
+              state: absent
+          loop: "{{ conflicting_files }}"
+          ignore_errors: yes
+
+        - name: Remove old .nix-profile symlink (if it's broken)
+          file:
+              path: "{{ nix_profile_path }}"
+              state: absent
+          when: config_cleanup_files is defined
+          ignore_errors: yes
+
+        - name: Remove old bash config files if they're symlinks
+          file:
+              path: "{{ item }}"
+              state: absent
+          loop:
+                - /root/.bashrc
+                - /root/.bash_profile
+                - /root/.profile
+          when: config_cleanup_files is defined
+          failed_when: false
+      always: yes
 
     - name: Cleanup old backup files
       file:
@@ -158,6 +179,30 @@
       register: profile_fix
       ignore_errors: yes
 
+    - name: Wait for shell config files to be regenerated
+      pause:
+        seconds: 2
+
+    - name: Verify shell config files were regenerated
+      block:
+        - name: Check .bashrc was regenerated
+          stat:
+            path: /root/.bashrc
+          register: bashrc_stat
+
+        - name: Verify .bashrc is not a symlink to old generation
+          shell: |
+            readlink /root/.bashrc 2>/dev/null || echo "NO_LINK"
+          register: bashrc_link
+          changed_when: false
+          failed_when: false
+
+        - name: Display .bashrc status
+          debug:
+            msg: |
+              .bashrc exists: {{ bashrc_stat.stat.exists }}
+              Link target: {{ bashrc_link.stdout | default('N/A') }}
+
     - name: Check home-manager installation
       stat:
         path: /root/.local/state/home-manager
@@ -187,72 +232,104 @@
 
     - name: Verify installation and tools
       block:
-        - name: Verify .nix-profile exists and is a link
+        - name: Wait for shell config files to be regenerated
+          pause:
+              seconds: 2
+
+        - name: Check .nix-profile exists and is a link
           stat:
-            path: "{{ nix_profile_path }}"
+              path: "{{ nix_profile_path }}"
           register: profile_stat
-        
+
         - name: Verify .nix-profile points to home-manager
           shell: |
-            readlink {{ nix_profile_path }}
+              readlink {{ nix_profile_path }}
           register: profile_target
           changed_when: false
-        
+
+        - name: Verify shell configs were regenerated
+          block:
+                - name: Check .bashrc timestamp
+                  stat:
+                        path: /root/.bashrc
+                  register: bashrc_stat
+
+                - name: Check .bashrc is not old (Dec 31)
+                  debug:
+                        msg: ".bashrc modified: {{ bashrc_stat.stat.mtime | default(0) }} (should be recent)"
+
+                - name: Check .bash_profile timestamp
+                  stat:
+                        path: /root/.bash_profile
+                  register: bash_profile_stat
+
+                - name: Check .profile timestamp
+                  stat:
+                        path: /root/.profile
+                  register: profile_stat
+
+                - name: Verify configs are recent (not from old generation)
+                  debug:
+                        msg: |
+                              .bashrc time: {{ bashrc_stat.stat.mtime | default(0) }}
+                              .bash_profile time: {{ bash_profile_stat.stat.mtime | default(0) }}
+                              .profile time: {{ profile_stat.stat.mtime | default(0) }}
+
         - name: Verify home-manager in PATH
           command: /root/.nix-profile/bin/home-manager --version
           register: hm_version
           changed_when: false
           failed_when: false
-        
+
         - name: Verify atuin is available
           command: /root/.nix-profile/bin/atuin --version
           register: atuin_version
           changed_when: false
           failed_when: false
-        
+
         - name: Verify fish shell is available
           command: which fish
           environment:
-            PATH: "{{ lookup('env', 'PATH') }}:/root/.nix-profile/bin"
+                PATH: "{{ lookup('env', 'PATH') }}:/root/.nix-profile/bin"
           register: fish_check
           changed_when: false
           failed_when: false
-        
+
         - name: Verify fnox is available
           command: /root/.nix-profile/bin/fnox --version
           register: fnox_version
           changed_when: false
           failed_when: false
-        
+
         - name: Display comprehensive verification results
           debug:
-            msg: |
-              ✅ Nix installed
-              {% if profile_stat.stat.exists %}
-              ✅ .nix-profile exists: {{ profile_target.stdout | default('not a link') }}
-              {% if 'home-manager' in profile_target.stdout %}
-              ✅ .nix-profile correctly linked to home-manager
-              {% else %}
-              ⚠️  .nix-profile points to: {{ profile_target.stdout | default('unknown') }}
-              {% endif %}
-              {% else %}
-              ❌ .nix-profile does not exist
-              {% endif %}
-              ✅ Home Manager: {{ hm_version.stdout | default('not found') }}
-              {% if atuin_version.rc == 0 %}
-              ✅ Atuin: {{ atuin_version.stdout | default('found') }}
-              {% else %}
-              ⚠️  Atuin not found in PATH
-              {% endif %}
-              {% if fish_check.rc == 0 %}
-              ✅ Fish shell available
-              {% else %}
-              ⚠️  Fish shell not found
-              {% endif %}
-              {% if fnox_version.rc == 0 %}
-              ✅ Fnox: {{ fnox_version.stdout | default('found') }}
-              {% else %}
-              ⚠️  Fnox not found
-              {% endif %}
-              ✅ Cache-build-server configured: {{ cache_build_server_url }}
+                msg: |
+                              ✅ Nix installed
+                              {% if profile_stat.stat.exists %}
+                              ✅ .nix-profile exists: {{ profile_target.stdout | default('not a link') }}
+                              {% if 'home-manager' in profile_target.stdout %}
+                              ✅ .nix-profile correctly linked to home-manager
+                              {% else %}
+                              ⚠️  .nix-profile points to: {{ profile_target.stdout | default('unknown') }}
+                              {% endif %}
+                              {% else %}
+                              ❌ .nix-profile does not exist
+                              {% endif %}
+                              ✅ Home Manager: {{ hm_version.stdout | default('not found') }}
+                              {% if atuin_version.rc == 0 %}
+                              ✅ Atuin: {{ atuin_version.stdout | default('found') }}
+                              {% else %}
+                              ⚠️  Atuin not found in PATH
+                              {% endif %}
+                              {% if fish_check.rc == 0 %}
+                              ✅ Fish shell available
+                              {% else %}
+                              ⚠️  Fish shell not found
+                              {% endif %}
+                              {% if fnox_version.rc == 0 %}
+                              ✅ Fnox: {{ fnox_version.stdout | default('found') }}
+                              {% else %}
+                              ⚠️  Fnox not found
+                              {% endif %}
+                              ✅ Cache-build-server configured: {{ cache_build_server_url }}
       when: hm_installation.stat.exists
