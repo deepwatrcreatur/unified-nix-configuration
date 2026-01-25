@@ -13,6 +13,10 @@ Host opnsense
     Hostname 10.10.10.1
     user root
 
+Host pve-lattitude
+    Hostname 10.10.11.47
+    user root
+
 Host pve-tomahawk
     Hostname 10.10.11.55
     user root
@@ -43,10 +47,6 @@ Host homeserver
 
 Host phoenix
     Hostname 10.10.11.73
-    user deepwatrcreatur
-
-Host inference-node1
-    Hostname 10.10.11.141
     user deepwatrcreatur
 
 Host inference1
