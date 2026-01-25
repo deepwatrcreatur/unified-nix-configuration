@@ -132,8 +132,13 @@
   # Additional system packages (utility-packages provides: git, vim, curl, wget, rsync, nmap, openssl, etc.)
   environment.systemPackages = with pkgs; [
     at-spi2-core # Accessibility framework for deskflow clipboard
+    baobab # Disk usage analyzer (GUI)
     distrobox
     filezilla
+    dosfstools # FAT filesystem utilities (mkfs.vfat, fsck.vfat)
+    gnome-disk-utility # GNOME Disks - GUI disk management tool (supports FAT32 formatting)
+    gparted # Partition editor (GUI - supports FAT32 formatting)
+    parted # Command-line partition manager
     nushell # Stopgap: Add nushell at system level for ghostty compatibility
     pavucontrol
     rclone-browser
