@@ -186,7 +186,7 @@
   services.attic-post-build-hook = {
     enable = true;
 
-    serverName = "cache-build-server";
+    serverName = "attic-cache";
     serverEndpoint = "http://cache-build-server:5001";
     cacheName = "cache-local";
 

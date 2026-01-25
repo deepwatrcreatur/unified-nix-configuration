@@ -91,7 +91,7 @@ in
 
           mkdir -p "$temp_dir/attic"
           cat > "$temp_dir/attic/config.toml" <<EOF
-          [servers.cache-build-server]
+          [servers.attic-cache]
           endpoint = "${cfg.server}"
           token = "$token"
           EOF
@@ -106,7 +106,7 @@ in
             echo "Attic: Token file exists: $(test -f "$token_file" && echo 'yes' || echo 'no')" >&2
             echo "Attic: Token length: $(echo -n "$token" | wc -c) characters" >&2
 
-            if ${pkgs.attic-client}/bin/attic push cache-build-server:${cfg.cache} $OUT_PATHS; then
+            if ${pkgs.attic-client}/bin/attic push attic-cache:${cfg.cache} $OUT_PATHS; then
               echo "Attic: Successfully pushed paths" >&2
             else
               echo "Attic: Push failed - checking server connectivity..." >&2
@@ -157,9 +157,13 @@ in
           mkdir -p /run/nix
 
           token=$(cat "$token_file")
-          umask 0077
-          echo "bearer $token" > /run/nix/attic-token-bearer
-          chmod 0600 /run/nix/attic-token-bearer
+          if [[ -z "$token" ]]; then
+            echo "Warning: Attic client token empty. Cache pulls may fail." >&2
+          else
+            umask 0077
+            echo "bearer $token" > /run/nix/attic-token-bearer
+            chmod 0600 /run/nix/attic-token-bearer
+          fi
         '';
       };
 
