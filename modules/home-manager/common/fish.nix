@@ -79,19 +79,19 @@
       end
 
       # Ensure Nix paths are in PATH early for ALL sessions (especially SSH)
-      # In containers: append as fallback (prefer RPM-provided tools).
+      # In containers: prioritize Nix/host tools for consistency
       if test $in_container -eq 1
-        if test -d /etc/profiles/per-user/$USER/bin
-          fish_add_path --append --move /etc/profiles/per-user/$USER/bin
-        end
         if test -d ${config.home.homeDirectory}/.nix-profile/bin
-          fish_add_path --append --move ${config.home.homeDirectory}/.nix-profile/bin
-        end
-        if test -d /nix/var/nix/profiles/system/sw/bin
-          fish_add_path --append --move /nix/var/nix/profiles/system/sw/bin
+          fish_add_path --prepend --move ${config.home.homeDirectory}/.nix-profile/bin
         end
         if test -d /nix/var/nix/profiles/default/bin
-          fish_add_path --append --move /nix/var/nix/profiles/default/bin
+          fish_add_path --prepend --move /nix/var/nix/profiles/default/bin
+        end
+        if test -d /nix/var/nix/profiles/system/sw/bin
+          fish_add_path --prepend --move /nix/var/nix/profiles/system/sw/bin
+        end
+        if test -d /etc/profiles/per-user/$USER/bin
+          fish_add_path --prepend --move /etc/profiles/per-user/$USER/bin
         end
       else
         if test -d ${config.home.homeDirectory}/.nix-profile/bin
