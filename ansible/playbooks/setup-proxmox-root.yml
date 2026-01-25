@@ -13,6 +13,10 @@
         name: nix-daemon
         state: restarted
 
+    - name: Reload shell profile
+      debug:
+        msg: "Profile symlink fixed - you may need to reload your shell (exec bash)"
+
   tasks:
     - name: Check if Nix is already installed
       stat:
@@ -90,6 +94,13 @@
       loop: "{{ conflicting_files }}"
       ignore_errors: yes
 
+    - name: Cleanup old backup files
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop: "{{ cleanup_files }}"
+      ignore_errors: yes
+
     - name: Run home-manager activation
       shell: |
         . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
@@ -103,6 +114,48 @@
         - hm_activation.rc != 0
         - "'Starting Home Manager activation' not in hm_activation.stderr"
         - "'error' in hm_activation.stderr.lower()"
+      ignore_errors: yes
+
+    - name: Verify and fix .nix-profile symlink
+      block:
+        - name: Check current .nix-profile target
+          stat:
+            path: "{{ nix_profile_path }}"
+          register: current_profile
+          failed_when: false
+        
+        - name: Read .nix-profile link target
+          shell: |
+            readlink {{ nix_profile_path }} 2>/dev/null || echo "NO_LINK"
+          register: profile_link_target
+          changed_when: false
+          failed_when: false
+        
+        - name: Check if profile points to home-manager
+          debug:
+            msg: "Current profile target: {{ profile_link_target.stdout }}"
+        
+        - name: Fix .nix-profile if pointing to system profile
+          file:
+            path: "{{ nix_profile_path }}"
+            src: "{{ hm_profile_path }}"
+            state: link
+            force: yes
+          when:
+            - current_profile.stat.exists
+            - "'profile' in profile_link_target.stdout"
+            - "'home-manager' not in profile_link_target.stdout"
+          notify: Reload shell profile
+        
+        - name: Ensure .nix-profile points to home-manager
+          file:
+            path: "{{ nix_profile_path }}"
+            src: "{{ hm_profile_path }}"
+            state: link
+            force: yes
+          when: current_profile.stat.exists and "'NO_LINK' in profile_link_target.stdout"
+          notify: Reload shell profile
+      register: profile_fix
       ignore_errors: yes
 
     - name: Check home-manager installation
@@ -132,28 +185,74 @@
         msg: "{{ hm_news.stdout_lines | select('search', 'news items') | list }}"
       when: hm_news.stdout is defined
 
-    - name: Verify installation
+    - name: Verify installation and tools
       block:
-        - name: Check home-manager version
+        - name: Verify .nix-profile exists and is a link
+          stat:
+            path: "{{ nix_profile_path }}"
+          register: profile_stat
+        
+        - name: Verify .nix-profile points to home-manager
+          shell: |
+            readlink {{ nix_profile_path }}
+          register: profile_target
+          changed_when: false
+        
+        - name: Verify home-manager in PATH
           command: /root/.nix-profile/bin/home-manager --version
           register: hm_version
           changed_when: false
-
-        - name: Check fish shell is available
+          failed_when: false
+        
+        - name: Verify atuin is available
+          command: /root/.nix-profile/bin/atuin --version
+          register: atuin_version
+          changed_when: false
+          failed_when: false
+        
+        - name: Verify fish shell is available
           command: which fish
+          environment:
+            PATH: "{{ lookup('env', 'PATH') }}:/root/.nix-profile/bin"
           register: fish_check
           changed_when: false
           failed_when: false
-
-        - name: Display verification results
+        
+        - name: Verify fnox is available
+          command: /root/.nix-profile/bin/fnox --version
+          register: fnox_version
+          changed_when: false
+          failed_when: false
+        
+        - name: Display comprehensive verification results
           debug:
             msg: |
               ✅ Nix installed
-              ✅ Home Manager installed: {{ hm_version.stdout | default('unknown') }}
+              {% if profile_stat.stat.exists %}
+              ✅ .nix-profile exists: {{ profile_target.stdout | default('not a link') }}
+              {% if 'home-manager' in profile_target.stdout %}
+              ✅ .nix-profile correctly linked to home-manager
+              {% else %}
+              ⚠️  .nix-profile points to: {{ profile_target.stdout | default('unknown') }}
+              {% endif %}
+              {% else %}
+              ❌ .nix-profile does not exist
+              {% endif %}
+              ✅ Home Manager: {{ hm_version.stdout | default('not found') }}
+              {% if atuin_version.rc == 0 %}
+              ✅ Atuin: {{ atuin_version.stdout | default('found') }}
+              {% else %}
+              ⚠️  Atuin not found in PATH
+              {% endif %}
               {% if fish_check.rc == 0 %}
               ✅ Fish shell available
               {% else %}
-              ⚠️  Fish shell not found (may need reload)
+              ⚠️  Fish shell not found
+              {% endif %}
+              {% if fnox_version.rc == 0 %}
+              ✅ Fnox: {{ fnox_version.stdout | default('found') }}
+              {% else %}
+              ⚠️  Fnox not found
               {% endif %}
               ✅ Cache-build-server configured: {{ cache_build_server_url }}
       when: hm_installation.stat.exists

@@ -53,11 +53,12 @@ Customize variables in `group_vars/proxmox.yml`:
 The `setup-proxmox-root.yml` playbook performs:
 
 1. ✅ **Install Determinate Nix** - Uses the official installer script
-2. ✅ **Configure cache-build-server** - Adds as substituter for faster builds
+2. ✅ **Configure cache-build-server** - Adds as a substituter for faster builds
 3. ✅ **Clone configuration repo** - Pulls your flake configuration
 4. ✅ **Remove conflicting files** - Cleans up existing shell configs
-5. ✅ **Activate home-manager** - Applies `proxmox-root` configuration
-6. ✅ **Verify installation** - Checks that everything is working
+5. ✅ **Verify and fix profile symlinks** - Ensures `.nix-profile` points to home-manager
+6. ✅ **Activate home-manager** - Applies `proxmox-root` configuration
+7. ✅ **Verify installation** - Checks that everything is working correctly
 
 ## Usage Examples
 
@@ -86,10 +87,66 @@ ansible-playbook -i inventory/proxmox.ini playbooks/setup-proxmox-root.yml -v
 ```
 
 ### Skip specific tasks
+```bash
+ansible-playbook -i inventory/proxmox.ini playbooks/setup-proxmox-root.yml --skip-tags news
+```
+
+## Troubleshooting
+
+### Atuin "command not found" Error
+
+If you see `atuin: command not found` after SSH login:
+
+#### Problem
+The `.nix-profile` symlink points to system profile instead of to home-manager profile:
+```bash
+# Wrong (causes error)
+/root/.nix-profile -> /nix/var/nix/profiles/per-user/root/profile
+
+# Correct
+/root/.nix-profile -> /nix/var/nix/profiles/per-user/root/home-manager
+```
+
+#### Solution 1: Manual Quick Fix
+
+SSH into the host and fix the symlink:
 
 ```bash
-# Skip checking home-manager news
-ansible-playbook -i inventory/proxmox.ini playbooks/setup-proxmox-root.yml --skip-tags news
+ln -sf /nix/var/nix/profiles/per-user/root/home-manager ~/.nix-profile
+exec bash
+```
+
+#### Solution 2: Re-run Home-Manager Activation
+
+```bash
+cd /root/flakes/unified-nix-configuration
+/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+nix run nixpkgs#home-manager -- switch --flake .#proxmox-root
+```
+
+#### Solution 3: Ansible Auto-Fix
+
+The playbook now automatically detects and fixes this issue. Re-run:
+
+```bash
+ansible-playbook -i inventory/proxmox.ini playbooks/setup-proxmox-root.yml
+```
+
+#### Verification
+
+After fixing, verify that the shell works:
+
+```bash
+# Check that profile is correct
+readlink ~/.nix-profile
+# Should output: /nix/var/nix/profiles/per-user/root/home-manager
+
+# Verify atuin is available
+which atuin
+atuin --version
+
+# Check that PATH includes home-manager
+echo $PATH | grep home-manager
 ```
 
 ## Troubleshooting

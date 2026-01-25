@@ -6,8 +6,25 @@ cache_build_server_url: "http://{{ cache_build_server_host }}:{{ cache_build_ser
 
 determinate_nix_version: latest
 
+# Profile paths for verification
+nix_profile_path: /root/.nix-profile
+hm_profile_path: /nix/var/nix/profiles/per-user/root/home-manager
+system_profile_path: /nix/var/nix/profiles/per-user/root/profile
+
+# Tools to verify
+verify_tools:
+  - atuin
+  - fish
+  - fnox
+
 # Files to remove before home-manager activation (conflicts on fresh setup)
 conflicting_files:
   - /root/.profile
   - /root/.bashrc
   - /root/.ssh/config
+
+# Cleanup files to remove
+cleanup_files:
+  - /root/.nix-profile.backup
+  - /root/.bashrc.backup
+  - /root/.profile.backup
