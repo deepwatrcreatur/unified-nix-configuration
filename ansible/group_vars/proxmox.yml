@@ -1,0 +1,13 @@
+---
+# Default variables for proxmox hosts
+cache_build_server_host: cache-build-server
+cache_build_server_port: 5001
+cache_build_server_url: "http://{{ cache_build_server_host }}:{{ cache_build_server_port }}"
+
+determinate_nix_version: latest
+
+# Files to remove before home-manager activation (conflicts on fresh setup)
+conflicting_files:
+  - /root/.profile
+  - /root/.bashrc
+  - /root/.ssh/config

@@ -1,0 +1,18 @@
+# Ansible specific
+*.retry
+ansible.cfg
+inventory/group_vars/
+
+# Temporary files
+.cache/
+tmp/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*~
+.vscode/
+.idea/

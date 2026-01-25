@@ -1,0 +1,159 @@
+---
+# Playbook to setup Nix and home-manager on Proxmox hosts
+- name: Setup Proxmox hosts with Nix and home-manager
+  hosts: proxmox
+  become: yes
+  gather_facts: yes
+  vars_files:
+    - group_vars/proxmox.yml
+
+  handlers:
+    - name: Restart nix-daemon
+      systemd:
+        name: nix-daemon
+        state: restarted
+
+  tasks:
+    - name: Check if Nix is already installed
+      stat:
+        path: /nix
+      register: nix_installation
+      changed_when: false
+
+    - name: Install Determinate Nix
+      shell: |
+        curl -fsSL https://install.determinate.systems/nix | sh -s -- install
+      args:
+        creates: /nix
+      when: not nix_installation.stat.exists
+
+    - name: Source Nix environment for subsequent tasks
+      shell: |
+        . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+        {{ ansible_user_shell }} -c 'nix --version'
+      changed_when: false
+      register: nix_version
+      failed_when: false
+
+    - name: Display Nix version
+      debug:
+        msg: "Nix version: {{ nix_version.stdout }}"
+      when: nix_version.rc == 0
+
+    - name: Check if cache-build-server substituter is configured
+      lineinfile:
+        path: /etc/nix/nix.conf
+        regexp: '^extra-substituters.*cache-build-server'
+        state: absent
+      check_mode: yes
+      register: cache_substituter_check
+      changed_when: false
+
+    - name: Add cache-build-server as substituter
+      blockinfile:
+        path: /etc/nix/nix.conf
+        marker: "# {mark} ANSIBLE MANAGED BLOCK - cache-build-server"
+        block: |
+          extra-substituters = {{ cache_build_server_url }}
+          extra-trusted-substituters = {{ cache_build_server_url }}
+        create: yes
+        mode: '0644'
+      notify: restart nix-daemon
+
+    - name: Ensure git is installed (for cloning config)
+      apt:
+        name:
+          - git
+          - curl
+        state: present
+        update_cache: yes
+
+    - name: Check if config repo exists
+      stat:
+        path: "{{ config_repo_path }}"
+      register: config_repo
+
+    - name: Clone configuration repository
+      git:
+        repo: "{{ config_repo_url }}"
+        dest: "{{ config_repo_path }}"
+        version: "{{ config_repo_branch | default('main') }}"
+        update: yes
+        force: yes
+      retries: 3
+      delay: 5
+
+    - name: Remove conflicting files before home-manager activation
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop: "{{ conflicting_files }}"
+      ignore_errors: yes
+
+    - name: Run home-manager activation
+      shell: |
+        . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+        cd {{ config_repo_path }}
+        nix run nixpkgs#home-manager -- switch --flake .#{{ home_manager_output }}
+      args:
+        executable: /bin/bash
+      register: hm_activation
+      changed_when: "'Starting Home Manager activation' in hm_activation.stdout"
+      failed_when:
+        - hm_activation.rc != 0
+        - "'Starting Home Manager activation' not in hm_activation.stderr"
+        - "'error' in hm_activation.stderr.lower()"
+      ignore_errors: yes
+
+    - name: Check home-manager installation
+      stat:
+        path: /root/.local/state/home-manager
+      register: hm_installation
+
+    - name: Display home-manager activation status
+      debug:
+        msg: |
+          Home Manager activation {{ 'completed' if hm_activation.rc == 0 else 'failed' }}
+          Status: {{ hm_activation.rc }}
+          {% if hm_activation.stderr is defined %}
+          Stderr: {{ hm_activation.stderr[-500:] }}
+          {% endif %}
+      when: hm_activation is defined
+
+    - name: Read home-manager news (optional)
+      command: /root/.nix-profile/bin/home-manager news
+      register: hm_news
+      changed_when: false
+      failed_when: false
+      when: hm_installation.stat.exists
+
+    - name: Display unread home-manager news count
+      debug:
+        msg: "{{ hm_news.stdout_lines | select('search', 'news items') | list }}"
+      when: hm_news.stdout is defined
+
+    - name: Verify installation
+      block:
+        - name: Check home-manager version
+          command: /root/.nix-profile/bin/home-manager --version
+          register: hm_version
+          changed_when: false
+
+        - name: Check fish shell is available
+          command: which fish
+          register: fish_check
+          changed_when: false
+          failed_when: false
+
+        - name: Display verification results
+          debug:
+            msg: |
+              ✅ Nix installed
+              ✅ Home Manager installed: {{ hm_version.stdout | default('unknown') }}
+              {% if fish_check.rc == 0 %}
+              ✅ Fish shell available
+              {% else %}
+              ⚠️  Fish shell not found (may need reload)
+              {% endif %}
+              ✅ Cache-build-server configured: {{ cache_build_server_url }}
+      when: hm_installation.stat.exists
