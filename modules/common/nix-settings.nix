@@ -77,7 +77,7 @@ in
     # Substituters - exclude local cache on the cache server itself to avoid circular dependency
     substituters =
       lib.optionals (!isCacheServer) [
-        "http://cache-build-server:5001/cache-local"
+        "http://attic-cache:5001/cache-local"
       ]
       ++ [
         "https://cache.nixos.org/"
@@ -100,7 +100,7 @@ in
     # Access tokens - only on non-cache-server hosts
     access-tokens =
       lib.optionals (!isCacheServer) [
-        "cache-build-server:5001 = /run/nix/attic-token-bearer"
+        "attic-cache:5001 = /run/nix/attic-token-bearer"
       ]
       # Only try to read GitHub token if it's a SOPS secret (avoid file system access during evaluation)
       ++

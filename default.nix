@@ -174,15 +174,15 @@
     # SOPS-encrypted token providing `ATTIC_CLIENT_JWT_TOKEN`
     tokenFile = ../../../secrets/attic-client-token.yaml.enc;
 
-    server = "http://cache-build-server:5001";
+    server = "http://attic-cache:5001";
     cache = "cache-local";
   };
 
   services.attic-post-build-hook = {
     enable = true;
 
-    serverName = "cache-build-server";
-    serverEndpoint = "http://cache-build-server:5001";
+    serverName = "attic-cache";
+    serverEndpoint = "http://attic-cache:5001";
     cacheName = "cache-local";
 
     tokenFile = "/run/secrets/attic-client-token";

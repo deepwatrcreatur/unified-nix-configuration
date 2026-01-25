@@ -19,7 +19,7 @@ in
     substituters = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [
-        "http://cache-build-server:5001/cache-local"
+        "http://attic-cache:5001/cache-local"
         "https://cache.nixos.org"
       ];
       description = "List of binary cache substituters";
@@ -51,7 +51,7 @@ in
 
     netrcMachine = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
-      default = "cache-build-server";
+      default = "attic-cache";
       description = "Machine name for netrc authentication (null to disable)";
     };
 

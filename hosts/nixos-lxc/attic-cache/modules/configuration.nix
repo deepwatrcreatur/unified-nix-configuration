@@ -21,7 +21,7 @@
   # Enable OpenSSH (also satisfies sops-nix requirement)
   services.openssh.enable = true;
 
-  networking.hostName = "cache-build-server";
+  networking.hostName = "attic-cache";
 
   security.sudo.enable = true;
   security.sudo.wheelNeedsPassword = false;

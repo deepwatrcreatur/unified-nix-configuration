@@ -97,7 +97,7 @@
     settings = {
       listen = "[::]:5001";
       # allowed-hosts = [ "localhost" "127.0.0.1" "*.deepwatercreature.com" "10.10.*" ];  # Disabled to allow all hosts
-      api-endpoint = "http://cache-build-server:5001/";
+      api-endpoint = "http://attic-cache:5001/";
 
       # Database
       database.url = "sqlite:///var/lib/atticd/server.db?mode=rwc";
@@ -122,7 +122,7 @@
 
   # Override atticd service to ensure correct api-endpoint
   systemd.services.atticd.serviceConfig.Environment = [
-    "ATTIC_SERVER_API_ENDPOINT=http://cache-build-server:5001/"
+    "ATTIC_SERVER_API_ENDPOINT=http://attic-cache:5001/"
   ];
 
   # Initialize Attic cache and configure upstream
@@ -171,7 +171,7 @@
 
       # Login using the SOPS-managed token
       echo "Attempting to login to Attic server..."
-      if ${pkgs.attic-client}/bin/attic login local http://cache-build-server:5001 "$ATTIC_TOKEN" --set-default; then
+      if ${pkgs.attic-client}/bin/attic login local http://attic-cache:5001 "$ATTIC_TOKEN" --set-default; then
         echo "Successfully logged into Attic server"
 
         # Create cache if it doesn't exist
@@ -362,7 +362,7 @@
   ];
 
   environment.etc."attic/config.toml" = {
-    text = '''';
+    text = "";
     user = "atticd";
     group = "atticd";
     mode = "0644";

@@ -19,7 +19,7 @@ in
 
     server = mkOption {
       type = types.str;
-      default = "http://cache-build-server:5001";
+      default = "http://attic-cache:5001";
       description = "The URL of the Attic cache server.";
     };
 

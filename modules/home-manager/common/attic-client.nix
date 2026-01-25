@@ -54,10 +54,10 @@ in
       );
       default = {
         attic-cache = {
-          endpoint = "http://cache-build-server:5001";
+          endpoint = "http://attic-cache:5001";
         };
         attic-cache-local = {
-          endpoint = "http://cache-build-server:5001";
+          endpoint = "http://attic-cache:5001";
         };
       };
       description = "Default Attic servers (can be overridden)";

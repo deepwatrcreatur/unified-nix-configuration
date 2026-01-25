@@ -1,9 +1,9 @@
-# outputs/cache-build-server.nix - NixOS Build Server LXC Container with Attic Cache
+# outputs/attic-cache.nix - NixOS Build Server LXC Container with Attic Cache
 { helpers, ... }:
 (helpers.mkNixosOutput {
-  name = "cache-build-server";
+  name = "attic-cache";
   system = "x86_64-linux";
-  hostPath = ../hosts/nixos-lxc/cache-build-server;
+  hostPath = ../hosts/nixos-lxc/attic-cache;
   isDesktop = false;
   extraModules = [
     ../hosts/nixos-lxc/lxc-systemd-suppressions.nix

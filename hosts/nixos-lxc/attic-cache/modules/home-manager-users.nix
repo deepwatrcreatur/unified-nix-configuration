@@ -18,7 +18,7 @@
     users.root = {
       imports = [
         ../../../../users/root
-        ../../../../users/root/hosts/cache-build-server
+        ../../../../users/root/hosts/attic-cache
         ../../../../modules/home-manager/git.nix
         ../../../../modules/home-manager/gpg-cli.nix
       ];
