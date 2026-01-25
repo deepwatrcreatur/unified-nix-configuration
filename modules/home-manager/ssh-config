@@ -37,6 +37,10 @@ Host nixoslxc
     Hostname 10.10.11.40
     user deepwatrcreatur
 
+Host ansible
+    Hostname 10.10.11.67
+    user root
+    
 Host rustdesk
     Hostname 10.10.11.68
     user root
