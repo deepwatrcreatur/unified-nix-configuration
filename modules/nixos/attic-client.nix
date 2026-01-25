@@ -60,70 +60,70 @@ in
       environment.etc."nix/attic-upload.sh" = {
         mode = "0755";
         text = ''
-          #!${pkgs.bash}/bin/bash
-          # DO NOT use 'set -e' - we want to continue even if push fails
-          set -uo pipefail
+                    #!${pkgs.bash}/bin/bash
+                    # DO NOT use 'set -e' - we want to continue even if push fails
+                    set -uo pipefail
 
-          if [ -z "$OUT_PATHS" ]; then
-            exit 0
-          fi
+                    if [ -z "$OUT_PATHS" ]; then
+                      exit 0
+                    fi
 
-          token_file="${tokenFilePath}"
+                    token_file="${tokenFilePath}"
 
-          if [ ! -f "$token_file" ]; then
-            echo "Attic: Token not available, skipping push" >&2
-            exit 0
-          fi
+                    if [ ! -f "$token_file" ]; then
+                      echo "Attic: Token not available, skipping push" >&2
+                      exit 0
+                    fi
 
-          if [ ! -r "$token_file" ]; then
-            echo "Attic: Token file not readable, skipping push" >&2
-            exit 0
-          fi
+                    if [ ! -r "$token_file" ]; then
+                      echo "Attic: Token file not readable, skipping push" >&2
+                      exit 0
+                    fi
 
-          token=$(cat "$token_file")
+                    token=$(cat "$token_file")
 
-          # Create a temporary config for attic.
-          # `attic` does not support a `--config` flag; it reads from XDG_CONFIG_HOME.
-          temp_dir=$(mktemp -d)
+                    # Create a temporary config for attic.
+                    # `attic` does not support a `--config` flag; it reads from XDG_CONFIG_HOME.
+                    temp_dir=$(mktemp -d)
 
-          # Ensure cleanup happens on exit
-          trap 'rm -rf "$temp_dir"' EXIT
+                    # Ensure cleanup happens on exit
+                    trap 'rm -rf "$temp_dir"' EXIT
 
-          mkdir -p "$temp_dir/attic"
-          cat > "$temp_dir/attic/config.toml" <<EOF
+                    mkdir -p "$temp_dir/attic"
+                    cat > "$temp_dir/attic/config.toml" <<EOF
           [servers.attic-cache]
           endpoint = "${cfg.server}"
           token = "$token"
           EOF
 
-          export XDG_CONFIG_HOME="$temp_dir"
+                    export XDG_CONFIG_HOME="$temp_dir"
 
-          # Wrap everything in a try-catch to never fail the build
-          {
-            echo "Attic: Attempting to push to cache '${cfg.cache}'..." >&2
-            echo "Attic: Server endpoint: ${cfg.server}" >&2
-            echo "Attic: Cache name: ${cfg.cache}" >&2
-            echo "Attic: Token file exists: $(test -f "$token_file" && echo 'yes' || echo 'no')" >&2
-            echo "Attic: Token length: $(echo -n "$token" | wc -c) characters" >&2
+                    # Wrap everything in a try-catch to never fail the build
+                    {
+                      echo "Attic: Attempting to push to cache '${cfg.cache}'..." >&2
+                      echo "Attic: Server endpoint: ${cfg.server}" >&2
+                      echo "Attic: Cache name: ${cfg.cache}" >&2
+                      echo "Attic: Token file exists: $(test -f "$token_file" && echo 'yes' || echo 'no')" >&2
+                      echo "Attic: Token length: $(echo -n "$token" | wc -c) characters" >&2
 
-            if ${pkgs.attic-client}/bin/attic push attic-cache:${cfg.cache} $OUT_PATHS; then
-              echo "Attic: Successfully pushed paths" >&2
-            else
-              echo "Attic: Push failed - checking server connectivity..." >&2
-              # Test server connectivity
-              if ${pkgs.curl}/bin/curl -s -f --max-time 10 "${cfg.server}/_attic/v1/cache/${cfg.cache}/info" -H "Authorization: Bearer $token" >/dev/null 2>&1; then
-                echo "Attic: Server reachable, likely permission issue" >&2
-              else
-                echo "Attic: Server unreachable or auth failed - check network/server status" >&2
-              fi
-              echo "Attic: Continuing build despite push failure" >&2
-            fi
-          } || {
-            echo "Attic: Upload hook failed unexpectedly, but build continues" >&2
-          }
+                      if ${pkgs.attic-client}/bin/attic push attic-cache:${cfg.cache} $OUT_PATHS; then
+                        echo "Attic: Successfully pushed paths" >&2
+                      else
+                        echo "Attic: Push failed - checking server connectivity..." >&2
+                        # Test server connectivity
+                        if ${pkgs.curl}/bin/curl -s -f --max-time 10 "${cfg.server}/_attic/v1/cache/${cfg.cache}/info" -H "Authorization: Bearer $token" >/dev/null 2>&1; then
+                          echo "Attic: Server reachable, likely permission issue" >&2
+                        else
+                          echo "Attic: Server unreachable or auth failed - check network/server status" >&2
+                        fi
+                        echo "Attic: Continuing build despite push failure" >&2
+                      fi
+                    } || {
+                      echo "Attic: Upload hook failed unexpectedly, but build continues" >&2
+                    }
 
-          # Always exit successfully so builds never fail
-          exit 0
+                    # Always exit successfully so builds never fail
+                    exit 0
         '';
       };
 
