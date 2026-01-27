@@ -73,18 +73,11 @@
       };
 
       username = {
-        disabled = false;
-        show_always = true;
-        format = "[$user]($style)";
-        style_user = "fg:color_bright_orange";
-        style_root = "fg:color_red";
+        disabled = true;
       };
 
 hostname = {
-        disabled = false;
-        ssh_only = false;
-        format = "[$hostname]($style) ";
-        style = "fg:color_bright_green";
+        disabled = true;
       };
 
       git_branch = {
