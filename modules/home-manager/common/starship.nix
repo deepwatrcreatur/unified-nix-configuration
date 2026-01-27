@@ -75,7 +75,7 @@
       username = {
         disabled = false;
         show_always = true;
-        format = "[$user@]($style)";
+        format = "[$user]($style)";
         style_user = "fg:color_bright_orange";
         style_root = "fg:color_red";
       };
