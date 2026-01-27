@@ -12,7 +12,13 @@
     ./proxmox-shell-extra.nix
     ../../../../modules/home-manager/git.nix
     ../../../../modules/home-manager/gpg-cli.nix
-    ../../../../modules/home-manager
+    # Selectively import only essential modules to avoid activation issues
+    ../../../../modules/home-manager/secrets-activation.nix
+    ../../../../modules/home-manager/nix-user-config.nix
+    ../../../../modules/home-manager/attic-client.nix
+    ../../../../modules/home-manager/common/fish.nix
+    ../../../../modules/home-manager/common/starship.nix
+    # Avoid importing tool-aliases and bat modules that break activation
   ];
 
   home.username = "root";
