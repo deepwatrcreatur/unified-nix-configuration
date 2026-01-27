@@ -23,6 +23,8 @@
     inputs.nix-whitesur-config.homeManagerModules.default
   ];
 
+  
+
   home.homeDirectory = "/home/deepwatrcreatur";
 
   # WhiteSur theming for GTK applications
@@ -51,6 +53,7 @@
     rustdesk
     virt-viewer
     xorg.xhost # X11 host access control for DeskFlow
+    wasistlos # WhatsApp desktop client (was previously whatsapp-for-linux)
   ];
 
   programs.firefox = {
