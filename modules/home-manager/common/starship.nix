@@ -27,7 +27,7 @@
         "$username$hostname$os$nix$env_var$rust$nodejs$python$golang$git_branch$git_status$fill$cmd_duration$status\n$character";
 
       # Palettes
-      palette = "kanagawa";
+      palette = "gruvbox_dark";
       palettes = {
         gruvbox_dark = {
           color_fg0 = "#ebdbb2";
@@ -39,6 +39,10 @@
           color_purple = "#b16286";
           color_aqua = "#689d6a";
           color_gray = "#a89984";
+          # Enhanced vibrant colors for better visibility on black background
+          color_bright_orange = "#fe8019";  # For username
+          color_bright_yellow = "#fabd2f";  # For @ symbol
+          color_bright_green = "#b8bb26";   # For hostname
         };
 
         # Kanagawa-inspired colors (dark background, readable accents)
@@ -71,22 +75,22 @@
       username = {
         disabled = false;
         show_always = true;
-        format = "[$user]($style)[@](fg:color_purple)";
-        style_user = "fg:color_yellow";
+        format = "[$user]($style)[@](fg:color_bright_yellow)";
+        style_user = "fg:color_bright_orange";
         style_root = "fg:color_red";
       };
 
-      hostname = {
+hostname = {
         disabled = false;
         ssh_only = false;
         format = "[$hostname]($style) ";
-        style = "fg:color_green";
+        style = "fg:color_bright_green";
       };
 
       git_branch = {
         disabled = false;
         symbol = " ";
-        style = "fg:color_purple";
+        style = "fg:color_bright_yellow";
         format = "[$symbol$branch]($style)";
       };
 
@@ -106,7 +110,7 @@
         disabled = false;
         min_time = 0;
         show_milliseconds = true;
-        style = "fg:color_aqua";
+        style = "fg:color_bright_yellow";
         format = "[took $duration]($style)";
       };
 
@@ -164,15 +168,15 @@
 
       # Virtual environments - detects VIRTUAL_ENV when in Python venv
       env_var.VIRTUAL_ENV = {
-        symbol = "🐍 ";
-        style = "fg:color_yellow";
-        format = "[$symbol($env_value)]($style)";
+symbol = "🐍 ";
+         style = "fg:color_bright_yellow";
+         format = "[$symbol($env_value)]($style)";
       };
 
       character = {
         success_symbol = "[❯](bold color_green)";
         error_symbol = "[❯](bold color_red)";
-        vicmd_symbol = "[❮](bold color_yellow)";
+        vicmd_symbol = "[❮](bold fg:color_bright_yellow)";
       };
     };
   };
