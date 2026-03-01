@@ -19,7 +19,6 @@
   };
 
   home.shellAliases = {
-    cat = "bat";
     less = "bat --plain";
   };
 }

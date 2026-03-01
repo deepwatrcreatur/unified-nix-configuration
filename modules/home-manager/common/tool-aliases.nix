@@ -11,7 +11,6 @@ let
   toolAliases = {
     # Bat (cat replacement)
     bp = "bat --paging=never --plain";
-    cat = "bat";
     less = "bat --plain";
 
     # Just (command runner)

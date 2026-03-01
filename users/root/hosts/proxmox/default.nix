@@ -20,7 +20,8 @@
     ../../../../modules/home-manager/common/starship.nix
     ../../../../modules/home-manager/common/atuin.nix
     ../../../../modules/home-manager/common/fnox.nix
-    # Avoid importing tool-aliases and bat modules that break activation
+    ../../../../modules/home-manager/common/bat.nix
+    ../../../../modules/home-manager/common/tool-aliases.nix
   ];
 
   home.username = "root";
