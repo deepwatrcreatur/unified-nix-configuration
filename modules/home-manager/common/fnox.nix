@@ -61,37 +61,35 @@
   # This keeps wrappers working without injecting secrets into every shell.
   home.activation.fnoxSeedFromSops = lib.mkIf (pkgs ? fnox) (
     lib.hm.dag.entryAfter [ "sops-nix" ] ''
-        if ! command -v fnox >/dev/null 2>&1; then
-          return 0
+        if command -v fnox >/dev/null 2>&1; then
+          export FNOX_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
+          export FNOX_CONFIG="$HOME/.config/fnox/config.toml"
+
+          seed_secret() {
+            name="$1"
+            file="$2"
+
+            if [ -z "$file" ] || [ ! -f "$file" ]; then
+              return 0
+            fi
+
+            if fnox -c "$FNOX_CONFIG" get "$name" >/dev/null 2>&1; then
+              return 0
+            fi
+
+            value="$(cat "$file" 2>/dev/null || true)"
+            if [ -z "$value" ]; then
+              return 0
+            fi
+
+            fnox -c "$FNOX_CONFIG" set "$name" "$value" >/dev/null 2>&1 || true
+          }
+
+          seed_secret GITHUB_TOKEN "${config.sops.secrets."github-token".path or ""}"
+          seed_secret GROK_API_KEY "${config.sops.secrets."grok-api-key".path or ""}"
+          seed_secret Z_AI_API_KEY "${config.sops.secrets."z-ai-api-key".path or ""}"
+          seed_secret OPENCODE_ZEN_API_KEY "${config.sops.secrets."opencode-zen-api-key".path or ""}"
         fi
-
-        export FNOX_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
-        export FNOX_CONFIG="$HOME/.config/fnox/config.toml"
-
-        seed_secret() {
-          name="$1"
-          file="$2"
-
-          if [ -z "$file" ] || [ ! -f "$file" ]; then
-            return 0
-          fi
-
-          if fnox -c "$FNOX_CONFIG" get "$name" >/dev/null 2>&1; then
-            return 0
-          fi
-
-          value="$(cat "$file" 2>/dev/null || true)"
-          if [ -z "$value" ]; then
-            return 0
-          fi
-
-          fnox -c "$FNOX_CONFIG" set "$name" "$value" >/dev/null 2>&1 || true
-        }
-
-      seed_secret GITHUB_TOKEN "${config.sops.secrets."github-token".path or ""}"
-      seed_secret GROK_API_KEY "${config.sops.secrets."grok-api-key".path or ""}"
-      seed_secret Z_AI_API_KEY "${config.sops.secrets."z-ai-api-key".path or ""}"
-      seed_secret OPENCODE_ZEN_API_KEY "${config.sops.secrets."opencode-zen-api-key".path or ""}"
 
     ''
   );
