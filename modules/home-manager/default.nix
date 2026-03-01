@@ -8,11 +8,16 @@
 }:
 let
   # Auto-import all .nix files and directories from common directory
+  # Exclude tool-aliases and bat modules to prevent activation failures
   commonDir = ./common;
   commonImports = lib.mapAttrsToList (name: _: commonDir + "/${name}") (
-    lib.filterAttrs (
-      name: type: (type == "regular" && lib.hasSuffix ".nix" name) || type == "directory"
-    ) (builtins.readDir commonDir)
+    lib.filterAttrs
+      (name: type: (type == "regular" && lib.hasSuffix ".nix" name) || type == "directory")
+      (
+        lib.filterAttrs (name: _: name != "tool-aliases.nix" && name != "bat.nix") (
+          builtins.readDir commonDir
+        )
+      )
   );
 
   hasZellijVividRounded = inputs ? zellij-vivid-rounded;
