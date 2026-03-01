@@ -62,7 +62,7 @@
   home.activation.fnoxSeedFromSops = lib.mkIf (pkgs ? fnox) (
     lib.hm.dag.entryAfter [ "sops-nix" ] ''
         if ! command -v fnox >/dev/null 2>&1; then
-          exit 0
+          return 0
         fi
 
         export FNOX_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
