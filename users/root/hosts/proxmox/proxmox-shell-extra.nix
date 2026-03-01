@@ -12,9 +12,9 @@
       . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
     fi
 
-    # Source home-manager activation script to ensure PATH is set correctly
-    if [ -e /nix/var/nix/profiles/per-user/root/home-manager/activate ]; then
-      . /nix/var/nix/profiles/per-user/root/home-manager/activate
+    # Source home-manager session variables to ensure PATH is set correctly
+    if [ -e /root/.nix-profile/etc/profile.d/hm-session-vars.sh ]; then
+      . /root/.nix-profile/etc/profile.d/hm-session-vars.sh
     fi
   '';
 
