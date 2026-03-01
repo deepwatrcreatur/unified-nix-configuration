@@ -137,33 +137,6 @@
         - "'error' in hm_activation.stderr.lower()"
       ignore_errors: yes
 
-    - name: Verify and fix .nix-profile symlink
-      block:
-        - name: Check current .nix-profile target
-          stat:
-            path: "{{ nix_profile_path }}"
-          register: current_profile
-          failed_when: false
-        
-        - name: Read .nix-profile link target
-          shell: |
-            readlink {{ nix_profile_path }} 2>/dev/null || echo "NO_LINK"
-          register: profile_link_target
-          changed_when: false
-          failed_when: false
-        
-        - name: Check if profile points to home-manager
-          debug:
-            msg: "Current profile target: {{ profile_link_target.stdout }}"
-        
-        - name: Fix .nix-profile if pointing to system profile
-          file:
-            path: "{{ nix_profile_path }}"
-            src: "{{ hm_profile_path }}"
-            state: link
-            force: yes
-          when:
-            - current_profile.stat.exists
             - "'profile' in profile_link_target.stdout"
             - "'home-manager' not in profile_link_target.stdout"
           notify: Reload shell profile
