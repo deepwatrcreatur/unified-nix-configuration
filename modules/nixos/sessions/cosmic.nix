@@ -18,7 +18,7 @@ let
     # Wait up to ~10s for a connected DRM output.
     for _ in $(seq 1 50); do
       if ls /sys/class/drm/card*-*/status >/dev/null 2>&1 \
-        && rg -q "^connected$" /sys/class/drm/card*-*/status 2>/dev/null; then
+        && grep -q "^connected$" /sys/class/drm/card*-*/status 2>/dev/null; then
         break
       fi
       sleep 0.2
@@ -45,8 +45,7 @@ let
     GTK_CMD=${lib.escapeShellArg (toString cosmicSessionCommand)}
 
     # If the graphical greeter can't start, fall back quickly.
-    if ${pkgs.coreutils}/bin/timeout 8s \
-      ${pkgs.cage}/bin/cage -s -- \
+    if ${pkgs.cage}/bin/cage -s -- \
       ${pkgs.gtkgreet}/bin/gtkgreet -c "$GTK_CMD"; then
       exit 0
     fi
