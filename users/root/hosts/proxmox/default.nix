@@ -18,6 +18,8 @@
     ../../../../modules/home-manager/common/attic-client.nix
     ../../../../modules/home-manager/common/fish.nix
     ../../../../modules/home-manager/common/starship.nix
+    ../../../../modules/home-manager/common/atuin.nix
+    ../../../../modules/home-manager/common/fnox.nix
     # Avoid importing tool-aliases and bat modules that break activation
   ];
 
