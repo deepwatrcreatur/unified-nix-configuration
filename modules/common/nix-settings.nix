@@ -118,14 +118,4 @@ in
   # Container-specific settings
   nix.settings.sandbox = lib.mkIf isContainer false;
   nix.settings.use-cgroups = lib.mkIf (!isContainer) true;
-
-  # Add opencode wrapper from the pinned nixpkgs-unstable input.
-  # This avoids repeated downloads while still tracking “latest” via `nix flake update`.
-  environment.systemPackages = with pkgs; [
-    (pkgs.writeShellScriptBin "opencode" ''
-      # Use `nix` from PATH so the wrapper doesn't break
-      # when the `nixos-rebuild` store path gets replaced/GC'd.
-      exec nix run "${inputs.nixpkgs-unstable}#opencode" "$@"
-    '')
-  ];
 }

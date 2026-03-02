@@ -18,8 +18,10 @@
     "uhci_hcd"
     "ehci_pci"
     "ahci"
+    "xhci_pci"
     "virtio_pci"
     "virtio_scsi"
+    "usbhid"
     "sd_mod"
     "sr_mod"
   ];
@@ -28,12 +30,19 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" = {
-    device = "/dev/disk/by-uuid/127d3393-a51a-4d45-82b6-e8f60ad7377c";
+    device = "/dev/disk/by-uuid/595d5f2a-6752-4f50-b9ba-1ee7ae40133e";
     fsType = "btrfs";
+    options = [ "subvol=@" ];
+  };
+
+  fileSystems."/home" = {
+    device = "/dev/disk/by-uuid/595d5f2a-6752-4f50-b9ba-1ee7ae40133e";
+    fsType = "btrfs";
+    options = [ "subvol=@home" ];
   };
 
   fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/56FA-387E";
+    device = "/dev/disk/by-uuid/CBF1-7C80";
     fsType = "vfat";
     options = [
       "fmask=0077"

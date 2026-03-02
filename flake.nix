@@ -116,21 +116,21 @@
 
       # Extract the opencode override overlay so we can exclude it from the
       # nested unstable import (prevents infinite recursion).
-      #      opencodeFromUnstableOverlay =
-      #        final: prev:
-      #        let
-      #          overlaysForUnstable = nixpkgsLib.filter (o: o != opencodeFromUnstableOverlay) commonOverlays;
-      #          unstable = import inputs.nixpkgs-unstable {
-      #            system = prev.stdenv.hostPlatform.system;
-      #            config = commonNixpkgsConfig;
-      #            overlays = overlaysForUnstable;
-      #          };
-      #        in
-      #        {
-      #          opencode = unstable.opencode or prev.opencode;
-      #        };
+      opencodeFromUnstableOverlay =
+        final: prev:
+        let
+          unstable = import inputs.nixpkgs-unstable {
+            system = prev.stdenv.hostPlatform.system;
+            config = commonNixpkgsConfig;
+          };
+        in
+        {
+          opencode = unstable.opencode or prev.opencode;
+        };
 
       commonOverlays = [
+        # Prefer opencode from nixpkgs-unstable
+        opencodeFromUnstableOverlay
         # Overlay to selectively use stable packages when unstable ones cause issues
         (
           final: prev:
@@ -180,10 +180,6 @@
             cosmic-session
             ;
         })
-
-        # Prefer opencode from nixpkgs-unstable
-        # DISABLED: opencode is now provided as binary wrapper in nix-settings.nix
-        # opencodeFromUnstableOverlay
 
         # Worktrunk (git worktree management for parallel agents)
         (final: prev: {

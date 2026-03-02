@@ -18,7 +18,18 @@ in
     home.file.".config/distrobox/fedora.conf" = {
       text = ''
         [distrobox]
-        additional_paths = /etc/profiles/per-user/\$USER/bin
+        # Make Home Manager symlinked dotfiles work inside the container
+        additional_flags="--volume /nix:/nix:ro"
+
+        # Expose the stable NixOS per-user profile symlink (HM packages live here)
+        additional_flags="--volume /etc/profiles/per-user:/etc/profiles/per-user:ro"
+        additional_flags="--volume /etc/static/profiles/per-user:/etc/static/profiles/per-user:ro"
+
+        # Fallback PATH entries: keep Fedora/RPM tools first, but don't break your
+        # muscle-memory commands if they're only available via Nix.
+        additional_paths="/etc/profiles/per-user/\$USER/bin"
+        additional_paths="/nix/var/nix/profiles/system/sw/bin"
+        additional_paths="/nix/var/nix/profiles/default/bin"
       '';
     };
 

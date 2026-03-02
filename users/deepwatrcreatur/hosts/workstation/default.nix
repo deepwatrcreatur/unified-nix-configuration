@@ -16,6 +16,7 @@
     ../../../../modules/home-manager/gpg-agent-cross-de.nix
     ../../../../modules/home-manager/zed.nix
     ../../../../modules/home-manager/cosmic-settings.nix
+    ../../../../modules/home-manager/linuxbrew.nix
   ];
 
   # Enable zellij with vivid colors, rounded tabs, and Ctrl-Alt keybindings
@@ -47,13 +48,13 @@
     ffmpeg
     gitkraken
     deskflow
-    libsecret
     megacmd
-    nomachine-client
     obsidian
     obsidian-export
     rustdesk
     virt-viewer
+    xorg.xhost # X11 host access control for DeskFlow
+    wasistlos # WhatsApp desktop client (was previously whatsapp-for-linux)
   ];
 
   programs.firefox = {
@@ -64,55 +65,61 @@
     enable = true;
   };
 
+  # Allow dconf activation so COSMIC/GNOME settings (theme/wallpaper) apply.
+  # If you see activation-time dconf errors again, we can gate this behind a
+  # `graphical-session.target` user service instead.
+
   home.file.".config/deskflow/deskflow.conf".text = ''
     clipboardSharing = true
   '';
 
-  # X11 display setup for DeskFlow (disabled)
-  # systemd.user.services.xhost-deskflow = {
-  #   Unit = {
-  #     Description = "X11 host access for DeskFlow";
-  #     After = [ "graphical-session.target" ];
-  #     PartOf = [ "graphical-session.target" ];
-  #   };
-  #   Service = {
-  #     Type = "oneshot";
-  #     ExecStart = "${pkgs.xorg.xhost}/bin/xhost +local:";
-  #     RemainAfterExit = true;
-  #   };
-  #   Install = {
-  #     WantedBy = [ "graphical-session.target" ];
-  #   };
-  # };
+  # X11 display setup for DeskFlow
+  systemd.user.services.xhost-deskflow = {
+    Unit = {
+      Description = "X11 host access for DeskFlow";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.xorg.xhost}/bin/xhost +local:";
+      RemainAfterExit = true;
+    };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
+  };
 
-  # Deskflow server service (disabled to prevent autostart)
+  # Deskflow server service (disabled in favor of RustDesk)
   # Start manually with: systemctl --user start deskflow
-  # systemd.user.services.deskflow = {
-  #   Unit = {
-  #     Description = "Deskflow Server";
-  #     After = [
-  #       "graphical-session.target"
-  #       "xhost-deskflow.service"
-  #     ];
-  #     Wants = [
-  #       "graphical-session.target"
-  #       "xhost-deskflow.service"
-  #     ];
-  #   };
-  #   Service = {
-  #     Type = "simple";
-  #     ExecStart = ''
-  #       ${pkgs.deskflow}/bin/deskflow server --config ${config.home.homeDirectory}/.config/deskflow/deskflow.conf
-  #     '';
-  #     Restart = "on-failure";
-  #     RestartSec = "5";
-  #     Environment = [
-  #       "DISPLAY=:0"
-  #       "XAUTHORITY=${config.xdg.cacheHome}/.Xauthority"
-  #     ];
-  #   };
-  #   Install = {};
-  # };
+  systemd.user.services.deskflow = {
+    Unit = {
+      Description = "Deskflow Server";
+      After = [
+        "graphical-session.target"
+        "xhost-deskflow.service"
+      ];
+      Wants = [
+        "graphical-session.target"
+        "xhost-deskflow.service"
+      ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = ''
+        ${pkgs.deskflow}/bin/deskflow server --config ${config.home.homeDirectory}/.config/deskflow/deskflow.conf
+      '';
+      Restart = "on-failure";
+      RestartSec = "5";
+      Environment = [
+        "DISPLAY=:0"
+        "XAUTHORITY=${config.xdg.cacheHome}/.Xauthority"
+      ];
+    };
+    Install = {
+      # Disabled: WantedBy = [ "graphical-session.target" ];
+    };
+  };
 
   home.stateVersion = "24.11";
 }

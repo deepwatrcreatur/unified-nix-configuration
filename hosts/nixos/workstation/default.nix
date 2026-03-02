@@ -22,16 +22,46 @@
     # KDE Plasma (testing): Powerful, app badges in system tray, Super+Space launcher, Desktop Grid
     #../../../modules/nixos/sessions/whitesur-themed-kde.nix
 
+    ../../../modules/nixos/hp-print-scan.nix # HP printer/scanner support
+    ../../../modules/nixos/printers/phoenix-hp-m477.nix # HP M477 printer queue
     ../../../modules/nixos/keyboard-glitches.nix # Fix for stuck keyboard presses in Proxmox VM
+    ../../../modules/nixos/snapper.nix # Btrfs snapshots via Snapper
     ../../../modules/wezterm-config.nix
     ../../../modules/activation-scripts # Activation scripts for system setup
+    ../../../modules/nixos/attic-post-build-hook.nix
   ];
 
   # Homebrew is managed via home-manager (modules/home-manager/linuxbrew.nix)
+  # Create /home/linuxbrew with correct ownership for install.sh
+  custom.activation-scripts.linux.linuxbrew-system.enable = true;
+
   # Symlink nice to /usr/bin for Homebrew's Ruby (needed by some formulae like bd)
   system.activationScripts.homebrewCompat = ''
     mkdir -p /usr/bin
     ln -sf ${pkgs.coreutils}/bin/nice /usr/bin/nice
+
+    # Homebrew's installer uses absolute /bin/* and /usr/bin/* paths.
+    mkdir -p /bin /usr/bin
+    ln -sf ${pkgs.coreutils}/bin/mkdir /bin/mkdir
+    ln -sf ${pkgs.coreutils}/bin/chmod /bin/chmod
+    ln -sf ${pkgs.coreutils}/bin/chown /bin/chown
+    ln -sf ${pkgs.coreutils}/bin/chgrp /bin/chgrp
+    ln -sf ${pkgs.coreutils}/bin/touch /bin/touch
+    ln -sf ${pkgs.coreutils}/bin/readlink /bin/readlink
+    ln -sf ${pkgs.coreutils}/bin/cat /bin/cat
+    ln -sf ${pkgs.coreutils}/bin/sort /bin/sort
+    ln -sf ${pkgs.coreutils}/bin/mv /bin/mv
+    ln -sf ${pkgs.coreutils}/bin/rm /bin/rm
+    ln -sf ${pkgs.coreutils}/bin/sha256sum /bin/sha256sum
+    ln -sf ${pkgs.gnutar}/bin/tar /bin/tar
+    ln -sf ${pkgs.gzip}/bin/gzip /bin/gzip
+    ln -sf ${pkgs.gnugrep}/bin/grep /bin/grep
+    ln -sf ${pkgs.util-linux}/bin/flock /usr/bin/flock
+    ln -sf ${pkgs.bash}/bin/bash /bin/bash
+    ln -sf ${pkgs.coreutils}/bin/stat /usr/bin/stat
+    ln -sf ${pkgs.coreutils}/bin/cut /usr/bin/cut
+    ln -sf ${pkgs.coreutils}/bin/sha256sum /usr/bin/sha256sum
+    ln -sf ${pkgs.glibc.bin}/bin/ldd /usr/bin/ldd
   '';
 
   # Linux-specific wezterm configuration
@@ -69,7 +99,7 @@
     videoDrivers = [ "amdgpu" ];
     xkb.options = "caps:none"; # Let input-leap handle caps lock synchronization
   };
-  hardware.opengl.enable = true;
+  hardware.graphics.enable = true;
 
   security.rtkit.enable = true;
   services.pipewire = {
@@ -119,10 +149,15 @@
   # Additional system packages (utility-packages provides: git, vim, curl, wget, rsync, nmap, openssl, etc.)
   environment.systemPackages = with pkgs; [
     at-spi2-core # Accessibility framework for deskflow clipboard
+    baobab # Disk usage analyzer (GUI)
     distrobox
+    dosfstools # FAT filesystem utilities (mkfs.vfat, fsck.vfat)
     filezilla
+    gnome-disk-utility # GNOME Disks - GUI disk management tool (supports FAT32 formatting)
+    gparted # Partition editor (GUI - supports FAT32 formatting)
     nushell # Stopgap: Add nushell at system level for ghostty compatibility
     nvtopPackages.amd # GPU monitoring tool for AMD GPUs
+    parted # Command-line partition manager
     pavucontrol
     rclone-browser
     remmina # Remote desktop client for VNC, RDP, and other protocols
@@ -142,10 +177,24 @@
   # Enable QEMU guest agent for Proxmox integration
   services.qemuGuest.enable = true;
 
-  # Attic cache client for automatic build uploads
   myModules.attic-client = {
     enable = true;
+
+    # SOPS-encrypted token providing `ATTIC_CLIENT_JWT_TOKEN`
     tokenFile = ../../../secrets/attic-client-token.yaml.enc;
+
+    server = "http://cache-build-server:5001";
+    cache = "cache-local";
+  };
+
+  services.attic-post-build-hook = {
+    enable = true;
+
+    serverName = "attic-cache";
+    serverEndpoint = "http://cache-build-server:5001";
+    cacheName = "cache-local";
+
+    tokenFile = "/run/secrets/attic-client-token";
   };
 
   # Enable snap support
