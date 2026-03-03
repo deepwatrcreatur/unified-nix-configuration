@@ -114,23 +114,7 @@
         allowUnfree = true;
       };
 
-      # Extract the opencode override overlay so we can exclude it from the
-      # nested unstable import (prevents infinite recursion).
-      opencodeFromUnstableOverlay =
-        final: prev:
-        let
-          unstable = import inputs.nixpkgs-unstable {
-            system = prev.stdenv.hostPlatform.system;
-            config = commonNixpkgsConfig;
-          };
-        in
-        {
-          opencode = unstable.opencode or prev.opencode;
-        };
-
       commonOverlays = [
-        # Prefer opencode from nixpkgs-unstable
-        opencodeFromUnstableOverlay
         # Overlay to selectively use stable packages when unstable ones cause issues
         (
           final: prev:
@@ -448,6 +432,36 @@
                 };
           }
         )
+
+        # Opencode CLI (from GitHub releases, pinned to latest)
+        #
+        # Uses the same GitHub fetcher as `nix run github:NixOS/nixpkgs/nixos-unstable#opencode`
+        # Ensures we always get the latest version via GitHub releases, not nixpkgs channel.
+        # The fnox wrappers (opencode-zai, opencode-claude) automatically use this opencode.
+        # (final: prev: {
+        #   opencode = prev.stdenvNoCC.mkDerivation {
+        #     pname = "opencode";
+        #     version = "1.2.15";
+        #     src = prev.fetchurl {
+        #       url = "https://github.com/anomalyco/opencode/releases/download/v1.2.15/opencode-linux-x64.tar.gz";
+        #       hash = "sha256-03ijbwq72v3vc3z5i8w70wdn41pl915dl7i6g6dmr4sf8r31kc3q";
+        #     };
+        #
+        #     installPhase = ''
+        #       runHook preInstall
+        #       tar -xzf "$src" -C "$out/bin"
+        #       runHook postInstall
+        #     '';
+        #
+        #     meta = {
+        #       description = "Opencode CLI";
+        #       homepage = "https://github.com/anomalyco/opencode";
+        #       mainProgram = "opencode";
+        #       platforms = [ "x86_64-linux" ];
+        #       license = nixpkgsLib.licenses.unfree;
+        #     };
+        #   };
+        # })
 
         # Provide fnox + related wrappers (prefer flake input)
         (

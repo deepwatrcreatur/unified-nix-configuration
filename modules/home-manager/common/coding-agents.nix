@@ -12,7 +12,7 @@ let
     claude-monitor
     cursor-cli
     gemini-cli
-    opencode
+    opencode # Provided by overlay - fetches latest from GitHub releases
     factory-droid
   ];
 in
