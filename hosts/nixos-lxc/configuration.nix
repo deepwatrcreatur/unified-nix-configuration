@@ -17,16 +17,6 @@
 
   networking.hostName = "nixos-lxc";
 
-  # Set a static IP (adjust interface and addresses as needed)
-  networking.interfaces.eth0.ipv4.addresses = [
-    {
-      address = "10.10.11.50";
-      prefixLength = 16;
-    }
-  ];
-  networking.defaultGateway = "10.10.10.1";
-  networking.nameservers = [ "10.10.10.1" ];
-
   # Enable SSH for management
   services.openssh = {
     enable = true;
@@ -68,4 +58,8 @@
 
   # Minimal systemd services
   system.stateVersion = "25.05"; # Set to your NixOS version
+
+  nix.settings = {
+    experimental-features = [ "nix-command" "flakes" ];
+  };
 }
