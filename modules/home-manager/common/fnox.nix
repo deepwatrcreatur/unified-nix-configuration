@@ -5,6 +5,39 @@
   ...
 }:
 
+let
+  fnoxBin = if pkgs ? fnox then "${pkgs.fnox}/bin/fnox" else "fnox";
+  opencodeFromUnstable = pkgs.writeShellScriptBin "opencode" ''
+    exec nix run github:NixOS/nixpkgs/nixos-unstable#opencode -- "$@"
+  '';
+
+  opencode-zai = pkgs.writeShellScriptBin "opencode-zai" ''
+    set -euo pipefail
+
+    FNOX_CONFIG_PATH="''${FNOX_CONFIG:-$HOME/.config/fnox/config.toml}"
+    export FNOX_AGE_KEY_FILE="''${FNOX_AGE_KEY_FILE:-$HOME/.config/sops/age/keys.txt}"
+
+    value=$("${fnoxBin}" -c "$FNOX_CONFIG_PATH" get "Z_AI_API_KEY")
+    export OPENAI_API_KEY="$value"
+
+    export OPENCODE_PROVIDER="z.ai"
+    export OPENCODE_MODEL="GLM 4.7"
+
+    exec nix run github:NixOS/nixpkgs/nixos-unstable#opencode -- "$@"
+  '';
+
+  opencode-claude = pkgs.writeShellScriptBin "opencode-claude" ''
+    set -euo pipefail
+
+    FNOX_CONFIG_PATH="''${FNOX_CONFIG:-$HOME/.config/fnox/config.toml}"
+    export FNOX_AGE_KEY_FILE="''${FNOX_AGE_KEY_FILE:-$HOME/.config/sops/age/keys.txt}"
+
+    value=$("${fnoxBin}" -c "$FNOX_CONFIG_PATH" get "anthropic_api_key")
+    export ANTHROPIC_API_KEY="$value"
+
+    exec nix run github:NixOS/nixpkgs/nixos-unstable#opencode -- "$@"
+  '';
+in
 {
   # Configure fnox environment variables (only if fnox package is available)
   home.sessionVariables = lib.mkIf (pkgs ? fnox) {
@@ -12,13 +45,19 @@
     FNOX_AGE_KEY_FILE = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
   };
 
-  home.packages = lib.optionals (pkgs ? fnox) (
-    [ pkgs.fnox ]
-    ++ lib.optionals (pkgs ? opencode-zai) [ pkgs.opencode-zai ]
-    ++ lib.optionals (pkgs ? opencode-claude) [ pkgs.opencode-claude ]
-    ++ lib.optionals (pkgs ? gh-fnox) [ pkgs.gh-fnox ]
-    ++ lib.optionals (pkgs ? bw-fnox) [ pkgs.bw-fnox ]
-  );
+  home.packages =
+    lib.optionals (pkgs ? fnox) (
+      [ pkgs.fnox ]
+      ++ lib.optionals (pkgs ? opencode-zai) [ pkgs.opencode-zai ]
+      ++ lib.optionals (pkgs ? opencode-claude) [ pkgs.opencode-claude ]
+      ++ lib.optionals (pkgs ? gh-fnox) [ pkgs.gh-fnox ]
+      ++ lib.optionals (pkgs ? bw-fnox) [ pkgs.bw-fnox ]
+    )
+    ++ [
+      opencodeFromUnstable
+      opencode-zai
+      opencode-claude
+    ];
 
   # Create fnox configuration (only if fnox package is available)
   # NOTE: fnox reads its global config from ~/.config/fnox/config.toml
@@ -61,35 +100,35 @@
   # This keeps wrappers working without injecting secrets into every shell.
   home.activation.fnoxSeedFromSops = lib.mkIf (pkgs ? fnox) (
     lib.hm.dag.entryAfter [ "sops-nix" ] ''
-        if command -v fnox >/dev/null 2>&1; then
-          export FNOX_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
-          export FNOX_CONFIG="$HOME/.config/fnox/config.toml"
+      if command -v fnox >/dev/null 2>&1; then
+        export FNOX_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
+        export FNOX_CONFIG="$HOME/.config/fnox/config.toml"
 
-          seed_secret() {
-            name="$1"
-            file="$2"
+        seed_secret() {
+          name="$1"
+          file="$2"
 
-            if [ -z "$file" ] || [ ! -f "$file" ]; then
-              return 0
-            fi
+          if [ -z "$file" ] || [ ! -f "$file" ]; then
+            return 0
+          fi
 
-            if fnox -c "$FNOX_CONFIG" get "$name" >/dev/null 2>&1; then
-              return 0
-            fi
+          if fnox -c "$FNOX_CONFIG" get "$name" >/dev/null 2>&1; then
+            return 0
+          fi
 
-            value="$(cat "$file" 2>/dev/null || true)"
-            if [ -z "$value" ]; then
-              return 0
-            fi
+          value="$(cat "$file" 2>/dev/null || true)"
+          if [ -z "$value" ]; then
+            return 0
+          fi
 
-            fnox -c "$FNOX_CONFIG" set "$name" "$value" >/dev/null 2>&1 || true
-          }
+          fnox -c "$FNOX_CONFIG" set "$name" "$value" >/dev/null 2>&1 || true
+        }
 
-          seed_secret GITHUB_TOKEN "${config.sops.secrets."github-token".path or ""}"
-          seed_secret GROK_API_KEY "${config.sops.secrets."grok-api-key".path or ""}"
-          seed_secret Z_AI_API_KEY "${config.sops.secrets."z-ai-api-key".path or ""}"
-          seed_secret OPENCODE_ZEN_API_KEY "${config.sops.secrets."opencode-zen-api-key".path or ""}"
-        fi
+        seed_secret GITHUB_TOKEN "${config.sops.secrets."github-token".path or ""}"
+        seed_secret GROK_API_KEY "${config.sops.secrets."grok-api-key".path or ""}"
+        seed_secret Z_AI_API_KEY "${config.sops.secrets."z-ai-api-key".path or ""}"
+        seed_secret OPENCODE_ZEN_API_KEY "${config.sops.secrets."opencode-zen-api-key".path or ""}"
+      fi
 
     ''
   );

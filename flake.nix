@@ -433,115 +433,24 @@
           }
         )
 
-        # Opencode CLI (from GitHub releases, pinned to latest)
-        #
-        # Uses the same GitHub fetcher as `nix run github:NixOS/nixpkgs/nixos-unstable#opencode`
-        # Ensures we always get the latest version via GitHub releases, not nixpkgs channel.
+        # Opencode CLI from nixpkgs-unstable (v1.2.13)
         # The fnox wrappers (opencode-zai, opencode-claude) automatically use this opencode.
-        # (final: prev: {
-        #   opencode = prev.stdenvNoCC.mkDerivation {
-        #     pname = "opencode";
-        #     version = "1.2.15";
-        #     src = prev.fetchurl {
-        #       url = "https://github.com/anomalyco/opencode/releases/download/v1.2.15/opencode-linux-x64.tar.gz";
-        #       hash = "sha256-03ijbwq72v3vc3z5i8w70wdn41pl915dl7i6g6dmr4sf8r31kc3q";
-        #     };
-        #
-        #     installPhase = ''
-        #       runHook preInstall
-        #       tar -xzf "$src" -C "$out/bin"
-        #       runHook postInstall
-        #     '';
-        #
-        #     meta = {
-        #       description = "Opencode CLI";
-        #       homepage = "https://github.com/anomalyco/opencode";
-        #       mainProgram = "opencode";
-        #       platforms = [ "x86_64-linux" ];
-        #       license = nixpkgsLib.licenses.unfree;
-        #     };
-        #   };
-        # })
-
-        # Provide fnox + related wrappers (prefer flake input)
-        (
-          final: prev:
-          let
-            system = prev.stdenv.hostPlatform.system;
-            flakeHasPkgs = builtins.hasAttr system inputs.fnox.packages;
-            fnoxPkgs = if flakeHasPkgs then inputs.fnox.packages.${system} else { };
-            flakeHasFnox = fnoxPkgs ? default;
-          in
-          (
-            if flakeHasFnox then
-              { fnox = fnoxPkgs.default; }
-            else if prev ? fnox then
-              { fnox = prev.fnox; }
-            else
-              { }
-          )
-          // (nixpkgsLib.optionalAttrs (fnoxPkgs ? gh-fnox) { gh-fnox = fnoxPkgs.gh-fnox; })
-          // (nixpkgsLib.optionalAttrs (fnoxPkgs ? bw-fnox) { bw-fnox = fnoxPkgs.bw-fnox; })
-        )
-
-        # Opencode wrappers must use our (unstable) opencode, not the fnox-flake baked one.
-        (
-          final: prev:
-          let
-            mkWrapped =
-              {
-                name,
-                providerEnv,
-                secretName,
-                keyEnv ? "OPENAI_API_KEY",
-              }:
-              prev.writeShellScriptBin name ''
-                set -euo pipefail
-
-                FNOX_CONFIG_PATH="''${FNOX_CONFIG:-$HOME/.config/fnox/config.toml}"
-                export FNOX_AGE_KEY_FILE="''${FNOX_AGE_KEY_FILE:-$HOME/.config/sops/age/keys.txt}"
-
-                value=$("${final.fnox}/bin/fnox" -c "$FNOX_CONFIG_PATH" get "${secretName}")
-                export ${keyEnv}="$value"
-
-                ${providerEnv}
-
-                exec "${final.opencode}/bin/opencode" "$@"
-              '';
-          in
-          {
-            opencode-zai = mkWrapped {
-              name = "opencode-zai";
-              secretName = "Z_AI_API_KEY";
-              providerEnv = ''
-                export OPENCODE_PROVIDER="z.ai"
-                export OPENCODE_MODEL="GLM 4.7"
-              '';
-            };
-
-            opencode-claude = mkWrapped {
-              name = "opencode-claude";
-              secretName = "ANTHROPIC_API_KEY";
-              keyEnv = "ANTHROPIC_API_KEY";
-              providerEnv = "";
-            };
-          }
-        )
+        (final: prev: {
+          opencode = inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.hostPlatform.system}.opencode;
+        })
 
         # Tesla inference overlays for GPU optimization
         inputs.tesla-inference-flake.overlays.ollama-official-binaries # Use official binaries to avoid cuda_compat build error
         inputs.tesla-inference-flake.overlays.llama-cpp-tesla
         inputs.tesla-inference-flake.overlays.gpu-tools
         # Try to use fnox from nixpkgs first, fallback to flake input if not available
-        # (final: prev: {
-        #   fnox =
-        #     if prev.stdenv.isLinux && prev.stdenv.isx86_64 then
-        #       # Try to get fnox from nixpkgs (should be pre-built in newer versions)
-        #       (prev.fnox or inputs.fnox.packages.${prev.stdenv.hostPlatform.system}.default)
-        #     else
-        #       # Fallback to flake input for other platforms
-        #       inputs.fnox.packages.${prev.stdenv.hostPlatform.system}.default;
-        # })
+        (final: prev: {
+          fnox =
+            if prev.stdenv.isLinux && prev.stdenv.isx86_64 then
+              (prev.fnox or inputs.fnox.packages.${prev.stdenv.hostPlatform.system}.default)
+            else
+              inputs.fnox.packages.${prev.stdenv.hostPlatform.system}.default;
+        })
       ];
 
       # SpecialArgs for NixOS and Darwin SYSTEM modules.
