@@ -23,6 +23,14 @@
   security.sudo.enable = true;
   security.sudo.wheelNeedsPassword = false;
 
+  services.openssh = {
+    enable = true;
+    settings.PermitRootLogin = "yes";
+    settings.PasswordAuthentication = true;
+  };
+
+  users.users.root.password = "temp123";
+
   systemd.mounts = [
     {
       what = "debugfs";
