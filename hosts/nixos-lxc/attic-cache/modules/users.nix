@@ -7,6 +7,9 @@
 
 {
   users.users.root.shell = pkgs.fish;
+  users.users.root.openssh.authorizedKeys.keys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIB4ELcnxIV0zujIJ4EPubU5nkKPV7G8pZ3tDDjZ6pXI deepwatrcreatur@gmail.com"
+  ];
 
   # Build user for remote builds
   users.users.nixbuilder = {
