@@ -188,12 +188,13 @@
           echo "Cache cache-local already exists"
         fi
 
-        # Configure upstream cache key (for skipping already-signed paths)
+        # Configure upstream cache key (for skipping already-signed paths) and make public
         if ${pkgs.attic-client}/bin/attic cache configure cache-local \
+            --public \
             --upstream-cache-key-name cache.nixos.org-1; then
-          echo "Cache upstream configuration successful"
+          echo "Cache upstream and public configuration successful"
         else
-          echo "Cache upstream configuration failed (non-critical)"
+          echo "Cache upstream and public configuration failed (non-critical)"
         fi
 
         echo "Attic cache initialized successfully"

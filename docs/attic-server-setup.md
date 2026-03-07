@@ -33,6 +33,7 @@ attic login local http://localhost:5001 $ATTIC_TOKEN --set-default
 
 # Create the cache
 attic cache create cache-local
+attic cache configure cache-local --public
 ```
 
 ## Configuration Files
