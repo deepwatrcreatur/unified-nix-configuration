@@ -32,9 +32,8 @@
   home-manager.extraSpecialArgs.hostName = "gateway";
   home-manager.extraSpecialArgs.isDesktop = false;
 
-  # Boot loader
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  # Boot loader (Limine for MBR disk)
+  boot.loader.limine.enable = true;
 
   nix.settings.experimental-features = [
     "nix-command"
