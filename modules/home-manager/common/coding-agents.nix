@@ -11,6 +11,7 @@
     claude-monitor
     cursor-cli
     gemini-cli
+    github-copilot-cli   
     factory-droid
   ];
 }
