@@ -167,6 +167,7 @@
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
     xdg-desktop-portal-gtk # GTK desktop portal
     satty # Screenshot annotation tool inspired by Swappy and Flameshot
+    gthumb # Image browser and viewer with crop support
   ];
 
   # Enable nix-ld for running dynamically linked executables (like homebrew packages)

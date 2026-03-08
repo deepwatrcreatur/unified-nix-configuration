@@ -69,16 +69,16 @@
   xdg.mimeApps = {
     enable = true;
     defaultApplications = {
-      "image/png" = [ "satty.desktop" ];
-      "image/jpeg" = [ "satty.desktop" ];
-      "image/gif" = [ "satty.desktop" ];
-      "image/webp" = [ "satty.desktop" ];
+      "image/png" = [ "org.gnome.gThumb.desktop" "satty.desktop" ];
+      "image/jpeg" = [ "org.gnome.gThumb.desktop" "satty.desktop" ];
+      "image/gif" = [ "org.gnome.gThumb.desktop" "satty.desktop" ];
+      "image/webp" = [ "org.gnome.gThumb.desktop" "satty.desktop" ];
     };
     associations.added = {
-      "image/png" = [ "satty.desktop" ];
-      "image/jpeg" = [ "satty.desktop" ];
-      "image/gif" = [ "satty.desktop" ];
-      "image/webp" = [ "satty.desktop" ];
+      "image/png" = [ "org.gnome.gThumb.desktop" "satty.desktop" ];
+      "image/jpeg" = [ "org.gnome.gThumb.desktop" "satty.desktop" ];
+      "image/gif" = [ "org.gnome.gThumb.desktop" "satty.desktop" ];
+      "image/webp" = [ "org.gnome.gThumb.desktop" "satty.desktop" ];
     };
   };
 
