@@ -11,8 +11,9 @@
     ./hardware-configuration.nix
     ../../../modules/nixos/common
     ../../../modules/common/utility-packages.nix
+    ../../../modules/nixos/keyboard-glitches.nix # Fix stuck keyboard presses in Proxmox VM
+    ../../../modules/nixos/snap.nix # Snap package manager support
     ../../../modules/activation-scripts
-    ../../../modules/home-manager/linuxbrew.nix # Linuxbrew support
   ];
 
   # Home manager configuration for gateway
@@ -72,9 +73,6 @@
 
   # SSH daemon
   services.openssh.enable = true;
-
-  # Fix stuck keyboard presses in Proxmox VM
-  myModules.keyboardGlitches.enable = true;
 
   nixpkgs.hostPlatform = "x86_64-linux";
   system.stateVersion = "25.05";
