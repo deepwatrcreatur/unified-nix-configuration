@@ -19,9 +19,13 @@
   # Home manager configuration for gateway
   home-manager.users.deepwatrcreatur = {
     imports = [
+      ../../../modules/home-manager
       ../../../users/deepwatrcreatur/hosts/gateway
     ];
   };
+
+  home-manager.extraSpecialArgs.hostName = "gateway";
+  home-manager.extraSpecialArgs.isDesktop = false;
 
   # Boot loader
   boot.loader.systemd-boot.enable = true;
