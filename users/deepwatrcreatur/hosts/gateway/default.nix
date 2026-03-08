@@ -6,6 +6,8 @@
 }:
 
 {
+  home.homeDirectory = "/home/deepwatrcreatur";
+
   home.packages = with pkgs; [
     # Common utilities
     git
@@ -49,4 +51,6 @@
     viAlias = true;
     vimAlias = true;
   };
+
+  home.stateVersion = "25.11";
 }
