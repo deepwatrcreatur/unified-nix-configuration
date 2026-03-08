@@ -95,7 +95,7 @@
 
   # X11 with AMD GPU passthrough
   services.xserver = {
-    enable = true;
+    enable = false;
     videoDrivers = [ "amdgpu" ];
     xkb.options = "caps:none"; # Let input-leap handle caps lock synchronization
   };
@@ -166,6 +166,7 @@
     vscode.fhs # VSCode with FHS environment
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
     xdg-desktop-portal-gtk # GTK desktop portal
+    satty # Screenshot annotation tool inspired by Swappy and Flameshot
   ];
 
   # Enable nix-ld for running dynamically linked executables (like homebrew packages)

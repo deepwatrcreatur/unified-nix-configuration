@@ -129,6 +129,8 @@ in
     pulseaudio-ctl
     pavucontrol
     flameshot
+    grim
+    slurp
     copyq
 
     # Needed for COSMIC settings and schema availability.
@@ -162,7 +164,7 @@ in
   # Enable XDG portals for COSMIC
   xdg.portal = {
     enable = true;
-    config.common.default = "*";
+    config.common.default = [ "cosmic" "gtk" ];
     extraPortals = with pkgs; [
       xdg-desktop-portal-cosmic
       xdg-desktop-portal-gnome

@@ -65,6 +65,37 @@
     enable = true;
   };
 
+  # Set default applications
+  xdg.mimeApps = {
+    enable = true;
+    defaultApplications = {
+      "image/png" = [ "satty.desktop" ];
+      "image/jpeg" = [ "satty.desktop" ];
+      "image/gif" = [ "satty.desktop" ];
+      "image/webp" = [ "satty.desktop" ];
+    };
+    associations.added = {
+      "image/png" = [ "satty.desktop" ];
+      "image/jpeg" = [ "satty.desktop" ];
+      "image/gif" = [ "satty.desktop" ];
+      "image/webp" = [ "satty.desktop" ];
+    };
+  };
+
+  xdg.desktopEntries.satty = {
+    name = "Satty";
+    genericName = "Screenshot Annotation";
+    exec = "satty -f %f";
+    terminal = false;
+    categories = [ "Utility" "Graphics" ];
+    mimeType = [ "image/png" "image/jpeg" ];
+    icon = "satty";
+    type = "Application";
+    settings = {
+      NoDisplay = "false";
+    };
+  };
+
   # Allow dconf activation so COSMIC/GNOME settings (theme/wallpaper) apply.
   # If you see activation-time dconf errors again, we can gate this behind a
   # `graphical-session.target` user service instead.
