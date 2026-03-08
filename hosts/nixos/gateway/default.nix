@@ -19,9 +19,14 @@
   # Home manager configuration for gateway
   home-manager.users.deepwatrcreatur = {
     imports = [
-      ../../../modules/home-manager
+      ../../../modules/home-manager/git.nix
+      ../../../modules/home-manager/gpg-cli.nix
       ../../../users/deepwatrcreatur/hosts/gateway
     ];
+    
+    home.username = "deepwatrcreatur";
+    home.homeDirectory = "/home/deepwatrcreatur";
+    programs.home-manager.enable = true;
   };
 
   home-manager.extraSpecialArgs.hostName = "gateway";
