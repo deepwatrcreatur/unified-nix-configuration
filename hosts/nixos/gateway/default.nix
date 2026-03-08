@@ -53,7 +53,6 @@
   systemd.network.networks."10-wan" = {
     matchConfig.Name = "ens17";
     networkConfig.DHCP = "yes";
-    DHCPv4UseDNS = false;
   };
 
   # LAN interface (ens16) - Static IP for Technitium
@@ -77,6 +76,18 @@
 
   # SSH daemon
   services.openssh.enable = true;
+
+  # Define your user account (SSH keys managed by common/ssh-keys.nix)
+  users.users.deepwatrcreatur = {
+    isNormalUser = true;
+    extraGroups = [
+      "wheel"
+    ];
+    shell = pkgs.fish;
+  };
+
+  # Enable fish shell
+  programs.fish.enable = true;
 
   nixpkgs.hostPlatform = "x86_64-linux";
   system.stateVersion = "25.05";

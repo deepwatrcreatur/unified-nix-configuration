@@ -15,6 +15,7 @@ in
 {
   # Set SSH authorized keys for the main user
   users.users.deepwatrcreatur = {
+    isNormalUser = true;
     openssh.authorizedKeys.keys = pubKeys;
   };
 
