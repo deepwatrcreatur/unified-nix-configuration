@@ -1,25 +1,39 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  lib,
+  ...
+}:
 
 {
   imports = [
     ./hardware-configuration.nix
     ../../../modules/nixos/common
+    ../../../modules/common/utility-packages.nix
+    ../../../modules/activation-scripts
+    ../../../modules/home-manager/linuxbrew.nix # Linuxbrew support
   ];
 
+  # Home manager configuration for gateway
+  home-manager.users.deepwatrcreatur = {
+    imports = [
+      ../../../users/deepwatrcreatur/hosts/gateway
+    ];
+  };
+
+  # Boot loader
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
   networking.hostName = "gateway";
   networking.domain = "deepwatercreature.com";
 
-  # User configuration
-  users.users.deepwatrcreatur = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" ];
-  };
-
-  # Bootloader
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "/dev/sda"; # MBR install for SeaBIOS
-
-  # Turn on IP forwarding for routing
+  # Enable IP forwarding for routing
   boot.kernel.sysctl = {
     "net.ipv4.ip_forward" = 1;
     "net.ipv6.conf.all.forwarding" = 1;
@@ -30,48 +44,38 @@
   networking.useDHCP = false;
   systemd.network.enable = true;
 
-  # WAN interface
+  # WAN interface (ens17) - Get IP via DHCP
   systemd.network.networks."10-wan" = {
-    matchConfig.Name = "igb0"; # Adjust if different in Proxmox VM (e.g. eth0, ens18)
+    matchConfig.Name = "ens17";
     networkConfig.DHCP = "yes";
+    DHCPv4UseDNS = false;
   };
 
-  # LAN interface
+  # LAN interface (ens16) - Static IP for Technitium
   systemd.network.networks."20-lan" = {
-    matchConfig.Name = "igb1"; # Adjust if different in Proxmox VM (e.g. eth1, ens19)
+    matchConfig.Name = "ens16";
     address = [ "10.10.10.1/16" ];
     networkConfig = {
       DHCPServer = "no";
     };
   };
 
-  # NAT configuration
-  networking.nat = {
-    enable = true;
-    externalInterface = "igb0";
-    internalInterfaces = [ "igb1" ];
-    forwardPorts = [
-      {
-        destination = "10.10.11.69:80";
-        proto = "tcp";
-        sourcePort = 80;
-      }
-      {
-        destination = "10.10.11.69:443";
-        proto = "tcp";
-        sourcePort = 443;
-      }
-      # WebGUI forwarding is omitted as NixOS router doesn't need it on 8443
-    ];
-  };
-
-  # Firewall rules
-  networking.nftables.enable = true;
-  networking.firewall.interfaces."igb1".allowedTCPPorts = [ 53 80 443 22 5380 ];
-  networking.firewall.interfaces."igb1".allowedUDPPorts = [ 53 67 68 ];
-
-  # Technitium DNS & DHCP Server
+  # Technitium DNS & DHCP Server (will be configured later after Opnsense is removed)
   services.technitium-dns-server.enable = true;
 
+  # Firewall
+  networking.nftables.enable = true;
+  networking.firewall.enable = false; # Controlled by nftables
+
+  # QEMU guest agent for Proxmox
+  services.qemuGuest.enable = true;
+
+  # SSH daemon
+  services.openssh.enable = true;
+
+  # Fix stuck keyboard presses in Proxmox VM
+  myModules.keyboardGlitches.enable = true;
+
+  nixpkgs.hostPlatform = "x86_64-linux";
   system.stateVersion = "25.05";
 }
