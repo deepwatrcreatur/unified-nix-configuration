@@ -17,12 +17,12 @@ Host pve-lattitude
     Hostname 10.10.11.47
     user root
 
-Host pve-tomahawk
-    Hostname 10.10.11.55
+Host pve-gateway
+    Hostname 10.10.11.52
     user root
 
-Host pve-z170
-    Hostname 10.10.11.56
+Host pve-tomahawk
+    Hostname 10.10.11.55
     user root
 
 Host pve-strix
