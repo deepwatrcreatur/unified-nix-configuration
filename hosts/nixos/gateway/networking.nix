@@ -37,7 +37,7 @@
   # LAN interface (ens16) - Static IP for internal network
   systemd.network.networks."20-lan" = {
     matchConfig.Name = "ens16";
-    address = [ "10.101.10.1/16" ];
+    address = [ "10.10.101.1/16" ];
     networkConfig = {
       DHCPServer = "no";
       IPv6SendRA = true;
