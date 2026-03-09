@@ -92,8 +92,13 @@ while IFS= read -r reservation; do
         ((SUCCESS_COUNT++))
     else
         ERROR_MSG=$(echo "$RESPONSE" | jq -r '.errorMessage // "Unknown error"')
-        echo "✗ Failed: $ERROR_MSG"
-        ((FAIL_COUNT++))
+        # Check if it's a duplicate error
+        if [[ "$ERROR_MSG" == *"already exists"* ]] || [[ "$ERROR_MSG" == *"already reserved"* ]] || [[ "$ERROR_MSG" == *"Failed to add reserved lease"* ]]; then
+            echo "⊙ Already exists (skipping)"
+        else
+            echo "✗ Failed: $ERROR_MSG"
+            ((FAIL_COUNT++))
+        fi
     fi
     
     # Rate limiting - small delay to avoid overwhelming the server
