@@ -98,7 +98,7 @@
         ct state {established, related} accept
         
         # Allow loopback
-        iif lo accept
+        iifname "lo" accept
         
         # Allow ICMP (ping)
         ip protocol icmp accept
@@ -108,14 +108,14 @@
         tcp dport 22 accept
         
         # Allow DNS and DHCP on LAN interface
-        iif ens16 udp dport {53, 67} accept
-        iif ens16 tcp dport 53 accept
+        iifname "ens16" udp dport {53, 67} accept
+        iifname "ens16" tcp dport 53 accept
         
         # Allow Technitium web UI on LAN
-        iif ens16 tcp dport {5380, 53443} accept
+        iifname "ens16" tcp dport {5380, 53443} accept
         
-        # Log and drop everything else
-        log prefix "INPUT DROP: " drop
+        # Allow management interface access
+        iifname "ens18" tcp dport 22 accept
       }
       
       chain forward {
@@ -125,10 +125,7 @@
         ct state {established, related} accept
         
         # Allow forwarding from LAN to WAN
-        iif ens16 oif ens17 accept
-        
-        # Log and drop everything else
-        log prefix "FORWARD DROP: " drop
+        iifname "ens16" oifname "ens17" accept
       }
       
       chain output {
@@ -141,7 +138,7 @@
         type nat hook postrouting priority 100; policy accept;
         
         # Masquerade traffic from LAN going to WAN
-        oif ens17 masquerade
+        oifname "ens17" masquerade
       }
     }
   '';
