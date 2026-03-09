@@ -12,7 +12,7 @@
     ./networking.nix
     ../../../modules/nixos/common # Common NixOS modules (SSH keys, etc.)
     ../../../modules/common/utility-packages.nix # Common utility packages
-    ../../../modules/nixos/attic-client.nix # Attic cache client
+    inputs.nix-attic-infra.nixosModules.attic-client # Attic cache client
     ../../../modules/nixos/snap.nix # Snap package manager support
     #../../../modules/nixos/sessions/cinnamon.nix # MATE with WhiteSur theming
 
@@ -28,7 +28,6 @@
     ../../../modules/nixos/snapper.nix # Btrfs snapshots via Snapper
     ../../../modules/wezterm-config.nix
     ../../../modules/activation-scripts # Activation scripts for system setup
-    ../../../modules/nixos/attic-post-build-hook.nix
   ];
 
   # Homebrew is managed via home-manager (modules/home-manager/linuxbrew.nix)
@@ -179,7 +178,7 @@
   # Enable QEMU guest agent for Proxmox integration
   services.qemuGuest.enable = true;
 
-  myModules.attic-client = {
+  services.attic-client = {
     enable = true;
 
     # SOPS-encrypted token providing `ATTIC_CLIENT_JWT_TOKEN`
@@ -187,16 +186,8 @@
 
     server = "http://cache-build-server:5001";
     cache = "cache-local";
-  };
 
-  services.attic-post-build-hook = {
-    enable = true;
-
-    serverName = "attic-cache";
-    serverEndpoint = "http://cache-build-server:5001";
-    cacheName = "cache-local";
-
-    tokenFile = "/run/secrets/attic-client-token";
+    enablePostBuildHook = true;
   };
 
   # Enable snap support

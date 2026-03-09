@@ -5,6 +5,8 @@ let
   currentDir = ./.;
   excludeItems = [
     "default.nix"
+    "attic-client.nix"
+    "attic-post-build-hook.nix"
     "common"
     "inference-vm"
     "inference-vm-nix-overrides.nix"

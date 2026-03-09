@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 
@@ -9,12 +10,7 @@
   imports = [
     ../../../../modules/common/nix-settings.nix
     ../../../../modules/nixos/inference-vm-nix-overrides.nix
-
-    # Defines `myModules.attic-client` used by inference hosts
-    ../../../../modules/nixos/attic-client.nix
-
-    # Attic post-build hook module
-    ../../../../modules/nixos/attic-post-build-hook.nix
+    inputs.nix-attic-infra.nixosModules.attic-client
   ];
 
   # Enable fish shell since users set it as default
@@ -29,7 +25,7 @@
     config.cudaForwardCompat = false; # Skip cuda_compat build
   };
 
-  myModules.attic-client = {
+  services.attic-client = {
     enable = true;
 
     # SOPS-encrypted token providing `ATTIC_CLIENT_JWT_TOKEN`
@@ -37,16 +33,8 @@
 
     server = "http://cache-build-server:5001";
     cache = "cache-local";
-  };
 
-  services.attic-post-build-hook = {
-    enable = true;
-
-    serverName = "cache-build-server";
-    serverEndpoint = "http://cache-build-server:5001";
-    cacheName = "cache-local";
-
-    tokenFile = "/run/secrets/attic-client-token";
+    enablePostBuildHook = true;
   };
 
   # GPU Infrastructure configuration - Tesla P40 optimized
