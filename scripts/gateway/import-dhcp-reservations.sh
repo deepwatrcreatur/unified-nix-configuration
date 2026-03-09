@@ -2,7 +2,7 @@
 # Import DHCP reservations from JSON file into Technitium DNS Server
 # Usage: ./import-dhcp-reservations.sh <json-file> <scope-name> [technitium-url] [token]
 
-set -euo pipefail
+set -uo pipefail
 
 JSON_FILE="${1:-}"
 SCOPE_NAME="${2:-}"
