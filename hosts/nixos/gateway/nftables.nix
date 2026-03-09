@@ -22,11 +22,14 @@
         ip protocol icmp accept
         ip6 nexthdr icmpv6 accept
         
+        # Allow DHCPv6 on WAN interface
+        iifname "ens17" udp dport 546 accept
+        
         # Allow SSH from LAN and management only (not WAN)
         iifname {"ens16", "ens18"} tcp dport 22 accept
         
         # Allow DNS and DHCP on LAN interface
-        iifname "ens16" udp dport {53, 67} accept
+        iifname "ens16" udp dport {53, 67, 547} accept
         iifname "ens16" tcp dport 53 accept
         
         # Allow Technitium web UI on LAN and management

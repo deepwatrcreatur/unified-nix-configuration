@@ -19,7 +19,16 @@
   # WAN interface (ens17) - Get IP via DHCP from ISP
   systemd.network.networks."10-wan" = {
     matchConfig.Name = "ens17";
-    networkConfig.DHCP = "yes";
+    networkConfig = {
+      DHCP = "yes";
+      IPv6AcceptRA = true;
+    };
+    dhcpV6Config = {
+      PrefixDelegationHint = "::/60";  # Request /60 prefix from ISP
+    };
+    ipv6AcceptRAConfig = {
+      DHCPv6Client = "always";
+    };
   };
 
   # LAN interface (ens16) - Static IP for internal network
@@ -28,7 +37,22 @@
     address = [ "10.10.10.1/16" ];
     networkConfig = {
       DHCPServer = "no";
+      IPv6SendRA = true;
+      DHCPPrefixDelegation = true;
     };
+    ipv6SendRAConfig = {
+      Managed = true;
+      OtherInformation = true;
+    };
+    ipv6Prefixes = [
+      {
+        ipv6PrefixConfig = {
+          Prefix = "::/64";
+          PreferredLifetimeSec = 1800;
+          ValidLifetimeSec = 3600;
+        };
+      }
+    ];
   };
 
   # Management interface (ens18) - Get IP via DHCP for remote access
