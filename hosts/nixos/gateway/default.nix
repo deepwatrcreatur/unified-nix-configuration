@@ -34,9 +34,10 @@
   home-manager.extraSpecialArgs.hostName = "gateway";
   home-manager.extraSpecialArgs.isDesktop = false;
 
-  # Boot loader (Limine for MBR disk)
-  boot.loader.limine.enable = true;
-  boot.loader.timeout = 5;  # 5 second timeout to select generation
+  # Boot loader (GRUB for MBR/BIOS)
+  boot.loader.grub.enable = true;
+  boot.loader.grub.device = "/dev/sda";  # Install GRUB on the disk
+  boot.loader.timeout = 5;
 
   nix.settings.experimental-features = [
     "nix-command"
