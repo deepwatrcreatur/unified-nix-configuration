@@ -40,7 +40,6 @@ if [[ -z "$TOKEN" ]]; then
 fi
 
 # Extract reservations from JSON
-RESERVATIONS=$(jq -r '.dhcpReservations[]' "$JSON_FILE")
 TOTAL_COUNT=$(jq -r '.totalCount' "$JSON_FILE")
 
 echo "Found $TOTAL_COUNT DHCP reservations to import"
@@ -56,10 +55,10 @@ mapfile -t RESERVATIONS < <(jq -c '.dhcpReservations[]' "$JSON_FILE")
 
 # Process each reservation
 for reservation in "${RESERVATIONS[@]}"; do
-    MAC=$(echo "$reservation" | jq -r '.macAddress')
-    IP=$(echo "$reservation" | jq -r '.ipAddress')
-    HOSTNAME=$(echo "$reservation" | jq -r '.hostName // ""')
-    DESCRIPTION=$(echo "$reservation" | jq -r '.description // ""')
+    MAC=$(printf "%s" "$reservation" | jq -r '.macAddress')
+    IP=$(printf "%s" "$reservation" | jq -r '.ipAddress')
+    HOSTNAME=$(printf "%s" "$reservation" | jq -r '.hostName // ""')
+    DESCRIPTION=$(printf "%s" "$reservation" | jq -r '.description // ""')
     
     # Combine hostname and description for comments
     COMMENTS=""
@@ -81,26 +80,26 @@ for reservation in "${RESERVATIONS[@]}"; do
     # Technitium API endpoint: /api/dhcp/scopes/addReservedLease
     RESPONSE=$(curl -s -X POST "$TECHNITIUM_URL/api/dhcp/scopes/addReservedLease" \
         -H "Content-Type: application/x-www-form-urlencoded" \
-        -d "token=$TOKEN" \
-        -d "name=$SCOPE_NAME" \
-        -d "hardwareAddress=$MAC" \
-        -d "ipAddress=$IP" \
-        -d "hostName=$HOSTNAME" \
-        -d "comments=$COMMENTS" 2>&1 || echo '{"status":"error"}')
+        --data-urlencode "token=$TOKEN" \
+        --data-urlencode "name=$SCOPE_NAME" \
+        --data-urlencode "hardwareAddress=$MAC" \
+        --data-urlencode "ipAddress=$IP" \
+        --data-urlencode "hostName=$HOSTNAME" \
+        --data-urlencode "comments=$COMMENTS" 2>&1 || echo '{"status":"error"}')
     
-    STATUS=$(echo "$RESPONSE" | jq -r '.status // "error"')
+    STATUS=$(printf "%s" "$RESPONSE" | jq -r '.status // "error"')
     
     if [[ "$STATUS" == "ok" ]]; then
         echo "✓ Success"
-        ((SUCCESS_COUNT++))
+        SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
     else
-        ERROR_MSG=$(echo "$RESPONSE" | jq -r '.errorMessage // "Unknown error"')
+        ERROR_MSG=$(printf "%s" "$RESPONSE" | jq -r '.errorMessage // "Unknown error"')
         # Check if it's a duplicate error
         if [[ "$ERROR_MSG" == *"already exists"* ]] || [[ "$ERROR_MSG" == *"already reserved"* ]] || [[ "$ERROR_MSG" == *"Failed to add reserved lease"* ]]; then
             echo "⊙ Already exists (skipping)"
         else
             echo "✗ Failed: $ERROR_MSG"
-            ((FAIL_COUNT++))
+            FAIL_COUNT=$((FAIL_COUNT + 1))
         fi
     fi
     
