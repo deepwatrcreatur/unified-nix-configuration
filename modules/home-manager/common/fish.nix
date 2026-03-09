@@ -112,6 +112,9 @@
 
       # Set NH_FLAKE for nh helper
       set -gx NH_FLAKE "${config.home.homeDirectory}/flakes/unified-nix-configuration"
+      
+      # Reduce escape key delay for better zellij responsiveness
+      set -g fish_escape_delay_ms 10
 
       # Ensure /run/wrappers/bin is at the front of PATH for NixOS security wrappers
       if test -d /run/wrappers/bin
