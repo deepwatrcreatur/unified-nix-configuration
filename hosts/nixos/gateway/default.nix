@@ -36,6 +36,7 @@
 
   # Boot loader (Limine for MBR disk)
   boot.loader.limine.enable = true;
+  boot.loader.timeout = 5;  # 5 second timeout to select generation
 
   nix.settings.experimental-features = [
     "nix-command"
