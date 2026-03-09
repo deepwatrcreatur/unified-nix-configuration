@@ -93,6 +93,10 @@
   # Enable fish shell
   programs.fish.enable = true;
 
+  environment.systemPackages = with pkgs; [
+    tmux
+  ];
+
   nixpkgs.hostPlatform = "x86_64-linux";
   system.stateVersion = "25.05";
 }
