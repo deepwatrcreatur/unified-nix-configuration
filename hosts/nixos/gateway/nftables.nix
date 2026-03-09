@@ -28,9 +28,9 @@
         # Allow SSH from LAN and management only (not WAN)
         iifname {"ens16", "ens18"} tcp dport 22 accept
         
-        # Allow DNS and DHCP on LAN interface
-        iifname "ens16" udp dport {53, 67, 547} accept
-        iifname "ens16" tcp dport 53 accept
+        # Allow DNS and DHCP on LAN and management interfaces
+        iifname {"ens16", "ens18"} udp dport {53, 67, 547} accept
+        iifname {"ens16", "ens18"} tcp dport 53 accept
         
         # Allow Technitium web UI on LAN and management
         iifname {"ens16", "ens18"} tcp dport {5380, 53443} accept
