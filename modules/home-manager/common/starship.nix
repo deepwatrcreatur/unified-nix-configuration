@@ -18,13 +18,12 @@
       command_timeout = 1000;
 
       # Two-line prompt:
-      # - Line 1: os + hostname + user + language + git branch/status ... right edge: cmd_duration + exit_status
+      # - Line 1: os + hostname + directory + user + language + git branch/status ... right edge: cmd_duration + exit_status
       # - Line 2: input character
       #
-      # Directory shown at top of zellij pane (current working directory)
       # Keep it "colored text on dark background" (no solid background blocks).
       format =
-        "$os$hostname$username$nix$env_var$rust$nodejs$python$golang$git_branch$git_status$fill$cmd_duration$status\n$character";
+        "$os$hostname$directory$username$nix$env_var$rust$nodejs$python$golang$git_branch$git_status$fill$cmd_duration$status\n$character";
 
       # Palettes
       palette = "gruvbox_dark";
@@ -81,6 +80,14 @@
         ssh_only = false;
         format = "[$hostname]($style) ";
         style = "fg:color_bright_green";
+      };
+
+      directory = {
+        disabled = false;
+        truncation_length = 3;
+        truncate_to_repo = true;
+        format = "[$path]($style) ";
+        style = "fg:color_blue";
       };
 
       git_branch = {
