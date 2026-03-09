@@ -23,11 +23,14 @@
       DHCP = "yes";
       IPv6AcceptRA = true;
     };
+    # Request IPv6 prefix delegation
     dhcpV6Config = {
-      PrefixDelegationHint = "::/60";  # Request /60 prefix from ISP
+      PrefixDelegationHint = "::/56";  # Request /56 prefix from ISP (matches OPNsense)
+      UseAddress = true;  # Also get an address for the gateway itself
     };
     ipv6AcceptRAConfig = {
       DHCPv6Client = "always";
+      UseDNS = false;  # Use Technitium DNS instead
     };
   };
 
