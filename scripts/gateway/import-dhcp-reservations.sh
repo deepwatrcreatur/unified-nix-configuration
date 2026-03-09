@@ -30,7 +30,7 @@ fi
 
 # Prompt for token if not provided
 if [[ -z "$TOKEN" ]]; then
-    read -sp "Enter Technitium API token (from Settings > API): " TOKEN
+    read -sp "Enter Technitium API token (from Settings > API): " TOKEN </dev/tty
     echo
 fi
 
