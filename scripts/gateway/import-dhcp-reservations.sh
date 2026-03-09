@@ -51,8 +51,11 @@ echo ""
 SUCCESS_COUNT=0
 FAIL_COUNT=0
 
+# Store all reservations in array to avoid stdin issues
+mapfile -t RESERVATIONS < <(jq -c '.dhcpReservations[]' "$JSON_FILE")
+
 # Process each reservation
-while IFS= read -r reservation; do
+for reservation in "${RESERVATIONS[@]}"; do
     MAC=$(echo "$reservation" | jq -r '.macAddress')
     IP=$(echo "$reservation" | jq -r '.ipAddress')
     HOSTNAME=$(echo "$reservation" | jq -r '.hostName // ""')
@@ -103,7 +106,7 @@ while IFS= read -r reservation; do
     
     # Rate limiting - small delay to avoid overwhelming the server
     sleep 0.1
-done < <(jq -c '.dhcpReservations[]' "$JSON_FILE")
+done
 
 echo ""
 echo "Import complete!"
