@@ -36,11 +36,17 @@
       chain forward {
         type filter hook forward priority 0; policy drop;
         
-        # Allow established/related connections
+        # Allow established/related connections (return traffic)
         ct state {established, related} accept
+        
+        # Drop invalid packets
+        ct state invalid drop
         
         # Allow forwarding from LAN to WAN
         iifname "ens16" oifname "ens17" accept
+        
+        # Allow forwarding from management to WAN
+        iifname "ens18" oifname "ens17" accept
       }
       
       chain output {

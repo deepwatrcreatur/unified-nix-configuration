@@ -25,7 +25,7 @@
   # LAN interface (ens16) - Static IP for internal network
   systemd.network.networks."20-lan" = {
     matchConfig.Name = "ens16";
-    address = [ "10.10.10.65/16" ];
+    address = [ "10.10.10.1/16" ];
     networkConfig = {
       DHCPServer = "no";
     };
@@ -37,10 +37,6 @@
     networkConfig.DHCP = "yes";
   };
 
-  # NAT configuration for routing LAN traffic to WAN
-  networking.nat = {
-    enable = true;
-    externalInterface = "ens17"; # WAN
-    internalInterfaces = [ "ens16" ]; # LAN
-  };
+  # NAT is handled by nftables (see nftables.nix)
+  networking.nat.enable = false;
 }
