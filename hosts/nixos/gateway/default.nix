@@ -77,9 +77,75 @@
   # Technitium DNS & DHCP Server (will be configured later after Opnsense is removed)
   services.technitium-dns-server.enable = true;
 
-  # Firewall
+  # Firewall and NAT
   networking.nftables.enable = true;
-  networking.firewall.enable = false; # Controlled by nftables
+  networking.firewall.enable = false; # Using nftables directly
+  
+  # NAT configuration for routing LAN traffic to WAN
+  networking.nat = {
+    enable = true;
+    externalInterface = "ens17"; # WAN
+    internalInterfaces = [ "ens16" ]; # LAN
+  };
+  
+  # nftables rules for masquerading and forwarding
+  networking.nftables.ruleset = ''
+    table inet filter {
+      chain input {
+        type filter hook input priority 0; policy drop;
+        
+        # Allow established/related connections
+        ct state {established, related} accept
+        
+        # Allow loopback
+        iif lo accept
+        
+        # Allow ICMP (ping)
+        ip protocol icmp accept
+        ip6 nexthdr icmpv6 accept
+        
+        # Allow SSH
+        tcp dport 22 accept
+        
+        # Allow DNS and DHCP on LAN interface
+        iif ens16 udp dport {53, 67} accept
+        iif ens16 tcp dport 53 accept
+        
+        # Allow Technitium web UI on LAN
+        iif ens16 tcp dport {5380, 53443} accept
+        
+        # Log and drop everything else
+        log prefix "INPUT DROP: " drop
+      }
+      
+      chain forward {
+        type filter hook forward priority 0; policy drop;
+        
+        # Allow established/related connections
+        ct state {established, related} accept
+        
+        # Allow forwarding from LAN to WAN
+        iif ens16 oif ens17 accept
+        
+        # Log and drop everything else
+        log prefix "FORWARD DROP: " drop
+      }
+      
+      chain output {
+        type filter hook output priority 0; policy accept;
+      }
+    }
+    
+    table ip nat {
+      chain postrouting {
+        type nat hook postrouting priority 100; policy accept;
+        
+        # Masquerade traffic from LAN going to WAN
+        oif ens17 masquerade
+      }
+    }
+  '';
+
 
   # QEMU guest agent for Proxmox
   services.qemuGuest.enable = true;
