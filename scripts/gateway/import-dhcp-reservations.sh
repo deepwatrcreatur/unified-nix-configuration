@@ -77,8 +77,8 @@ jq -c '.dhcpReservations[]' "$JSON_FILE" | while read -r reservation; do
     # API call to add DHCP reservation
     # Technitium API endpoint: /api/dhcp/scopes/addReservedLease
     RESPONSE=$(curl -s -X POST "$TECHNITIUM_URL/api/dhcp/scopes/addReservedLease" \
-        -H "Authorization: Bearer $TOKEN" \
         -H "Content-Type: application/x-www-form-urlencoded" \
+        -d "token=$TOKEN" \
         -d "scopeName=$SCOPE_NAME" \
         -d "hardwareAddress=$MAC" \
         -d "ipAddress=$IP" \
