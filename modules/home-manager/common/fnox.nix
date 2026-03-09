@@ -124,7 +124,13 @@ in
           fnox -c "$FNOX_CONFIG" set "$name" "$value" >/dev/null 2>&1 || true
         }
 
-        seed_secret GITHUB_TOKEN "${config.sops.secrets."github-token".path or ""}"
+        # Handle github-token specifically since it exists in the raw file too
+        if [ -f "$HOME/.config/git/github-token" ]; then
+           seed_secret GITHUB_TOKEN "$HOME/.config/git/github-token"
+        else
+           seed_secret GITHUB_TOKEN "${config.sops.secrets."github-token".path or ""}"
+        fi
+
         seed_secret GROK_API_KEY "${config.sops.secrets."grok-api-key".path or ""}"
         seed_secret Z_AI_API_KEY "${config.sops.secrets."z-ai-api-key".path or ""}"
         seed_secret OPENCODE_ZEN_API_KEY "${config.sops.secrets."opencode-zen-api-key".path or ""}"

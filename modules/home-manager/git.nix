@@ -164,6 +164,11 @@ in
   config = {
     # Shell configurations that merge with existing configs from other modules
     programs.bash.initExtra = lib.mkAfter ''
+      # Set GITHUB_TOKEN directly for all shells from sops decrypted file
+      if [ -f ~/.config/git/github-token ]; then
+        export GITHUB_TOKEN="$(cat ~/.config/git/github-token)"
+      fi
+
       # GPG settings for automated commits (prevents password prompts in CI/agents)
       export GPG_TTY=$(tty 2>/dev/null || echo "")
       # Allow automated tools to bypass pinentry when in non-interactive mode
@@ -182,6 +187,11 @@ in
     '';
 
     programs.zsh.initContent = lib.mkAfter ''
+      # Set GITHUB_TOKEN directly for all shells from sops decrypted file
+      if [ -f ~/.config/git/github-token ]; then
+        export GITHUB_TOKEN="$(cat ~/.config/git/github-token)"
+      fi
+
       # GPG settings for automated commits (prevents password prompts in CI/agents)
       export GPG_TTY=$(tty 2>/dev/null || echo "")
       # Allow automated tools to bypass pinentry when in non-interactive mode
@@ -200,6 +210,11 @@ in
     '';
 
     programs.fish.interactiveShellInit = lib.mkAfter ''
+      # Set GITHUB_TOKEN directly for all shells from sops decrypted file
+      if test -f ~/.config/git/github-token
+        set -gx GITHUB_TOKEN (cat ~/.config/git/github-token)
+      end
+
       # GPG settings for automated commits (prevents password prompts in CI/agents)
       set -gx GPG_TTY (tty 2>/dev/null; or echo "")
       # Allow automated tools to bypass pinentry when in non-interactive mode
@@ -218,6 +233,11 @@ in
     '';
 
     programs.nushell.extraConfig = lib.mkAfter ''
+      # Set GITHUB_TOKEN directly for all shells from sops decrypted file
+      if ("~/.config/git/github-token" | path exists) {
+        $env.GITHUB_TOKEN = (open ~/.config/git/github-token | str trim)
+      }
+
       # GPG settings for automated commits (prevents password prompts in CI/agents)
       $env.GPG_TTY = (try { tty } catch { "" })
       # Allow automated tools to bypass pinentry when in non-interactive mode
