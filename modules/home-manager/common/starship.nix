@@ -84,8 +84,8 @@
 
       directory = {
         disabled = false;
-        truncation_length = 3;
-        truncate_to_repo = true;
+        truncation_length = 5;
+        truncate_to_repo = false;
         format = "[$path]($style) ";
         style = "fg:color_blue";
       };
