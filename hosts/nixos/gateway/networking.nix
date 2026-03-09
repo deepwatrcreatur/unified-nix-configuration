@@ -46,11 +46,9 @@
     };
     ipv6Prefixes = [
       {
-        ipv6PrefixConfig = {
-          Prefix = "::/64";
-          PreferredLifetimeSec = 1800;
-          ValidLifetimeSec = 3600;
-        };
+        Prefix = "::/64";
+        PreferredLifetimeSec = 1800;
+        ValidLifetimeSec = 3600;
       }
     ];
   };
