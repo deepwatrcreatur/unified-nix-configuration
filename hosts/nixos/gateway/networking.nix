@@ -59,7 +59,23 @@
   # Management interface (ens18) - Get IP via DHCP for remote access
   systemd.network.networks."30-management" = {
     matchConfig.Name = "ens18";
-    networkConfig.DHCP = "yes";
+    address = [ "10.10.11.31/16" ];
+    networkConfig = {
+      DHCPServer = "no";
+      IPv6SendRA = true;
+      DHCPPrefixDelegation = true;
+    };
+    ipv6SendRAConfig = {
+      Managed = true;
+      OtherInformation = true;
+    };
+    ipv6Prefixes = [
+      {
+        Prefix = "::/64";
+        PreferredLifetimeSec = 1800;
+        ValidLifetimeSec = 3600;
+      }
+    ];
   };
 
   # NAT is handled by nftables (see nftables.nix)
