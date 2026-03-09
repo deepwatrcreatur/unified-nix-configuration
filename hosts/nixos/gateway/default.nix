@@ -68,6 +68,12 @@
     };
   };
 
+  # Management interface (ens18) - Get IP via DHCP
+  systemd.network.networks."30-management" = {
+    matchConfig.Name = "ens18";
+    networkConfig.DHCP = "yes";
+  };
+
   # Technitium DNS & DHCP Server (will be configured later after Opnsense is removed)
   services.technitium-dns-server.enable = true;
 
