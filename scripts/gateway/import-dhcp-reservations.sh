@@ -79,7 +79,7 @@ jq -c '.dhcpReservations[]' "$JSON_FILE" | while read -r reservation; do
     RESPONSE=$(curl -s -X POST "$TECHNITIUM_URL/api/dhcp/scopes/addReservedLease" \
         -H "Content-Type: application/x-www-form-urlencoded" \
         -d "token=$TOKEN" \
-        -d "scopeName=$SCOPE_NAME" \
+        -d "name=$SCOPE_NAME" \
         -d "hardwareAddress=$MAC" \
         -d "ipAddress=$IP" \
         -d "hostName=$HOSTNAME" \
