@@ -65,14 +65,6 @@
         oifname "ens17" masquerade
       }
     }
-    
-    table ip6 nat {
-      chain postrouting {
-        type nat hook postrouting priority 100; policy accept;
-        
-        # Masquerade IPv6 traffic from LAN going to WAN
-        oifname "ens17" masquerade
-      }
-    }
+  '';
   '';
 }
