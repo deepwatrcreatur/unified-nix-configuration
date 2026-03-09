@@ -37,10 +37,10 @@
   # LAN interface (ens16) - Static IP for internal network
   systemd.network.networks."20-lan" = {
     matchConfig.Name = "ens16";
-    address = [ "10.10.101.1/24" ];  # Changed to /24 to avoid routing conflicts
+    address = [ "10.10.10.1/24" ];
     routes = [
       {
-        Destination = "10.10.101.0/24";
+        Destination = "10.10.10.0/24";
         Scope = "link";
       }
     ];
