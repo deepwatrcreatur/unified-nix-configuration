@@ -46,9 +46,20 @@
     ];
     networkConfig = {
       DHCPServer = "no";
-      IPv6SendRA = false;  # Disable until IPv6 NAT is configured
-      DHCPPrefixDelegation = false;
+      IPv6SendRA = true;
+      DHCPPrefixDelegation = true;
     };
+    ipv6SendRAConfig = {
+      Managed = true;
+      OtherInformation = true;
+    };
+    ipv6Prefixes = [
+      {
+        Prefix = "::/64";
+        PreferredLifetimeSec = 1800;
+        ValidLifetimeSec = 3600;
+      }
+    ];
   };
 
   # Management interface (ens18) - Get IP via DHCP for remote access
