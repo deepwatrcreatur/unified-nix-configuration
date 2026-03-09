@@ -52,7 +52,7 @@ SUCCESS_COUNT=0
 FAIL_COUNT=0
 
 # Process each reservation
-jq -c '.dhcpReservations[]' "$JSON_FILE" | while read -r reservation; do
+while IFS= read -r reservation; do
     MAC=$(echo "$reservation" | jq -r '.macAddress')
     IP=$(echo "$reservation" | jq -r '.ipAddress')
     HOSTNAME=$(echo "$reservation" | jq -r '.hostName // ""')
@@ -98,7 +98,7 @@ jq -c '.dhcpReservations[]' "$JSON_FILE" | while read -r reservation; do
     
     # Rate limiting - small delay to avoid overwhelming the server
     sleep 0.1
-done
+done < <(jq -c '.dhcpReservations[]' "$JSON_FILE")
 
 echo ""
 echo "Import complete!"
