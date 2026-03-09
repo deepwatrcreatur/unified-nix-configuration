@@ -49,6 +49,16 @@
 
   # SSH daemon
   services.openssh.enable = true;
+  
+  # Fail2ban for SSH brute-force protection
+  services.fail2ban = {
+    enable = true;
+    maxretry = 5;
+    ignoreIP = [
+      "127.0.0.1/8"
+      "10.10.0.0/16"  # LAN network
+    ];
+  };
 
   # Define your user account (SSH keys managed by common/ssh-keys.nix)
   users.users.deepwatrcreatur = {
