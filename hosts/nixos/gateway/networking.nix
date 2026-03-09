@@ -47,13 +47,19 @@
     networkConfig = {
       DHCPServer = "no";
       IPv6SendRA = true;
+      DHCPPrefixDelegation = true;  # Enable receiving and using delegated prefixes
     };
     ipv6SendRAConfig = {
       Managed = false;  # Use SLAAC, not DHCPv6
       OtherInformation = false;
     };
-    # Advertise a /64 subnet from the delegated prefix
-    # systemd-networkd will automatically use a subnet from the delegated prefix
+    ipv6Prefixes = [
+      {
+        Prefix = "::/64";  # Announce a /64 from the delegated prefix
+        PreferredLifetimeSec = 1800;
+        ValidLifetimeSec = 3600;
+      }
+    ];
   };
 
   # Management interface (ens18) - Get IP via DHCP for remote access
