@@ -95,6 +95,9 @@ in
     HOMEBREW_PREFIX = brewPrefix;
     HOMEBREW_CELLAR = "${brewPrefix}/Cellar";
     HOMEBREW_REPOSITORY = "${brewPrefix}/Homebrew";
+    # Tell Homebrew where to find curl and git from Nix
+    HOMEBREW_CURL_PATH = "${pkgs.curl}/bin/curl";
+    HOMEBREW_GIT_PATH = "${pkgs.git}/bin/git";
   };
 
   # Add ~/.local/bin to PATH

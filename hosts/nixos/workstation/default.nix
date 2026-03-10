@@ -54,6 +54,7 @@
     ln -sf ${pkgs.coreutils}/bin/ln /bin/ln
     ln -sf ${pkgs.coreutils}/bin/dirname /bin/dirname
     ln -sf ${pkgs.coreutils}/bin/basename /bin/basename
+    ln -sf ${pkgs.coreutils}/bin/uname /bin/uname
     ln -sf ${pkgs.coreutils}/bin/sha256sum /bin/sha256sum
     ln -sf ${pkgs.gnutar}/bin/tar /bin/tar
     ln -sf ${pkgs.gzip}/bin/gzip /bin/gzip
