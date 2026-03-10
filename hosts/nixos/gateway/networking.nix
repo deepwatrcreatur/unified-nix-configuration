@@ -5,6 +5,10 @@
   networking.hostName = "gateway";
   networking.domain = "deepwatercreature.com";
 
+  # Disable systemd-resolved, use Technitium DNS directly
+  services.resolved.enable = false;
+  networking.nameservers = [ "127.0.0.1" ];
+
   # Enable IP forwarding for routing
   boot.kernel.sysctl = {
     "net.ipv4.ip_forward" = 1;
