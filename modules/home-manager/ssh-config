@@ -9,12 +9,8 @@ Host *
     ServerAliveInterval 15
     ConnectTimeout 20
 
-Host opnsense
-    Hostname 10.10.10.1
-    user root
-
 Host gateway
-    Hostname 10.10.11.31
+    Hostname 10.10.10.1
     user deepwatrcreatur
 
 Host pve-lattitude
