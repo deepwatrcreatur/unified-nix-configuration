@@ -8,6 +8,8 @@
   # Disable systemd-resolved, use Technitium DNS directly
   services.resolved.enable = false;
   networking.nameservers = [ "127.0.0.1" ];
+  
+  # If Technitium fails, you can still SSH via IP: ssh 192.168.100.100
 
   # Enable IP forwarding for routing
   boot.kernel.sysctl = {
