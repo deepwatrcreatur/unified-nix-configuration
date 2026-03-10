@@ -1,0 +1,13 @@
+# DNS mappings for Technitium
+# Format: hostname ip_address [record_type]
+# Default record_type is A if not specified
+
+gateway 10.10.10.1 A
+attic-cache 10.10.11.39 A
+pve-lattitude 10.10.11.47 A
+pve-rog 10.10.11.53 A
+pve-tomahawk 10.10.11.55 A
+pve-gateway 10.10.11.56 A
+pve-strix 10.10.11.57 A
+workstation 10.10.11.73 A
+
