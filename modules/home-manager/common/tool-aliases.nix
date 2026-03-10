@@ -22,6 +22,7 @@ let
 
     # System tools
     rsync = "/run/current-system/sw/bin/rsync";
+    sudo = "/run/wrappers/bin/sudo";  # Use wrapped sudo with correct setuid permissions
 
     # Tailspin
     tailspin = "tspin";

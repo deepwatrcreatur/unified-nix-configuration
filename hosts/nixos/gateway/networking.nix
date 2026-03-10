@@ -62,10 +62,10 @@
     ];
   };
 
-  # Management interface (ens18) - Get IP via DHCP for remote access
+  # Management interface (ens18) - Static IP for remote access
   systemd.network.networks."30-management" = {
     matchConfig.Name = "ens18";
-    address = [ "10.10.11.31/16" ];
+    address = [ "192.168.100.100/24" ];
     networkConfig = {
       DHCPServer = "no";
       IPv6SendRA = true;
