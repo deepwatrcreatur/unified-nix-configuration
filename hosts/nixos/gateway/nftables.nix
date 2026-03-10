@@ -29,7 +29,8 @@
         iifname {"ens16", "ens18"} tcp dport 22 accept
         
         # Allow DNS and DHCP on LAN and management interfaces
-        iifname {"ens16", "ens18"} udp dport {53, 67, 547} accept
+        iifname {"ens16", "ens18"} udp dport {53, 67, 68, 547} accept
+        iifname {"ens16", "ens18"} udp sport {67, 68} accept
         iifname {"ens16", "ens18"} tcp dport 53 accept
         
         # Allow Technitium web UI on LAN and management
