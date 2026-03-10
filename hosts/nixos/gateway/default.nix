@@ -11,6 +11,7 @@
     ./hardware-configuration.nix
     ./networking.nix
     ./nftables.nix
+    ./nginx-proxy-manager.nix
     ../../../modules/nixos/common
     ../../../modules/common/utility-packages.nix
     ../../../modules/nixos/keyboard-glitches.nix # Fix stuck keyboard presses in Proxmox VM
@@ -46,6 +47,10 @@
 
   # Technitium DNS & DHCP Server
   services.technitium-dns-server.enable = true;
+  
+  # Nginx Proxy Manager for reverse proxy
+  services.nginx-proxy-manager.enable = true;
+  
   # QEMU guest agent for Proxmox
   services.qemuGuest.enable = true;
 

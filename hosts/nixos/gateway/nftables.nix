@@ -35,6 +35,12 @@
         
         # Allow Technitium web UI on LAN and management
         iifname {"ens16", "ens18"} tcp dport {5380, 53443} accept
+        
+        # Allow NPM web UI on LAN and management
+        iifname {"ens16", "ens18"} tcp dport 81 accept
+        
+        # Allow HTTP/HTTPS from WAN and LAN for NPM reverse proxy
+        tcp dport {80, 443} accept
       }
       
       chain forward {

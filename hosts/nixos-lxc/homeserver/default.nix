@@ -15,7 +15,7 @@
     ./home-manager-users.nix
     ./influxdb.nix
     ./kasa-collector.nix
-    ./nginx-proxy-manager.nix
+    # ./nginx-proxy-manager.nix  # Moved to gateway
     ./packages.nix
     ./podman.nix
     ./rsync.nix
