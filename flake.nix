@@ -68,6 +68,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-linuxbrew = {
+      url = "github:deepwatrcreatur/nix-linuxbrew";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     tesla-inference-flake = {
       url = "github:deepwatrcreatur/tesla-inference-flake"; # Use latest main with official binaries
       inputs.nixpkgs.follows = "nixpkgs";

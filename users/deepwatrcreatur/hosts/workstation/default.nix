@@ -1,6 +1,7 @@
 {
   config,
   pkgs,
+  lib,
   inputs,
   ...
 }:
@@ -16,34 +17,12 @@
     ../../../../modules/home-manager/gpg-agent-cross-de.nix
     ../../../../modules/home-manager/zed.nix
     ../../../../modules/home-manager/cosmic-settings.nix
-    ../../../../modules/home-manager/linuxbrew.nix
   ];
-
-  # Enable zellij with vivid colors, rounded tabs, and Ctrl-Alt keybindings
-  programs.zellij-vivid-rounded = {
-    enable = true;
-  };
-
-  # Enable yazelix with catppuccin theming
-  programs.yazelix = {
-    enable = true;
-    enableShellIntegration = true;
-  };
-
-  home.homeDirectory = "/home/deepwatrcreatur";
-
-  # WhiteSur theming for MATE
-  whitesur = {
-    enable = true;
-    gtk.enable = true;
-  };
-
-  # Automatically back up clobbered config files by allowing overwrites
-  xdg.configFile."gtk-4.0/gtk.css".force = true;
 
   programs.distrobox.fedora.enable = true;
 
   home.packages = with pkgs; [
+    inputs.nix-linuxbrew.packages.${pkgs.stdenv.hostPlatform.system}.brew-wrapper
     bitwarden-desktop
     ffmpeg
     gitkraken
