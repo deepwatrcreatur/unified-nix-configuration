@@ -51,6 +51,9 @@
     ln -sf ${pkgs.coreutils}/bin/sort /bin/sort
     ln -sf ${pkgs.coreutils}/bin/mv /bin/mv
     ln -sf ${pkgs.coreutils}/bin/rm /bin/rm
+    ln -sf ${pkgs.coreutils}/bin/ln /bin/ln
+    ln -sf ${pkgs.coreutils}/bin/dirname /bin/dirname
+    ln -sf ${pkgs.coreutils}/bin/basename /bin/basename
     ln -sf ${pkgs.coreutils}/bin/sha256sum /bin/sha256sum
     ln -sf ${pkgs.gnutar}/bin/tar /bin/tar
     ln -sf ${pkgs.gzip}/bin/gzip /bin/gzip
@@ -59,6 +62,7 @@
     ln -sf ${pkgs.bash}/bin/bash /bin/bash
     ln -sf ${pkgs.coreutils}/bin/stat /usr/bin/stat
     ln -sf ${pkgs.coreutils}/bin/cut /usr/bin/cut
+    ln -sf ${pkgs.coreutils}/bin/dirname /usr/bin/dirname
     ln -sf ${pkgs.coreutils}/bin/sha256sum /usr/bin/sha256sum
     ln -sf ${pkgs.glibc.bin}/bin/ldd /usr/bin/ldd
   '';
