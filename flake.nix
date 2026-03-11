@@ -120,6 +120,11 @@
       inputs.flake-utils.follows = "flake-utils";
     };
 
+    ssh-keys-manager = {
+      url = "github:deepwatrcreatur/nix-ssh-keys-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs =
