@@ -24,6 +24,14 @@ Both sops-nix and agenix running successfully on workstation. Core API keys migr
   - `opencode-zen-api-key` → `/run/agenix/opencode-zen-api-key`
 - ✅ All secrets decrypt successfully
 - ✅ Owned by `deepwatrcreatur:users` with correct permissions
+- ✅ Fnox updated to prefer agenix paths
+
+### Gateway
+- ✅ Agenix module imported
+- ✅ Migrated secrets:
+  - `technitium-api-key` → `/run/agenix/technitium-api-key`
+- ✅ DNS sync script tested and working with agenix
+- ✅ Deployed successfully
 
 ## Testing Needed
 
