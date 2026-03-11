@@ -1,5 +1,9 @@
 # hosts/nixos-lxc/cache-build-server/default.nix
 {
+  inputs,
+  ...
+}:
+{
   imports = [
     ./modules/configuration.nix
     ./modules/build-server.nix
@@ -7,5 +11,6 @@
     ./modules/packages.nix
     ./modules/users.nix
     ./modules/sops.nix
+    inputs.agenix.nixosModules.default
   ];
 }

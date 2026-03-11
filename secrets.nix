@@ -32,6 +32,7 @@ in
   "secrets-agenix/z-ai-api-key.age".publicKeys = allKeys;
   "secrets-agenix/opencode-zen-api-key.age".publicKeys = allKeys;
   "secrets-agenix/atuin-key-b64.age".publicKeys = allKeys;
+  "secrets-agenix/attic-client-token.age".publicKeys = [ hosts.attic-cache hosts.workstation ] ++ allUsers;
   
   # Add more secrets as needed...
 }

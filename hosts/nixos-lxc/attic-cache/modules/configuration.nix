@@ -36,6 +36,13 @@
 
   security.wrappers.sudo.setuid = true;
 
+  # Agenix configuration
+  age.secrets.attic-client-token = {
+    file = ../../../../secrets-agenix/attic-client-token.age;
+    owner = "root";
+    mode = "0400";
+  };
+
   systemd.mounts = [
     {
       what = "debugfs";
