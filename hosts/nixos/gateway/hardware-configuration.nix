@@ -18,6 +18,13 @@
       fsType = "ext4";
     };
 
+  fileSystems."/var/log/gateway" =
+    { device = "/dev/disk/by-label/gateway-logs";
+      fsType = "ext4";
+      options = [ "noatime" ];
+      neededForBoot = false;
+    };
+
   swapDevices = [ ];
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
