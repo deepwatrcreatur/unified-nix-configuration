@@ -250,6 +250,21 @@
       owner = "deepwatrcreatur";
       group = "users";
     };
+    oauth-creds = {
+      file = ../../../secrets-agenix/oauth-creds.age;
+      owner = "deepwatrcreatur";
+      group = "users";
+    };
+    bitwarden-data = {
+      file = ../../../secrets-agenix/bitwarden-data.age;
+      owner = "deepwatrcreatur";
+      group = "users";
+    };
+    rclone-conf = {
+      file = ../../../secrets-agenix/rclone-conf.age;
+      owner = "deepwatrcreatur";
+      group = "users";
+    };
   };
   
   # Test: Make available as env var
