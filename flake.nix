@@ -82,7 +82,7 @@
     };
 
     nix-linuxbrew = {
-      url = "github:deepwatrcreatur/nix-linuxbrew/v1.0.0";
+      url = "github:deepwatrcreatur/nix-linuxbrew/v1.0.1";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

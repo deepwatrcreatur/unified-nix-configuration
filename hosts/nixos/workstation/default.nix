@@ -197,6 +197,7 @@
     cache = "cache-local";
 
     enablePostBuildHook = true;
+    configureNixSubstituter = false;
   };
 
   nixbit = {

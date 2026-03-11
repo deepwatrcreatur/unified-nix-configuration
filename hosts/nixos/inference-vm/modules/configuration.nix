@@ -35,6 +35,7 @@
     cache = "cache-local";
 
     enablePostBuildHook = true;
+    configureNixSubstituter = false;
   };
 
   # GPU Infrastructure configuration - Tesla P40 optimized
