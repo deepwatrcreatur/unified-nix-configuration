@@ -3,7 +3,9 @@
 let
   # System host keys (for system-level secrets)
   hosts = {
+    attic-cache = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBMzmqOZ301fwZJVQI5KZ9+npuFs+3EvwKet4peLZeLv";
     gateway = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGjM16WJ9SUCs+moDo8QTTbbEJMd0EYZPGItC6oV4WiO root@nixos";
+    rustdesk = "";
     workstation = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKFAzJUqDpasPy2B+vODDAZOdGJ/7DiZ1wWjbWkM1Bi8 root@workstation";
   };
   
@@ -20,10 +22,10 @@ let
 in
 {
   # System-level secrets
-  "secrets-agenix/cloudflare-api-key.age".publicKeys = [ hosts.gateway hosts.homeserver ] ++ allUsers;
+  "secrets-agenix/cloudflare-api-key.age".publicKeys = [ hosts.gateway ] ++ allUsers;
   "secrets-agenix/technitium-api-key.age".publicKeys = [ hosts.gateway hosts.workstation ] ++ allUsers;
   
-  # User-level secrets (testing migration)
+  # User-level secrets (migrated)
   "secrets-agenix/github-token.age".publicKeys = allKeys;
   "secrets-agenix/grok-api-key.age".publicKeys = allKeys;
   "secrets-agenix/openrouter-api-key.age".publicKeys = allKeys;
