@@ -17,6 +17,7 @@
     ../../../modules/nixos/keyboard-glitches.nix # Fix stuck keyboard presses in Proxmox VM
     ../../../modules/nixos/snap.nix # Snap package manager support
     ../../../modules/activation-scripts
+    inputs.agenix.nixosModules.default # Agenix secrets management
   ];
 
   # Home manager configuration for gateway
@@ -92,6 +93,15 @@
   environment.systemPackages = with pkgs; [
     tmux
   ];
+
+  # Agenix configuration
+  age.secrets.technitium-api-key = {
+    file = ../../../secrets-agenix/technitium-api-key.age;
+    owner = "deepwatrcreatur";
+    group = "users";
+  };
+  
+  environment.variables.TECHNITIUM_API_KEY_FILE = config.age.secrets.technitium-api-key.path;
 
   nixpkgs.hostPlatform = "x86_64-linux";
   system.stateVersion = "25.05";
