@@ -694,6 +694,7 @@
             userPath,
             modules ? [ ],
             isDesktop ? false,
+            extraSpecialArgs ? { },
           }:
           inputs.home-manager.lib.homeManagerConfiguration {
             pkgs = import inputs.nixpkgs {
@@ -701,10 +702,12 @@
               config = commonNixpkgsConfig;
               overlays = commonOverlays;
             };
-            extraSpecialArgs = homeManagerModuleArgs // {
-              inherit isDesktop;
-              hostName = "";
-            };
+            extraSpecialArgs =
+              homeManagerModuleArgs // {
+                inherit isDesktop;
+                hostName = "";
+              }
+              // extraSpecialArgs;
             modules = [
               userPath
               ./modules/home-manager
