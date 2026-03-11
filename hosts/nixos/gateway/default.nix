@@ -51,6 +51,13 @@
   # Nginx Proxy Manager for reverse proxy
   services.nginx-proxy-manager.enable = true;
   
+  # Enable podman for containers (required by NPM)
+  virtualisation.podman = {
+    enable = true;
+    dockerCompat = true;
+  };
+  virtualisation.oci-containers.backend = "podman";
+  
   # QEMU guest agent for Proxmox
   services.qemuGuest.enable = true;
 

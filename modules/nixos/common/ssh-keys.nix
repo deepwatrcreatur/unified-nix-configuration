@@ -21,4 +21,16 @@ in
 
   # Ensure SSH service is enabled
   services.openssh.enable = lib.mkDefault true;
+  
+  # Enable hybrid authorized_keys: NixOS-managed + user-managed dynamic keys
+  services.openssh.extraConfig = ''
+    # Check both NixOS-managed and user-managed keys
+    AuthorizedKeysFile .ssh/authorized_keys .ssh/authorized_keys_dynamic
+  '';
+  
+  # Create mutable authorized_keys_dynamic file
+  systemd.tmpfiles.rules = [
+    "d /home/deepwatrcreatur/.ssh 0700 deepwatrcreatur users - -"
+    "f /home/deepwatrcreatur/.ssh/authorized_keys_dynamic 0600 deepwatrcreatur users - -"
+  ];
 }
