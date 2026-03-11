@@ -14,6 +14,7 @@
     ../../../modules/common/utility-packages.nix # Common utility packages
     inputs.nix-attic-infra.nixosModules.attic-client # Attic cache client
     inputs.nixbit.nixosModules.nixbit # Nix bit repository manager
+    inputs.agenix.nixosModules.default # Agenix secrets management (testing alongside sops)
     ../../../modules/nixos/snap.nix # Snap package manager support
     #../../../modules/nixos/sessions/cinnamon.nix # MATE with WhiteSur theming
 
@@ -216,6 +217,16 @@
     "flakes"
   ];
   nixpkgs.config.allowUnfree = true;
+
+  # Agenix test configuration (parallel with sops)
+  age.secrets.github-token-agenix = {
+    file = ../../../secrets-agenix/github-token.age;
+    owner = "deepwatrcreatur";
+    group = "users";
+  };
+  
+  # Test: Make available as env var
+  environment.variables.GITHUB_TOKEN_AGENIX = config.age.secrets.github-token-agenix.path;
 
   system.stateVersion = "25.05";
 }

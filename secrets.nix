@@ -20,14 +20,14 @@ let
 in
 {
   # System-level secrets
-  "cloudflare-api-key.age".publicKeys = [ hosts.gateway hosts.homeserver ] ++ allUsers;
-  "technitium-api-key.age".publicKeys = [ hosts.gateway hosts.workstation ] ++ allUsers;
+  "secrets-agenix/cloudflare-api-key.age".publicKeys = [ hosts.gateway hosts.homeserver ] ++ allUsers;
+  "secrets-agenix/technitium-api-key.age".publicKeys = [ hosts.gateway hosts.workstation ] ++ allUsers;
   
-  # User-level secrets
-  "github-token.age".publicKeys = allKeys;
-  "grok-api-key.age".publicKeys = allKeys;
-  "openrouter-api-key.age".publicKeys = allKeys;
-  "atuin-key.age".publicKeys = allKeys;
+  # User-level secrets (testing migration)
+  "secrets-agenix/github-token.age".publicKeys = allKeys;
+  "secrets-agenix/grok-api-key.age".publicKeys = allKeys;
+  "secrets-agenix/openrouter-api-key.age".publicKeys = allKeys;
+  "secrets-agenix/atuin-key.age".publicKeys = allKeys;
   
   # Add more secrets as needed...
 }
