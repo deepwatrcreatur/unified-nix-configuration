@@ -5,6 +5,13 @@
 let
   sshKeysDir = ../../../ssh-keys;
   
+  # Hostname to IP mapping from ssh-config
+  hostToIP = {
+    gateway = "10.10.10.1";
+    workstation = "localhost";
+    # Add more as needed
+  };
+  
   # Read host keys (pattern: {hostname}-host-ed25519.pub)
   hostKeyFiles = builtins.attrNames (
     lib.filterAttrs (name: type: 
@@ -12,13 +19,17 @@ let
     ) (builtins.readDir sshKeysDir)
   );
   
-  # Convert to known_hosts format
+  # Convert to known_hosts format with hostname,IP
   knownHostsEntries = lib.concatMapStringsSep "\n" (file:
     let
       hostname = lib.removeSuffix "-host-ed25519.pub" file;
       key = lib.strings.trim (builtins.readFile (sshKeysDir + "/${file}"));
+      # Add IP if we have a mapping, otherwise just hostname
+      hostPattern = if hostToIP ? ${hostname}
+                    then "${hostname},${hostToIP.${hostname}}"
+                    else hostname;
     in
-    "${hostname} ${key}"
+    "${hostPattern} ${key}"
   ) hostKeyFiles;
 in
 {
