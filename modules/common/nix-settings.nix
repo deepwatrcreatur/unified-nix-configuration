@@ -116,4 +116,23 @@ in
   # Container-specific settings
   nix.settings.sandbox = lib.mkIf isContainer false;
   nix.settings.use-cgroups = lib.mkIf (!isContainer) true;
+
+  # Remote building configuration
+  nix.distributedBuilds = lib.mkIf (!isCacheServer) true;
+  nix.buildMachines = lib.mkIf (!isCacheServer) [
+    {
+      hostName = "10.10.11.39"; # attic-cache
+      system = "x86_64-linux";
+      maxJobs = 8;
+      speedFactor = 2;
+      supportedFeatures = [
+        "nixos-test"
+        "benchmark"
+        "big-parallel"
+        "kvm"
+      ];
+      sshUser = "deepwatrcreatur";
+      sshKey = if pkgs.stdenv.isDarwin then "/var/root/.ssh/nix-remote" else "/root/.ssh/nix-remote";
+    }
+  ];
 }
