@@ -1131,6 +1131,7 @@
         "nixpkgs-unstable": "nixpkgs-unstable",
         "plasma-manager": "plasma-manager",
         "sops-nix": "sops-nix",
+        "ssh-keys-manager": "ssh-keys-manager",
         "tap-gabe565": "tap-gabe565",
         "tap-romkatv-powerlevel10k": "tap-romkatv-powerlevel10k",
         "tap-sst": "tap-sst",
@@ -1178,6 +1179,26 @@
       "original": {
         "owner": "Mic92",
         "repo": "sops-nix",
+        "type": "github"
+      }
+    },
+    "ssh-keys-manager": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1773211200,
+        "narHash": "sha256-PBdX90fKEg+r49ZLlPqrfjEODCjpMv1/jgw/0yxnvSA=",
+        "owner": "deepwatrcreatur",
+        "repo": "nix-ssh-keys-manager",
+        "rev": "aca08c23300a64f586f3daf12fa18812b959727e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "deepwatrcreatur",
+        "repo": "nix-ssh-keys-manager",
         "type": "github"
       }
     },

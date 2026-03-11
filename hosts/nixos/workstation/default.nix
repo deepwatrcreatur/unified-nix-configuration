@@ -138,6 +138,8 @@
     shell = pkgs.fish;
   };
 
+  services.ssh-keys-manager.username = "deepwatrcreatur";
+
   # Configure automatic login for deepwatrcreatur user
   services.displayManager.autoLogin.enable = true;
   services.displayManager.autoLogin.user = "deepwatrcreatur";

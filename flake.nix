@@ -120,6 +120,11 @@
       inputs.flake-utils.follows = "flake-utils";
     };
 
+    ssh-keys-manager = {
+      url = "github:deepwatrcreatur/nix-ssh-keys-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs =
@@ -786,11 +791,13 @@
     in
     (loadOutputs ./outputs)
     // {
-      hm-opts = inputs.home-manager.lib.homeManagerConfiguration {
-        pkgs = import inputs.nixpkgs {
-          system = "x86_64-linux";
+      hm-opts = helpers.mkHomeConfig {
+        system = "x86_64-linux";
+        userPath = ./modules/home-manager; # mkHomeConfig automatically imports default.nix
+        extraSpecialArgs = homeManagerModuleArgs // {
+          hostName = "";
+          isDesktop = false;
         };
-        modules = [ ./modules/home-manager/non-nixos.nix ];
       };
     };
 }
