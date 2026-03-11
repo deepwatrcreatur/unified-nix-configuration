@@ -27,6 +27,11 @@
 
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
 
+    nixbit = {
+      url = "github:pbek/nixbit";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     tap-romkatv-powerlevel10k = {
       url = "github:romkatv/powerlevel10k";
       flake = false;
@@ -69,7 +74,7 @@
     };
 
     nix-linuxbrew = {
-      url = "github:deepwatrcreatur/nix-linuxbrew";
+      url = "github:deepwatrcreatur/nix-linuxbrew/v1.0.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
