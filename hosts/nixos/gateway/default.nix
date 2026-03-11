@@ -84,6 +84,8 @@
     shell = pkgs.fish;
   };
 
+  services.ssh-keys-manager.username = "deepwatrcreatur";
+
   # Enable fish shell
   programs.fish.enable = true;
   

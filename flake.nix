@@ -795,7 +795,8 @@
         pkgs = import inputs.nixpkgs {
           system = "x86_64-linux";
         };
-        modules = [ ./modules/home-manager/non-nixos.nix ];
+        extraSpecialArgs = { inherit inputs; };
+        modules = [ ./modules/home-manager/default.nix ];
       };
     };
 }

@@ -18,7 +18,6 @@
 
   # Ensure SSH is enabled for SOPS
   services.openssh.enable = true;
-  services.nginx-proxy-manager.enable = true;
 
   # Enable nix-ld for running dynamically linked executables (like homebrew packages)
   programs.nix-ld.enable = true;

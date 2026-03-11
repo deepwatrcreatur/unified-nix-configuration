@@ -11,5 +11,6 @@
     enable = true;
     keysDirectory = ../../../ssh-keys;
     sshConfigFile = ../ssh-config;
+    outputFile = ".ssh/known_hosts_managed";
   };
 }
