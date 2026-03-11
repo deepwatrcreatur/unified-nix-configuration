@@ -27,6 +27,8 @@ in
   "secrets-agenix/github-token.age".publicKeys = allKeys;
   "secrets-agenix/grok-api-key.age".publicKeys = allKeys;
   "secrets-agenix/openrouter-api-key.age".publicKeys = allKeys;
+  "secrets-agenix/z-ai-api-key.age".publicKeys = allKeys;
+  "secrets-agenix/opencode-zen-api-key.age".publicKeys = allKeys;
   "secrets-agenix/atuin-key.age".publicKeys = allKeys;
   
   # Add more secrets as needed...

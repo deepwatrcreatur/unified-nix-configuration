@@ -219,10 +219,32 @@
   nixpkgs.config.allowUnfree = true;
 
   # Agenix test configuration (parallel with sops)
-  age.secrets.github-token-agenix = {
-    file = ../../../secrets-agenix/github-token.age;
-    owner = "deepwatrcreatur";
-    group = "users";
+  age.secrets = {
+    github-token-agenix = {
+      file = ../../../secrets-agenix/github-token.age;
+      owner = "deepwatrcreatur";
+      group = "users";
+    };
+    grok-api-key = {
+      file = ../../../secrets-agenix/grok-api-key.age;
+      owner = "deepwatrcreatur";
+      group = "users";
+    };
+    openrouter-api-key = {
+      file = ../../../secrets-agenix/openrouter-api-key.age;
+      owner = "deepwatrcreatur";
+      group = "users";
+    };
+    z-ai-api-key = {
+      file = ../../../secrets-agenix/z-ai-api-key.age;
+      owner = "deepwatrcreatur";
+      group = "users";
+    };
+    opencode-zen-api-key = {
+      file = ../../../secrets-agenix/opencode-zen-api-key.age;
+      owner = "deepwatrcreatur";
+      group = "users";
+    };
   };
   
   # Test: Make available as env var
