@@ -29,9 +29,16 @@ Agenix successfully deployed to workstation and gateway. Core secrets migrated.
 
 ### Gateway
 - ✅ Agenix module imported
-- ✅ Migrated secrets:
+- ✅ Migrated secrets (1 total):
   - `technitium-api-key` → `/run/agenix/technitium-api-key`
 - ✅ DNS sync script tested and working with agenix
+- ✅ Deployed successfully
+
+### Attic-Cache
+- ✅ Agenix module imported
+- ✅ Migrated secrets (1 total):
+  - `attic-client-token` → `/run/agenix/attic-client-token`
+- ✅ Backward compatibility symlink at `/run/secrets/attic-client-token`
 - ✅ Deployed successfully
 
 ## Testing Needed
@@ -44,18 +51,15 @@ Agenix successfully deployed to workstation and gateway. Core secrets migrated.
 ## Remaining Secrets to Migrate
 
 ### User Secrets (users/deepwatrcreatur/secrets/)
-- `atuin-key-b64.txt.enc` - Shell history sync
 - `oauth_creds.json.enc` - Gemini OAuth (binary)
-- `bitwarden_data_json` - Bitwarden data (binary)
+- `data.json.enc` - Bitwarden data (binary)
 - `gpg-private-key.asc.enc` - GPG key (large binary)
 - `rclone.conf.enc` - Rclone config (binary)
-- `attic-client-token.yaml.enc` - Already configured separately
 
-### System Secrets
-- Cloudflare API keys (homeserver, gateway)
-- Technitium API key (gateway, workstation)
-- InfluxDB passwords (homeserver)
-- Kasa collector tokens (homeserver)
+### System Secrets (secrets/)
+- `attic-server-private-key.yaml.enc` - Attic server key
+- `attic-server-token.yaml.enc` - Attic server token
+- `rclone.yaml.enc` - System rclone config
 
 ## Next Actions
 
