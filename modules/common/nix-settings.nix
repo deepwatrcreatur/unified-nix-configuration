@@ -26,10 +26,8 @@ let
   # boot.isContainer is set by virtualisation/lxc-container.nix and similar
   isContainer = config.boot.isContainer or false;
 
-  # Detect if this is the cache-build-server itself (avoid circular dependency)
-  isCacheServer =
-    config.networking.hostName or "" == "cache-build-server"
-    || config.networking.hostName == "attic-cache";
+  # Detect if this is the attic-cache server itself (avoid circular dependency)
+  isCacheServer = config.networking.hostName or "" == "attic-cache";
 in
 {
   nixpkgs.config.allowUnfree = true;

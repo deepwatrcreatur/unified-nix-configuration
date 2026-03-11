@@ -1,5 +1,10 @@
 # Override attic post-build-hook to use attic-cache hostname instead of cache-build-server
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   atticUploadScript = pkgs.writeShellScript "attic-upload.sh" ''
@@ -52,9 +57,7 @@ let
     exit 0
   '';
 
-  isCacheServer =
-    config.networking.hostName or "" == "cache-build-server"
-    || config.networking.hostName == "attic-cache";
+  isCacheServer = config.networking.hostName or "" == "attic-cache";
 in
 {
   config = lib.mkIf (!isCacheServer) {

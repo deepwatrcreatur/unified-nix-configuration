@@ -13,6 +13,7 @@
     ../../../modules/nixos/common # Common NixOS modules (SSH keys, etc.)
     ../../../modules/common/utility-packages.nix # Common utility packages
     inputs.nix-attic-infra.nixosModules.attic-client # Attic cache client
+    inputs.nixbit.nixosModules.nixbit # Nix bit repository manager
     ../../../modules/nixos/snap.nix # Snap package manager support
     #../../../modules/nixos/sessions/cinnamon.nix # MATE with WhiteSur theming
 
@@ -82,8 +83,8 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.bootspec.enable = true;
   boot.growPartition = true;
-  boot.loader.timeout = 7;  # Increased from default 5 seconds for easier generation selection
-  boot.loader.systemd-boot.consoleMode = "auto";  # Auto-detect optimal resolution for smaller font
+  boot.loader.timeout = 7; # Increased from default 5 seconds for easier generation selection
+  boot.loader.systemd-boot.consoleMode = "auto"; # Auto-detect optimal resolution for smaller font
 
   # Load AMD GPU driver
   boot.kernelModules = [ "amdgpu" ];
@@ -193,6 +194,12 @@
     cache = "cache-local";
 
     enablePostBuildHook = true;
+  };
+
+  nixbit = {
+    enable = true;
+    repository = "https://github.com/deepwatrcreatur/unified-nix-configuration.git";
+    forceAutostart = true; # Ensure autostart on all systems
   };
 
   # Enable snap support
