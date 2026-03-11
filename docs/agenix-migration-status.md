@@ -1,27 +1,28 @@
 # Agenix Migration Status
 
-**Last updated:** 2026-03-11 01:17 UTC
+**Last updated:** 2026-03-11 05:28 UTC
 
-## Current State: ✅ Phase 2 Complete - Parallel Operation Working
+## Current State: ✅ Phase 2+ - Expanding to Multiple Hosts
 
-Both sops-nix and agenix running successfully on workstation. Core API keys migrated and tested.
+Agenix successfully deployed to workstation and gateway. Core secrets migrated.
 
 ## Completed
 
 ### Infrastructure
 - ✅ Added agenix to flake inputs
-- ✅ Collected host SSH keys (gateway, workstation, attic-cache)
+- ✅ Collected host SSH keys (gateway, workstation, attic-cache, rustdesk)
 - ✅ Auto-generated `secrets.nix` from ssh-keys directory
 - ✅ Created migration scripts (`collect-host-keys.sh`, `generate-secrets-nix.sh`)
 
 ### Workstation (Test Host)
 - ✅ Agenix module imported
-- ✅ Migrated secrets:
+- ✅ Migrated secrets (6 total):
   - `github-token` → `/run/agenix/github-token-agenix`
   - `grok-api-key` → `/run/agenix/grok-api-key`
   - `openrouter-api-key` → `/run/agenix/openrouter-api-key`
   - `z-ai-api-key` → `/run/agenix/z-ai-api-key`
   - `opencode-zen-api-key` → `/run/agenix/opencode-zen-api-key`
+  - `atuin-key-b64` → `/run/agenix/atuin-key-b64`
 - ✅ All secrets decrypt successfully
 - ✅ Owned by `deepwatrcreatur:users` with correct permissions
 - ✅ Fnox updated to prefer agenix paths
