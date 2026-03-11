@@ -791,14 +791,9 @@
     in
     (loadOutputs ./outputs)
     // {
-      hm-opts = inputs.home-manager.lib.homeManagerConfiguration {
-        pkgs = import inputs.nixpkgs {
-          system = "x86_64-linux";
-        };
-        extraSpecialArgs = homeManagerModuleArgs // {
-          hostName = "";
-          isDesktop = false;
-        };
+      hm-opts = helpers.mkHomeConfig {
+        system = "x86_64-linux";
+        userPath = ./modules/home-manager/non-nixos.nix;
         modules = [ ./modules/home-manager/default.nix ];
       };
     };
