@@ -1,4 +1,4 @@
-{ lib ? import <nixpkgs/lib> }:
+{ lib }:
 
 let
   # A minimal stub for the inputs.ssh-keys-manager.nixosModules.default
