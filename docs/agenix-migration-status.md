@@ -10,20 +10,23 @@ Agenix successfully deployed to workstation and gateway. Core secrets migrated.
 
 ### Infrastructure
 - ✅ Added agenix to flake inputs
-- ✅ Collected host SSH keys (gateway, workstation, attic-cache, rustdesk)
+- ✅ Collected host SSH keys (gateway, workstation, attic-cache, pve-gateway, pve-lattitude, pve-strix, pve-tomahawk)
 - ✅ Auto-generated `secrets.nix` from ssh-keys directory
 - ✅ Created migration scripts (`collect-host-keys.sh`, `generate-secrets-nix.sh`)
 
 ### Workstation (Test Host)
 - ✅ Agenix module imported
-- ✅ Migrated secrets (6 total):
+- ✅ Migrated secrets (9 total):
   - `github-token` → `/run/agenix/github-token-agenix`
   - `grok-api-key` → `/run/agenix/grok-api-key`
   - `openrouter-api-key` → `/run/agenix/openrouter-api-key`
   - `z-ai-api-key` → `/run/agenix/z-ai-api-key`
   - `opencode-zen-api-key` → `/run/agenix/opencode-zen-api-key`
   - `atuin-key-b64` → `/run/agenix/atuin-key-b64`
-- ✅ All secrets decrypt successfully
+  - `oauth-creds` (JSON) → `/run/agenix/oauth-creds`
+  - `bitwarden-data` (JSON) → `/run/agenix/bitwarden-data`
+  - `rclone-conf` → `/run/agenix/rclone-conf`
+- ✅ All secrets decrypt successfully (including binary formats)
 - ✅ Owned by `deepwatrcreatur:users` with correct permissions
 - ✅ Fnox updated to prefer agenix paths
 
@@ -51,15 +54,11 @@ Agenix successfully deployed to workstation and gateway. Core secrets migrated.
 ## Remaining Secrets to Migrate
 
 ### User Secrets (users/deepwatrcreatur/secrets/)
-- `oauth_creds.json.enc` - Gemini OAuth (binary)
-- `data.json.enc` - Bitwarden data (binary)
-- `gpg-private-key.asc.enc` - GPG key (large binary)
-- `rclone.conf.enc` - Rclone config (binary)
+- `gpg-private-key.asc.enc` - GPG key (large binary - optional)
 
 ### System Secrets (secrets/)
-- `attic-server-private-key.yaml.enc` - Attic server key
-- `attic-server-token.yaml.enc` - Attic server token
-- `rclone.yaml.enc` - System rclone config
+- `attic-server-private-key.yaml.enc` - Attic server key (when attic server is set up)
+- `attic-server-token.yaml.enc` - Attic server token (when attic server is set up)
 
 ## Next Actions
 
