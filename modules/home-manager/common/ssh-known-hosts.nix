@@ -4,13 +4,49 @@
 
 let
   sshKeysDir = ../../../ssh-keys;
+  sshConfigFile = ../ssh-config;
   
-  # Hostname to IP mapping from ssh-config
-  hostToIP = {
-    gateway = "10.10.10.1";
-    workstation = "localhost";
-    # Add more as needed
-  };
+  # Parse ssh-config to extract hostname -> IP mappings
+  sshConfigContent = builtins.readFile sshConfigFile;
+  
+  # Extract Host and Hostname pairs from ssh-config
+  # This is a simple parser - matches "Host X" followed by "Hostname Y"
+  parseSSHConfig = content:
+    let
+      lines = lib.splitString "\n" content;
+      # Remove comments and trim
+      cleanLines = map (line: lib.strings.trim line) (lib.filter (line: 
+        !(lib.hasPrefix "#" (lib.strings.trim line)) && (lib.strings.trim line) != ""
+      ) lines);
+      
+      # Parse pairs of Host/Hostname
+      parseLines = lines: acc:
+        if lines == [] then acc
+        else
+          let
+            line = lib.head lines;
+            rest = lib.tail lines;
+          in
+          if lib.hasPrefix "Host " line && line != "Host *" then
+            let
+              hostname = lib.removePrefix "Host " line;
+              # Look ahead for Hostname line
+              nextLine = if rest != [] then lib.head rest else "";
+              hasIP = lib.hasPrefix "Hostname " nextLine || lib.hasPrefix "HostName " nextLine;
+              ip = if hasIP then 
+                     lib.removePrefix "Hostname " (lib.removePrefix "HostName " nextLine)
+                   else null;
+            in
+            if ip != null then
+              parseLines (lib.tail rest) (acc // { ${hostname} = ip; })
+            else
+              parseLines rest acc
+          else
+            parseLines rest acc;
+    in
+    parseLines cleanLines {};
+  
+  hostToIP = parseSSHConfig sshConfigContent;
   
   # Read host keys (pattern: {hostname}-host-ed25519.pub)
   hostKeyFiles = builtins.attrNames (
@@ -38,6 +74,7 @@ in
     text = ''
       # NixOS-managed known_hosts (read-only)
       # Auto-generated from ssh-keys/*-host-ed25519.pub
+      # IPs auto-extracted from ssh-config
       ${knownHostsEntries}
     '';
   };
