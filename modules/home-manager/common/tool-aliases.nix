@@ -19,6 +19,7 @@ let
 
     # SSH
     ssh-nocheck = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ";
+    ssh-copy-id-dynamic = "ssh-copy-id -t .ssh/authorized_keys_dynamic";
 
     # System tools
     rsync = "/run/current-system/sw/bin/rsync";
