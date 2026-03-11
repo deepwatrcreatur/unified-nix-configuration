@@ -1,7 +1,8 @@
 {
   config,
-  pkgs,
+  inputs,
   lib,
+  pkgs,
   ...
 }:
 
@@ -13,5 +14,6 @@
     gemini-cli
     github-copilot-cli   
     factory-droid
+    inputs.codex-cli-nix.packages.${pkgs.system}.codex
   ];
 }

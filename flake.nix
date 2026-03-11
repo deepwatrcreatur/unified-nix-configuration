@@ -30,6 +30,11 @@
 
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
 
+    codex-cli-nix = {
+      url = "github:sadjow/codex-cli-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nixbit = {
       url = "github:pbek/nixbit";
       inputs.nixpkgs.follows = "nixpkgs";
