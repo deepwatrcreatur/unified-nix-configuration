@@ -3,20 +3,26 @@ set -euo pipefail
 
 # Sync DNS records to Technitium DNS Server
 # Usage: ./sync-dns-records.sh [mappings_file] [api_key] [server_url] [zone]
-# If api_key is not provided, reads from sops secret at ~/.config/sops/secrets/technitium-api-key
+# If api_key is not provided, reads from agenix (/run/agenix/technitium-api-key) or sops fallback
 
 MAPPINGS_FILE="${1:-dns-mappings.txt}"
 API_KEY="${2:-}"
 SERVER_URL="${3:-http://10.10.10.1:5380}"
 ZONE="${4:-deepwatercreature.com}"
 
-# If no API key provided, try to read from sops
+# If no API key provided, try to read from agenix or sops
 if [[ -z "$API_KEY" ]]; then
+    AGENIX_SECRET_PATH="/run/agenix/technitium-api-key"
     SOPS_SECRET_PATH="$HOME/.config/sops/secrets/technitium-api-key"
-    if [[ -f "$SOPS_SECRET_PATH" ]]; then
+    
+    if [[ -f "$AGENIX_SECRET_PATH" ]]; then
+        API_KEY=$(cat "$AGENIX_SECRET_PATH")
+    elif [[ -f "$SOPS_SECRET_PATH" ]]; then
         API_KEY=$(cat "$SOPS_SECRET_PATH")
     else
-        echo "Error: No API key provided and sops secret not found at $SOPS_SECRET_PATH"
+        echo "Error: No API key provided and secret not found at:"
+        echo "  - $AGENIX_SECRET_PATH (agenix)"
+        echo "  - $SOPS_SECRET_PATH (sops)"
         echo "Usage: $0 [mappings_file] <api_key> [server_url] [zone]"
         exit 1
     fi
