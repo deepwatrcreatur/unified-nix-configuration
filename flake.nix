@@ -795,7 +795,10 @@
         pkgs = import inputs.nixpkgs {
           system = "x86_64-linux";
         };
-        extraSpecialArgs = { inherit inputs; };
+        extraSpecialArgs = homeManagerModuleArgs // {
+          hostName = "";
+          isDesktop = false;
+        };
         modules = [ ./modules/home-manager/default.nix ];
       };
     };
