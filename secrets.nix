@@ -31,7 +31,7 @@ in
   "secrets-agenix/openrouter-api-key.age".publicKeys = allKeys;
   "secrets-agenix/z-ai-api-key.age".publicKeys = allKeys;
   "secrets-agenix/opencode-zen-api-key.age".publicKeys = allKeys;
-  "secrets-agenix/atuin-key.age".publicKeys = allKeys;
+  "secrets-agenix/atuin-key-b64.age".publicKeys = allKeys;
   
   # Add more secrets as needed...
 }

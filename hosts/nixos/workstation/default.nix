@@ -245,6 +245,11 @@
       owner = "deepwatrcreatur";
       group = "users";
     };
+    atuin-key-b64 = {
+      file = ../../../secrets-agenix/atuin-key-b64.age;
+      owner = "deepwatrcreatur";
+      group = "users";
+    };
   };
   
   # Test: Make available as env var
