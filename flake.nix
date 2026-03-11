@@ -793,8 +793,11 @@
     // {
       hm-opts = helpers.mkHomeConfig {
         system = "x86_64-linux";
-        userPath = ./modules/home-manager/non-nixos.nix;
-        modules = [ ./modules/home-manager/default.nix ];
+        userPath = ./modules/home-manager; # mkHomeConfig automatically imports default.nix
+        extraSpecialArgs = homeManagerModuleArgs // {
+          hostName = "";
+          isDesktop = false;
+        };
       };
     };
 }
