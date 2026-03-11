@@ -8,6 +8,8 @@ Host *
     AddressFamily inet
     ServerAliveInterval 15
     ConnectTimeout 20
+    # Hybrid known_hosts: NixOS-managed (read-only) + dynamic (mutable)
+    UserKnownHostsFile ~/.ssh/known_hosts_managed ~/.ssh/known_hosts_dynamic
 
 Host gateway
     Hostname 10.10.10.1
