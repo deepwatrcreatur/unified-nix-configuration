@@ -73,11 +73,6 @@
         end
       end
 
-      # Prioritize Homebrew binaries (if available)
-      if test -d /home/linuxbrew/.linuxbrew/bin
-        fish_add_path --prepend --move /home/linuxbrew/.linuxbrew/bin
-      end
-
       # Ensure Nix paths are in PATH early for ALL sessions (especially SSH)
       # In containers: prioritize Nix/host tools for consistency
       if test $in_container -eq 1
