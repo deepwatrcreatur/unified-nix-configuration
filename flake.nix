@@ -115,7 +115,7 @@
     };
 
     nix-attic-infra = {
-      url = "github:deepwatrcreatur/nix-attic-infra/feat/attic-infra-layer";
+      url = "github:deepwatrcreatur/nix-attic-infra";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-utils.follows = "flake-utils";
     };
