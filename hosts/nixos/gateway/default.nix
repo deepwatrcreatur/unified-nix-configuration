@@ -9,7 +9,6 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ./logging-config.nix
     ../../../modules/nixos/common
     ../../../modules/common/utility-packages.nix
     ../../../modules/nixos/keyboard-glitches.nix # Fix stuck keyboard presses in Proxmox VM
