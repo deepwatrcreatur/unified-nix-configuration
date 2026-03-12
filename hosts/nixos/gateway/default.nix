@@ -13,6 +13,7 @@
     ./nftables.nix
     ./router-optimizations.nix
     ./router-dashboard.nix
+    ./logging-config.nix
     ./nginx-proxy-manager.nix
     ../../../modules/nixos/common
     ../../../modules/common/utility-packages.nix
@@ -51,6 +52,28 @@
 
   # Technitium DNS & DHCP Server
   services.technitium-dns-server.enable = true;
+  
+  # Configure Technitium to use spinning disk for logs
+  systemd.services.technitium-dns-server = {
+    environment = {
+      TECHNITIUM_DNS_LOG_FOLDER = "/var/log/gateway/technitium";
+    };
+  };
+  
+  # Configure systemd journal to use spinning disk
+  services.journald.extraConfig = ''
+    Storage=persistent
+    SystemMaxUse=2G
+    RuntimeMaxUse=100M
+  '';
+  
+  # Bind mount journal to spinning disk
+  fileSystems."/var/log/journal" = {
+    device = "/var/log/gateway/journal";
+    fsType = "none";
+    options = [ "bind" "nofail" "x-systemd.automount" ];
+    depends = [ "/var/log/gateway" ];
+  };
   
   # Nginx Proxy Manager for reverse proxy
   services.nginx-proxy-manager.enable = true;
@@ -102,13 +125,54 @@
   # Allow wheel group to use sudo without password
   security.sudo.wheelNeedsPassword = false;
 
-  # Mount the 10GB spinning disk for log files
-  fileSystems."/var/log/technitium" = {
+  # Mount the 10GB spinning disk for all log files to preserve SSD lifespan
+  fileSystems."/var/log/gateway" = {
     device = "/dev/disk/by-uuid/f4b71c97-3f7f-47b3-a644-d82e051d5343";
     fsType = "ext4";
-    options = [ "defaults" "nofail" "x-systemd.automount" ];
+    options = [ "noatime" "nofail" "x-systemd.automount" ];
     neededForBoot = false;
   };
+
+  # Systemd service to set up log directory structure on HDD
+  systemd.services.setup-gateway-logs = {
+    description = "Set up gateway log directories on spinning disk";
+    after = [ "var-log-gateway.mount" ];
+    wants = [ "var-log-gateway.mount" ];
+    wantedBy = [ "multi-user.target" ];
+    
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+    
+    script = ''
+      # Create log directories if they don't exist
+      mkdir -p /var/log/gateway/system
+      mkdir -p /var/log/gateway/technitium
+      mkdir -p /var/log/gateway/journal
+      mkdir -p /var/log/gateway/nginx-proxy-manager
+      
+      # Set proper permissions
+      chmod 755 /var/log/gateway/system
+      chmod 755 /var/log/gateway/technitium
+      chmod 755 /var/log/gateway/journal
+      chmod 755 /var/log/gateway/nginx-proxy-manager
+      
+      echo "Gateway log directories created on spinning disk"
+    '';
+  };
+
+  # Tmpfiles rules for additional log management
+  systemd.tmpfiles.rules = [
+    # Create additional service log directories on HDD
+    "d /var/log/gateway/system 0755 root root -"
+    "d /var/log/gateway/technitium 0755 root root -"
+    "d /var/log/gateway/journal 0755 root root -"
+    "d /var/log/gateway/nginx-proxy-manager 0755 root root -"
+    "d /var/log/gateway/netdata 0755 netdata netdata -"
+    "d /var/log/gateway/prometheus 0755 prometheus prometheus -"
+    "d /var/log/gateway/grafana 0755 grafana grafana -"
+  ];
 
   environment.systemPackages = with pkgs; [
     tmux
