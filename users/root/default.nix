@@ -20,6 +20,10 @@
   home.homeDirectory = "/root";
   home.stateVersion = "25.11";
 
-   # Allow root to manage Home Manager
-   programs.home-manager.enable = true;
+  # Allow root to manage Home Manager
+  programs.home-manager.enable = true;
+
+  programs.zellij-vivid-rounded = {
+    enable = true;
+  };
 }
