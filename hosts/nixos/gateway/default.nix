@@ -58,32 +58,34 @@
     ];
   };
 
-  # DNS Zone management with static hosts imported from external file
-  # Edit ./dns-zone.nix to manage static host records
-  services.router.dnsZone = let
+  # DNS zone management with static hosts imported from external file.
+  # Edit ./dns-zone.nix to manage one or more zones.
+  services.router.dnsZones = let
     dnsConfig = import ./dns-zone.nix;
-  in {
-    enable = true;
-    zoneName = dnsConfig.domain;
-    nameserverIP = "10.10.10.1";  # Gateway IP
-    allowDynamicUpdates = true;  # DHCP can still register hosts dynamically
-    
-    # Import static hosts from dns-zone.nix
-    # Convert from dns-zone.nix format to router module format
-    staticHosts = lib.mapAttrs (name: host: {
-      ipAddress = host.ipv4;
-      aliases = host.aliases or [];
-    }) dnsConfig.hosts;
-    
-    # Create reverse DNS zones
-    reverseZone = {
-      enable = true;
-      networks = [
-        "10.10.10.0/24"
-        "10.10.11.0/24"
-      ];
+    defaultNetworks = [
+      "10.10.10.0/24"
+      "10.10.11.0/24"
+    ];
+    mkZone = zone: {
+      nameserverIP = zone.nameserverIP or "10.10.10.1";
+      allowDynamicUpdates = zone.allowDynamicUpdates or true;
+      aliases = zone.aliases or {};
+      staticHosts = lib.mapAttrs (_name: host: {
+        ipAddress = host.ipv4;
+        aliases = host.aliases or [];
+      }) zone.hosts;
+      reverseZone = {
+        enable = zone.reverseZone.enable or true;
+        networks = zone.reverseZone.networks or defaultNetworks;
+      };
     };
-  };
+  in
+    if dnsConfig ? zones then
+      lib.mapAttrs (_zoneName: zone: mkZone zone) dnsConfig.zones
+    else
+      {
+        "${dnsConfig.domain}" = mkZone dnsConfig;
+      };
 
   # Caddy reverse proxy with Let's Encrypt
   services.caddy = {
