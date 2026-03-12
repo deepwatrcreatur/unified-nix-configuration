@@ -129,19 +129,6 @@
     openFirewall = true;
   };
 
-  systemd.services."ensure-printers".serviceConfig = lib.mkIf config.services.printing.enable {
-    # Ensure the printer setup command's failure doesn't block the system activation.
-    # We prepend '-' to the ExecStart command, which tells systemd to ignore its exit status.
-    ExecStart = lib.mkForce (
-      let
-        originalExecStart = config.systemd.services."ensure-printers".serviceConfig.ExecStart;
-      in
-      if originalExecStart != null && originalExecStart != ""
-      then "-${originalExecStart}"
-      else originalExecStart
-    );
-  };
-
   # Disable screen lock
   services.logind.settings.Login.HandleLidSwitch = "ignore";
 
