@@ -691,6 +691,7 @@
         mkHomeConfig =
           {
             targetSystem ? "x86_64-linux",
+            hostName ? "",
             userPath,
             modules ? [ ],
             isDesktop ? false,
@@ -704,7 +705,7 @@
             };
             extraSpecialArgs =
               homeManagerModuleArgs // {
-                inherit isDesktop;
+                inherit isDesktop hostName;
               }
               // extraSpecialArgs;
             modules = [
@@ -795,6 +796,7 @@
     // {
       hm-opts = helpers.mkHomeConfig {
         targetSystem = "x86_64-linux";
+        hostName = "";
         userPath = ./modules/home-manager/non-nixos.nix;
       };
     };

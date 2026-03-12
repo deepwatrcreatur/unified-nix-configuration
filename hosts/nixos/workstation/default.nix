@@ -122,6 +122,13 @@
   # Enable SSH daemon
   services.openssh.enable = true;
 
+  # Enable Avahi for mDNS (service discovery)
+  services.avahi = {
+    enable = true;
+    nssmdns = true; # For resolving .local hostnames
+    openFirewall = true;
+  };
+
   # Disable screen lock
   services.logind.settings.Login.HandleLidSwitch = "ignore";
 
