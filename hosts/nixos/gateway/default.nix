@@ -104,9 +104,10 @@
 
   # Mount the 10GB spinning disk for log files
   fileSystems."/var/log/technitium" = {
-    device = "/dev/sda";
+    device = "/dev/disk/by-uuid/f4b71c97-3f7f-47b3-a644-d82e051d5343";
     fsType = "ext4";
-    options = [ "defaults" "nofail" ];
+    options = [ "defaults" "nofail" "x-systemd.automount" ];
+    neededForBoot = false;
   };
 
   environment.systemPackages = with pkgs; [
