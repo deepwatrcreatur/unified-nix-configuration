@@ -152,11 +152,14 @@
       mkdir -p /var/log/gateway/journal
       mkdir -p /var/log/gateway/nginx-proxy-manager
       
-      # Set proper permissions
+      # Set proper permissions and ownership
       chmod 755 /var/log/gateway/system
       chmod 755 /var/log/gateway/technitium
       chmod 755 /var/log/gateway/journal
       chmod 755 /var/log/gateway/nginx-proxy-manager
+      
+      # Set ownership for service-specific directories
+      chown technitium:technitium /var/log/gateway/technitium
       
       echo "Gateway log directories created on spinning disk"
     '';
@@ -166,7 +169,7 @@
   systemd.tmpfiles.rules = [
     # Create additional service log directories on HDD
     "d /var/log/gateway/system 0755 root root -"
-    "d /var/log/gateway/technitium 0755 root root -"
+    "d /var/log/gateway/technitium 0755 technitium technitium -"
     "d /var/log/gateway/journal 0755 root root -"
     "d /var/log/gateway/nginx-proxy-manager 0755 root root -"
     "d /var/log/gateway/netdata 0755 netdata netdata -"
