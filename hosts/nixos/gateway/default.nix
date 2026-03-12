@@ -23,6 +23,10 @@
     inputs.agenix.nixosModules.default # Agenix secrets management
   ];
 
+  # Disable remote building on gateway (it's a router, should use cache instead)
+  nix.distributedBuilds = lib.mkForce false;
+  nix.buildMachines = lib.mkForce [];
+
   # Home manager configuration for gateway
   home-manager.users.deepwatrcreatur = {
     imports = [
@@ -88,7 +92,7 @@
   # SSH daemon
   services.openssh = {
     enable = true;
-    permitRootLogin = "prohibit-password"; # Secure default
+    settings.PermitRootLogin = "prohibit-password"; # Secure default
     extraConfig = ''
       Match Address 10.10.10.0/24
         PermitRootLogin yes
