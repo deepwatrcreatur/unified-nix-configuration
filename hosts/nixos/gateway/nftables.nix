@@ -36,6 +36,9 @@
         # Allow Technitium web UI on LAN and management
         iifname {"ens16", "ens18"} tcp dport {5380, 53443} accept
         
+        # Allow monitoring dashboards on LAN and management
+        iifname {"ens16", "ens18"} tcp dport {3000, 8080, 9090} accept comment "Grafana, Netdata, Prometheus"
+        
         # Allow NPM web UI on LAN and management
         iifname {"ens16", "ens18"} tcp dport 81 accept
         
