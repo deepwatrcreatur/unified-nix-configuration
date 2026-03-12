@@ -126,7 +126,7 @@
     };
 
     nix-router-optimized = {
-      url = "github:deepwatrcreatur/nix-router-optimized";
+      url = "git+ssh://git@github.com/deepwatrcreatur/nix-router-optimized";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
