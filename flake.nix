@@ -82,7 +82,7 @@
     };
 
     nix-linuxbrew = {
-      url = "git+ssh://git@github.com/deepwatrcreatur/nix-linuxbrew?ref=v1.0.1";
+      url = "git+ssh://git@github.com/deepwatrcreatur/nix-linuxbrew?ref=refs/tags/v1.0.1";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -126,7 +126,7 @@
     };
 
     nix-router-optimized = {
-      url = "git+ssh://git@github.com/deepwatrcreatur/nix-router-optimized";
+      url = "github:deepwatrcreatur/nix-router-optimized";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
