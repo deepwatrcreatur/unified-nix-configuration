@@ -52,12 +52,25 @@ get_interface_info() {
 EOF
 }
 
+# Get uptime in a compatible way
+get_uptime() {
+    if [ -r /proc/uptime ]; then
+        local uptime_secs=$(cut -d. -f1 /proc/uptime)
+        local days=$((uptime_secs / 86400))
+        local hours=$(((uptime_secs % 86400) / 3600))
+        local minutes=$(((uptime_secs % 3600) / 60))
+        echo "up ${days}d ${hours}h ${minutes}m"
+    else
+        echo "unknown"
+    fi
+}
+
 # Generate complete status
 cat <<EOF
 {
   "timestamp": "$(date -Iseconds)",
   "hostname": "$(hostname)",
-  "uptime": "$(uptime -p)",
+  "uptime": "$(get_uptime)",
   "interfaces": {
     "wan": $(get_interface_info "ens17"),
     "lan": $(get_interface_info "ens16"),
