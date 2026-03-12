@@ -22,6 +22,30 @@
     ./networking.nix # Network interface configuration
   ];
 
+  # Router optimizations (hardware offload, fasttrack, queue management)
+  services.router-optimizations = {
+    enable = true;
+    interfaces = {
+      wan = {
+        device = "ens17";
+        role = "wan";
+        label = "WAN";
+        bandwidth = "1Gbit";
+      };
+      lan = {
+        device = "ens16";
+        role = "lan";
+        label = "LAN";
+      };
+      management = {
+        device = "ens18";
+        role = "management";
+        label = "Management";
+      };
+    };
+    conntrack-max = 262144;
+  };
+
   # Router dashboard configuration
   services.router-dashboard = {
     enable = true;
