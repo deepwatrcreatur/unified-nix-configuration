@@ -187,15 +187,10 @@
       mkdir -p /var/log/gateway/technitium
       mkdir -p /var/log/gateway/journal
       
-      # Set proper permissions and ownership
+      # Set proper permissions
       chmod 755 /var/log/gateway/system
-      chmod 755 /var/log/gateway/technitium
+      chmod 777 /var/log/gateway/technitium  # World-writable for DynamicUser
       chmod 755 /var/log/gateway/journal
-      
-      # Set ownership for service-specific directories (if users exist)
-      if id -u technitium >/dev/null 2>&1; then
-        chown technitium:technitium /var/log/gateway/technitium
-      fi
       
       echo "Gateway log directories created on spinning disk"
     '';
@@ -205,9 +200,8 @@
   systemd.tmpfiles.rules = [
     # Create additional service log directories on HDD
     "d /var/log/gateway/system 0755 root root -"
-    "d /var/log/gateway/technitium 0755 technitium technitium -"
+    "d /var/log/gateway/technitium 0777 root root -"  # World-writable for DynamicUser
     "d /var/log/gateway/journal 0755 root root -"
-    "d /var/log/gateway/netdata 0755 netdata netdata -"
     "d /var/log/gateway/prometheus 0755 prometheus prometheus -"
     "d /var/log/gateway/grafana 0755 grafana grafana -"
   ];
