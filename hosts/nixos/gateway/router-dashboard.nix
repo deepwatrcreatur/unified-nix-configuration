@@ -524,7 +524,7 @@
       DynamicUser = true;
       ExecStart = "${pkgs.writeShellScript "router-dashboard-server" ''
         cd /etc/router-dashboard
-        ${pkgs.python3}/bin/python3 -m http.server 8080 --bind 0.0.0.0
+        ${pkgs.python3}/bin/python3 -m http.server 8888 --bind 10.10.10.1
       ''}";
       Restart = "always";
     };
