@@ -17,8 +17,8 @@
 
         # Prefer a stable URI over dnssd:// so we don't depend on browsing state.
         # If you get a "Host is down" error from `ensure-printers.service`,
-        # check that the printer is online and reachable from this host, e.g., `ping 10.10.10.13`.
-        deviceUri = "ipp://10.10.10.13/ipp/print";
+        # check that the printer is online and reachable from this host, e.g., `ping 10.10.10.51`.
+        deviceUri = "ipp://10.10.10.51/ipp/print";
 
         # Driverless printing for IPP Everywhere/AirPrint devices.
         # `lpinfo -m | rg -n 'everywhere'` should show the exact available model.
