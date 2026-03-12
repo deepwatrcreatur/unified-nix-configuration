@@ -65,7 +65,14 @@
   services.qemuGuest.enable = true;
 
   # SSH daemon
-  services.openssh.enable = true;
+  services.openssh = {
+    enable = true;
+    permitRootLogin = "prohibit-password"; # Secure default
+    extraConfig = ''
+      Match Address 10.10.10.0/24
+        PermitRootLogin yes
+    '';
+  };
   
   # Fail2ban for SSH brute-force protection
   services.fail2ban = {
