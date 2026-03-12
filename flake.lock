@@ -1188,11 +1188,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773283266,
-        "narHash": "sha256-wo+jMTFl14Ac9IwVHvWR8gxlk3iWNXBsJ0Tgt4vgjzo=",
+        "lastModified": 1773284500,
+        "narHash": "sha256-gLHQd6oPziQYxkz8OEckMYzzLGtUbuZJdh7MWfCSLic=",
         "owner": "deepwatrcreatur",
         "repo": "nix-ssh-keys-manager",
-        "rev": "537e2d949e9498ad602bbb144f8b3a8bd0ca8b45",
+        "rev": "474e36683617ddf9c4487728216fdd3901c445cd",
         "type": "github"
       },
       "original": {
