@@ -129,6 +129,11 @@
     openFirewall = true;
   };
 
+  systemd.services."ensure-printers".serviceConfig = lib.mkIf config.services.printing.enable {
+    # Ensure the printer setup command's failure doesn't block the system activation.
+    ContinueOnError = true;
+  };
+
   # Disable screen lock
   services.logind.settings.Login.HandleLidSwitch = "ignore";
 
