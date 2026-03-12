@@ -30,5 +30,5 @@
   # Let Home Manager manage itself if you want the `home-manager` command available
   programs.home-manager.enable = true;
 
-  home.stateVersion = "24.11";
+  home.stateVersion = "25.11";
 }
