@@ -9,18 +9,14 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ./networking.nix
-    ./nftables.nix
-    ./router-optimizations.nix
-    ./router-dashboard.nix
     ./logging-config.nix
-    ./caddy.nix
     ../../../modules/nixos/common
     ../../../modules/common/utility-packages.nix
     ../../../modules/nixos/keyboard-glitches.nix # Fix stuck keyboard presses in Proxmox VM
     ../../../modules/nixos/snap.nix # Snap package manager support
     ../../../modules/activation-scripts
     inputs.agenix.nixosModules.default # Agenix secrets management
+    inputs.nix-router-optimized.nixosModules.default # Optimized router modules
   ];
 
   # Enable remote building on gateway using attic-cache

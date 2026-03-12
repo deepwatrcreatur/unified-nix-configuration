@@ -125,6 +125,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-router-optimized = {
+      url = "path:/home/deepwatrcreatur/flakes/nix-router-optimized";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs =
