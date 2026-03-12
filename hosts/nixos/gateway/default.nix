@@ -20,23 +20,12 @@
   ];
 
   # Router optimizations (from nix-router-optimized flake)
-  services.router = {
+  services.router-optimizations = {
     enable = true;
     wan-interface = "ens17";
     lan-interface = "ens16";
     extra-lan-interfaces = ["ens18"];
     wan-bandwidth = "1Gbit";
-    
-    # Enable monitoring services
-    monitoring = {
-      enable = true;
-      grafana.enable = true;
-      prometheus.enable = true;
-      netdata.enable = true;
-    };
-    
-    # Enable dashboard
-    dashboard.enable = true;
   };
 
   # Caddy reverse proxy with Let's Encrypt
