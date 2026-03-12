@@ -2,7 +2,7 @@
 { helpers, ... }:
 {
   homeConfigurations.proxmox-root = helpers.mkHomeConfig {
-    system = "x86_64-linux";
+    targetSystem = "x86_64-linux";
     userPath = ../users/root;
     modules = [ ../users/root/hosts/proxmox ];
     isDesktop = false;
