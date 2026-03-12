@@ -9,6 +9,7 @@
 {
   # Fix home-manager service timeout in LXC - nix daemon needs NIX_REMOTE set
   systemd.services."home-manager-root".environment.NIX_REMOTE = "daemon";
+  systemd.services."home-manager-deepwatrcreatur".environment.NIX_REMOTE = "daemon";
 
   home-manager = {
     useGlobalPkgs = true;
@@ -49,6 +50,17 @@
         build-stats = "tokei";
         clean-store = "nix-collect-garbage -d";
       };
+    };
+
+    users.deepwatrcreatur = {
+      imports = [
+        ../../../../users/deepwatrcreatur/hosts/attic-cache
+      ];
+
+      home.username = "deepwatrcreatur";
+      home.homeDirectory = "/home/deepwatrcreatur";
+      home.stateVersion = "24.11";
+      programs.home-manager.enable = true;
     };
   };
 }
