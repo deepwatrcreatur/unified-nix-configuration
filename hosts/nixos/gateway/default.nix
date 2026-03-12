@@ -15,17 +15,11 @@
     ../../../modules/nixos/snap.nix # Snap package manager support
     ../../../modules/activation-scripts
     inputs.agenix.nixosModules.default # Agenix secrets management
-    inputs.nix-router-optimized.nixosModules.default # Optimized router modules
+    # inputs.nix-router-optimized.nixosModules.default # Optimized router modules - DISABLED: conflicts with existing config
+    ./router-optimizations.nix # Local router optimizations
+    ./nftables.nix # NFtables firewall configuration
+    ./networking.nix # Network interface configuration
   ];
-
-  # Router optimizations (from nix-router-optimized flake)
-  services.router-optimizations = {
-    enable = true;
-    wan-interface = "ens17";
-    lan-interface = "ens16";
-    extra-lan-interfaces = ["ens18"];
-    wan-bandwidth = "1Gbit";
-  };
 
   # Caddy reverse proxy with Let's Encrypt
   services.caddy = {
