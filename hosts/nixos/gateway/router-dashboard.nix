@@ -513,6 +513,12 @@
     mode = "0755";
   };
 
+  # API server script for dashboard
+  environment.etc."router-dashboard/api-server.py" = {
+    source = ./scripts/router-api-server.py;
+    mode = "0755";
+  };
+
   # Simple HTTP server for the dashboard with API support
   systemd.services.router-dashboard = {
     description = "Router Dashboard Web Server";
@@ -522,10 +528,7 @@
     serviceConfig = {
       Type = "simple";
       DynamicUser = true;
-      ExecStart = "${pkgs.writeShellScript "router-dashboard-server" ''
-        cd /etc/router-dashboard
-        ${pkgs.python3}/bin/python3 -m http.server 8888 --bind 10.10.10.1
-      ''}";
+      ExecStart = "${pkgs.python3}/bin/python3 /etc/router-dashboard/api-server.py";
       Restart = "always";
     };
   };
