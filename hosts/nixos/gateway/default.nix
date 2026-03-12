@@ -75,10 +75,7 @@
     depends = [ "/var/log/gateway" ];
   };
   
-  # Nginx Proxy Manager for reverse proxy
-  services.nginx-proxy-manager.enable = true;
-  
-  # Enable podman for containers (required by NPM)
+  # Enable podman for containers
   virtualisation.podman = {
     enable = true;
     dockerCompat = true;
@@ -150,13 +147,11 @@
       mkdir -p /var/log/gateway/system
       mkdir -p /var/log/gateway/technitium
       mkdir -p /var/log/gateway/journal
-      mkdir -p /var/log/gateway/nginx-proxy-manager
       
       # Set proper permissions and ownership
       chmod 755 /var/log/gateway/system
       chmod 755 /var/log/gateway/technitium
       chmod 755 /var/log/gateway/journal
-      chmod 755 /var/log/gateway/nginx-proxy-manager
       
       # Set ownership for service-specific directories (if users exist)
       if id -u technitium >/dev/null 2>&1; then
@@ -173,7 +168,6 @@
     "d /var/log/gateway/system 0755 root root -"
     "d /var/log/gateway/technitium 0755 technitium technitium -"
     "d /var/log/gateway/journal 0755 root root -"
-    "d /var/log/gateway/nginx-proxy-manager 0755 root root -"
     "d /var/log/gateway/netdata 0755 netdata netdata -"
     "d /var/log/gateway/prometheus 0755 prometheus prometheus -"
     "d /var/log/gateway/grafana 0755 grafana grafana -"
