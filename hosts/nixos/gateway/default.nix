@@ -58,73 +58,22 @@
     ];
   };
 
-  # DNS Zone management with static hosts
-  services.router.dnsZone = {
+  # DNS Zone management with static hosts imported from external file
+  # Edit ../../../dns-zone.nix to manage static host records
+  services.router.dnsZone = let
+    dnsConfig = import ../../../dns-zone.nix;
+  in {
     enable = true;
-    zoneName = "deepwatercreature.com";
+    zoneName = dnsConfig.domain;
     nameserverIP = "10.10.10.1";  # Gateway IP
     allowDynamicUpdates = true;  # DHCP can still register hosts dynamically
     
-    # Static hosts that are always in DNS and version controlled
-    staticHosts = {
-      gateway = {
-        ipAddress = "10.10.10.1";
-        aliases = [ "router" "dns" "firewall" ];
-      };
-      
-      pve-gateway = {
-        ipAddress = "10.10.11.52";
-      };
-      
-      pve-lattitude = {
-        ipAddress = "10.10.11.47";
-      };
-      
-      pve-tomahawk = {
-        ipAddress = "10.10.11.55";
-      };
-      
-      pve-strix = {
-        ipAddress = "10.10.11.57";
-      };
-      
-      attic-cache = {
-        ipAddress = "10.10.11.39";
-        aliases = [ "cache" "nix-cache" ];
-      };
-      
-      nixoslxc = {
-        ipAddress = "10.10.11.40";
-      };
-      
-      ansible = {
-        ipAddress = "10.10.11.67";
-      };
-      
-      rustdesk = {
-        ipAddress = "10.10.11.68";
-      };
-      
-      homeserver = {
-        ipAddress = "10.10.11.69";
-      };
-      
-      inference1 = {
-        ipAddress = "10.10.11.131";
-      };
-      
-      inference2 = {
-        ipAddress = "10.10.11.132";
-      };
-      
-      inference3 = {
-        ipAddress = "10.10.11.133";
-      };
-      
-      casaos = {
-        ipAddress = "10.10.11.77";
-      };
-    };
+    # Import static hosts from dns-zone.nix
+    # Convert from dns-zone.nix format to router module format
+    staticHosts = lib.mapAttrs (name: host: {
+      ipAddress = host.ipv4;
+      aliases = host.aliases or [];
+    }) dnsConfig.hosts;
     
     # Create reverse DNS zones
     reverseZone = {
