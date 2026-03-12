@@ -21,7 +21,7 @@
   fileSystems."/var/log/gateway" =
     { device = "/dev/disk/by-label/gateway-logs";
       fsType = "ext4";
-      options = [ "noatime" ];
+      options = [ "noatime" "nofail" "x-systemd.automount" ];
       neededForBoot = false;
     };
 
