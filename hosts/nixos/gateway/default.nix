@@ -26,7 +26,11 @@
   services.router-dashboard = {
     enable = true;
     port = 8888;
-    interfaces = [ "ens16" "ens17" "ens18" ]; # LAN, WAN, Management
+    interfaces = [
+      { device = "ens16"; label = "LAN"; role = "lan"; }
+      { device = "ens17"; label = "WAN"; role = "wan"; }
+      { device = "ens18"; label = "Management"; role = "mgmt"; }
+    ];
   };
 
   # Caddy reverse proxy with Let's Encrypt
