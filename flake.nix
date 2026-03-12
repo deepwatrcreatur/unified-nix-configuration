@@ -126,7 +126,7 @@
     };
 
     nix-router-optimized = {
-      url = "path:../nix-router-optimized";
+      url = "github:deepwatrcreatur/nix-router-optimized";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
