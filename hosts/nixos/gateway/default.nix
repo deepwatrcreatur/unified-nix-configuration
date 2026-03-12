@@ -20,6 +20,13 @@
     ./networking.nix # Network interface configuration
   ];
 
+  # Router dashboard configuration
+  services.router-dashboard = {
+    enable = true;
+    port = 8888;
+    interfaces = [ "ens16" "ens17" "ens18" ]; # LAN, WAN, Management
+  };
+
   # Caddy reverse proxy with Let's Encrypt
   services.caddy = {
     enable = true;
