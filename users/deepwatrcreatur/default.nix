@@ -24,6 +24,10 @@
     enable = true;
   };
 
+  programs.zellij-vivid-rounded = {
+    enable = true;
+  };
+
   programs.rclone-scripts.secretsPath = ./secrets;
 
   services.user-secrets = {
