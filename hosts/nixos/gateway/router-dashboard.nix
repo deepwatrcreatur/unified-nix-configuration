@@ -94,7 +94,8 @@
           name = "Prometheus";
           type = "prometheus";
           access = "proxy";
-          url = "http://127.0.0.1:9090";
+          url = "http://10.10.10.1:9090";
+          uid = "prometheus";
           isDefault = true;
         }
       ];
@@ -107,6 +108,11 @@
         }
       ];
     };
+  };
+
+  # Copy Grafana dashboards to /etc
+  environment.etc."grafana-dashboards/network-monitor.json" = {
+    source = ./dashboards/network-monitor.json;
   };
 
   # Grafana admin password (using simple file-based secret)
