@@ -57,6 +57,10 @@
         
         # Allow forwarding from management to WAN
         iifname "ens18" oifname "ens17" accept
+
+        # Allow forwarding between management and LAN
+        iifname "ens18" oifname "ens16" accept
+        iifname "ens16" oifname "ens18" accept
         
         # Default drop
         drop
