@@ -156,6 +156,13 @@
       fi
       
       echo "Router hardware offload configuration complete"
+      
+      # Configure nftables flowtable for fasttrack offload
+      # This must be done after interfaces are up
+      ${pkgs.nftables}/bin/nft add flowtable inet filter f '{ hook ingress priority 0\; devices = { ens16, ens17, ens18 }\; }' 2>/dev/null || true
+      ${pkgs.nftables}/bin/nft insert rule inet filter forward position 0 ip protocol { tcp, udp } flow add @f 2>/dev/null || true
+      
+      echo "Flowtable offload configured"
     '';
   };
 

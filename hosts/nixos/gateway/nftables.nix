@@ -8,13 +8,7 @@
 
   # nftables ruleset for gateway functionality with fasttrack optimization
   networking.nftables.ruleset = ''
-    # Flowtable for hardware/software flow offloading (fasttrack equivalent)
     table inet filter {
-      flowtable f {
-        hook ingress priority 0;
-        devices = { ens16, ens17, ens18 };
-      }
-      
       chain input {
         type filter hook input priority 0; policy drop;
         
@@ -51,9 +45,6 @@
       
       chain forward {
         type filter hook forward priority 0; policy drop;
-        
-        # Fasttrack: Offload established connections to flowtable (RouterOS fasttrack equivalent)
-        ip protocol { tcp, udp } flow add @f
         
         # Allow established/related connections (return traffic)
         ct state {established, related} accept
