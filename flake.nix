@@ -704,6 +704,7 @@
             };
             extraSpecialArgs =
               homeManagerModuleArgs // {
+                inherit isDesktop;
               }
               // extraSpecialArgs;
             modules = [
