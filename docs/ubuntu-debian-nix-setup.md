@@ -18,9 +18,8 @@ Create or edit `/etc/nix/nix.conf` (requires root/sudo):
 # Experimental features
 experimental-features = nix-command flakes impure-derivations ca-derivations
 
-# Binary cache configuration
 substituters = http://cache-build-server:5001/cache-local https://cache.nixos.org
-trusted-public-keys = cache-local:63xryK76L6y/NphTP/iS63yiYqldoWvVlWI0N8rgvBw= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
+trusted-public-keys = cache-local:63xryK76L6y/NphTP/iS63yiYqldoWvVlWI0N8rgvBw= cache-local:GozZz7XFsUZ7xI5o/Q36JA/BFfjzONWOjiqC+zAhp2g= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
 
 # Remote builders (optional but recommended for faster builds)
 builders = ssh://deepwatrcreatur@cache-build-server x86_64-linux - 8 1 big-parallel
@@ -78,7 +77,7 @@ If you don't have root access, create `~/.config/nix/nix.conf`:
 ```conf
 experimental-features = nix-command flakes impure-derivations ca-derivations
 substituters = http://cache-build-server:5001/cache-local https://cache.nixos.org
-trusted-public-keys = cache-local:63xryK76L6y/NphTP/iS63yiYqldoWvVlWI0N8rgvBw= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
+trusted-public-keys = cache-local:63xryK76L6y/NphTP/iS63yiYqldoWvVlWI0N8rgvBw= cache-local:GozZz7XFsUZ7xI5o/Q36JA/BFfjzONWOjiqC+zAhp2g= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
 netrc-file = /home/deepwatrcreatur/.config/nix/netrc
 
 # Note: User-level config cannot configure remote builders

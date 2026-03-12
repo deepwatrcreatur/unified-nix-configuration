@@ -87,7 +87,8 @@ in
 
     trusted-public-keys = [
       "cache-local:63xryK76L6y/NphTP/iS63yiYqldoWvVlWI0N8rgvBw="
-      "cache.local:92faFQnuzuYUJ4ta3EYpqIaCMIZGenDoaPktsBucTe4="
+      "cache-local:92faFQnuzuYUJ4ta3EYpqIaCMIZGenDoaPktsBucTe4="
+      "cache-local:GozZz7XFsUZ7xI5o/Q36JA/BFfjzONWOjiqC+zAhp2g="
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="
       "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
@@ -135,4 +136,8 @@ in
       sshKey = if pkgs.stdenv.isDarwin then "/var/root/.ssh/nix-remote" else "/root/.ssh/nix-remote";
     }
   ];
+
+  # Programmatically inject the attic-cache host key so the remote builder connects without prompting.
+  programs.ssh.knownHosts."10.10.11.39".publicKey = 
+    lib.strings.trim (builtins.readFile ../../ssh-keys/attic-cache-host-ed25519.pub);
 }

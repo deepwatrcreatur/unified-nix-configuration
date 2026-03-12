@@ -11,12 +11,6 @@
   
   # If Technitium fails, you can still SSH via IP: ssh 192.168.100.100
 
-  # Enable IP forwarding for routing
-  boot.kernel.sysctl = {
-    "net.ipv4.ip_forward" = 1;
-    "net.ipv6.conf.all.forwarding" = 1;
-  };
-
   # Network interfaces using systemd-networkd
   networking.useNetworkd = true;
   networking.useDHCP = false;

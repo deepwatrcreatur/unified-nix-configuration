@@ -690,7 +690,7 @@
         # Standard Home Manager configuration builder
         mkHomeConfig =
           {
-            system ? "x86_64-linux",
+            targetSystem ? "x86_64-linux",
             userPath,
             modules ? [ ],
             isDesktop ? false,
@@ -698,14 +698,12 @@
           }:
           inputs.home-manager.lib.homeManagerConfiguration {
             pkgs = import inputs.nixpkgs {
-              system = system;
+              system = targetSystem;
               config = commonNixpkgsConfig;
               overlays = commonOverlays;
             };
             extraSpecialArgs =
               homeManagerModuleArgs // {
-                inherit isDesktop;
-                hostName = "";
               }
               // extraSpecialArgs;
             modules = [
@@ -795,7 +793,7 @@
     (loadOutputs ./outputs)
     // {
       hm-opts = helpers.mkHomeConfig {
-        system = "x86_64-linux";
+        targetSystem = "x86_64-linux";
         userPath = ./modules/home-manager/non-nixos.nix;
       };
     };

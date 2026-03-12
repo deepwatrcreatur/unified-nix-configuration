@@ -11,6 +11,8 @@
     ./hardware-configuration.nix
     ./networking.nix
     ./nftables.nix
+    ./router-optimizations.nix
+    ./router-dashboard.nix
     ./nginx-proxy-manager.nix
     ../../../modules/nixos/common
     ../../../modules/common/utility-packages.nix

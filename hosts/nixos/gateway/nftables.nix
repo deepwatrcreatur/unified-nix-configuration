@@ -6,9 +6,15 @@
   networking.nftables.enable = true;
   networking.firewall.enable = false;
 
-  # nftables ruleset for gateway functionality
+  # nftables ruleset for gateway functionality with fasttrack optimization
   networking.nftables.ruleset = ''
+    # Flowtable for hardware/software flow offloading (fasttrack equivalent)
     table inet filter {
+      flowtable f {
+        hook ingress priority 0;
+        devices = { ens16, ens17, ens18 };
+      }
+      
       chain input {
         type filter hook input priority 0; policy drop;
         
@@ -44,12 +50,15 @@
       }
       
       chain forward {
-        type filter hook forward priority 0; policy drop;
+        type filter hook forward priority 0; policy filter;
+        
+        # Fasttrack: Offload established connections to flowtable (RouterOS fasttrack equivalent)
+        ip protocol { tcp, udp } flow add @f
         
         # Allow established/related connections (return traffic)
         ct state {established, related} accept
         
-        # Drop invalid packets
+        # Drop invalid packets early
         ct state invalid drop
         
         # Allow forwarding from LAN to WAN
@@ -57,6 +66,9 @@
         
         # Allow forwarding from management to WAN
         iifname "ens18" oifname "ens17" accept
+        
+        # Default drop
+        drop
       }
       
       chain output {
