@@ -19,62 +19,13 @@
     inputs.nix-router-optimized.nixosModules.default # Optimized router modules
   ];
 
-  # Router configuration
-  services.router = {
+  # Router optimizations (from nix-router-optimized flake)
+  services.router-optimizations = {
     enable = true;
-    
-    # Network interfaces
-    wan = {
-      interface = "ens17";
-      ipv6 = true;
-    };
-    
-    lan = {
-      interface = "ens16";
-      ipAddress = "10.10.10.1";
-      prefixLength = 16;
-      ipv6 = true;
-    };
-    
-    # Optional management interface
-    mgmt = {
-      interface = "ens18";
-      ipAddress = "192.168.100.100";
-      prefixLength = 24;
-    };
-    
-    # Enable all optimization features
-    optimizations = {
-      enable = true;
-      fasttrack.enable = true;
-      hardwareOffload.enable = true;
-      xdp.enable = true;
-      queueManagement.enable = true;
-    };
-    
-    # Enable monitoring dashboards
-    monitoring = {
-      enable = true;
-      netdata.enable = true;
-      prometheus.enable = true;
-      grafana = {
-        enable = true;
-        port = 3000;
-      };
-      customDashboard = {
-        enable = true;
-        port = 8888;
-      };
-    };
-    
-    # Firewall configuration
-    firewall = {
-      enable = true;
-      allowPing = true;
-      trustedInterfaces = [ "ens16" "ens18" ];
-      openTCPPorts = [ 22 53 80 443 ];
-      openUDPPorts = [ 53 ];
-    };
+    wan-interface = "ens17";
+    lan-interface = "ens16";
+    extra-lan-interfaces = ["ens18"];
+    wan-bandwidth = "1Gbit";
   };
 
   # Caddy reverse proxy with Let's Encrypt
