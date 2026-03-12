@@ -136,8 +136,4 @@ in
       sshKey = if pkgs.stdenv.isDarwin then "/var/root/.ssh/nix-remote" else "/root/.ssh/nix-remote";
     }
   ];
-
-  # Programmatically inject the attic-cache host key so the remote builder connects without prompting.
-  programs.ssh.knownHosts."10.10.11.39".publicKey = 
-    lib.strings.trim (builtins.readFile ../../ssh-keys/attic-cache-host-ed25519.pub);
 }
