@@ -23,9 +23,24 @@
     inputs.agenix.nixosModules.default # Agenix secrets management
   ];
 
-  # Disable remote building on gateway (it's a router, should use cache instead)
-  nix.distributedBuilds = lib.mkForce false;
-  nix.buildMachines = lib.mkForce [];
+  # Enable remote building on gateway using attic-cache
+  nix.distributedBuilds = lib.mkForce true;
+  nix.buildMachines = lib.mkForce [
+    {
+      hostName = "10.10.11.39"; # attic-cache
+      system = "x86_64-linux";
+      maxJobs = 8;
+      speedFactor = 2;
+      supportedFeatures = [
+        "nixos-test"
+        "benchmark"
+        "big-parallel"
+        "kvm"
+      ];
+      sshUser = "root";
+      sshKey = "/root/.ssh/id_ed25519"; # Use existing gateway root SSH key
+    }
+  ];
 
   # Home manager configuration for gateway
   home-manager.users.deepwatrcreatur = {
