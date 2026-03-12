@@ -15,8 +15,7 @@
     ../../../modules/nixos/snap.nix # Snap package manager support
     ../../../modules/activation-scripts
     inputs.agenix.nixosModules.default # Agenix secrets management
-    # inputs.nix-router-optimized.nixosModules.default # Optimized router modules - DISABLED: conflicts with existing config
-    ./router-optimizations.nix # Local router optimizations
+    inputs.nix-router-optimized.nixosModules.default # Optimized router modules
     ./nftables.nix # NFtables firewall configuration
     ./networking.nix # Network interface configuration
   ];
