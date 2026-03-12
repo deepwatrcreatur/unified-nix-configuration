@@ -76,7 +76,7 @@
     settings = {
       server = {
         http_addr = "10.10.10.1";  # Only bind to LAN interface
-        http_port = 3000;
+        http_port = 3001;  # Changed from 3000 to avoid conflict with NPM backend
         domain = "gateway.deepwatercreature.com";
         root_url = "%(protocol)s://%(domain)s:%(http_port)s/";
       };

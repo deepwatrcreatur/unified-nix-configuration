@@ -37,7 +37,7 @@
         iifname {"ens16", "ens18"} tcp dport {5380, 53443} accept
         
         # Allow monitoring dashboards on LAN and management
-        iifname {"ens16", "ens18"} tcp dport {3000, 8080, 8888, 9090} accept comment "Grafana, Netdata, Custom Dashboard, Prometheus"
+        iifname {"ens16", "ens18"} tcp dport {3001, 8080, 8888, 9090} accept comment "Grafana, Netdata, Custom Dashboard, Prometheus"
         
         # Allow NPM web UI on LAN and management
         iifname {"ens16", "ens18"} tcp dport 81 accept
