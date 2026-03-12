@@ -4,10 +4,12 @@
 
 set -euo pipefail
 
+# Store previous stats for speed calculation
+STATS_DIR="/run/router-dashboard"
+mkdir -p "$STATS_DIR"
+
 get_interface_info() {
     local iface=$1
-    local ip_output=$(ip -j addr show dev "$iface" 2>/dev/null || echo "[]")
-    local link_output=$(ip -j link show dev "$iface" 2>/dev/null || echo "[]")
     local stats_rx=$(cat "/sys/class/net/$iface/statistics/rx_bytes" 2>/dev/null || echo "0")
     local stats_tx=$(cat "/sys/class/net/$iface/statistics/tx_bytes" 2>/dev/null || echo "0")
     local stats_rx_packets=$(cat "/sys/class/net/$iface/statistics/rx_packets" 2>/dev/null || echo "0")
@@ -15,17 +17,43 @@ get_interface_info() {
     local stats_rx_errors=$(cat "/sys/class/net/$iface/statistics/rx_errors" 2>/dev/null || echo "0")
     local stats_tx_errors=$(cat "/sys/class/net/$iface/statistics/tx_errors" 2>/dev/null || echo "0")
     
-    # Extract IPv4 addresses
-    local ipv4=$(echo "$ip_output" | jq -r '.[0].addr_info[] | select(.family=="inet") | .local' 2>/dev/null | head -1 || echo "N/A")
+    # Get IPv4 address using simple parsing
+    local ipv4=$(ip -4 addr show dev "$iface" 2>/dev/null | grep -oP '(?<=inet\s)\d+(\.\d+){3}' | head -1)
+    [ -z "$ipv4" ] && ipv4="N/A"
     
-    # Extract IPv6 addresses (global)
-    local ipv6=$(echo "$ip_output" | jq -r '.[0].addr_info[] | select(.family=="inet6" and .scope=="global") | .local' 2>/dev/null | head -1 || echo "N/A")
+    # Get IPv6 global address
+    local ipv6=$(ip -6 addr show dev "$iface" scope global 2>/dev/null | grep -oP '(?<=inet6\s)[0-9a-f:]+' | head -1)
+    [ -z "$ipv6" ] && ipv6="N/A"
     
-    # Link state
-    local state=$(echo "$link_output" | jq -r '.[0].operstate' 2>/dev/null || echo "UNKNOWN")
+    # Get link state from operstate file (more reliable than ip command)
+    local state=$(cat "/sys/class/net/$iface/operstate" 2>/dev/null | tr '[:lower:]' '[:upper:]')
+    [ -z "$state" ] && state="UNKNOWN"
     
-    # MTU
-    local mtu=$(echo "$link_output" | jq -r '.[0].mtu' 2>/dev/null || echo "0")
+    # Get MTU
+    local mtu=$(cat "/sys/class/net/$iface/mtu" 2>/dev/null || echo "0")
+    
+    # Calculate speed (bytes/sec since last check)
+    local rx_speed=0
+    local tx_speed=0
+    local rx_speed_human="0 B/s"
+    local tx_speed_human="0 B/s"
+    
+    local now=$(date +%s)
+    local prev_file="$STATS_DIR/${iface}.prev"
+    
+    if [ -f "$prev_file" ]; then
+        read -r prev_time prev_rx prev_tx < "$prev_file"
+        local time_diff=$((now - prev_time))
+        if [ "$time_diff" -gt 0 ]; then
+            rx_speed=$(( (stats_rx - prev_rx) / time_diff ))
+            tx_speed=$(( (stats_tx - prev_tx) / time_diff ))
+            rx_speed_human=$(numfmt --to=iec-i --suffix=B/s "$rx_speed" 2>/dev/null || echo "${rx_speed} B/s")
+            tx_speed_human=$(numfmt --to=iec-i --suffix=B/s "$tx_speed" 2>/dev/null || echo "${tx_speed} B/s")
+        fi
+    fi
+    
+    # Save current stats
+    echo "$now $stats_rx $stats_tx" > "$prev_file"
     
     # Convert bytes to human readable
     local rx_human=$(numfmt --to=iec-i --suffix=B "$stats_rx" 2>/dev/null || echo "${stats_rx}B")
@@ -43,6 +71,10 @@ get_interface_info() {
     "tx_bytes": $stats_tx,
     "rx_bytes_human": "$rx_human",
     "tx_bytes_human": "$tx_human",
+    "rx_speed": $rx_speed,
+    "tx_speed": $tx_speed,
+    "rx_speed_human": "$rx_speed_human",
+    "tx_speed_human": "$tx_speed_human",
     "rx_packets": $stats_rx_packets,
     "tx_packets": $stats_tx_packets,
     "rx_errors": $stats_rx_errors,
@@ -65,11 +97,20 @@ get_uptime() {
     fi
 }
 
+# Get hostname
+get_hostname() {
+    if [ -r /proc/sys/kernel/hostname ]; then
+        cat /proc/sys/kernel/hostname
+    else
+        hostname 2>/dev/null || echo "unknown"
+    fi
+}
+
 # Generate complete status
 cat <<EOF
 {
   "timestamp": "$(date -Iseconds)",
-  "hostname": "$(hostname)",
+  "hostname": "$(get_hostname)",
   "uptime": "$(get_uptime)",
   "interfaces": {
     "wan": $(get_interface_info "ens17"),

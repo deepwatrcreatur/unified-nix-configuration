@@ -348,12 +348,22 @@
               </div>
               <div class="stat-grid">
                 <div class="metric metric-small">
-                  <div class="metric-label">RX</div>
+                  <div class="metric-label">RX (Total)</div>
                   <div class="metric-value" id="wan-rx">-</div>
                 </div>
                 <div class="metric metric-small">
-                  <div class="metric-label">TX</div>
+                  <div class="metric-label">TX (Total)</div>
                   <div class="metric-value" id="wan-tx">-</div>
+                </div>
+              </div>
+              <div class="stat-grid">
+                <div class="metric metric-small">
+                  <div class="metric-label">⬇️ Speed</div>
+                  <div class="metric-value" id="wan-rx-speed" style="color: #10b981;">-</div>
+                </div>
+                <div class="metric metric-small">
+                  <div class="metric-label">⬆️ Speed</div>
+                  <div class="metric-value" id="wan-tx-speed" style="color: #3b82f6;">-</div>
                 </div>
               </div>
             </div>
@@ -371,12 +381,22 @@
               </div>
               <div class="stat-grid">
                 <div class="metric metric-small">
-                  <div class="metric-label">RX</div>
+                  <div class="metric-label">RX (Total)</div>
                   <div class="metric-value" id="lan-rx">-</div>
                 </div>
                 <div class="metric metric-small">
-                  <div class="metric-label">TX</div>
+                  <div class="metric-label">TX (Total)</div>
                   <div class="metric-value" id="lan-tx">-</div>
+                </div>
+              </div>
+              <div class="stat-grid">
+                <div class="metric metric-small">
+                  <div class="metric-label">⬇️ Speed</div>
+                  <div class="metric-value" id="lan-rx-speed" style="color: #10b981;">-</div>
+                </div>
+                <div class="metric metric-small">
+                  <div class="metric-label">⬆️ Speed</div>
+                  <div class="metric-value" id="lan-tx-speed" style="color: #3b82f6;">-</div>
                 </div>
               </div>
             </div>
@@ -394,12 +414,22 @@
               </div>
               <div class="stat-grid">
                 <div class="metric metric-small">
-                  <div class="metric-label">RX</div>
+                  <div class="metric-label">RX (Total)</div>
                   <div class="metric-value" id="mgmt-rx">-</div>
                 </div>
                 <div class="metric metric-small">
-                  <div class="metric-label">TX</div>
+                  <div class="metric-label">TX (Total)</div>
                   <div class="metric-value" id="mgmt-tx">-</div>
+                </div>
+              </div>
+              <div class="stat-grid">
+                <div class="metric metric-small">
+                  <div class="metric-label">⬇️ Speed</div>
+                  <div class="metric-value" id="mgmt-rx-speed" style="color: #10b981;">-</div>
+                </div>
+                <div class="metric metric-small">
+                  <div class="metric-label">⬆️ Speed</div>
+                  <div class="metric-value" id="mgmt-tx-speed" style="color: #3b82f6;">-</div>
                 </div>
               </div>
             </div>
@@ -488,14 +518,19 @@
             if (ifdata.state === 'UP') {
               statusEl.className = 'status-badge status-up';
               statusEl.textContent = '● UP';
-            } else {
+            } else if (ifdata.state === 'DOWN') {
               statusEl.className = 'status-badge status-down';
               statusEl.textContent = '● DOWN';
+            } else {
+              statusEl.className = 'status-badge status-warning';
+              statusEl.textContent = '● ' + ifdata.state;
             }
             
             document.getElementById(prefix + '-ipv4').textContent = ifdata.ipv4;
             document.getElementById(prefix + '-rx').textContent = ifdata.stats.rx_bytes_human;
             document.getElementById(prefix + '-tx').textContent = ifdata.stats.tx_bytes_human;
+            document.getElementById(prefix + '-rx-speed').textContent = ifdata.stats.rx_speed_human || '-';
+            document.getElementById(prefix + '-tx-speed').textContent = ifdata.stats.tx_speed_human || '-';
           }
           
           // Update immediately and then every 5 seconds
