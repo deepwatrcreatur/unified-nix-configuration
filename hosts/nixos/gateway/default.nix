@@ -18,6 +18,7 @@
     # Import only specific modules, NOT default (which includes nftables-fasttrack that conflicts with our nftables.nix)
     inputs.nix-router-optimized.nixosModules.router-optimizations
     inputs.nix-router-optimized.nixosModules.router-dashboard
+    inputs.nix-router-optimized.nixosModules.dns-zone
     ./nftables.nix # NFtables firewall configuration
     ./networking.nix # Network interface configuration
   ];
@@ -55,6 +56,83 @@
       { device = "ens17"; label = "WAN"; role = "wan"; }
       { device = "ens18"; label = "Management"; role = "mgmt"; }
     ];
+  };
+
+  # DNS Zone management with static hosts
+  services.router.dnsZone = {
+    enable = true;
+    zoneName = "deepwatercreature.com";
+    allowDynamicUpdates = true;  # DHCP can still register hosts dynamically
+    
+    # Static hosts that are always in DNS and version controlled
+    staticHosts = {
+      gateway = {
+        ipAddress = "10.10.10.1";
+        aliases = [ "router" "dns" "firewall" ];
+      };
+      
+      pve-gateway = {
+        ipAddress = "10.10.11.52";
+      };
+      
+      pve-lattitude = {
+        ipAddress = "10.10.11.47";
+      };
+      
+      pve-tomahawk = {
+        ipAddress = "10.10.11.55";
+      };
+      
+      pve-strix = {
+        ipAddress = "10.10.11.57";
+      };
+      
+      attic-cache = {
+        ipAddress = "10.10.11.39";
+        aliases = [ "cache" "nix-cache" ];
+      };
+      
+      nixoslxc = {
+        ipAddress = "10.10.11.40";
+      };
+      
+      ansible = {
+        ipAddress = "10.10.11.67";
+      };
+      
+      rustdesk = {
+        ipAddress = "10.10.11.68";
+      };
+      
+      homeserver = {
+        ipAddress = "10.10.11.69";
+      };
+      
+      inference1 = {
+        ipAddress = "10.10.11.131";
+      };
+      
+      inference2 = {
+        ipAddress = "10.10.11.132";
+      };
+      
+      inference3 = {
+        ipAddress = "10.10.11.133";
+      };
+      
+      casaos = {
+        ipAddress = "10.10.11.77";
+      };
+    };
+    
+    # Create reverse DNS zones
+    reverseZone = {
+      enable = true;
+      networks = [
+        "10.10.10.0/24"
+        "10.10.11.0/24"
+      ];
+    };
   };
 
   # Caddy reverse proxy with Let's Encrypt
