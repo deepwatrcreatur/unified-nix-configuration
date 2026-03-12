@@ -101,6 +101,13 @@
   # Allow wheel group to use sudo without password
   security.sudo.wheelNeedsPassword = false;
 
+  # Mount the 10GB spinning disk for log files
+  fileSystems."/var/log/technitium" = {
+    device = "/dev/sda";
+    fsType = "ext4";
+    options = [ "defaults" "nofail" ];
+  };
+
   environment.systemPackages = with pkgs; [
     tmux
   ];
