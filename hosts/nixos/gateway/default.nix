@@ -42,6 +42,7 @@
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "/dev/sda";  # Install GRUB on the disk
   boot.loader.timeout = 5;
+  boot.growPartition = true;
 
   nix.settings.experimental-features = [
     "nix-command"
