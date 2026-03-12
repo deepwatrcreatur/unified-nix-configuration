@@ -158,8 +158,10 @@
       chmod 755 /var/log/gateway/journal
       chmod 755 /var/log/gateway/nginx-proxy-manager
       
-      # Set ownership for service-specific directories
-      chown technitium:technitium /var/log/gateway/technitium
+      # Set ownership for service-specific directories (if users exist)
+      if id -u technitium >/dev/null 2>&1; then
+        chown technitium:technitium /var/log/gateway/technitium
+      fi
       
       echo "Gateway log directories created on spinning disk"
     '';
