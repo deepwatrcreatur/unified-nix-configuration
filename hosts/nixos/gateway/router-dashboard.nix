@@ -81,7 +81,7 @@
       };
       security = {
         admin_user = "admin";
-        admin_password = "$__file{/run/secrets/grafana-admin-password}";
+        admin_password = "$__file{/var/lib/grafana/secrets/admin-password}";
       };
       analytics.reporting_enabled = false;
     };
@@ -108,14 +108,11 @@
     };
   };
 
-  # Create Grafana admin password secret placeholder
-  systemd.services.grafana.preStart = lib.mkBefore ''
-    if [ ! -f /run/secrets/grafana-admin-password ]; then
-      mkdir -p /run/secrets
-      echo "admin" > /run/secrets/grafana-admin-password
-      chmod 600 /run/secrets/grafana-admin-password
-    fi
-  '';
+  # Grafana admin password (using simple file-based secret)
+  systemd.tmpfiles.rules = [
+    "d /var/lib/grafana/secrets 0750 grafana grafana -"
+    "f /var/lib/grafana/secrets/admin-password 0640 grafana grafana - admin"
+  ];
 
   # Install router monitoring packages
   environment.systemPackages = with pkgs; [
