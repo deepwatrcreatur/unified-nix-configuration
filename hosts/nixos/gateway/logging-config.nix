@@ -25,8 +25,8 @@
   # Nginx Proxy Manager logs
   # (Podman container - configured via volumes in nginx-proxy-manager.nix if needed)
   
-  # Fail2ban logs to HDD
-  services.fail2ban.logpath = "/var/log/gateway/system/fail2ban.log";
+  # Fail2ban logs are handled by journald which is already redirected to HDD
+  # fail2ban doesn't have a direct logpath option in NixOS
   
   # SSH logs are handled by journald which is already redirected to HDD
 }
