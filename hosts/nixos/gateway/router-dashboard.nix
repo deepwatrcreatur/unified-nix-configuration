@@ -9,6 +9,7 @@
   services.prometheus = {
     enable = true;
     port = 9090;
+    listenAddress = "10.10.10.1";  # Only bind to LAN interface
     
     # Scrape local node exporter
     scrapeConfigs = [
@@ -74,7 +75,7 @@
     enable = true;
     settings = {
       server = {
-        http_addr = "0.0.0.0";
+        http_addr = "10.10.10.1";  # Only bind to LAN interface
         http_port = 3000;
         domain = "gateway.deepwatercreature.com";
         root_url = "%(protocol)s://%(domain)s:%(http_port)s/";
@@ -131,14 +132,14 @@
     enable = true;
     config = {
       global = {
-        "default port" = "19999";
-        "bind to" = "*";
+        "default port" = "8080";  # Use port 8080 to match firewall rules
+        "bind to" = "10.10.10.1";  # Only bind to LAN interface
         "memory mode" = "dbengine";
         "page cache size" = "32";
       };
       web = {
-        "allow connections from" = "*";
-        "allow dashboard from" = "*";
+        "allow connections from" = "10.10.*";  # Only allow LAN subnet
+        "allow dashboard from" = "10.10.*";
       };
     };
   };
