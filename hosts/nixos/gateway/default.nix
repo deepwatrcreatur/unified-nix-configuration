@@ -92,15 +92,16 @@
   # Technitium DNS & DHCP Server
   services.technitium-dns-server.enable = true;
   
-  # Configure Technitium to use spinning disk for logs
-  systemd.services.technitium-dns-server = {
-    environment = {
-      TECHNITIUM_DNS_LOG_FOLDER = "/var/log/gateway/technitium";
-    };
-    serviceConfig = {
-      ReadWritePaths = [ "/var/log/gateway/technitium" ];
-    };
-  };
+  # Disable custom logging for Technitium - use default state directory
+  # The spinning disk logging causes read-only filesystem errors with DynamicUser
+  # systemd.services.technitium-dns-server = {
+  #   environment = {
+  #     TECHNITIUM_DNS_LOG_FOLDER = "/var/log/gateway/technitium";
+  #   };
+  #   serviceConfig = {
+  #     ReadWritePaths = [ "/var/log/gateway/technitium" ];
+  #   };
+  # };
   
   # Configure systemd journal to use spinning disk
   services.journald.extraConfig = ''
