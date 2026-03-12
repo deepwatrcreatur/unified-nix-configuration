@@ -612,6 +612,8 @@
           };
 
         # Standard Darwin system builder
+        mkDarwinSystem =
+          {
             system ? inputs.nix-darwin.system,
             hostPath,
             username,
