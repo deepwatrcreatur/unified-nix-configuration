@@ -563,7 +563,8 @@
   # Simple HTTP server for the dashboard with API support
   systemd.services.router-dashboard = {
     description = "Router Dashboard Web Server";
-    after = [ "network.target" ];
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
     wantedBy = [ "multi-user.target" ];
     
     serviceConfig = {

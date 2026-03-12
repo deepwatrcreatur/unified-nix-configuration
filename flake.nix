@@ -577,7 +577,7 @@
         # Standard NixOS system builder
         mkNixosSystem =
           {
-            system ? "x86_64-linux",
+            system ? inputs.nixpkgs.system,
             hostPath,
             modules ? [ ],
             extraModules ? [ ],
@@ -612,9 +612,7 @@
           };
 
         # Standard Darwin system builder
-        mkDarwinSystem =
-          {
-            system ? "aarch64-darwin",
+            system ? inputs.nix-darwin.system,
             hostPath,
             username,
             modules ? [ ],
@@ -667,7 +665,7 @@
 
         mkOmarchySystem =
           {
-            system ? "x86_64-linux",
+            system ? inputs.nixpkgs.system,
             hostPath,
             modules ? [ ],
             extraModules ? [ ],
@@ -695,7 +693,7 @@
         # Standard Home Manager configuration builder
         mkHomeConfig =
           {
-            targetSystem ? "x86_64-linux",
+            targetSystem ? inputs.nixpkgs.system,
             hostName ? "",
             userPath,
             modules ? [ ],
@@ -725,7 +723,7 @@
         mkNixosOutput =
           {
             name,
-            system ? "x86_64-linux",
+            system ? inputs.nixpkgs.system,
             hostPath,
             modules ? [ ],
             extraModules ? [ ],
@@ -749,7 +747,7 @@
         mkDarwinOutput =
           {
             name,
-            system ? "aarch64-darwin",
+            system ? inputs.nix-darwin.system,
             hostPath,
             username,
             modules ? [ ],
