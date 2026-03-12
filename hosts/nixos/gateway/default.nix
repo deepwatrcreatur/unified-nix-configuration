@@ -97,6 +97,9 @@
     environment = {
       TECHNITIUM_DNS_LOG_FOLDER = "/var/log/gateway/technitium";
     };
+    serviceConfig = {
+      ReadWritePaths = [ "/var/log/gateway/technitium" ];
+    };
   };
   
   # Configure systemd journal to use spinning disk
