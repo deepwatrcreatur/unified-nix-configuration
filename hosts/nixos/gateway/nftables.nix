@@ -39,11 +39,8 @@
         # Allow monitoring dashboards on LAN and management
         iifname {"ens16", "ens18"} tcp dport {3001, 8080, 8888, 9090} accept comment "Grafana, Netdata, Custom Dashboard, Prometheus"
         
-        # Allow NPM web UI on LAN and management
-        iifname {"ens16", "ens18"} tcp dport 81 accept
-        
-        # Allow HTTP/HTTPS from WAN and LAN for NPM reverse proxy
-        tcp dport {80, 443} accept
+        # Allow HTTP/HTTPS from WAN for Caddy reverse proxy
+        iifname "ens17" tcp dport {80, 443} accept comment "Caddy HTTP/HTTPS"
       }
       
       chain forward {

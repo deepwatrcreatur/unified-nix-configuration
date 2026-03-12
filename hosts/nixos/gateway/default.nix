@@ -14,7 +14,7 @@
     ./router-optimizations.nix
     ./router-dashboard.nix
     ./logging-config.nix
-    ./nginx-proxy-manager.nix
+    ./caddy.nix
     ../../../modules/nixos/common
     ../../../modules/common/utility-packages.nix
     ../../../modules/nixos/keyboard-glitches.nix # Fix stuck keyboard presses in Proxmox VM
