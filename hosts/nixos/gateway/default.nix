@@ -62,6 +62,7 @@
   services.router.dnsZone = {
     enable = true;
     zoneName = "deepwatercreature.com";
+    nameserverIP = "10.10.10.1";  # Gateway IP
     allowDynamicUpdates = true;  # DHCP can still register hosts dynamically
     
     # Static hosts that are always in DNS and version controlled
