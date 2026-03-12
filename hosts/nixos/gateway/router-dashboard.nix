@@ -530,7 +530,12 @@
       DynamicUser = true;
       ExecStart = "${pkgs.python3}/bin/python3 /etc/router-dashboard/api-server.py";
       Restart = "always";
+      # Permissions needed to execute network-status.sh
+      AmbientCapabilities = [ "CAP_NET_ADMIN" ];
+      CapabilityBoundingSet = [ "CAP_NET_ADMIN" ];
     };
+    
+    path = with pkgs; [ bash coreutils iproute2 procps gawk ];
   };
 
   # Create systemd timer for vnstat database update
