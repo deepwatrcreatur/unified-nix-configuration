@@ -7,7 +7,21 @@
 
   # Disable systemd-resolved, use Technitium DNS directly
   services.resolved.enable = false;
+  
+  # DNS configuration - with fallback if Technitium is unavailable
+  # Note: With systemd-networkd, this needs special handling
   networking.nameservers = [ "127.0.0.1" "1.1.1.1" "8.8.8.8" ];
+  
+  # Create static resolv.conf with our nameservers
+  environment.etc."resolv.conf".text = ''
+    # Gateway DNS configuration
+    # Primary: Technitium DNS on localhost
+    # Fallback: Cloudflare and Google
+    nameserver 127.0.0.1
+    nameserver 1.1.1.1
+    nameserver 8.8.8.8
+    options edns0
+  '';
   
   # If Technitium fails, you can still SSH via IP: ssh 192.168.100.100
 
