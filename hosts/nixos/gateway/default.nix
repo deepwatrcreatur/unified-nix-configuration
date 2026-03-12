@@ -59,9 +59,9 @@
   };
 
   # DNS Zone management with static hosts imported from external file
-  # Edit ../../../dns-zone.nix to manage static host records
+  # Edit ./dns-zone.nix to manage static host records
   services.router.dnsZone = let
-    dnsConfig = import ../../../dns-zone.nix;
+    dnsConfig = import ./dns-zone.nix;
   in {
     enable = true;
     zoneName = dnsConfig.domain;
