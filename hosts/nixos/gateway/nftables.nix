@@ -50,7 +50,7 @@
       }
       
       chain forward {
-        type filter hook forward priority 0; policy filter;
+        type filter hook forward priority 0; policy drop;
         
         # Fasttrack: Offload established connections to flowtable (RouterOS fasttrack equivalent)
         ip protocol { tcp, udp } flow add @f
