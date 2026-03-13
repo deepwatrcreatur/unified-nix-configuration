@@ -8,10 +8,12 @@
 
 with lib;
 
+{ config, lib, pkgs, inputs, ... }:
+
+with lib;
+
 let
   cfg = config.programs.dmux;
-  dmux-pkg = import ../../pkgs/dmux { inherit pkgs lib; };
-
 in
 {
   options.programs.dmux = {
@@ -19,6 +21,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages = [ dmux-pkg ];
+    home.packages = [ inputs.dmux-flake.packages.${pkgs.system}.default ];
   };
 }
