@@ -1,5 +1,10 @@
 # modules/home-manager/common/dmux.nix
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -9,23 +14,21 @@ let
   # Derivation for the dmux package
   dmux-pkg = pkgs.rustPlatform.buildRustPackage rec {
     pname = "dmux";
-    version = "0.1.0"; # From Cargo.toml
+    version = "0.6.2"; # From Cargo.toml
 
     src = pkgs.fetchFromGitHub {
-      owner = "standardagents";
+      owner = "zdcthomas";
       repo = "dmux";
-      rev = "main"; # Using main as there are no release tags
-      # The user will need to replace this with the correct hash after the first build fails.
-      sha256 = "0000000000000000000000000000000000000000000000000000";
+      rev = "584aa85Merge pull request #19 from zdcthomas/window-name";
+      sha256 = "1cdb7jlav9g5w70mglvxjx1sm9pmgklm19jlp9a7h78mwkhhmxxb";
     };
 
-    # The user will need to replace this with the correct hash after the first build fails.
-    cargoSha256 = "0000000000000000000000000000000000000000000000000000";
+    cargoHash = "sha256-088m5j6npp11cnwrjlax26svyvixjwikwzbkz84wsc1xfrdcn8vr";
 
     meta = {
-      description = "A command-line tool for multi-agent workflows";
-      homepage = "https://github.com/standardagents/dmux";
-      license = licenses.mit; # Assuming MIT from common practice, check repo if needed
+      description = "A fast and easy tmux workspace opener";
+      homepage = "https://github.com/zdcthomas/dmux";
+      license = licenses.mit;
     };
   };
 

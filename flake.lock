@@ -839,11 +839,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773319257,
-        "narHash": "sha256-U92OcncnY+JfGCXcsnJvgLXIRLbZNoGhlQTjbZAjT8k=",
+        "lastModified": 1773329316,
+        "narHash": "sha256-5vI56SZ/VEuvSDQD3T7JVso2CGSD7AaQsttMINPSXAE=",
         "owner": "deepwatrcreatur",
         "repo": "nix-router-optimized",
-        "rev": "361beb4158671438af41be8a6a4a2f48051d7c32",
+        "rev": "98097dfa545e71028270ccd1afcea2d4a43d1a75",
         "type": "github"
       },
       "original": {
@@ -903,11 +903,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1772802345,
-        "narHash": "sha256-9DJtFPXa3WiKLHkfcL6E0kZlDsYsdujiLO+f4chfevs=",
+        "lastModified": 1773319542,
+        "narHash": "sha256-eVtxmBp1D7XqUlAW0Q3C25LCAs7sDsfbznEeJvUYj9M=",
         "owner": "pbek",
         "repo": "nixbit",
-        "rev": "6017c950ab10b9f2c4703c4428e28502f1f7b39b",
+        "rev": "46fb29998afa6b90eb7fb163e757137a29c3667e",
         "type": "github"
       },
       "original": {
@@ -1010,11 +1010,11 @@
     },
     "nixpkgs-stable_2": {
       "locked": {
-        "lastModified": 1773068389,
-        "narHash": "sha256-vMrm7Pk2hjBRPnCSjhq1pH0bg350Z+pXhqZ9ICiqqCs=",
+        "lastModified": 1773222311,
+        "narHash": "sha256-BHoB/XpbqoZkVYZCfXJXfkR+GXFqwb/4zbWnOr2cRcU=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "44bae273f9f82d480273bab26f5c50de3724f52f",
+        "rev": "0590cd39f728e129122770c029970378a79d076a",
         "type": "github"
       },
       "original": {
@@ -1090,11 +1090,11 @@
     },
     "nixpkgs_5": {
       "locked": {
-        "lastModified": 1773068389,
-        "narHash": "sha256-vMrm7Pk2hjBRPnCSjhq1pH0bg350Z+pXhqZ9ICiqqCs=",
+        "lastModified": 1773222311,
+        "narHash": "sha256-BHoB/XpbqoZkVYZCfXJXfkR+GXFqwb/4zbWnOr2cRcU=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "44bae273f9f82d480273bab26f5c50de3724f52f",
+        "rev": "0590cd39f728e129122770c029970378a79d076a",
         "type": "github"
       },
       "original": {
@@ -1504,11 +1504,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1773309596,
-        "narHash": "sha256-De70ccY3YJ0mXjKJAlsNWGz/N3fcGZQiCXJ20H7faKE=",
+        "lastModified": 1773327720,
+        "narHash": "sha256-vw6YahKp/0CoEWcSzeRo6WkPubmgvBCrj2oQvLteOZA=",
         "ref": "refs/heads/main",
-        "rev": "2ffc09f4b6f156801a7caba3e08f5473f5394c1d",
-        "revCount": 2994,
+        "rev": "225a21da67f21afdc216f2fd59b44ef7d2e5dc21",
+        "revCount": 2995,
         "type": "git",
         "url": "ssh://git@github.com/max-sixty/worktrunk"
       },

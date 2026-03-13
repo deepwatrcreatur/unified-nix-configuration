@@ -125,7 +125,7 @@
   # Enable Avahi for mDNS (service discovery)
   services.avahi = {
     enable = true;
-    nssmdns = true; # For resolving .local hostnames
+    nssmdns4 = true; # For resolving .local hostnames
     openFirewall = true;
   };
 
@@ -227,6 +227,7 @@
   # Enable fixes for stuck keyboard presses in Proxmox VM
   myModules.keyboardGlitches.enable = true;
 
+  nix.buildMachines = []; # Disable remote builders to prevent SSH connection errors
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"
@@ -281,9 +282,10 @@
       group = "users";
     };
   };
-  
+
   # Test: Make available as env var
   environment.variables.GITHUB_TOKEN_AGENIX = config.age.secrets.github-token-agenix.path;
 
+  services.resolved.enable = true; # Explicitly enable systemd-resolved for automatic DNS management
   system.stateVersion = "25.05";
 }

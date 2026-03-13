@@ -14,6 +14,6 @@
     gemini-cli
     github-copilot-cli   
     factory-droid
-    inputs.codex-cli-nix.packages.${pkgs.system}.codex
+    inputs.codex-cli-nix.packages.${pkgs.stdenv.hostPlatform.system}.codex
   ];
 }
