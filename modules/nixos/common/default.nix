@@ -9,6 +9,7 @@
     ./ssh-keys.nix
     ./sops.nix
     ./fstrim.nix
+    ./git-ssh.nix
     # ../../activation-scripts
   ];
 }
