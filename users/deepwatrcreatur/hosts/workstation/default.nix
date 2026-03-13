@@ -17,10 +17,10 @@
     ../../../../modules/home-manager/gpg-agent-cross-de.nix
     ../../../../modules/home-manager/zed.nix
     ../../../../modules/home-manager/cosmic-settings.nix
-    # ../../../../modules/home-manager/common/dmux.nix
+    ../../../../modules/home-manager/common/dmux.nix
   ];
 
-  # programs.dmux.enable = true;
+  programs.dmux.enable = true;
 
   programs.distrobox.fedora.enable = true;
 

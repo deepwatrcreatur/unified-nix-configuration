@@ -227,7 +227,7 @@
   # Enable fixes for stuck keyboard presses in Proxmox VM
   myModules.keyboardGlitches.enable = true;
 
-  nix.buildMachines = []; # Disable remote builders to prevent SSH connection errors
+  # nix.buildMachines is now managed by modules/common/nix-settings.nix
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"
