@@ -283,8 +283,9 @@
   # Agenix configuration
   age.secrets.technitium-api-key = {
     file = ../../../secrets-agenix/technitium-api-key.age;
-    owner = "deepwatrcreatur";
-    group = "users";
+    owner = "root";
+    group = "root";
+    mode = "0444";  # World-readable for router-dashboard DynamicUser access
   };
   
   environment.variables.TECHNITIUM_API_KEY_FILE = config.age.secrets.technitium-api-key.path;
