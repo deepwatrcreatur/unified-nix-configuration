@@ -219,6 +219,26 @@
         "url": "https://install.determinate.systems/determinate-nixd/tag/v3.17.0/x86_64-linux"
       }
     },
+    "dmux-flake": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1773403616,
+        "narHash": "sha256-40lpM8lf+3CqssKczFYgwm2Vi2AcUD8bYiGWX44LrPU=",
+        "owner": "deepwatrcreatur",
+        "repo": "nix-dmux",
+        "rev": "9ce476b1d6f49fea8d7593eef600bc04e26c86b9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "deepwatrcreatur",
+        "repo": "nix-dmux",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -839,11 +859,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773401677,
-        "narHash": "sha256-0/YgeDUuoTtapirp88yunNTMFO5D7aAwx0XOUsLwCG0=",
+        "lastModified": 1773403856,
+        "narHash": "sha256-Rbf7A6mXY9CzTRXnz/vAabzBeF7Gz8687HWkrtUQOVY=",
         "owner": "deepwatrcreatur",
         "repo": "nix-router-optimized",
-        "rev": "dec433f69ccc6f28b9454e9f492db35ebeb354e9",
+        "rev": "a7a9600f56b612cd88ea8b44abb310cecb807fc1",
         "type": "github"
       },
       "original": {
@@ -1132,6 +1152,7 @@
         "agenix": "agenix",
         "codex-cli-nix": "codex-cli-nix",
         "determinate": "determinate",
+        "dmux-flake": "dmux-flake",
         "flake-utils": "flake-utils_2",
         "fnox": "fnox",
         "home-manager": "home-manager_2",
