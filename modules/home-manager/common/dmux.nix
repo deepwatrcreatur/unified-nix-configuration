@@ -1,13 +1,4 @@
 # modules/home-manager/common/dmux.nix
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
-
-with lib;
-
 { config, lib, pkgs, inputs, ... }:
 
 with lib;
