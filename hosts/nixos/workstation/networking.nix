@@ -13,6 +13,9 @@
         631
       ]; # Deskflow server and CUPS
     };
+
+    # Tell NetworkManager to use systemd-resolved for DNS (gets from DHCP)
+    networkmanager.dns = "systemd-resolved";
   };
 
   # Enable Avahi for service discovery (e.g., printers)
