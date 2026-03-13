@@ -1,9 +1,0 @@
-refactor: Consume dmux package from dedicated flake
-
-- Added `dmux-flake` as an input to `unified-nix-configuration/flake.nix`.
-- Modified `unified-nix-configuration/modules/home-manager/common/dmux.nix` to
-  import the `dmux` package directly from `inputs.dmux-flake`.
-- Removed the temporary `pkgs/dmux/default.nix` file from this repository,
-  as the package now resides in its own flake.
-- This refactoring completes the migration of `dmux` to a dedicated flake
-  for better modularity and reusability.
