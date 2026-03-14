@@ -112,7 +112,7 @@ in
       API_TOKEN_SECRET="secret-not-available"
     fi
     cat > "$HOME/.config/cosmic-applet-proxmoxbar/config.toml" <<EOF
-base_url = "https://pve-gateway.deepwatercreature.com:8006"
+base_url = "https://10.10.11.52:8006"
 api_token_id = "root@pam!cosmic-applet-proxmoxbar"
 api_token_secret = "$API_TOKEN_SECRET"
 verify_tls = true
