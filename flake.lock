@@ -197,11 +197,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773499741,
-        "narHash": "sha256-9u4JZ0qFpumgtQG2VGWulzA7ALvxA8J9GcE+V4wsGYM=",
+        "lastModified": 1773503072,
+        "narHash": "sha256-SAfzh/yLG4sFiTOFKNsQ5nNE2t8tYqxB3h6z/kbjOMI=",
         "owner": "deepwatrcreatur",
         "repo": "cosmic-applet-proxmoxbar",
-        "rev": "dd5c324e5f9917328e7ee629df7fc20e76fcbd70",
+        "rev": "ba3db007c610ee42a0cf008ade9c334a6ec46136",
         "type": "github"
       },
       "original": {
@@ -998,11 +998,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773404437,
-        "narHash": "sha256-25kNMxkMGq8lDDbXqf/m0+1mZiNy5GauWKVDQ06ijjU=",
+        "lastModified": 1773501791,
+        "narHash": "sha256-DHSCOlSEOGx+AVYwLaV6NdvdjqSPRxdlr3wP/Yqdb1U=",
         "owner": "deepwatrcreatur",
         "repo": "nix-router-optimized",
-        "rev": "bb34798f21b84329128d3a430e2342f6bcac519b",
+        "rev": "4d0c691d4430b6f7de2a9591a5dc22abbeabb9f8",
         "type": "github"
       },
       "original": {
