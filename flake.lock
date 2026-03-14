@@ -31,15 +31,15 @@
       "locked": {
         "lastModified": 1773489714,
         "narHash": "sha256-+tD/Jg/FA4SR74zZhppmYyGL6zvvUnBT9QyzsyBrX4A=",
-        "ref": "refs/heads/main",
+        "owner": "deepwatrcreatur",
+        "repo": "agents-status-tray",
         "rev": "935da7eec6cb454bf95e0389423f523756bd0a68",
-        "revCount": 1,
-        "type": "git",
-        "url": "file:///home/deepwatrcreatur/flakes/agents-status-tray"
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "file:///home/deepwatrcreatur/flakes/agents-status-tray"
+        "owner": "deepwatrcreatur",
+        "repo": "agents-status-tray",
+        "type": "github"
       }
     },
     "agents-status-tray-home-manager": {
@@ -53,17 +53,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1773489732,
-        "narHash": "sha256-bpEbxVqLmhkMfA1jQ2Uoa1IOFIVWWkjw8v1r8esUito=",
-        "ref": "refs/heads/main",
-        "rev": "60f2200a1f302cb974d0ae5e79ed32de35807300",
-        "revCount": 2,
-        "type": "git",
-        "url": "file:///home/deepwatrcreatur/flakes/agents-status-tray-home-manager"
+        "lastModified": 1773493979,
+        "narHash": "sha256-xhTXFNSmyahscqe3vzj68zFF0hsObRSPCHPyEAfPD68=",
+        "owner": "deepwatrcreatur",
+        "repo": "agents-status-tray-home-manager",
+        "rev": "cdfbb8055bace733e065072f07b9c0ecdf3e83ec",
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "file:///home/deepwatrcreatur/flakes/agents-status-tray-home-manager"
+        "owner": "deepwatrcreatur",
+        "repo": "agents-status-tray-home-manager",
+        "type": "github"
       }
     },
     "attic": {
@@ -199,14 +199,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1773490234,
-        "narHash": "sha256-n2RHP8mSlSA6kIJO7Npf2XIeKqxktQrU+Fk6gyd/G5g=",
-        "path": "/home/deepwatrcreatur/flakes/cosmic-applet-proxmoxbar",
-        "type": "path"
+        "lastModified": 1773490221,
+        "narHash": "sha256-bNw+YGsBD5kiTOXR3ClnHaoTUaahBoBqcF6PIhEW/S8=",
+        "owner": "deepwatrcreatur",
+        "repo": "cosmic-applet-proxmoxbar",
+        "rev": "7f3bb8629aa09d97b72d3f9e019aefc2f81276a9",
+        "type": "github"
       },
       "original": {
-        "path": "/home/deepwatrcreatur/flakes/cosmic-applet-proxmoxbar",
-        "type": "path"
+        "owner": "deepwatrcreatur",
+        "repo": "cosmic-applet-proxmoxbar",
+        "type": "github"
       }
     },
     "crane": {
