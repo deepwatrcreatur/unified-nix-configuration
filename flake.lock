@@ -94,22 +94,20 @@
     },
     "attic-observatory": {
       "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
+        "nixpkgs": "nixpkgs_6"
       },
       "locked": {
-        "lastModified": 1773482888,
-        "narHash": "sha256-bWgiT/ieBwdlE0xZqAtDnphP1psG/d3bkPiRIC7cKBQ=",
-        "ref": "refs/heads/main",
-        "rev": "2685ab37167c8163e95132df76d1e5cb8ba2de99",
-        "revCount": 1,
-        "type": "git",
-        "url": "ssh://git@github.com/deepwatrcreatur/attic-observatory"
+        "lastModified": 1773492668,
+        "narHash": "sha256-fiwt494iXWT7x4l8zFUSwJ8D7gzozFhvp7itcgk2IG8=",
+        "owner": "deepwatrcreatur",
+        "repo": "attic-observatory",
+        "rev": "4beb35edd4f8d22d1165487df4ce2a1e632b3835",
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "ssh://git@github.com/deepwatrcreatur/attic-observatory"
+        "owner": "deepwatrcreatur",
+        "repo": "attic-observatory",
+        "type": "github"
       }
     },
     "brew-src": {
@@ -133,7 +131,7 @@
       "inputs": {
         "flake-parts": "flake-parts_2",
         "nixpkgs": "nixpkgs_3",
-        "systems": "systems_7",
+        "systems": "systems_6",
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
@@ -189,24 +187,6 @@
         "owner": "sadjow",
         "repo": "codex-cli-nix",
         "type": "github"
-      }
-    },
-    "cosmic-applet-proxmoxbar": {
-      "inputs": {
-        "flake-utils": "flake-utils_3",
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1773490234,
-        "narHash": "sha256-n2RHP8mSlSA6kIJO7Npf2XIeKqxktQrU+Fk6gyd/G5g=",
-        "path": "/home/deepwatrcreatur/flakes/cosmic-applet-proxmoxbar",
-        "type": "path"
-      },
-      "original": {
-        "path": "/home/deepwatrcreatur/flakes/cosmic-applet-proxmoxbar",
-        "type": "path"
       }
     },
     "crane": {
@@ -500,24 +480,6 @@
         "type": "github"
       }
     },
-    "flake-utils_10": {
-      "inputs": {
-        "systems": "systems_13"
-      },
-      "locked": {
-        "lastModified": 1731533236,
-        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
-        "type": "github"
-      },
-      "original": {
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "type": "github"
-      }
-    },
     "flake-utils_2": {
       "inputs": {
         "systems": "systems_3"
@@ -574,7 +536,7 @@
     },
     "flake-utils_5": {
       "inputs": {
-        "systems": "systems_6"
+        "systems": "systems_8"
       },
       "locked": {
         "lastModified": 1731533236,
@@ -664,7 +626,7 @@
     },
     "fnox": {
       "inputs": {
-        "flake-utils": "flake-utils_5",
+        "flake-utils": "flake-utils_4",
         "fnox-src": "fnox-src",
         "nixpkgs": [
           "nixpkgs"
@@ -800,7 +762,7 @@
         "nixpkgs": [
           "nixpkgs"
         ],
-        "systems": "systems_8",
+        "systems": "systems_7",
         "treefmt-nix": "treefmt-nix_2"
       },
       "locked": {
@@ -841,6 +803,7 @@
     "nix-attic-infra": {
       "inputs": {
         "attic": "attic",
+        "attic-observatory": "attic-observatory",
         "flake-utils": [
           "flake-utils"
         ],
@@ -849,15 +812,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1769348768,
-        "narHash": "sha256-cP26lcO+4Yihkl91vkvH6PZTImv4QAtSHuC42cD1/WI=",
-        "ref": "refs/heads/main",
-        "rev": "8eee3cc15a50992e7ac42bceda45fc91be37644a",
-        "revCount": 16,
+        "lastModified": 1773493536,
+        "narHash": "sha256-GAB5Lj1MFim8BcGlG4tekiqwoXNTkKIyfow8kV+nKVU=",
+        "ref": "feat/attic-observatory-module",
+        "rev": "ba1038af2946ce10cfaa7eae8633f29f0df5388e",
+        "revCount": 18,
         "type": "git",
         "url": "ssh://git@github.com/deepwatrcreatur/nix-attic-infra"
       },
       "original": {
+        "ref": "feat/attic-observatory-module",
         "type": "git",
         "url": "ssh://git@github.com/deepwatrcreatur/nix-attic-infra"
       }
@@ -968,7 +932,7 @@
     },
     "nix-linuxbrew": {
       "inputs": {
-        "flake-utils": "flake-utils_6",
+        "flake-utils": "flake-utils_5",
         "home-manager": "home-manager_3",
         "nixpkgs": [
           "nixpkgs"
@@ -1033,7 +997,7 @@
     },
     "nix-whitesur-config": {
       "inputs": {
-        "flake-utils": "flake-utils_7",
+        "flake-utils": "flake-utils_6",
         "nixpkgs": [
           "nixpkgs"
         ]
@@ -1054,7 +1018,7 @@
     },
     "nixbit": {
       "inputs": {
-        "flake-utils": "flake-utils_8",
+        "flake-utils": "flake-utils_7",
         "nixpkgs": [
           "nixpkgs"
         ]
@@ -1277,6 +1241,22 @@
         "type": "github"
       }
     },
+    "nixpkgs_7": {
+      "locked": {
+        "lastModified": 1773375660,
+        "narHash": "sha256-SEzUWw2Rf5Ki3bcM26nSKgbeoqi2uYy8IHVBqOKjX3w=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "3e20095fe3c6cbb1ddcef89b26969a69a1570776",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-25.11",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "plasma-manager": {
       "inputs": {
         "home-manager": [
@@ -1304,13 +1284,11 @@
       "inputs": {
         "agenix": "agenix",
         "agents-status-tray-home-manager": "agents-status-tray-home-manager",
-        "attic-observatory": "attic-observatory",
         "claude-statusline-flake": "claude-statusline-flake",
         "codex-cli-nix": "codex-cli-nix",
-        "cosmic-applet-proxmoxbar": "cosmic-applet-proxmoxbar",
         "determinate": "determinate",
         "dmux-flake": "dmux-flake",
-        "flake-utils": "flake-utils_4",
+        "flake-utils": "flake-utils_3",
         "fnox": "fnox",
         "home-manager": "home-manager_2",
         "mac-app-util": "mac-app-util",
@@ -1324,7 +1302,7 @@
         "nix-snapd": "nix-snapd",
         "nix-whitesur-config": "nix-whitesur-config",
         "nixbit": "nixbit",
-        "nixpkgs": "nixpkgs_6",
+        "nixpkgs": "nixpkgs_7",
         "nixpkgs-stable": "nixpkgs-stable_2",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "plasma-manager": "plasma-manager",
@@ -1459,21 +1437,6 @@
         "type": "github"
       }
     },
-    "systems_13": {
-      "locked": {
-        "lastModified": 1681028828,
-        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
-        "owner": "nix-systems",
-        "repo": "default",
-        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-systems",
-        "repo": "default",
-        "type": "github"
-      }
-    },
     "systems_2": {
       "locked": {
         "lastModified": 1681028828,
@@ -1551,21 +1514,6 @@
     },
     "systems_7": {
       "locked": {
-        "lastModified": 1681028828,
-        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
-        "owner": "nix-systems",
-        "repo": "default",
-        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-systems",
-        "repo": "default",
-        "type": "github"
-      }
-    },
-    "systems_8": {
-      "locked": {
         "lastModified": 1689347925,
         "narHash": "sha256-ozenz5bFe1UUqOn7f60HRmgc01BgTGIKZ4Xl+HbocGQ=",
         "owner": "nix-systems",
@@ -1576,6 +1524,21 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default-darwin",
+        "type": "github"
+      }
+    },
+    "systems_8": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
         "type": "github"
       }
     },
@@ -1628,7 +1591,7 @@
     },
     "tesla-inference-flake": {
       "inputs": {
-        "flake-utils": "flake-utils_9",
+        "flake-utils": "flake-utils_8",
         "nixpkgs": [
           "nixpkgs"
         ]
@@ -1710,7 +1673,7 @@
     },
     "zellij-vivid-rounded": {
       "inputs": {
-        "flake-utils": "flake-utils_10",
+        "flake-utils": "flake-utils_9",
         "nixpkgs": [
           "nixpkgs"
         ]

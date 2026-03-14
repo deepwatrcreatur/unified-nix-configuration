@@ -110,7 +110,7 @@
     };
 
     nix-attic-infra = {
-      url = "git+ssh://git@github.com/deepwatrcreatur/nix-attic-infra";
+      url = "git+ssh://git@github.com/deepwatrcreatur/nix-attic-infra?ref=feat/attic-observatory-module";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-utils.follows = "flake-utils";
     };
@@ -132,11 +132,6 @@
 
     claude-statusline-flake = {
       url = "github:deepwatrcreatur/nix-claude-statusline"; # Your new claude-statusline package flake
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    attic-observatory = {
-      url = "git+ssh://git@github.com/deepwatrcreatur/attic-observatory";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

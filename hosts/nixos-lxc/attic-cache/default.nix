@@ -5,6 +5,7 @@
 }:
 {
   imports = [
+    ../../../modules/nixos/attic-observatory.nix
     ./modules/configuration.nix
     ./modules/build-server.nix
     ./modules/home-manager-users.nix
