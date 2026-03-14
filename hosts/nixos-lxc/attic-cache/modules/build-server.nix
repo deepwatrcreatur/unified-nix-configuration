@@ -382,13 +382,14 @@ in
       ExecStart = "${atticObservatoryPkg}/bin/attic-observatory";
       Restart = "on-failure";
       RestartSec = "5";
-      DynamicUser = true;
-      SupplementaryGroups = [ "atticd" ];
+      User = "root";
+      Group = "root";
     };
     environment = {
       ATTIC_DB_PATH = "/var/lib/atticd/server.db";
       ATTIC_OBSERVATORY_HOST = "127.0.0.1";
       ATTIC_OBSERVATORY_PORT = toString atticObservatoryPort;
+      ATTIC_OBSERVATORY_THEME = "sugarplum";
     };
   };
 
