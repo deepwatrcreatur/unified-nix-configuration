@@ -47,3 +47,5 @@ in
 }
   "secrets-agenix/cloudflare_ddns_API_token.age".publicKeys = allKeys;
   "secrets-agenix/proxmox-api-token.age".publicKeys = allKeys;
+  "secrets-agenix/cloudflare-api-key.age".publicKeys = [ hosts.gateway hosts.homeserver ] ++ allUsers;
+  "secrets-agenix/cloudflare-api-key.age".publicKeys = allKeys;
