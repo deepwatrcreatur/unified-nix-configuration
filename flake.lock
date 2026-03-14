@@ -29,11 +29,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1773489714,
-        "narHash": "sha256-+tD/Jg/FA4SR74zZhppmYyGL6zvvUnBT9QyzsyBrX4A=",
+        "lastModified": 1773528359,
+        "narHash": "sha256-l3/S6vkIDlDAr9xxBoSR2jWkzRwDp3ORrYM2j49D5MI=",
         "owner": "deepwatrcreatur",
         "repo": "agents-status-tray",
-        "rev": "935da7eec6cb454bf95e0389423f523756bd0a68",
+        "rev": "64397ed1381dafd7aeeed00c91bf9534774b812a",
         "type": "github"
       },
       "original": {
@@ -53,11 +53,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773493979,
-        "narHash": "sha256-xhTXFNSmyahscqe3vzj68zFF0hsObRSPCHPyEAfPD68=",
+        "lastModified": 1773528388,
+        "narHash": "sha256-KKWXfXBPo+jnd0l31lsAHxY5XbnkiAV3N/5+RDN8DCA=",
         "owner": "deepwatrcreatur",
         "repo": "agents-status-tray-home-manager",
-        "rev": "cdfbb8055bace733e065072f07b9c0ecdf3e83ec",
+        "rev": "0f04090010e9b02f6c0380da41ea55f644c9f937",
         "type": "github"
       },
       "original": {
@@ -197,11 +197,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773503072,
-        "narHash": "sha256-SAfzh/yLG4sFiTOFKNsQ5nNE2t8tYqxB3h6z/kbjOMI=",
+        "lastModified": 1773503234,
+        "narHash": "sha256-itr3LLovlOkMDzBS8TSPeSQOYeQ+sjezGNQfUCXWsCY=",
         "owner": "deepwatrcreatur",
         "repo": "cosmic-applet-proxmoxbar",
-        "rev": "ba3db007c610ee42a0cf008ade9c334a6ec46136",
+        "rev": "51e23061f865a97baabc69284f9206690e52a95a",
         "type": "github"
       },
       "original": {
@@ -999,11 +999,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773501791,
-        "narHash": "sha256-DHSCOlSEOGx+AVYwLaV6NdvdjqSPRxdlr3wP/Yqdb1U=",
+        "lastModified": 1773527680,
+        "narHash": "sha256-eJ3sf3n/hIov1Dty1MLec/Yl7eXh6CQE/6sg1PFnBfs=",
         "owner": "deepwatrcreatur",
         "repo": "nix-router-optimized",
-        "rev": "4d0c691d4430b6f7de2a9591a5dc22abbeabb9f8",
+        "rev": "9a28e467d0bff5c5b9f348f783c823fdef84aa0d",
         "type": "github"
       },
       "original": {
@@ -1631,11 +1631,11 @@
     "tap-sst": {
       "flake": false,
       "locked": {
-        "lastModified": 1773483697,
-        "narHash": "sha256-RZIGsPpUOb3igQiqOfyuvlfc1uoynpnQVcXyLHg7Qu0=",
+        "lastModified": 1773517070,
+        "narHash": "sha256-aOmOvx5daeX7yhyADX7OZcAXJNcriHgbEPRsVrxyQi8=",
         "owner": "sst",
         "repo": "homebrew-tap",
-        "rev": "5bf99b62f8904e4a6265aefb69f9a593b8a626b8",
+        "rev": "435619c6caa8166b47b57c9f1e543bdff2c24071",
         "type": "github"
       },
       "original": {
@@ -1713,11 +1713,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1773479344,
-        "narHash": "sha256-WchvLeectQoNZxXIqDQDYFCAXCbTAyTh7ckbOTcLI+A=",
+        "lastModified": 1773525102,
+        "narHash": "sha256-J3yqwJ8PvnNNRQNQFJFWGsZml871LwDejpcG+FW0CJA=",
         "ref": "refs/heads/main",
-        "rev": "af84c04902988ff59e90926438863e360a3ee8fe",
-        "revCount": 3032,
+        "rev": "18aab7b1716893d5c721fe25e63e939b04220864",
+        "revCount": 3041,
         "type": "git",
         "url": "ssh://git@github.com/max-sixty/worktrunk"
       },
