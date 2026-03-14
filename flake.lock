@@ -851,16 +851,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1773503354,
+        "lastModified": 1773503892,
         "narHash": "sha256-EIKtC5JTeaBItNRYnB8U/06A/CNGhbXzF+w7ptqI6CQ=",
-        "ref": "fix/attic-observatory-immutable",
-        "rev": "ce6a4ddb0e313ba0b7d6cdf684ec447f69787a85",
-        "revCount": 24,
+        "ref": "main",
+        "rev": "bda2eaf904f1dd4555d839cb263e17157a5cccb2",
+        "revCount": 25,
         "type": "git",
         "url": "ssh://git@github.com/deepwatrcreatur/nix-attic-infra"
       },
       "original": {
-        "ref": "fix/attic-observatory-immutable",
+        "ref": "main",
         "type": "git",
         "url": "ssh://git@github.com/deepwatrcreatur/nix-attic-infra"
       }
