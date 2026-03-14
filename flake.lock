@@ -812,11 +812,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773493536,
-        "narHash": "sha256-GAB5Lj1MFim8BcGlG4tekiqwoXNTkKIyfow8kV+nKVU=",
+        "lastModified": 1773494822,
+        "narHash": "sha256-hlH5wFD8B5dv9+w7XQu7HdFVhqowq07uoLP0XNOuZWw=",
         "ref": "feat/attic-observatory-module",
-        "rev": "ba1038af2946ce10cfaa7eae8633f29f0df5388e",
-        "revCount": 18,
+        "rev": "27341cccff1689fb845f9de21ebe03b937186339",
+        "revCount": 19,
         "type": "git",
         "url": "ssh://git@github.com/deepwatrcreatur/nix-attic-infra"
       },

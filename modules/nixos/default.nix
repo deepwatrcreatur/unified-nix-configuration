@@ -6,6 +6,7 @@ let
   excludeItems = [
     "default.nix"
     "attic-client.nix"
+    "attic-observatory.nix"
     "attic-post-build-hook.nix"
     "common"
     "inference-vm"
