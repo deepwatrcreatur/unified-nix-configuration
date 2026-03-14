@@ -1295,18 +1295,6 @@
         "type": "github"
       }
     },
-    "pkgs": {
-      "flake": false,
-      "locked": {
-        "path": "./pkgs",
-        "type": "path"
-      },
-      "original": {
-        "path": "./pkgs",
-        "type": "path"
-      },
-      "parent": []
-    },
     "plasma-manager": {
       "inputs": {
         "home-manager": [
@@ -1356,7 +1344,6 @@
         "nixpkgs": "nixpkgs_7",
         "nixpkgs-stable": "nixpkgs-stable_2",
         "nixpkgs-unstable": "nixpkgs-unstable",
-        "pkgs": "pkgs",
         "plasma-manager": "plasma-manager",
         "sops-nix": "sops-nix",
         "ssh-keys-manager": "ssh-keys-manager",
