@@ -135,6 +135,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    attic-observatory = {
+      url = "git+ssh://git@github.com/deepwatrcreatur/attic-observatory";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     agents-status-tray-home-manager = {
       url = "git+file:///home/deepwatrcreatur/flakes/agents-status-tray-home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
