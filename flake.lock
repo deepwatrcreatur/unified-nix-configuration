@@ -72,10 +72,7 @@
         "flake-compat": "flake-compat_3",
         "flake-parts": "flake-parts_3",
         "nix-github-actions": "nix-github-actions",
-        "nixpkgs": [
-          "nix-attic-infra",
-          "nixpkgs"
-        ],
+        "nixpkgs": "nixpkgs_6",
         "nixpkgs-stable": "nixpkgs-stable"
       },
       "locked": {
@@ -95,21 +92,22 @@
     "attic-observatory": {
       "inputs": {
         "nixpkgs": [
+          "nix-attic-infra",
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1773482888,
-        "narHash": "sha256-bWgiT/ieBwdlE0xZqAtDnphP1psG/d3bkPiRIC7cKBQ=",
-        "ref": "refs/heads/main",
-        "rev": "2685ab37167c8163e95132df76d1e5cb8ba2de99",
-        "revCount": 1,
-        "type": "git",
-        "url": "ssh://git@github.com/deepwatrcreatur/attic-observatory"
+        "lastModified": 1773492668,
+        "narHash": "sha256-fiwt494iXWT7x4l8zFUSwJ8D7gzozFhvp7itcgk2IG8=",
+        "owner": "deepwatrcreatur",
+        "repo": "attic-observatory",
+        "rev": "4beb35edd4f8d22d1165487df4ce2a1e632b3835",
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "ssh://git@github.com/deepwatrcreatur/attic-observatory"
+        "owner": "deepwatrcreatur",
+        "repo": "attic-observatory",
+        "type": "github"
       }
     },
     "brew-src": {
@@ -844,6 +842,7 @@
     "nix-attic-infra": {
       "inputs": {
         "attic": "attic",
+        "attic-observatory": "attic-observatory",
         "flake-utils": [
           "flake-utils"
         ],
@@ -852,11 +851,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1769348768,
-        "narHash": "sha256-cP26lcO+4Yihkl91vkvH6PZTImv4QAtSHuC42cD1/WI=",
+        "lastModified": 1773499277,
+        "narHash": "sha256-C9pZfcbN7ZSZztRger2/ePp7vyaJIxU9sGHelRBuROU=",
         "ref": "refs/heads/main",
-        "rev": "8eee3cc15a50992e7ac42bceda45fc91be37644a",
-        "revCount": 16,
+        "rev": "5e9e59d7fc7d9b94a7b8a5dcc15eaa34d8e1c478",
+        "revCount": 23,
         "type": "git",
         "url": "ssh://git@github.com/deepwatrcreatur/nix-attic-infra"
       },
@@ -1266,6 +1265,22 @@
     },
     "nixpkgs_6": {
       "locked": {
+        "lastModified": 1751949589,
+        "narHash": "sha256-mgFxAPLWw0Kq+C8P3dRrZrOYEQXOtKuYVlo9xvPntt8=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "9b008d60392981ad674e04016d25619281550a9d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_7": {
+      "locked": {
         "lastModified": 1773375660,
         "narHash": "sha256-SEzUWw2Rf5Ki3bcM26nSKgbeoqi2uYy8IHVBqOKjX3w=",
         "owner": "NixOS",
@@ -1307,7 +1322,6 @@
       "inputs": {
         "agenix": "agenix",
         "agents-status-tray-home-manager": "agents-status-tray-home-manager",
-        "attic-observatory": "attic-observatory",
         "claude-statusline-flake": "claude-statusline-flake",
         "codex-cli-nix": "codex-cli-nix",
         "cosmic-applet-proxmoxbar": "cosmic-applet-proxmoxbar",
@@ -1327,7 +1341,7 @@
         "nix-snapd": "nix-snapd",
         "nix-whitesur-config": "nix-whitesur-config",
         "nixbit": "nixbit",
-        "nixpkgs": "nixpkgs_6",
+        "nixpkgs": "nixpkgs_7",
         "nixpkgs-stable": "nixpkgs-stable_2",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "plasma-manager": "plasma-manager",

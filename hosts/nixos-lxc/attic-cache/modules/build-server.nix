@@ -2,14 +2,10 @@
   config,
   lib,
   pkgs,
-  inputs,
   ...
 }:
 
 let
-  atticObservatoryPort = 8088;
-  atticObservatoryUiPort = 8082;
-  atticObservatoryPkg = inputs.attic-observatory.packages.${pkgs.stdenv.hostPlatform.system}.default;
 in
 {
   # Sops secret for attic server token
@@ -283,26 +279,6 @@ in
       };
     };
 
-    virtualHosts."attic-observatory" = {
-      listen = [
-        {
-          addr = "0.0.0.0";
-          port = atticObservatoryUiPort;
-        }
-      ];
-      locations = {
-        "/" = {
-          proxyPass = "http://127.0.0.1:${toString atticObservatoryPort}";
-          extraConfig = ''
-            proxy_set_header Host $host;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-            add_header X-Cache-Source "attic-observatory";
-          '';
-        };
-      };
-    };
-
   };
 
   # User and group for atticd
@@ -365,30 +341,17 @@ in
       5001
       8080
       8081
-      atticObservatoryUiPort
     ];
   };
 
-  systemd.services.attic-observatory = {
-    description = "Attic Observatory dashboard";
-    wantedBy = [ "multi-user.target" ];
-    after = [
-      "network.target"
-      "atticd.service"
-    ];
-    requires = [ "atticd.service" ];
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${atticObservatoryPkg}/bin/attic-observatory";
-      Restart = "on-failure";
-      RestartSec = "5";
-      User = "root";
-      Group = "root";
-    };
-    environment = {
-      ATTIC_DB_PATH = "/var/lib/atticd/server.db";
-      ATTIC_OBSERVATORY_HOST = "127.0.0.1";
-      ATTIC_OBSERVATORY_PORT = toString atticObservatoryPort;
+  services.attic-observatory = {
+    enable = true;
+    theme = "sugarplum";
+    openFirewall = true;
+
+    nginx = {
+      enable = true;
+      port = 8082;
     };
   };
 
