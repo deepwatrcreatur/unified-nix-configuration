@@ -5,6 +5,14 @@
   ...
 }:
 
+let
+  atticObservatoryPort = 8088;
+  atticObservatoryUiPort = 8082;
+  atticObservatoryPkg =
+    import ../../../../../attic-observatory/default.nix {
+      inherit pkgs;
+    };
+in
 {
   # Sops secret for attic server token
   sops.secrets."attic-server-token" = {
@@ -277,6 +285,26 @@
       };
     };
 
+    virtualHosts."attic-observatory" = {
+      listen = [
+        {
+          addr = "0.0.0.0";
+          port = atticObservatoryUiPort;
+        }
+      ];
+      locations = {
+        "/" = {
+          proxyPass = "http://127.0.0.1:${toString atticObservatoryPort}";
+          extraConfig = ''
+            proxy_set_header Host $host;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            add_header X-Cache-Source "attic-observatory";
+          '';
+        };
+      };
+    };
+
   };
 
   # User and group for atticd
@@ -339,7 +367,31 @@
       5001
       8080
       8081
+      atticObservatoryUiPort
     ];
+  };
+
+  systemd.services.attic-observatory = {
+    description = "Attic Observatory dashboard";
+    wantedBy = [ "multi-user.target" ];
+    after = [
+      "network.target"
+      "atticd.service"
+    ];
+    requires = [ "atticd.service" ];
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = "${atticObservatoryPkg}/bin/attic-observatory";
+      Restart = "on-failure";
+      RestartSec = "5";
+      DynamicUser = true;
+      SupplementaryGroups = [ "atticd" ];
+    };
+    environment = {
+      ATTIC_DB_PATH = "/var/lib/atticd/server.db";
+      ATTIC_OBSERVATORY_HOST = "127.0.0.1";
+      ATTIC_OBSERVATORY_PORT = toString atticObservatoryPort;
+    };
   };
 
   # System monitoring for build server
