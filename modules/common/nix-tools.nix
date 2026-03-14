@@ -25,6 +25,7 @@
 
     # Age encryption (for agenix secrets)
     rage
+    ssh-to-age
     
     # Nix visualization and monitoring
     nix-output-monitor
