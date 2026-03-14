@@ -6,14 +6,14 @@
   ...
 }:
 
+let
+  codingAgents = import ../coding-agents-registry.nix {
+    inherit pkgs inputs;
+  };
+in
 {
-  home.packages = with pkgs; [
-    claude-code
-    claude-monitor
-    cursor-cli
-    gemini-cli
-    github-copilot-cli   
-    factory-droid
-    inputs.codex-cli-nix.packages.${pkgs.stdenv.hostPlatform.system}.codex
-  ];
+  home.packages = [
+    pkgs.claude-monitor
+    inputs.claude-statusline-flake.packages.${pkgs.system}.default
+  ] ++ map (agent: agent.package) codingAgents;
 }
