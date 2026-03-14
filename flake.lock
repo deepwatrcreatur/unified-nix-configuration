@@ -29,11 +29,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1773528359,
-        "narHash": "sha256-l3/S6vkIDlDAr9xxBoSR2jWkzRwDp3ORrYM2j49D5MI=",
+        "lastModified": 1773529787,
+        "narHash": "sha256-x8/2FcSVmptWxbDC9lGk626GjdXOexUjDfgz/jc2FFA=",
         "owner": "deepwatrcreatur",
         "repo": "agents-status-tray",
-        "rev": "64397ed1381dafd7aeeed00c91bf9534774b812a",
+        "rev": "d74358c2d380a7ab0819066c5e4504bd857ab104",
         "type": "github"
       },
       "original": {
@@ -53,11 +53,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773528388,
-        "narHash": "sha256-KKWXfXBPo+jnd0l31lsAHxY5XbnkiAV3N/5+RDN8DCA=",
+        "lastModified": 1773529796,
+        "narHash": "sha256-eBU37cWL+SbGk+pcqYNP2ZCbsHvHtlXhpWwB1LSYdcA=",
         "owner": "deepwatrcreatur",
         "repo": "agents-status-tray-home-manager",
-        "rev": "0f04090010e9b02f6c0380da41ea55f644c9f937",
+        "rev": "893b8e9a49bb1009669a0f816e1ed3fc4b5b7a5d",
         "type": "github"
       },
       "original": {
