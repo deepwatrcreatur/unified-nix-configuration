@@ -382,8 +382,8 @@ in
       ExecStart = "${atticObservatoryPkg}/bin/attic-observatory";
       Restart = "on-failure";
       RestartSec = "5";
-      DynamicUser = true;
-      SupplementaryGroups = [ "atticd" ];
+      User = "atticd";
+      Group = "atticd";
     };
     environment = {
       ATTIC_DB_PATH = "/var/lib/atticd/server.db";
