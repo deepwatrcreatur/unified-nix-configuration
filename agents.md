@@ -128,6 +128,11 @@ For testing changes across hosts (especially build failures):
 3. **Use tmux sessions** for maintaining persistent remote sessions (see tmux section above)
 4. **Test platform-specific issues** by reproducing on relevant host type
 
+### Host Safety Notes
+- **Do not locally switch LXC guest configs on workstation**: `attic-cache` is a Proxmox LXC guest. Running `nixos-rebuild test/switch --flake .#attic-cache` on `workstation` can shut down the desktop session.
+- **Preferred attic-cache workflow**: `ssh attic-cache`, `cd ~/flakes/unified-nix-configuration`, `git pull`, then run the local rebuild on `attic-cache`.
+- **Alternative attic-cache workflow from workstation**: use a remote target rebuild such as `just remote-test attic-cache` or `sudo nixos-rebuild test --flake .#attic-cache --target-host attic-cache --use-remote-sudo`.
+
 ### Git Workflow
 Before pushing changes that affect remote hosts:
 1. **Check local files exist** with `git status`

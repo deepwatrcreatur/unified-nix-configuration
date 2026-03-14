@@ -261,6 +261,7 @@ tmux new-session -d -s minimal-dev -c ~/nix-minimal
   - **NixOS hosts** (homeserver, workstation, etc.): Use `sudo nixos-rebuild` commands, account for non-FHS compliance
   - **Darwin hosts** (macminim4): Use `darwin-rebuild` commands, respect macOS peculiarities
   - **LXC containers**: May require special handling for container-specific rebuilds
+- **attic-cache safety**: `attic-cache` is a Proxmox LXC guest. Do not run `nixos-rebuild test/switch --flake .#attic-cache` locally on `workstation`; either SSH into `attic-cache`, `git pull`, and rebuild there, or use `--target-host attic-cache --use-remote-sudo`.
 ### Host Detection Examples
 ```bash
 # Check which host you're on

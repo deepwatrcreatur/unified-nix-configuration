@@ -135,6 +135,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    claude-statusline-flake = {
+      url = "github:deepwatrcreatur/nix-claude-statusline"; # Your new claude-statusline package flake
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs =

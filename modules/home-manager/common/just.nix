@@ -150,6 +150,15 @@ let
     test-nixos:
         /run/wrappers/bin/sudo nixos-rebuild test --flake $NH_FLAKE#${hostname} --option use-cgroups false
 
+    # Rebuild a remote NixOS host without activating its configuration locally.
+    # Use this for LXC and other remote-only targets such as attic-cache.
+    remote-switch host:
+        /run/wrappers/bin/sudo nixos-rebuild switch --flake $NH_FLAKE#{{host}} --target-host {{host}} --use-remote-sudo --option use-cgroups false
+
+    # Test a remote NixOS host without activating its configuration locally.
+    remote-test host:
+        /run/wrappers/bin/sudo nixos-rebuild test --flake $NH_FLAKE#{{host}} --target-host {{host}} --use-remote-sudo --option use-cgroups false
+
     # Show NixOS version
     nixos-version:
         nixos-version

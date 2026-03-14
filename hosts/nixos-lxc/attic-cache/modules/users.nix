@@ -22,6 +22,7 @@
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIB4ELcnxIV0zujIJ4EPubU5nkKPV7G8pZ3tDDjZ6pXI deepwatrcreatur@gmail.com"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEbX1mL3oZyEz1KhjEWww+k4RTXXeOJSqXWqu5N44ZAg root@gateway" # For remote builds
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM5HOcU16SWmgUKA6kEsQWInZdg1PnPKJDUP+R9qeVcR nix-remote-builder" # For nix remote builder
     ];
   };
 
