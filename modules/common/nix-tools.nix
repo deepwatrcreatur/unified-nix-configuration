@@ -22,6 +22,9 @@
     
     # Nix helper tools
     nh
+
+    # Age encryption (for agenix secrets)
+    rage
     
     # Nix visualization and monitoring
     nix-output-monitor
