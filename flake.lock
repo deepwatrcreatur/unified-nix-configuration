@@ -50,8 +50,11 @@
         ]
       },
       "locked": {
-        "lastModified": 0,
+        "lastModified": 1773485750,
         "narHash": "sha256-H6JkBJo0dPXmc8jlb5fyMFHxo06HVzJ6JPU4Zh3eYFA=",
+        "ref": "refs/heads/main",
+        "rev": "4d1dc428ea2d9eb12970dd3a37efcf8c1ed4bef9",
+        "revCount": 1,
         "type": "git",
         "url": "file:///home/deepwatrcreatur/flakes/agents-status-tray-home-manager"
       },
