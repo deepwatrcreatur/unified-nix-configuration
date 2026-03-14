@@ -97,11 +97,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773492668,
-        "narHash": "sha256-fiwt494iXWT7x4l8zFUSwJ8D7gzozFhvp7itcgk2IG8=",
+        "lastModified": 1773503295,
+        "narHash": "sha256-lArHSe0DuXEriP79Gxcpdkn/+c9iAqMD/FaStix499E=",
         "owner": "deepwatrcreatur",
         "repo": "attic-observatory",
-        "rev": "4beb35edd4f8d22d1165487df4ce2a1e632b3835",
+        "rev": "2211935082bf462f6b1785dc65517891bf4ffd71",
         "type": "github"
       },
       "original": {
@@ -851,15 +851,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1773499277,
-        "narHash": "sha256-C9pZfcbN7ZSZztRger2/ePp7vyaJIxU9sGHelRBuROU=",
-        "ref": "refs/heads/main",
-        "rev": "5e9e59d7fc7d9b94a7b8a5dcc15eaa34d8e1c478",
-        "revCount": 23,
+        "lastModified": 1773503354,
+        "narHash": "sha256-EIKtC5JTeaBItNRYnB8U/06A/CNGhbXzF+w7ptqI6CQ=",
+        "ref": "fix/attic-observatory-immutable",
+        "rev": "ce6a4ddb0e313ba0b7d6cdf684ec447f69787a85",
+        "revCount": 24,
         "type": "git",
         "url": "ssh://git@github.com/deepwatrcreatur/nix-attic-infra"
       },
       "original": {
+        "ref": "fix/attic-observatory-immutable",
         "type": "git",
         "url": "ssh://git@github.com/deepwatrcreatur/nix-attic-infra"
       }
