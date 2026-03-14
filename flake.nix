@@ -110,7 +110,7 @@
     };
 
     nix-attic-infra = {
-      url = "git+ssh://git@github.com/deepwatrcreatur/nix-attic-infra?ref=feat/attic-observatory-module";
+      url = "git+ssh://git@github.com/deepwatrcreatur/nix-attic-infra";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-utils.follows = "flake-utils";
     };
@@ -136,9 +136,14 @@
     };
 
     agents-status-tray-home-manager = {
-      url = "git+file:///home/deepwatrcreatur/flakes/agents-status-tray-home-manager";
+      url = "github:deepwatrcreatur/agents-status-tray-home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
+    };
+
+    cosmic-applet-proxmoxbar = {
+      url = "github:deepwatrcreatur/cosmic-applet-proxmoxbar";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
   };

@@ -40,6 +40,7 @@ in
     inputs.nix-linuxbrew.packages.${pkgs.stdenv.hostPlatform.system}.brew-wrapper
     inputs.claude-statusline-flake.packages.${pkgs.stdenv.hostPlatform.system}.default # Your new claude-statusline package
     inputs.codex-cli-nix.packages.${pkgs.stdenv.hostPlatform.system}.default         # Assuming codex-cli-nix is your claude-code package
+    inputs.cosmic-applet-proxmoxbar.packages.${pkgs.stdenv.hostPlatform.system}.default
     bitwarden-desktop
     ffmpeg
     gitkraken
@@ -98,6 +99,42 @@ in
 
   home.file.".config/deskflow/deskflow.conf".text = ''
     clipboardSharing = true
+  '';
+
+  # cosmic-applet-proxmoxbar config is generated at activation time
+  # to inject the secret from agenix
+  home.activation.cosmicAppletProxmoxbarConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    mkdir -p "$HOME/.config/cosmic-applet-proxmoxbar"
+    SECRET_PATH="/run/agenix/proxmox-api-token"
+    if [ -f "$SECRET_PATH" ]; then
+      API_TOKEN_SECRET=$(cat "$SECRET_PATH")
+    else
+      API_TOKEN_SECRET="secret-not-available"
+    fi
+    cat > "$HOME/.config/cosmic-applet-proxmoxbar/config.toml" <<EOF
+base_url = "https://pve-gateway.deepwatercreature.com:8006"
+api_token_id = "root@pam!cosmic-applet-proxmoxbar"
+api_token_secret = "$API_TOKEN_SECRET"
+verify_tls = true
+poll_seconds = 30
+EOF
+  '';
+
+  home.file.".local/share/applications/com.deepwatrcreatur.CosmicAppletProxmoxbar.desktop".text = ''
+    [Desktop Entry]
+    Name=ProxmoxBar
+    Type=Application
+    Exec=${inputs.cosmic-applet-proxmoxbar.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/cosmic-applet-proxmoxbar
+    Terminal=false
+    Categories=COSMIC;
+    Keywords=COSMIC;Proxmox;Virtualization;
+    Icon=network-workgroup-symbolic
+    StartupNotify=true
+    NoDisplay=true
+    X-CosmicApplet=true
+    X-CosmicShrinkable=true
+    X-CosmicHoverPopup=Auto
+    X-OverflowPriority=10
   '';
 
   # X11 display setup for DeskFlow
