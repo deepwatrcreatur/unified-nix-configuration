@@ -346,7 +346,7 @@ in
 
   services.attic-observatory = {
     enable = true;
-    theme = "sugarplum";
+    theme = "x-dark";
     openFirewall = true;
 
     nginx = {
