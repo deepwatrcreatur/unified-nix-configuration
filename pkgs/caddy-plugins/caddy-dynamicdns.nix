@@ -1,6 +1,7 @@
 {
   buildGoModule,
   fetchFromGitHub,
+  lib,
   stdenv,
 }:
 
@@ -24,7 +25,7 @@ buildGoModule rec {
     "-w"
   ];
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "Dynamic DNS app for Caddy";
     homepage = "https://github.com/mholt/caddy-dynamicdns";
     license = licenses.asl20;

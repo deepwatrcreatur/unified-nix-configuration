@@ -5,7 +5,6 @@
   lib,
   ...
 }:
-
 {
   imports = [
     ./hardware-configuration.nix
@@ -22,6 +21,7 @@
     inputs.nix-router-optimized.nixosModules.dns-zone
     ./nftables.nix # NFtables firewall configuration
     ./networking.nix # Network interface configuration
+    ./caddy.nix # Caddy reverse proxy configuration
   ];
 
   # Router optimizations (hardware offload, fasttrack, queue management)
@@ -136,33 +136,6 @@
       {
         "${dnsConfig.domain}" = mkZone dnsConfig;
       };
-
-  # Caddy reverse proxy with Let's Encrypt
-  services.caddy = {
-    enable = true;
-    email = "deepwatrcreatur@gmail.com";
-    forceHTTPS = true;
-    enableReload = true;
-
-    # Configure dynamic DNS plugin
-    dynamicDNS = {
-      enable = true;
-      provider = "cloudflare";
-      tokenFile = config.age.secrets.cloudflare-api-key.path;
-      domains = {
-        "deepwatercreature.com" = [ "@" ];
-        "home.deepwatercreature.com" = [ "@" ];
-        "2fauth.deepwatercreature.com" = [ "@" ];
-        "nightscout.deepwatercreature.com" = [ "@" ];
-      };
-      checkInterval = "5m";
-      versions = [
-        "ipv4"
-        "ipv6"
-      ];
-      ttl = "1h";
-    };
-  };
 
   # Enable remote building on gateway using attic-cache
   nix.distributedBuilds = lib.mkForce true;
@@ -341,21 +314,7 @@
 
   environment.systemPackages = with pkgs; [
     tmux
-    pkgs.caddy-dynamicdns
   ];
-
-  # Caddy Dynamic DNS service
-  systemd.services.caddy-dynamicdns = {
-    description = "Update DNS records for dynamic IP";
-    after = [ "caddy.service" ];
-    wants = [ "caddy.service" ];
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = "${pkgs.caddy-dynamicdns}/bin/caddy-dynamicdns --config /etc/caddy/Caddyfile";
-      Restart = "on-failure";
-      RestartSec = 30 s;
-    };
-  };
 
   # Agenix configuration
   age.secrets.cloudflare-api-key = {
