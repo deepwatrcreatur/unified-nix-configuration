@@ -110,7 +110,7 @@
     };
 
     nix-attic-infra = {
-      url = "git+ssh://git@github.com/deepwatrcreatur/nix-attic-infra";
+      url = "git+ssh://git@github.com/deepwatrcreatur/nix-attic-infra?ref=main";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-utils.follows = "flake-utils";
     };
