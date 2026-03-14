@@ -40,11 +40,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    tap-romkatv-powerlevel10k = {
-      url = "github:romkatv/powerlevel10k";
-      flake = false;
-    };
-
     tap-gabe565 = {
       url = "github:gabe565/homebrew-tap";
       flake = false;

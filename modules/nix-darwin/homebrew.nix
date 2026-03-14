@@ -37,17 +37,15 @@ in
         autoUpdate = false; # Temporarily disabled due to git permission issues
         cleanup = "uninstall"; # Changed from "zap" to avoid git operations
       };
-      taps = (import ../common-brew-packages.nix).taps
-        ++ config.homebrew.hostSpecific.taps;
+      taps = (import ../common-brew-packages.nix).taps ++ config.homebrew.hostSpecific.taps;
       brews = [
         "cmake"
         "fish"
         "mole"
-        "powerlevel10k"
         "bitwarden-cli"
       ]
       ++ lib.optionals (pkgs.stdenv.system == "aarch64-darwin") [
-        "mactop"  # Only available for arm64 (Apple Silicon)
+        "mactop" # Only available for arm64 (Apple Silicon)
       ]
       ++ (import ../common-brew-packages.nix).brews
       ++ config.homebrew.hostSpecific.brews;
