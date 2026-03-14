@@ -10,6 +10,7 @@ let
   atticObservatoryPort = 8088;
   atticObservatoryUiPort = 8082;
   atticObservatoryPkg = inputs.attic-observatory.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  atticObservatoryDbPath = "/var/lib/attic-observatory/server.db";
 in
 {
   # Sops secret for attic server token
@@ -369,24 +370,92 @@ in
     ];
   };
 
+  users.users.attic-observatory = {
+    isSystemUser = true;
+    group = "attic-observatory";
+  };
+
+  users.groups.attic-observatory = { };
+
+  systemd.services.attic-observatory-db-sync = {
+    description = "Refresh Attic Observatory database snapshot";
+    after = [ "atticd.service" ];
+    requires = [ "atticd.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      User = "root";
+      Group = "root";
+      StateDirectory = "attic-observatory";
+      UMask = "0027";
+    };
+    script = ''
+      tmp_db="$(mktemp ${atticObservatoryDbPath}.tmp.XXXXXX)"
+      trap 'rm -f "$tmp_db"' EXIT
+
+      ${pkgs.sqlite}/bin/sqlite3 /var/lib/atticd/server.db ".timeout 5000" ".backup $tmp_db"
+      chown attic-observatory:attic-observatory "$tmp_db"
+      chmod 0640 "$tmp_db"
+      mv "$tmp_db" ${atticObservatoryDbPath}
+      trap - EXIT
+    '';
+  };
+
+  systemd.timers.attic-observatory-db-sync = {
+    description = "Refresh Attic Observatory database snapshot";
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnBootSec = "2m";
+      OnUnitActiveSec = "1m";
+      Unit = "attic-observatory-db-sync.service";
+    };
+  };
+
   systemd.services.attic-observatory = {
     description = "Attic Observatory dashboard";
     wantedBy = [ "multi-user.target" ];
     after = [
       "network.target"
       "atticd.service"
+      "attic-observatory-db-sync.service"
     ];
-    requires = [ "atticd.service" ];
+    requires = [
+      "atticd.service"
+      "attic-observatory-db-sync.service"
+    ];
     serviceConfig = {
       Type = "simple";
       ExecStart = "${atticObservatoryPkg}/bin/attic-observatory";
       Restart = "on-failure";
       RestartSec = "5";
-      User = "root";
-      Group = "root";
+      User = "attic-observatory";
+      Group = "attic-observatory";
+      NoNewPrivileges = true;
+      PrivateTmp = true;
+      ProtectControlGroups = true;
+      ProtectHome = true;
+      ProtectHostname = true;
+      ProtectKernelLogs = true;
+      ProtectKernelModules = true;
+      ProtectKernelTunables = true;
+      ProtectProc = "invisible";
+      ProtectSystem = "strict";
+      RestrictAddressFamilies = [
+        "AF_INET"
+        "AF_INET6"
+        "AF_UNIX"
+      ];
+      RestrictNamespaces = true;
+      RestrictRealtime = true;
+      RestrictSUIDSGID = true;
+      SystemCallArchitectures = "native";
+      SystemCallFilter = [
+        "@system-service"
+        "~@privileged"
+        "~@resources"
+      ];
     };
     environment = {
-      ATTIC_DB_PATH = "/var/lib/atticd/server.db";
+      ATTIC_DB_PATH = atticObservatoryDbPath;
       ATTIC_OBSERVATORY_HOST = "127.0.0.1";
       ATTIC_OBSERVATORY_PORT = toString atticObservatoryPort;
       ATTIC_OBSERVATORY_THEME = "sugarplum";
