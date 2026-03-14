@@ -281,6 +281,11 @@
       owner = "deepwatrcreatur";
       group = "users";
     };
+    proxmox-api-token = {
+      file = ../../../secrets-agenix/proxmox-api-token.age;
+      owner = "deepwatrcreatur";
+      group = "users";
+    };
   };
 
   # Test: Make available as env var
