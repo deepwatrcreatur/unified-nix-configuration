@@ -46,3 +46,4 @@ in
   # Add more secrets as needed...
 }
   "secrets-agenix/cloudflare_ddns_API_token.age".publicKeys = allKeys;
+  "secrets-agenix/proxmox-api-token.age".publicKeys = allKeys;
