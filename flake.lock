@@ -197,11 +197,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773490221,
-        "narHash": "sha256-bNw+YGsBD5kiTOXR3ClnHaoTUaahBoBqcF6PIhEW/S8=",
+        "lastModified": 1773499741,
+        "narHash": "sha256-9u4JZ0qFpumgtQG2VGWulzA7ALvxA8J9GcE+V4wsGYM=",
         "owner": "deepwatrcreatur",
         "repo": "cosmic-applet-proxmoxbar",
-        "rev": "7f3bb8629aa09d97b72d3f9e019aefc2f81276a9",
+        "rev": "dd5c324e5f9917328e7ee629df7fc20e76fcbd70",
         "type": "github"
       },
       "original": {
@@ -1295,6 +1295,18 @@
         "type": "github"
       }
     },
+    "pkgs": {
+      "flake": false,
+      "locked": {
+        "path": "./pkgs",
+        "type": "path"
+      },
+      "original": {
+        "path": "./pkgs",
+        "type": "path"
+      },
+      "parent": []
+    },
     "plasma-manager": {
       "inputs": {
         "home-manager": [
@@ -1344,6 +1356,7 @@
         "nixpkgs": "nixpkgs_7",
         "nixpkgs-stable": "nixpkgs-stable_2",
         "nixpkgs-unstable": "nixpkgs-unstable",
+        "pkgs": "pkgs",
         "plasma-manager": "plasma-manager",
         "sops-nix": "sops-nix",
         "ssh-keys-manager": "ssh-keys-manager",
