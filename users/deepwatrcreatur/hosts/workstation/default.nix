@@ -115,7 +115,7 @@ in
 base_url = "https://pve-tomahawk.deepwatercreature.com:8006"
 api_token_id = "root@pam!cosmic-applet-proxmoxbar"
 api_token_secret = "$API_TOKEN_SECRET"
-verify_tls = true
+verify_tls = false
 poll_seconds = 30
 EOF
   '';
