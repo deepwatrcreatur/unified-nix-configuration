@@ -18,6 +18,12 @@
           aliases = [ "cache" "nix-cache" ];
         };
 
+        apt-cache = {
+          ipv4 = "10.10.11.42";
+          ipv6 = null;
+          aliases = [ "apt-proxy" ];
+        };
+
         workstation = {
           ipv4 = "10.10.11.90";
           ipv6 = null;
