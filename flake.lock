@@ -51,7 +51,7 @@
       },
       "locked": {
         "lastModified": 0,
-        "narHash": "sha256-/UviibsJ2wTDt2nzRmhLV392qX0mUbDrdFAcAId0WFk=",
+        "narHash": "sha256-H6JkBJo0dPXmc8jlb5fyMFHxo06HVzJ6JPU4Zh3eYFA=",
         "type": "git",
         "url": "file:///home/deepwatrcreatur/flakes/agents-status-tray-home-manager"
       },
@@ -84,6 +84,26 @@
         "owner": "zhaofengli",
         "repo": "attic",
         "type": "github"
+      }
+    },
+    "attic-observatory": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1773482888,
+        "narHash": "sha256-bWgiT/ieBwdlE0xZqAtDnphP1psG/d3bkPiRIC7cKBQ=",
+        "ref": "refs/heads/main",
+        "rev": "2685ab37167c8163e95132df76d1e5cb8ba2de99",
+        "revCount": 1,
+        "type": "git",
+        "url": "ssh://git@github.com/deepwatrcreatur/attic-observatory"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/deepwatrcreatur/attic-observatory"
       }
     },
     "brew-src": {
@@ -1242,6 +1262,7 @@
       "inputs": {
         "agenix": "agenix",
         "agents-status-tray-home-manager": "agents-status-tray-home-manager",
+        "attic-observatory": "attic-observatory",
         "claude-statusline-flake": "claude-statusline-flake",
         "codex-cli-nix": "codex-cli-nix",
         "determinate": "determinate",

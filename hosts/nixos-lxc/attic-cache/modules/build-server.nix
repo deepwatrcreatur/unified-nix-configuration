@@ -2,16 +2,14 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 
 let
   atticObservatoryPort = 8088;
   atticObservatoryUiPort = 8082;
-  atticObservatoryPkg =
-    import ../../../../../attic-observatory/default.nix {
-      inherit pkgs;
-    };
+  atticObservatoryPkg = inputs.attic-observatory.packages.${pkgs.stdenv.hostPlatform.system}.default;
 in
 {
   # Sops secret for attic server token
