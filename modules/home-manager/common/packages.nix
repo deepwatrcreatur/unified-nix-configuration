@@ -9,7 +9,7 @@
 {
   home.packages = with pkgs; [
     age
-    pkgs."ansible-core"
+    ansible
     bandwhich
     bottom
     btop
