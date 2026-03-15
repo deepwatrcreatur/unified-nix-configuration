@@ -78,6 +78,7 @@ in
             # User Nix configuration managed by home-manager
             experimental-features = ${lib.concatStringsSep " " cfg.experimentalFeatures}
             extra-substituters = ${lib.concatStringsSep " " cfg.substituters}
+            extra-trusted-substituters = ${lib.concatStringsSep " " cfg.substituters}
             extra-trusted-public-keys = ${lib.concatStringsSep " " cfg.trustedPublicKeys}
           '';
           force = true; # Overwrite existing backups to avoid clobbering errors
