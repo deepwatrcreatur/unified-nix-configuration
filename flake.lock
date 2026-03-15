@@ -197,11 +197,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773550379,
-        "narHash": "sha256-aNV37i9yEugFU4x7CMBhp8YTTpU4jopsL1d8DcxyHGs=",
+        "lastModified": 1773551090,
+        "narHash": "sha256-iySFiDJZeKrC8zlyKOZdzGg7LlGDCLHyAhZPPLHCCgs=",
         "owner": "deepwatrcreatur",
         "repo": "cosmic-applet-agents-status",
-        "rev": "48500221dfd24c85d89da3264f7d08e37365e148",
+        "rev": "598268a0c8a71bf2c843ac00e044fee6b89d64bb",
         "type": "github"
       },
       "original": {
