@@ -890,11 +890,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773615623,
-        "narHash": "sha256-lDbQtLUeZ2fJ+2ETpk1dxqEhjTnhcbm64XLIO/rmXP0=",
+        "lastModified": 1773615883,
+        "narHash": "sha256-h+kI8n/9GlE5hQfErPnfDEQOSHJ+9ZkA4Gt6JfMm928=",
         "ref": "feat/agenix-support",
-        "rev": "0ce33f8dca94f20615e481f8f42153d8795df2cb",
-        "revCount": 33,
+        "rev": "33d7d071ad3178e0b27e8fbc050c4d0648e36161",
+        "revCount": 34,
         "type": "git",
         "url": "ssh://git@github.com/deepwatrcreatur/nix-attic-infra"
       },
