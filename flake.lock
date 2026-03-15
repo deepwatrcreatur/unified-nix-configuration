@@ -1386,10 +1386,7 @@
         "nixpkgs-stable": "nixpkgs-stable_2",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "plasma-manager": "plasma-manager",
-        "sops-nix": "sops-nix",
         "ssh-keys-manager": "ssh-keys-manager",
-        "tap-gabe565": "tap-gabe565",
-        "tap-sst": "tap-sst",
         "tesla-inference-flake": "tesla-inference-flake",
         "worktrunk": "worktrunk",
         "zellij-vivid-rounded": "zellij-vivid-rounded",
@@ -1414,26 +1411,6 @@
       "original": {
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "type": "github"
-      }
-    },
-    "sops-nix": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1773096132,
-        "narHash": "sha256-M3zEnq9OElB7zqc+mjgPlByPm1O5t2fbUrH3t/Hm5Ag=",
-        "owner": "Mic92",
-        "repo": "sops-nix",
-        "rev": "d1ff3b1034d5bab5d7d8086a7803c5a5968cd784",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Mic92",
-        "repo": "sops-nix",
         "type": "github"
       }
     },
@@ -1664,38 +1641,6 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default-darwin",
-        "type": "github"
-      }
-    },
-    "tap-gabe565": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1773120307,
-        "narHash": "sha256-pxobKtH5LwHy8lbOV0nP51/HIEaCUAF/kxO18sdAJ6s=",
-        "owner": "gabe565",
-        "repo": "homebrew-tap",
-        "rev": "4fa53d0bdd3ac9d1d7eccdf9a822ca873ba32d07",
-        "type": "github"
-      },
-      "original": {
-        "owner": "gabe565",
-        "repo": "homebrew-tap",
-        "type": "github"
-      }
-    },
-    "tap-sst": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1773517070,
-        "narHash": "sha256-aOmOvx5daeX7yhyADX7OZcAXJNcriHgbEPRsVrxyQi8=",
-        "owner": "sst",
-        "repo": "homebrew-tap",
-        "rev": "435619c6caa8166b47b57c9f1e543bdff2c24071",
-        "type": "github"
-      },
-      "original": {
-        "owner": "sst",
-        "repo": "homebrew-tap",
         "type": "github"
       }
     },

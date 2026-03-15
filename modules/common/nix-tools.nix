@@ -23,10 +23,8 @@
     # Nix helper tools
     nh
 
-    # Age encryption (for agenix secrets)
-    rage
-    ssh-to-age
-    
+    # Secrets management tools are in ./secrets-management.nix
+
     # Nix visualization and monitoring
     nix-output-monitor
     nix-tree

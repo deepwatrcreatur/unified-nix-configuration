@@ -11,8 +11,8 @@
     ./modules/home-manager-users.nix
     ./modules/packages.nix
     ./modules/users.nix
-    ./modules/sops.nix
-    inputs.nix-attic-infra.nixosModules.attic-client
+    ./modules/agenix.nix
+    # inputs.nix-attic-infra.nixosModules.attic-client  # Disabled - requires sops-nix
     inputs.agenix.nixosModules.default
   ];
 }

@@ -30,10 +30,15 @@ in
   config = lib.mkIf cfg.enable (
     let
       # Auto-detect sops secret path if enabled and available
+      # Guard against missing sops module
+      hasSopsSecret = cfg.autoDetectSopsSecret
+        && (config ? sops)
+        && (config.sops ? secrets)
+        && (config.sops.secrets ? BW_SESSION);
       secretPath =
         if cfg.sessionSecretPath != null then
           cfg.sessionSecretPath
-        else if cfg.autoDetectSopsSecret && (config.sops.secrets ? BW_SESSION) then
+        else if hasSopsSecret then
           config.sops.secrets.BW_SESSION.path
         else
           null;

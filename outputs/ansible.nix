@@ -10,7 +10,7 @@
     system = "x86_64-linux";
     hostPath = ../hosts/nixos-lxc/ansible;
     extraModules = [
-      ../hosts/nixos-lxc/ansible/modules/sops.nix
+      # sops.nix disabled - migrated to agenix
       (
         {
           config,
@@ -19,7 +19,8 @@
           ...
         }:
         {
-          sops.age.keyFile = "/var/lib/sops/age/key.txt";
+          # Agenix identity for secrets
+          age.identityPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
           home-manager.users.ansible = {
             imports = [ ../modules/home-manager ];
             home.stateVersion = "24.11";

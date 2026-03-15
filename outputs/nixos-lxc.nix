@@ -20,7 +20,7 @@
         nixpkgs.overlays = commonOverlays;
         nixpkgs.config = commonNixpkgsConfig;
       }
-      inputs.sops-nix.nixosModules.sops
+      inputs.agenix.nixosModules.default
       inputs.home-manager.nixosModules.home-manager
       {
         home-manager.extraSpecialArgs = homeManagerModuleArgs // {
@@ -30,7 +30,6 @@
         home-manager.useGlobalPkgs = true;
         home-manager.useUserPackages = true;
         home-manager.sharedModules = [
-          inputs.sops-nix.homeManagerModules.sops
           # Exclude plasma-manager for LXC - not needed in headless container
         ];
       }

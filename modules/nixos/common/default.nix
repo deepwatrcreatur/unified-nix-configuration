@@ -3,13 +3,15 @@
 
 {
   imports = [
+    ../host-options.nix  # Declarative host configuration options
     ./home-manager.nix
     ./locale.nix
     ./nh.nix
     ./ssh-keys.nix
-    ./sops.nix
+    ./agenix.nix
     ./fstrim.nix
     ./git-ssh.nix
+    ../../common/secrets-management.nix  # age/agenix/rage/ssh-to-age tools
     # ../../activation-scripts
   ];
 }

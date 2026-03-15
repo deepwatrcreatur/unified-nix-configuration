@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   system.defaults = {
@@ -6,18 +6,18 @@
       AppleInterfaceStyle = "Dark";
       KeyRepeat = 2;
       InitialKeyRepeat = 15;
-      AppleShowScrollBars = "Always"; # Always show scroll bars ("Automatic" or "WhenScrolling")
+      AppleShowScrollBars = "Always";
       "com.apple.swipescrolldirection" = true;
     };
     screencapture = {
       location = "~/Pictures/Screenshots";
       disable-shadow = true;
-      type = "png"; # Screenshot format: "png", "jpg", "tiff", etc.
+      type = "png";
     };
   };
 
   # Activation script for unsupported settings
-  system.activationScripts.postActivation.text = ''
+  system.activationScripts.postActivation.text = lib.mkAfter ''
     # Disable Fast User Switching menu item
     /usr/bin/defaults write /Library/Preferences/.GlobalPreferences.plist MultipleSessionEnabled -bool false
 

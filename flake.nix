@@ -13,9 +13,6 @@
     home-manager.url = "github:nix-community/home-manager/release-25.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-    sops-nix.url = "github:Mic92/sops-nix";
-    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
-
     agenix.url = "github:ryantm/agenix";
     agenix.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -38,16 +35,6 @@
     nixbit = {
       url = "github:pbek/nixbit";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    tap-gabe565 = {
-      url = "github:gabe565/homebrew-tap";
-      flake = false;
-    };
-
-    tap-sst = {
-      url = "github:sst/homebrew-tap";
-      flake = false;
     };
 
     plasma-manager = {
@@ -630,7 +617,7 @@
           let
             hostName = builtins.baseNameOf (toString hostPath);
             baseModules = commonSystemModules ++ [
-              inputs.sops-nix.nixosModules.sops
+              inputs.agenix.nixosModules.default
               inputs.home-manager.nixosModules.home-manager
               (nixosHomeManagerConfig { inherit hostName isDesktop; })
               # inputs.determinate.nixosModules.default # TEMPORARILY DISABLED
@@ -724,7 +711,7 @@
             modules =
               commonSystemModules
               ++ [
-                inputs.sops-nix.nixosModules.sops
+                inputs.agenix.nixosModules.default
                 inputs.home-manager.nixosModules.home-manager
                 inputs.determinate.nixosModules.default
                 omarchyHomeManagerConfig
@@ -760,7 +747,6 @@
             modules = [
               userPath
               ./modules/home-manager
-              inputs.sops-nix.homeManagerModules.sops
             ]
             ++ modules;
           };

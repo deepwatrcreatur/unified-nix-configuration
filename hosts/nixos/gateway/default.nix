@@ -6,6 +6,23 @@
   ...
 }:
 {
+  # Declarative host configuration
+  host = {
+    type = "gateway";
+    primaryUser = "deepwatrcreatur";
+    gpu.type = "none";
+    desktop.enable = false;
+    networking = {
+      enableTailscale = false;  # Gateway has custom networking
+      enableAvahi = false;      # Not needed on gateway
+    };
+    services = {
+      enableSsh = true;
+      enableDocker = false;
+      enablePodman = true;
+    };
+  };
+
   imports = [
     ./hardware-configuration.nix
     ../../../modules/nixos/common

@@ -11,7 +11,6 @@
     ../../modules/nix-darwin/pam.nix
     ../../modules/common/utility-packages.nix
     ./rsync.nix
-    ./system-defaults.nix
     ./nix-store-uuid.nix
     ./homebrew.nix
   ];
