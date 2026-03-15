@@ -1,8 +1,0 @@
-# users/root/hosts/homeserver/justfile
-
-# NixOS - use nixos-rebuild or nh (root user)
-update:
-  nixos-rebuild switch --flake $NH_FLAKE#homeserver
-
-nh-update:
-  nh os switch

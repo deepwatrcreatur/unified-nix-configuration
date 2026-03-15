@@ -15,22 +15,12 @@
   # Enable fish shell since users set it as default
   programs.fish.enable = true;
 
-  # SOPS configuration for secrets management
-  sops.age.keyFile = "/var/lib/sops/age/keys.txt";
-
-  # Enable OpenSSH (also satisfies sops-nix requirement)
+  # Enable OpenSSH
   services.openssh.enable = true;
 
-  # Publish locally-built store paths into Attic, but do not configure the
-  # cache server to substitute from itself.
-  services.attic-client = {
-    enable = true;
-    tokenFile = ../../../../secrets/attic-client-token.yaml.enc;
-    server = "http://attic-cache:5001";
-    cache = "cache-local";
-    enablePostBuildHook = true;
-    configureNixSubstituter = false;
-  };
+  # Attic client configuration (using agenix for token)
+  # The nix-attic-infra module is disabled since it requires sops-nix internally
+  # Configure attic manually via the attic CLI using the token from agenix
 
   networking.hostName = "attic-cache";
   networking.interfaces.eth0.ipv4.addresses = [
@@ -47,12 +37,7 @@
 
   security.wrappers.sudo.setuid = true;
 
-  # Agenix configuration
-  age.secrets.attic-client-token = {
-    file = ../../../../secrets-agenix/attic-client-token.age;
-    owner = "root";
-    mode = "0400";
-  };
+  # Agenix secrets are defined in ./agenix.nix
 
   systemd.mounts = [
     {

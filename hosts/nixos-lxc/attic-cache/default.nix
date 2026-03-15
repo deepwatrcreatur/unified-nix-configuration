@@ -12,7 +12,7 @@
     ./modules/packages.nix
     ./modules/users.nix
     ./modules/agenix.nix
-    inputs.nix-attic-infra.nixosModules.attic-client
+    # inputs.nix-attic-infra.nixosModules.attic-client  # Disabled - requires sops-nix
     inputs.agenix.nixosModules.default
   ];
 }

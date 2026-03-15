@@ -11,6 +11,7 @@
     ./agenix.nix
     ./fstrim.nix
     ./git-ssh.nix
+    ../../common/secrets-management.nix  # age/agenix/rage/ssh-to-age tools
     # ../../activation-scripts
   ];
 }

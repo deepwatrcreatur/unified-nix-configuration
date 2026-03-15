@@ -96,10 +96,10 @@ in
     '';
   };
 
-  # Seed fnox secrets from sops-nix (if present).
+  # Seed fnox secrets from agenix.
   # This keeps wrappers working without injecting secrets into every shell.
-  home.activation.fnoxSeedFromSops = lib.mkIf (pkgs ? fnox) (
-    lib.hm.dag.entryAfter [ "sops-nix" ] ''
+  home.activation.fnoxSeedFromAgenix = lib.mkIf (pkgs ? fnox) (
+    lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       if command -v fnox >/dev/null 2>&1; then
         export FNOX_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
         export FNOX_CONFIG="$HOME/.config/fnox/config.toml"
@@ -124,26 +124,17 @@ in
           fnox -c "$FNOX_CONFIG" set "$name" "$value" >/dev/null 2>&1 || true
         }
 
-        # Prefer agenix, fallback to sops
+        # Seed from agenix secrets
         # Handle github-token specifically since it exists in the raw file too
         if [ -f "$HOME/.config/git/github-token" ]; then
            seed_secret GITHUB_TOKEN "$HOME/.config/git/github-token"
         elif [ -f "/run/agenix/github-token-agenix" ]; then
            seed_secret GITHUB_TOKEN "/run/agenix/github-token-agenix"
-        else
-           seed_secret GITHUB_TOKEN "${config.sops.secrets."github-token".path or ""}"
         fi
 
-        # Try agenix first, fallback to sops
         seed_secret GROK_API_KEY "/run/agenix/grok-api-key"
-        seed_secret GROK_API_KEY "${config.sops.secrets."grok-api-key".path or ""}"
-        
         seed_secret Z_AI_API_KEY "/run/agenix/z-ai-api-key"
-        seed_secret Z_AI_API_KEY "${config.sops.secrets."z-ai-api-key".path or ""}"
-        
         seed_secret OPENCODE_ZEN_API_KEY "/run/agenix/opencode-zen-api-key"
-        seed_secret OPENCODE_ZEN_API_KEY "${config.sops.secrets."opencode-zen-api-key".path or ""}"
-        
         seed_secret OPENROUTER_API_KEY "/run/agenix/openrouter-api-key"
       fi
 

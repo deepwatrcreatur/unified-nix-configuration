@@ -46,6 +46,8 @@
       nix-prefetch-github
       nix-index
 
+      # Secrets management tools are in ./secrets-management.nix
+
       # Cache management
       attic-client
     ];
