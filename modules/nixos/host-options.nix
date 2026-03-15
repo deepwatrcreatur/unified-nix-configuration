@@ -182,8 +182,8 @@ in
       services.xserver.videoDrivers = [ "amdgpu" ];
       hardware.graphics = {
         enable = true;
+        # RADV is now the default Vulkan driver for AMD, amdvlk was removed
         extraPackages = with pkgs; [
-          amdvlk
           rocmPackages.clr.icd
         ];
       };
