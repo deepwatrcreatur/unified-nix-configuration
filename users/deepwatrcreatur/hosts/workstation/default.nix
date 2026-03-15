@@ -158,11 +158,17 @@ EOF
   home.file.".config/cosmic-applet-agents-status/config.toml".text = ''
     poll_seconds = 90
     claude_cache_ttl_seconds = 60
+    openrouter_api_key_path = "/run/agenix/openrouter-api-key"
 
     [[agents]]
     id = "claude"
     name = "Claude Code"
     command = "claude"
+
+    [[agents]]
+    id = "openrouter"
+    name = "OpenRouter"
+    command = "true"
 
     [[agents]]
     id = "codex"

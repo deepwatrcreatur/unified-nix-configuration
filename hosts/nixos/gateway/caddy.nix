@@ -20,7 +20,7 @@
       dynamic_dns {
         provider cloudflare {$CLOUDFLARE_API_TOKEN}
         domains {
-          deepwatercreature.com @ www dashboard grafana
+          deepwatercreature.com @ www dashboard grafana home 2fauth nightscout marreta linkwarden
         }
         check_interval 5m
         versions ipv4 ipv6
@@ -35,17 +35,14 @@
       # Main domain - redirect to www or dashboard
       "deepwatercreature.com" = {
         extraConfig = ''
-          # Redirect to www subdomain
-          redir https://www.deepwatercreature.com{uri} permanent
+          redir https://x.com/deepwatrcreatur permanent
         '';
       };
       
       # WWW subdomain - serve main site or redirect to dashboard
       "www.deepwatercreature.com" = {
         extraConfig = ''
-          # For now, redirect to dashboard
-          # Replace with actual website later
-          redir https://dashboard.deepwatercreature.com permanent
+          redir https://x.com/deepwatrcreatur permanent
         '';
       };
       
@@ -53,6 +50,17 @@
       "dashboard.deepwatercreature.com" = {
         extraConfig = ''
           reverse_proxy 10.10.10.1:8888
+        '';
+      };
+
+      "home.deepwatercreature.com" = {
+        extraConfig = ''
+          @trusted remote_ip 10.10.0.0/16 100.64.0.0/10
+          handle @trusted {
+            reverse_proxy 10.10.10.1:8888
+          }
+
+          respond "Access restricted to home LAN and Tailnet" 403
         '';
       };
       

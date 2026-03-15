@@ -12,6 +12,7 @@
     ./modules/packages.nix
     ./modules/users.nix
     ./modules/sops.nix
+    inputs.nix-attic-infra.nixosModules.attic-client
     inputs.agenix.nixosModules.default
   ];
 }

@@ -21,6 +21,17 @@
   # Enable OpenSSH (also satisfies sops-nix requirement)
   services.openssh.enable = true;
 
+  # Publish locally-built store paths into Attic, but do not configure the
+  # cache server to substitute from itself.
+  services.attic-client = {
+    enable = true;
+    tokenFile = ../../../../secrets/attic-client-token.yaml.enc;
+    server = "http://attic-cache:5001";
+    cache = "cache-local";
+    enablePostBuildHook = true;
+    configureNixSubstituter = false;
+  };
+
   networking.hostName = "attic-cache";
   networking.interfaces.eth0.ipv4.addresses = [
     {

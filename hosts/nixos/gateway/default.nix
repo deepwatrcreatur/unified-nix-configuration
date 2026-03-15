@@ -19,6 +19,7 @@
     inputs.nix-router-optimized.nixosModules.router-dashboard
     inputs.nix-router-optimized.nixosModules.monitoring
     inputs.nix-router-optimized.nixosModules.dns-zone
+    inputs.nix-router-optimized.nixosModules."dns-blocklists"
     ./nftables.nix # NFtables firewall configuration
     ./networking.nix # Network interface configuration
     ./caddy.nix # Caddy reverse proxy configuration
@@ -219,6 +220,16 @@
 
   # Technitium DNS & DHCP Server
   services.technitium-dns-server.enable = true;
+
+  services.router.dnsBlockLists = {
+    enable = true;
+    presets = [
+      "hagezi-normal"
+      "hagezi-nrd-14d"
+    ];
+    extraUrls = [ ];
+    updateIntervalHours = 24;
+  };
 
   # Disable custom logging for Technitium - use default state directory
   # The spinning disk logging causes read-only filesystem errors with DynamicUser
