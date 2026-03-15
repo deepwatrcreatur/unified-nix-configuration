@@ -197,11 +197,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773551090,
-        "narHash": "sha256-iySFiDJZeKrC8zlyKOZdzGg7LlGDCLHyAhZPPLHCCgs=",
+        "lastModified": 1773578669,
+        "narHash": "sha256-C4KgN7StUYovRHDA59cNuchYzOxkPgIB3+oGdGQufJk=",
         "owner": "deepwatrcreatur",
         "repo": "cosmic-applet-agents-status",
-        "rev": "598268a0c8a71bf2c843ac00e044fee6b89d64bb",
+        "rev": "a089a679d17750718ed9e27bec867afd3917e7dc",
         "type": "github"
       },
       "original": {
@@ -890,16 +890,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1773503892,
-        "narHash": "sha256-EIKtC5JTeaBItNRYnB8U/06A/CNGhbXzF+w7ptqI6CQ=",
-        "ref": "main",
-        "rev": "bda2eaf904f1dd4555d839cb263e17157a5cccb2",
-        "revCount": 25,
+        "lastModified": 1773615623,
+        "narHash": "sha256-lDbQtLUeZ2fJ+2ETpk1dxqEhjTnhcbm64XLIO/rmXP0=",
+        "ref": "feat/agenix-support",
+        "rev": "0ce33f8dca94f20615e481f8f42153d8795df2cb",
+        "revCount": 33,
         "type": "git",
         "url": "ssh://git@github.com/deepwatrcreatur/nix-attic-infra"
       },
       "original": {
-        "ref": "main",
+        "ref": "feat/agenix-support",
         "type": "git",
         "url": "ssh://git@github.com/deepwatrcreatur/nix-attic-infra"
       }
@@ -1038,11 +1038,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773540392,
-        "narHash": "sha256-IMuiBRzMtqA0N2ScqwCqQMflBdbLtzwzSANGTqKTcvw=",
+        "lastModified": 1773613020,
+        "narHash": "sha256-qev7dTVeJHxk9dsEW+/kMBcjNR5j4zkQrOocLuV0IgI=",
         "owner": "deepwatrcreatur",
         "repo": "nix-router-optimized",
-        "rev": "03f0543419da8b232acb16b75f138856aea7a7d4",
+        "rev": "8a507eb56e43c8d9cf63892a5b00e4a1556af849",
         "type": "github"
       },
       "original": {
