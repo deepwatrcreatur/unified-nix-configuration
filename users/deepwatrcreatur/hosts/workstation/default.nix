@@ -41,6 +41,7 @@ in
     inputs.claude-statusline-flake.packages.${pkgs.stdenv.hostPlatform.system}.default # Your new claude-statusline package
     inputs.codex-cli-nix.packages.${pkgs.stdenv.hostPlatform.system}.default         # Assuming codex-cli-nix is your claude-code package
     inputs.cosmic-applet-proxmoxbar.packages.${pkgs.stdenv.hostPlatform.system}.default
+    inputs.cosmic-applet-agents-status.packages.${pkgs.stdenv.hostPlatform.system}.default
     bitwarden-desktop
     ffmpeg
     gitkraken
@@ -135,6 +136,38 @@ EOF
     X-CosmicShrinkable=true
     X-CosmicHoverPopup=Auto
     X-OverflowPriority=10
+  '';
+
+  home.file.".local/share/applications/com.deepwatrcreatur.CosmicAppletAgentsStatus.desktop".text = ''
+    [Desktop Entry]
+    Name=Agents Status
+    Type=Application
+    Exec=${inputs.cosmic-applet-agents-status.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/cosmic-applet-agents-status
+    Terminal=false
+    Categories=COSMIC;
+    Keywords=COSMIC;AI;Agents;Claude;Codex;
+    Icon=utilities-terminal-symbolic
+    StartupNotify=true
+    NoDisplay=true
+    X-CosmicApplet=true
+    X-CosmicShrinkable=true
+    X-CosmicHoverPopup=Auto
+    X-OverflowPriority=10
+  '';
+
+  home.file.".config/cosmic-applet-agents-status/config.toml".text = ''
+    poll_seconds = 90
+    claude_cache_ttl_seconds = 60
+
+    [[agents]]
+    id = "claude"
+    name = "Claude Code"
+    command = "claude"
+
+    [[agents]]
+    id = "codex"
+    name = "Codex CLI"
+    command = "codex"
   '';
 
   # X11 display setup for DeskFlow

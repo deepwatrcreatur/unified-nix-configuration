@@ -146,6 +146,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    cosmic-applet-agents-status = {
+      url = "github:deepwatrcreatur/cosmic-applet-agents-status";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs =

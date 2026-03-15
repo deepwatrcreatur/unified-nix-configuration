@@ -37,10 +37,14 @@
         iifname {"ens16", "ens18"} tcp dport {5380, 53443} accept
         
         # Allow monitoring dashboards on LAN and management
-        iifname {"ens16", "ens18"} tcp dport {3001, 8080, 8888, 9090} accept comment "Grafana, Netdata, Custom Dashboard, Prometheus"
+        iifname {"ens16", "ens18"} tcp dport {3001, 8888, 9090, 19999} accept comment "Grafana, Custom Dashboard, Prometheus, Netdata"
         
         # Allow HTTP/HTTPS from WAN for Caddy reverse proxy
         iifname "ens17" tcp dport {80, 443} accept comment "Caddy HTTP/HTTPS"
+
+        # Log dropped inbound packets for dashboard visibility
+        log prefix "FW-INPUT-DROP " level info flags all
+        drop
       }
       
       chain forward {
@@ -50,6 +54,7 @@
         ct state {established, related} accept
         
         # Drop invalid packets early
+        ct state invalid log prefix "FW-INVALID " level info flags all
         ct state invalid drop
         
         # Allow forwarding from LAN to WAN
@@ -62,7 +67,8 @@
         iifname "ens18" oifname "ens16" accept
         iifname "ens16" oifname "ens18" accept
         
-        # Default drop
+        # Log dropped forwarded packets for dashboard visibility
+        log prefix "FW-FORWARD-DROP " level info flags all
         drop
       }
       
@@ -80,4 +86,22 @@
       }
     }
   '';
+
+  systemd.services.gateway-flowtable = {
+    description = "Configure nftables flowtable after interfaces are up";
+    after = [
+      "network-online.target"
+      "nftables.service"
+    ];
+    wants = [ "network-online.target" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+    script = ''
+      ${pkgs.nftables}/bin/nft 'add flowtable inet filter f { hook ingress priority 0; devices = { ens16, ens17, ens18 }; }' 2>/dev/null || true
+      ${pkgs.nftables}/bin/nft 'insert rule inet filter forward position 0 ip protocol { tcp, udp } flow add @f' 2>/dev/null || true
+    '';
+  };
 }

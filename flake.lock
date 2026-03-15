@@ -131,7 +131,7 @@
       "inputs": {
         "flake-parts": "flake-parts_2",
         "nixpkgs": "nixpkgs_3",
-        "systems": "systems_7",
+        "systems": "systems_8",
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
@@ -189,9 +189,30 @@
         "type": "github"
       }
     },
-    "cosmic-applet-proxmoxbar": {
+    "cosmic-applet-agents-status": {
       "inputs": {
         "flake-utils": "flake-utils_3",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1773534509,
+        "narHash": "sha256-qmZ409VztFUDpFWWmYb8Dx0sHknEpgpOW6ulCPRpzLw=",
+        "owner": "deepwatrcreatur",
+        "repo": "cosmic-applet-agents-status",
+        "rev": "3ab34b0628cbf43ac5b37a66cae2e81b42faef3a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "deepwatrcreatur",
+        "repo": "cosmic-applet-agents-status",
+        "type": "github"
+      }
+    },
+    "cosmic-applet-proxmoxbar": {
+      "inputs": {
+        "flake-utils": "flake-utils_4",
         "nixpkgs": [
           "nixpkgs"
         ]
@@ -519,6 +540,24 @@
         "type": "github"
       }
     },
+    "flake-utils_11": {
+      "inputs": {
+        "systems": "systems_14"
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
     "flake-utils_2": {
       "inputs": {
         "systems": "systems_3"
@@ -593,7 +632,7 @@
     },
     "flake-utils_6": {
       "inputs": {
-        "systems": "systems_9"
+        "systems": "systems_7"
       },
       "locked": {
         "lastModified": 1731533236,
@@ -665,7 +704,7 @@
     },
     "fnox": {
       "inputs": {
-        "flake-utils": "flake-utils_5",
+        "flake-utils": "flake-utils_6",
         "fnox-src": "fnox-src",
         "nixpkgs": [
           "nixpkgs"
@@ -801,7 +840,7 @@
         "nixpkgs": [
           "nixpkgs"
         ],
-        "systems": "systems_8",
+        "systems": "systems_9",
         "treefmt-nix": "treefmt-nix_2"
       },
       "locked": {
@@ -971,7 +1010,7 @@
     },
     "nix-linuxbrew": {
       "inputs": {
-        "flake-utils": "flake-utils_6",
+        "flake-utils": "flake-utils_7",
         "home-manager": "home-manager_3",
         "nixpkgs": [
           "nixpkgs"
@@ -999,11 +1038,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773527680,
-        "narHash": "sha256-eJ3sf3n/hIov1Dty1MLec/Yl7eXh6CQE/6sg1PFnBfs=",
+        "lastModified": 1773534646,
+        "narHash": "sha256-TtONjnlTJnUAsrNuOBXJlxn0cbadDJzhQZz6GYMpf4U=",
         "owner": "deepwatrcreatur",
         "repo": "nix-router-optimized",
-        "rev": "9a28e467d0bff5c5b9f348f783c823fdef84aa0d",
+        "rev": "e86d2d41eff0486a0427ba1ffd30dd51d2741640",
         "type": "github"
       },
       "original": {
@@ -1036,7 +1075,7 @@
     },
     "nix-whitesur-config": {
       "inputs": {
-        "flake-utils": "flake-utils_7",
+        "flake-utils": "flake-utils_8",
         "nixpkgs": [
           "nixpkgs"
         ]
@@ -1057,7 +1096,7 @@
     },
     "nixbit": {
       "inputs": {
-        "flake-utils": "flake-utils_8",
+        "flake-utils": "flake-utils_9",
         "nixpkgs": [
           "nixpkgs"
         ]
@@ -1325,10 +1364,11 @@
         "agents-status-tray-home-manager": "agents-status-tray-home-manager",
         "claude-statusline-flake": "claude-statusline-flake",
         "codex-cli-nix": "codex-cli-nix",
+        "cosmic-applet-agents-status": "cosmic-applet-agents-status",
         "cosmic-applet-proxmoxbar": "cosmic-applet-proxmoxbar",
         "determinate": "determinate",
         "dmux-flake": "dmux-flake",
-        "flake-utils": "flake-utils_4",
+        "flake-utils": "flake-utils_5",
         "fnox": "fnox",
         "home-manager": "home-manager_2",
         "mac-app-util": "mac-app-util",
@@ -1492,6 +1532,21 @@
         "type": "github"
       }
     },
+    "systems_14": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
     "systems_2": {
       "locked": {
         "lastModified": 1681028828,
@@ -1584,21 +1639,6 @@
     },
     "systems_8": {
       "locked": {
-        "lastModified": 1689347925,
-        "narHash": "sha256-ozenz5bFe1UUqOn7f60HRmgc01BgTGIKZ4Xl+HbocGQ=",
-        "owner": "nix-systems",
-        "repo": "default-darwin",
-        "rev": "2235d7e6cc29ae99878133c95e9fe5e157661ffb",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-systems",
-        "repo": "default-darwin",
-        "type": "github"
-      }
-    },
-    "systems_9": {
-      "locked": {
         "lastModified": 1681028828,
         "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
         "owner": "nix-systems",
@@ -1609,6 +1649,21 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "systems_9": {
+      "locked": {
+        "lastModified": 1689347925,
+        "narHash": "sha256-ozenz5bFe1UUqOn7f60HRmgc01BgTGIKZ4Xl+HbocGQ=",
+        "owner": "nix-systems",
+        "repo": "default-darwin",
+        "rev": "2235d7e6cc29ae99878133c95e9fe5e157661ffb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default-darwin",
         "type": "github"
       }
     },
@@ -1646,7 +1701,7 @@
     },
     "tesla-inference-flake": {
       "inputs": {
-        "flake-utils": "flake-utils_9",
+        "flake-utils": "flake-utils_10",
         "nixpkgs": [
           "nixpkgs"
         ]
@@ -1728,7 +1783,7 @@
     },
     "zellij-vivid-rounded": {
       "inputs": {
-        "flake-utils": "flake-utils_10",
+        "flake-utils": "flake-utils_11",
         "nixpkgs": [
           "nixpkgs"
         ]

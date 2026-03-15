@@ -78,6 +78,39 @@
       "technitium-dns-server"
       "router-dashboard"
     ];
+    links = [
+      {
+        label = "Netdata";
+        url = "http://10.10.10.1:19999/";
+        icon = "📊";
+      }
+      {
+        label = "Grafana";
+        url = "http://10.10.10.1:3001/";
+        icon = "📈";
+      }
+      {
+        label = "DNS Admin";
+        url = "http://10.10.10.1:5380/";
+        icon = "🌍";
+      }
+      {
+        label = "Tech Logs";
+        url = "/logs/technitium.html";
+        icon = "📜";
+      }
+      {
+        label = "Fail2ban";
+        url = "/status/fail2ban.html";
+        icon = "🛡️";
+      }
+      {
+        label = "Router SSH";
+        kind = "copy";
+        copyText = "ssh gateway.deepwatercreature.com";
+        icon = "🖥️";
+      }
+    ];
   };
 
   router.monitoring = {
@@ -95,9 +128,10 @@
 
   services.netdata = {
     enable = true;
+    package = pkgs.netdataCloud;
     config = {
       global = {
-        "default port" = "8080";
+        "default port" = "19999";
         "bind to" = "10.10.10.1";
       };
       web = {
@@ -316,12 +350,12 @@
     tmux
   ];
 
-  # Agenix configuration
+  # Cloudflare token is stored as a true agenix secret.
   age.secrets.cloudflare-api-key = {
-    file = ../../../secrets-agenix/cloudflare-api-key.age;
+    file = ../../../secrets-agenix/cloudflare_ddns_API_token.age;
     owner = "root";
     group = "root";
-    mode = "0444";
+    mode = "0400";
   };
 
   # Agenix configuration

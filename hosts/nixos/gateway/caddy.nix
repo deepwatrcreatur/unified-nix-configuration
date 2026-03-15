@@ -7,7 +7,7 @@
     package = pkgs.caddy.withPlugins {
       plugins = [
         "github.com/caddy-dns/cloudflare@v0.2.3"
-        "github.com/mholt/caddy-dynamicdns@1af4f88765982db86ce091eeb075cfb2d9348dc8"
+        "github.com/mholt/caddy-dynamicdns@v0.0.0-20251231002810-1af4f8876598"
       ];
       hash = "sha256-cx7C7x9PG0RQh5ZaXIi2pDIiC2d3kdgBPE4SMApCY5o=";
     };
@@ -93,26 +93,21 @@
     allowedTCPPorts = [ 80 443 ];
   };
   
-  # Ensure Caddy can access the services
+  # Ensure Caddy can access the services and prepare its dynamic DNS token
   systemd.services.caddy = {
-    after = [ "network-online.target" ];
+    after = [
+      "network-online.target"
+      "agenix.service"
+    ];
     wants = [ "network-online.target" ];
-  };
-
-  systemd.services.caddy-cloudflare-env = {
-    description = "Prepare Cloudflare token environment for Caddy";
-    wantedBy = [ "caddy.service" ];
-    before = [ "caddy.service" ];
-    after = [ "agenix.service" ];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-    };
-    script = ''
+    preStart = ''
       install -d -m 0750 -o caddy -g caddy /run/caddy
-      printf 'CLOUDFLARE_API_TOKEN=%s\n' "$(cat ${config.age.secrets.cloudflare-api-key.path})" > /run/caddy/caddy.env
+      token="$(tr -d '\n' < ${config.age.secrets.cloudflare-api-key.path})"
+      test -n "$token"
+      printf 'CLOUDFLARE_API_TOKEN=%s\n' "$token" > /run/caddy/caddy.env
       chown caddy:caddy /run/caddy/caddy.env
       chmod 0400 /run/caddy/caddy.env
     '';
+    serviceConfig.PermissionsStartOnly = true;
   };
 }
