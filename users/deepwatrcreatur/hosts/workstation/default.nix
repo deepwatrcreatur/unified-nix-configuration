@@ -168,6 +168,26 @@ EOF
     id = "codex"
     name = "Codex CLI"
     command = "codex"
+
+    [[agents]]
+    id = "gemini"
+    name = "Gemini CLI"
+    command = "gemini"
+
+    [[agents]]
+    id = "copilot"
+    name = "GitHub Copilot"
+    command = "copilot"
+
+    [[agents]]
+    id = "opencode"
+    name = "OpenCode Zen"
+    command = "opencode"
+
+    [[agents]]
+    id = "opencode-zai"
+    name = "OpenCode Z.ai"
+    command = "opencode-zai"
   '';
 
   # X11 display setup for DeskFlow

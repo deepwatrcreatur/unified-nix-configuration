@@ -20,10 +20,7 @@
       dynamic_dns {
         provider cloudflare {$CLOUDFLARE_API_TOKEN}
         domains {
-          deepwatercreature.com @
-          home.deepwatercreature.com @
-          2fauth.deepwatercreature.com @
-          nightscout.deepwatercreature.com @
+          deepwatercreature.com @ www dashboard grafana
         }
         check_interval 5m
         versions ipv4 ipv6

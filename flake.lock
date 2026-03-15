@@ -197,11 +197,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773534509,
-        "narHash": "sha256-qmZ409VztFUDpFWWmYb8Dx0sHknEpgpOW6ulCPRpzLw=",
+        "lastModified": 1773539147,
+        "narHash": "sha256-zTmsZtnFf/B73G/+6xGvyu1WguiHMS2kLRxrFCGHAU0=",
         "owner": "deepwatrcreatur",
         "repo": "cosmic-applet-agents-status",
-        "rev": "3ab34b0628cbf43ac5b37a66cae2e81b42faef3a",
+        "rev": "eb87a19b97e1ce9fbae7e3cec96643f2347780a6",
         "type": "github"
       },
       "original": {
@@ -1038,11 +1038,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773534646,
-        "narHash": "sha256-TtONjnlTJnUAsrNuOBXJlxn0cbadDJzhQZz6GYMpf4U=",
+        "lastModified": 1773539064,
+        "narHash": "sha256-kzFOJXiUt+RCyLR7U8SdZFET4D3O2Z14tnD4Vzha2pg=",
         "owner": "deepwatrcreatur",
         "repo": "nix-router-optimized",
-        "rev": "e86d2d41eff0486a0427ba1ffd30dd51d2741640",
+        "rev": "5700c08927b2fba9ea1fdfa552031fb6218802c6",
         "type": "github"
       },
       "original": {
