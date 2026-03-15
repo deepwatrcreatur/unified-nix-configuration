@@ -10,13 +10,14 @@
   imports = [
     ../../../../modules/common/nix-settings.nix
     ../../../../modules/nixos/inference-vm-nix-overrides.nix
-    inputs.nix-attic-infra.nixosModules.attic-client
+    # inputs.nix-attic-infra.nixosModules.attic-client  # Disabled - requires sops-nix
   ];
 
   # Enable fish shell since users set it as default
   programs.fish.enable = true;
 
-  sops.age.keyFile = lib.mkForce "/var/lib/sops/age/keys.txt";
+  # Agenix identity for secrets (sops-nix removed)
+  age.identityPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
 
   # Nixpkgs configuration
   nixpkgs = {
@@ -25,18 +26,9 @@
     config.cudaForwardCompat = false; # Skip cuda_compat build
   };
 
-  services.attic-client = {
-    enable = true;
-
-    # SOPS-encrypted token providing `ATTIC_CLIENT_JWT_TOKEN`
-    tokenFile = ../../../../secrets/attic-client-token.yaml.enc;
-
-    server = "http://attic-cache:5001";
-    cache = "cache-local";
-
-    enablePostBuildHook = true;
-    configureNixSubstituter = false;
-  };
+  # Attic client configuration (using agenix for token)
+  # The nix-attic-infra module is disabled since it requires sops-nix internally
+  # Configure attic manually via the attic CLI using the token from agenix
 
   # GPU Infrastructure configuration - Tesla P40 optimized
   hardware.nvidia = {

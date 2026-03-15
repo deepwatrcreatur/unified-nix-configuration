@@ -5,6 +5,6 @@
     ./modules/home-manager-users.nix
     ./modules/packages.nix
     ./modules/users.nix
-    ./modules/sops.nix
+    # ./modules/sops.nix  # Disabled - migrated to agenix
   ];
 }

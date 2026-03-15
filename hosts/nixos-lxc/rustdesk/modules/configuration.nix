@@ -15,8 +15,8 @@
   # Enable fish shell since users set it as default
   programs.fish.enable = true;
 
-  # SOPS configuration for secrets management
-  sops.age.keyFile = "/var/lib/sops/age/keys.txt";
+  # Agenix identity for secrets (sops-nix removed)
+  age.identityPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
 
   # Enable OpenSSH with password auth and root login (matching cache-build-server)
   services.openssh.enable = true;

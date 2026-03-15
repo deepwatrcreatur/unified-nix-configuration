@@ -47,14 +47,16 @@ in
       tokenFilePath = "/run/secrets/attic-client-token";
     in
     {
-      # 1. Define the system-level SOPS secret for the client token.
-      sops.secrets."attic-client-token" = mkIf (cfg.tokenFile != null) {
-        sopsFile = cfg.tokenFile;
-        key = cfg.tokenKey;
-        path = "/run/secrets/attic-client-token";
-        owner = config.users.users.root.name;
-        mode = "0400";
-      };
+      # 1. Define the system-level secret for the client token.
+      # Note: sops-nix has been removed. Use agenix instead:
+      #   age.secrets.attic-client-token = {
+      #     file = path/to/attic-client-token.age;
+      #     path = "/run/secrets/attic-client-token";
+      #     owner = "root";
+      #     mode = "0400";
+      #   };
+      # Legacy sops configuration (only if sops-nix module is loaded):
+      # sops.secrets."attic-client-token" = mkIf (cfg.tokenFile != null) { ... };
 
       # 2. Create the post-build hook script (fail-safe: never blocks builds)
       environment.etc."nix/attic-upload.sh" = {
