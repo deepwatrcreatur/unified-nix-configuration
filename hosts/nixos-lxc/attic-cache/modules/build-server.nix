@@ -8,42 +8,30 @@
 let
 in
 {
-  # Sops secret for attic server token
-  sops.secrets."attic-server-token" = {
-    sopsFile = ../../../../secrets/attic-server-token.yaml.enc;
-    key = "ATTIC_SERVER_TOKEN";
-    path = "/run/secrets/attic-server-token";
-    owner = config.users.users.root.name;
-  };
-
-  sops.secrets."attic-jwt-secret" = {
-    sopsFile = ../../../../secrets/attic-server-private-key.yaml.enc;
-    key = "ATTIC_SERVER_PRIVATE_KEY_BASE64";
-    path = "/run/secrets/attic-jwt-secret";
-    owner = config.users.users.root.name;
-  };
+  # Secrets are defined in ./agenix.nix
+  # Expected: attic-server-token, attic-jwt-secret
 
   # Create atticd environment file with JWT secret
   systemd.services.atticd-env = {
     description = "Create atticd environment file";
     wantedBy = [ "multi-user.target" ];
     before = [ "atticd.service" ];
-    after = [ "sops-nix.service" ];
+    after = [ "agenix.service" ];
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
     };
     script = ''
       # Ensure the JWT secret is available
-      SOPS_JWT_PATH="${config.sops.secrets."attic-jwt-secret".path}"
-      if [[ ! -s "$SOPS_JWT_PATH" ]]; then
-        echo "Error: SOPS attic-jwt-secret not found or is empty at $SOPS_JWT_PATH"
+      JWT_PATH="${config.age.secrets."attic-jwt-secret".path}"
+      if [[ ! -s "$JWT_PATH" ]]; then
+        echo "Error: agenix attic-jwt-secret not found or is empty at $JWT_PATH"
         exit 1
       fi
 
       # Create environment file with JWT secret
       # The secret is an RSA private key, so use RS256 (not HS256)
-      JWT_SECRET=$(cat "$SOPS_JWT_PATH")
+      JWT_SECRET=$(cat "$JWT_PATH")
       echo "ATTIC_SERVER_TOKEN_RS256_SECRET_BASE64=$JWT_SECRET" > /etc/atticd.env
       chmod 600 /etc/atticd.env
       echo "Created atticd environment file with JWT secret (RS256)"
@@ -133,7 +121,7 @@ in
     wantedBy = [ "multi-user.target" ];
     after = [
       "atticd.service"
-      "sops-nix.service"
+      "agenix.service"
     ];
     serviceConfig = {
       Type = "oneshot";
@@ -159,17 +147,17 @@ in
       # Use the client configuration
       export ATTIC_CONFIG="/etc/attic/config.toml"
 
-      echo "Initializing Attic cache with SOPS-managed authentication..."
+      echo "Initializing Attic cache with agenix-managed authentication..."
 
-      # Check if SOPS token is available and not empty
-      SOPS_TOKEN_PATH="${config.sops.secrets."attic-server-token".path}"
-      if ! ${pkgs.coreutils}/bin/test -s "$SOPS_TOKEN_PATH"; then
-        echo "Error: SOPS attic-server-token not found or is empty at $SOPS_TOKEN_PATH"
+      # Check if agenix token is available and not empty
+      TOKEN_PATH="${config.age.secrets."attic-server-token".path}"
+      if ! ${pkgs.coreutils}/bin/test -s "$TOKEN_PATH"; then
+        echo "Error: agenix attic-server-token not found or is empty at $TOKEN_PATH"
         echo "Cannot initialize Attic cache - configure secret first"
         exit 1
       fi
 
-      ATTIC_TOKEN=$(${pkgs.coreutils}/bin/cat "$SOPS_TOKEN_PATH")
+      ATTIC_TOKEN=$(${pkgs.coreutils}/bin/cat "$TOKEN_PATH")
 
       # Login using the SOPS-managed token
       echo "Attempting to login to Attic server..."

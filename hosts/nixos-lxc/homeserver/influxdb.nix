@@ -7,10 +7,8 @@
 }:
 
 {
-  sops.secrets.influxdb_password = {
-    sopsFile = builtins.path { path = ./secrets/influxdb-secrets.yaml; };
-    owner = "influxdb2";
-  };
+  # Secret defined in ./agenix.nix
+  # age.secrets.influxdb-password is expected to exist
 
   services.influxdb2 = {
     enable = true;
@@ -18,7 +16,7 @@
       http-bind-address = ":8086";
       auth-enabled = true;
       admin-user = "admin";
-      admin-password = config.sops.secrets.influxdb_password.path;
+      admin-password = config.age.secrets.influxdb-password.path;
     };
   };
 }

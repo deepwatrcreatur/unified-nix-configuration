@@ -11,7 +11,7 @@ This repository uses Nix to manage system and user configurations for multiple m
 -   **Nix/NixOS:** For system and package management.
 -   **home-manager:** For user-specific dotfiles and packages.
 -   **Nix Flakes:** For reproducible builds.
--   **sops-nix:** For managing secrets.
+-   **agenix:** For managing secrets (system-level secrets at /run/agenix/).
 
 ## How It's Organized
 

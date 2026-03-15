@@ -35,24 +35,13 @@ in
 
     # Mount the decrypted secrets files into the container
     extraOptions = [
-      #"-v" "${config.sops.secrets."kasa_collector_influxdb_token".path}:/run/secrets/kasa_collector_influxdb_token:ro"
-      #"-v" "${config.sops.secrets."kasa_collector_tplink_password".path}:/run/secrets/kasa_collector_tplink_password:ro"
       "-v"
-      "/run/secrets/kasa_collector_influxdb_token:/run/secrets/kasa_collector_influxdb_token:ro"
+      "${config.age.secrets."kasa-influxdb-token".path}:/run/secrets/kasa_collector_influxdb_token:ro"
       "-v"
-      "/run/secrets/kasa_collector_tplink_password:/run/secrets/kasa_collector_tplink_password:ro"
+      "${config.age.secrets."kasa-tplink-password".path}:/run/secrets/kasa_collector_tplink_password:ro"
     ];
   };
 
-  # Configure sops to manage the secrets
-  sops.secrets = {
-    "kasa_collector_influxdb_token" = {
-      sopsFile = ./secrets/kasa-secrets.yaml; # Path to your sops-encrypted file
-      owner = "root";
-    };
-    "kasa_collector_tplink_password" = {
-      sopsFile = ./secrets/kasa-secrets.yaml; # Path to your sops-encrypted file
-      owner = "root";
-    };
-  };
+  # Secrets are managed by agenix in ./agenix.nix
+  # Expected secrets: kasa-influxdb-token, kasa-tplink-password
 }

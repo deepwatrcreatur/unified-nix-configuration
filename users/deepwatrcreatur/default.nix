@@ -8,10 +8,10 @@
 
 {
   imports = [
-    inputs.sops-nix.homeManagerModules.sops
+    # Note: sops CLI is still used for manual decryption in secrets-activation.nix
+    # System-level secrets are handled by agenix at /run/agenix/
     ../../modules/home-manager/secrets-activation.nix
     ../../modules/home-manager/user-secrets.nix
-    ./sops.nix
     ./rbw.nix
     ./env.nix
     ../../modules/home-manager/git.nix

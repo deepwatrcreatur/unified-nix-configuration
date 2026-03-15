@@ -32,6 +32,35 @@
     ../../../modules/activation-scripts # Activation scripts for system setup
   ];
 
+  # Declarative host configuration using options-based system
+  host = {
+    type = "workstation";
+    primaryUser = "deepwatrcreatur";
+    gpu = {
+      type = "amd";
+      enableRocm = false;  # Enable if ROCm support needed
+    };
+    desktop = {
+      enable = true;
+      environment = "cosmic";  # Using COSMIC desktop
+      enableSound = true;
+      enablePrinting = true;
+    };
+    networking = {
+      enableTailscale = true;
+      enableAvahi = true;
+    };
+    services = {
+      enableSsh = true;
+      enableDocker = true;
+      enablePodman = false;
+    };
+    cache = {
+      server = "http://attic-cache:5001";
+      enableClient = true;
+    };
+  };
+
   # Homebrew is managed via home-manager (modules/home-manager/linuxbrew.nix)
   # Create /home/linuxbrew with correct ownership for install.sh
   custom.activation-scripts.linux.linuxbrew-system.enable = true;

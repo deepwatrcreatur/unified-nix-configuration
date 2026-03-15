@@ -22,11 +22,12 @@
   };
 
   # Deploy SSH private key for nix remote builder authentication
-  # The key is deployed to /root/.ssh/nix-remote, matching nix-settings.nix config
+  # TODO: Migrate to agenix - the key needs to be at /root/.ssh/nix-remote
+  # For now, manage the key manually or create an agenix secret
   services.ssh-remote-builder-keys = {
-    enable = true;
-    keyName = "nix-remote";
-    sopsFile = ../../../secrets/nix-remote-builder-key.yaml.enc;
-    sopsKey = "private_key";
+    enable = false;
+    # keyName = "nix-remote";
+    # sopsFile = ../../../secrets/nix-remote-builder-key.yaml.enc;
+    # sopsKey = "private_key";
   };
 }

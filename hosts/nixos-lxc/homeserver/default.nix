@@ -19,7 +19,7 @@
     ./packages.nix
     ./podman.nix
     ./rsync.nix
-    ./sops.nix
+    ./agenix.nix
     ./tplink-energy-monitor.nix
     ./users.nix
     ./nix-settings.nix

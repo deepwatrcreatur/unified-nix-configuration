@@ -6,7 +6,7 @@
   ...
 }:
 let
-  apiKeyFile = config.sops.secrets."API_KEY".path;
+  apiKeyFile = config.age.secrets."cloudflare-api-key".path;
 in
 {
   virtualisation.oci-containers.containers.cloudflare-ddns = {
