@@ -217,6 +217,7 @@
     xdg-desktop-portal-gtk # GTK desktop portal
     satty # Screenshot annotation tool inspired by Swappy and Flameshot
     gthumb # Image browser and viewer with crop support
+    yt-dlp # YouTube and video downloader
   ];
 
   # Enable nix-ld for running dynamically linked executables (like homebrew packages)
