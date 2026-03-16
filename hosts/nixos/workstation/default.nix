@@ -28,6 +28,7 @@
     ../../../modules/nixos/printers/phoenix-hp-m477.nix # HP M477 printer queue
     ../../../modules/nixos/keyboard-glitches.nix # Fix for stuck keyboard presses in Proxmox VM
     ../../../modules/nixos/snapper.nix # Btrfs snapshots via Snapper
+    ../../../modules/nixos/nix-daemon-user-ssh.nix # SSH socket for git+ssh flake inputs
     ../../../modules/wezterm-config.nix
     ../../../modules/activation-scripts # Activation scripts for system setup
   ];
@@ -229,9 +230,8 @@
   # Enable QEMU guest agent for Proxmox integration
   services.qemuGuest.enable = true;
 
-  # Allow the Nix daemon to use the workstation user's stable GPG SSH socket
-  # for git+ssh flake inputs during local rebuilds.
-  systemd.services.nix-daemon.environment.SSH_AUTH_SOCK = "/run/user/1000/gnupg/S.gpg-agent.ssh";
+  # Enable nix-daemon to use user's SSH socket for git+ssh flake inputs
+  myModules.nix-daemon-user-ssh.enable = true;
 
   # Attic client with agenix backend (nix-attic-infra feat/agenix-support)
   services.attic-client = {

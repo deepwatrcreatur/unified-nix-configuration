@@ -1,27 +1,27 @@
 # users/deepwatrcreatur/hosts/homeserver/justfile
-# Note: LXC containers have sudo setuid issues, use 'just switch' as root
+# Note: LXC containers need /run/wrappers/bin/sudo for setuid
 
-# Build and switch (run as root, e.g., via 'su -' or SSH as root)
-switch dir="/home/deepwatrcreatur/flakes/unified-nix-configuration":
-  nixos-rebuild switch --flake {{dir}}#homeserver
+# Rebuild homeserver NixOS configuration
+update dir="/home/deepwatrcreatur/flakes/unified-nix-configuration":
+  /run/wrappers/bin/sudo nixos-rebuild switch --flake {{dir}}#homeserver
 
-# Build only (can run as regular user)
+# Rebuild using nh (nicer output)
+nh-update dir="/home/deepwatrcreatur/flakes/unified-nix-configuration":
+  nh os switch {{dir}} -- --flake {{dir}}#homeserver
+
+# Test build without switching
+test dir="/home/deepwatrcreatur/flakes/unified-nix-configuration":
+  /run/wrappers/bin/sudo nixos-rebuild test --flake {{dir}}#homeserver
+
+# Build only (no switch)
 build dir="/home/deepwatrcreatur/flakes/unified-nix-configuration":
   nixos-rebuild build --flake {{dir}}#homeserver
 
-# Build and activate - for LXC containers where sudo doesn't work
-# Run 'just build' first, then 'just activate' as root
-activate:
-  ./result/bin/switch-to-configuration switch
+# Pull latest and rebuild
+pull-update dir="/home/deepwatrcreatur/flakes/unified-nix-configuration":
+  cd {{dir}} && git pull && just update
 
-# Test build without switching (run as root)
-test dir="/home/deepwatrcreatur/flakes/unified-nix-configuration":
-  nixos-rebuild test --flake {{dir}}#homeserver
-
-# Pull latest and build (as regular user)
-pull-build dir="/home/deepwatrcreatur/flakes/unified-nix-configuration":
-  cd {{dir}} && git pull && just build
-
-# Garbage collect old generations (run as root)
+# Garbage collect old generations
 gc:
+  /run/wrappers/bin/sudo nix-collect-garbage -d
   nix-collect-garbage -d

@@ -11,6 +11,7 @@
     ../../../modules/nixos/common  # Common NixOS modules including ssh-keys-manager
     ../../../modules/nixos/services/iperf3.nix
     ../../../modules/nixos/attic-client.nix  # Attic binary cache client
+    ../../../modules/nixos/nix-daemon-user-ssh.nix  # SSH socket for git+ssh flake inputs
     ./modules/configuration.nix
     ./modules/homebridge.nix
     ./modules/home-manager-users.nix
@@ -32,6 +33,6 @@
   # Enable attic client for binary cache
   myModules.attic-client.enable = true;
 
-  # Allow the Nix daemon to use the user's GPG SSH socket for git+ssh flake inputs
-  systemd.services.nix-daemon.environment.SSH_AUTH_SOCK = "/run/user/1000/gnupg/S.gpg-agent.ssh";
+  # Enable nix-daemon to use user's SSH socket for git+ssh flake inputs
+  myModules.nix-daemon-user-ssh.enable = true;
 }
