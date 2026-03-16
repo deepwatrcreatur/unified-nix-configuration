@@ -8,7 +8,7 @@
 
 {
   imports = [
-    ../../.. # default config for deepwatrcreatur (up 3 levels)
+    ../.. # default config for deepwatrcreatur (up 2 levels)
     ./homeserver-justfile.nix
     ./nh.nix
     ./rbw.nix
