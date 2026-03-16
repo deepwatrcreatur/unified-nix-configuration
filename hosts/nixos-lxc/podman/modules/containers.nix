@@ -12,7 +12,6 @@
   # Create persistent data directories
   # Use 0777 for container data dirs since container UIDs may differ from host
   systemd.tmpfiles.rules = [
-    "d /var/lib/semaphore 0777 root root -"
     "d /var/lib/plex 0777 root root -"
     "d /var/lib/plex/config 0777 root root -"
     "d /var/lib/plex/transcode 0777 root root -"
@@ -23,26 +22,6 @@
     backend = "podman";
 
     containers = {
-      # Semaphore - Ansible Web UI
-      semaphore = {
-        image = "semaphoreui/semaphore:latest";
-        ports = [ "3000:3000" ];
-        volumes = [
-          "/var/lib/semaphore:/etc/semaphore"
-          # Mount SSH keys for Ansible to reach other hosts
-          "/root/.ssh:/home/semaphore/.ssh:ro"
-        ];
-        environment = {
-          SEMAPHORE_DB_DIALECT = "bolt";  # Simple file-based DB
-          SEMAPHORE_ADMIN = "admin";
-          SEMAPHORE_ADMIN_PASSWORD = "changeme";  # Change after first login
-          SEMAPHORE_ADMIN_EMAIL = "admin@localhost";
-        };
-        extraOptions = [
-          "--name=semaphore"
-        ];
-      };
-
       # Plex Media Server
       plex = {
         image = "plexinc/pms-docker:latest";
@@ -81,7 +60,6 @@
   # Open firewall ports
   networking.firewall = {
     allowedTCPPorts = [
-      3000   # Semaphore
       32400  # Plex
       3005   # Plex
       8324   # Plex

@@ -18,7 +18,14 @@
     ./modules/home-manager-users.nix
     ./modules/users.nix
     inputs.agenix.nixosModules.default
+    inputs.nix-semaphore.nixosModules.default
   ];
+
+  # Semaphore Ansible UI
+  services.semaphore = {
+    enable = true;
+    openFirewall = true;
+  };
 
   # SSH keys manager - deploy authorized_keys from ssh-keys/ directory
   services.ssh-keys-manager.username = "deepwatrcreatur";

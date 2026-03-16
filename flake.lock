@@ -1033,6 +1033,26 @@
         "type": "github"
       }
     },
+    "nix-semaphore": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1773701417,
+        "narHash": "sha256-qQywSfL+tF6RMbOTto+YpI8cvz9UVnw/9ivKnZbDd/Q=",
+        "owner": "deepwatrcreatur",
+        "repo": "nix-semaphore",
+        "rev": "e78b0a9a89dab557ee7499dfeb7640fcfb66a432",
+        "type": "github"
+      },
+      "original": {
+        "owner": "deepwatrcreatur",
+        "repo": "nix-semaphore",
+        "type": "github"
+      }
+    },
     "nix-snapd": {
       "inputs": {
         "flake-compat": "flake-compat_4",
@@ -1361,6 +1381,7 @@
         "nix-index-database": "nix-index-database",
         "nix-linuxbrew": "nix-linuxbrew",
         "nix-router-optimized": "nix-router-optimized",
+        "nix-semaphore": "nix-semaphore",
         "nix-snapd": "nix-snapd",
         "nix-whitesur-config": "nix-whitesur-config",
         "nixbit": "nixbit",

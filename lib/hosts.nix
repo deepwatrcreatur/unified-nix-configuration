@@ -98,7 +98,8 @@
     homeserver = {
       ip = "10.10.11.69";
       sshUser = "deepwatrcreatur";
-      description = "Home automation and services";
+      aliases = [ "semaphore" ];
+      description = "Home automation, Semaphore Ansible UI";
     };
 
     casaos = {
@@ -110,8 +111,8 @@
     podman = {
       ip = "10.10.11.84";
       sshUser = "deepwatrcreatur";
-      aliases = [ "semaphore" "plex" ];
-      description = "Podman container host (Semaphore, Plex)";
+      aliases = [ "plex" ];
+      description = "Podman container host (Plex)";
     };
 
     # Workstations

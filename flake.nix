@@ -138,6 +138,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-semaphore = {
+      url = "github:deepwatrcreatur/nix-semaphore";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs =
