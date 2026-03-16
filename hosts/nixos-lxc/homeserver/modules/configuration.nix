@@ -48,7 +48,7 @@
   security.sudo.wheelNeedsPassword = false;
   security.wrappers.sudo.setuid = true;
 
-  age.identityPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+  # age.identityPaths set in modules/nixos/common/agenix.nix
 
   systemd.mounts = [
     {
