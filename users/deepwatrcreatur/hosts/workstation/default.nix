@@ -5,12 +5,6 @@
   inputs,
   ...
 }:
-
-let
-  codingAgents = import ../../../../modules/home-manager/coding-agents-registry.nix {
-    inherit pkgs inputs;
-  };
-in
 {
   imports = [
     ../../default.nix
@@ -24,16 +18,9 @@ in
     ../../../../modules/home-manager/zed.nix
     ../../../../modules/home-manager/cosmic-settings.nix
     ../../../../modules/home-manager/common/dmux.nix
-    inputs.agents-status-tray-home-manager.homeManagerModules.default
   ];
 
   programs.dmux.enable = true;
-  services.agents-status-tray = {
-    enable = true;
-    agents = map (agent: {
-      inherit (agent) id name command;
-    }) codingAgents;
-  };
 
   services.agenix-user-secrets = {
     enable = true;

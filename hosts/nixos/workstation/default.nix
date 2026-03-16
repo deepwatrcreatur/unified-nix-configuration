@@ -12,7 +12,7 @@
     ./networking.nix
     ../../../modules/nixos/common # Common NixOS modules (SSH keys, etc.)
     ../../../modules/common/utility-packages.nix # Common utility packages
-    # inputs.nix-attic-infra.nixosModules.attic-client # Disabled - requires sops-nix
+    inputs.nix-attic-infra.nixosModules.attic-client # Re-enabled with agenix support
     inputs.nixbit.nixosModules.nixbit # Nix bit repository manager
     inputs.agenix.nixosModules.default # Agenix secrets management (testing alongside sops)
     ../../../modules/nixos/snap.nix # Snap package manager support
@@ -233,16 +233,15 @@
   # for git+ssh flake inputs during local rebuilds.
   systemd.services.nix-daemon.environment.SSH_AUTH_SOCK = "/run/user/1000/gnupg/S.gpg-agent.ssh";
 
-  # Attic client - disabled during sops->agenix migration
-  # TODO: Update nix-attic-infra module to support agenix or configure manually
-  # services.attic-client configuration removed - module not imported
-
-  # Attic client token via agenix (for future manual configuration)
-  age.secrets.attic-client-token = {
-    file = ../../../secrets-agenix/attic-client-token.age;
-    path = "/run/secrets/attic-client-token";  # Legacy path for compatibility
-    owner = "root";
-    mode = "0400";
+  # Attic client with agenix backend (nix-attic-infra feat/agenix-support)
+  services.attic-client = {
+    enable = true;
+    secretsBackend = "agenix";
+    ageSecretFile = ../../../secrets-agenix/attic-client-token.age;
+    server = "http://attic-cache:5001";
+    cache = "cache-local";
+    enablePostBuildHook = true;
+    configureNixSubstituter = false;  # Already configured via nix-settings
   };
 
   nixbit = {
