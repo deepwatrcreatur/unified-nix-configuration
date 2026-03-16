@@ -5,6 +5,7 @@
 {
   # Declarative host configuration
   host.type = "lxc";
+  host.networking.enableTailscale = false;  # LXC containers can't run Tailscale
   host.services.iperf3.enable = true;
 
   imports = [
