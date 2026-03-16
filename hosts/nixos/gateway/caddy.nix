@@ -20,7 +20,7 @@
       dynamic_dns {
         provider cloudflare {$CLOUDFLARE_API_TOKEN}
         domains {
-          deepwatercreature.com @ www dashboard grafana home 2fauth nightscout marreta linkwarden
+          deepwatercreature.com @ homelab 2fauth nightscout marreta linkwarden
         }
         check_interval 5m
         versions ipv4 ipv6
@@ -53,7 +53,7 @@
         '';
       };
 
-      "home.deepwatercreature.com" = {
+      "homelab.deepwatercreature.com" = {
         extraConfig = ''
           @trusted remote_ip 10.10.0.0/16 100.64.0.0/10
           handle @trusted {

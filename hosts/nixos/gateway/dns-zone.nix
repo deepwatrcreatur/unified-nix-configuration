@@ -5,11 +5,29 @@
     "deepwatercreature.com" = {
       # Static host records - these are version controlled and persistent.
       hosts = {
+        "@" = {
+          ipv4 = "10.10.10.1";
+          ipv6 = null;
+        };
+
         # Core Infrastructure
         gateway = {
           ipv4 = "10.10.10.1";
           ipv6 = null;
-          aliases = [ "router" "dns" "dhcp" "firewall" ];
+          aliases = [
+            "router"
+            "dns"
+            "dhcp"
+            "firewall"
+            "www"
+            "dashboard"
+            "grafana"
+            "homelab"
+            "2fauth"
+            "nightscout"
+            "marreta"
+            "linkwarden"
+          ];
         };
 
         attic-cache = {
