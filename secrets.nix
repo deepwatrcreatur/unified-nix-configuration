@@ -20,26 +20,50 @@ let
     "root-homeserver" = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEBi+OJR+l/cO+Kf2WuCjKw9yLlcvqTaOb/KkolX+qgh root@homeserver";
   };
 
-  allHosts = builtins.filter (key: key != "") (builtins.attrValues hosts);
-  allUsers = builtins.attrValues users;
-  allKeys = allHosts ++ allUsers;
+  operatorUsers = [
+    users.deepwatrcreatur
+  ];
+
+  workstationUserSecrets = operatorUsers ++ [
+    hosts.workstation
+  ];
+
+  gatewayServiceSecrets = operatorUsers ++ [
+    hosts.gateway
+  ];
+
+  gatewayAndWorkstationSecrets = operatorUsers ++ [
+    hosts.gateway
+    hosts.workstation
+  ];
+
+  atticServiceSecrets = operatorUsers ++ [
+    hosts.attic-cache
+  ];
+
+  atticClientSecrets = operatorUsers ++ [
+    hosts.attic-cache
+    hosts.workstation
+  ];
 in
 {
-  "secrets-agenix/cloudflare-api-key.age".publicKeys = [ hosts.gateway hosts.homeserver ] ++ allUsers;
-  "secrets-agenix/technitium-api-key.age".publicKeys = [ hosts.gateway hosts.workstation ] ++ allUsers;
-  "secrets-agenix/attic-client-token.age".publicKeys = [ hosts.attic-cache hosts.workstation ] ++ allUsers;
-  "secrets-agenix/attic-server-token.age".publicKeys = [ hosts.attic-cache ] ++ allUsers;
-  "secrets-agenix/attic-jwt-secret.age".publicKeys = [ hosts.attic-cache ] ++ allUsers;
+  # Service-scoped secrets
+  "secrets-agenix/cloudflare-api-key.age".publicKeys = gatewayServiceSecrets;
+  "secrets-agenix/cloudflare_ddns_API_token.age".publicKeys = gatewayServiceSecrets;
+  "secrets-agenix/technitium-api-key.age".publicKeys = gatewayAndWorkstationSecrets;
+  "secrets-agenix/attic-client-token.age".publicKeys = atticClientSecrets;
+  "secrets-agenix/attic-server-token.age".publicKeys = atticServiceSecrets;
+  "secrets-agenix/attic-jwt-secret.age".publicKeys = atticServiceSecrets;
 
-  "secrets-agenix/github-token.age".publicKeys = allKeys;
-  "secrets-agenix/grok-api-key.age".publicKeys = allKeys;
-  "secrets-agenix/openrouter-api-key.age".publicKeys = allKeys;
-  "secrets-agenix/z-ai-api-key.age".publicKeys = allKeys;
-  "secrets-agenix/opencode-zen-api-key.age".publicKeys = allKeys;
-  "secrets-agenix/atuin-key-b64.age".publicKeys = allKeys;
-  "secrets-agenix/oauth-creds.age".publicKeys = allKeys;
-  "secrets-agenix/bitwarden-data.age".publicKeys = allKeys;
-  "secrets-agenix/rclone-conf.age".publicKeys = allKeys;
-  "secrets-agenix/cloudflare_ddns_API_token.age".publicKeys = allKeys;
-  "secrets-agenix/proxmox-api-token.age".publicKeys = allKeys;
+  # Operator/user secrets, still including the consuming host where NixOS decrypts them at activation
+  "secrets-agenix/github-token.age".publicKeys = workstationUserSecrets;
+  "secrets-agenix/grok-api-key.age".publicKeys = workstationUserSecrets;
+  "secrets-agenix/openrouter-api-key.age".publicKeys = workstationUserSecrets;
+  "secrets-agenix/z-ai-api-key.age".publicKeys = workstationUserSecrets;
+  "secrets-agenix/opencode-zen-api-key.age".publicKeys = workstationUserSecrets;
+  "secrets-agenix/atuin-key-b64.age".publicKeys = workstationUserSecrets;
+  "secrets-agenix/oauth-creds.age".publicKeys = workstationUserSecrets;
+  "secrets-agenix/bitwarden-data.age".publicKeys = workstationUserSecrets;
+  "secrets-agenix/rclone-conf.age".publicKeys = workstationUserSecrets;
+  "secrets-agenix/proxmox-api-token.age".publicKeys = workstationUserSecrets;
 }
