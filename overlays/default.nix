@@ -4,20 +4,6 @@
   nixpkgsLib,
 }:
 [
-  # Overlay to selectively use stable packages when unstable ones cause issues
-  (
-    final: prev:
-    let
-      stable = import inputs.nixpkgs-stable {
-        system = prev.stdenv.hostPlatform.system;
-        config = commonNixpkgsConfig;
-      };
-    in
-    {
-      # Add stable packages here when needed to avoid compilation
-      # Example: some-package = stable.some-package;
-    }
-  )
   (final: prev: {
     inherit (inputs.nixpkgs-stable.legacyPackages.${prev.stdenv.hostPlatform.system}) tailscale;
   })
