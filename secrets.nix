@@ -14,7 +14,7 @@ let
   };
 
   users = {
-    deepwatrcreatur = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK6kog9oZnpZtFz2nqM5na6lriJKvjU31CF82mcTfvhe deepwatrcreatur@gmail.com";
+    deepwatrcreatur = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIB4ELcnxIV0zujIJ4EPubU5nkKPV7G8pZ3tDDjZ6pXI deepwatrcreatur@gmail.com";
     "deepwatrcreatur-homeserver" = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBJ4DIw7ZaUAUVUF7GcEwEA8dOEaKtJ3SsVw2MBFV/H4 deepwatrcreatur@homeserver";
     root = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ+Rnj2TmFnoT8eygCClp/aOEzTnJgalIe1HGPWQkGL+ root@attic-cache";
     "root-homeserver" = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEBi+OJR+l/cO+Kf2WuCjKw9yLlcvqTaOb/KkolX+qgh root@homeserver";
