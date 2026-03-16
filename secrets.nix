@@ -34,9 +34,17 @@ let
     hosts.attic-cache
   ];
 
+  # All hosts that build from this repo should be able to use the attic cache
   atticClientSecrets = operatorUsers ++ [
     hosts.attic-cache
+    hosts.gateway
+    hosts.homeserver
+    hosts.pve-gateway
+    hosts.pve-lattitude
+    hosts.pve-strix
+    hosts.pve-tomahawk
     hosts.workstation
+    # TODO: Add hackintosh and macminim4 once their host keys are in the hosts list
   ];
 in
 {
