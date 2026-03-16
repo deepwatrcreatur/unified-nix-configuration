@@ -9,32 +9,8 @@
 
   networking.hostName = "podman";
 
-  # Static IP configuration - adjust IP as needed
-  systemd.network = {
-    enable = true;
-    wait-online.enable = true;
-    networks."10-eth0" = {
-      matchConfig.Name = "eth0";
-      address = [ "10.10.11.84/16" ];
-      routes = [
-        { Gateway = "10.10.10.1"; }
-      ];
-      networkConfig = {
-        DNS = [ "10.10.10.1" ];
-        Domains = [ "deepwatercreature.com" ];
-        IPv6AcceptRA = true;
-      };
-      linkConfig.RequiredForOnline = "routable";
-    };
-  };
-
-  networking = {
-    useDHCP = false;
-    useHostResolvConf = false;
-    nameservers = [ "10.10.10.1" ];
-  };
-
-  services.resolved.enable = true;
+  # Use DHCP - static lease configured in Technitium
+  networking.useDHCP = true;
 
   services.openssh.enable = true;
   services.openssh.settings = {
