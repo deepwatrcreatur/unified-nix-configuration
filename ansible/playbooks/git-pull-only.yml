@@ -1,0 +1,52 @@
+---
+# Just git pull on all hosts without rebuilding
+#
+# Usage:
+#   ansible-playbook -i inventory/hosts.yml playbooks/git-pull-only.yml
+
+- name: Git pull on all hosts
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Check if flake repo exists
+      stat:
+        path: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+      register: repo_check
+
+    - name: Skip host if repo doesn't exist
+      debug:
+        msg: "Skipping {{ inventory_hostname }} - repo not found"
+      when: not repo_check.stat.exists
+
+    - name: Git operations
+      when: repo_check.stat.exists
+      block:
+        - name: Fetch latest from origin
+          command:
+            cmd: git fetch origin
+            chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+
+        - name: Check for local changes
+          command:
+            cmd: git status --porcelain
+            chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+          register: git_status
+          changed_when: false
+
+        - name: Reset flake.lock if it has local changes
+          command:
+            cmd: git checkout -- flake.lock
+            chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+          when: git_status.stdout is search('flake.lock')
+
+        - name: Pull latest changes
+          command:
+            cmd: git pull --ff-only origin main
+            chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+          register: git_pull
+          changed_when: "'Already up to date' not in git_pull.stdout"
+
+        - name: Show result
+          debug:
+            msg: "{{ inventory_hostname }}: {{ 'Updated' if git_pull.changed else 'Already up to date' }}"

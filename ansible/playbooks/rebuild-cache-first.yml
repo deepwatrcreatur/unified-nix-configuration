@@ -1,0 +1,66 @@
+---
+# Rebuild attic-cache first, then all other hosts
+# This ensures the binary cache is up-to-date before other hosts rebuild
+#
+# Usage:
+#   ansible-playbook -i inventory/hosts.yml playbooks/rebuild-cache-first.yml
+
+- name: Update attic-cache first
+  hosts: attic-cache
+  gather_facts: true
+
+  vars:
+    skip_git_pull: false
+    rebuild_action: switch
+
+  tasks:
+    - name: Git pull
+      include_tasks: ../tasks/git-pull.yml
+      when: not skip_git_pull
+
+    - name: NixOS rebuild
+      become: true
+      command:
+        cmd: "nixos-rebuild {{ rebuild_action }} --flake .#{{ flake_target }}"
+        chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+      register: nixos_rebuild
+
+    - name: Show rebuild output
+      debug:
+        msg: "{{ nixos_rebuild.stdout_lines[-20:] }}"
+
+- name: Update all other hosts
+  hosts: all:!attic-cache
+  gather_facts: true
+  serial: 3  # Rebuild 3 hosts at a time
+
+  vars:
+    skip_git_pull: false
+    rebuild_action: switch
+
+  tasks:
+    - name: Git pull
+      include_tasks: ../tasks/git-pull.yml
+      when: not skip_git_pull
+
+    - name: NixOS rebuild
+      when: inventory_hostname in groups.get('needs_nixos_rebuild', [])
+      become: true
+      command:
+        cmd: "nixos-rebuild {{ rebuild_action }} --flake .#{{ flake_target }}"
+        chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+      register: nixos_rebuild
+
+    - name: Darwin rebuild
+      when: inventory_hostname in groups.get('needs_darwin_rebuild', [])
+      command:
+        cmd: "darwin-rebuild {{ rebuild_action }} --flake .#{{ flake_target }}"
+        chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+      register: darwin_rebuild
+
+    - name: Home Manager rebuild
+      when: inventory_hostname in groups.get('needs_home_manager', [])
+      command:
+        cmd: "home-manager switch --flake .#{{ home_manager_target }}"
+        chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+      register: hm_rebuild

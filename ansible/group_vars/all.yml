@@ -1,0 +1,11 @@
+---
+# Global variables for all hosts
+
+# Default SSH user
+ansible_user: deepwatrcreatur
+
+# Default repo location
+flake_repo_path: ~/flakes/unified-nix-configuration
+
+# Python interpreter (for non-NixOS hosts that might have different paths)
+ansible_python_interpreter: auto

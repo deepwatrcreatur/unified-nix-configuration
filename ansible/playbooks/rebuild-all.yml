@@ -1,0 +1,143 @@
+---
+# Rebuild all hosts from unified-nix-configuration
+#
+# Usage:
+#   ansible-playbook -i inventory/hosts.yml playbooks/rebuild-all.yml
+#
+# Limit to specific hosts/groups:
+#   ansible-playbook -i inventory/hosts.yml playbooks/rebuild-all.yml --limit nixos
+#   ansible-playbook -i inventory/hosts.yml playbooks/rebuild-all.yml --limit gateway,homeserver
+#
+# Dry run (check mode):
+#   ansible-playbook -i inventory/hosts.yml playbooks/rebuild-all.yml --check
+#
+# Skip git pull (just rebuild):
+#   ansible-playbook -i inventory/hosts.yml playbooks/rebuild-all.yml -e skip_git_pull=true
+
+- name: Update and rebuild all Nix-managed hosts
+  hosts: all
+  gather_facts: true
+  serial: "{{ serial_count | default(omit) }}"
+
+  vars:
+    skip_git_pull: false
+    rebuild_action: switch  # or 'test', 'boot', 'build'
+
+  tasks:
+    # =========================================================================
+    # Git Pull (all hosts)
+    # =========================================================================
+    - name: Git pull block
+      when: not skip_git_pull
+      block:
+        - name: Check if flake repo exists
+          stat:
+            path: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+          register: repo_check
+
+        - name: Fail if repo doesn't exist
+          fail:
+            msg: "Flake repo not found at {{ flake_repo_path_override | default(flake_repo_path) }}"
+          when: not repo_check.stat.exists
+
+        - name: Fetch latest from origin
+          command:
+            cmd: git fetch origin
+            chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+          register: git_fetch
+          changed_when: git_fetch.stdout != ''
+
+        - name: Check for local changes
+          command:
+            cmd: git status --porcelain
+            chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+          register: git_status
+          changed_when: false
+
+        - name: Handle flake.lock conflicts - reset if only flake.lock changed
+          command:
+            cmd: git checkout -- flake.lock
+            chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+          when: git_status.stdout is search('flake.lock')
+          register: flake_lock_reset
+
+        - name: Stash local changes if any (excluding flake.lock)
+          command:
+            cmd: git stash push -m "ansible-rebuild-{{ ansible_date_time.iso8601 }}"
+            chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+          when:
+            - git_status.stdout != ''
+            - git_status.stdout is not search('^M  flake.lock$')
+          register: git_stash
+
+        - name: Pull latest changes
+          command:
+            cmd: git pull --ff-only origin main
+            chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+          register: git_pull
+          changed_when: "'Already up to date' not in git_pull.stdout"
+
+        - name: Show git pull result
+          debug:
+            msg: "{{ git_pull.stdout_lines }}"
+          when: git_pull.changed
+
+    # =========================================================================
+    # NixOS Rebuild
+    # =========================================================================
+    - name: NixOS rebuild
+      when: inventory_hostname in groups.get('needs_nixos_rebuild', [])
+      block:
+        - name: Run nixos-rebuild {{ rebuild_action }}
+          become: true
+          command:
+            cmd: "nixos-rebuild {{ rebuild_action }} --flake .#{{ flake_target }}"
+            chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+          register: nixos_rebuild
+          changed_when: true
+
+        - name: Show nixos-rebuild output
+          debug:
+            msg: "{{ nixos_rebuild.stdout_lines[-30:] }}"
+          when: nixos_rebuild is defined
+
+    # =========================================================================
+    # Darwin Rebuild
+    # =========================================================================
+    - name: Darwin rebuild
+      when: inventory_hostname in groups.get('needs_darwin_rebuild', [])
+      block:
+        - name: Run darwin-rebuild {{ rebuild_action }}
+          command:
+            cmd: "darwin-rebuild {{ rebuild_action }} --flake .#{{ flake_target }}"
+            chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+          register: darwin_rebuild
+          changed_when: true
+
+        - name: Show darwin-rebuild output
+          debug:
+            msg: "{{ darwin_rebuild.stdout_lines[-30:] }}"
+          when: darwin_rebuild is defined
+
+    # =========================================================================
+    # Home Manager Rebuild (non-NixOS, non-Darwin)
+    # =========================================================================
+    - name: Home Manager rebuild
+      when: inventory_hostname in groups.get('needs_home_manager', [])
+      block:
+        - name: Run home-manager switch
+          command:
+            cmd: "home-manager switch --flake .#{{ home_manager_target }}"
+            chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+          register: hm_rebuild
+          changed_when: true
+
+        - name: Show home-manager output
+          debug:
+            msg: "{{ hm_rebuild.stdout_lines[-30:] }}"
+          when: hm_rebuild is defined
+
+  handlers:
+    - name: Show stashed changes reminder
+      debug:
+        msg: "Note: Local changes were stashed. Run 'git stash pop' to restore them."

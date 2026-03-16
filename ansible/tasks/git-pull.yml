@@ -1,0 +1,49 @@
+---
+# Reusable git pull tasks
+# Include with: include_tasks: ../tasks/git-pull.yml
+
+- name: Check if flake repo exists
+  stat:
+    path: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+  register: repo_check
+
+- name: Fail if repo doesn't exist
+  fail:
+    msg: "Flake repo not found at {{ flake_repo_path_override | default(flake_repo_path) }}"
+  when: not repo_check.stat.exists
+
+- name: Fetch latest from origin
+  command:
+    cmd: git fetch origin
+    chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+  register: git_fetch
+  changed_when: git_fetch.stdout != ''
+
+- name: Check for local changes
+  command:
+    cmd: git status --porcelain
+    chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+  register: git_status
+  changed_when: false
+
+- name: Handle flake.lock conflicts - reset if changed
+  command:
+    cmd: git checkout -- flake.lock
+    chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+  when: git_status.stdout is search('flake.lock')
+
+- name: Stash other local changes if any
+  command:
+    cmd: "git stash push -m 'ansible-rebuild-{{ ansible_date_time.iso8601 | default(ansible_facts.date_time.iso8601) }}'"
+    chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+  when:
+    - git_status.stdout != ''
+    - not (git_status.stdout | regex_search('^.{0,2}flake\\.lock$', multiline=True))
+  register: git_stash
+
+- name: Pull latest changes
+  command:
+    cmd: git pull --ff-only origin main
+    chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+  register: git_pull
+  changed_when: "'Already up to date' not in git_pull.stdout"
