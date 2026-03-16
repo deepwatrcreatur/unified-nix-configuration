@@ -2,6 +2,8 @@
   ...
 }:
 {
+  # Declarative host configuration
+  host.type = "lxc";
   host.services.iperf3.enable = true;
 
   imports = [

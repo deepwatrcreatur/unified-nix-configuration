@@ -1403,11 +1403,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773473457,
-        "narHash": "sha256-CDv0CNrx4jVpDmmW5OJBLN9zx4GD5/fqD8EipgD5XK4=",
+        "lastModified": 1773666312,
+        "narHash": "sha256-4+VOa5BAC3lNFQTAhCDxDAi8xrqUGbOsmq68ds9r73Y=",
         "ref": "refs/heads/main",
-        "rev": "545fd6babea1b24fc10c2030dce324e2d81b202a",
-        "revCount": 10,
+        "rev": "787ba7f5762d5581749b6bf045b67ffcc88bfa89",
+        "revCount": 11,
         "type": "git",
         "url": "ssh://git@github.com/deepwatrcreatur/nix-ssh-keys-manager"
       },
