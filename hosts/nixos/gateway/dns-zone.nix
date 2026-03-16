@@ -1,135 +1,46 @@
 # DNS zone configuration for the homelab.
-# Each attribute under `zones` is a separate Technitium zone.
-{
+# Generated from lib/hosts.nix - single source of truth
+let
+  hostsData = import ../../../lib/hosts.nix;
+
+  # Filter hosts that should be in DNS
+  dnsHosts = builtins.removeAttrs
+    (builtins.mapAttrs (name: host: host // { inherit name; }) hostsData.hosts)
+    (builtins.attrNames (builtins.filter (name:
+      !(hostsData.hosts.${name}.includeDns or true) || hostsData.hosts.${name}.ip or null == null
+    ) (builtins.attrNames hostsData.hosts)));
+
+  # Transform hosts to DNS zone format
+  hostsToDnsRecords = builtins.listToAttrs (
+    builtins.filter (x: x != null) (
+      builtins.map (name:
+        let host = hostsData.hosts.${name}; in
+        if (host.includeDns or true) && (host.ip or null) != null
+        then {
+          inherit name;
+          value = {
+            ipv4 = host.ip;
+            ipv6 = host.ipv6 or null;
+          } // (if host.aliases or [] != [] then { aliases = host.aliases; } else {});
+        }
+        else null
+      ) (builtins.attrNames hostsData.hosts)
+    )
+  );
+
+in {
   zones = {
-    "deepwatercreature.com" = {
-      # Static host records - these are version controlled and persistent.
+    "${hostsData.domain}" = {
+      # Static host records - generated from lib/hosts.nix
       hosts = {
+        # Root domain points to gateway
         "@" = {
-          ipv4 = "10.10.10.1";
+          ipv4 = hostsData.hosts.gateway.ip;
           ipv6 = null;
         };
+      } // hostsToDnsRecords;
 
-        # Core Infrastructure
-        gateway = {
-          ipv4 = "10.10.10.1";
-          ipv6 = null;
-          aliases = [
-            "router"
-            "dns"
-            "dhcp"
-            "firewall"
-            "www"
-            "dashboard"
-            "grafana"
-            "homelab"
-            "2fauth"
-            "nightscout"
-            "marreta"
-            "linkwarden"
-          ];
-        };
-
-        attic-cache = {
-          ipv4 = "10.10.11.39";
-          ipv6 = null;
-          aliases = [ "cache" "nix-cache" ];
-        };
-
-        apt-cache = {
-          ipv4 = "10.10.11.42";
-          ipv6 = null;
-          aliases = [ "apt-proxy" ];
-        };
-
-        workstation = {
-          ipv4 = "10.10.11.90";
-          ipv6 = null;
-        };
-
-        # Proxmox Hypervisors
-        pve-gateway = {
-          ipv4 = "10.10.11.52";
-          ipv6 = null;
-        };
-
-        pve-lattitude = {
-          ipv4 = "10.10.11.47";
-          ipv6 = null;
-        };
-
-        pve-rog = {
-          ipv4 = "10.10.11.45";
-          ipv6 = null;
-        };
-
-        pve-strix = {
-          ipv4 = "10.10.11.57";
-          ipv6 = null;
-        };
-
-        pve-tomahawk = {
-          ipv4 = "10.10.11.55";
-          ipv6 = null;
-        };
-
-        # LXC Containers and VMs
-        nixoslxc = {
-          ipv4 = "10.10.11.40";
-          ipv6 = null;
-        };
-
-        ansible = {
-          ipv4 = "10.10.11.67";
-          ipv6 = null;
-        };
-
-        rustdesk = {
-          ipv4 = "10.10.11.68";
-          ipv6 = null;
-        };
-
-        homeserver = {
-          ipv4 = "10.10.11.69";
-          ipv6 = null;
-        };
-
-        casaos = {
-          ipv4 = "10.10.11.77";
-          ipv6 = null;
-        };
-
-        podman = {
-          ipv4 = "10.10.11.84";
-          ipv6 = null;
-          aliases = [ "semaphore" "plex" ];
-        };
-
-        # Inference Servers
-        inference1 = {
-          ipv4 = "10.10.11.131";
-          ipv6 = null;
-        };
-
-        inference2 = {
-          ipv4 = "10.10.11.132";
-          ipv6 = null;
-        };
-
-        inference3 = {
-          ipv4 = "10.10.11.133";
-          ipv6 = null;
-        };
-
-        # Services
-        npm = {
-          ipv4 = "10.10.11.37";
-          ipv6 = null;
-          aliases = [ "proxy" ];
-        };
-      };
-
-      # Additional CNAME aliases (alternative to per-host aliases above).
+      # Additional CNAME aliases (for hosts not in hosts.nix)
       aliases = {
         # "www" = "gateway";
         # "mail" = "gateway";
