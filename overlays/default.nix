@@ -15,30 +15,31 @@
   })
 
   # Prefer COSMIC packages from nixpkgs-unstable (Dec 11 fixes)
-  (final: prev: {
-    # Import specific COSMIC packages from unstable
-    inherit
-      (import inputs.nixpkgs-unstable {
-        system = prev.stdenv.hostPlatform.system;
-        config = commonNixpkgsConfig;
-      })
-      xdg-desktop-portal-cosmic
-      cosmic-greeter
-      cosmic-panel
-      cosmic-applets
-      cosmic-icons
-      cosmic-settings
-      cosmic-term
-      cosmic-store
-      cosmic-files
-      cosmic-randr
-      cosmic-edit
-      cosmic-screenshot
-      cosmic-bg
-      cosmic-comp
-      cosmic-session
-      ;
-  })
+  (final: prev:
+    nixpkgsLib.optionalAttrs prev.stdenv.isLinux {
+      # Import specific COSMIC packages from unstable
+      inherit
+        (import inputs.nixpkgs-unstable {
+          system = prev.stdenv.hostPlatform.system;
+          config = commonNixpkgsConfig;
+        })
+        xdg-desktop-portal-cosmic
+        cosmic-greeter
+        cosmic-panel
+        cosmic-applets
+        cosmic-icons
+        cosmic-settings
+        cosmic-term
+        cosmic-store
+        cosmic-files
+        cosmic-randr
+        cosmic-edit
+        cosmic-screenshot
+        cosmic-bg
+        cosmic-comp
+        cosmic-session
+        ;
+    })
 
   # Worktrunk (git worktree management for parallel agents)
   (final: prev: {
@@ -75,7 +76,7 @@
   # Try to use fnox from nixpkgs first, fallback to flake input if not available
   (final: prev: {
     fnox =
-      if prev.stdenv.isLinux && prev.stdenv.isx86_64 then
+      if prev.stdenv.isLinux && prev.stdenv.hostPlatform.isx86_64 then
         (prev.fnox or inputs.fnox.packages.${prev.stdenv.hostPlatform.system}.default)
       else
         inputs.fnox.packages.${prev.stdenv.hostPlatform.system}.default;
