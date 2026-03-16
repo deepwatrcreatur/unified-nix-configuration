@@ -99,6 +99,12 @@
           ipv6 = null;
         };
 
+        podman = {
+          ipv4 = "10.10.11.84";
+          ipv6 = null;
+          aliases = [ "semaphore" "plex" ];
+        };
+
         # Inference Servers
         inference1 = {
           ipv4 = "10.10.11.131";
