@@ -16,7 +16,7 @@
 
     users.deepwatrcreatur = {
       imports = [
-        ../../../../users/deepwatrcreatur/hosts/nixos-lxc/nixos_lxc
+        ../../../../users/deepwatrcreatur/hosts/homeserver
       ];
     };
   };

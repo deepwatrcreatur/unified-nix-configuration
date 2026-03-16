@@ -1,0 +1,26 @@
+# users/deepwatrcreatur/hosts/homeserver/justfile
+
+# Rebuild homeserver NixOS configuration
+update dir="/home/deepwatrcreatur/flakes/unified-nix-configuration":
+  sudo nixos-rebuild switch --flake {{dir}}#homeserver
+
+# Rebuild using nh (nicer output)
+nh-update dir="/home/deepwatrcreatur/flakes/unified-nix-configuration":
+  nh os switch {{dir}} -- --flake {{dir}}#homeserver
+
+# Test build without switching
+test dir="/home/deepwatrcreatur/flakes/unified-nix-configuration":
+  sudo nixos-rebuild test --flake {{dir}}#homeserver
+
+# Build only (no switch)
+build dir="/home/deepwatrcreatur/flakes/unified-nix-configuration":
+  nixos-rebuild build --flake {{dir}}#homeserver
+
+# Pull latest and rebuild
+pull-update dir="/home/deepwatrcreatur/flakes/unified-nix-configuration":
+  cd {{dir}} && git pull && just update
+
+# Garbage collect old generations
+gc:
+  sudo nix-collect-garbage -d
+  nix-collect-garbage -d
