@@ -2,169 +2,50 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
-
-let
-  fnoxBin = if pkgs ? fnox then "${pkgs.fnox}/bin/fnox" else "fnox";
-  opencodeFromUnstable = pkgs.writeShellScriptBin "opencode" ''
-    exec nix run github:NixOS/nixpkgs/nixos-unstable#opencode -- "$@"
-  '';
-
-  opencode-zai = pkgs.writeShellScriptBin "opencode-zai" ''
-    set -euo pipefail
-
-    FNOX_CONFIG_PATH="''${FNOX_CONFIG:-$HOME/.config/fnox/config.toml}"
-    export FNOX_AGE_KEY_FILE="''${FNOX_AGE_KEY_FILE:-$HOME/.config/sops/age/keys.txt}"
-
-    value=$("${fnoxBin}" -c "$FNOX_CONFIG_PATH" get "Z_AI_API_KEY")
-    export OPENAI_API_KEY="$value"
-
-    export OPENCODE_PROVIDER="z.ai"
-    export OPENCODE_MODEL="GLM 4.7"
-
-    exec nix run github:NixOS/nixpkgs/nixos-unstable#opencode -- "$@"
-  '';
-
-  opencode-claude = pkgs.writeShellScriptBin "opencode-claude" ''
-    set -euo pipefail
-
-    FNOX_CONFIG_PATH="''${FNOX_CONFIG:-$HOME/.config/fnox/config.toml}"
-    export FNOX_AGE_KEY_FILE="''${FNOX_AGE_KEY_FILE:-$HOME/.config/sops/age/keys.txt}"
-
-    value=$("${fnoxBin}" -c "$FNOX_CONFIG_PATH" get "anthropic_api_key")
-    export ANTHROPIC_API_KEY="$value"
-
-    exec nix run github:NixOS/nixpkgs/nixos-unstable#opencode -- "$@"
-  '';
-in
 {
-  # Configure fnox environment variables (only if fnox package is available)
-  home.sessionVariables = lib.mkIf (pkgs ? fnox) {
-    # Point fnox to the sops age key
-    FNOX_AGE_KEY_FILE = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
-  };
+  imports = [ inputs.fnox.homeManagerModules.default ];
 
-  home.packages =
-    lib.optionals (pkgs ? fnox) (
-      [ pkgs.fnox ]
-      ++ lib.optionals (pkgs ? opencode-zai) [ pkgs.opencode-zai ]
-      ++ lib.optionals (pkgs ? opencode-claude) [ pkgs.opencode-claude ]
-      ++ lib.optionals (pkgs ? gh-fnox) [ pkgs.gh-fnox ]
-      ++ lib.optionals (pkgs ? bw-fnox) [ pkgs.bw-fnox ]
-    )
-    ++ [
-      opencodeFromUnstable
-      opencode-zai
-      opencode-claude
-    ];
-
-  # Create fnox configuration (only if fnox package is available)
-  # NOTE: fnox reads its global config from ~/.config/fnox/config.toml
-  xdg.configFile."fnox/config.toml" = lib.mkIf (pkgs ? fnox) {
-    text = ''
-      [providers.age]
-      type = "age"
+  config = lib.mkIf (pkgs ? fnox) {
+    programs.fnox = {
+      enable = true;
       recipients = [
-        "age17mn5lnlh2mgttp950wc7a2nl9kphewa4jj8e0uhlv3svx68a54vqyngcyr",
+        "age17mn5lnlh2mgttp950wc7a2nl9kphewa4jj8e0uhlv3svx68a54vqyngcyr"
         "age1awqed0la6x3rr39et8fjruw42mf8v2sqct78mcjzx5d226gcx9nqrjdmjz"
-      ]
+      ];
 
-      [secrets.GITHUB_TOKEN]
-      description = "GitHub Personal Access Token"
-      default = "age"
+      seedSecretSources = {
+        GITHUB_TOKEN = [
+          "${config.home.homeDirectory}/.config/git/github-token"
+          "${config.home.homeDirectory}/.local/share/agenix-user-secrets/github-token"
+          "/run/agenix/github-token-agenix"
+        ];
+        GROK_API_KEY = [
+          "${config.home.homeDirectory}/.local/share/agenix-user-secrets/grok-api-key"
+          "/run/agenix/grok-api-key"
+        ];
+        Z_AI_API_KEY = [
+          "${config.home.homeDirectory}/.local/share/agenix-user-secrets/z-ai-api-key"
+          "/run/agenix/z-ai-api-key"
+        ];
+        OPENCODE_ZEN_API_KEY = [
+          "${config.home.homeDirectory}/.local/share/agenix-user-secrets/opencode-zen-api-key"
+          "/run/agenix/opencode-zen-api-key"
+        ];
+        OPENROUTER_API_KEY = [
+          "${config.home.homeDirectory}/.local/share/agenix-user-secrets/openrouter-api-key"
+          "/run/agenix/openrouter-api-key"
+        ];
+        PROXMOX_API_TOKEN = [
+          "${config.home.homeDirectory}/.local/share/agenix-user-secrets/proxmox-api-token"
+          "/run/agenix/proxmox-api-token"
+        ];
+      };
+    };
 
-      [secrets.GROK_API_KEY]
-      description = "XAI Grok API Key"
-      default = "age"
-
-      [secrets.BW_SESSION]
-      description = "Bitwarden Session Key"
-      default = "age"
-
-      [secrets.ATTIC_CLIENT_JWT_TOKEN]
-      description = "Attic Client JWT Token"
-      default = "age"
-
-      [secrets.OPENCODE_ZEN_API_KEY]
-      description = "OpenCode Zen API Key"
-      default = "age"
-
-      [secrets.Z_AI_API_KEY]
-      description = "Z.AI API Key"
-      default = "age"
-    '';
+    # Keep plain opencode installed in addition to the fnox-backed wrappers.
+    home.packages = lib.optionals (pkgs ? opencode) [ pkgs.opencode ];
   };
-
-  # Seed fnox secrets from agenix.
-  # This keeps wrappers working without injecting secrets into every shell.
-  home.activation.fnoxSeedFromAgenix = lib.mkIf (pkgs ? fnox) (
-    lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      if command -v fnox >/dev/null 2>&1; then
-        export FNOX_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
-        export FNOX_CONFIG="$HOME/.config/fnox/config.toml"
-
-        seed_secret() {
-          name="$1"
-          file="$2"
-
-          if [ -z "$file" ] || [ ! -f "$file" ]; then
-            return 0
-          fi
-
-          if fnox -c "$FNOX_CONFIG" get "$name" >/dev/null 2>&1; then
-            return 0
-          fi
-
-          value="$(cat "$file" 2>/dev/null || true)"
-          if [ -z "$value" ]; then
-            return 0
-          fi
-
-          fnox -c "$FNOX_CONFIG" set "$name" "$value" >/dev/null 2>&1 || true
-        }
-
-        # Seed from agenix secrets
-        # Handle github-token specifically since it exists in the raw file too
-        if [ -f "$HOME/.config/git/github-token" ]; then
-           seed_secret GITHUB_TOKEN "$HOME/.config/git/github-token"
-        elif [ -f "$HOME/.local/share/agenix-user-secrets/github-token" ]; then
-           seed_secret GITHUB_TOKEN "$HOME/.local/share/agenix-user-secrets/github-token"
-        elif [ -f "/run/agenix/github-token-agenix" ]; then
-           seed_secret GITHUB_TOKEN "/run/agenix/github-token-agenix"
-        fi
-
-        if [ -f "$HOME/.local/share/agenix-user-secrets/grok-api-key" ]; then
-          seed_secret GROK_API_KEY "$HOME/.local/share/agenix-user-secrets/grok-api-key"
-        else
-          seed_secret GROK_API_KEY "/run/agenix/grok-api-key"
-        fi
-
-        if [ -f "$HOME/.local/share/agenix-user-secrets/z-ai-api-key" ]; then
-          seed_secret Z_AI_API_KEY "$HOME/.local/share/agenix-user-secrets/z-ai-api-key"
-        else
-          seed_secret Z_AI_API_KEY "/run/agenix/z-ai-api-key"
-        fi
-
-        if [ -f "$HOME/.local/share/agenix-user-secrets/opencode-zen-api-key" ]; then
-          seed_secret OPENCODE_ZEN_API_KEY "$HOME/.local/share/agenix-user-secrets/opencode-zen-api-key"
-        else
-          seed_secret OPENCODE_ZEN_API_KEY "/run/agenix/opencode-zen-api-key"
-        fi
-
-        if [ -f "$HOME/.local/share/agenix-user-secrets/openrouter-api-key" ]; then
-          seed_secret OPENROUTER_API_KEY "$HOME/.local/share/agenix-user-secrets/openrouter-api-key"
-        else
-          seed_secret OPENROUTER_API_KEY "/run/agenix/openrouter-api-key"
-        fi
-      fi
-
-    ''
-  );
-
-  # Shell integration intentionally disabled.
-  #
-  # Some fnox builds do not provide a `fnox env` subcommand. We rely on explicit
-  # wrappers (e.g. `gh-fnox`, `opencode-zai`) to fetch only the secrets needed
-  # for that command via `fnox get ...`.
 }

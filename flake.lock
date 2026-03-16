@@ -705,40 +705,22 @@
     "fnox": {
       "inputs": {
         "flake-utils": "flake-utils_6",
-        "fnox-src": "fnox-src",
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1768427971,
-        "narHash": "sha256-5nu2+/3ZlNnC9707ogXxnyt7FEZJ0fKepNWxNVQ/K7A=",
-        "ref": "refs/heads/main",
-        "rev": "0569537ba6b71219ce63af189aa17887f1ea63c9",
-        "revCount": 9,
+        "lastModified": 1773646536,
+        "narHash": "sha256-2MCG4/wsX4CgaJohV0VqONgTtyDTlJo/mBYXUCqcWD8=",
+        "ref": "feat/modularize-fnox-flake",
+        "rev": "1b45aea46308bf8de62000fa9ceb5deeb62d5255",
+        "revCount": 10,
         "type": "git",
         "url": "ssh://git@github.com/deepwatrcreatur/fnox-flake"
       },
       "original": {
         "type": "git",
         "url": "ssh://git@github.com/deepwatrcreatur/fnox-flake"
-      }
-    },
-    "fnox-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1764269156,
-        "narHash": "sha256-ThGs9KFbwVp80RtivKOiwnrzx52H1t0RDu+EhUXHCzw=",
-        "owner": "jdx",
-        "repo": "fnox",
-        "rev": "fe25084e61d21f2bd33305b9fa67136956d3ab9c",
-        "type": "github"
-      },
-      "original": {
-        "owner": "jdx",
-        "ref": "v1.7.0",
-        "repo": "fnox",
-        "type": "github"
       }
     },
     "git-hooks-nix": {
