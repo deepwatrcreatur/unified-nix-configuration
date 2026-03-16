@@ -31,4 +31,7 @@
 
   # Enable attic client for binary cache
   myModules.attic-client.enable = true;
+
+  # Allow the Nix daemon to use the user's GPG SSH socket for git+ssh flake inputs
+  systemd.services.nix-daemon.environment.SSH_AUTH_SOCK = "/run/user/1000/gnupg/S.gpg-agent.ssh";
 }
