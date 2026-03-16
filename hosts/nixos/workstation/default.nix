@@ -229,6 +229,10 @@
   # Enable QEMU guest agent for Proxmox integration
   services.qemuGuest.enable = true;
 
+  # Allow the Nix daemon to use the workstation user's stable GPG SSH socket
+  # for git+ssh flake inputs during local rebuilds.
+  systemd.services.nix-daemon.environment.SSH_AUTH_SOCK = "/run/user/1000/gnupg/S.gpg-agent.ssh";
+
   # Attic client - disabled during sops->agenix migration
   # TODO: Update nix-attic-infra module to support agenix or configure manually
   # services.attic-client configuration removed - module not imported
