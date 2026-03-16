@@ -35,8 +35,8 @@
         environment = {
           SEMAPHORE_DB_DIALECT = "bolt";  # Simple file-based DB
           SEMAPHORE_ADMIN = "admin";
-          # Set this after first run or use agenix for secrets
-          # SEMAPHORE_ADMIN_PASSWORD = "changeme";
+          SEMAPHORE_ADMIN_PASSWORD = "changeme";  # Change after first login
+          SEMAPHORE_ADMIN_EMAIL = "admin@localhost";
         };
         extraOptions = [
           "--name=semaphore"
