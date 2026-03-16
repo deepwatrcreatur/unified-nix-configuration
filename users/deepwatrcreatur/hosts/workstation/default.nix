@@ -18,6 +18,7 @@ in
     ./distrobox.nix
 
     ../../../../modules/home-manager
+    ../../../../modules/home-manager/agenix-user-secrets.nix
     ../../../../modules/home-manager/ghostty
     ../../../../modules/home-manager/gpg-agent-cross-de.nix
     ../../../../modules/home-manager/zed.nix
@@ -32,6 +33,52 @@ in
     agents = map (agent: {
       inherit (agent) id name command;
     }) codingAgents;
+  };
+
+  services.agenix-user-secrets = {
+    enable = true;
+    secrets = {
+      github-token = {
+        source = ../../../../secrets-agenix/github-token.age;
+        target = ".local/share/agenix-user-secrets/github-token";
+      };
+      grok-api-key = {
+        source = ../../../../secrets-agenix/grok-api-key.age;
+        target = ".local/share/agenix-user-secrets/grok-api-key";
+      };
+      openrouter-api-key = {
+        source = ../../../../secrets-agenix/openrouter-api-key.age;
+        target = ".local/share/agenix-user-secrets/openrouter-api-key";
+      };
+      z-ai-api-key = {
+        source = ../../../../secrets-agenix/z-ai-api-key.age;
+        target = ".local/share/agenix-user-secrets/z-ai-api-key";
+      };
+      opencode-zen-api-key = {
+        source = ../../../../secrets-agenix/opencode-zen-api-key.age;
+        target = ".local/share/agenix-user-secrets/opencode-zen-api-key";
+      };
+      atuin-key-b64 = {
+        source = ../../../../secrets-agenix/atuin-key-b64.age;
+        target = ".local/share/agenix-user-secrets/atuin-key-b64";
+      };
+      oauth-creds = {
+        source = ../../../../secrets-agenix/oauth-creds.age;
+        target = ".local/share/agenix-user-secrets/oauth-creds";
+      };
+      bitwarden-data = {
+        source = ../../../../secrets-agenix/bitwarden-data.age;
+        target = ".local/share/agenix-user-secrets/bitwarden-data";
+      };
+      rclone-conf = {
+        source = ../../../../secrets-agenix/rclone-conf.age;
+        target = ".local/share/agenix-user-secrets/rclone-conf";
+      };
+      proxmox-api-token = {
+        source = ../../../../secrets-agenix/proxmox-api-token.age;
+        target = ".local/share/agenix-user-secrets/proxmox-api-token";
+      };
+    };
   };
 
   programs.distrobox.fedora.enable = true;
@@ -106,7 +153,7 @@ in
   # to inject the secret from agenix
   home.activation.cosmicAppletProxmoxbarConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     mkdir -p "$HOME/.config/cosmic-applet-proxmoxbar"
-    SECRET_PATH="/run/agenix/proxmox-api-token"
+    SECRET_PATH="$HOME/.local/share/agenix-user-secrets/proxmox-api-token"
     if [ -f "$SECRET_PATH" ]; then
       API_TOKEN_SECRET=$(cat "$SECRET_PATH")
     else
@@ -158,7 +205,7 @@ EOF
   home.file.".config/cosmic-applet-agents-status/config.toml".text = ''
     poll_seconds = 90
     claude_cache_ttl_seconds = 60
-    openrouter_api_key_path = "/run/agenix/openrouter-api-key"
+    openrouter_api_key_path = "${config.home.homeDirectory}/.local/share/agenix-user-secrets/openrouter-api-key"
 
     [[agents]]
     id = "claude"

@@ -128,14 +128,35 @@ in
         # Handle github-token specifically since it exists in the raw file too
         if [ -f "$HOME/.config/git/github-token" ]; then
            seed_secret GITHUB_TOKEN "$HOME/.config/git/github-token"
+        elif [ -f "$HOME/.local/share/agenix-user-secrets/github-token" ]; then
+           seed_secret GITHUB_TOKEN "$HOME/.local/share/agenix-user-secrets/github-token"
         elif [ -f "/run/agenix/github-token-agenix" ]; then
            seed_secret GITHUB_TOKEN "/run/agenix/github-token-agenix"
         fi
 
-        seed_secret GROK_API_KEY "/run/agenix/grok-api-key"
-        seed_secret Z_AI_API_KEY "/run/agenix/z-ai-api-key"
-        seed_secret OPENCODE_ZEN_API_KEY "/run/agenix/opencode-zen-api-key"
-        seed_secret OPENROUTER_API_KEY "/run/agenix/openrouter-api-key"
+        if [ -f "$HOME/.local/share/agenix-user-secrets/grok-api-key" ]; then
+          seed_secret GROK_API_KEY "$HOME/.local/share/agenix-user-secrets/grok-api-key"
+        else
+          seed_secret GROK_API_KEY "/run/agenix/grok-api-key"
+        fi
+
+        if [ -f "$HOME/.local/share/agenix-user-secrets/z-ai-api-key" ]; then
+          seed_secret Z_AI_API_KEY "$HOME/.local/share/agenix-user-secrets/z-ai-api-key"
+        else
+          seed_secret Z_AI_API_KEY "/run/agenix/z-ai-api-key"
+        fi
+
+        if [ -f "$HOME/.local/share/agenix-user-secrets/opencode-zen-api-key" ]; then
+          seed_secret OPENCODE_ZEN_API_KEY "$HOME/.local/share/agenix-user-secrets/opencode-zen-api-key"
+        else
+          seed_secret OPENCODE_ZEN_API_KEY "/run/agenix/opencode-zen-api-key"
+        fi
+
+        if [ -f "$HOME/.local/share/agenix-user-secrets/openrouter-api-key" ]; then
+          seed_secret OPENROUTER_API_KEY "$HOME/.local/share/agenix-user-secrets/openrouter-api-key"
+        else
+          seed_secret OPENROUTER_API_KEY "/run/agenix/openrouter-api-key"
+        fi
       fi
 
     ''

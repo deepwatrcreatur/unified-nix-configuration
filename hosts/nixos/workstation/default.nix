@@ -267,63 +267,6 @@
   ];
   nixpkgs.config.allowUnfree = true;
 
-  # Agenix test configuration (parallel with sops)
-  age.secrets = {
-    github-token-agenix = {
-      file = ../../../secrets-agenix/github-token.age;
-      owner = "deepwatrcreatur";
-      group = "users";
-    };
-    grok-api-key = {
-      file = ../../../secrets-agenix/grok-api-key.age;
-      owner = "deepwatrcreatur";
-      group = "users";
-    };
-    openrouter-api-key = {
-      file = ../../../secrets-agenix/openrouter-api-key.age;
-      owner = "deepwatrcreatur";
-      group = "users";
-    };
-    z-ai-api-key = {
-      file = ../../../secrets-agenix/z-ai-api-key.age;
-      owner = "deepwatrcreatur";
-      group = "users";
-    };
-    opencode-zen-api-key = {
-      file = ../../../secrets-agenix/opencode-zen-api-key.age;
-      owner = "deepwatrcreatur";
-      group = "users";
-    };
-    atuin-key-b64 = {
-      file = ../../../secrets-agenix/atuin-key-b64.age;
-      owner = "deepwatrcreatur";
-      group = "users";
-    };
-    oauth-creds = {
-      file = ../../../secrets-agenix/oauth-creds.age;
-      owner = "deepwatrcreatur";
-      group = "users";
-    };
-    bitwarden-data = {
-      file = ../../../secrets-agenix/bitwarden-data.age;
-      owner = "deepwatrcreatur";
-      group = "users";
-    };
-    rclone-conf = {
-      file = ../../../secrets-agenix/rclone-conf.age;
-      owner = "deepwatrcreatur";
-      group = "users";
-    };
-    proxmox-api-token = {
-      file = ../../../secrets-agenix/proxmox-api-token.age;
-      owner = "deepwatrcreatur";
-      group = "users";
-    };
-  };
-
-  # Test: Make available as env var
-  environment.variables.GITHUB_TOKEN_AGENIX = config.age.secrets.github-token-agenix.path;
-
   services.resolved.enable = true; # Explicitly enable systemd-resolved for automatic DNS management
   system.stateVersion = "25.05";
 }

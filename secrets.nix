@@ -24,17 +24,10 @@ let
     users.deepwatrcreatur
   ];
 
-  workstationUserSecrets = operatorUsers ++ [
-    hosts.workstation
-  ];
+  userOnlySecrets = operatorUsers;
 
   gatewayServiceSecrets = operatorUsers ++ [
     hosts.gateway
-  ];
-
-  gatewayAndWorkstationSecrets = operatorUsers ++ [
-    hosts.gateway
-    hosts.workstation
   ];
 
   atticServiceSecrets = operatorUsers ++ [
@@ -50,20 +43,20 @@ in
   # Service-scoped secrets
   "secrets-agenix/cloudflare-api-key.age".publicKeys = gatewayServiceSecrets;
   "secrets-agenix/cloudflare_ddns_API_token.age".publicKeys = gatewayServiceSecrets;
-  "secrets-agenix/technitium-api-key.age".publicKeys = gatewayAndWorkstationSecrets;
+  "secrets-agenix/technitium-api-key.age".publicKeys = gatewayServiceSecrets;
   "secrets-agenix/attic-client-token.age".publicKeys = atticClientSecrets;
   "secrets-agenix/attic-server-token.age".publicKeys = atticServiceSecrets;
   "secrets-agenix/attic-jwt-secret.age".publicKeys = atticServiceSecrets;
 
-  # Operator/user secrets, still including the consuming host where NixOS decrypts them at activation
-  "secrets-agenix/github-token.age".publicKeys = workstationUserSecrets;
-  "secrets-agenix/grok-api-key.age".publicKeys = workstationUserSecrets;
-  "secrets-agenix/openrouter-api-key.age".publicKeys = workstationUserSecrets;
-  "secrets-agenix/z-ai-api-key.age".publicKeys = workstationUserSecrets;
-  "secrets-agenix/opencode-zen-api-key.age".publicKeys = workstationUserSecrets;
-  "secrets-agenix/atuin-key-b64.age".publicKeys = workstationUserSecrets;
-  "secrets-agenix/oauth-creds.age".publicKeys = workstationUserSecrets;
-  "secrets-agenix/bitwarden-data.age".publicKeys = workstationUserSecrets;
-  "secrets-agenix/rclone-conf.age".publicKeys = workstationUserSecrets;
-  "secrets-agenix/proxmox-api-token.age".publicKeys = workstationUserSecrets;
+  # Operator/user secrets decrypted directly in Home Manager with the stable user key
+  "secrets-agenix/github-token.age".publicKeys = userOnlySecrets;
+  "secrets-agenix/grok-api-key.age".publicKeys = userOnlySecrets;
+  "secrets-agenix/openrouter-api-key.age".publicKeys = userOnlySecrets;
+  "secrets-agenix/z-ai-api-key.age".publicKeys = userOnlySecrets;
+  "secrets-agenix/opencode-zen-api-key.age".publicKeys = userOnlySecrets;
+  "secrets-agenix/atuin-key-b64.age".publicKeys = userOnlySecrets;
+  "secrets-agenix/oauth-creds.age".publicKeys = userOnlySecrets;
+  "secrets-agenix/bitwarden-data.age".publicKeys = userOnlySecrets;
+  "secrets-agenix/rclone-conf.age".publicKeys = userOnlySecrets;
+  "secrets-agenix/proxmox-api-token.age".publicKeys = userOnlySecrets;
 }
