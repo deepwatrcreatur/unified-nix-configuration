@@ -11,6 +11,7 @@
       allowedTCPPorts = [
         24800
         631
+        5201
       ]; # Deskflow server and CUPS
     };
 
