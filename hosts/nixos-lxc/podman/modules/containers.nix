@@ -10,11 +10,12 @@
   };
 
   # Create persistent data directories
+  # Use 0777 for container data dirs since container UIDs may differ from host
   systemd.tmpfiles.rules = [
-    "d /var/lib/semaphore 0755 root root -"
-    "d /var/lib/plex 0755 deepwatrcreatur deepwatrcreatur -"
-    "d /var/lib/plex/config 0755 deepwatrcreatur deepwatrcreatur -"
-    "d /var/lib/plex/transcode 0755 deepwatrcreatur deepwatrcreatur -"
+    "d /var/lib/semaphore 0777 root root -"
+    "d /var/lib/plex 0777 root root -"
+    "d /var/lib/plex/config 0777 root root -"
+    "d /var/lib/plex/transcode 0777 root root -"
   ];
 
   # Declarative OCI containers managed by systemd
