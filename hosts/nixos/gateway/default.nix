@@ -20,6 +20,7 @@
       enableSsh = true;
       enableDocker = false;
       enablePodman = true;
+      iperf3.enable = true;
     };
   };
 

@@ -39,8 +39,8 @@
         # Allow monitoring dashboards on LAN and management
         iifname {"ens16", "ens18"} tcp dport {3001, 8888, 9090, 19999} accept comment "Grafana, Custom Dashboard, Prometheus, Netdata"
         
-        # Allow iperf3 from LAN and management
-        iifname {"ens16", "ens18"} tcp dport 5201 accept
+        # Allow iperf3 from LAN only
+        iifname "ens16" tcp dport 5201 accept
         
         # Allow HTTP/HTTPS from WAN for Caddy reverse proxy
         iifname "ens17" tcp dport {80, 443} accept comment "Caddy HTTP/HTTPS"

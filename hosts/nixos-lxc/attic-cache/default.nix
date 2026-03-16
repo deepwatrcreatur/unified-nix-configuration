@@ -4,7 +4,10 @@
   ...
 }:
 {
+  host.services.iperf3.enable = true;
+
   imports = [
+    ../../../modules/nixos/services/iperf3.nix
     ../../../modules/nixos/attic-observatory.nix
     ./modules/configuration.nix
     ./modules/build-server.nix
