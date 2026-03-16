@@ -74,7 +74,7 @@
     };
 
     fnox = {
-      url = "git+ssh://git@github.com/deepwatrcreatur/fnox-flake";
+      url = "git+ssh://git@github.com/deepwatrcreatur/fnox-flake?ref=feat/modularize-fnox-flake";
       inputs.nixpkgs.follows = "nixpkgs";
       flake = true;
     };
