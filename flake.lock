@@ -710,16 +710,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1773656582,
-        "narHash": "sha256-D4lSwH3xA8aDwJ3FFwjO/d8OKhaTQRGnL0JQR7Fjc2A=",
-        "ref": "feat/modularize-fnox-flake",
-        "rev": "8d428c34571abbb83dc868bc078bfb5a5df15028",
-        "revCount": 11,
+        "lastModified": 1773657705,
+        "narHash": "sha256-7fCRoeJKD/H24YmzIlfFEZ0gYDghMktbnPydSukX19U=",
+        "ref": "refs/heads/main",
+        "rev": "8b5535e8bdac6d1b327a98bd6c0b478515e6aa20",
+        "revCount": 10,
         "type": "git",
         "url": "ssh://git@github.com/deepwatrcreatur/fnox-flake"
       },
       "original": {
-        "ref": "feat/modularize-fnox-flake",
         "type": "git",
         "url": "ssh://git@github.com/deepwatrcreatur/fnox-flake"
       }
