@@ -1040,11 +1040,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773701417,
-        "narHash": "sha256-qQywSfL+tF6RMbOTto+YpI8cvz9UVnw/9ivKnZbDd/Q=",
+        "lastModified": 1773702098,
+        "narHash": "sha256-MY42ognI1H0Lt+m4yJ9dyyJPABAq+9U+WH1HveXfiVY=",
         "owner": "deepwatrcreatur",
         "repo": "nix-semaphore",
-        "rev": "e78b0a9a89dab557ee7499dfeb7640fcfb66a432",
+        "rev": "553bbabeabefe311dabfd7f094a623adeee7c0ee",
         "type": "github"
       },
       "original": {
