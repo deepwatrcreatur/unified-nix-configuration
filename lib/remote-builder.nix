@@ -1,0 +1,7 @@
+{
+  supportedHosts = [
+    "gateway"
+    "homeserver"
+    "workstation"
+  ];
+}

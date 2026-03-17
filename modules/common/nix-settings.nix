@@ -7,6 +7,8 @@
 }:
 
 let
+  remoteBuilder = import ../../lib/remote-builder.nix;
+
   # Path to GitHub token (works for both user and root contexts)
   githubTokenPath =
     if
@@ -29,13 +31,8 @@ let
   # Detect if this is the attic-cache server itself (avoid circular dependency)
   isCacheServer = config.networking.hostName or "" == "attic-cache";
 
-  remoteBuilderSupportedHosts = [
-    "gateway"
-    "homeserver"
-    "workstation"
-  ];
   remoteBuilderKeyPath = if pkgs.stdenv.isDarwin then "/var/root/.ssh/nix-remote" else "/root/.ssh/nix-remote";
-  hasDeclarativeRemoteBuilderKey = builtins.elem (config.networking.hostName or "") remoteBuilderSupportedHosts;
+  hasDeclarativeRemoteBuilderKey = builtins.elem (config.networking.hostName or "") remoteBuilder.supportedHosts;
   canUseRemoteBuilder = !isCacheServer && hasDeclarativeRemoteBuilderKey;
 in
 {

@@ -1,13 +1,9 @@
 { config, lib, pkgs, ... }:
 
 let
-  remoteBuilderSupportedHosts = [
-    "gateway"
-    "homeserver"
-    "workstation"
-  ];
+  remoteBuilder = import ../../../lib/remote-builder.nix;
   hostName = config.networking.hostName or "";
-  canUseRemoteBuilder = hostName != "attic-cache" && builtins.elem hostName remoteBuilderSupportedHosts;
+  canUseRemoteBuilder = hostName != "attic-cache" && builtins.elem hostName remoteBuilder.supportedHosts;
   remoteBuilderKeyPath = if pkgs.stdenv.isDarwin then "/var/root/.ssh/nix-remote" else "/root/.ssh/nix-remote";
 in
 {

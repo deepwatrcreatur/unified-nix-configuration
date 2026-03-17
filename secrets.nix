@@ -1,6 +1,8 @@
 # Auto-generated secrets.nix for agenix
 # Manually normalized after replacing the old homeserver LXC.
 let
+  remoteBuilder = import ./lib/remote-builder.nix;
+
   hosts = {
     attic-cache = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBMzmqOZ301fwZJVQI5KZ9+npuFs+3EvwKet4peLZeLv";
     gateway = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGjM16WJ9SUCs+moDo8QTTbbEJMd0EYZPGItC6oV4WiO root@nixos";
@@ -34,11 +36,7 @@ let
     hosts.attic-cache
   ];
 
-  remoteBuilderClientSecrets = operatorUsers ++ [
-    hosts.gateway
-    hosts.homeserver
-    hosts.workstation
-  ];
+  remoteBuilderClientSecrets = operatorUsers ++ map (hostName: hosts.${hostName}) remoteBuilder.supportedHosts;
 
   # All hosts that build from this repo should be able to use the attic cache
   atticClientSecrets = operatorUsers ++ [
