@@ -25,6 +25,7 @@
   services.semaphore = {
     enable = true;
     openFirewall = true;
+    host = "http://homeserver:3000";  # Required for WebSocket connections
   };
 
   # SSH keys manager - deploy authorized_keys from ssh-keys/ directory
