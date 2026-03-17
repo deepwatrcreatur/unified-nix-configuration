@@ -29,8 +29,6 @@ in {
   imports = [
     inputs.ssh-keys-manager.nixosModules.default
     inputs.ssh-keys-manager.nixosModules.ssh-known-hosts
-    # ssh-remote-builder-keys removed - requires sops-nix module
-    # TODO: Create agenix-based alternative for nix remote builder key
   ];
 
   # Note: The per-host NixOS config must set services.ssh-keys-manager.username

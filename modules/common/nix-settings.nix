@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  options,
   pkgs,
   inputs,
   ...
@@ -28,9 +29,27 @@ let
 
   # Detect if this is the attic-cache server itself (avoid circular dependency)
   isCacheServer = config.networking.hostName or "" == "attic-cache";
+
+  remoteBuilderSupportedHosts = [
+    "gateway"
+    "homeserver"
+    "podman"
+    "workstation"
+  ];
+  remoteBuilderKeyPath = if pkgs.stdenv.isDarwin then "/var/root/.ssh/nix-remote" else "/root/.ssh/nix-remote";
+  hasDeclarativeRemoteBuilderKey = builtins.elem (config.networking.hostName or "") remoteBuilderSupportedHosts;
+  canUseRemoteBuilder = !isCacheServer && hasDeclarativeRemoteBuilderKey;
 in
 {
   nixpkgs.config.allowUnfree = true;
+
+  age.secrets.nix-remote-builder-key = lib.mkIf (canUseRemoteBuilder && options ? age) {
+    file = ../../secrets-agenix/nix-remote-builder-key.age;
+    path = remoteBuilderKeyPath;
+    owner = "root";
+    group = "root";
+    mode = "0400";
+  };
 
   nix.settings = {
     experimental-features = [
@@ -119,8 +138,8 @@ in
   nix.settings.use-cgroups = lib.mkIf (!isContainer) true;
 
   # Remote building configuration
-  nix.distributedBuilds = lib.mkIf (!isCacheServer) true;
-  nix.buildMachines = lib.mkIf (!isCacheServer) [
+  nix.distributedBuilds = lib.mkIf canUseRemoteBuilder true;
+  nix.buildMachines = lib.mkIf canUseRemoteBuilder [
     {
       hostName = "10.10.11.39"; # attic-cache
       system = "x86_64-linux";
@@ -133,7 +152,7 @@ in
         "kvm"
       ];
       sshUser = "deepwatrcreatur";
-      sshKey = if pkgs.stdenv.isDarwin then "/var/root/.ssh/nix-remote" else "/root/.ssh/nix-remote";
+      sshKey = remoteBuilderKeyPath;
     }
   ];
 }
