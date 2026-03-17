@@ -1060,11 +1060,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773703796,
-        "narHash": "sha256-Br41geQzfA2oqTa8K3G2VEl5ynhTq9vzR9dQ53nmp9U=",
+        "lastModified": 1773711158,
+        "narHash": "sha256-LQhHgp6+m9kT60AKc2PkuctspckN5NjrjzB4EtpIU+g=",
         "owner": "deepwatrcreatur",
         "repo": "nix-semaphore",
-        "rev": "523586bdea95b1e76acd56974903748ec232745b",
+        "rev": "0d3020d9f4cc5e0669d1afeef6a62c0e65fbe410",
         "type": "github"
       },
       "original": {
