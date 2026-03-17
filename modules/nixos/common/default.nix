@@ -8,6 +8,7 @@
     ./locale.nix
     ./nh.nix
     ./ssh-keys.nix
+    ./remote-builder-key.nix
     ./agenix.nix
     ./fstrim.nix
     ./git-ssh.nix

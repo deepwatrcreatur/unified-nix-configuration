@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  options,
   pkgs,
   inputs,
   ...
@@ -33,7 +32,6 @@ let
   remoteBuilderSupportedHosts = [
     "gateway"
     "homeserver"
-    "podman"
     "workstation"
   ];
   remoteBuilderKeyPath = if pkgs.stdenv.isDarwin then "/var/root/.ssh/nix-remote" else "/root/.ssh/nix-remote";
@@ -42,14 +40,6 @@ let
 in
 {
   nixpkgs.config.allowUnfree = true;
-
-  age.secrets.nix-remote-builder-key = lib.mkIf (canUseRemoteBuilder && options ? age) {
-    file = ../../secrets-agenix/nix-remote-builder-key.age;
-    path = remoteBuilderKeyPath;
-    owner = "root";
-    group = "root";
-    mode = "0400";
-  };
 
   nix.settings = {
     experimental-features = [
