@@ -143,6 +143,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-lightpanda = {
+      url = "github:deepwatrcreatur/nix-lightpanda";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs =
@@ -479,6 +484,9 @@
         (final: prev: {
           opencode = inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.hostPlatform.system}.opencode;
         })
+
+        # Lightpanda headless browser for AI agents
+        inputs.nix-lightpanda.overlays.default
 
         # Tesla inference overlays for GPU optimization
         inputs.tesla-inference-flake.overlays.ollama-official-binaries # Use official binaries to avoid cuda_compat build error

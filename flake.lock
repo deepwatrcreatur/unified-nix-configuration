@@ -990,6 +990,26 @@
         "type": "github"
       }
     },
+    "nix-lightpanda": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1773708856,
+        "narHash": "sha256-pEZ0CFuB9hribYDrotivsB2RWnYcqLASvOWSCDm4JO0=",
+        "owner": "deepwatrcreatur",
+        "repo": "nix-lightpanda",
+        "rev": "bd237cb46bea8255db4c30e4efa304a836d6aa3f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "deepwatrcreatur",
+        "repo": "nix-lightpanda",
+        "type": "github"
+      }
+    },
     "nix-linuxbrew": {
       "inputs": {
         "flake-utils": "flake-utils_7",
@@ -1379,6 +1399,7 @@
         "nix-gnome-cosmic-ui": "nix-gnome-cosmic-ui",
         "nix-homebrew": "nix-homebrew",
         "nix-index-database": "nix-index-database",
+        "nix-lightpanda": "nix-lightpanda",
         "nix-linuxbrew": "nix-linuxbrew",
         "nix-router-optimized": "nix-router-optimized",
         "nix-semaphore": "nix-semaphore",
