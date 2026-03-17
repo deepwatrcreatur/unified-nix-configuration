@@ -219,6 +219,7 @@
     satty # Screenshot annotation tool inspired by Swappy and Flameshot
     gthumb # Image browser and viewer with crop support
     yt-dlp # YouTube and video downloader
+    vivaldi # Chromium-based browser with advanced features
   ];
 
   # Enable nix-ld for running dynamically linked executables (like homebrew packages)
