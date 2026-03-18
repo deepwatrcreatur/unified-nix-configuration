@@ -22,16 +22,23 @@
   ];
 
   # Create static resolv.conf with our nameservers and search domain
-  environment.etc."resolv.conf".text = ''
-    # Gateway DNS configuration
-    # Primary: Technitium DNS on localhost
-    # Fallback: Cloudflare and Google
-    search deepwatercreature.com
-    nameserver 127.0.0.1
-    nameserver 1.1.1.1
-    nameserver 8.8.8.8
-    options edns0
-  '';
+  # systemd-networkd may override this, so we use a systemd service to restore it
+  systemd.services.fix-resolv-conf = {
+    description = "Set correct resolv.conf with search domain";
+    wantedBy = [ "network.target" ];
+    after = [ "systemd-networkd.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = pkgs.writeScript "fix-resolv-conf.sh" ''
+        #!/bin/sh
+        echo "search deepwatercreature.com" > /etc/resolv.conf
+        echo "nameserver 127.0.0.1" >> /etc/resolv.conf
+        echo "nameserver 1.1.1.1" >> /etc/resolv.conf
+        echo "nameserver 8.8.8.8" >> /etc/resolv.conf
+      '';
+    };
+  };
 
   # If Technitium fails, you can still SSH via IP: ssh 192.168.100.100
 
