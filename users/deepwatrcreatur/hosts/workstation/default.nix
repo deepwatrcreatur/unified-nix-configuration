@@ -28,6 +28,7 @@
       github-token = {
         source = ../../../../secrets-agenix/github-token.age;
         target = ".local/share/agenix-user-secrets/github-token";
+        extraTargets = [ ".config/git/github-token" ];
       };
       grok-api-key = {
         source = ../../../../secrets-agenix/grok-api-key.age;
@@ -52,10 +53,12 @@
       oauth-creds = {
         source = ../../../../secrets-agenix/oauth-creds.age;
         target = ".local/share/agenix-user-secrets/oauth-creds";
+        extraTargets = [ ".gemini/oauth_creds.json" ];
       };
       bitwarden-data = {
         source = ../../../../secrets-agenix/bitwarden-data.age;
         target = ".local/share/agenix-user-secrets/bitwarden-data";
+        extraTargets = [ ".config/Bitwarden CLI/data.json" ];
       };
       rclone-conf = {
         source = ../../../../secrets-agenix/rclone-conf.age;

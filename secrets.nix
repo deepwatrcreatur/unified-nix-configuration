@@ -2,7 +2,7 @@
 # Manually normalized after replacing the old homeserver LXC.
 let
   machineIdentity = import ./lib/agenix-machine-identities.nix;
-  remoteBuilder = import ./lib/remote-builder.nix pkgs;
+  remoteBuilder = import ./lib/remote-builder.nix { };
 
   hosts = {
     attic-cache = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBMzmqOZ301fwZJVQI5KZ9+npuFs+3EvwKet4peLZeLv";

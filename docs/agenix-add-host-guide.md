@@ -84,6 +84,25 @@ agenix -r
 
 This updates recipients based on `secrets.nix`.
 
+### Important CLI compatibility note
+
+Do not assume the `agenix` binary in `PATH` is the correct tool for this repo.
+
+On `workstation`, `/run/current-system/sw/bin/agenix` was actually
+`agenix-cli 0.1.2`, which expects `.agenix.toml` and fails with:
+
+```text
+Failed to find config root
+Failed to find .agenix.toml
+```
+
+This repo uses the `ryantm/agenix` workflow with a repo-root `secrets.nix`,
+not the `.agenix.toml` workflow.
+
+Before rekeying, verify the tool you are about to run is compatible with the
+repo. If the help output or errors mention `.agenix.toml`, stop and switch to
+the `ryantm/agenix` tool instead of the host's default `agenix` package.
+
 ## 7. Deploy and verify
 
 Deploy the host and verify:

@@ -7,7 +7,7 @@
 }:
 
 let
-  remoteBuilder = import ../../lib/remote-builder.nix pkgs;
+  remoteBuilder = import ../../lib/remote-builder.nix { inherit pkgs; };
 
   # Path to GitHub token (works for both user and root contexts)
   githubTokenPath =

@@ -64,7 +64,7 @@ in
 
     githubTokenPath = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
-      default = "${config.home.homeDirectory}/.config/sops-nix/secrets/github-token";
+      default = "${config.home.homeDirectory}/.config/git/github-token";
       description = "Path to GitHub token file for API authentication (null to disable)";
     };
   };

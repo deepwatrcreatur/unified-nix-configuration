@@ -65,11 +65,19 @@
    }
    ```
 
-4. **Install agenix CLI locally:**
+4. **Install the correct agenix CLI locally:**
    ```bash
-   nix profile install nixpkgs#agenix
-   # or add to home.packages
+   # Use the ryantm/agenix tool that works with repo-root secrets.nix.
+   # Do not assume any package named `agenix` in PATH is correct.
    ```
+
+   Compatibility note:
+
+   - On `workstation`, the default `agenix` in `PATH` was `agenix-cli 0.1.2`
+   - That tool expects `.agenix.toml` and is incompatible with this repo's
+     `secrets.nix`-based workflow
+   - If `agenix --help` or runtime errors mention `.agenix.toml`, do not use it
+     for this repo
 
 ### Phase 2: Parallel Operation (Test without breaking existing)
 
@@ -128,7 +136,7 @@
 | File format | JSON/YAML/binary + metadata | Age-encrypted binary |
 | Editing | `sops file.enc` | `agenix -e file.age` |
 | Config | `.sops.yaml` per directory | Single `secrets.nix` at root |
-| Rekeying | `sops updatekeys` | `agenix -r` |
+| Rekeying | `sops updatekeys` | `agenix -r` with the correct `ryantm/agenix` CLI |
 | Home-manager | Built-in support | Separate HM module |
 
 ## SSH Keys Requirements

@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 
 let
-  remoteBuilder = import ../../../lib/remote-builder.nix pkgs;
+  remoteBuilder = import ../../../lib/remote-builder.nix { inherit pkgs; };
   hostName = config.networking.hostName or "";
   canUseRemoteBuilder = remoteBuilder.canUse hostName;
 in

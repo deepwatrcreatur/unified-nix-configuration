@@ -45,6 +45,7 @@
           ATTIC_CLIENT_JWT_TOKEN = [
             "${config.home.homeDirectory}/.config/sops/attic-client-token"
             "${config.home.homeDirectory}/.local/share/agenix-user-secrets/attic-client-token"
+            "/run/secrets/attic-client-token"
             "/run/agenix/attic-client-token"
           ];
           PROXMOX_API_TOKEN = [

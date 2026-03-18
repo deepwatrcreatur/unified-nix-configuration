@@ -17,6 +17,12 @@ in
       type = types.path;
       description = "Path to the secrets directory for rclone config";
     };
+
+    agenixRclonePath = mkOption {
+      type = types.str;
+      default = "${config.home.homeDirectory}/.local/share/agenix-user-secrets/rclone-conf";
+      description = "Path to the decrypted agenix rclone config, if present.";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -49,22 +55,29 @@ in
       export SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
       export PATH="${lib.makeBinPath [ pkgs.sops ]}:$PATH"
 
-      # Decrypt rclone.conf - with error handling
       mkdir -p "$HOME/.config/rclone"
-      rm -f "$HOME/.config/rclone/rclone.conf"
 
-      # Check if the secrets path and file exist before trying to decrypt
+      # Prefer the Home Manager agenix secret if present, otherwise fall back to
+      # the legacy SOPS-encrypted user secret.
       SECRETS_PATH="${toString cfg.secretsPath}"
       RCLONE_ENC="$SECRETS_PATH/rclone.conf.enc"
+      AGENIX_RCLONE="${cfg.agenixRclonePath}"
+      TARGET_RCLONE="$HOME/.config/rclone/rclone.conf"
 
-      if [ -f "$RCLONE_ENC" ]; then
+      if [ -f "$AGENIX_RCLONE" ]; then
+        install -m 600 "$AGENIX_RCLONE" "$TARGET_RCLONE"
+      elif [ -f "$RCLONE_ENC" ]; then
         if [ -f "$SOPS_AGE_KEY_FILE" ]; then
-          sops -d "$RCLONE_ENC" > "$HOME/.config/rclone/rclone.conf" 2>/dev/null && chmod 600 "$HOME/.config/rclone/rclone.conf" || true
+          tmp_rclone="$(mktemp)"
+          if sops -d "$RCLONE_ENC" > "$tmp_rclone" 2>/dev/null; then
+            install -m 600 "$tmp_rclone" "$TARGET_RCLONE"
+          fi
+          rm -f "$tmp_rclone"
         else
           echo "Warning: SOPS age key not found at $SOPS_AGE_KEY_FILE, skipping rclone secrets decryption"
         fi
       else
-        echo "Warning: rclone.conf.enc not found at $RCLONE_ENC, skipping rclone secrets decryption"
+        echo "Warning: no agenix or SOPS rclone config found; leaving existing rclone.conf in place"
       fi
     '';
   };

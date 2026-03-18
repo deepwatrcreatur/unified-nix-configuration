@@ -13,6 +13,18 @@ in
       type = types.path;
       description = "Path to the user secrets directory";
     };
+
+    agenixGithubTokenPath = mkOption {
+      type = types.str;
+      default = "${config.home.homeDirectory}/.local/share/agenix-user-secrets/github-token";
+      description = "Path to the agenix-decrypted GitHub token, if present.";
+    };
+
+    systemAtticTokenPath = mkOption {
+      type = types.str;
+      default = "/run/secrets/attic-client-token";
+      description = "Path to the system-provisioned attic token, if present.";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -27,26 +39,41 @@ in
       SECRETS_PATH="${toString cfg.secretsPath}"
       ATTIC_TOKEN_ENC="$SECRETS_PATH/attic-client-token.yaml.enc"
       GITHUB_TOKEN_ENC="$SECRETS_PATH/github-token.txt.enc"
+      AGENIX_GITHUB_TOKEN="${cfg.agenixGithubTokenPath}"
+      SYSTEM_ATTIC_TOKEN="${cfg.systemAtticTokenPath}"
 
-      if [ -f "$ATTIC_TOKEN_ENC" ]; then
+      if [ -f "$SYSTEM_ATTIC_TOKEN" ] && [ -r "$SYSTEM_ATTIC_TOKEN" ]; then
+        install -m 600 "$SYSTEM_ATTIC_TOKEN" "$HOME/.config/sops/attic-client-token"
+      elif [ -f "$ATTIC_TOKEN_ENC" ]; then
         if [ -f "$SOPS_AGE_KEY_FILE" ]; then
-          sops -d "$ATTIC_TOKEN_ENC" > "$HOME/.config/sops/attic-client-token" 2>/dev/null && chmod 600 "$HOME/.config/sops/attic-client-token" || true
+          tmp_attic_token="$(mktemp)"
+          if sops -d "$ATTIC_TOKEN_ENC" > "$tmp_attic_token" 2>/dev/null; then
+            install -m 600 "$tmp_attic_token" "$HOME/.config/sops/attic-client-token"
+          fi
+          rm -f "$tmp_attic_token"
         else
           echo "Warning: SOPS age key not found at $SOPS_AGE_KEY_FILE, skipping attic-client-token decryption"
         fi
       else
-        echo "Warning: attic-client-token.yaml.enc not found at $ATTIC_TOKEN_ENC, skipping decryption"
+        echo "Warning: no system or SOPS attic-client-token source found; leaving existing token in place"
       fi
 
-      # Decrypt github-token for nix flake operations
-      if [ -f "$GITHUB_TOKEN_ENC" ]; then
+      # Prefer agenix GitHub token for nix flake operations, otherwise fall back
+      # to the legacy SOPS-encrypted user secret.
+      if [ -f "$AGENIX_GITHUB_TOKEN" ]; then
+        install -m 600 "$AGENIX_GITHUB_TOKEN" "$HOME/.config/git/github-token"
+      elif [ -f "$GITHUB_TOKEN_ENC" ]; then
         if [ -f "$SOPS_AGE_KEY_FILE" ]; then
-          sops -d "$GITHUB_TOKEN_ENC" > "$HOME/.config/git/github-token" 2>/dev/null && chmod 600 "$HOME/.config/git/github-token" || true
+          tmp_github_token="$(mktemp)"
+          if sops -d "$GITHUB_TOKEN_ENC" > "$tmp_github_token" 2>/dev/null; then
+            install -m 600 "$tmp_github_token" "$HOME/.config/git/github-token"
+          fi
+          rm -f "$tmp_github_token"
         else
           echo "Warning: SOPS age key not found at $SOPS_AGE_KEY_FILE, skipping github-token decryption"
         fi
       else
-        echo "Warning: github-token.txt.enc not found at $GITHUB_TOKEN_ENC, skipping github token setup"
+        echo "Warning: no agenix or SOPS GitHub token found; leaving existing github-token in place"
       fi
     '';
   };

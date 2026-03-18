@@ -18,6 +18,12 @@ let
         description = "Path relative to the home directory where the decrypted secret is written.";
       };
 
+      extraTargets = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [ ];
+        description = "Additional home-relative paths where the decrypted secret should also be installed.";
+      };
+
       mode = lib.mkOption {
         type = lib.types.str;
         default = "0600";
@@ -60,12 +66,18 @@ in
           name: secret:
           let
             targetPath = "${config.home.homeDirectory}/${secret.target}";
-            targetDir = builtins.dirOf targetPath;
+            installTargets = [ targetPath ] ++ map (target: "${config.home.homeDirectory}/${target}") secret.extraTargets;
+            mkdirCommands = lib.concatStringsSep "\n" (
+              map (path: ''mkdir -p "${builtins.dirOf path}"'') installTargets
+            );
+            installCommands = lib.concatStringsSep "\n" (
+              map (path: ''install -m ${secret.mode} "$tmp_dir/${name}" "${path}"'') installTargets
+            );
           in
           ''
-            mkdir -p "${targetDir}"
+            ${mkdirCommands}
             ${pkgs.rage}/bin/rage -d -i "${cfg.identityFile}" -o "$tmp_dir/${name}" "${secret.source}"
-            install -m ${secret.mode} "$tmp_dir/${name}" "${targetPath}"
+            ${installCommands}
           ''
         ) cfg.secrets
       )}

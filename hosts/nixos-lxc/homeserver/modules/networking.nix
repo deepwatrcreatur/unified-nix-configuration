@@ -15,6 +15,10 @@
     wait-online.enable = true;
     networks."10-eth0" = {
       matchConfig.Name = "eth0";
+      networkConfig = {
+        DHCP = "yes";
+        IPv6AcceptRA = true;
+      };
       dhcpV4Config = {
         UseDNS = true;
         UseDomains = true;

@@ -1,4 +1,4 @@
-pkgs:
+{ pkgs ? null }:
 let
   supportedHosts = [
     "gateway"
@@ -10,7 +10,7 @@ in
   inherit supportedHosts;
 
   keyPath =
-    if pkgs.stdenv.isDarwin then
+    if pkgs != null && pkgs.stdenv.isDarwin then
       "/var/root/.ssh/nix-remote"
     else
       "/root/.ssh/nix-remote";
