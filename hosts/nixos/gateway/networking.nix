@@ -70,7 +70,6 @@
       DHCPPrefixDelegation = true;
       DNS = [ "127.0.0.1" ];
       Domains = [ "deepwatercreature.com" ];
-      MakeResolvConf = false;
     };
     ipv6SendRAConfig = {
       Managed = false; # Use SLAAC, not DHCPv6
