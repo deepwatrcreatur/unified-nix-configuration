@@ -74,6 +74,7 @@
       DHCPPrefixDelegation = true; # Enable receiving and using delegated prefixes
       DNS = [ "127.0.0.1" ];
       Domains = [ "deepwatercreature.com" ];
+      MakeResolvConf = false; # Don't let networkd overwrite resolv.conf
     };
     ipv6SendRAConfig = {
       Managed = false; # Use SLAAC, not DHCPv6
