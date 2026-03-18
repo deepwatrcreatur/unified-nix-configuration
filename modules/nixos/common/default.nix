@@ -9,9 +9,11 @@
     ./nh.nix
     ./ssh-keys.nix
     ./remote-builder-key.nix
+    ./agenix-machine-identity.nix
     ./agenix.nix
     ./fstrim.nix
     ./git-ssh.nix
+    ./zram.nix  # Zram compressed swap for desktops
     ../../common/secrets-management.nix  # age/agenix/rage/ssh-to-age tools
     # ../../activation-scripts
   ];

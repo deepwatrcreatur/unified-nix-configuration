@@ -1,0 +1,8 @@
+attic-cache: agenix machine identity - attic-cache
+gateway: agenix machine identity - gateway
+homeserver: agenix machine identity - homeserver
+pve-gateway: agenix machine identity - pve-gateway
+pve-lattitude: agenix machine identity - pve-lattitude
+pve-strix: agenix machine identity - pve-strix
+pve-tomahawk: agenix machine identity - pve-tomahawk
+workstation: agenix machine identity - workstation

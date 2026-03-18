@@ -1,7 +1,8 @@
 # Auto-generated secrets.nix for agenix
 # Manually normalized after replacing the old homeserver LXC.
 let
-  remoteBuilder = import ./lib/remote-builder.nix;
+  machineIdentity = import ./lib/agenix-machine-identities.nix;
+  remoteBuilder = import ./lib/remote-builder.nix pkgs;
 
   hosts = {
     attic-cache = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBMzmqOZ301fwZJVQI5KZ9+npuFs+3EvwKet4peLZeLv";
@@ -26,30 +27,36 @@ let
     users.deepwatrcreatur
   ];
 
+  machineRecipients =
+    hostName:
+    builtins.filter (key: key != null && key != "") [
+      (machineIdentity.readPublicKey hostName)
+      (hosts.${hostName} or null)
+    ];
+
   userOnlySecrets = operatorUsers;
 
-  gatewayServiceSecrets = operatorUsers ++ [
-    hosts.gateway
-  ];
+  gatewayServiceSecrets = operatorUsers ++ machineRecipients "gateway";
 
-  atticServiceSecrets = operatorUsers ++ [
-    hosts.attic-cache
-  ];
+  atticServiceSecrets = operatorUsers ++ machineRecipients "attic-cache";
 
-  remoteBuilderClientSecrets = operatorUsers ++ map (hostName: hosts.${hostName}) remoteBuilder.supportedHosts;
+  remoteBuilderClientSecrets =
+    operatorUsers ++ builtins.concatLists (map machineRecipients remoteBuilder.supportedHosts);
 
   # All hosts that build from this repo should be able to use the attic cache
-  atticClientSecrets = operatorUsers ++ [
-    hosts.attic-cache
-    hosts.gateway
-    hosts.homeserver
-    hosts.pve-gateway
-    hosts.pve-lattitude
-    hosts.pve-strix
-    hosts.pve-tomahawk
-    hosts.workstation
+  atticClientHosts = [
+    "attic-cache"
+    "gateway"
+    "homeserver"
+    "pve-gateway"
+    "pve-lattitude"
+    "pve-strix"
+    "pve-tomahawk"
+    "workstation"
     # TODO: Add hackintosh and macminim4 once their host keys are in the hosts list
   ];
+
+  atticClientSecrets = operatorUsers ++ builtins.concatLists (map machineRecipients atticClientHosts);
 in
 {
   # Service-scoped secrets

@@ -22,6 +22,8 @@ cat > "$OUTPUT_FILE" << 'EOF'
 # Auto-generated secrets.nix for agenix
 # DO NOT EDIT MANUALLY - regenerate with scripts/agenix/generate-secrets-nix.sh
 let
+  machineIdentity = import ./lib/agenix-machine-identities.nix;
+
   # System host keys (for system-level secrets)
   hosts = {
 EOF
@@ -66,22 +68,26 @@ done
 
 cat >> "$OUTPUT_FILE" << 'EOF'
   };
-  
-  # Convenience groups
-  allHosts = builtins.attrValues hosts;
-  allUsers = builtins.attrValues users;
-  allKeys = allHosts ++ allUsers;
+
+  operatorUsers = builtins.attrValues users;
+
+  machineRecipients =
+    hostName:
+    builtins.filter (key: key != null && key != "") [
+      (machineIdentity.readPublicKey hostName)
+      (hosts.${hostName} or null)
+    ];
 in
 {
   # System-level secrets
-  "cloudflare-api-key.age".publicKeys = [ hosts.gateway hosts.homeserver ] ++ allUsers;
-  "technitium-api-key.age".publicKeys = [ hosts.gateway hosts.workstation ] ++ allUsers;
+  "cloudflare-api-key.age".publicKeys = operatorUsers ++ machineRecipients "gateway";
+  "technitium-api-key.age".publicKeys = operatorUsers ++ machineRecipients "gateway";
   
   # User-level secrets
-  "github-token.age".publicKeys = allKeys;
-  "grok-api-key.age".publicKeys = allKeys;
-  "openrouter-api-key.age".publicKeys = allKeys;
-  "atuin-key.age".publicKeys = allKeys;
+  "github-token.age".publicKeys = operatorUsers;
+  "grok-api-key.age".publicKeys = operatorUsers;
+  "openrouter-api-key.age".publicKeys = operatorUsers;
+  "atuin-key.age".publicKeys = operatorUsers;
   
   # Add more secrets as needed...
 }
