@@ -218,6 +218,8 @@
     "flakes"
   ];
 
+  my.agenix.machineIdentity.enable = true;
+
   # Technitium DNS & DHCP Server
   services.technitium-dns-server.enable = true;
 

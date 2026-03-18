@@ -1,7 +1,12 @@
 {
   # Agenix configuration for attic-cache
   age.identityPaths = [
+    "/var/lib/agenix/machine-identity"
     "/etc/ssh/ssh_host_ed25519_key"
+  ];
+
+  systemd.tmpfiles.rules = [
+    "d /var/lib/agenix 0700 root root -"
   ];
 
   age.secrets."attic-client-token" = {
