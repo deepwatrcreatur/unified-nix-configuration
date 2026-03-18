@@ -56,9 +56,8 @@ Agenix successfully deployed to workstation and gateway. Core secrets migrated.
 ### User Secrets (users/deepwatrcreatur/secrets/)
 - `gpg-private-key.asc.enc` - GPG key (large binary - optional)
 
-### System Secrets (secrets/)
-- `attic-server-private-key.yaml.enc` - Attic server key (when attic server is set up)
-- `attic-server-token.yaml.enc` - Attic server token (when attic server is set up)
+### System Secrets
+- Remaining system secrets now live under `secrets-agenix/` with host-based recipients.
 
 ## Next Actions
 

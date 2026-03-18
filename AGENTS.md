@@ -30,7 +30,7 @@ The primary goal of this repository is to provide a single source of truth for s
   - `home-manager/`: User environment modules
 -   `users/`: Contains user-specific configurations, such as dotfiles, packages, and services.
   - Organized by username with host-specific overrides in `users/{username}/hosts/{hostname}/`
--   `secrets/`: Contains encrypted secret files managed by `sops`.
+-   `secrets-agenix/`: Contains system secrets encrypted with `agenix`.
 -   `outputs/`: Host output definitions using helper functions from flake.nix
 
 ## Getting Started
