@@ -7,6 +7,8 @@
 }:
 
 let
+  remoteBuilder = import ../../lib/remote-builder.nix pkgs;
+
   # Path to GitHub token (works for both user and root contexts)
   githubTokenPath =
     if
@@ -28,6 +30,8 @@ let
 
   # Detect if this is the attic-cache server itself (avoid circular dependency)
   isCacheServer = config.networking.hostName or "" == "attic-cache";
+
+  canUseRemoteBuilder = remoteBuilder.canUse (config.networking.hostName or "");
 in
 {
   nixpkgs.config.allowUnfree = true;
@@ -119,8 +123,8 @@ in
   nix.settings.use-cgroups = lib.mkIf (!isContainer) true;
 
   # Remote building configuration
-  nix.distributedBuilds = lib.mkIf (!isCacheServer) true;
-  nix.buildMachines = lib.mkIf (!isCacheServer) [
+  nix.distributedBuilds = lib.mkIf canUseRemoteBuilder true;
+  nix.buildMachines = lib.mkIf canUseRemoteBuilder [
     {
       hostName = "10.10.11.39"; # attic-cache
       system = "x86_64-linux";
@@ -133,7 +137,7 @@ in
         "kvm"
       ];
       sshUser = "deepwatrcreatur";
-      sshKey = if pkgs.stdenv.isDarwin then "/var/root/.ssh/nix-remote" else "/root/.ssh/nix-remote";
+      sshKey = remoteBuilder.keyPath;
     }
   ];
 }

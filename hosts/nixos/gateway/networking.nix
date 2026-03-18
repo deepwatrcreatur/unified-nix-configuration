@@ -1,5 +1,10 @@
 # Gateway networking configuration
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   networking.hostName = "gateway";
@@ -7,22 +12,23 @@
 
   # Disable systemd-resolved, use Technitium DNS directly
   services.resolved.enable = false;
-  
+
   # DNS configuration - with fallback if Technitium is unavailable
   # Note: With systemd-networkd, this needs special handling
-  networking.nameservers = [ "127.0.0.1" "1.1.1.1" "8.8.8.8" ];
-  
-  # Create static resolv.conf with our nameservers
+  networking.nameservers = [
+    "127.0.0.1"
+    "1.1.1.1"
+    "8.8.8.8"
+  ];
+
+  # Create static resolv.conf with our nameservers and search domain
   environment.etc."resolv.conf".text = ''
-    # Gateway DNS configuration
-    # Primary: Technitium DNS on localhost
-    # Fallback: Cloudflare and Google
+    search deepwatercreature.com
     nameserver 127.0.0.1
     nameserver 1.1.1.1
     nameserver 8.8.8.8
-    options edns0
   '';
-  
+
   # If Technitium fails, you can still SSH via IP: ssh 192.168.100.100
 
   # Network interfaces using systemd-networkd
@@ -34,17 +40,17 @@
   systemd.network.networks."10-wan" = {
     matchConfig.Name = "ens17";
     networkConfig = {
-      DHCP = "yes";
+      DHCP = true;
       IPv6AcceptRA = true;
     };
     # Request IPv6 prefix delegation
     dhcpV6Config = {
-      PrefixDelegationHint = "::/56";  # Request /56 prefix from ISP (matches OPNsense)
-      UseAddress = true;  # Also get an address for the gateway itself
+      PrefixDelegationHint = "::/56"; # Request /56 prefix from ISP (matches OPNsense)
+      UseAddress = true; # Also get an address for the gateway itself
     };
     ipv6AcceptRAConfig = {
       DHCPv6Client = "always";
-      UseDNS = false;  # Use Technitium DNS instead
+      UseDNS = false; # Use Technitium DNS instead
     };
   };
 
@@ -59,17 +65,19 @@
       }
     ];
     networkConfig = {
-      DHCPServer = "no";
+      DHCPServer = false;
       IPv6SendRA = true;
-      DHCPPrefixDelegation = true;  # Enable receiving and using delegated prefixes
+      DHCPPrefixDelegation = true;
+      DNS = [ "127.0.0.1" ];
+      Domains = [ "deepwatercreature.com" ];
     };
     ipv6SendRAConfig = {
-      Managed = false;  # Use SLAAC, not DHCPv6
+      Managed = false; # Use SLAAC, not DHCPv6
       OtherInformation = false;
     };
     ipv6Prefixes = [
       {
-        Prefix = "::/64";  # Announce a /64 from the delegated prefix
+        Prefix = "::/64"; # Announce a /64 from the delegated prefix
         PreferredLifetimeSec = 1800;
         ValidLifetimeSec = 3600;
       }

@@ -1,6 +1,9 @@
 # Auto-generated secrets.nix for agenix
 # Manually normalized after replacing the old homeserver LXC.
 let
+  machineIdentity = import ./lib/agenix-machine-identities.nix;
+  remoteBuilder = import ./lib/remote-builder.nix pkgs;
+
   hosts = {
     attic-cache = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBMzmqOZ301fwZJVQI5KZ9+npuFs+3EvwKet4peLZeLv";
     gateway = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGjM16WJ9SUCs+moDo8QTTbbEJMd0EYZPGItC6oV4WiO root@nixos";
@@ -24,28 +27,40 @@ let
     users.deepwatrcreatur
   ];
 
+  machineRecipients =
+    hostName:
+    let
+      stable = machineIdentity.readPublicKey hostName;
+      legacy = hosts.${hostName} or null;
+    in
+    if stable != null && stable != "" then
+      [ stable ]
+    else
+      builtins.filter (key: key != null && key != "") [ legacy ];
+
   userOnlySecrets = operatorUsers;
 
-  gatewayServiceSecrets = operatorUsers ++ [
-    hosts.gateway
-  ];
+  gatewayServiceSecrets = operatorUsers ++ machineRecipients "gateway";
 
-  atticServiceSecrets = operatorUsers ++ [
-    hosts.attic-cache
-  ];
+  atticServiceSecrets = operatorUsers ++ machineRecipients "attic-cache";
+
+  remoteBuilderClientSecrets =
+    operatorUsers ++ builtins.concatLists (map machineRecipients remoteBuilder.supportedHosts);
 
   # All hosts that build from this repo should be able to use the attic cache
-  atticClientSecrets = operatorUsers ++ [
-    hosts.attic-cache
-    hosts.gateway
-    hosts.homeserver
-    hosts.pve-gateway
-    hosts.pve-lattitude
-    hosts.pve-strix
-    hosts.pve-tomahawk
-    hosts.workstation
+  atticClientHosts = [
+    "attic-cache"
+    "gateway"
+    "homeserver"
+    "pve-gateway"
+    "pve-lattitude"
+    "pve-strix"
+    "pve-tomahawk"
+    "workstation"
     # TODO: Add hackintosh and macminim4 once their host keys are in the hosts list
   ];
+
+  atticClientSecrets = operatorUsers ++ builtins.concatLists (map machineRecipients atticClientHosts);
 in
 {
   # Service-scoped secrets
@@ -55,6 +70,7 @@ in
   "secrets-agenix/attic-client-token.age".publicKeys = atticClientSecrets;
   "secrets-agenix/attic-server-token.age".publicKeys = atticServiceSecrets;
   "secrets-agenix/attic-jwt-secret.age".publicKeys = atticServiceSecrets;
+  "secrets-agenix/nix-remote-builder-key.age".publicKeys = remoteBuilderClientSecrets;
 
   # Operator/user secrets decrypted directly in Home Manager with the stable user key
   "secrets-agenix/github-token.age".publicKeys = userOnlySecrets;
