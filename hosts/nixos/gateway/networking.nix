@@ -72,6 +72,8 @@
       DHCPServer = "no";
       IPv6SendRA = true;
       DHCPPrefixDelegation = true; # Enable receiving and using delegated prefixes
+      DNS = [ "127.0.0.1" ];
+      Domains = [ "deepwatercreature.com" ];
     };
     ipv6SendRAConfig = {
       Managed = false; # Use SLAAC, not DHCPv6
