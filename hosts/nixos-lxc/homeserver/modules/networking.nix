@@ -6,10 +6,9 @@
 }:
 
 {
-  networking = {
-    useDHCP = true;
-    useHostResolvConf = false;
-  };
+  networking.useNetworkd = true;
+  networking.useDHCP = true;
+  networking.useHostResolvConf = false;
 
   systemd.network = {
     enable = true;
