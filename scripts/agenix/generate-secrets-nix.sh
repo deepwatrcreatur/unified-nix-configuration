@@ -69,14 +69,25 @@ done
 cat >> "$OUTPUT_FILE" << 'EOF'
   };
 
-  operatorUsers = builtins.attrValues users;
+  operatorUserNames = [
+    "deepwatrcreatur"
+  ];
+
+  operatorUsers =
+    builtins.concatLists (
+      map (name: if builtins.hasAttr name users then [ users.${name} ] else [ ]) operatorUserNames
+    );
 
   machineRecipients =
     hostName:
-    builtins.filter (key: key != null && key != "") [
-      (machineIdentity.readPublicKey hostName)
-      (hosts.${hostName} or null)
-    ];
+    let
+      stable = machineIdentity.readPublicKey hostName;
+      legacy = hosts.${hostName} or null;
+    in
+    if stable != null && stable != "" then
+      [ stable ]
+    else
+      builtins.filter (key: key != null && key != "") [ legacy ];
 in
 {
   # System-level secrets

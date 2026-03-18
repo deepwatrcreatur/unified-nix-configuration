@@ -29,10 +29,14 @@ let
 
   machineRecipients =
     hostName:
-    builtins.filter (key: key != null && key != "") [
-      (machineIdentity.readPublicKey hostName)
-      (hosts.${hostName} or null)
-    ];
+    let
+      stable = machineIdentity.readPublicKey hostName;
+      legacy = hosts.${hostName} or null;
+    in
+    if stable != null && stable != "" then
+      [ stable ]
+    else
+      builtins.filter (key: key != null && key != "") [ legacy ];
 
   userOnlySecrets = operatorUsers;
 

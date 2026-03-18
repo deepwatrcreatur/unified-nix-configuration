@@ -7,6 +7,7 @@
 let
   cfg = config.my.agenix.machineIdentity;
   defaultPath = "/var/lib/agenix/machine-identity";
+  parentDir = builtins.dirOf cfg.path;
 in
 {
   options.my.agenix.machineIdentity = {
@@ -34,7 +35,7 @@ in
     ];
 
     systemd.tmpfiles.rules = [
-      "d /var/lib/agenix 0700 root root -"
+      "d ${parentDir} 0700 root root -"
     ];
 
     age.identityPaths = [ cfg.path ] ++ lib.optionals cfg.legacyHostKeyFallback [ "/etc/ssh/ssh_host_ed25519_key" ];
