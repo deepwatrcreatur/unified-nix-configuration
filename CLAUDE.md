@@ -19,7 +19,7 @@ This repository uses Nix to manage system and user configurations for multiple m
 -   `hosts/`: Configurations for each specific machine (e.g., `homeserver`, `macminim4`).
 -   `modules/`: Shared and reusable configuration modules.
 -   `users/`: User-specific settings.
--   `secrets/`: Encrypted secrets.
+-   `secrets-agenix/`: System secrets encrypted with `agenix`.
 
 ## Common Tasks
 
