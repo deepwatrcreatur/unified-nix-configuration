@@ -40,7 +40,7 @@
   systemd.network.networks."10-wan" = {
     matchConfig.Name = "ens17";
     networkConfig = {
-      DHCP = true;
+      DHCP = "yes";
       IPv6AcceptRA = true;
     };
     # Request IPv6 prefix delegation
