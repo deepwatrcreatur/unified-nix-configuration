@@ -33,6 +33,7 @@
         "nightscout"
         "marreta"
         "linkwarden"
+        "homeassistant"
       ];
       description = "Main router/firewall running NixOS";
     };
@@ -106,6 +107,7 @@
       ip = "10.10.11.18";
       aliases = [ "ha" ];
       includeSsh = false;
+      includeDns = false;
       description = "Home Assistant VM";
     };
 
