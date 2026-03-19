@@ -51,7 +51,7 @@
     };
 
     pve-rog = {
-      ip = "10.10.11.45";
+      ip = "10.10.11.53";
       sshUser = "root";
       description = "Proxmox node - ROG laptop";
     };
