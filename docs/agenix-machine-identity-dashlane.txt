@@ -6,4 +6,6 @@ pve-lattitude: agenix machine identity - pve-lattitude
 pve-rog: agenix machine identity - pve-rog
 pve-strix: agenix machine identity - pve-strix
 pve-tomahawk: agenix machine identity - pve-tomahawk
+podman: agenix machine identity - podman
+rustdesk: agenix machine identity - rustdesk
 workstation: agenix machine identity - workstation

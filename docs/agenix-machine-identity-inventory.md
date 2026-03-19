@@ -15,6 +15,7 @@ with mode `0400` and owner `root:root`.
 | pve-strix | `agenix machine identity - pve-strix` | `/var/lib/agenix/machine-identity` | `ssh-keys/agenix-machine-identities/pve-strix.pub` | `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIzZpL56XGOHA7gOVeLNttiOYV/iNyoIOPAzwr5aONab agenix-machine-identity pve-strix` |
 | pve-tomahawk | `agenix machine identity - pve-tomahawk` | `/var/lib/agenix/machine-identity` | `ssh-keys/agenix-machine-identities/pve-tomahawk.pub` | `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE9TotDUuaBOyI8Tvm4PW1w8xf2RUUcg3g310HIxenyf agenix-machine-identity pve-tomahawk` |
 | podman | `agenix machine identity - podman` | `/var/lib/agenix/machine-identity` | `ssh-keys/agenix-machine-identities/podman.pub` | `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHCr6V3GOWCDJUKxnVAj+AZTUgGG7Vd51j/AQiMJ7SX1 agenix-machine-identity podman` |
+| rustdesk | `agenix machine identity - rustdesk` | `/var/lib/agenix/machine-identity` | `ssh-keys/agenix-machine-identities/rustdesk.pub` | `pending` |
 | workstation | `agenix machine identity - workstation` | `/var/lib/agenix/machine-identity` | `ssh-keys/agenix-machine-identities/workstation.pub` | `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC22EvqG/w5v3w4TRwz4KajVwU5b19VXQJKbLKSQVlTy agenix-machine-identity workstation` |
 
 Suggested generation command per machine:

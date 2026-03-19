@@ -16,8 +16,12 @@
   # Enable fish shell since users set it as default
   programs.fish.enable = true;
 
-  # Agenix identity for secrets (sops-nix removed)
-  age.identityPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+  # Prepare inference VMs to use the stable per-host agenix identity from first boot.
+  age.identityPaths = [ "/var/lib/agenix/machine-identity" ];
+
+  systemd.tmpfiles.rules = [
+    "d /var/lib/agenix 0700 root root -"
+  ];
 
   # Nixpkgs configuration
   nixpkgs = {
