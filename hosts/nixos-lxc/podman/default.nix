@@ -37,5 +37,4 @@
 
   # Use the stable per-host agenix identity instead of relying on SSH host keys.
   my.agenix.machineIdentity.enable = true;
-  my.agenix.machineIdentity.legacyHostKeyFallback = false;
 }

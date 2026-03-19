@@ -14,6 +14,7 @@
     ../../../../modules/home-manager/gpg-cli.nix
     # Selectively import only essential modules to avoid activation issues
     ../../../../modules/home-manager/secrets-activation.nix
+    ../../../../modules/home-manager/user-secrets.nix
     ../../../../modules/home-manager/common/nix-user-config.nix
     ../../../../modules/home-manager/common/attic-client.nix
     ../../../../modules/home-manager/common/fish.nix
@@ -41,5 +42,12 @@
 
   # Enable attic-client for binary cache access
   programs.attic-client.enable = true;
+
+  # Prefer system or future agenix-provided tokens while keeping the existing
+  # root SOPS secrets path as a compatibility fallback on Debian/Proxmox hosts.
+  services.user-secrets = {
+    enable = true;
+    secretsPath = ../../secrets;
+  };
 
 }

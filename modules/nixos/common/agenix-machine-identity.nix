@@ -18,12 +18,6 @@ in
       default = defaultPath;
       description = "Private key path used by agenix for machine-scoped secret decryption.";
     };
-
-    legacyHostKeyFallback = lib.mkOption {
-      type = lib.types.bool;
-      default = true;
-      description = "Keep the SSH host key as a secondary agenix identity during migration.";
-    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -38,6 +32,6 @@ in
       "d ${parentDir} 0700 root root -"
     ];
 
-    age.identityPaths = [ cfg.path ] ++ lib.optionals cfg.legacyHostKeyFallback [ "/etc/ssh/ssh_host_ed25519_key" ];
+    age.identityPaths = [ cfg.path ];
   };
 }

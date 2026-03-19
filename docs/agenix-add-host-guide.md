@@ -57,8 +57,8 @@ In the host’s NixOS config, enable the stable machine identity module:
 }
 ```
 
-During migration, the module still allows fallback to `/etc/ssh/ssh_host_ed25519_key`
-unless you disable `my.agenix.machineIdentity.legacyHostKeyFallback`.
+When this module is enabled, agenix uses `/var/lib/agenix/machine-identity`
+directly instead of the SSH host key.
 
 ## 5. Ensure recipients include the host
 

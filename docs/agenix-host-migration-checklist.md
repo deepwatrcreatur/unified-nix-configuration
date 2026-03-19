@@ -84,13 +84,9 @@ In the host's NixOS configuration, ensure:
 }
 ```
 
-Leave legacy fallback enabled during migration unless you have already verified
-the host decrypts successfully with the stable identity alone.
-
 Default behavior:
 
 - stable identity path: `/var/lib/agenix/machine-identity`
-- fallback identity: `/etc/ssh/ssh_host_ed25519_key`
 
 ### 6. Ensure the host is in the right recipient groups
 
@@ -173,15 +169,11 @@ sudo ls -l /run/agenix
 
 Verify that expected secrets are present and owned correctly.
 
-### 11. Keep fallback until the host is proven stable
+### 11. Remove leftover explicit SSH-host-key references
 
-Do not remove SSH-host-key fallback immediately.
-
-Only remove fallback after:
-
-- the host rebuilds successfully
-- agenix decrypts successfully
-- the host continues working after reboot
+After the host rebuilds successfully with the stable identity, remove any
+host-specific `age.identityPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];`
+leftovers from older configs.
 
 ## Suggested Rollout Order
 
@@ -191,7 +183,8 @@ Only remove fallback after:
 4. Homeserver
 5. Remaining Proxmox hosts
 
-Start with lower-risk hosts and only remove fallback after confidence is high.
+Start with lower-risk hosts and only remove legacy host-key references after
+confidence is high.
 
 ## Troubleshooting
 
@@ -213,11 +206,11 @@ not seeing the user's SSH agent socket.
 
 ### Agenix still decrypts via host SSH key
 
-That is expected during migration if fallback is still enabled.
+That means the host still has an explicit legacy identity path in its config.
 
-Stable keys are preferred when the matching public key exists in:
+Search for:
 
-`ssh-keys/agenix-machine-identities/HOSTNAME.pub`
+`age.identityPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];`
 
 ### Host rebuilt or reprovisioned
 
