@@ -119,6 +119,11 @@
       chown caddy:caddy /run/caddy/caddy.env
       chmod 0400 /run/caddy/caddy.env
     '';
-    serviceConfig.PermissionsStartOnly = true;
+    serviceConfig = {
+      # The preStart script creates this file, so it must be optional at the
+      # unit level or systemd will fail before preStart gets a chance to run.
+      EnvironmentFile = lib.mkForce [ "-/run/caddy/caddy.env" ];
+      PermissionsStartOnly = true;
+    };
   };
 }
