@@ -42,8 +42,10 @@
         # Allow iperf3 from LAN only
         iifname "ens16" tcp dport 5201 accept
         
-        # Allow HTTP/HTTPS from WAN for Caddy reverse proxy
-        iifname "ens17" tcp dport {80, 443} accept comment "Caddy HTTP/HTTPS"
+        # Allow HTTP/HTTPS to Caddy from WAN, LAN, and management.
+        # LAN access is required for split-DNS names like
+        # home-assistant.deepwatercreature.com to work on local clients.
+        iifname {"ens16", "ens17", "ens18"} tcp dport {80, 443} accept comment "Caddy HTTP/HTTPS"
 
         # Log dropped inbound packets for dashboard visibility
         log prefix "FW-INPUT-DROP " level info flags all
