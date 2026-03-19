@@ -219,6 +219,7 @@
   ];
 
   my.agenix.machineIdentity.enable = true;
+  my.agenix.machineIdentity.legacyHostKeyFallback = false;
 
   # Technitium DNS & DHCP Server
   services.technitium-dns-server.enable = true;

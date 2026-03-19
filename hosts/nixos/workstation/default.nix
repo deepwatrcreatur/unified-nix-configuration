@@ -201,6 +201,7 @@
   # Enable nix-daemon to use user's SSH socket for git+ssh flake inputs
   myModules.nix-daemon-user-ssh.enable = true;
   my.agenix.machineIdentity.enable = true;
+  my.agenix.machineIdentity.legacyHostKeyFallback = false;
 
   # Attic client with agenix backend (nix-attic-infra feat/agenix-support)
   services.attic-client = {
