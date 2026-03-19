@@ -1,0 +1,88 @@
+---
+# Update Proxmox hosts from unified-nix-configuration
+#
+# Usage:
+#   ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml
+#
+# Limit to specific Proxmox hosts:
+#   ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml --limit pve-gateway
+#   ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml --limit "pve-rog,pve-strix"
+#
+# Skip git pull (just run Home Manager):
+#   ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml -e skip_git_pull=true
+
+- name: Update Proxmox hosts with Home Manager
+  hosts: proxmox
+  gather_facts: true
+  serial: "{{ serial_count | default(omit) }}"
+
+  vars:
+    skip_git_pull: false
+
+  tasks:
+    - name: Git pull block
+      when: not skip_git_pull
+      block:
+        - name: Check if flake repo exists
+          stat:
+            path: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+          register: repo_check
+
+        - name: Fail if repo doesn't exist
+          fail:
+            msg: "Flake repo not found at {{ flake_repo_path_override | default(flake_repo_path) }}"
+          when: not repo_check.stat.exists
+
+        - name: Fetch latest from origin
+          command:
+            cmd: git fetch origin
+            chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+          register: git_fetch
+          changed_when: git_fetch.stdout != ''
+
+        - name: Check for local changes
+          command:
+            cmd: git status --porcelain
+            chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+          register: git_status
+          changed_when: false
+
+        - name: Handle flake.lock conflicts - reset if only flake.lock changed
+          command:
+            cmd: git checkout -- flake.lock
+            chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+          when: git_status.stdout is search('flake.lock')
+          register: flake_lock_reset
+
+        - name: Stash local changes if any (excluding flake.lock)
+          command:
+            cmd: git stash push -m "ansible-proxmox-update-{{ ansible_date_time.iso8601 }}"
+            chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+          when:
+            - git_status.stdout != ''
+            - git_status.stdout is not search('^M  flake.lock$')
+          register: git_stash
+
+        - name: Pull latest changes
+          command:
+            cmd: git pull --ff-only origin main
+            chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+          register: git_pull
+          changed_when: "'Already up to date' not in git_pull.stdout"
+
+        - name: Show git pull result
+          debug:
+            msg: "{{ git_pull.stdout_lines }}"
+          when: git_pull.changed
+
+    - name: Run home-manager switch for proxmox-root
+      command:
+        cmd: "home-manager switch --flake .#{{ home_manager_target }}"
+        chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
+      register: hm_rebuild
+      changed_when: true
+
+    - name: Show home-manager output
+      debug:
+        msg: "{{ hm_rebuild.stdout_lines[-30:] }}"
+      when: hm_rebuild is defined

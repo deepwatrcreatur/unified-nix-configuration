@@ -17,7 +17,7 @@ Edit `inventory/hosts.yml` to configure your hosts. Hosts are grouped by rebuild
 | `nixos` | `nixos-rebuild switch` | gateway, homeserver, workstation, attic-cache |
 | `nixos_inference` | `nixos-rebuild switch` | inference1, inference2, inference3 |
 | `darwin` | `darwin-rebuild switch` | hackintosh, macminim4 |
-| `proxmox` | `home-manager switch` | pve-gateway, pve-lattitude, pve-strix, pve-tomahawk |
+| `proxmox` | `home-manager switch` | pve-gateway, pve-lattitude, pve-rog, pve-strix, pve-tomahawk |
 | `ubuntu_inference` | `home-manager switch` | (configure your Ubuntu hosts) |
 
 ## Playbooks
@@ -52,6 +52,23 @@ Rebuilds attic-cache first to ensure the binary cache is updated, then rebuilds 
 
 ```bash
 ansible-playbook -i inventory/hosts.yml playbooks/rebuild-cache-first.yml
+```
+
+### update-proxmox.yml
+
+Pulls latest changes and runs `home-manager switch` on the 5 Proxmox hosts only.
+This is the simplest playbook to point Semaphore at for routine PVE updates.
+
+```bash
+# Update all Proxmox hosts
+ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml
+
+# Update just one or two Proxmox hosts
+ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml --limit pve-gateway
+ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml --limit "pve-rog,pve-strix"
+
+# Skip git pull and only re-run Home Manager
+ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml -e skip_git_pull=true
 ```
 
 ### git-pull-only.yml
