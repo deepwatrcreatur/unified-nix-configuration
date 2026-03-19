@@ -2,10 +2,15 @@
 
 This repo publishes Home Assistant externally at:
 
-- `https://homeassistant.deepwatercreature.com`
+- `https://home-assistant.deepwatercreature.com`
 
 The public TLS endpoint is terminated on `gateway` by Caddy and proxied to the
 internal Home Assistant VM at `10.10.11.18:8123`.
+
+Keep the direct host record and the public proxy hostname separate:
+
+- `homeassistant.deepwatercreature.com` -> direct VM address from DHCP/DNS
+- `home-assistant.deepwatercreature.com` -> public Caddy endpoint on `gateway`
 
 ## Repo-side pieces
 
@@ -16,11 +21,11 @@ internal Home Assistant VM at `10.10.11.18:8123`.
 
 Use a `DNS only` Cloudflare `CNAME` record:
 
-- name: `homeassistant`
+- name: `home-assistant`
 - target: `homelab.deepwatercreature.com`
 
-Do not create an `A` or `AAAA` record for `homeassistant`, and do not orange-cloud
-the CNAME. This repo intentionally leaves `homeassistant` out of Caddy's
+Do not create an `A` or `AAAA` record for `home-assistant`, and do not orange-cloud
+the CNAME. This repo intentionally leaves `home-assistant` out of Caddy's
 dynamic-DNS-managed names so the manual CNAME does not conflict with automatic
 updates.
 
@@ -86,15 +91,15 @@ Restart Home Assistant after editing `configuration.yaml`.
 
 These values are now fixed by this repo's reverse-proxy setup:
 
-- Home Assistant base URL: `https://homeassistant.deepwatercreature.com`
-- Authorization URI: `https://homeassistant.deepwatercreature.com/auth/authorize`
-- Access Token URI: `https://homeassistant.deepwatercreature.com/auth/token`
+- Home Assistant base URL: `https://home-assistant.deepwatercreature.com`
+- Authorization URI: `https://home-assistant.deepwatercreature.com/auth/authorize`
+- Access Token URI: `https://home-assistant.deepwatercreature.com/auth/token`
 
 For AWS Lambda:
 
 - region for `en-US` / `en-CA`: `US East (N. Virginia)`
 - `BASE_URL` environment variable:
-  `https://homeassistant.deepwatercreature.com`
+  `https://home-assistant.deepwatercreature.com`
 
 For Home Assistant's manual Alexa integration, the default proactive-events
 endpoint for North America is:
@@ -103,9 +108,9 @@ endpoint for North America is:
 
 ## Sequence
 
-1. Create the Cloudflare `DNS only` CNAME for `homeassistant`.
-2. Rebuild `gateway` so Caddy serves `homeassistant.deepwatercreature.com`.
-3. Verify `https://homeassistant.deepwatercreature.com` presents a valid public
+1. Create the Cloudflare `DNS only` CNAME for `home-assistant`.
+2. Rebuild `gateway` so Caddy serves `home-assistant.deepwatercreature.com`.
+3. Verify `https://home-assistant.deepwatercreature.com` presents a valid public
    certificate.
 4. Add the `http:` and `alexa:` configuration to Home Assistant and restart it.
 5. Create the Alexa Smart Home skill and AWS Lambda function using the official

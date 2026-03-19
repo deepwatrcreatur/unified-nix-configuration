@@ -20,7 +20,7 @@
       dynamic_dns {
         provider cloudflare {$CLOUDFLARE_API_TOKEN}
         domains {
-          # `homeassistant` is intentionally excluded here. We publish it as a
+          # `home-assistant` is intentionally excluded here. We publish it as a
           # Cloudflare CNAME to another DDNS-managed hostname so Caddy's DDNS
           # updater does not fight Cloudflare over the same record name.
           deepwatercreature.com @ homelab 2fauth nightscout marreta linkwarden
@@ -67,7 +67,7 @@
         '';
       };
 
-      "homeassistant.deepwatercreature.com" = {
+      "home-assistant.deepwatercreature.com" = {
         extraConfig = ''
           reverse_proxy 10.10.11.18:8123
         '';
