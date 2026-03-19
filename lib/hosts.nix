@@ -102,6 +102,13 @@
       description = "Home automation, Semaphore Ansible UI";
     };
 
+    homeassistant = {
+      ip = "10.10.11.18";
+      aliases = [ "ha" ];
+      includeSsh = false;
+      description = "Home Assistant VM";
+    };
+
     casaos = {
       ip = "10.10.11.77";
       sshUser = "root";

@@ -20,7 +20,7 @@
       dynamic_dns {
         provider cloudflare {$CLOUDFLARE_API_TOKEN}
         domains {
-          deepwatercreature.com @ homelab 2fauth nightscout marreta linkwarden
+          deepwatercreature.com @ homelab homeassistant 2fauth nightscout marreta linkwarden
         }
         check_interval 5m
         versions ipv4 ipv6
@@ -61,6 +61,12 @@
           }
 
           respond "Access restricted to home LAN and Tailnet" 403
+        '';
+      };
+
+      "homeassistant.deepwatercreature.com" = {
+        extraConfig = ''
+          reverse_proxy 10.10.11.18:8123
         '';
       };
       
