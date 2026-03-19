@@ -34,4 +34,7 @@
 
   # Enable nix-daemon to use user's SSH socket for git+ssh flake inputs
   myModules.nix-daemon-user-ssh.enable = true;
+
+  # Use the stable per-host agenix identity instead of relying on SSH host keys.
+  my.agenix.machineIdentity.enable = true;
 }

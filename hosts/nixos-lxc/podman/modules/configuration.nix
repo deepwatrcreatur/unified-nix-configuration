@@ -24,9 +24,6 @@
   security.sudo.enable = true;
   security.sudo.wheelNeedsPassword = false;
   security.wrappers.sudo.setuid = true;
-
-  age.identityPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-
   systemd.mounts = [
     {
       what = "debugfs";

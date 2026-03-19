@@ -53,6 +53,7 @@ let
     "attic-cache"
     "gateway"
     "homeserver"
+    "podman"
     "pve-gateway"
     "pve-lattitude"
     "pve-rog"
