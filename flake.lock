@@ -1019,16 +1019,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1773230021,
-        "narHash": "sha256-KIMu0Xt8c+3rBZvibHvvB2hSRiI7hzQaa0s3MdqbrBw=",
-        "ref": "refs/tags/v1.0.1",
-        "rev": "e7f36e1986e08369fa7cb39ff88b812bdd183c53",
-        "revCount": 8,
+        "lastModified": 1773960749,
+        "narHash": "sha256-/IIONY8DBGf1XdU7RDmDji0iH4t5Pd1xcmTusc/SckA=",
+        "ref": "refs/tags/v1.1.0",
+        "rev": "d1fb8c94ba097d8cef33120f2e7bf87e65bd0aa7",
+        "revCount": 12,
         "type": "git",
         "url": "ssh://git@github.com/deepwatrcreatur/nix-linuxbrew"
       },
       "original": {
-        "ref": "refs/tags/v1.0.1",
+        "ref": "refs/tags/v1.1.0",
         "type": "git",
         "url": "ssh://git@github.com/deepwatrcreatur/nix-linuxbrew"
       }

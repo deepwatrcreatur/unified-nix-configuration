@@ -64,7 +64,7 @@
     };
 
     nix-linuxbrew = {
-      url = "git+ssh://git@github.com/deepwatrcreatur/nix-linuxbrew?ref=refs/tags/v1.0.1";
+      url = "git+ssh://git@github.com/deepwatrcreatur/nix-linuxbrew?ref=refs/tags/v1.1.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
