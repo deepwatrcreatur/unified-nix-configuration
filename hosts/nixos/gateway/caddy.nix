@@ -20,7 +20,10 @@
       dynamic_dns {
         provider cloudflare {$CLOUDFLARE_API_TOKEN}
         domains {
-          deepwatercreature.com @ homelab homeassistant 2fauth nightscout marreta linkwarden
+          # `homeassistant` is intentionally excluded here. We publish it as a
+          # Cloudflare CNAME to another DDNS-managed hostname so Caddy's DDNS
+          # updater does not fight Cloudflare over the same record name.
+          deepwatercreature.com @ homelab 2fauth nightscout marreta linkwarden
         }
         check_interval 5m
         versions ipv4 ipv6
