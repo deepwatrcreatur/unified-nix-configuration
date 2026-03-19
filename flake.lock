@@ -1019,11 +1019,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773960749,
-        "narHash": "sha256-/IIONY8DBGf1XdU7RDmDji0iH4t5Pd1xcmTusc/SckA=",
+        "lastModified": 1773961047,
+        "narHash": "sha256-u7dkgcHwyBJu2tNjNLKK7/DYOqq2dwr7BZboexQjQZM=",
         "ref": "refs/tags/v1.1.0",
-        "rev": "d1fb8c94ba097d8cef33120f2e7bf87e65bd0aa7",
-        "revCount": 12,
+        "rev": "bda7f0db2765165f0f845cdcf164ebd00df22b0a",
+        "revCount": 13,
         "type": "git",
         "url": "ssh://git@github.com/deepwatrcreatur/nix-linuxbrew"
       },

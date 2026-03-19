@@ -62,10 +62,9 @@
     };
   };
 
-  # Homebrew is managed via home-manager (modules/home-manager/linuxbrew.nix)
-  # System-level Linuxbrew setup and Homebrew compatibility links live in
-  # modules/activation-scripts/linux/linuxbrew-system.nix.
-  custom.activation-scripts.linux.linuxbrew-system.enable = true;
+  # Homebrew is managed via home-manager (nix-linuxbrew homeManagerModule)
+  # System-level setup (directory + compatibility symlinks) via nix-linuxbrew nixosModule
+  programs.linuxbrew.enableSystemSetup = true;
 
   # Linux-specific wezterm configuration
   programs.wezterm.extraConfig = lib.mkAfter ''
