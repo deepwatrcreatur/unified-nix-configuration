@@ -64,7 +64,10 @@
 
   # Homebrew is managed via home-manager (nix-linuxbrew homeManagerModule)
   # System-level setup (directory + compatibility symlinks) via nix-linuxbrew nixosModule
-  programs.linuxbrew.enableSystemSetup = true;
+  programs.linuxbrew = {
+    enableSystemSetup = true;
+    owner = "deepwatrcreatur";
+  };
 
   # Linux-specific wezterm configuration
   programs.wezterm.extraConfig = lib.mkAfter ''
