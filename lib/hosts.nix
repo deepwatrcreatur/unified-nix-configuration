@@ -29,6 +29,7 @@
         "dashboard"
         "grafana"
         "homelab"
+        "home-assistant"
         "2fauth"
         "nightscout"
         "marreta"
