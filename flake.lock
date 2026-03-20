@@ -750,15 +750,15 @@
       "locked": {
         "lastModified": 1773663796,
         "narHash": "sha256-X+JHJY3ovZ9INT7CzySQHLYMoFJZpL+H718WbBs/K3Q=",
-        "ref": "refs/heads/main",
+        "owner": "deepwatrcreatur",
+        "repo": "fnox-flake",
         "rev": "8453a4caeb4e4175203c9fc1bc43bfb3065786d9",
-        "revCount": 13,
-        "type": "git",
-        "url": "ssh://git@github.com/deepwatrcreatur/fnox-flake"
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "ssh://git@github.com/deepwatrcreatur/fnox-flake"
+        "owner": "deepwatrcreatur",
+        "repo": "fnox-flake",
+        "type": "github"
       }
     },
     "git-hooks-nix": {
@@ -912,16 +912,16 @@
       "locked": {
         "lastModified": 1773621656,
         "narHash": "sha256-fI+zrTJuxLV0YwlWnQnHzz81qwKoN5s2g/zwn6cs3dU=",
-        "ref": "main",
+        "owner": "deepwatrcreatur",
+        "repo": "nix-attic-infra",
         "rev": "6c963661dea080dfc335b256fdc2022032de4f67",
-        "revCount": 26,
-        "type": "git",
-        "url": "ssh://git@github.com/deepwatrcreatur/nix-attic-infra"
+        "type": "github"
       },
       "original": {
+        "owner": "deepwatrcreatur",
         "ref": "main",
-        "type": "git",
-        "url": "ssh://git@github.com/deepwatrcreatur/nix-attic-infra"
+        "repo": "nix-attic-infra",
+        "type": "github"
       }
     },
     "nix-coding-agents": {
@@ -1003,15 +1003,15 @@
       "locked": {
         "lastModified": 1768426850,
         "narHash": "sha256-0BDa/PTi9QHydkEQWGDmlhiVeXQpff/7xxiHCa/EUFk=",
-        "ref": "refs/heads/main",
+        "owner": "deepwatrcreatur",
+        "repo": "nix-gnome-cosmic-ui",
         "rev": "196f9ed611a93d813736b876f52fcbe3f43ba28d",
-        "revCount": 2,
-        "type": "git",
-        "url": "ssh://git@github.com/deepwatrcreatur/nix-gnome-cosmic-ui"
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "ssh://git@github.com/deepwatrcreatur/nix-gnome-cosmic-ui"
+        "owner": "deepwatrcreatur",
+        "repo": "nix-gnome-cosmic-ui",
+        "type": "github"
       }
     },
     "nix-homebrew": {
@@ -1083,16 +1083,16 @@
       "locked": {
         "lastModified": 1773967287,
         "narHash": "sha256-2yw1s7S4FxRFnqtKf0q/7Pp4ufqh5xb5cJ6JGIDUtmQ=",
-        "ref": "refs/tags/v1.1.0",
+        "owner": "deepwatrcreatur",
+        "repo": "nix-linuxbrew",
         "rev": "6545282cff9b310d2a50dde2324c182aa2e2842c",
-        "revCount": 17,
-        "type": "git",
-        "url": "ssh://git@github.com/deepwatrcreatur/nix-linuxbrew"
+        "type": "github"
       },
       "original": {
-        "ref": "refs/tags/v1.1.0",
-        "type": "git",
-        "url": "ssh://git@github.com/deepwatrcreatur/nix-linuxbrew"
+        "owner": "deepwatrcreatur",
+        "ref": "v1.1.0",
+        "repo": "nix-linuxbrew",
+        "type": "github"
       }
     },
     "nix-router-optimized": {
@@ -1189,15 +1189,15 @@
       "locked": {
         "lastModified": 1767035367,
         "narHash": "sha256-dHSwu0LBSqbMqJQW/5L5hJ2KciTDB6h83iWTVI3gcEM=",
-        "ref": "refs/heads/main",
+        "owner": "deepwatrcreatur",
+        "repo": "nix-whitesur-config",
         "rev": "a374aa647c56d7c7e9754dbadd014a7c4dd75cb0",
-        "revCount": 5,
-        "type": "git",
-        "url": "ssh://git@github.com/deepwatrcreatur/nix-whitesur-config"
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "ssh://git@github.com/deepwatrcreatur/nix-whitesur-config"
+        "owner": "deepwatrcreatur",
+        "repo": "nix-whitesur-config",
+        "type": "github"
       }
     },
     "nixbit": {
@@ -1530,15 +1530,15 @@
       "locked": {
         "lastModified": 1773666312,
         "narHash": "sha256-4+VOa5BAC3lNFQTAhCDxDAi8xrqUGbOsmq68ds9r73Y=",
-        "ref": "refs/heads/main",
+        "owner": "deepwatrcreatur",
+        "repo": "nix-ssh-keys-manager",
         "rev": "787ba7f5762d5581749b6bf045b67ffcc88bfa89",
-        "revCount": 11,
-        "type": "git",
-        "url": "ssh://git@github.com/deepwatrcreatur/nix-ssh-keys-manager"
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "ssh://git@github.com/deepwatrcreatur/nix-ssh-keys-manager"
+        "owner": "deepwatrcreatur",
+        "repo": "nix-ssh-keys-manager",
+        "type": "github"
       }
     },
     "systems": {
@@ -1791,15 +1791,15 @@
       "locked": {
         "lastModified": 1767683021,
         "narHash": "sha256-9/lALzcSJe3qzFF0LUcGsMWhFUC3HuT7amsQVeEvp24=",
-        "ref": "refs/heads/main",
+        "owner": "deepwatrcreatur",
+        "repo": "tesla-inference-flake",
         "rev": "1df9199f6457d5ef8e58f6caf3875027090e0779",
-        "revCount": 49,
-        "type": "git",
-        "url": "ssh://git@github.com/deepwatrcreatur/tesla-inference-flake"
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "ssh://git@github.com/deepwatrcreatur/tesla-inference-flake"
+        "owner": "deepwatrcreatur",
+        "repo": "tesla-inference-flake",
+        "type": "github"
       }
     },
     "treefmt-nix": {
@@ -1852,15 +1852,15 @@
       "locked": {
         "lastModified": 1773980015,
         "narHash": "sha256-XuyLnyQfjKGMR02tkXw/ExQA5J5k18oP+DtKDry6K1Y=",
-        "ref": "refs/heads/main",
+        "owner": "max-sixty",
+        "repo": "worktrunk",
         "rev": "ccbdf0f70b32067aa9c5145a5093f49a279af7fd",
-        "revCount": 3106,
-        "type": "git",
-        "url": "ssh://git@github.com/max-sixty/worktrunk"
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "ssh://git@github.com/max-sixty/worktrunk"
+        "owner": "max-sixty",
+        "repo": "worktrunk",
+        "type": "github"
       }
     },
     "zellij-vivid-rounded": {
@@ -1873,15 +1873,15 @@
       "locked": {
         "lastModified": 1773289824,
         "narHash": "sha256-oOGyKkG7u7OEgB7pOTTkRNXtS8Dz1FXxYVznaidt/d4=",
-        "ref": "refs/heads/main",
+        "owner": "deepwatrcreatur",
+        "repo": "nix-zellij-vivid-rounded",
         "rev": "396811ca5422619e0759ba6374c5351e36784593",
-        "revCount": 65,
-        "type": "git",
-        "url": "ssh://git@github.com/deepwatrcreatur/nix-zellij-vivid-rounded"
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "ssh://git@github.com/deepwatrcreatur/nix-zellij-vivid-rounded"
+        "owner": "deepwatrcreatur",
+        "repo": "nix-zellij-vivid-rounded",
+        "type": "github"
       }
     },
     "zen-browser": {
