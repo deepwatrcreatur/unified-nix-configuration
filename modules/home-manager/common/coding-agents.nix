@@ -15,5 +15,6 @@ in
   home.packages = [
     pkgs.claude-monitor
     inputs.claude-statusline-flake.packages.${pkgs.stdenv.hostPlatform.system}.default
+    inputs.nix-rtk.packages.${pkgs.stdenv.hostPlatform.system}.default
   ] ++ map (agent: agent.package) codingAgents;
 }
