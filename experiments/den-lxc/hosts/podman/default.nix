@@ -10,7 +10,7 @@ denPrototype.mkHostModule {
     "podman"
   ];
   primaryUserImports = [
-    ../../../users/deepwatrcreatur/hosts/podman
+    ../../../../users/deepwatrcreatur/hosts/podman
   ];
   aspectsList = [
     "nixos-base"
