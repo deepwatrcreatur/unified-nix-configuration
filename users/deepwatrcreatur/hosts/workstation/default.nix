@@ -74,7 +74,6 @@
   programs.distrobox.fedora.enable = true;
 
   home.packages = with pkgs; [
-    inputs.nix-linuxbrew.packages.${pkgs.stdenv.hostPlatform.system}.brew-wrapper
     inputs.claude-statusline-flake.packages.${pkgs.stdenv.hostPlatform.system}.default # Your new claude-statusline package
     inputs.codex-cli-nix.packages.${pkgs.stdenv.hostPlatform.system}.default         # Assuming codex-cli-nix is your claude-code package
     inputs.cosmic-applet-proxmoxbar.packages.${pkgs.stdenv.hostPlatform.system}.default
