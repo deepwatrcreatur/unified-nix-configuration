@@ -12,12 +12,11 @@ in
   # Configure nix to use the netrc file (NixOS-specific, not in common module)
   nix.settings.netrc-file = targetPath;
 
-  # Prepare the netrc file for the Nix daemon (runs after agenix, before nix-daemon)
+  # Prepare the netrc file for the Nix daemon (runs before nix-daemon)
+  # Note: agenix decrypts secrets during system activation, before services start
   systemd.services.nix-ci-netrc = {
     description = "Prepare nix-ci.com netrc for Nix daemon";
     wantedBy = [ "multi-user.target" ];
-    after = [ "agenix.service" ];
-    requires = [ "agenix.service" ];
     before = [ "nix-daemon.service" ];
     serviceConfig = {
       Type = "oneshot";
