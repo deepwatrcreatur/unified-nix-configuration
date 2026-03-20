@@ -32,6 +32,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-rtk = {
+      url = "github:deepwatrcreatur/nix-rtk";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nixbit = {
       url = "github:pbek/nixbit";
       inputs.nixpkgs.follows = "nixpkgs";
