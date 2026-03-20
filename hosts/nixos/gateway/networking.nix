@@ -35,6 +35,7 @@
   networking.useNetworkd = true;
   networking.useDHCP = false;
   systemd.network.enable = true;
+  systemd.network.wait-online.enable = true;
 
   # WAN interface (ens17) - Get IP via DHCP from ISP
   systemd.network.networks."10-wan" = {
@@ -58,6 +59,7 @@
   systemd.network.networks."20-lan" = {
     matchConfig.Name = "ens16";
     address = [ "10.10.10.1/16" ];
+    linkConfig.RequiredForOnline = "routable";
     routes = [
       {
         Destination = "10.10.0.0/16";
