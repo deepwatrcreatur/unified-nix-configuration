@@ -1,7 +1,11 @@
 {
   inputs,
+  lib,
   ...
 }:
+let
+  atticClientTokenFile = ../../../secrets-agenix/attic-client-token.age;
+in
 {
   # Declarative host configuration
   host.type = "lxc";
@@ -33,8 +37,8 @@
   services.ssh-keys-manager.username = "deepwatrcreatur";
 
   # Agenix secret for attic cache authentication
-  age.secrets."attic-client-token" = {
-    file = ../../../secrets-agenix/attic-client-token.age;
+  age.secrets."attic-client-token" = lib.mkIf (builtins.pathExists atticClientTokenFile) {
+    file = atticClientTokenFile;
     path = "/run/secrets/attic-client-token";
     owner = "root";
     mode = "0400";

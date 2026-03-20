@@ -5,6 +5,11 @@
   lib,
   ...
 }:
+let
+  # Define secret file paths for conditional loading
+  cloudflareSecretFile = ../../../secrets-agenix/cloudflare_ddns_API_token.age;
+  technitiumSecretFile = ../../../secrets-agenix/technitium-api-key.age;
+in
 {
   # Declarative host configuration
   host = {
@@ -364,16 +369,16 @@
   ];
 
   # Cloudflare token is stored as a true agenix secret.
-  age.secrets.cloudflare-api-key = {
-    file = ../../../secrets-agenix/cloudflare_ddns_API_token.age;
+  age.secrets.cloudflare-api-key = lib.mkIf (builtins.pathExists cloudflareSecretFile) {
+    file = cloudflareSecretFile;
     owner = "root";
     group = "root";
     mode = "0400";
   };
 
   # Agenix configuration
-  age.secrets.technitium-api-key = {
-    file = ../../../secrets-agenix/technitium-api-key.age;
+  age.secrets.technitium-api-key = lib.mkIf (builtins.pathExists technitiumSecretFile) {
+    file = technitiumSecretFile;
     owner = "root";
     group = "root";
     mode = "0444"; # World-readable for router-dashboard DynamicUser access

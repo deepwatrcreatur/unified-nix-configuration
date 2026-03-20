@@ -137,6 +137,8 @@ in
       systemd.services.nix-attic-token = {
         description = "Prepare Attic token for Nix daemon";
         wantedBy = [ "multi-user.target" ];
+        after = [ "agenix.service" ];
+        requires = [ "agenix.service" ];
         serviceConfig = {
           Type = "oneshot";
           RemainAfterExit = true;
