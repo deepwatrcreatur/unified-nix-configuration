@@ -38,7 +38,7 @@ let
   helpers = rec {
     mkNixosSystem =
       {
-        system ? inputs.nixpkgs.system,
+        system,
         hostPath,
         hostName ? builtins.baseNameOf (toString hostPath),
         modules ? [ ],
@@ -74,7 +74,7 @@ let
 
     mkDarwinSystem =
       {
-        system ? inputs.nix-darwin.system,
+        system,
         hostPath,
         username,
         modules ? [ ],
@@ -127,7 +127,7 @@ let
 
     mkOmarchySystem =
       {
-        system ? inputs.nixpkgs.system,
+        system,
         hostPath,
         modules ? [ ],
         extraModules ? [ ],
@@ -151,7 +151,7 @@ let
 
     mkHomeConfig =
       {
-        targetSystem ? inputs.nixpkgs.system,
+        targetSystem,
         hostName ? "",
         userPath,
         modules ? [ ],
@@ -180,7 +180,7 @@ let
       {
         outputName ? name,
         name,
-        targetSystem ? inputs.nixpkgs.system,
+        targetSystem,
         hostName ? name,
         userPath,
         modules ? [ ],
@@ -204,7 +204,7 @@ let
       {
         outputName ? name,
         name,
-        system ? inputs.nixpkgs.system,
+        system,
         hostPath,
         hostName ? builtins.baseNameOf (toString hostPath),
         modules ? [ ],
@@ -230,7 +230,7 @@ let
       {
         outputName ? name,
         name,
-        system ? inputs.nix-darwin.system,
+        system,
         hostPath,
         username,
         modules ? [ ],
