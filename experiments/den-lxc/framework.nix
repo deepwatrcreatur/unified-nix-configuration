@@ -6,6 +6,7 @@
       name,
       system,
       hostPath,
+      hostName ? outputName,
       modules ? [ ],
       extraModules ? [ ],
       isDesktop ? false,
@@ -17,6 +18,7 @@
         inherit
           system
           hostPath
+          hostName
           modules
           extraModules
           isDesktop

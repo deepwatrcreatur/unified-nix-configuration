@@ -25,9 +25,7 @@
     kind = "nixos";
     name = "homeserver";
     system = "x86_64-linux";
-    hostPath = ../hosts/homeserver.nix;
-    extraModules =
-      if builtins.pathExists /etc/nixos/local-secrets.nix then [ /etc/nixos/local-secrets.nix ] else [ ];
+    hostPath = ../hosts/homeserver;
     mode = "aspect";
   };
 
@@ -67,7 +65,7 @@
     kind = "nixos";
     name = "podman";
     system = "x86_64-linux";
-    hostPath = ../hosts/podman.nix;
+    hostPath = ../hosts/podman;
     mode = "aspect";
   };
 

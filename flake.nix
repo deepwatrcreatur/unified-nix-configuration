@@ -258,13 +258,13 @@
           {
             system ? inputs.nixpkgs.system,
             hostPath,
+            hostName ? builtins.baseNameOf (toString hostPath),
             modules ? [ ],
             extraModules ? [ ],
             isDesktop ? false,
             includeSnapd ? true,
           }:
           let
-            hostName = builtins.baseNameOf (toString hostPath);
             baseModules = commonSystemModules ++ [
               inputs.agenix.nixosModules.default
               inputs.home-manager.nixosModules.home-manager
@@ -407,6 +407,7 @@
             name,
             system ? inputs.nixpkgs.system,
             hostPath,
+            hostName ? builtins.baseNameOf (toString hostPath),
             modules ? [ ],
             extraModules ? [ ],
             isDesktop ? false,
@@ -417,6 +418,7 @@
               inherit
                 system
                 hostPath
+                hostName
                 modules
                 extraModules
                 isDesktop
