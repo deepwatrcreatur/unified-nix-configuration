@@ -4,6 +4,7 @@
   helpers,
   homeManagerModuleArgs,
   importAllModulesInDir,
+  inventoryOutputs,
   inputs,
   nixpkgsLib,
   systemSpecialArgs,
@@ -15,18 +16,6 @@ let
   };
 
   inventory = import ../experiments/den-lxc/inventory;
-
-  nixosOutputs = nixpkgsLib.mapAttrsToList (
-    _: host: framework.mkNixosOutput (host // { outputName = "${host.name}-den"; })
-  ) inventory.hosts;
-
-  homeOutputs = nixpkgsLib.mapAttrsToList (
-    _: home: framework.mkHomeOutput (home // { outputName = "${home.name}-den"; })
-  ) inventory.homes;
-
-  darwinOutputs = nixpkgsLib.mapAttrsToList (
-    _: host: framework.mkDarwinOutput (host // { outputName = "${host.name}-den"; })
-  ) inventory.darwin;
 
   bootstrapOutputs =
     let
@@ -49,4 +38,10 @@ let
       ) legacy.nixosConfigurations;
     };
 in
-helpers.mergeOutputs (nixosOutputs ++ homeOutputs ++ darwinOutputs ++ [ bootstrapOutputs ])
+inventoryOutputs.mkInventoryOutputs {
+  inherit inventory;
+  nixosTransform = host: host // { outputName = "${host.name}-den"; };
+  homeTransform = home: home // { outputName = "${home.name}-den"; };
+  darwinTransform = host: host // { outputName = "${host.name}-den"; };
+  extraOutputs = [ bootstrapOutputs ];
+}

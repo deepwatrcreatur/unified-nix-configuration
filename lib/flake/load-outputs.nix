@@ -1,5 +1,6 @@
 {
   inputs,
+  inventoryOutputs,
   nixpkgsLib,
   shared,
   helpers,
@@ -11,6 +12,7 @@ let
   outputContext = {
     inherit
       inputs
+      inventoryOutputs
       nixpkgsLib
       helpers
       ;

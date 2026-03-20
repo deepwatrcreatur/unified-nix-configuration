@@ -176,8 +176,33 @@ let
         ] ++ modules;
       };
 
+    mkHomeOutput =
+      {
+        outputName ? name,
+        name,
+        targetSystem ? inputs.nixpkgs.system,
+        hostName ? name,
+        userPath,
+        modules ? [ ],
+        isDesktop ? false,
+        extraSpecialArgs ? { },
+      }:
+      nixpkgsLib.setAttrByPath [ "homeConfigurations" outputName ] (
+        mkHomeConfig {
+          inherit
+            targetSystem
+            hostName
+            userPath
+            modules
+            isDesktop
+            extraSpecialArgs
+            ;
+        }
+      );
+
     mkNixosOutput =
       {
+        outputName ? name,
         name,
         system ? inputs.nixpkgs.system,
         hostPath,
@@ -187,7 +212,7 @@ let
         isDesktop ? false,
         includeSnapd ? true,
       }:
-      nixpkgsLib.setAttrByPath [ "nixosConfigurations" name ] (
+      nixpkgsLib.setAttrByPath [ "nixosConfigurations" outputName ] (
         mkNixosSystem {
           inherit
             system
@@ -203,6 +228,7 @@ let
 
     mkDarwinOutput =
       {
+        outputName ? name,
         name,
         system ? inputs.nix-darwin.system,
         hostPath,
@@ -210,7 +236,7 @@ let
         modules ? [ ],
         isDesktop ? true,
       }:
-      nixpkgsLib.setAttrByPath [ "darwinConfigurations" name ] (
+      nixpkgsLib.setAttrByPath [ "darwinConfigurations" outputName ] (
         mkDarwinSystem {
           inherit
             system

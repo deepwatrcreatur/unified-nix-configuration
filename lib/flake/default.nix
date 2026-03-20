@@ -21,12 +21,17 @@ let
       shared
       ;
   };
+  inventoryOutputs = import ./inventory-outputs.nix {
+    helpers = helperSet.helpers;
+    inherit nixpkgsLib;
+  };
   loadOutputs = import ./load-outputs.nix {
     inherit
       inputs
       nixpkgsLib
       shared
       repoRoot
+      inventoryOutputs
       ;
     helpers = helperSet.helpers;
   };
@@ -39,5 +44,6 @@ shared
     repoRoot
     utils
     loadOutputs
+    inventoryOutputs
     ;
 }
