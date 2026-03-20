@@ -27,13 +27,8 @@
 
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
 
-    codex-cli-nix = {
-      url = "github:sadjow/codex-cli-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    nix-rtk = {
-      url = "github:deepwatrcreatur/nix-rtk";
+    nix-coding-agents = {
+      url = "github:deepwatrcreatur/nix-coding-agents";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -119,11 +114,6 @@
 
     dmux-flake = {
       url = "github:deepwatrcreatur/nix-dmux"; # Your new dmux package flake
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    claude-statusline-flake = {
-      url = "github:deepwatrcreatur/nix-claude-statusline"; # Your new claude-statusline package flake
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
