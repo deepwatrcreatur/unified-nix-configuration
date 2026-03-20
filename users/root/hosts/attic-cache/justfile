@@ -1,4 +1,4 @@
-# users/root/hosts/cache-build-server/justfile
+# users/root/hosts/attic-cache/justfile
 
 update:
   nixos-rebuild switch --flake /root/flakes/unified-nix-configuration#attic-cache

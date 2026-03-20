@@ -4,4 +4,4 @@ update dir="/home/deepwatrcreatur/flakes/unified-nix-configuration":
   /run/wrappers/bin/sudo nixos-rebuild switch --flake {{dir}}#homeserver
 
 nh-update dir="/home/deepwatrcreatur/flakes/unified-nix-configuration":
-  nix --experimental-features 'nix-command flakes' run 'github:viperML/nh' -- os switch -H homeserver -f {{dir}}
+  nh os switch -H {{`hostname`}} -f {{dir}}
