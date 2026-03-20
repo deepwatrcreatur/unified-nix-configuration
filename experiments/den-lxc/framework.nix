@@ -6,6 +6,9 @@
       name,
       system,
       hostPath,
+      # This feeds Home Manager's extraSpecialArgs.hostName so host-local just
+      # commands target the selected flake output (for example homeserver-den).
+      # The actual machine hostname is still set by the host modules.
       hostName ? outputName,
       modules ? [ ],
       extraModules ? [ ],

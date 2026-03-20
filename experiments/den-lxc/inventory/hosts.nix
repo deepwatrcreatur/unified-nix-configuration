@@ -3,13 +3,8 @@
     kind = "nixos";
     name = "attic-cache";
     system = "x86_64-linux";
-    hostPath = ../../../hosts/nixos-lxc/attic-cache;
-    isDesktop = false;
-    extraModules = [
-      ../../../hosts/nixos-lxc/lxc-systemd-suppressions.nix
-      ../../../hosts/nixos
-    ];
-    mode = "legacy";
+    hostPath = ../hosts/attic-cache;
+    mode = "aspect";
   };
 
   gateway = {
@@ -67,19 +62,6 @@
     system = "x86_64-linux";
     hostPath = ../hosts/podman;
     mode = "aspect";
-  };
-
-  rustdesk = {
-    kind = "nixos";
-    name = "rustdesk";
-    system = "x86_64-linux";
-    hostPath = ../../../hosts/nixos-lxc/rustdesk;
-    isDesktop = false;
-    extraModules = [
-      ../../../hosts/nixos-lxc/lxc-systemd-suppressions.nix
-      ../../../hosts/nixos
-    ];
-    mode = "legacy";
   };
 
   workstation = {

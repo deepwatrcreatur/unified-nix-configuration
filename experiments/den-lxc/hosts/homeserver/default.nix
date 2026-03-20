@@ -18,5 +18,6 @@ denPrototype.mkHostModule {
     "homeserver-iperf3"
     "homeserver-homebridge"
     "homeserver-semaphore"
+    "rustdesk-server"
   ];
 }
