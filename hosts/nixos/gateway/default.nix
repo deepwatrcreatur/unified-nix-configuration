@@ -384,7 +384,7 @@ in
     mode = "0444"; # World-readable for router-dashboard DynamicUser access
   };
 
-  environment.variables.TECHNITIUM_API_KEY_FILE = config.age.secrets.technitium-api-key.path;
+  environment.variables.TECHNITIUM_API_KEY_FILE = lib.mkIf (builtins.pathExists technitiumSecretFile) config.age.secrets.technitium-api-key.path;
 
   nixpkgs.hostPlatform = "x86_64-linux";
   system.stateVersion = "25.05";
