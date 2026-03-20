@@ -64,6 +64,12 @@ let
   ];
 
   atticClientSecrets = operatorUsers ++ builtins.concatLists (map machineRecipients atticClientHosts);
+
+  # Hosts that use the nix-ci.com paid cache service
+  # Using same list as atticClientHosts - all NixOS hosts benefit from shared cache
+  nixCiCacheHosts = atticClientHosts;
+
+  nixCiCacheSecrets = operatorUsers ++ builtins.concatLists (map machineRecipients nixCiCacheHosts);
 in
 {
   # Service-scoped secrets
@@ -86,4 +92,7 @@ in
   "secrets-agenix/bitwarden-data.age".publicKeys = userOnlySecrets;
   "secrets-agenix/rclone-conf.age".publicKeys = userOnlySecrets;
   "secrets-agenix/proxmox-api-token.age".publicKeys = userOnlySecrets;
+
+  # nix-ci.com cache authentication (netrc format)
+  "secrets-agenix/nix-ci-netrc.age".publicKeys = nixCiCacheSecrets;
 }

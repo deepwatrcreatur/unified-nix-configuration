@@ -134,6 +134,7 @@ in
       nix.settings.post-build-hook = mkDefault "/etc/nix/attic-upload.sh";
 
       # 4. Prepare the token for the Nix daemon for pulling from the cache.
+      # Note: agenix decrypts secrets during system activation, before services start
       systemd.services.nix-attic-token = {
         description = "Prepare Attic token for Nix daemon";
         wantedBy = [ "multi-user.target" ];

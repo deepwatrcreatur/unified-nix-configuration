@@ -16,9 +16,11 @@ let
   cfg = config.lxc;
 in
 {
-  # Import LXC container module at top level
+  # Import LXC container module and required myModules at top level
   imports = [
     "${modulesPath}/virtualisation/lxc-container.nix"
+    ./attic-client.nix        # Defines myModules.attic-client
+    ./nix-daemon-user-ssh.nix # Defines myModules.nix-daemon-user-ssh
   ];
 
   options.lxc = {
