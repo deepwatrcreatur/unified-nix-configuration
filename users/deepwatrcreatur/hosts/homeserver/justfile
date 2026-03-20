@@ -7,7 +7,7 @@ update dir="/home/deepwatrcreatur/flakes/unified-nix-configuration":
 
 # Rebuild using nh (nicer output)
 nh-update dir="/home/deepwatrcreatur/flakes/unified-nix-configuration":
-  nh os switch {{dir}} -- --flake {{dir}}#homeserver
+  nh os switch -H homeserver -f {{dir}}
 
 # Test build without switching
 test dir="/home/deepwatrcreatur/flakes/unified-nix-configuration":
@@ -19,7 +19,7 @@ build dir="/home/deepwatrcreatur/flakes/unified-nix-configuration":
 
 # Pull latest and rebuild
 pull-update dir="/home/deepwatrcreatur/flakes/unified-nix-configuration":
-  cd {{dir}} && git pull && just update
+  cd {{dir}} && git pull --ff-only origin main && just update dir={{dir}}
 
 # Garbage collect old generations
 gc:
