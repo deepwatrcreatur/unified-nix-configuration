@@ -102,9 +102,6 @@ in
       "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
     ];
 
-    # nix-ci.com cache authentication (netrc file prepared by systemd on NixOS)
-    netrc-file = "/run/nix/nix-ci-netrc";
-
     # Access tokens - only on non-cache-server hosts
     access-tokens =
       lib.optionals (!isCacheServer) [
