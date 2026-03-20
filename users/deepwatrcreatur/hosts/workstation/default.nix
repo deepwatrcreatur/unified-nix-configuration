@@ -22,6 +22,13 @@
 
   programs.dmux.enable = true;
 
+  programs.coding-agents.rtk.integrations = {
+    claude.enable = true;
+    codex.enable = true;
+    gemini.enable = true;
+    opencode.enable = true;
+  };
+
   services.agenix-user-secrets = {
     enable = true;
     secrets = {
