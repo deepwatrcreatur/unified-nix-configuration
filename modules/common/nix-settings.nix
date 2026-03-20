@@ -82,6 +82,7 @@ in
         "http://attic-cache:5001/cache-local"
       ]
       ++ [
+        "https://cache.nix-ci.com"
         "https://cache.nixos.org/"
         "https://cuda-maintainers.cachix.org"
         "https://cache.garnix.io/"
@@ -93,12 +94,16 @@ in
       "cache-local:63xryK76L6y/NphTP/iS63yiYqldoWvVlWI0N8rgvBw="
       "cache-local:92faFQnuzuYUJ4ta3EYpqIaCMIZGenDoaPktsBucTe4="
       "cache-local:GozZz7XFsUZ7xI5o/Q36JA/BFfjzONWOjiqC+zAhp2g="
+      "nix-ci:g3xV5BDTLtIBZr/A00IU1x0EtKKlb7YLgBN2SgYgM6A="
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="
       "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
     ];
+
+    # nix-ci.com cache authentication (netrc file prepared by systemd on NixOS)
+    netrc-file = "/run/nix/nix-ci-netrc";
 
     # Access tokens - only on non-cache-server hosts
     access-tokens =
