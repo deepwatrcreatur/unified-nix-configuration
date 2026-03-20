@@ -12,6 +12,7 @@ let
 in
 helpers.mergeOutputs [
   (framework.mkNixosOutput (inventory.hosts.attic-cache // { outputName = "attic-cache-den"; }))
+  (framework.mkNixosOutput (inventory.hosts.gateway // { outputName = "gateway-den"; }))
   (framework.mkNixosOutput (inventory.hosts.homeserver // { outputName = "homeserver-den"; }))
   (framework.mkNixosOutput (inventory.hosts.podman // { outputName = "podman-den"; }))
   (framework.mkHomeOutput (inventory.homes.proxmox-root // { outputName = "proxmox-root-den"; }))
