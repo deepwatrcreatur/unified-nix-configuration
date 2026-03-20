@@ -151,7 +151,7 @@ in
 
     # SSH server
     services.openssh = {
-      enable = true;
+      enable = mkDefault true;
       settings = {
         PermitRootLogin = mkDefault "yes";
       };
@@ -174,7 +174,7 @@ in
     ];
 
     # Networking
-    networking.useDHCP = mkIf cfg.networking.useDHCP true;
+    networking.useDHCP = cfg.networking.useDHCP;
     networking.interfaces.eth0.ipv4.addresses = mkIf (cfg.networking.staticIP != null) [
       {
         address = cfg.networking.staticIP;
@@ -238,7 +238,7 @@ in
 
         home.username = "root";
         home.homeDirectory = "/root";
-        home.stateVersion = "25.11";
+        home.stateVersion = mkDefault "25.11";
         programs.home-manager.enable = true;
         home.packages = cfg.homeManager.rootPackages;
       };
@@ -248,7 +248,7 @@ in
 
         home.username = cfg.users.primaryUser;
         home.homeDirectory = "/home/${cfg.users.primaryUser}";
-        home.stateVersion = "25.11";
+        home.stateVersion = mkDefault "25.11";
         programs.home-manager.enable = true;
       };
     };
