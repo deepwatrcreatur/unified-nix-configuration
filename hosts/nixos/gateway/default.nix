@@ -6,9 +6,19 @@
   ...
 }:
 let
-  # Define secret file paths for conditional loading
-  cloudflareSecretFile = ../../../secrets-agenix/cloudflare_ddns_API_token.age;
-  technitiumSecretFile = ../../../secrets-agenix/technitium-api-key.age;
+  # Optional secrets library for graceful degradation when .age files don't exist
+  optSec = import ../../../modules/helpers/optional-secrets.nix { inherit lib; };
+
+  # Define all secrets in one place - they gracefully degrade if files don't exist
+  secrets = optSec.mkSecrets {
+    cloudflare-api-key = {
+      file = ../../../secrets-agenix/cloudflare_ddns_API_token.age;
+    };
+    technitium-api-key = {
+      file = ../../../secrets-agenix/technitium-api-key.age;
+      mode = "0444"; # World-readable for router-dashboard DynamicUser access
+    };
+  };
 in
 {
   # Declarative host configuration
@@ -368,23 +378,11 @@ in
     tmux
   ];
 
-  # Cloudflare token is stored as a true agenix secret.
-  age.secrets.cloudflare-api-key = lib.mkIf (builtins.pathExists cloudflareSecretFile) {
-    file = cloudflareSecretFile;
-    owner = "root";
-    group = "root";
-    mode = "0400";
-  };
+  # Agenix secrets - uses optional-secrets library for graceful degradation
+  age.secrets = secrets.definitions;
 
-  # Agenix configuration
-  age.secrets.technitium-api-key = lib.mkIf (builtins.pathExists technitiumSecretFile) {
-    file = technitiumSecretFile;
-    owner = "root";
-    group = "root";
-    mode = "0444"; # World-readable for router-dashboard DynamicUser access
-  };
-
-  environment.variables.TECHNITIUM_API_KEY_FILE = lib.mkIf (builtins.pathExists technitiumSecretFile) config.age.secrets.technitium-api-key.path;
+  # Environment variable only set when secret exists
+  environment.variables.TECHNITIUM_API_KEY_FILE = secrets.pathIf "technitium-api-key";
 
   nixpkgs.hostPlatform = "x86_64-linux";
   system.stateVersion = "25.05";

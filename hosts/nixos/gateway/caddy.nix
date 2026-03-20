@@ -1,8 +1,13 @@
 { config, pkgs, lib, ... }:
 
 let
-  cloudflareSecretFile = ../../../secrets-agenix/cloudflare_ddns_API_token.age;
-  hasCloudflareSecret = builtins.pathExists cloudflareSecretFile;
+  # Optional secrets library for graceful degradation
+  optSec = import ../../../modules/helpers/optional-secrets.nix { inherit lib; };
+
+  # Check if cloudflare secret exists (defined in default.nix, checked here for preStart logic)
+  cfSecret = optSec.mkSecret "cloudflare-api-key" {
+    file = ../../../secrets-agenix/cloudflare_ddns_API_token.age;
+  };
 in
 {
   services.caddy = {
@@ -117,14 +122,14 @@ in
     wants = [ "network-online.target" ];
     preStart = ''
       install -d -m 0750 -o caddy -g caddy /run/caddy
-      ${lib.optionalString hasCloudflareSecret ''
+      ${lib.optionalString cfSecret.exists ''
         token="$(tr -d '\n' < ${config.age.secrets.cloudflare-api-key.path})"
         test -n "$token"
         printf 'CLOUDFLARE_API_TOKEN=%s\n' "$token" > /run/caddy/caddy.env
         chown caddy:caddy /run/caddy/caddy.env
         chmod 0400 /run/caddy/caddy.env
       ''}
-      ${lib.optionalString (!hasCloudflareSecret) ''
+      ${lib.optionalString (!cfSecret.exists) ''
         # No Cloudflare secret available - create empty env file
         touch /run/caddy/caddy.env
         chown caddy:caddy /run/caddy/caddy.env
