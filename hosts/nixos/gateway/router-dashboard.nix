@@ -150,6 +150,23 @@
     };
   };
 
+  # These services bind the LAN address directly, so they need the address to
+  # exist before systemd starts them after reboot.
+  systemd.services.prometheus = {
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
+  };
+
+  systemd.services.grafana = {
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
+  };
+
+  systemd.services.netdata = {
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
+  };
+
   # Custom router dashboard script
   environment.etc."router-dashboard/index.html" = {
     text = ''
