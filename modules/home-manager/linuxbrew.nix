@@ -8,11 +8,12 @@
 
 let
   commonPackages = import ../common-brew-packages.nix;
+  isLinux = pkgs.stdenv.hostPlatform.isLinux;
 in
 {
   imports = [ inputs.nix-linuxbrew.homeManagerModules.default ];
 
-  config = lib.mkIf (config.home.homeDirectory != null) {
+  config = lib.mkIf (isLinux && config.home.homeDirectory != null) {
     programs.linuxbrew = {
       enable = lib.mkDefault true;
       taps = lib.mkDefault commonPackages.taps;
