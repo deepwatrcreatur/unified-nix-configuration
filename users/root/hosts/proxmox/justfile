@@ -5,4 +5,4 @@ update:
   home-manager switch --flake $NH_FLAKE#proxmox-root
 
 nh-update:
-  nh home switch $NH_FLAKE#homeConfigurations.proxmox-root.activationPackage
+  nh home switch $NH_FLAKE#proxmox-root

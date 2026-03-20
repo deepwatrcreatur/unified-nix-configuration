@@ -6,4 +6,4 @@ update dir="/home/deepwatrcreatur/flakes/unified-nix-configuration":
   /run/wrappers/bin/sudo nixos-rebuild switch --flake {{dir}}#{{`hostname`}}
 
 nh-update:
-  nh os switch
+  nh os switch -H {{`hostname`}} -f /home/deepwatrcreatur/flakes/unified-nix-configuration

@@ -92,7 +92,7 @@ let
 
     # Update macOS system using nh helper
     nh-update:
-        nh darwin switch
+        nh darwin switch -H ${hostname} -f $NH_FLAKE
 
     # Build macOS system without switching
     build-darwin:
@@ -140,7 +140,7 @@ let
 
     # Update NixOS system using nh helper
     nh-update:
-        PATH="/run/current-system/sw/bin:$PATH" nh os switch
+        PATH="/run/current-system/sw/bin:$PATH" nh os switch -H ${hostname} -f $NH_FLAKE
 
     # Build NixOS system without switching
     build-nixos:
