@@ -59,51 +59,51 @@
     };
 
     nix-whitesur-config = {
-      url = "git+ssh://git@github.com/deepwatrcreatur/nix-whitesur-config";
+      url = "github:deepwatrcreatur/nix-whitesur-config";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nix-linuxbrew = {
-      url = "git+ssh://git@github.com/deepwatrcreatur/nix-linuxbrew?ref=refs/tags/v1.1.0";
+      url = "github:deepwatrcreatur/nix-linuxbrew/v1.1.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     tesla-inference-flake = {
-      url = "git+ssh://git@github.com/deepwatrcreatur/tesla-inference-flake";
+      url = "github:deepwatrcreatur/tesla-inference-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     fnox = {
-      url = "git+ssh://git@github.com/deepwatrcreatur/fnox-flake";
+      url = "github:deepwatrcreatur/fnox-flake";
       inputs.nixpkgs.follows = "nixpkgs";
       flake = true;
     };
 
     zellij-vivid-rounded = {
-      url = "git+ssh://git@github.com/deepwatrcreatur/nix-zellij-vivid-rounded";
+      url = "github:deepwatrcreatur/nix-zellij-vivid-rounded";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nix-gnome-cosmic-ui = {
-      url = "git+ssh://git@github.com/deepwatrcreatur/nix-gnome-cosmic-ui";
+      url = "github:deepwatrcreatur/nix-gnome-cosmic-ui";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-utils.follows = "flake-utils";
     };
 
     worktrunk = {
-      url = "git+ssh://git@github.com/max-sixty/worktrunk";
+      url = "github:max-sixty/worktrunk";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-utils.follows = "flake-utils";
     };
 
     nix-attic-infra = {
-      url = "git+ssh://git@github.com/deepwatrcreatur/nix-attic-infra?ref=main";
+      url = "github:deepwatrcreatur/nix-attic-infra/main";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-utils.follows = "flake-utils";
     };
 
     ssh-keys-manager = {
-      url = "git+ssh://git@github.com/deepwatrcreatur/nix-ssh-keys-manager";
+      url = "github:deepwatrcreatur/nix-ssh-keys-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
