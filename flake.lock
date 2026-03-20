@@ -935,11 +935,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1774003841,
-        "narHash": "sha256-LTDDya09BcC99mhgUZ1JKQcUCTbA1bH1d5KfntiX+Uk=",
+        "lastModified": 1774007186,
+        "narHash": "sha256-u73UuXyWu+pQLoj+ARLADXelJ8ePfgthMVS5LMSnj0U=",
         "owner": "deepwatrcreatur",
         "repo": "nix-coding-agents",
-        "rev": "351ce1b775017d79eccd45185543af8d2771b157",
+        "rev": "e7fe0b238e9d87cb7f825c12378f1113557d49d0",
         "type": "github"
       },
       "original": {
