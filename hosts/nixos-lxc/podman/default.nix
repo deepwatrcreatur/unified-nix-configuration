@@ -9,8 +9,8 @@
     ../../../modules/nixos/attic-client.nix
     ../../../modules/nixos/nix-daemon-user-ssh.nix
     ./modules/containers.nix
+    ./stacks/paperless-quadlet.nix
     inputs.agenix.nixosModules.default
-    inputs.arion.nixosModules.arion
   ];
 
   networking.hostName = "podman";
@@ -39,30 +39,4 @@
       atticToken = true;
     };
   };
-
-  # Arion configuration for Podman
-  virtualisation.arion = {
-    backend = "podman-socket";
-    projects.paperless.settings = {
-      imports = [ ./stacks/paperless-arion.nix ];
-    };
-  };
-
-  # Agenix secrets for paperless
-  age.secrets."paperless-db-password" = {
-    file = ../../../secrets-agenix/paperless-db-password.age;
-    owner = "root";
-    group = "root";
-    mode = "0440";
-  };
-
-  # Create persistent data directories for Paperless-ngx
-  systemd.tmpfiles.rules = [
-    "d /var/lib/paperless/consume 0777 root root -"
-    "d /var/lib/paperless/data 0777 root root -"
-    "d /var/lib/paperless/pgdata 0777 root root -"
-  ];
-
-  # Open firewall port for Paperless-ngx
-  networking.firewall.allowedTCPPorts = [ 8000 ];
 }
