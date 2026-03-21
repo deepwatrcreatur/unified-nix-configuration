@@ -4,12 +4,13 @@
 }:
 {
   imports = [
-    ../../../modules/nixos/common # Common NixOS modules including ssh-keys-manager
+    ../../../modules/nixos/common
     ../../../modules/nixos/lxc-common.nix
     ../../../modules/nixos/attic-client.nix
     ../../../modules/nixos/nix-daemon-user-ssh.nix
+    ../../../modules/nixos/container-stack.nix  # New container stack module
     ./modules/containers.nix
-    ./stacks/paperless-quadlet.nix
+    ./stacks/paperless-stack.nix  # Simplified stack config
     inputs.agenix.nixosModules.default
   ];
 
