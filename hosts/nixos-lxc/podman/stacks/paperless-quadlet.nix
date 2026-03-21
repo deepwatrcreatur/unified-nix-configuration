@@ -99,7 +99,6 @@
   '';
 
   # Enable quadlet generator
-  systemd.packages = [ config.virtualisation.podman.package ];
 
   # Open firewall
   networking.firewall.allowedTCPPorts = [ 8000 ];
