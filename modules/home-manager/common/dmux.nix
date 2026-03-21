@@ -12,6 +12,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages = [ inputs.dmux-flake.packages.${pkgs.system}.default ];
+    home.packages = [ inputs.dmux-flake.packages.${pkgs.stdenv.hostPlatform.system}.default ];
   };
 }
