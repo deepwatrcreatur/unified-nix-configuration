@@ -1,17 +1,15 @@
 # hosts/nixos-lxc/podman/stacks/paperless-arion.nix
 # Paperless-NGX stack using Arion (docker-compose for Nix)
-{ pkgs, ... }:
+{ ... }:
 {
   project.name = "paperless";
 
-  networks.paperless = {
-    name = "paperless";
-  };
+  networks.paperless = {};
 
   services = {
     paperless-ngx = {
-      image.name = "ghcr.io/paperless-ngx/paperless-ngx:latest";
       service = {
+        image = "ghcr.io/paperless-ngx/paperless-ngx:latest";
         hostname = "paperless-ngx";
         container_name = "paperless-ngx";
         ports = [ "8000:8000" ];
@@ -35,8 +33,8 @@
     };
 
     paperless-db = {
-      image.name = "postgres:15";
       service = {
+        image = "postgres:15";
         hostname = "paperless-db";
         container_name = "paperless-db";
         volumes = [ "/var/lib/paperless/pgdata:/var/lib/postgresql/data" ];
@@ -51,8 +49,8 @@
     };
 
     paperless-redis = {
-      image.name = "redis:latest";
       service = {
+        image = "redis:latest";
         hostname = "paperless-redis";
         container_name = "paperless-redis";
         networks = [ "paperless" ];
