@@ -24,6 +24,10 @@
         
         # Allow DHCPv6 on WAN interface
         iifname "ens17" udp dport 546 accept
+
+        # Allow Tailscale tunnel establishment on WAN and trust Tailnet traffic.
+        iifname "ens17" udp dport 41641 accept
+        iifname "tailscale0" accept
         
         # Allow SSH from LAN and management only (not WAN)
         iifname {"ens16", "ens18"} tcp dport 22 accept
@@ -67,6 +71,10 @@
         
         # Allow forwarding from management to WAN
         iifname "ens18" oifname "ens17" accept
+
+        # Allow Tailnet clients to use the gateway as a subnet router and exit node.
+        iifname "tailscale0" oifname {"ens16", "ens17", "ens18"} accept
+        iifname {"ens16", "ens18"} oifname "tailscale0" accept
 
         # Allow forwarding between management and LAN
         iifname "ens18" oifname "ens16" accept

@@ -18,6 +18,9 @@ let
       file = ../../../secrets-agenix/technitium-api-key.age;
       mode = "0444"; # World-readable for router-dashboard DynamicUser access
     };
+    tailscale-auth-key = {
+      file = ../../../secrets-agenix/tailscale-auth-key.age;
+    };
   };
 in
 {
@@ -28,7 +31,7 @@ in
     gpu.type = "none";
     desktop.enable = false;
     networking = {
-      enableTailscale = false;  # Gateway has custom networking
+      enableTailscale = true;
       enableAvahi = false;      # Not needed on gateway
     };
     services = {
@@ -174,6 +177,15 @@ in
         "allow dashboard from" = "10.10.*";
       };
     };
+  };
+
+  services.tailscale = {
+    useRoutingFeatures = "server";
+    authKeyFile = secrets.path "tailscale-auth-key";
+    extraUpFlags = lib.optionals (secrets.exists "tailscale-auth-key") [
+      "--advertise-exit-node"
+      "--advertise-routes=10.10.0.0/16"
+    ];
   };
 
   # DNS zone management with static hosts imported from external file.

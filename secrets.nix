@@ -78,6 +78,7 @@ in
   "secrets-agenix/cloudflare-api-key.age".publicKeys = gatewayServiceSecrets;
   "secrets-agenix/cloudflare_ddns_API_token.age".publicKeys = gatewayServiceSecrets;
   "secrets-agenix/technitium-api-key.age".publicKeys = gatewayServiceSecrets;
+  "secrets-agenix/tailscale-auth-key.age".publicKeys = gatewayServiceSecrets;
   "secrets-agenix/attic-client-token.age".publicKeys = atticClientSecrets;
   "secrets-agenix/attic-server-token.age".publicKeys = atticServiceSecrets;
   "secrets-agenix/attic-jwt-secret.age".publicKeys = atticServiceSecrets;
