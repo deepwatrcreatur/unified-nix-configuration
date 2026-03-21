@@ -66,9 +66,29 @@ with lib;
   };
 
   # Define the paperless network
-  virtualisation.podman.networks.paperless = {
-    driver = "bridge";
+  systemd.services.podman-network-paperless = {
+    description = "Create podman network for paperless-ngx";
+    after = [ "network.target" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = ''
+        /bin/sh -c '${pkgs.podman}/bin/podman network exists paperless || ${pkgs.podman}/bin/podman network create paperless'
+      '';
+    };
   };
+
+  systemd.targets.paperless = {
+    description = "Paperless-ngx target";
+    requires = [ "podman-network-paperless.service" ];
+    after = [ "podman-network-paperless.service" ];
+    wantedBy = [ "multi-user.target" ];
+  };
+
+  systemd.services."podman-paperless-ngx".wantedBy = [ "paperless.target" ];
+  systemd.services."podman-paperless-db".wantedBy = [ "paperless.target" ];
+  systemd.services."podman-paperless-redis".wantedBy = [ "paperless.target" ];
 
   # Open firewall port for Paperless-ngx
   networking.firewall.allowedTCPPorts = [ 8000 ];
