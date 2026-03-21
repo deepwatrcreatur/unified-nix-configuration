@@ -70,17 +70,14 @@ Converting docker-compose.yml is now trivial:
 ## Files Created
 
 - `modules/nixos/container-stack.nix` - Main module (360 lines)
-- `lib/container-helpers.nix` - Helper functions (60 lines) 
 - `hosts/nixos-lxc/podman/stacks/paperless-stack.nix` - Example usage (62 lines)
 - `docs/agent-docker-compose-conversion.md` - Agent conversion guide
 - `docs/reducing-container-boilerplate.md` - Pattern explanation
-- `docs/who-wants-arion-and-quadlet.md` - Tool comparison
-- `docs/quadlet-vs-oci-containers.md` - Deep comparison
 
 ## Next Steps
 
 1. ✅ **Test on podman host** - Verify paperless works with new module
-2. ✅ **Keep old configs** - arion/quadlet as git history reference
+2. ✅ **Use one pattern** - `containerStacks` is the only supported path here
 3. ✅ **Add more stacks** - Convert docker-compose files easily
 4. ✅ **Share with community** - Pattern is solid, reusable
 
