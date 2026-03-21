@@ -44,7 +44,7 @@ in
         "mole"
         "bitwarden-cli"
       ]
-      ++ lib.optionals (pkgs.stdenv.system == "aarch64-darwin") [
+      ++ lib.optionals (pkgs.stdenv.hostPlatform.system == "aarch64-darwin") [
         "mactop" # Only available for arm64 (Apple Silicon)
       ]
       ++ (import ../common-brew-packages.nix).brews
