@@ -70,6 +70,8 @@ let
   nixCiCacheHosts = atticClientHosts;
 
   nixCiCacheSecrets = operatorUsers ++ builtins.concatLists (map machineRecipients nixCiCacheHosts);
+
+  podmanServiceSecrets = operatorUsers ++ machineRecipients "podman";
 in
 {
   # Service-scoped secrets
@@ -80,6 +82,7 @@ in
   "secrets-agenix/attic-server-token.age".publicKeys = atticServiceSecrets;
   "secrets-agenix/attic-jwt-secret.age".publicKeys = atticServiceSecrets;
   "secrets-agenix/nix-remote-builder-key.age".publicKeys = remoteBuilderClientSecrets;
+  "secrets-agenix/paperless-db-password.age".publicKeys = podmanServiceSecrets;
 
   # Operator/user secrets decrypted directly in Home Manager with the stable user key
   "secrets-agenix/github-token.age".publicKeys = userOnlySecrets;
