@@ -14,8 +14,12 @@ let
   matchBlocks = lib.mapAttrs (name: host: {
     hostname = host.hostname or host.ip;
     user = host.sshUser or "deepwatrcreatur";
-    userKnownHostsFile = "~/.ssh/known_hosts_dynamic ~/.ssh/known_hosts_managed";
-  }) sshHosts;
+  }) sshHosts // {
+    # Wildcard match block for default settings
+    "*" = {
+      userKnownHostsFile = "~/.ssh/known_hosts_dynamic ~/.ssh/known_hosts_managed";
+    };
+  };
 
 in {
   programs.ssh = {
@@ -36,10 +40,5 @@ in {
 
     # Generated host configurations
     inherit matchBlocks;
-
-    # Wildcard match block for default settings
-    matchBlocks."*" = {
-      userKnownHostsFile = "~/.ssh/known_hosts_dynamic ~/.ssh/known_hosts_managed";
-    };
   };
 }
