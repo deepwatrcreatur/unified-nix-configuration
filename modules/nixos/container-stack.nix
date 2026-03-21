@@ -304,10 +304,11 @@ in
     # Create directories
     {
       systemd.tmpfiles.rules = flatten (
-        mapAttrsToList (stackName: stackCfg:
-          mkIf stackCfg.enable (
+        mapAttrsToList (_stackName: stackCfg:
+          if stackCfg.enable then
             map (dir: "d ${dir.path} ${dir.mode} ${dir.user} ${dir.group} -") stackCfg.directories
-          )
+          else
+            [ ]
         ) cfg
       );
     }
@@ -316,13 +317,13 @@ in
     {
       networking.firewall = {
         allowedTCPPorts = flatten (
-          mapAttrsToList (stackName: stackCfg:
-            mkIf stackCfg.enable stackCfg.firewall.allowedTCPPorts
+          mapAttrsToList (_stackName: stackCfg:
+            if stackCfg.enable then stackCfg.firewall.allowedTCPPorts else [ ]
           ) cfg
         );
         allowedUDPPorts = flatten (
-          mapAttrsToList (stackName: stackCfg:
-            mkIf stackCfg.enable stackCfg.firewall.allowedUDPPorts
+          mapAttrsToList (_stackName: stackCfg:
+            if stackCfg.enable then stackCfg.firewall.allowedUDPPorts else [ ]
           ) cfg
         );
       };

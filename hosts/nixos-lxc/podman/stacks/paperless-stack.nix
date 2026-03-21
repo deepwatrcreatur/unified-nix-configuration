@@ -1,7 +1,15 @@
 # hosts/nixos-lxc/podman/stacks/paperless-stack.nix
 # Paperless-NGX using container-stack module
 # Clean, declarative, agent-friendly format
-{ config, ... }:
+{ config, lib, ... }:
+
+let
+  optSec = import ../../../../modules/helpers/optional-secrets.nix { inherit lib; };
+
+  paperlessOidc = optSec.mkSecret "paperless-authentik-oidc" {
+    file = ../../../../secrets-agenix/paperless-authentik-oidc.age;
+  };
+in
 
 {
   # Agenix secret
@@ -12,12 +20,18 @@
     mode = "0440";
   };
 
+  age.secrets."paperless-authentik-oidc" = paperlessOidc.definition;
+
   # Declarative container stack - agents can easily convert docker-compose to this format!
   services.containerStacks.paperless = {
     network = "paperless";
 
     # Reference secrets (will be mounted in ALL containers)
-    secrets."db-password".path = config.age.secrets."paperless-db-password".path;
+    secrets = {
+      "db-password".path = config.age.secrets."paperless-db-password".path;
+    } // lib.optionalAttrs paperlessOidc.exists {
+      "authentik-oidc".path = config.age.secrets."paperless-authentik-oidc".path;
+    };
 
     # Containers (maps 1:1 with docker-compose services)
     containers = {
@@ -34,7 +48,8 @@
           PAPERLESS_DBHOST = "paperless-db";
           PAPERLESS_DBNAME = "paperless_user";
           PAPERLESS_DBUSER = "paperless_user";
-          PAPERLESS_URL = "https://paperless-ngx.local";
+          PAPERLESS_TRUSTED_PROXIES = "10.10.10.1";
+          PAPERLESS_URL = "https://paperless.deepwatercreature.com";
         };
         dependsOn = [ "paperless-db" "paperless-redis" ];
       };

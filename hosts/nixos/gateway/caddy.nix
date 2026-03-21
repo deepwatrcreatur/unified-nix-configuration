@@ -32,7 +32,7 @@ in
           # `home-assistant` is intentionally excluded here. We publish it as a
           # Cloudflare CNAME to another DDNS-managed hostname so Caddy's DDNS
           # updater does not fight Cloudflare over the same record name.
-          deepwatercreature.com @ homelab 2fauth nightscout marreta linkwarden
+          deepwatercreature.com @ homelab authentik paperless 2fauth nightscout marreta linkwarden
         }
         check_interval 5m
         versions ipv4 ipv6
@@ -79,6 +79,18 @@ in
       "home-assistant.deepwatercreature.com" = {
         extraConfig = ''
           reverse_proxy 10.10.11.18:8123
+        '';
+      };
+
+      "authentik.deepwatercreature.com" = {
+        extraConfig = ''
+          reverse_proxy 10.10.11.69:9000
+        '';
+      };
+
+      "paperless.deepwatercreature.com" = {
+        extraConfig = ''
+          reverse_proxy 10.10.11.84:8000
         '';
       };
       

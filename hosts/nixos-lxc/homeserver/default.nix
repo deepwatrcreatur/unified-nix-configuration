@@ -11,13 +11,16 @@ in
   host.type = "lxc";
   host.networking.enableTailscale = false; # LXC containers can't run Tailscale
   host.services.iperf3.enable = true;
+  host.services.enablePodman = true;
 
   imports = [
     ../../../modules/nixos/common # Common NixOS modules including ssh-keys-manager
+    ../../../modules/nixos/container-stack.nix
     ../../../modules/nixos/services/iperf3.nix
     ../../../modules/nixos/attic-client.nix # Attic binary cache client
     ../../../modules/nixos/nix-daemon-user-ssh.nix # SSH socket for git+ssh flake inputs
     ./modules/networking.nix
+    ./modules/authentik.nix
     ./modules/configuration.nix
     ./modules/homebridge.nix
     ./modules/home-manager-users.nix

@@ -30,6 +30,8 @@
         "grafana"
         "homelab"
         "home-assistant"
+        "authentik"
+        "paperless"
         "2fauth"
         "nightscout"
         "marreta"

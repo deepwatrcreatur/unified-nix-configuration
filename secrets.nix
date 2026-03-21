@@ -42,6 +42,7 @@ let
   userOnlySecrets = operatorUsers;
 
   gatewayServiceSecrets = operatorUsers ++ machineRecipients "gateway";
+  homeserverServiceSecrets = operatorUsers ++ machineRecipients "homeserver";
 
   atticServiceSecrets = operatorUsers ++ machineRecipients "attic-cache";
 
@@ -79,11 +80,13 @@ in
   "secrets-agenix/cloudflare_ddns_API_token.age".publicKeys = gatewayServiceSecrets;
   "secrets-agenix/technitium-api-key.age".publicKeys = gatewayServiceSecrets;
   "secrets-agenix/tailscale-auth-key.age".publicKeys = gatewayServiceSecrets;
+  "secrets-agenix/authentik-env.age".publicKeys = homeserverServiceSecrets;
   "secrets-agenix/attic-client-token.age".publicKeys = atticClientSecrets;
   "secrets-agenix/attic-server-token.age".publicKeys = atticServiceSecrets;
   "secrets-agenix/attic-jwt-secret.age".publicKeys = atticServiceSecrets;
   "secrets-agenix/nix-remote-builder-key.age".publicKeys = remoteBuilderClientSecrets;
   "secrets-agenix/paperless-db-password.age".publicKeys = podmanServiceSecrets;
+  "secrets-agenix/paperless-authentik-oidc.age".publicKeys = podmanServiceSecrets;
 
   # Operator/user secrets decrypted directly in Home Manager with the stable user key
   "secrets-agenix/github-token.age".publicKeys = userOnlySecrets;
