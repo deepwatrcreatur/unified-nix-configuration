@@ -1,7 +1,7 @@
 # hosts/nixos-lxc/podman/stacks/paperless-stack.nix
 # Paperless-NGX using container-stack module
 # Clean, declarative, agent-friendly format
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   optSec = import ../../../../modules/helpers/optional-secrets.nix { inherit lib; };
@@ -37,12 +37,12 @@ in
     containers = {
       paperless-ngx = {
         image = "ghcr.io/paperless-ngx/paperless-ngx:latest";
-        ports = [ "8000:8000" ];
         volumes = [
           "/var/lib/paperless/data:/usr/src/paperless/data"
           "/var/lib/paperless/consume:/usr/src/paperless/consume"
         ];
         environment = {
+          PAPERLESS_BIND_ADDR = "0.0.0.0";
           PAPERLESS_REDIS = "redis://paperless-redis:6379";
           PAPERLESS_DBENGINE = "postgresql";
           PAPERLESS_DBHOST = "paperless-db";
@@ -76,6 +76,25 @@ in
     ];
 
     # Firewall
-    firewall.allowedTCPPorts = [ 8000 ];
+    firewall.allowedTCPPorts = [ 18000 ];
+  };
+
+  systemd.services.paperless-host-proxy = {
+    description = "Host-side Paperless proxy";
+    after = [ "network-online.target" "podman-paperless-ngx.service" ];
+    wants = [ "network-online.target" "podman-paperless-ngx.service" ];
+    wantedBy = [ "multi-user.target" ];
+    partOf = [ "podman-paperless-ngx.service" ];
+    serviceConfig = {
+      Type = "simple";
+      Restart = "always";
+      RestartSec = 2;
+      ExecStart = let
+        podman = "${pkgs.podman}/bin/podman";
+        socat = "${pkgs.socat}/bin/socat";
+        shell = "${pkgs.runtimeShell}";
+      in
+        "${shell} -c 'target_ip=$(${podman} inspect paperless-ngx --format \"{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}\"); exec ${socat} TCP-LISTEN:18000,reuseaddr,fork,bind=0.0.0.0 TCP:$${target_ip}:8000'";
+    };
   };
 }

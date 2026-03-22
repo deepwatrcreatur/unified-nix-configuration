@@ -90,7 +90,7 @@ in
 
       "paperless.deepwatercreature.com" = {
         extraConfig = ''
-          reverse_proxy 10.10.11.84:8000
+          reverse_proxy 10.10.11.84:18000
         '';
       };
       

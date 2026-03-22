@@ -8,22 +8,27 @@ with lib;
 
 let
   cfg = config.services.containerStacks;
+  builtinNetworks = [ "bridge" "host" "none" ];
 
   # Helper to create network service
-  mkNetworkService = name: {
-    "podman-network-${name}" = {
-      description = "Podman network: ${name}";
-      after = [ "network.target" ];
-      before = [ "podman.service" ];
-      wantedBy = [ "multi-user.target" ];
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
-        ExecStart = "${pkgs.podman}/bin/podman network exists ${name} || ${pkgs.podman}/bin/podman network create ${name}";
-        ExecStop = "${pkgs.podman}/bin/podman network rm -f ${name}";
+  mkNetworkService = name:
+    if builtins.elem name builtinNetworks then
+      { }
+    else
+      {
+        "podman-network-${name}" = {
+          description = "Podman network: ${name}";
+          after = [ "network.target" ];
+          before = [ "podman.service" ];
+          wantedBy = [ "multi-user.target" ];
+          serviceConfig = {
+            Type = "oneshot";
+            RemainAfterExit = true;
+            ExecStart = "${pkgs.runtimeShell} -c '${pkgs.podman}/bin/podman network exists ${name} || ${pkgs.podman}/bin/podman network create ${name}'";
+            ExecStop = "${pkgs.podman}/bin/podman network rm -f ${name}";
+          };
+        };
       };
-    };
-  };
 
   # Convert our stack config to oci-containers format
   stackToContainers = stackName: stackCfg:
@@ -257,14 +262,13 @@ in
     example = literalExpression ''
       {
         paperless = {
-          network = "paperless";
+          network = "host";
           containers = {
             paperless-ngx = {
               image = "ghcr.io/paperless-ngx/paperless-ngx:latest";
-              ports = [ "8000:8000" ];
               environment = {
-                PAPERLESS_REDIS = "redis://paperless-redis:6379";
-                PAPERLESS_DBHOST = "paperless-db";
+                PAPERLESS_REDIS = "redis://127.0.0.1:6379";
+                PAPERLESS_DBHOST = "127.0.0.1";
               };
             };
             paperless-db = {
