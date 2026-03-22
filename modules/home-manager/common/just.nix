@@ -79,6 +79,11 @@ let
 
     # Check flake configuration (alias)
     check: nix-check
+
+    # Encrypt a plaintext secret into an agenix file using the repo's
+    # ryantm/agenix workflow.
+    agenix-encrypt plaintext agefile:
+        cat {{plaintext}} | EDITOR=tee nix run github:ryantm/agenix -- -e {{agefile}}
   '';
 
   # Platform-specific extensions
