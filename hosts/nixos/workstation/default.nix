@@ -88,6 +88,14 @@
 
   # Load AMD GPU driver
   boot.kernelModules = [ "amdgpu" ];
+  # This VM uses the passed-through AMD GPU for display. Do not also bind
+  # QEMU's virtual display adapters, which can leave Wayland/COSMIC juggling
+  # multiple DRM devices and destabilize the session.
+  boot.blacklistedKernelModules = [
+    "virtio_gpu"
+    "bochs_drm"
+    "qxl"
+  ];
 
   # Enable AMD GPU firmware
   hardware.enableRedistributableFirmware = true;
