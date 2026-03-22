@@ -49,7 +49,7 @@
     };
     networking = {
       enableTailscale = true;
-      enableAvahi = true;
+      enableAvahi = false;
     };
     services = {
       enableSsh = true;
@@ -128,12 +128,10 @@
 
   # Enable SSH daemon
   services.openssh.enable = true;
-
-  # Enable Avahi for mDNS (service discovery)
   services.avahi = {
-    enable = true;
-    nssmdns4 = true; # For resolving .local hostnames
-    openFirewall = true;
+    enable = lib.mkForce false;
+    nssmdns4 = lib.mkForce false;
+    openFirewall = lib.mkForce false;
   };
 
   systemd.services."ensure-printers".serviceConfig = lib.mkIf config.services.printing.enable {
