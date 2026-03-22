@@ -8,6 +8,14 @@
 
 let
   cfg = config.services.nix-user-config;
+  legacyNetrcEntries =
+    lib.optional (cfg.netrcMachine != null) {
+      machine = cfg.netrcMachine;
+      passwordPath = cfg.netrcTokenPath;
+      fnoxSecretName = "ATTIC_CLIENT_JWT_TOKEN";
+    };
+
+  netrcEntries = legacyNetrcEntries ++ cfg.netrcEntries;
 in
 {
   options.services.nix-user-config = {
@@ -62,6 +70,45 @@ in
       description = "Path to the token file for netrc authentication";
     };
 
+    netrcEntries = lib.mkOption {
+      type = lib.types.listOf (
+        lib.types.submodule {
+          options = {
+            machine = lib.mkOption {
+              type = lib.types.str;
+              description = "Machine name for the netrc stanza.";
+            };
+
+            login = lib.mkOption {
+              type = lib.types.nullOr lib.types.str;
+              default = null;
+              description = "Optional login value for the netrc stanza.";
+            };
+
+            passwordPath = lib.mkOption {
+              type = lib.types.nullOr lib.types.str;
+              default = null;
+              description = "Path to a file containing the password/token.";
+            };
+
+            fnoxSecretName = lib.mkOption {
+              type = lib.types.nullOr lib.types.str;
+              default = null;
+              description = "Optional fnox secret name used before passwordPath.";
+            };
+          };
+        }
+      );
+      default = [ ];
+      description = "Managed netrc entries written to /nix/var/determinate/netrc.";
+    };
+
+    netrcSnippetPaths = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
+      description = "Paths to preformatted netrc snippets to append to the managed Determinate Nix netrc.";
+    };
+
     githubTokenPath = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
       default = "${config.home.homeDirectory}/.config/git/github-token";
@@ -110,39 +157,72 @@ in
         '';
       }
 
-      # Create netrc file in Determinate Nix's managed location (only if netrcMachine is set)
-      (lib.mkIf (cfg.netrcMachine != null) {
+      # Create or refresh Determinate Nix's managed netrc file.
+      (lib.mkIf (netrcEntries != [ ] || cfg.netrcSnippetPaths != [ ]) {
         home.activation.nix-netrc = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-                          netrc_file="/nix/var/determinate/netrc"
+          netrc_file="/nix/var/determinate/netrc"
+          managed_begin="# BEGIN home-manager managed nix-user-config"
+          managed_end="# END home-manager managed nix-user-config"
+          tmp_existing="$(mktemp)"
+          tmp_managed="$(mktemp)"
 
-                          token=""
-                          # Try fnox if available
-                          if command -v fnox &> /dev/null && [ -f "$HOME/.config/sops/age/keys.txt" ]; then
-                             export FNOX_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
-                             token=$(fnox get ATTIC_CLIENT_JWT_TOKEN 2>/dev/null || echo "")
-                          fi
-                          
-                          if [[ -z "$token" && -f "${cfg.netrcTokenPath}" ]]; then
-                             token=$(cat "${cfg.netrcTokenPath}" 2>/dev/null || echo "")
-                          fi
+          mkdir -p "$(dirname "$netrc_file")"
+          touch "$netrc_file"
+          chmod 600 "$netrc_file"
 
-                          # Only create netrc if we have a token
-                          if [[ -n "$token" ]]; then
-                            # Append to Determinate Nix's netrc if not already present
-                                      if [[ -w "$netrc_file" ]] || test -w "$(dirname "$netrc_file")" 2>/dev/null; then
-                                        if ! grep -q "machine ${cfg.netrcMachine}" "$netrc_file" 2>/dev/null; then
-                                          tee -a "$netrc_file" > /dev/null <<EOF
-                machine ${cfg.netrcMachine}
-                password $token
-          EOF
-                                echo "Added netrc authentication for ${cfg.netrcMachine} to Determinate Nix's netrc"
-                              fi
-                            else
-                              echo "Warning: Cannot write to Determinate Nix's netrc at $netrc_file" >&2
-                            fi
-                          else
-                            echo "Warning: No token found for netrc authentication (checked ${cfg.netrcTokenPath})" >&2
-                          fi
+          awk -v begin="$managed_begin" -v end="$managed_end" '
+            $0 == begin { skip = 1; next }
+            $0 == end { skip = 0; next }
+            !skip { print }
+          ' "$netrc_file" > "$tmp_existing"
+
+          {
+            echo "$managed_begin"
+            ${lib.concatMapStringsSep "\n" (entry: ''
+              password=""
+              ${lib.optionalString (entry.fnoxSecretName != null) ''
+                if command -v fnox &> /dev/null && [ -f "$HOME/.config/sops/age/keys.txt" ]; then
+                  export FNOX_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
+                  password=$(fnox get ${lib.escapeShellArg entry.fnoxSecretName} 2>/dev/null || echo "")
+                fi
+              ''}
+              ${lib.optionalString (entry.passwordPath != null) ''
+                if [[ -z "$password" && -f ${lib.escapeShellArg entry.passwordPath} ]]; then
+                  password=$(cat ${lib.escapeShellArg entry.passwordPath} 2>/dev/null || echo "")
+                fi
+              ''}
+
+              if [[ -n "$password" ]]; then
+                echo "machine ${entry.machine}"
+                ${lib.optionalString (entry.login != null) ''
+                  echo "login ${entry.login}"
+                ''}
+                echo "password $password"
+                echo
+              else
+                echo "Warning: No token found for ${entry.machine} netrc entry" >&2
+              fi
+            '') netrcEntries}
+
+            ${lib.concatMapStringsSep "\n" (snippetPath: ''
+              if [[ -f ${lib.escapeShellArg snippetPath} ]]; then
+                cat ${lib.escapeShellArg snippetPath}
+                echo
+              else
+                echo "Warning: netrc snippet ${snippetPath} not found" >&2
+              fi
+            '') cfg.netrcSnippetPaths}
+            echo "$managed_end"
+          } > "$tmp_managed"
+
+          cat "$tmp_existing" > "$netrc_file"
+          if [[ -s "$netrc_file" ]]; then
+            printf '\n' >> "$netrc_file"
+          fi
+          cat "$tmp_managed" >> "$netrc_file"
+          chmod 600 "$netrc_file"
+
+          rm -f "$tmp_existing" "$tmp_managed"
         '';
       })
     ]

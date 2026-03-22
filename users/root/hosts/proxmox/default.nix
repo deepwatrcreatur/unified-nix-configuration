@@ -35,7 +35,32 @@
     proxmenux
   ];
   # Determinate Nix manages `/etc/nix/nix.conf`; we only add user extras.
-  services.nix-user-config.enable = true;
+  services.nix-user-config = {
+    enable = true;
+    netrcMachine = null;
+    substituters = [
+      "http://attic-cache:5001/cache-local"
+      "https://cache.nix-ci.com"
+      "https://cache.nixos.org"
+    ];
+    trustedPublicKeys = [
+      "cache-local:63xryK76L6y/NphTP/iS63yiYqldoWvVlWI0N8rgvBw="
+      "cache-local:GozZz7XFsUZ7xI5o/Q36JA/BFfjzONWOjiqC+zAhp2g="
+      "cache-local:92faFQnuzuYUJ4ta3EYpqIaCMIZGenDoaPktsBucTe4="
+      "nix-ci:g3xV5BDTLtIBZr/A00IU1x0EtKKlb7YLgBN2SgYgM6A="
+      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+    ];
+    netrcEntries = [
+      {
+        machine = "attic-cache";
+        passwordPath = "${config.home.homeDirectory}/.config/sops/attic-client-token";
+        fnoxSecretName = "ATTIC_CLIENT_JWT_TOKEN";
+      }
+    ];
+    netrcSnippetPaths = [
+      "${config.home.homeDirectory}/.config/nix/nix-ci-netrc"
+    ];
+  };
 
   # Allow root to manage Home Manager
   programs.home-manager.enable = true;
