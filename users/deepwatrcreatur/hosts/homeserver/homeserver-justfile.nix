@@ -1,12 +1,11 @@
 # users/deepwatrcreatur/hosts/homeserver/homeserver-justfile.nix
 {
-  config,
-  pkgs,
-  lib,
-  ...
-}:
-{
-  home.packages = [ pkgs.just ];
-
-  home.file.".justfile".source = ./justfile;
+  my.just = {
+    flakeTarget = "homeserver";
+    extraRecipes = ''
+      # Pull latest and rebuild
+      pull-update:
+          cd $NH_FLAKE && git pull --ff-only origin main && just update
+    '';
+  };
 }

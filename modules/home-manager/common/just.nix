@@ -17,14 +17,7 @@ let
     else
       "unknown";
 
-  # System hostname for flake references
-  # Passed via extraSpecialArgs from flake.nix for NixOS/Darwin systems
-  # Falls back to config.home.username if not provided
-  hostname =
-    if hostName != "" then
-      hostName
-    else
-      config.home.username;
+  cfg = config.my.just;
 
   # Base justfile content (common commands)
   baseJustfile = ''
@@ -93,19 +86,19 @@ let
 
     # Update macOS system using darwin-rebuild
     update:
-        ulimit -n 65536; sudo /nix/var/nix/profiles/system/sw/bin/darwin-rebuild switch --flake $NH_FLAKE#${hostname}
+        ${cfg.updateCommand}
 
     # Update macOS system using nh helper
     nh-update:
-        nh darwin switch -H ${hostname} -f $NH_FLAKE
+        ${cfg.nhUpdateCommand}
 
     # Build macOS system without switching
     build-darwin:
-        ulimit -n 65536; sudo /nix/var/nix/profiles/system/sw/bin/darwin-rebuild build --flake $NH_FLAKE#${hostname}
+        ${cfg.buildCommand}
 
     # Test macOS configuration
     test-darwin:
-        ulimit -n 65536; sudo /nix/var/nix/profiles/system/sw/bin/darwin-rebuild test --flake $NH_FLAKE#${hostname}
+        ${cfg.testCommand}
 
     # Show macOS version
     darwin-version:
@@ -141,19 +134,19 @@ let
 
     # Update NixOS system using nixos-rebuild
     update:
-        /run/wrappers/bin/sudo nixos-rebuild switch --flake $NH_FLAKE#${hostname} --option use-cgroups false
+        ${cfg.updateCommand}
 
     # Update NixOS system using nh helper
     nh-update:
-        PATH="/run/current-system/sw/bin:$PATH" nh os switch -H ${hostname} -f $NH_FLAKE
+        ${cfg.nhUpdateCommand}
 
     # Build NixOS system without switching
     build-nixos:
-        /run/wrappers/bin/sudo nixos-rebuild build --flake $NH_FLAKE#${hostname} --option use-cgroups false
+        ${cfg.buildCommand}
 
     # Test NixOS configuration
     test-nixos:
-        /run/wrappers/bin/sudo nixos-rebuild test --flake $NH_FLAKE#${hostname} --option use-cgroups false
+        ${cfg.testCommand}
 
     # Rebuild a remote NixOS host without activating its configuration locally.
     # Use this for LXC and other remote-only targets such as attic-cache.
@@ -197,22 +190,131 @@ let
         nixos-version
   '';
 
+  homeManagerExtension = ''
+    # Home Manager Commands
+    # =====================
+
+    update:
+        ${cfg.updateCommand}
+
+    nh-update:
+        ${cfg.nhUpdateCommand}
+
+    build-home:
+        ${cfg.buildCommand}
+
+    switch: update
+  '';
+
   # Combine base with platform-specific extension
   fullJustfile =
     baseJustfile
     + (
-      if platform == "darwin" then
+      if cfg.backend == "darwin" then
         darwinExtension
-      else if platform == "nixos" then
+      else if cfg.backend == "nixos" then
         nixosExtension
+      else if cfg.backend == "home-manager" then
+        homeManagerExtension
       else
         ""
-    );
+    )
+    + lib.optionalString (cfg.extraRecipes != "") "\n${cfg.extraRecipes}\n";
 
 in
 {
-  home.packages = [ pkgs.just ];
+  options.my.just = {
+    enable = lib.mkEnableOption "shared justfile generation" // {
+      default = true;
+    };
 
-  # Create justfile in home directory
-  home.file.".justfile".text = fullJustfile;
+    backend = lib.mkOption {
+      type = lib.types.enum [
+        "nixos"
+        "darwin"
+        "home-manager"
+      ];
+      default = platform;
+      description = "Backend that the generated justfile should target.";
+    };
+
+    flakeDir = lib.mkOption {
+      type = lib.types.str;
+      default = "$NH_FLAKE";
+      description = "Flake path used by generated just recipes.";
+    };
+
+    flakeTarget = lib.mkOption {
+      type = lib.types.str;
+      default =
+        if hostName != "" then
+          hostName
+        else
+          "{{`hostname`}}";
+      description = "Flake target used by generated just recipes.";
+    };
+
+    updateCommand = lib.mkOption {
+      type = lib.types.lines;
+      default =
+        if platform == "darwin" then
+          "ulimit -n 65536; sudo /nix/var/nix/profiles/system/sw/bin/darwin-rebuild switch --flake ${config.my.just.flakeDir}#${config.my.just.flakeTarget}"
+        else if platform == "nixos" then
+          "/run/wrappers/bin/sudo nixos-rebuild switch --flake ${config.my.just.flakeDir}#${config.my.just.flakeTarget} --option use-cgroups false"
+        else
+          "home-manager switch --flake ${config.my.just.flakeDir}#${config.my.just.flakeTarget}";
+      description = "Command body used for the update recipe.";
+    };
+
+    nhUpdateCommand = lib.mkOption {
+      type = lib.types.lines;
+      default =
+        if platform == "darwin" then
+          "nh darwin switch -H ${config.my.just.flakeTarget} -f ${config.my.just.flakeDir}"
+        else if platform == "nixos" then
+          "PATH=\"/run/current-system/sw/bin:$PATH\" nh os switch -H ${config.my.just.flakeTarget} -f ${config.my.just.flakeDir}"
+        else
+          "nh home switch ${config.my.just.flakeDir}#${config.my.just.flakeTarget}";
+      description = "Command body used for the nh-update recipe.";
+    };
+
+    buildCommand = lib.mkOption {
+      type = lib.types.lines;
+      default =
+        if platform == "darwin" then
+          "ulimit -n 65536; sudo /nix/var/nix/profiles/system/sw/bin/darwin-rebuild build --flake ${config.my.just.flakeDir}#${config.my.just.flakeTarget}"
+        else if platform == "nixos" then
+          "/run/wrappers/bin/sudo nixos-rebuild build --flake ${config.my.just.flakeDir}#${config.my.just.flakeTarget} --option use-cgroups false"
+        else
+          "home-manager build --flake ${config.my.just.flakeDir}#${config.my.just.flakeTarget}";
+      description = "Command body used for the build recipe.";
+    };
+
+    testCommand = lib.mkOption {
+      type = lib.types.lines;
+      default =
+        if platform == "darwin" then
+          "ulimit -n 65536; sudo /nix/var/nix/profiles/system/sw/bin/darwin-rebuild test --flake ${config.my.just.flakeDir}#${config.my.just.flakeTarget}"
+        else if platform == "nixos" then
+          "/run/wrappers/bin/sudo nixos-rebuild test --flake ${config.my.just.flakeDir}#${config.my.just.flakeTarget} --option use-cgroups false"
+        else
+          "home-manager build --flake ${config.my.just.flakeDir}#${config.my.just.flakeTarget}";
+      description = "Command body used for the test recipe.";
+    };
+
+    extraRecipes = lib.mkOption {
+      type = lib.types.lines;
+      default = "";
+      description = "Additional just recipes appended to the generated justfile.";
+    };
+  };
+
+  config = {
+    home.packages = [ pkgs.just ];
+
+    # Create justfile in home directory
+    home.file.".justfile" = lib.mkIf cfg.enable {
+      text = fullJustfile;
+    };
+  };
 }

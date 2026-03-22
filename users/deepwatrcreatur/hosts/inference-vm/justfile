@@ -1,9 +1,0 @@
-# users/deepwatrcreatur/hosts/inference-vm/justfile
-# Custom justfile for inference-vm - custom flake path
-
-# Custom commands specific to inference-vm
-update dir="/home/deepwatrcreatur/flakes/unified-nix-configuration":
-  /run/wrappers/bin/sudo nixos-rebuild switch --flake {{dir}}#{{`hostname`}}
-
-nh-update:
-  nh os switch -H {{`hostname`}} -f /home/deepwatrcreatur/flakes/unified-nix-configuration

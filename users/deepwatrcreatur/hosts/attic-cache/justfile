@@ -1,9 +1,0 @@
-# users/deepwatrcreatur/hosts/cache-build-server/justfile
-# Custom justfile for cache-build-server - custom flake path
-
-# Custom commands specific to cache-build-server
-update dir="/home/deepwatrcreatur/flakes/unified-nix-configuration":
-  sudo nixos-rebuild switch --flake {{dir}}#{{`hostname`}}
-
-nh-update:
-  nh os switch -H attic-cache -f /home/deepwatrcreatur/flakes/unified-nix-configuration
