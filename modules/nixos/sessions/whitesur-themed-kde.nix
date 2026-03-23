@@ -6,6 +6,10 @@
   ...
 }:
 {
+  imports = [
+    ./whitesur-theme.nix
+  ];
+
   # KDE Plasma with WhiteSur theming for workstation
   # Similar aesthetic to COSMIC but with KDE's power and Thunderbird badge support
 
@@ -65,6 +69,9 @@
   # WhiteSur theming configuration
   environment.variables = {
     ICON_THEME = "WhiteSur";
+    GTK_THEME = "WhiteSur-Dark";
+    GTK_ICON_THEME = "WhiteSur";
+    GTK_CURSOR_THEME = "capitaine-cursors";
   };
 
   # XDG portals for better desktop integration

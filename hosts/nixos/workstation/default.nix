@@ -19,10 +19,10 @@
     #../../../modules/nixos/sessions/cinnamon.nix # MATE with WhiteSur theming
 
     # Desktop environment - choose one:
-    # COSMIC: Clean GNOME-based, excellent Activities, no app badges
-    ../../../modules/nixos/sessions/cosmic.nix
-    # KDE Plasma (testing): Powerful, app badges in system tray, Super+Space launcher, Desktop Grid
-    #../../../modules/nixos/sessions/whitesur-themed-kde.nix
+    # COSMIC: Attractive, but currently too unstable on this Proxmox VM.
+    #../../../modules/nixos/sessions/cosmic.nix
+    # KDE Plasma: Daily-driver fallback with WhiteSur theming and COSMIC-like keybinds.
+    ../../../modules/nixos/sessions/whitesur-themed-kde.nix
 
     ../../../modules/nixos/hp-print-scan.nix # HP printer/scanner support
     ../../../modules/nixos/printers/phoenix-hp-m477.nix # HP M477 printer queue
@@ -43,7 +43,7 @@
     };
     desktop = {
       enable = true;
-      environment = "cosmic";  # Using COSMIC desktop
+      environment = "plasma";  # KDE Plasma is the stable default on this VM
       enableSound = true;
       enablePrinting = true;
     };

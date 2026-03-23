@@ -16,7 +16,6 @@
     ../../../../modules/home-manager/ghostty
     ../../../../modules/home-manager/gpg-agent-cross-de.nix
     ../../../../modules/home-manager/zed.nix
-    ../../../../modules/home-manager/cosmic-settings.nix
     ../../../../modules/home-manager/common/dmux.nix
   ];
 
@@ -81,8 +80,6 @@
   programs.distrobox.fedora.enable = true;
 
   home.packages = with pkgs; [
-    inputs.cosmic-applet-proxmoxbar.packages.${pkgs.stdenv.hostPlatform.system}.default
-    inputs.cosmic-applet-agents-status.packages.${pkgs.stdenv.hostPlatform.system}.default
     bitwarden-desktop
     ffmpeg
     gitkraken
@@ -141,100 +138,6 @@
 
   home.file.".config/deskflow/deskflow.conf".text = ''
     clipboardSharing = true
-  '';
-
-  # cosmic-applet-proxmoxbar config is generated at activation time
-  # to inject the secret from agenix
-  home.activation.cosmicAppletProxmoxbarConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    mkdir -p "$HOME/.config/cosmic-applet-proxmoxbar"
-    SECRET_PATH="$HOME/.local/share/agenix-user-secrets/proxmox-api-token"
-    if [ -f "$SECRET_PATH" ]; then
-      API_TOKEN_SECRET=$(cat "$SECRET_PATH")
-    else
-      API_TOKEN_SECRET="secret-not-available"
-    fi
-    cat > "$HOME/.config/cosmic-applet-proxmoxbar/config.toml" <<EOF
-base_url = "https://pve-tomahawk.deepwatercreature.com:8006"
-api_token_id = "root@pam!cosmic-applet-proxmoxbar"
-api_token_secret = "$API_TOKEN_SECRET"
-verify_tls = false
-poll_seconds = 30
-EOF
-  '';
-
-  home.file.".local/share/applications/com.deepwatrcreatur.CosmicAppletProxmoxbar.desktop".text = ''
-    [Desktop Entry]
-    Name=ProxmoxBar
-    Type=Application
-    Exec=${inputs.cosmic-applet-proxmoxbar.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/cosmic-applet-proxmoxbar
-    Terminal=false
-    Categories=COSMIC;
-    Keywords=COSMIC;Proxmox;Virtualization;
-    Icon=network-workgroup-symbolic
-    StartupNotify=true
-    NoDisplay=true
-    X-CosmicApplet=true
-    X-CosmicShrinkable=true
-    X-CosmicHoverPopup=Auto
-    X-OverflowPriority=10
-  '';
-
-  home.file.".local/share/applications/com.deepwatrcreatur.CosmicAppletAgentsStatus.desktop".text = ''
-    [Desktop Entry]
-    Name=Agents Status
-    Type=Application
-    Exec=${inputs.cosmic-applet-agents-status.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/cosmic-applet-agents-status
-    Terminal=false
-    Categories=COSMIC;
-    Keywords=COSMIC;AI;Agents;Claude;Codex;
-    Icon=utilities-terminal-symbolic
-    StartupNotify=true
-    NoDisplay=true
-    X-CosmicApplet=true
-    X-CosmicShrinkable=true
-    X-CosmicHoverPopup=Auto
-    X-OverflowPriority=10
-  '';
-
-  home.file.".config/cosmic-applet-agents-status/config.toml".text = ''
-    poll_seconds = 90
-    claude_cache_ttl_seconds = 60
-    openrouter_api_key_path = "${config.home.homeDirectory}/.local/share/agenix-user-secrets/openrouter-api-key"
-
-    [[agents]]
-    id = "claude"
-    name = "Claude Code"
-    command = "claude"
-
-    [[agents]]
-    id = "openrouter"
-    name = "OpenRouter"
-    command = "true"
-
-    [[agents]]
-    id = "codex"
-    name = "Codex CLI"
-    command = "codex"
-
-    [[agents]]
-    id = "gemini"
-    name = "Gemini CLI"
-    command = "gemini"
-
-    [[agents]]
-    id = "copilot"
-    name = "GitHub Copilot"
-    command = "copilot"
-
-    [[agents]]
-    id = "opencode"
-    name = "OpenCode Zen"
-    command = "opencode"
-
-    [[agents]]
-    id = "opencode-zai"
-    name = "OpenCode Z.ai"
-    command = "opencode-zai"
   '';
 
   # X11 display setup for DeskFlow
