@@ -11,6 +11,7 @@ let
   legacyNetrcEntries =
     lib.optional (cfg.netrcMachine != null) {
       machine = cfg.netrcMachine;
+      login = null;
       passwordPath = cfg.netrcTokenPath;
       fnoxSecretName = "ATTIC_CLIENT_JWT_TOKEN";
     };
@@ -170,7 +171,7 @@ in
           touch "$netrc_file"
           chmod 600 "$netrc_file"
 
-          awk -v begin="$managed_begin" -v end="$managed_end" '
+          ${pkgs.gawk}/bin/awk -v begin="$managed_begin" -v end="$managed_end" '
             $0 == begin { skip = 1; next }
             $0 == end { skip = 0; next }
             !skip { print }
