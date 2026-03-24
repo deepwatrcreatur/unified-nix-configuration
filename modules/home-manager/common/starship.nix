@@ -4,9 +4,7 @@
   pkgs,
   lib,
   ...
-}:
-
-{
+}: {
   programs.starship = {
     enable = true;
     enableFishIntegration = true;
@@ -22,8 +20,7 @@
       # - Line 2: input character
       #
       # Keep it "colored text on dark background" (no solid background blocks).
-      format =
-        "$os$hostname$directory$username$nix$env_var$rust$nodejs$python$golang$git_branch$git_status$fill$cmd_duration$status\n$character";
+      format = "$os$hostname$directory$username$nix$env_var$rust$nodejs$python$golang$git_branch$git_status$fill$cmd_duration$status\n$character";
 
       # Palettes
       palette = "gruvbox_dark";
@@ -39,9 +36,9 @@
           color_aqua = "#689d6a";
           color_gray = "#a89984";
           # Enhanced vibrant colors for better visibility on black background
-          color_bright_orange = "#fe8019";  # For username
-          color_bright_yellow = "#fabd2f";  # For @ symbol
-          color_bright_green = "#b8bb26";   # For hostname
+          color_bright_orange = "#fe8019"; # For username
+          color_bright_yellow = "#fabd2f"; # For @ symbol
+          color_bright_green = "#b8bb26"; # For hostname
         };
 
         # Kanagawa-inspired colors (dark background, readable accents)
@@ -86,8 +83,18 @@
         disabled = false;
         truncation_length = 5;
         truncate_to_repo = false;
-        format = "[$path]($style) ";
-        style = "fg:color_blue";
+
+        # Style for the path inside a repo (or standalone path)
+        style = "bold fg:color_blue";
+
+        # Style for the repo root itself
+        repo_root_style = "bold fg:color_bright_orange";
+
+        # Style for the path before the repo root
+        before_repo_root_style = "fg:color_aqua";
+
+        format = "[$path]($style)[$read_only]($read_only_style) ";
+        repo_root_format = "[$before_root_path]($before_repo_root_style)[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) ";
       };
 
       git_branch = {
@@ -171,9 +178,9 @@
 
       # Virtual environments - detects VIRTUAL_ENV when in Python venv
       env_var.VIRTUAL_ENV = {
-symbol = "🐍 ";
-         style = "fg:color_bright_yellow";
-         format = "[$symbol($env_value)]($style)";
+        symbol = "🐍 ";
+        style = "fg:color_bright_yellow";
+        format = "[$symbol($env_value)]($style)";
       };
 
       character = {

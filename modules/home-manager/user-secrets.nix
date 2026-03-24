@@ -1,11 +1,12 @@
-{ config, lib, pkgs, ... }:
-
-with lib;
-
-let
-  cfg = config.services.user-secrets;
-in
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with lib; let
+  cfg = config.services.user-secrets;
+in {
   options.services.user-secrets = {
     enable = mkEnableOption "User-specific SOPS secrets activation";
 
@@ -28,9 +29,9 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.activation.userSecretsActivation = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    home.activation.userSecretsActivation = lib.hm.dag.entryAfter ["writeBoundary"] ''
       export SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
-      export PATH="${lib.makeBinPath [ pkgs.sops ]}:$PATH"
+      export PATH="${lib.makeBinPath [pkgs.sops]}:$PATH"
 
       # Decrypt secrets - with error handling
       mkdir -p "$HOME/.config/sops"
@@ -52,10 +53,12 @@ in
           fi
           rm -f "$tmp_attic_token"
         else
-          echo "Warning: SOPS age key not found at $SOPS_AGE_KEY_FILE, skipping attic-client-token decryption"
+          # echo "Warning: SOPS age key not found at $SOPS_AGE_KEY_FILE, skipping attic-client-token decryption"
+          true
         fi
       else
-        echo "Warning: no system or SOPS attic-client-token source found; leaving existing token in place"
+        # echo "Warning: no system or SOPS attic-client-token source found; leaving existing token in place"
+        true
       fi
 
       # Prefer agenix GitHub token for nix flake operations, otherwise fall back
@@ -70,10 +73,12 @@ in
           fi
           rm -f "$tmp_github_token"
         else
-          echo "Warning: SOPS age key not found at $SOPS_AGE_KEY_FILE, skipping github-token decryption"
+          # echo "Warning: SOPS age key not found at $SOPS_AGE_KEY_FILE, skipping github-token decryption"
+          true
         fi
       else
-        echo "Warning: no agenix or SOPS GitHub token found; leaving existing github-token in place"
+        # echo "Warning: no agenix or SOPS GitHub token found; leaving existing github-token in place"
+        true
       fi
     '';
   };

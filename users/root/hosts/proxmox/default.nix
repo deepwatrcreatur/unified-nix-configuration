@@ -4,8 +4,7 @@
   lib,
   inputs,
   ...
-}:
-{
+}: {
   imports = [
     ./justfile.nix
     ./nh.nix
@@ -15,6 +14,7 @@
     # Selectively import only essential modules to avoid activation issues
     ../../../../modules/home-manager/secrets-activation.nix
     ../../../../modules/home-manager/user-secrets.nix
+    ../../../../modules/home-manager/agenix-user-secrets.nix
     ../../../../modules/home-manager/common/nix-user-config.nix
     ../../../../modules/home-manager/common/attic-client.nix
     ../../../../modules/home-manager/common/fish.nix
@@ -75,4 +75,16 @@
     secretsPath = ../../secrets;
   };
 
+  # Decrypt agenix user secrets using the stable machine identity on the proxmox host
+  services.agenix-user-secrets = {
+    enable = true;
+    identityFile = "/var/lib/agenix/machine-identity";
+    secrets = {
+      github-token = {
+        source = ../../../../secrets-agenix/github-token.age;
+        target = ".local/share/agenix-user-secrets/github-token";
+        extraTargets = [".config/git/github-token"];
+      };
+    };
+  };
 }

@@ -2,7 +2,7 @@
 # Manually normalized after replacing the old homeserver LXC.
 let
   machineIdentity = import ./lib/agenix-machine-identities.nix;
-  remoteBuilder = import ./lib/remote-builder.nix { };
+  remoteBuilder = import ./lib/remote-builder.nix {};
 
   hosts = {
     attic-cache = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBMzmqOZ301fwZJVQI5KZ9+npuFs+3EvwKet4peLZeLv";
@@ -28,16 +28,13 @@ let
     users.deepwatrcreatur
   ];
 
-  machineRecipients =
-    hostName:
-    let
-      stable = machineIdentity.readPublicKey hostName;
-      legacy = hosts.${hostName} or null;
-    in
-    if stable != null && stable != "" then
-      [ stable ]
-    else
-      builtins.filter (key: key != null && key != "") [ legacy ];
+  machineRecipients = hostName: let
+    stable = machineIdentity.readPublicKey hostName;
+    legacy = hosts.${hostName} or null;
+  in
+    if stable != null && stable != ""
+    then [stable]
+    else builtins.filter (key: key != null && key != "") [legacy];
 
   userOnlySecrets = operatorUsers;
 
@@ -72,9 +69,11 @@ let
 
   nixCiCacheSecrets = operatorUsers ++ builtins.concatLists (map machineRecipients nixCiCacheHosts);
 
+  githubTokenHosts = atticClientHosts;
+  githubTokenSecrets = operatorUsers ++ builtins.concatLists (map machineRecipients githubTokenHosts);
+
   podmanServiceSecrets = operatorUsers ++ machineRecipients "podman";
-in
-{
+in {
   # Service-scoped secrets
   "secrets-agenix/cloudflare-api-key.age".publicKeys = gatewayServiceSecrets;
   "secrets-agenix/cloudflare_ddns_API_token.age".publicKeys = gatewayServiceSecrets;
@@ -89,7 +88,7 @@ in
   "secrets-agenix/paperless-authentik-oidc.age".publicKeys = podmanServiceSecrets;
 
   # Operator/user secrets decrypted directly in Home Manager with the stable user key
-  "secrets-agenix/github-token.age".publicKeys = userOnlySecrets;
+  "secrets-agenix/github-token.age".publicKeys = githubTokenSecrets;
   "secrets-agenix/grok-api-key.age".publicKeys = userOnlySecrets;
   "secrets-agenix/openrouter-api-key.age".publicKeys = userOnlySecrets;
   "secrets-agenix/z-ai-api-key.age".publicKeys = userOnlySecrets;
