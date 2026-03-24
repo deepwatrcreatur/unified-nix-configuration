@@ -45,6 +45,7 @@ in
   imports = [
     ./hardware-configuration.nix
     ../../../modules/nixos/common
+    ../../../modules/nixos/determinate-netrc-dir.nix
     ../../../modules/nixos/services/iperf3.nix
     ../../../modules/common/utility-packages.nix
     ../../../modules/nixos/keyboard-glitches.nix # Fix stuck keyboard presses in Proxmox VM
