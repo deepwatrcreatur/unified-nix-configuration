@@ -84,8 +84,8 @@ in
       }
     '' + lib.optionalString shouldAutoLoadKeys ''
       # Skip auto-loading keys in SSH sessions on headless servers
-      let in_ssh = ($env | get -i SSH_CONNECTION | is-not-empty)
-      let has_display = ($env | get -i DISPLAY | is-not-empty)
+      let in_ssh = ($env | get -o SSH_CONNECTION | is-not-empty)
+      let has_display = ($env | get -o DISPLAY | is-not-empty)
       if (not $in_ssh or $has_display) {
         if ((do { ssh-add -l } | complete | get exit_code) != 0) {
           for key in [$"($env.HOME)/.ssh/id_ed25519" $"($env.HOME)/.ssh/id_rsa"] {
