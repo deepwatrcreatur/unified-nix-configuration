@@ -13,7 +13,6 @@
     [
       # System tools
       hyperfine
-      htop
       lsof
       procs
       tailspin

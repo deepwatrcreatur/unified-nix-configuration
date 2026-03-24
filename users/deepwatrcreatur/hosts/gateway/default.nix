@@ -8,9 +8,22 @@
 {
   imports = [
     ../../../../modules/home-manager/default.nix
+    ../../../../modules/home-manager/agenix-user-secrets.nix
   ];
 
   home.homeDirectory = "/home/deepwatrcreatur";
+
+  # User-scoped secrets decrypted via age
+  services.agenix-user-secrets = {
+    enable = true;
+    secrets = {
+      github-token = {
+        source = ../../../../secrets-agenix/github-token.age;
+        target = ".local/share/agenix-user-secrets/github-token";
+        extraTargets = [ ".config/git/github-token" ];
+      };
+    };
+  };
 
   home.stateVersion = "25.11";
 }

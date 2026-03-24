@@ -11,8 +11,11 @@
     age
     ansible
     bandwhich
+
+    # Terminal monitoring and diagnostics
     bottom
     btop
+    glances
     bun
     just
     cloc
