@@ -36,7 +36,34 @@ Replace `<hostname>` with the target machine's name.
 2.  Add the package to the `environment.systemPackages` list.
 3.  Rebuild the system configuration using the commands above.
 
-### A Note on Secrets
+### Managing Secrets with Agenix
+
+This repo uses two different agenix-related tools:
+
+1. **`ryantm/agenix`** (flake input) - The NixOS/Darwin module that decrypts secrets on hosts
+2. **`agenix-cli`** (nixpkgs) - A Rust CLI with a *different* config format (DO NOT USE for this repo)
+
+**To create or edit secrets**, use the wrapper script:
+```bash
+agenix-edit secrets-agenix/my-secret.age
+```
+
+This runs `nix run github:ryantm/agenix` which is compatible with our `secrets.nix` format.
+
+**To add a new secret:**
+1. Add the secret definition to `secrets.nix` with appropriate `publicKeys`
+2. Run `agenix-edit secrets-agenix/new-secret.age` to create and encrypt it
+3. Reference it in your host config via `config.age.secrets."secret-name".path`
+
+**Manual encryption** (if agenix-edit isn't available):
+```bash
+# Get the public keys for your secret
+nix eval --impure --expr '(import ./secrets.nix)."secrets-agenix/my-secret.age".publicKeys'
+
+# Encrypt with age
+echo 'SECRET_VALUE=xyz' | age -r "ssh-ed25519 KEY1..." -r "ssh-ed25519 KEY2..." -o secrets-agenix/my-secret.age
+```
+
 ### Module Organization
 - `modules/common/`: Cross-platform shared modules (packages, nix-settings, etc.) - imported by all hosts
 - `modules/nix-darwin/`: macOS-specific modules (dock, finder, security) - auto-imported only by Darwin hosts via modules/nix-darwin/default.nix

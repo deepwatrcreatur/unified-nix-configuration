@@ -11,6 +11,7 @@
     ../../../modules/nixos/container-stack.nix  # New container stack module
     ./modules/containers.nix
     ./stacks/paperless-stack.nix  # Simplified stack config
+    ./stacks/nightscout-stack.nix  # CGM remote monitoring
     inputs.agenix.nixosModules.default
   ];
 

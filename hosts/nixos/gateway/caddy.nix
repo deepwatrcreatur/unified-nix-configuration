@@ -93,6 +93,12 @@ in
           reverse_proxy 10.10.11.84:18000
         '';
       };
+
+      "nightscout.deepwatercreature.com" = {
+        extraConfig = ''
+          reverse_proxy 10.10.11.84:11337
+        '';
+      };
       
       # Grafana monitoring
       "grafana.deepwatercreature.com" = {
