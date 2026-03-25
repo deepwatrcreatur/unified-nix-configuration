@@ -15,6 +15,7 @@ in
 
   imports = [
     ../../../modules/nixos/common # Common NixOS modules including ssh-keys-manager
+    ../../../modules/nixos/determinate-netrc-dir.nix # Create /nix/var/determinate with proper permissions
     ../../../modules/nixos/container-stack.nix
     ../../../modules/nixos/services/iperf3.nix
     ../../../modules/nixos/attic-client.nix # Attic binary cache client
