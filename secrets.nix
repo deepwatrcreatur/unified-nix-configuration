@@ -24,8 +24,15 @@ let
     "root-homeserver" = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEBi+OJR+l/cO+Kf2WuCjKw9yLlcvqTaOb/KkolX+qgh root@homeserver";
   };
 
+  # Primary operator key (for secrets that only need workstation access)
   operatorUsers = [
     users.deepwatrcreatur
+  ];
+
+  # All operator keys across machines (for secrets that need user-level decryption on multiple hosts)
+  allOperatorKeys = [
+    users.deepwatrcreatur
+    users."deepwatrcreatur-homeserver"
   ];
 
   machineRecipients = hostName: let
@@ -70,7 +77,8 @@ let
   nixCiCacheSecrets = operatorUsers ++ builtins.concatLists (map machineRecipients nixCiCacheHosts);
 
   githubTokenHosts = atticClientHosts;
-  githubTokenSecrets = operatorUsers ++ builtins.concatLists (map machineRecipients githubTokenHosts);
+  # Use allOperatorKeys for user-level decryption on multiple hosts
+  githubTokenSecrets = allOperatorKeys ++ builtins.concatLists (map machineRecipients githubTokenHosts);
 
   podmanServiceSecrets = operatorUsers ++ machineRecipients "podman";
 in {
