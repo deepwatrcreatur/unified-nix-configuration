@@ -25,5 +25,8 @@
     };
   };
 
+  # Disable user-level netrc - NixOS uses system-level /run/nix/nix-ci-netrc
+  services.nix-user-config.netrcMachine = null;
+
   home.stateVersion = "25.11";
 }
