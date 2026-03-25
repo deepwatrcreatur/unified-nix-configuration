@@ -15,6 +15,7 @@
     ./git-ssh.nix
     ./zram.nix  # Zram compressed swap for desktops
     ./nix-ci-netrc.nix  # nix-ci.com cache authentication
+    ../determinate-netrc-dir.nix  # Create /nix/var/determinate for user netrc files
     ../root-ssh-identity.nix  # Stable root SSH identity
     ../../common/secrets-management.nix  # age/agenix/rage/ssh-to-age tools
     # ../../activation-scripts
