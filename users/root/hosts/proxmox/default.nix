@@ -85,6 +85,11 @@
         target = ".local/share/agenix-user-secrets/github-token";
         extraTargets = [".config/git/github-token"];
       };
+      nix-ci-netrc = {
+        source = ../../../../secrets-agenix/nix-ci-netrc.age;
+        target = ".local/share/agenix-user-secrets/nix-ci-netrc";
+        extraTargets = [".config/nix/nix-ci-netrc"];
+      };
     };
   };
 }
