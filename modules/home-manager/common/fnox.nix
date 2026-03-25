@@ -8,11 +8,7 @@
 {
   imports = lib.optionals (inputs ? fnox) [ inputs.fnox.homeManagerModules.default ];
 
-  config =
-    {
-      home.packages = lib.optionals (pkgs ? opencode) [ pkgs.opencode ];
-    }
-    // lib.optionalAttrs (inputs ? fnox) {
+  config = lib.optionalAttrs (inputs ? fnox) {
       programs.fnox = {
         enable = true;
         recipients = [
