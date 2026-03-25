@@ -20,8 +20,17 @@ let
   users = {
     # Single stable identity used across all hosts
     deepwatrcreatur = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIB4ELcnxIV0zujIJ4EPubU5nkKPV7G8pZ3tDDjZ6pXI deepwatrcreatur@gmail.com";
-    root = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ+Rnj2TmFnoT8eygCClp/aOEzTnJgalIe1HGPWQkGL+ root@attic-cache";
+    # Stable root identity - private key auto-deployed via agenix
+    root = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINdeqr8JB2UpKH3zX8bfQXYa2h1dVV+5JndrX8UyB+io root-stable-identity";
   };
+
+  # All NixOS hosts that should receive the root SSH key
+  rootSshKeyHosts = [
+    "attic-cache"
+    "gateway"
+    "homeserver"
+    "workstation"
+  ];
 
   # Single stable operator identity - same key deployed to all hosts
   operatorUsers = [
@@ -101,4 +110,8 @@ in {
 
   # nix-ci.com cache authentication (netrc format)
   "secrets-agenix/nix-ci-netrc.age".publicKeys = nixCiCacheSecrets;
+
+  # Stable root SSH key - deployed to /root/.ssh/id_ed25519 via agenix
+  "secrets-agenix/root-ssh-key.age".publicKeys =
+    operatorUsers ++ builtins.concatLists (map machineRecipients rootSshKeyHosts);
 }
