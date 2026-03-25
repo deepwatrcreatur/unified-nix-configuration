@@ -33,6 +33,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # RTK hook integration for AI coding agents
+    nix-rtk = {
+      url = "github:deepwatrcreatur/nix-rtk";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.llm-agents.follows = "llm-agents";
+    };
+
     nixbit = {
       url = "github:pbek/nixbit";
       inputs.nixpkgs.follows = "nixpkgs";

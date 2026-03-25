@@ -1114,6 +1114,29 @@
         "type": "github"
       }
     },
+    "nix-rtk": {
+      "inputs": {
+        "llm-agents": [
+          "llm-agents"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1774443280,
+        "narHash": "sha256-yeuDPLYy8U/yx2+FJqTRwh2eIOxMQsXEBaIesHaAELg=",
+        "owner": "deepwatrcreatur",
+        "repo": "nix-rtk",
+        "rev": "8d2c52a7a451219581633f993e890da643422d62",
+        "type": "github"
+      },
+      "original": {
+        "owner": "deepwatrcreatur",
+        "repo": "nix-rtk",
+        "type": "github"
+      }
+    },
     "nix-semaphore": {
       "inputs": {
         "nixpkgs": [
@@ -1462,6 +1485,7 @@
         "nix-lightpanda": "nix-lightpanda",
         "nix-linuxbrew": "nix-linuxbrew",
         "nix-router-optimized": "nix-router-optimized",
+        "nix-rtk": "nix-rtk",
         "nix-semaphore": "nix-semaphore",
         "nix-snapd": "nix-snapd",
         "nix-whitesur-config": "nix-whitesur-config",

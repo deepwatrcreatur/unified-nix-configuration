@@ -21,7 +21,7 @@
 
   programs.dmux.enable = true;
 
-  programs.coding-agents.rtk.integrations = {
+  programs.rtk-hooks.integrations = {
     claude.enable = true;
     codex.enable = true;
     gemini.enable = true;
