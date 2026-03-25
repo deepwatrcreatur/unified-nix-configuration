@@ -12,6 +12,7 @@
     ./modules/containers.nix
     ./stacks/paperless-stack.nix  # Simplified stack config
     ./stacks/nightscout-stack.nix  # CGM remote monitoring
+    ./stacks/librelinkup-stack.nix  # LibreLinkUp to Nightscout bridge
     inputs.agenix.nixosModules.default
   ];
 

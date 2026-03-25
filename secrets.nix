@@ -96,6 +96,7 @@ in {
   "secrets-agenix/paperless-db-password.age".publicKeys = podmanServiceSecrets;
   "secrets-agenix/paperless-authentik-oidc.age".publicKeys = podmanServiceSecrets;
   "secrets-agenix/nightscout-api-secret.age".publicKeys = podmanServiceSecrets;
+  "secrets-agenix/librelinkup-env.age".publicKeys = podmanServiceSecrets;
 
   # Operator/user secrets decrypted directly in Home Manager with the stable user key
   "secrets-agenix/github-token.age".publicKeys = githubTokenSecrets;
