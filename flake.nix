@@ -27,8 +27,9 @@
 
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
 
-    nix-coding-agents = {
-      url = "github:deepwatrcreatur/nix-coding-agents";
+    # LLM/AI coding agents - comprehensive package set from numtide
+    llm-agents = {
+      url = "github:numtide/llm-agents.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

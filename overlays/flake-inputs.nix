@@ -3,15 +3,12 @@
 { inputs }:
 
 [
+  # LLM/AI coding agents from numtide (claude-code, opencode, codex, rtk, etc.)
+  inputs.llm-agents.overlays.default
+
   # Worktrunk (git worktree management for parallel agents)
   (final: prev: {
     worktrunk = inputs.worktrunk.packages.${prev.stdenv.hostPlatform.system}.default;
-  })
-
-  # Opencode CLI from nixpkgs-unstable (v1.2.13)
-  # The fnox wrappers (opencode-zai, opencode-claude) automatically use this opencode.
-  (final: prev: {
-    opencode = inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.hostPlatform.system}.opencode;
   })
 
   # Lightpanda headless browser for AI agents
