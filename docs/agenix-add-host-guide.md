@@ -67,9 +67,11 @@ recipient group in `secrets.nix`.
 
 Common cases:
 
-- remote builder client host: ensure it is in `remoteBuilder.supportedHosts`
-- attic client host: ensure it is included in `atticClientHosts`
-- service host: ensure the relevant service secret group includes that host
+- **root SSH identity**: add to `rootSshKeyHosts` (auto-deploys `/root/.ssh/id_ed25519`)
+- **remote builder client**: add to `remoteBuilder.supportedHosts`
+- **attic client**: add to `atticClientHosts`
+- **nix-ci.com cache**: add to `nixCiCacheHosts`
+- **service host**: add to the relevant service secret group
 
 `secrets.nix` prefers `ssh-keys/agenix-machine-identities/{hostname}.pub` and
 only falls back to the legacy SSH host key if the stable public key is missing.
@@ -115,6 +117,41 @@ sudo ls -l /run/agenix
 
 If the host decrypts successfully with the stable key, you can eventually stop
 including the legacy host SSH key as a recipient for that host’s secrets.
+
+## Stable User Identities
+
+This repo uses stable SSH identities for users (not per-host keys):
+
+### Root identity (auto-deployed)
+
+The root SSH key is stored in `secrets-agenix/root-ssh-key.age` and auto-deploys
+to `/root/.ssh/id_ed25519` on all hosts in `rootSshKeyHosts`.
+
+- **Public key**: `ssh-keys/root-stable-identity.pub`
+- **Dashlane**: "ssh stable identity - root"
+
+After adding a host to `rootSshKeyHosts` and rekeying, root automatically gets
+the key on next rebuild.
+
+### User identity (manually deployed)
+
+The `deepwatrcreatur` user has a single stable key across all hosts:
+
+- **Public key**: `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIB4ELcnxIV0zujIJ4EPubU5nkKPV7G8pZ3tDDjZ6pXI deepwatrcreatur@gmail.com`
+- **Dashlane**: "ssh stable identity - deepwatrcreatur"
+
+Deploy manually to new hosts:
+```bash
+scp ~/.ssh/id_ed25519 newhost:~/.ssh/
+scp ~/.ssh/id_ed25519.pub newhost:~/.ssh/
+ssh newhost "chmod 600 ~/.ssh/id_ed25519"
+```
+
+### VM Creation
+
+When creating VMs (Proxmox, cloud), provide both public keys for immediate access:
+- Root: contents of `ssh-keys/root-stable-identity.pub`
+- User: `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIB4ELcnxIV0zujIJ4EPubU5nkKPV7G8pZ3tDDjZ6pXI deepwatrcreatur@gmail.com`
 
 ## Notes
 
