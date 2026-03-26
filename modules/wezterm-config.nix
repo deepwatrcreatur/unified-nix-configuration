@@ -66,14 +66,8 @@
       -- Apply Sugarplum theme instead of color scheme
       config.colors = sugarplum
 
-      -- Preserve WezTerm's default mouse handling so Zellij mouse selection and
-      -- copy-on-select continue to work, then add Ctrl-click link opening.
-      config.mouse_bindings = config.mouse_bindings or {}
-      table.insert(config.mouse_bindings, {
-        event = { Up = { streak = 1, button = "Left" } },
-        mods = "CTRL",
-        action = wezterm.action.OpenLinkAtMouseCursor,
-      })
+      -- Do not override WezTerm mouse bindings here. Zellij relies on the
+      -- terminal's default mouse/selection handling for copy-on-select.
     '';
   };
 }
