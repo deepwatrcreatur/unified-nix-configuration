@@ -37,7 +37,6 @@
     nix-rtk = {
       url = "github:deepwatrcreatur/nix-rtk";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.flake-utils.follows = "flake-utils";
       inputs.llm-agents.follows = "llm-agents";
     };
 
