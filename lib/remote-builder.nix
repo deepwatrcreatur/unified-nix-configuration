@@ -11,6 +11,7 @@ let
   # These use home-manager/ansible for key deployment
   nonNixosHosts = [
     "pve-gateway"
+    "pve-rog"
     "pve-strix"
     "pve-tomahawk"
     "pve-lattitude"
