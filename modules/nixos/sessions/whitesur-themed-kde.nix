@@ -23,11 +23,10 @@
   services.desktopManager.plasma6.enable = true;
   services.displayManager.sddm.enable = true;
 
-  # Enable X11 for KDE (Wayland support can be added later if desired)
-  services.xserver.enable = true;
-
   services.displayManager = {
-    defaultSession = "plasmax11";
+    # Workstation now runs Plasma on Wayland; match SDDM autologin to the
+    # installed session name instead of the legacy X11 session.
+    defaultSession = "plasma";
     autoLogin = {
       enable = true;
       user = "deepwatrcreatur";

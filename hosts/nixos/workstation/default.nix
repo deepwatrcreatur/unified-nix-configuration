@@ -106,9 +106,8 @@
   # Configure keyboard - let input-leap handle caps lock synchronization
   # services.xserver.xkb.options = "caps:none"; # Disabled - using input-leap fix instead
 
-  # X11 with AMD GPU passthrough
+  # Display/input configuration for the passed-through AMD GPU
   services.xserver = {
-    enable = false;
     videoDrivers = [ "amdgpu" ];
     xkb.options = "caps:none"; # Let input-leap handle caps lock synchronization
   };

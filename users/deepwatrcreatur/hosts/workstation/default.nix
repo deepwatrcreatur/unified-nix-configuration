@@ -140,6 +140,13 @@
     clipboardSharing = true
   '';
 
+  home.activation.kwinSeparateDesktops = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    ${pkgs.kdePackages.kconfig}/bin/kwriteconfig6 \
+      --file "${config.xdg.configHome}/kwinrc" \
+      --group MultiOutput \
+      --key separateDesktops true
+  '';
+
   # X11 display setup for DeskFlow
   systemd.user.services.xhost-deskflow = {
     Unit = {
