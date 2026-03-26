@@ -3,7 +3,7 @@
 {
   # Rofi application launcher configuration
   # Default mode: drun (show available applications)
-  # Keybinding: Super+Space via dconf settings in cosmic-settings.nix
+  # Keybinding: Super+Space via dconf settings in gnome-cosmic-style.nix
 
   programs.rofi = {
     enable = true;

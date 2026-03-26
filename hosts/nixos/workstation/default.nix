@@ -21,8 +21,8 @@
     # Desktop environment - choose one:
     # COSMIC: Attractive, but currently too unstable on this Proxmox VM.
     #../../../modules/nixos/sessions/cosmic.nix
-    # KDE Plasma: Daily-driver fallback with WhiteSur theming and COSMIC-like keybinds.
-    ../../../modules/nixos/sessions/whitesur-themed-kde.nix
+    # GNOME with COSMIC-like shell customizations and primary-monitor-only workspaces.
+    ../../../modules/nixos/sessions/gnome.nix
 
     ../../../modules/nixos/hp-print-scan.nix # HP printer/scanner support
     ../../../modules/nixos/printers/phoenix-hp-m477.nix # HP M477 printer queue
@@ -43,7 +43,7 @@
     };
     desktop = {
       enable = true;
-      environment = "plasma";  # KDE Plasma is the stable default on this VM
+      environment = "gnome";
       enableSound = true;
       enablePrinting = true;
     };

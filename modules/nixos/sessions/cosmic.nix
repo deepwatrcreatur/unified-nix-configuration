@@ -172,8 +172,9 @@ in
     ];
   };
 
-  # Desktop appearance, keybindings, and idle settings are now configured declaratively
-  # via home-manager dconf in modules/home-manager/cosmic-settings.nix
+  # Desktop appearance, keybindings, and idle settings are configured separately
+  # from the native COSMIC session. GNOME emulation lives in
+  # modules/home-manager/gnome-cosmic-style.nix.
   # This approach avoids timing issues and greeter conflicts with systemd services
 
   # GNOME Keyring daemon for credential storage
@@ -190,8 +191,8 @@ in
     };
   };
 
-  # Note: Keyboard keybindings are configured via home-manager dconf settings
-  # in modules/home-manager/cosmic-settings.nix using the standard GNOME keybindings schema
+  # Note: GNOME-style keyboard keybindings for the emulated COSMIC look are
+  # configured in modules/home-manager/gnome-cosmic-style.nix.
 
   # Thunderbird Apple Mail-like unified inbox configuration
   environment.etc."thunderbird/prefs.js".text = ''

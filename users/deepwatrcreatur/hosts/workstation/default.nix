@@ -13,6 +13,7 @@
 
     ../../../../modules/home-manager
     ../../../../modules/home-manager/agenix-user-secrets.nix
+    ../../../../modules/home-manager/gnome-cosmic-style.nix
     ../../../../modules/home-manager/ghostty
     ../../../../modules/home-manager/gpg-agent-cross-de.nix
     ../../../../modules/home-manager/zed.nix
@@ -138,32 +139,6 @@
 
   home.file.".config/deskflow/deskflow.conf".text = ''
     clipboardSharing = true
-  '';
-
-  home.activation.kwinSeparateDesktops = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    ${pkgs.kdePackages.kconfig}/bin/kwriteconfig6 \
-      --file "${config.xdg.configHome}/kwinrc" \
-      --group MultiOutput \
-      --key separateDesktops true
-  '';
-
-  home.activation.plasmaUnlockDesktopContainments = lib.hm.dag.entryAfter [ "kwinSeparateDesktops" ] ''
-    appletsrc="${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc"
-    if [[ -f "$appletsrc" ]]; then
-      ${pkgs.perl}/bin/perl -0pi -e 's/(\[Containments\]\[1\]\n.*?\nimmutability=)1(\n)/$1."0".$2/es' "$appletsrc"
-      ${pkgs.perl}/bin/perl -0pi -e 's/(\[Containments\]\[2\]\n.*?\nimmutability=)1(\n)/$1."0".$2/es' "$appletsrc"
-    fi
-  '';
-
-  home.activation.kdeFreeCtrlAltT = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    shortcuts="${config.xdg.configHome}/kglobalshortcutsrc"
-    if [[ -f "$shortcuts" ]] && ! grep -Fq '[services][org.kde.konsole.desktop]' "$shortcuts"; then
-      cat >> "$shortcuts" <<'EOF'
-
-[services][org.kde.konsole.desktop]
-_launch=none
-EOF
-    fi
   '';
 
   # X11 display setup for DeskFlow
