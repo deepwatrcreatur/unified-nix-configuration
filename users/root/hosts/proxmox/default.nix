@@ -90,6 +90,29 @@
         target = ".local/share/agenix-user-secrets/nix-ci-netrc";
         extraTargets = [".config/nix/nix-ci-netrc"];
       };
+      nix-remote-builder-key = {
+        source = ../../../../secrets-agenix/nix-remote-builder-key.age;
+        target = ".local/share/agenix-user-secrets/nix-remote-builder-key";
+        extraTargets = [".ssh/nix-remote"];
+      };
     };
   };
+
+  # Remote building configuration - offload builds to attic-cache
+  home.activation.setupRemoteBuilder = lib.hm.dag.entryAfter ["agenixUserSecrets"] ''
+    # Create /etc/nix/machines with remote builder config
+    machines_file="/etc/nix/machines"
+    machines_content="ssh://deepwatrcreatur@10.10.11.39 x86_64-linux /root/.ssh/nix-remote 8 2 nixos-test,benchmark,big-parallel,kvm - -"
+
+    if [[ ! -f "$machines_file" ]] || ! grep -qF "10.10.11.39" "$machines_file" 2>/dev/null; then
+      echo "$machines_content" | tee "$machines_file" > /dev/null
+      chmod 644 "$machines_file"
+      echo "Configured remote builder in $machines_file"
+    fi
+
+    # Ensure SSH key permissions
+    if [[ -f "$HOME/.ssh/nix-remote" ]]; then
+      chmod 600 "$HOME/.ssh/nix-remote"
+    fi
+  '';
 }

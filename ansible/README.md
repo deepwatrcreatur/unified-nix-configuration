@@ -79,6 +79,18 @@ Just pulls the latest changes without rebuilding. Useful for staging updates.
 ansible-playbook -i inventory/hosts.yml playbooks/git-pull-only.yml
 ```
 
+### setup-secrets.yml
+
+Bootstraps decrypted cache and token files needed for Nix and git auth.
+
+For Proxmox hosts, this now also writes `/nix/var/determinate/netrc` directly so
+`cache.nix-ci.com` and `attic-cache` auth works even if `proxmox-root`
+Home Manager activation is blocked by an unrelated package conflict.
+
+```bash
+ansible-playbook -i inventory/hosts.yml playbooks/setup-secrets.yml --limit proxmox
+```
+
 ## Git Handling
 
 The playbooks automatically handle common git issues:
