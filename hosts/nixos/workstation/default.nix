@@ -236,6 +236,11 @@
   myModules.keyboardGlitches.enable = true;
 
   # nix.buildMachines is now managed by modules/common/nix-settings.nix
+  # Workstation should still be able to rebuild locally when attic-cache is
+  # offline, so do not depend on it as a remote builder here.
+  nix.distributedBuilds = lib.mkForce false;
+  nix.buildMachines = lib.mkForce [ ];
+  nix.settings.fallback = true;
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"
