@@ -1,4 +1,8 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  ...
+}:
 
 {
   # KDE Plasma Home Manager configuration
@@ -21,6 +25,7 @@
   # KDE-specific applications
   home.packages = with pkgs; [
     kdePackages.krunner
+    kdePackages.krohnkite
     birdtray # System tray notification for Thunderbird
   ];
 
