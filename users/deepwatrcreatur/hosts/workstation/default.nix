@@ -147,6 +147,25 @@
       --key separateDesktops true
   '';
 
+  home.activation.plasmaUnlockDesktopContainments = lib.hm.dag.entryAfter [ "kwinSeparateDesktops" ] ''
+    appletsrc="${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc"
+    if [[ -f "$appletsrc" ]]; then
+      ${pkgs.perl}/bin/perl -0pi -e 's/(\[Containments\]\[1\]\n.*?\nimmutability=)1(\n)/$1."0".$2/es' "$appletsrc"
+      ${pkgs.perl}/bin/perl -0pi -e 's/(\[Containments\]\[2\]\n.*?\nimmutability=)1(\n)/$1."0".$2/es' "$appletsrc"
+    fi
+  '';
+
+  home.activation.kdeFreeCtrlAltT = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    shortcuts="${config.xdg.configHome}/kglobalshortcutsrc"
+    if [[ -f "$shortcuts" ]] && ! grep -Fq '[services][org.kde.konsole.desktop]' "$shortcuts"; then
+      cat >> "$shortcuts" <<'EOF'
+
+[services][org.kde.konsole.desktop]
+_launch=none
+EOF
+    fi
+  '';
+
   # X11 display setup for DeskFlow
   systemd.user.services.xhost-deskflow = {
     Unit = {
