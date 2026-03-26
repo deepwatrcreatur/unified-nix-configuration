@@ -35,7 +35,7 @@ in
           # Non-sensitive config
           LINK_UP_REGION = "CA";
           LINK_UP_TIME_INTERVAL = "5";
-          NIGHTSCOUT_URL = "https://nightscout.deepwatercreature.com";
+          NIGHTSCOUT_URL = "nightscout.deepwatercreature.com";
           NIGHTSCOUT_DEVICE_NAME = "librelinkup-bridge";
           LOG_LEVEL = "info";
           RETRY_ATTEMPTS = "2";
