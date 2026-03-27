@@ -55,8 +55,8 @@ in
     # Import only specific modules, NOT default (which includes nftables-fasttrack that conflicts with our nftables.nix)
     inputs.nix-router-optimized.nixosModules.router-networking
     inputs.nix-router-optimized.nixosModules.router-firewall
+    inputs.nix-router-optimized.nixosModules.router-dns-service
     inputs.nix-router-optimized.nixosModules.router-homelab
-    inputs.nix-router-optimized.nixosModules.router-technitium
     inputs.nix-router-optimized.nixosModules.router-optimizations
     ./networking.nix # Network interface configuration
     ./caddy.nix # Caddy reverse proxy configuration
@@ -214,16 +214,6 @@ in
   ];
 
   my.agenix.machineIdentity.enable = true;
-
-  services.router-technitium = {
-    enable = true;
-    blockListPresets = [
-      "hagezi-normal"
-      "hagezi-nrd-14d"
-    ];
-    extraBlockListUrls = [ ];
-    blockListUpdateIntervalHours = 24;
-  };
 
   # Disable custom logging for Technitium - use default state directory
   # The spinning disk logging causes read-only filesystem errors with DynamicUser
