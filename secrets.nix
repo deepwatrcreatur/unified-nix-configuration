@@ -3,6 +3,9 @@
 let
   machineIdentity = import ./lib/agenix-machine-identities.nix;
   remoteBuilder = import ./lib/remote-builder.nix {};
+  readPublicKey = path: builtins.replaceStrings [ "\n" ] [ "" ] (builtins.readFile path);
+  stableDeepwatrcreaturKey = readPublicKey ./ssh-keys/deepwatrcreatur-stable-identity.pub;
+  stableRootKey = readPublicKey ./ssh-keys/root-stable-identity.pub;
 
   hosts = {
     attic-cache = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBMzmqOZ301fwZJVQI5KZ9+npuFs+3EvwKet4peLZeLv";
@@ -19,9 +22,9 @@ let
 
   users = {
     # Single stable identity used across all hosts
-    deepwatrcreatur = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIB4ELcnxIV0zujIJ4EPubU5nkKPV7G8pZ3tDDjZ6pXI deepwatrcreatur@gmail.com";
+    deepwatrcreatur = stableDeepwatrcreaturKey;
     # Stable root identity - private key auto-deployed via agenix
-    root = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINdeqr8JB2UpKH3zX8bfQXYa2h1dVV+5JndrX8UyB+io root-stable-identity";
+    root = stableRootKey;
   };
 
   # All NixOS hosts that should receive the root SSH key

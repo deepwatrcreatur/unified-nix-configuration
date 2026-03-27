@@ -5,10 +5,13 @@
   ...
 }:
 
+let
+  deepwatrcreaturStableKey = lib.strings.trim (builtins.readFile ../../../../ssh-keys/deepwatrcreatur-stable-identity.pub);
+in
 {
   users.users.root.shell = pkgs.fish;
   users.users.root.openssh.authorizedKeys.keys = [
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIB4ELcnxIV0zujIJ4EPubU5nkKPV7G8pZ3tDDjZ6pXI deepwatrcreatur@gmail.com"
+    deepwatrcreaturStableKey
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEbX1mL3oZyEz1KhjEWww+k4RTXXeOJSqXWqu5N44ZAg root@gateway" # For remote builds
   ];
 
@@ -20,7 +23,7 @@
     extraGroups = [ "wheel" "networkmanager" ];
     shell = pkgs.fish;
     openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIB4ELcnxIV0zujIJ4EPubU5nkKPV7G8pZ3tDDjZ6pXI deepwatrcreatur@gmail.com"
+      deepwatrcreaturStableKey
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEbX1mL3oZyEz1KhjEWww+k4RTXXeOJSqXWqu5N44ZAg root@gateway" # For remote builds
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBZML6mOtZHRUmxNkIcv32q3kbBXMiOsQXyFzrWcUL4P nix-remote-builder" # For nix remote builder
     ];

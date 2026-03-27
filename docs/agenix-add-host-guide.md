@@ -137,7 +137,7 @@ the key on next rebuild.
 
 The `deepwatrcreatur` user has a single stable key across all hosts:
 
-- **Public key**: `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIB4ELcnxIV0zujIJ4EPubU5nkKPV7G8pZ3tDDjZ6pXI deepwatrcreatur@gmail.com`
+- **Public key**: `ssh-keys/deepwatrcreatur-stable-identity.pub`
 - **Dashlane**: "ssh stable identity - deepwatrcreatur"
 
 Deploy manually to new hosts:
@@ -151,7 +151,7 @@ ssh newhost "chmod 600 ~/.ssh/id_ed25519"
 
 When creating VMs (Proxmox, cloud), provide both public keys for immediate access:
 - Root: contents of `ssh-keys/root-stable-identity.pub`
-- User: `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIB4ELcnxIV0zujIJ4EPubU5nkKPV7G8pZ3tDDjZ6pXI deepwatrcreatur@gmail.com`
+- User: contents of `ssh-keys/deepwatrcreatur-stable-identity.pub`
 
 ## Notes
 

@@ -17,7 +17,7 @@
 ### Existing SSH keys:
 - **Workstation host:** `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKFAzJUqDpasPy2B+vODDAZOdGJ/7DiZ1wWjbWkM1Bi8`
 - **Gateway host:** `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGjM16WJ9SUCs+moDo8QTTbbEJMd0EYZPGItC6oV4WiO`
-- **User (deepwatrcreatur):** `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIB4ELcnxIV0zujIJ4EPubU5nkKPV7G8pZ3tDDjZ6pXI`
+- **User (deepwatrcreatur):** `ssh-keys/deepwatrcreatur-stable-identity.pub`
 
 ## Migration Strategy
 
@@ -47,7 +47,7 @@
      homeserver = "ssh-ed25519 AAAAC3..."; # Get from homeserver
      
      # User keys
-     deepwatrcreatur = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIB4ELcnxIV0zujIJ4EPubU5nkKPV7G8pZ3tDDjZ6pXI";
+     deepwatrcreatur = builtins.replaceStrings ["\n"] [""] (builtins.readFile ./ssh-keys/deepwatrcreatur-stable-identity.pub);
      
      # Convenience groups
      allHosts = [ gateway workstation homeserver ];
