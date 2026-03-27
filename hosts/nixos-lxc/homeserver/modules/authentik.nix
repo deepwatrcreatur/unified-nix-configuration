@@ -67,13 +67,13 @@ in
       { path = "/var/lib/authentik/postgres"; mode = "0777"; }
     ];
 
-    firewall.allowedTCPPorts = [ 9000 ];
+    firewall.allowedTCPPorts = [ 19000 ];
   };
 
   systemd.services.authentik-host-proxy = hostProxy.mkService {
     description = "Host-side Authentik proxy";
     containerName = "authentik-server";
-    hostPort = 9000;
+    hostPort = 19000;
     containerPort = 9000;
   };
 }

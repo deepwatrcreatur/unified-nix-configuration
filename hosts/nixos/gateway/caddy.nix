@@ -84,7 +84,7 @@ in
 
       "authentik.deepwatercreature.com" = {
         extraConfig = ''
-          reverse_proxy 10.10.11.69:9000
+          reverse_proxy 10.10.11.69:19000
         '';
       };
 
@@ -161,4 +161,5 @@ in
       PermissionsStartOnly = true;
     };
   };
+
 }
