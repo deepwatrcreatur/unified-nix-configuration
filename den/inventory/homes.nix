@@ -1,12 +1,24 @@
 let
-  pveNodes = [
-    { name = "proxmox-root";       hostName = "proxmox-root";   }
-    { name = "pve-gateway-root";   hostName = "pve-gateway";    }
-    { name = "pve-lattitude-root"; hostName = "pve-lattitude";  }
-    { name = "pve-rog-root";       hostName = "pve-rog";        }
-    { name = "pve-strix-root";     hostName = "pve-strix";      }
-    { name = "pve-tomahawk-root";  hostName = "pve-tomahawk";   }
-  ];
+  libHosts = (import ../../lib/hosts.nix).hosts;
+  proxmoxHostNames =
+    builtins.sort builtins.lessThan (
+      builtins.filter
+        (
+          name:
+          let
+            host = libHosts.${name};
+          in
+          (host.sshUser or "") == "root" && builtins.match "^pve-.*" name != null
+        )
+        (builtins.attrNames libHosts)
+    );
+
+  pveNodes =
+    [ { name = "proxmox-root"; hostName = "proxmox-root"; } ]
+    ++ map (hostName: {
+      name = "${hostName}-root";
+      inherit hostName;
+    }) proxmoxHostNames;
 
   mkProxmoxHome = { name, hostName }: {
     kind = "home";

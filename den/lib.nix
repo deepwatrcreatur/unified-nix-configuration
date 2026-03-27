@@ -20,7 +20,7 @@ in
           (
             aspectName:
             let
-              aspect = aspects.${aspectName} or (throw "Unknown den-lxc aspect: ${aspectName}");
+              aspect = aspects.${aspectName} or (throw "Unknown den aspect: ${aspectName}");
             in
             aspect {
               inherit

@@ -9,6 +9,7 @@
 }:
 let
   inherit (lib) optionals;
+  repoName = builtins.baseNameOf (toString ../..);
 
   desktopModules = [
     {
@@ -254,7 +255,7 @@ in
             key = "󰑓 Flake";
             keyColor = "magenta";
             keyWidth = 16;
-            text = "basename ~/flakes/unified-nix-configuration 2>/dev/null || printf unified-nix-configuration";
+            text = "printf ${lib.escapeShellArg repoName}";
           }
           {
             type = "datetime";

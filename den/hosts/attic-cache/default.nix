@@ -1,8 +1,8 @@
 { lib, ... }:
 let
-  denPrototype = import ../../lib.nix { inherit lib; };
+  den = import ../../lib.nix { inherit lib; };
 in
-denPrototype.mkHostModule {
+den.mkHostModule {
   name = "attic-cache";
   aspectsList = [
     "attic-cache-core"
