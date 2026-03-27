@@ -8,6 +8,7 @@
 
 let
   cfg = config.programs.attic-client;
+  atticCache = import ../../../lib/attic-cache.nix;
 in
 {
   options.programs.attic-client = {
@@ -53,11 +54,11 @@ in
         }
       );
       default = {
-        attic-cache = {
-          endpoint = "http://attic-cache:5001";
+        ${atticCache.serverName} = {
+          endpoint = atticCache.serverEndpoint;
         };
-        attic-cache-local = {
-          endpoint = "http://attic-cache:5001";
+        "${atticCache.serverName}-local" = {
+          endpoint = atticCache.serverEndpoint;
         };
       };
       description = "Default Attic servers (can be overridden)";

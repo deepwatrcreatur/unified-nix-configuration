@@ -6,7 +6,7 @@
   ...
 }:
 let
-  cacheTrust = import ../../../../lib/cache-trust.nix;
+  atticCache = import ../../../../lib/attic-cache.nix;
 in
 {
   imports = [
@@ -42,16 +42,11 @@ in
   services.nix-user-config = {
     enable = true;
     netrcMachine = null;
-    substituters = [
-      "http://attic-cache:5001/cache-local"
-      "https://cache.nix-ci.com"
-      "https://cache.nixos.org"
-    ];
-    trustedPublicKeys = [
-    ] ++ cacheTrust.cacheLocal ++ cacheTrust.nixCi ++ [ (builtins.head cacheTrust.official) ];
+    substituters = atticCache.defaultSubstituters { includeNixCi = true; };
+    trustedPublicKeys = atticCache.defaultTrustedPublicKeys { includeNixCi = true; };
     netrcEntries = [
       {
-        machine = "attic-cache";
+        machine = atticCache.serverName;
         passwordPath = "${config.home.homeDirectory}/.config/sops/attic-client-token";
         fnoxSecretName = "ATTIC_CLIENT_JWT_TOKEN";
       }

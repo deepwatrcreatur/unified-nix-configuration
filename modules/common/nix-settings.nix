@@ -9,6 +9,7 @@
 let
   remoteBuilder = import ../../lib/remote-builder.nix { inherit pkgs; };
   cacheTrust = import ../../lib/cache-trust.nix;
+  atticCache = import ../../lib/attic-cache.nix;
   nixCiNetrcFile = ../../secrets-agenix/nix-ci-netrc.age;
 
   # Path to GitHub token (works for both user and root contexts)
@@ -81,15 +82,9 @@ in
 
     # Substituters - exclude local cache on the cache server itself to avoid circular dependency
     substituters =
-      lib.optionals (!isCacheServer) [
-        "http://attic-cache:5001/cache-local"
-      ]
-      ++ lib.optionals hasNixCiNetrc [
-        "https://cache.nix-ci.com"
-      ]
+      lib.optionals (!isCacheServer) (atticCache.defaultSubstituters { includeNixCi = hasNixCiNetrc; })
       ++ [
-        "https://cache.nixos.org/"
-        "https://cache.numtide.com"  # llm-agents (claude-code, codex, rtk, etc.)
+        "https://cache.numtide.com" # llm-agents (claude-code, codex, rtk, etc.)
         "https://cuda-maintainers.cachix.org"
         "https://cache.garnix.io/"
         "https://nix-community.cachix.org/"
@@ -97,14 +92,13 @@ in
       ];
 
     trusted-public-keys =
-      cacheTrust.cacheLocal
-      ++ cacheTrust.official
-      ++ lib.optionals hasNixCiNetrc cacheTrust.nixCi;
+      (atticCache.defaultTrustedPublicKeys { includeNixCi = hasNixCiNetrc; })
+      ++ (builtins.tail cacheTrust.official);
 
     # Access tokens - only on non-cache-server hosts
     access-tokens =
       lib.optionals (!isCacheServer) [
-        "attic-cache:5001 = /run/nix/attic-token-bearer"
+        "${atticCache.serverName}:5001 = /run/nix/attic-token-bearer"
       ]
       # Only try to read GitHub token if it's a SOPS secret (avoid file system access during evaluation)
       ++

@@ -9,6 +9,7 @@
 let
   cfg = config.services.nix-user-config;
   cacheTrust = import ../../../lib/cache-trust.nix;
+  atticCache = import ../../../lib/attic-cache.nix;
   legacyNetrcEntries =
     lib.optional (cfg.netrcMachine != null) {
       machine = cfg.netrcMachine;
@@ -28,16 +29,13 @@ in
 
     substituters = lib.mkOption {
       type = lib.types.listOf lib.types.str;
-      default = [
-        "http://attic-cache:5001/cache-local"
-        "https://cache.nixos.org"
-      ];
+      default = atticCache.defaultSubstituters { includeNixCi = false; };
       description = "List of binary cache substituters";
     };
 
     trustedPublicKeys = lib.mkOption {
       type = lib.types.listOf lib.types.str;
-      default = cacheTrust.cacheLocal ++ [ (builtins.head cacheTrust.official) ];
+      default = atticCache.defaultTrustedPublicKeys { includeNixCi = false; };
       description = "List of trusted public keys for substituters";
     };
 
@@ -54,7 +52,7 @@ in
 
     netrcMachine = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
-      default = "attic-cache";
+      default = atticCache.serverName;
       description = "Machine name for netrc authentication (null to disable)";
     };
 
