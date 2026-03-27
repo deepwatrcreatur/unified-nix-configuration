@@ -64,15 +64,29 @@
     mode = "aspect";
   };
 
+  rustdesk = {
+    kind = "nixos";
+    name = "rustdesk";
+    system = "x86_64-linux";
+    hostPath = ../hosts/rustdesk;
+    mode = "aspect";
+  };
+
   workstation = {
     kind = "nixos";
     name = "workstation";
     system = "x86_64-linux";
-    hostPath = ../../../hosts/nixos/workstation;
+    hostPath = ../hosts/workstation;
     isDesktop = true;
-    extraModules = [
-      ../../../hosts/nixos/default.nix
-    ];
-    mode = "legacy";
+    mode = "aspect";
+  };
+
+  phoenix = {
+    kind = "nixos";
+    name = "phoenix";
+    system = "x86_64-linux";
+    hostPath = ../hosts/phoenix;
+    isDesktop = true;
+    mode = "aspect";
   };
 }

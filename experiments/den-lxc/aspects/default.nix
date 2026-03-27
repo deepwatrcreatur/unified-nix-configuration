@@ -15,4 +15,5 @@
   rustdesk-server = context: import ./rustdesk-server.nix context;
   podman-containers = context: import ./podman-containers.nix context;
   podman-lxc-suppressions = context: import ./podman-lxc-suppressions.nix context;
+  workstation-desktop = context: import ./workstation-desktop.nix context;
 }

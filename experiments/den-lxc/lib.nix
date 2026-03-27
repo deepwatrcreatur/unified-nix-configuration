@@ -11,11 +11,12 @@ in
       extraGroups ? [ "wheel" ],
       primaryUserImports ? [ ],
       rootImports ? [ ],
+      extraImports ? [ ],
       aspectsList,
     }:
     {
       imports =
-        map
+        (map
           (
             aspectName:
             let
@@ -31,6 +32,11 @@ in
                 ;
             }
           )
-          aspectsList;
+          aspectsList) ++ extraImports;
     };
+
+  # Borrowed from vic/den: select a value by hostname at eval time.
+  # Usage: denLib.perHost { workstation = x; phoenix = y; } config.networking.hostName
+  perHost = hostMap: hostName:
+    hostMap.${hostName} or (throw "perHost: no entry for hostname '${hostName}'");
 }

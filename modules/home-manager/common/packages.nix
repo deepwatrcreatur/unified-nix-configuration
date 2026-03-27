@@ -40,6 +40,7 @@
     just
     killall
     lsd
+    markit
     navi
     ncdu
     neovim

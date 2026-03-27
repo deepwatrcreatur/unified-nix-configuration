@@ -14,6 +14,9 @@
   # Lightpanda headless browser for AI agents
   inputs.nix-lightpanda.overlays.default
 
+  # markit - universal document-to-markdown converter CLI
+  inputs.nix-markit.overlays.default
+
   # Tesla inference overlays for GPU optimization
   inputs.tesla-inference-flake.overlays.ollama-official-binaries # Use official binaries to avoid cuda_compat build error
   inputs.tesla-inference-flake.overlays.llama-cpp-tesla

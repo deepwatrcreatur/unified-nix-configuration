@@ -1114,6 +1114,26 @@
         "type": "github"
       }
     },
+    "nix-markit": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1774608419,
+        "narHash": "sha256-QjeIGKR4HevoE/x8Kix931VCxA9OARD+sj85zJHqA2c=",
+        "owner": "deepwatrcreatur",
+        "repo": "nix-markit",
+        "rev": "0abab96d25cc49919936920d52984b8b2fe8191a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "deepwatrcreatur",
+        "repo": "nix-markit",
+        "type": "github"
+      }
+    },
     "nix-router-optimized": {
       "inputs": {
         "nixpkgs": [
@@ -1505,6 +1525,7 @@
         "nix-index-database": "nix-index-database",
         "nix-lightpanda": "nix-lightpanda",
         "nix-linuxbrew": "nix-linuxbrew",
+        "nix-markit": "nix-markit",
         "nix-router-optimized": "nix-router-optimized",
         "nix-rtk": "nix-rtk",
         "nix-semaphore": "nix-semaphore",

@@ -154,6 +154,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-markit = {
+      url = "github:deepwatrcreatur/nix-markit";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs =
