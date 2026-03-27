@@ -115,6 +115,14 @@ in
   services.router-firewall = {
     enable = true;
     tailscaleInterface = "tailscale0";
+    # Router-hosted HTTPS needs to be reachable from trusted LAN clients too,
+    # not just from WAN. Split DNS points service domains at the gateway, so
+    # LAN clients hit Caddy on the router itself.
+    trustedTcpPorts = [ 80 443 ];
+    # Split DNS already points service subdomains at the gateway for LAN clients,
+    # but hairpin NAT is a useful fallback for devices that bypass local DNS
+    # (for example phones using private DNS/DoH or stale public-cache answers).
+    hairpinNat.enable = true;
     trustedUdpPorts = [ ];
     wanUdpPorts = [ 41641 ];
     extraInputRules = ''
