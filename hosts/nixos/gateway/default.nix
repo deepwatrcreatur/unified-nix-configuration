@@ -57,6 +57,7 @@ in
     inputs.nix-router-optimized.nixosModules.router-firewall
     inputs.nix-router-optimized.nixosModules.router-dns-service
     inputs.nix-router-optimized.nixosModules.router-homelab
+    inputs.nix-router-optimized.nixosModules.router-log-storage
     inputs.nix-router-optimized.nixosModules.router-optimizations
     ./networking.nix # Network interface configuration
     ./caddy.nix # Caddy reverse proxy configuration
@@ -145,6 +146,9 @@ in
 
   router.monitoring = {
     grafanaDomain = "gateway.deepwatercreature.com";
+    grafanaDataDir = "/var/log/gateway/grafana";
+    prometheusStateDir = "gateway-prometheus";
+    prometheusBindMountPath = "/var/log/gateway/prometheus";
   };
 
   services.tailscale = {
@@ -226,23 +230,27 @@ in
   #   };
   # };
 
-  # Configure systemd journal to use spinning disk
-  services.journald.extraConfig = ''
-    Storage=persistent
-    SystemMaxUse=2G
-    RuntimeMaxUse=100M
-  '';
-
-  # Bind mount journal to spinning disk
-  fileSystems."/var/log/journal" = {
-    device = "/var/log/gateway/journal";
-    fsType = "none";
-    options = [
-      "bind"
-      "nofail"
-      "x-systemd.automount"
+  services.router-log-storage = {
+    enable = true;
+    device = "/dev/disk/by-uuid/f4b71c97-3f7f-47b3-a644-d82e051d5343";
+    mountPoint = "/var/log/gateway";
+    serviceName = "setup-gateway-logs";
+    extraDirectories = [
+      {
+        name = "technitium";
+        mode = "0777";
+      }
+      {
+        name = "prometheus";
+        user = "prometheus";
+        group = "prometheus";
+      }
+      {
+        name = "grafana";
+        user = "grafana";
+        group = "grafana";
+      }
     ];
-    depends = [ "/var/log/gateway" ];
   };
 
   # Enable podman for containers
@@ -291,55 +299,6 @@ in
 
   # Allow wheel group to use sudo without password
   security.sudo.wheelNeedsPassword = false;
-
-  # Mount the 10GB spinning disk for all log files to preserve SSD lifespan
-  fileSystems."/var/log/gateway" = {
-    device = "/dev/disk/by-uuid/f4b71c97-3f7f-47b3-a644-d82e051d5343";
-    fsType = "ext4";
-    options = [
-      "noatime"
-      "nofail"
-      "x-systemd.automount"
-    ];
-    neededForBoot = false;
-  };
-
-  # Systemd service to set up log directory structure on HDD
-  systemd.services.setup-gateway-logs = {
-    description = "Set up gateway log directories on spinning disk";
-    after = [ "var-log-gateway.mount" ];
-    wants = [ "var-log-gateway.mount" ];
-    wantedBy = [ "multi-user.target" ];
-
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-    };
-
-    script = ''
-      # Create log directories if they don't exist
-      mkdir -p /var/log/gateway/system
-      mkdir -p /var/log/gateway/technitium
-      mkdir -p /var/log/gateway/journal
-
-      # Set proper permissions
-      chmod 755 /var/log/gateway/system
-      chmod 777 /var/log/gateway/technitium  # World-writable for DynamicUser
-      chmod 755 /var/log/gateway/journal
-
-      echo "Gateway log directories created on spinning disk"
-    '';
-  };
-
-  # Tmpfiles rules for additional log management
-  systemd.tmpfiles.rules = [
-    # Create additional service log directories on HDD
-    "d /var/log/gateway/system 0755 root root -"
-    "d /var/log/gateway/technitium 0777 root root -" # World-writable for DynamicUser
-    "d /var/log/gateway/journal 0755 root root -"
-    "d /var/log/gateway/prometheus 0755 prometheus prometheus -"
-    "d /var/log/gateway/grafana 0755 grafana grafana -"
-  ];
 
   environment.systemPackages = with pkgs; [
     tmux
