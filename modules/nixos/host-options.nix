@@ -107,6 +107,9 @@ in
     {
       # SSH server
       services.openssh.enable = cfg.services.enableSsh;
+      services.openssh.settings = mkIf cfg.services.enableSsh {
+        AcceptEnv = "LANG LC_* COLORTERM TERM_PROGRAM TERM_PROGRAM_VERSION";
+      };
 
       # Tailscale
       services.tailscale.enable = cfg.networking.enableTailscale;

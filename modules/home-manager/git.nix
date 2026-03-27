@@ -179,8 +179,6 @@ in
       # SSH environment: disable interactive TUI features over SSH
       if [ -n "$SSH_CONNECTION" ]; then
         export CI=true
-        export TERM=linux
-        export NO_COLOR=1
         # Disable OpenCode plugins that cause issues over SSH
         export OPENCODE_DISABLE_PLUGINS=1
       fi
@@ -202,8 +200,6 @@ in
       # SSH environment: disable interactive TUI features over SSH
       if [ -n "$SSH_CONNECTION" ]; then
         export CI=true
-        export TERM=linux
-        export NO_COLOR=1
         # Disable OpenCode plugins that cause issues over SSH
         export OPENCODE_DISABLE_PLUGINS=1
       fi
@@ -225,8 +221,6 @@ in
       # SSH environment: disable interactive TUI features over SSH
       if test -n "$SSH_CONNECTION"
         set -gx CI true
-        set -gx TERM linux
-        set -gx NO_COLOR 1
         # Disable OpenCode plugins that cause issues over SSH
         set -gx OPENCODE_DISABLE_PLUGINS 1
       end
@@ -248,8 +242,6 @@ in
       # SSH environment: disable interactive TUI features over SSH
       if ($env.SSH_CONNECTION? != null) {
         $env.CI = "true"
-        $env.TERM = "linux"
-        $env.NO_COLOR = "1"
         # Disable OpenCode plugins that cause issues over SSH
         $env.OPENCODE_DISABLE_PLUGINS = "1"
       }

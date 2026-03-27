@@ -2,7 +2,7 @@
 
 # Proxmox (Debian) - use home-manager or nh for home-only config
 update:
-  home-manager switch --flake $NH_FLAKE#proxmox-root
+  home-manager switch --flake $NH_FLAKE#$(hostname)-root
 
 nh-update:
-  nh home switch $NH_FLAKE#proxmox-root
+  nh home switch $NH_FLAKE#$(hostname)-root
