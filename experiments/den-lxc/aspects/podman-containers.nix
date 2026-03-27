@@ -2,6 +2,6 @@
 { ... }:
 {
   imports = [
-    ../../../hosts/nixos-lxc/podman/modules/containers.nix
+    ../../../hosts/nixos-lxc/podman/stacks/plex-stack.nix
   ];
 }

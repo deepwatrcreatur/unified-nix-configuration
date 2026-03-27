@@ -9,7 +9,7 @@
     ../../../modules/nixos/attic-client.nix
     ../../../modules/nixos/nix-daemon-user-ssh.nix
     ../../../modules/nixos/container-stack.nix  # New container stack module
-    ./modules/containers.nix
+    ./stacks/plex-stack.nix
     ./stacks/paperless-stack.nix  # Simplified stack config
     ./stacks/nightscout-stack.nix  # CGM remote monitoring
     ./stacks/librelinkup-stack.nix  # LibreLinkUp to Nightscout bridge
@@ -17,6 +17,13 @@
   ];
 
   networking.hostName = "podman";
+
+  virtualisation.podman = {
+    enable = true;
+    dockerCompat = true;
+    defaultNetwork.settings.dns_enabled = true;
+    autoPrune.enable = true;
+  };
 
   # LXC common configuration
   lxc = {
