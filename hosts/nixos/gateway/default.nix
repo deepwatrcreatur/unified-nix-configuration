@@ -56,9 +56,8 @@ in
     inputs.nix-router-optimized.nixosModules.router-networking
     inputs.nix-router-optimized.nixosModules.router-firewall
     inputs.nix-router-optimized.nixosModules.router-homelab
+    inputs.nix-router-optimized.nixosModules.router-technitium
     inputs.nix-router-optimized.nixosModules.router-optimizations
-    inputs.nix-router-optimized.nixosModules.dns-zone
-    inputs.nix-router-optimized.nixosModules."dns-blocklists"
     ./networking.nix # Network interface configuration
     ./caddy.nix # Caddy reverse proxy configuration
   ];
@@ -216,17 +215,14 @@ in
 
   my.agenix.machineIdentity.enable = true;
 
-  # Technitium DNS & DHCP Server
-  services.technitium-dns-server.enable = true;
-
-  services.router.dnsBlockLists = {
+  services.router-technitium = {
     enable = true;
-    presets = [
+    blockListPresets = [
       "hagezi-normal"
       "hagezi-nrd-14d"
     ];
-    extraUrls = [ ];
-    updateIntervalHours = 24;
+    extraBlockListUrls = [ ];
+    blockListUpdateIntervalHours = 24;
   };
 
   # Disable custom logging for Technitium - use default state directory
@@ -361,9 +357,6 @@ in
 
   # Agenix secrets - uses optional-secrets library for graceful degradation
   age.secrets = secrets.definitions;
-
-  # Environment variable only set when secret exists
-  environment.variables.TECHNITIUM_API_KEY_FILE = secrets.pathIf "technitium-api-key";
 
   nixpkgs.hostPlatform = "x86_64-linux";
   system.stateVersion = "25.05";
