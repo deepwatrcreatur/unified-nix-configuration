@@ -18,7 +18,6 @@ Edit `inventory/hosts.yml` to configure your hosts. Hosts are grouped by rebuild
 | `nixos_inference` | `nixos-rebuild switch` | inference1, inference2, inference3 |
 | `darwin` | `darwin-rebuild switch` | hackintosh, macminim4 |
 | `proxmox` | `home-manager switch` | pve-gateway, pve-lattitude, pve-rog, pve-strix, pve-tomahawk |
-| `ubuntu_inference` | `home-manager switch` | (configure your Ubuntu hosts) |
 
 ## Playbooks
 
@@ -71,53 +70,6 @@ ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml --limit "pv
 ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml -e skip_git_pull=true
 ```
 
-### bootstrap-ubuntu-inference.yml
-
-Bootstraps a fresh Ubuntu Server inference host with:
-
-- the `deepwatrcreatur` primary user in `sudo`
-- stable authorized keys for `deepwatrcreatur` and `root`
-- optional controller-side private key injection for both users
-- optional SOPS age key injection to `~/.config/sops/age/keys.txt`
-- a generated `/var/lib/agenix/machine-identity`
-- Determinate Nix
-- cloned flake checkouts for both the primary user and root
-- Home Manager activation for both `deepwatrcreatur-inference-node` and `root-inference-node`
-
-```bash
-ansible-playbook -i inventory/hosts.yml playbooks/bootstrap-ubuntu-inference.yml --limit ubuntu-inference1
-```
-
-Optional controller-local key injection variables:
-
-```bash
-ansible-playbook -i inventory/hosts.yml playbooks/bootstrap-ubuntu-inference.yml \
-  --limit ubuntu-inference1 \
-  -e bootstrap_user_ssh_private_key_src="$HOME/.ssh/id_ed25519" \
-  -e bootstrap_root_ssh_private_key_src="$HOME/.ssh/root-stable-identity" \
-  -e bootstrap_sops_age_key_src="$HOME/.config/sops/age/keys.txt"
-```
-
-The bootstrap summary prints the host's generated agenix machine identity public
-key so you can commit it into `ssh-keys/agenix-machine-identities/<hostname>.pub`
-later if you want to migrate that host onto machine-scoped agenix secrets.
-
-### update-ubuntu-inference.yml
-
-Pulls the latest repo state into both the user and root checkouts on Ubuntu
-inference hosts, then reapplies both Home Manager outputs.
-
-```bash
-ansible-playbook -i inventory/hosts.yml playbooks/update-ubuntu-inference.yml --limit ubuntu-inference1
-
-# Re-run Home Manager only
-ansible-playbook -i inventory/hosts.yml playbooks/update-ubuntu-inference.yml --limit ubuntu-inference1 -e skip_git_pull=true
-```
-
-This Ubuntu path is legacy. The active inference VMs in this repo are
-`inference1`, `inference2`, and `inference3` under `nixos_inference`, backed by
-the shared `hosts/nixos/inference-vm` NixOS configuration.
-
 ### git-pull-only.yml
 
 Just pulls the latest changes without rebuilding. Useful for staging updates.
@@ -136,14 +88,6 @@ Home Manager activation is blocked by an unrelated package conflict.
 
 ```bash
 ansible-playbook -i inventory/hosts.yml playbooks/setup-secrets.yml --limit proxmox
-```
-
-This playbook also works for `ubuntu_inference` after bootstrap. If you seeded
-`bootstrap_sops_age_key_src`, it can decrypt the same user-scoped cache and git
-credentials for those hosts too:
-
-```bash
-ansible-playbook -i inventory/hosts.yml playbooks/setup-secrets.yml --limit ubuntu_inference
 ```
 
 ## Git Handling
@@ -168,15 +112,6 @@ nixos:
     my-new-host:
       ansible_host: 10.10.10.100
       flake_target: my-new-host
-```
-
-Example for a new Ubuntu inference host:
-
-```yaml
-ubuntu_inference:
-  hosts:
-    ubuntu-inference1:
-      ansible_host: 10.10.10.50
 ```
 
 ## Proxmox Hosts
