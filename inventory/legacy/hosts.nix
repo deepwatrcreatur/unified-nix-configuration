@@ -83,4 +83,14 @@
       ../../hosts/nixos/default.nix
     ];
   };
+
+  phoenix = {
+    name = "phoenix";
+    system = "x86_64-linux";
+    hostPath = ../../hosts/nixos/phoenix;
+    isDesktop = true;
+    extraModules = [
+      ../../hosts/nixos/default.nix
+    ];
+  };
 }

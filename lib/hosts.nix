@@ -127,9 +127,15 @@
 
     # Workstations
     workstation = {
-      ip = "10.10.11.90";
+      ip = "10.10.11.73";
       sshUser = "deepwatrcreatur";
       description = "Primary workstation";
+    };
+
+    phoenix = {
+      ip = "10.10.11.72";
+      sshUser = "deepwatrcreatur";
+      description = "Phoenix workstation";
     };
 
     # Inference Servers
