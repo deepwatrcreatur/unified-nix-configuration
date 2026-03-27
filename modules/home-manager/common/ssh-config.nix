@@ -10,6 +10,17 @@ let
     (host.includeSsh or true) && (host.ip != null || host.hostname or null != null)
   ) hostsData.hosts;
 
+  hostSummary = lib.concatStringsSep "\n" (
+    lib.mapAttrsToList (name: host:
+      let
+        target = host.hostname or host.ip;
+        user = host.sshUser or "deepwatrcreatur";
+        description = host.description or "no description";
+      in
+      "# ${name} -> ${user}@${target} (${description})"
+    ) sshHosts
+  );
+
   # Generate matchBlocks from hosts
   matchBlocks = lib.mapAttrs (name: host: {
     hostname = host.hostname or host.ip;
@@ -18,6 +29,9 @@ let
     # Wildcard match block for default settings
     "*" = {
       userKnownHostsFile = "~/.ssh/known_hosts_dynamic ~/.ssh/known_hosts_managed";
+      controlMaster = "auto";
+      controlPersist = "15m";
+      controlPath = "~/.ssh/master-%r@%n:%p";
     };
   };
 
@@ -29,12 +43,15 @@ in {
     # Global SSH settings
     extraConfig = ''
       # Global settings for all hosts
-      SendEnv LANG LC_*
-      MACs hmac-md5,hmac-sha1
+      # Inventory-backed SSH hosts:
+      ${hostSummary}
+      
+      SendEnv LANG LC_* COLORTERM TERM_PROGRAM TERM_PROGRAM_VERSION
       ForwardX11 no
       ForwardAgent yes
       AddressFamily inet
       ServerAliveInterval 15
+      ServerAliveCountMax 3
       ConnectTimeout 20
     '';
 

@@ -61,6 +61,11 @@
         set -gx COLORTERM truecolor
       end
 
+      # Keep truecolor enabled in normal SSH/tmux-compatible terminals too.
+      if string match -q "xterm-256color" "$TERM"; or string match -q "screen-256color*" "$TERM"; or string match -q "tmux-256color" "$TERM"
+        set -gx COLORTERM truecolor
+      end
+
       # Container awareness (distrobox/podman/docker)
       set -l in_container 0
       if test -f /.dockerenv; or test -n "$DISTROBOX_ENTER_PATH"; or test -n "$container"

@@ -31,6 +31,8 @@
       if [ -z "$TERM" ]; then
         export TERM=xterm-256color
         export COLORTERM=truecolor
+      elif [ "$TERM" = "xterm-256color" ] || [ "$TERM" = "tmux-256color" ] || printf %s "$TERM" | grep -q '^screen-256color'; then
+        export COLORTERM=truecolor
       fi
 
       # Determinate nixd completion (if available)
@@ -62,6 +64,8 @@
       # This prevents TUI applications like opencode from failing with "invalid input message type" errors
       if [ -z "$TERM" ]; then
         export TERM=xterm-256color
+        export COLORTERM=truecolor
+      elif [ "$TERM" = "xterm-256color" ] || [ "$TERM" = "tmux-256color" ] || printf %s "$TERM" | grep -q '^screen-256color'; then
         export COLORTERM=truecolor
       fi
 
