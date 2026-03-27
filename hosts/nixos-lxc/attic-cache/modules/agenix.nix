@@ -7,14 +7,12 @@ let
   atticJwtSecretFile = ../../../../secrets-agenix/attic-jwt-secret.age;
 in
 {
-  # Agenix configuration for attic-cache
-  age.identityPaths = [
-    "/var/lib/agenix/machine-identity"
+  imports = [
+    ../../../../modules/nixos/common/agenix-machine-identity.nix
   ];
 
-  systemd.tmpfiles.rules = [
-    "d /var/lib/agenix 0700 root root -"
-  ];
+  # Agenix configuration for attic-cache
+  my.agenix.machineIdentity.enable = true;
 
   age.secrets."attic-client-token" = lib.mkIf (builtins.pathExists atticClientTokenFile) {
     file = atticClientTokenFile;
