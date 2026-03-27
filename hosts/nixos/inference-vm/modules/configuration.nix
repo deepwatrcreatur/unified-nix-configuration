@@ -10,6 +10,7 @@
   imports = [
     ../../../../modules/common/nix-settings.nix
     ../../../../modules/nixos/inference-vm-nix-overrides.nix
+    ../../../../modules/nixos/root-ssh-identity.nix
     # inputs.nix-attic-infra.nixosModules.attic-client  # Disabled - requires sops-nix
   ];
 
@@ -22,6 +23,8 @@
   systemd.tmpfiles.rules = [
     "d /var/lib/agenix 0700 root root -"
   ];
+
+  my.root-ssh-identity.enable = true;
 
   # Nixpkgs configuration
   nixpkgs = {

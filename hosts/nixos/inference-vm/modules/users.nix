@@ -6,6 +6,10 @@
   ...
 }:
 
+let
+  deepwatrcreaturStableKey = lib.strings.trim (builtins.readFile ../../../../ssh-keys/deepwatrcreatur-stable-identity.pub);
+  rootStableKey = lib.strings.trim (builtins.readFile ../../../../ssh-keys/root-stable-identity.pub);
+in
 {
   # User configuration
   users.users.deepwatrcreatur = {
@@ -19,10 +23,17 @@
     ];
     packages = with pkgs; [ ];
     shell = pkgs.fish;
-    # SSH keys managed via SOPS if needed
+    openssh.authorizedKeys.keys = [
+      deepwatrcreaturStableKey
+    ];
   };
 
-  users.users.root.shell = pkgs.nushell;
+  users.users.root = {
+    shell = pkgs.nushell;
+    openssh.authorizedKeys.keys = [
+      rootStableKey
+    ];
+  };
 
   # Enable automatic login
   services.displayManager.autoLogin.enable = true;
