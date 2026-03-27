@@ -80,16 +80,20 @@ in
     wants = [ "network-online.target" "podman-nightscout.service" ];
     wantedBy = [ "multi-user.target" ];
     partOf = [ "podman-nightscout.service" ];
-    serviceConfig = {
-      Type = "simple";
-      Restart = "always";
-      RestartSec = 2;
-      ExecStart = let
+    serviceConfig =
+      let
         podman = "${pkgs.podman}/bin/podman";
         socat = "${pkgs.socat}/bin/socat";
         shell = "${pkgs.runtimeShell}";
       in
-        "${shell} -c 'target_ip=$(${podman} inspect nightscout --format \"{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}\"); exec ${socat} TCP-LISTEN:11337,reuseaddr,fork,bind=0.0.0.0 TCP:$${target_ip}:1337'";
-    };
+      {
+        Type = "simple";
+        Restart = "always";
+        RestartSec = 2;
+        ExecStartPre =
+          "${shell} -c 'for _ in $(seq 1 30); do target_ip=$(${podman} inspect nightscout --format \"{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}\" 2>/dev/null || true); [ -n \"$${target_ip}\" ] && exit 0; sleep 1; done; echo \"Nightscout container IP not available\" >&2; exit 1'";
+        ExecStart =
+          "${shell} -c 'set -eu; target_ip=$(${podman} inspect nightscout --format \"{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}\"); exec ${socat} TCP-LISTEN:11337,reuseaddr,fork,bind=0.0.0.0 TCP:$${target_ip}:1337'";
+      };
   };
 }
