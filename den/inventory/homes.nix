@@ -12,8 +12,8 @@ let
     kind = "home";
     inherit name hostName;
     targetSystem = "x86_64-linux";
-    userPath = ../../../users/root;
-    modules = [ ../../../profiles/home-manager/proxmox-root.nix ];
+    userPath = ../../users/root;
+    modules = [ ../../profiles/home-manager/proxmox-root.nix ];
     isDesktop = false;
     mode = "legacy";
   };

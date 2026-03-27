@@ -11,7 +11,7 @@
     kind = "nixos";
     name = "gateway";
     system = "x86_64-linux";
-    hostPath = ../../../hosts/nixos/gateway;
+    hostPath = ../../hosts/nixos/gateway;
     isDesktop = false;
     mode = "legacy";
   };
@@ -28,7 +28,7 @@
     kind = "nixos";
     name = "inference1";
     system = "x86_64-linux";
-    hostPath = ../../../hosts/nixos/inference-vm/hosts/inference1;
+    hostPath = ../../hosts/nixos/inference-vm/hosts/inference1;
     mode = "legacy";
   };
 
@@ -36,7 +36,7 @@
     kind = "nixos";
     name = "inference2";
     system = "x86_64-linux";
-    hostPath = ../../../hosts/nixos/inference-vm/hosts/inference2;
+    hostPath = ../../hosts/nixos/inference-vm/hosts/inference2;
     mode = "legacy";
   };
 
@@ -44,7 +44,7 @@
     kind = "nixos";
     name = "inference3";
     system = "x86_64-linux";
-    hostPath = ../../../hosts/nixos/inference-vm/hosts/inference3;
+    hostPath = ../../hosts/nixos/inference-vm/hosts/inference3;
     mode = "legacy";
   };
 
@@ -52,7 +52,7 @@
     kind = "nixos";
     name = "inference-fresh";
     system = "x86_64-linux";
-    hostPath = ../../../hosts/nixos/inference-vm/hosts/inference-fresh;
+    hostPath = ../../hosts/nixos/inference-vm/hosts/inference-fresh;
     mode = "legacy";
   };
 

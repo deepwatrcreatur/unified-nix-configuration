@@ -7,6 +7,6 @@
 { ... }:
 {
   imports = [
-    ../../../profiles/nixos/workstation.nix
+    ../../profiles/nixos/workstation.nix
   ];
 }

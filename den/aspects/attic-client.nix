@@ -1,7 +1,7 @@
 { ... }:
 { lib, ... }:
 let
-  atticClientTokenFile = ../../../secrets-agenix/attic-client-token.age;
+  atticClientTokenFile = ../../secrets-agenix/attic-client-token.age;
 in
 {
   age.secrets."attic-client-token" = lib.mkIf (builtins.pathExists atticClientTokenFile) {

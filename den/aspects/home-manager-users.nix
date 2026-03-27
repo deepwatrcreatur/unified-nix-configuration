@@ -20,7 +20,7 @@
 
     users.root = {
       imports = [
-        ../../../users/root
+        ../../users/root
       ] ++ rootImports;
 
       home.username = "root";

@@ -12,9 +12,9 @@
 {
   imports = [
     "${modulesPath}/virtualisation/lxc-container.nix"
-    ../../../modules/nixos/common
-    ../../../modules/nixos/attic-client.nix
-    ../../../modules/nixos/nix-daemon-user-ssh.nix
+    ../../modules/nixos/common
+    ../../modules/nixos/attic-client.nix
+    ../../modules/nixos/nix-daemon-user-ssh.nix
   ];
 
   networking.hostName = name;

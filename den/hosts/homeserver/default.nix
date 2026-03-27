@@ -6,7 +6,7 @@ denPrototype.mkHostModule {
   name = "homeserver";
   primaryUser = "deepwatrcreatur";
   primaryUserImports = [
-    ../../../../users/deepwatrcreatur/hosts/homeserver
+    ../../../users/deepwatrcreatur/hosts/homeserver
   ];
   aspectsList = [
     "nixos-base"

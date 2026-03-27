@@ -2,6 +2,6 @@
 { ... }:
 {
   imports = [
-    ../../../hosts/nixos/default.nix
+    ../../hosts/nixos/default.nix
   ];
 }
