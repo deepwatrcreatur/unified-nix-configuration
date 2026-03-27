@@ -54,12 +54,12 @@ in
     inputs.agenix.nixosModules.default # Agenix secrets management
     # Import only specific modules, NOT default (which includes nftables-fasttrack that conflicts with our nftables.nix)
     inputs.nix-router-optimized.nixosModules.router-networking
+    inputs.nix-router-optimized.nixosModules.router-firewall
     inputs.nix-router-optimized.nixosModules.router-optimizations
     inputs.nix-router-optimized.nixosModules.router-dashboard
     inputs.nix-router-optimized.nixosModules.monitoring
     inputs.nix-router-optimized.nixosModules.dns-zone
     inputs.nix-router-optimized.nixosModules."dns-blocklists"
-    ./nftables.nix # NFtables firewall configuration
     ./networking.nix # Network interface configuration
     ./caddy.nix # Caddy reverse proxy configuration
   ];
@@ -111,6 +111,27 @@ in
       };
     };
     conntrack-max = 262144;
+  };
+
+  services.router-firewall = {
+    enable = true;
+    tailscaleInterface = "tailscale0";
+    trustedTcpPorts = [
+      5380
+      53443
+      3001
+      8888
+      9090
+      19999
+      80
+      443
+    ];
+    trustedUdpPorts = [ ];
+    wanTcpPorts = [ 80 443 ];
+    wanUdpPorts = [ 41641 ];
+    extraInputRules = ''
+      iifname {"ens16"} tcp dport 5201 accept comment "iperf3 from LAN"
+    '';
   };
 
   # Router dashboard configuration
