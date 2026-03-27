@@ -4,7 +4,7 @@
 
 {
   imports = [
-    ./profile.nix
+    ../../../profiles/nixos/workstation.nix
     ./hardware-configuration.nix
     ./networking.nix
   ];

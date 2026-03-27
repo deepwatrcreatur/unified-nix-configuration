@@ -8,6 +8,7 @@
 
 let
   cfg = config.services.nix-user-config;
+  cacheTrust = import ../../../lib/cache-trust.nix;
   legacyNetrcEntries =
     lib.optional (cfg.netrcMachine != null) {
       machine = cfg.netrcMachine;
@@ -36,15 +37,7 @@ in
 
     trustedPublicKeys = lib.mkOption {
       type = lib.types.listOf lib.types.str;
-      default = [
-        # Attic cache key
-        "cache-local:63xryK76L6y/NphTP/iS63yiYqldoWvVlWI0N8rgvBw="
-        "cache-local:GozZz7XFsUZ7xI5o/Q36JA/BFfjzONWOjiqC+zAhp2g="
-        # nix-serve cache key
-        "cache-local:92faFQnuzuYUJ4ta3EYpqIaCMIZGenDoaPktsBucTe4="
-        # Official cache key
-        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-      ];
+      default = cacheTrust.cacheLocal ++ [ (builtins.head cacheTrust.official) ];
       description = "List of trusted public keys for substituters";
     };
 

@@ -4,7 +4,11 @@
   lib,
   inputs,
   ...
-}: {
+}:
+let
+  cacheTrust = import ../../../../lib/cache-trust.nix;
+in
+{
   imports = [
     ./justfile.nix
     ./nh.nix
@@ -44,12 +48,7 @@
       "https://cache.nixos.org"
     ];
     trustedPublicKeys = [
-      "cache-local:63xryK76L6y/NphTP/iS63yiYqldoWvVlWI0N8rgvBw="
-      "cache-local:GozZz7XFsUZ7xI5o/Q36JA/BFfjzONWOjiqC+zAhp2g="
-      "cache-local:92faFQnuzuYUJ4ta3EYpqIaCMIZGenDoaPktsBucTe4="
-      "nix-ci:g3xV5BDTLtIBZr/A00IU1x0EtKKlb7YLgBN2SgYgM6A="
-      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-    ];
+    ] ++ cacheTrust.cacheLocal ++ cacheTrust.nixCi ++ [ (builtins.head cacheTrust.official) ];
     netrcEntries = [
       {
         machine = "attic-cache";

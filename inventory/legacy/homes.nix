@@ -4,7 +4,7 @@
     targetSystem = "x86_64-linux";
     hostName = "proxmox-root";
     userPath = ../../users/root;
-    modules = [ ../../users/root/hosts/proxmox ];
+    modules = [ ../../profiles/home-manager/proxmox-root.nix ];
     isDesktop = false;
   };
 
@@ -13,7 +13,7 @@
     targetSystem = "x86_64-linux";
     hostName = "pve-gateway";
     userPath = ../../users/root;
-    modules = [ ../../users/root/hosts/proxmox ];
+    modules = [ ../../profiles/home-manager/proxmox-root.nix ];
     isDesktop = false;
   };
 
@@ -22,7 +22,7 @@
     targetSystem = "x86_64-linux";
     hostName = "pve-lattitude";
     userPath = ../../users/root;
-    modules = [ ../../users/root/hosts/proxmox ];
+    modules = [ ../../profiles/home-manager/proxmox-root.nix ];
     isDesktop = false;
   };
 
@@ -31,7 +31,7 @@
     targetSystem = "x86_64-linux";
     hostName = "pve-rog";
     userPath = ../../users/root;
-    modules = [ ../../users/root/hosts/proxmox ];
+    modules = [ ../../profiles/home-manager/proxmox-root.nix ];
     isDesktop = false;
   };
 
@@ -40,7 +40,7 @@
     targetSystem = "x86_64-linux";
     hostName = "pve-strix";
     userPath = ../../users/root;
-    modules = [ ../../users/root/hosts/proxmox ];
+    modules = [ ../../profiles/home-manager/proxmox-root.nix ];
     isDesktop = false;
   };
 
@@ -49,7 +49,7 @@
     targetSystem = "x86_64-linux";
     hostName = "pve-tomahawk";
     userPath = ../../users/root;
-    modules = [ ../../users/root/hosts/proxmox ];
+    modules = [ ../../profiles/home-manager/proxmox-root.nix ];
     isDesktop = false;
   };
 }

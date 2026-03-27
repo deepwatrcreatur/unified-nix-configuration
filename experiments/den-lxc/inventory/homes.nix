@@ -6,7 +6,7 @@
     hostName = "proxmox-root";
     userPath = ../../../users/root;
     modules = [
-      ../../../users/root/hosts/proxmox
+      ../../../profiles/home-manager/proxmox-root.nix
     ];
     isDesktop = false;
     mode = "legacy";
@@ -19,7 +19,7 @@
     hostName = "pve-gateway";
     userPath = ../../../users/root;
     modules = [
-      ../../../users/root/hosts/proxmox
+      ../../../profiles/home-manager/proxmox-root.nix
     ];
     isDesktop = false;
     mode = "legacy";
@@ -32,7 +32,7 @@
     hostName = "pve-lattitude";
     userPath = ../../../users/root;
     modules = [
-      ../../../users/root/hosts/proxmox
+      ../../../profiles/home-manager/proxmox-root.nix
     ];
     isDesktop = false;
     mode = "legacy";
@@ -45,7 +45,7 @@
     hostName = "pve-rog";
     userPath = ../../../users/root;
     modules = [
-      ../../../users/root/hosts/proxmox
+      ../../../profiles/home-manager/proxmox-root.nix
     ];
     isDesktop = false;
     mode = "legacy";
@@ -58,7 +58,7 @@
     hostName = "pve-strix";
     userPath = ../../../users/root;
     modules = [
-      ../../../users/root/hosts/proxmox
+      ../../../profiles/home-manager/proxmox-root.nix
     ];
     isDesktop = false;
     mode = "legacy";
@@ -71,7 +71,7 @@
     hostName = "pve-tomahawk";
     userPath = ../../../users/root;
     modules = [
-      ../../../users/root/hosts/proxmox
+      ../../../profiles/home-manager/proxmox-root.nix
     ];
     isDesktop = false;
     mode = "legacy";
