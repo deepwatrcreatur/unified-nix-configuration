@@ -134,6 +134,7 @@ in
     enable = true;
     sshTarget = "ssh gateway.deepwatercreature.com";
     netdataAllowConnectionsFrom = "10.10.*";
+    waitForListenAddress = true;
   };
 
   # Router dashboard configuration
