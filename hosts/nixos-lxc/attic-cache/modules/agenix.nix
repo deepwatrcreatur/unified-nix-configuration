@@ -5,6 +5,7 @@ let
   atticClientTokenFile = ../../../../secrets-agenix/attic-client-token.age;
   atticServerTokenFile = ../../../../secrets-agenix/attic-server-token.age;
   atticJwtSecretFile = ../../../../secrets-agenix/attic-jwt-secret.age;
+  nixCiNetrcFile = ../../../../secrets-agenix/nix-ci-netrc.age;
 in
 {
   imports = [
@@ -31,6 +32,13 @@ in
   age.secrets."attic-jwt-secret" = lib.mkIf (builtins.pathExists atticJwtSecretFile) {
     file = atticJwtSecretFile;
     path = "/run/secrets/attic-jwt-secret";
+    owner = "root";
+    mode = "0400";
+  };
+
+  age.secrets."nix-ci-netrc" = lib.mkIf (builtins.pathExists nixCiNetrcFile) {
+    file = nixCiNetrcFile;
+    path = "/run/secrets/nix-ci-netrc";
     owner = "root";
     mode = "0400";
   };

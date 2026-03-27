@@ -9,6 +9,7 @@
   imports = [
     ../../../modules/nixos/services/iperf3.nix
     ../../../modules/nixos/attic-observatory.nix
+    ../../../modules/nixos/common/nix-ci-netrc.nix
     ./modules/configuration.nix
     ./modules/build-server.nix
     ./modules/home-manager-users.nix
