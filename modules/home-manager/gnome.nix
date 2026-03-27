@@ -45,6 +45,7 @@
       color-scheme = "prefer-dark";
       icon-theme = "BeautyLine";
       gtk-theme = "Adwaita-dark";
+      cursor-theme = "capitaine-cursors";
       enable-animations = true;
     };
 
@@ -99,9 +100,17 @@
 
   };
 
+  # Set cursor theme system-wide (covers X11, GTK, and ~/.icons/default)
+  home.pointerCursor = {
+    package = pkgs.capitaine-cursors;
+    name = "capitaine-cursors";
+    gtk.enable = true;
+    x11.enable = true;
+  };
+
   # GNOME-specific applications
   home.packages = with pkgs; [
-    # Add GNOME-specific user applications here if needed
+    capitaine-cursors
   ];
 
   # Enable GNOME Keyring for password management
