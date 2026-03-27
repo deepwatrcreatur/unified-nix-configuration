@@ -13,6 +13,7 @@
   home.packages = with pkgs; [
     gnomeExtensions.space-bar
     gnomeExtensions.transparent-top-bar
+    capitaine-cursors
   ];
 
   dconf.settings = {
@@ -70,7 +71,7 @@
       cursor-size = 60;
       gtk-theme = lib.mkForce "WhiteSur-dark";
       icon-theme = lib.mkForce "WhiteSur";
-      cursor-theme = lib.mkForce "WhiteSur-cursors";
+      cursor-theme = lib.mkForce "capitaine-cursors";
     };
 
     "org/gnome/desktop/wm/preferences" = {
@@ -130,6 +131,16 @@
     "cosmic/com.system76.CosmicIdle/v1/screen_off_time".text = "None";
     "cosmic/com.system76.CosmicIdle/v1/suspend_on_ac_time".text = "None";
     "cosmic/com.system76.CosmicIdle/v1/suspend_on_battery_time".text = "None";
+  };
+
+  # Persist the cursor theme outside GNOME's dconf layer so it doesn't revert
+  # to the broken white block after rebuild/login.
+  home.pointerCursor = {
+    package = pkgs.capitaine-cursors;
+    name = "capitaine-cursors";
+    size = 60;
+    gtk.enable = true;
+    x11.enable = true;
   };
 
   home.activation.monitorSetupReminder = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
