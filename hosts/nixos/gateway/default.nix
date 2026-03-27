@@ -53,6 +53,7 @@ in
     ../../../modules/activation-scripts
     inputs.agenix.nixosModules.default # Agenix secrets management
     # Import only specific modules, NOT default (which includes nftables-fasttrack that conflicts with our nftables.nix)
+    inputs.nix-router-optimized.nixosModules.router-networking
     inputs.nix-router-optimized.nixosModules.router-optimizations
     inputs.nix-router-optimized.nixosModules.router-dashboard
     inputs.nix-router-optimized.nixosModules.monitoring
@@ -64,6 +65,31 @@ in
   ];
 
   # Router optimizations (hardware offload, fasttrack, queue management)
+  services.router-networking = {
+    enable = true;
+    wan.device = "ens17";
+    routedInterfaces = {
+      lan = {
+        device = "ens16";
+        ipv4Address = "10.10.10.1/16";
+        dns = [ "127.0.0.1" ];
+        domains = [ "deepwatercreature.com" ];
+        requiredForOnline = "routable";
+        extraRoutes = [
+          {
+            destination = "10.10.0.0/16";
+            scope = "link";
+          }
+        ];
+      };
+      management = {
+        device = "ens18";
+        ipv4Address = "192.168.100.100/24";
+        prefixDelegationMode = "managed";
+      };
+    };
+  };
+
   services.router-optimizations = {
     enable = true;
     interfaces = {
