@@ -5,6 +5,7 @@
 
 let
   optSec = import ../../../../modules/helpers/optional-secrets.nix { inherit lib; };
+  hostProxy = import ../../../../modules/helpers/container-host-proxy.nix { inherit pkgs; };
 
   paperlessOidc = optSec.mkSecret "paperless-authentik-oidc" {
     file = ../../../../secrets-agenix/paperless-authentik-oidc.age;
@@ -75,26 +76,18 @@ in
       { path = "/var/lib/paperless/pgdata"; mode = "0777"; }
     ];
 
-    # Firewall
+    # Keep Paperless on a non-default host port. The public URL is served by Caddy;
+    # this host port is mainly for LAN/admin access and debugging.
     firewall.allowedTCPPorts = [ 18000 ];
   };
 
-  systemd.services.paperless-host-proxy = {
+  # 18000 on the host forwards to Paperless' native 8000 inside the container.
+  # We keep the host port distinct so direct host access is unambiguous and does
+  # not collide with other services that may also want 8000 in the future.
+  systemd.services.paperless-host-proxy = hostProxy.mkService {
     description = "Host-side Paperless proxy";
-    after = [ "network-online.target" "podman-paperless-ngx.service" ];
-    wants = [ "network-online.target" "podman-paperless-ngx.service" ];
-    wantedBy = [ "multi-user.target" ];
-    partOf = [ "podman-paperless-ngx.service" ];
-    serviceConfig = {
-      Type = "simple";
-      Restart = "always";
-      RestartSec = 2;
-      ExecStart = let
-        podman = "${pkgs.podman}/bin/podman";
-        socat = "${pkgs.socat}/bin/socat";
-        shell = "${pkgs.runtimeShell}";
-      in
-        "${shell} -c 'target_ip=$(${podman} inspect paperless-ngx --format \"{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}\"); exec ${socat} TCP-LISTEN:18000,reuseaddr,fork,bind=0.0.0.0 TCP:$${target_ip}:8000'";
-    };
+    containerName = "paperless-ngx";
+    hostPort = 18000;
+    containerPort = 8000;
   };
 }

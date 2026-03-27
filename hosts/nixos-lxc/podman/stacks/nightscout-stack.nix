@@ -4,6 +4,7 @@
 
 let
   optSec = import ../../../../modules/helpers/optional-secrets.nix { inherit lib; };
+  hostProxy = import ../../../../modules/helpers/container-host-proxy.nix { inherit pkgs; };
 
   nightscoutSecret = optSec.mkSecret "nightscout-api-secret" {
     file = ../../../../secrets-agenix/nightscout-api-secret.age;
@@ -69,31 +70,18 @@ in
       { path = "/var/lib/nightscout/mongo"; mode = "0755"; }
     ];
 
-    # Firewall - expose the proxy port
+    # The public URL terminates at Caddy on gateway. This host port remains for
+    # direct LAN/admin access and for a stable reverse-proxy target from gateway.
     firewall.allowedTCPPorts = [ 11337 ];
   };
 
-  # Host-side proxy to forward traffic into the container network
-  systemd.services.nightscout-host-proxy = {
+  # 11337 is intentionally plain HTTP on the host. Browsing to
+  # `https://podman:11337` will fail because TLS is only terminated at the
+  # public URL on gateway; use `https://nightscout.deepwatercreature.com`.
+  systemd.services.nightscout-host-proxy = hostProxy.mkService {
     description = "Host-side Nightscout proxy";
-    after = [ "network-online.target" "podman-nightscout.service" ];
-    wants = [ "network-online.target" "podman-nightscout.service" ];
-    wantedBy = [ "multi-user.target" ];
-    partOf = [ "podman-nightscout.service" ];
-    serviceConfig =
-      let
-        podman = "${pkgs.podman}/bin/podman";
-        socat = "${pkgs.socat}/bin/socat";
-        shell = "${pkgs.runtimeShell}";
-      in
-      {
-        Type = "simple";
-        Restart = "always";
-        RestartSec = 2;
-        ExecStartPre =
-          "${shell} -c 'for _ in $(seq 1 30); do target_ip=$(${podman} inspect nightscout --format \"{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}\" 2>/dev/null || true); [ -n \"$${target_ip}\" ] && exit 0; sleep 1; done; echo \"Nightscout container IP not available\" >&2; exit 1'";
-        ExecStart =
-          "${shell} -c 'set -eu; target_ip=$(${podman} inspect nightscout --format \"{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}\"); exec ${socat} TCP-LISTEN:11337,reuseaddr,fork,bind=0.0.0.0 TCP:$${target_ip}:1337'";
-      };
+    containerName = "nightscout";
+    hostPort = 11337;
+    containerPort = 1337;
   };
 }
