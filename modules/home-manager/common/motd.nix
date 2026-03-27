@@ -69,8 +69,20 @@ let
     fi
 
     if command -v hostname >/dev/null 2>&1; then
-      ips="$(hostname -I 2>/dev/null | tr -s ' ' | sed 's/[[:space:]]*$//' || true)"
-      [ -n "$ips" ] && echo "IPs: $ips"
+      ips="$(hostname -I 2>/dev/null | tr -s ' ' '\n' | sed '/^$/d' || true)"
+      if [ -n "$ips" ]; then
+        first_ip=1
+        while IFS= read -r ip; do
+          if [ "$first_ip" -eq 1 ]; then
+            echo "IPs: $ip"
+            first_ip=0
+          else
+            echo "     $ip"
+          fi
+        done <<EOF
+$ips
+EOF
+      fi
     fi
 
     hr
