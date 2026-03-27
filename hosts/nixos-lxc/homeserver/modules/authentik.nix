@@ -1,4 +1,8 @@
-{ config, ... }:
+{ config, pkgs, ... }:
+
+let
+  hostProxy = import ../../../../modules/helpers/container-host-proxy.nix { inherit pkgs; };
+in
 
 {
   age.secrets."authentik-env" = {
@@ -29,7 +33,6 @@
 
       authentik-server = {
         image = "ghcr.io/goauthentik/server:2025.10.2";
-        ports = [ "9000:9000" ];
         volumes = [
           "/var/lib/authentik/media:/media"
         ];
@@ -65,5 +68,12 @@
     ];
 
     firewall.allowedTCPPorts = [ 9000 ];
+  };
+
+  systemd.services.authentik-host-proxy = hostProxy.mkService {
+    description = "Host-side Authentik proxy";
+    containerName = "authentik-server";
+    hostPort = 9000;
+    containerPort = 9000;
   };
 }

@@ -16,6 +16,7 @@ den.mkHostModule {
     "home-manager-users"
     "homeserver-networking"
     "homeserver-iperf3"
+    "homeserver-authentik"
     "homeserver-homebridge"
     "homeserver-semaphore"
     "rustdesk-server"
