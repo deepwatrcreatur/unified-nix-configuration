@@ -55,9 +55,8 @@ in
     # Import only specific modules, NOT default (which includes nftables-fasttrack that conflicts with our nftables.nix)
     inputs.nix-router-optimized.nixosModules.router-networking
     inputs.nix-router-optimized.nixosModules.router-firewall
+    inputs.nix-router-optimized.nixosModules.router-homelab
     inputs.nix-router-optimized.nixosModules.router-optimizations
-    inputs.nix-router-optimized.nixosModules.router-dashboard
-    inputs.nix-router-optimized.nixosModules.monitoring
     inputs.nix-router-optimized.nixosModules.dns-zone
     inputs.nix-router-optimized.nixosModules."dns-blocklists"
     ./networking.nix # Network interface configuration
@@ -116,53 +115,22 @@ in
   services.router-firewall = {
     enable = true;
     tailscaleInterface = "tailscale0";
-    trustedTcpPorts = [
-      5380
-      53443
-      3001
-      8888
-      9090
-      19999
-      80
-      443
-    ];
     trustedUdpPorts = [ ];
-    wanTcpPorts = [ 80 443 ];
     wanUdpPorts = [ 41641 ];
     extraInputRules = ''
       iifname {"ens16"} tcp dport 5201 accept comment "iperf3 from LAN"
     '';
   };
 
+  services.router-homelab = {
+    enable = true;
+    sshTarget = "ssh gateway.deepwatercreature.com";
+    netdataAllowConnectionsFrom = "10.10.*";
+  };
+
   # Router dashboard configuration
   services.router-dashboard = {
-    enable = true;
-    port = 8888;
-    services = [
-      "nftables"
-      "caddy"
-      "prometheus"
-      "grafana"
-      "netdata"
-      "technitium-dns-server"
-      "router-dashboard"
-    ];
     links = [
-      {
-        label = "Netdata";
-        url = "http://10.10.10.1:19999/";
-        icon = "📊";
-      }
-      {
-        label = "Grafana";
-        url = "http://10.10.10.1:3001/";
-        icon = "📈";
-      }
-      {
-        label = "DNS Admin";
-        url = "http://10.10.10.1:5380/";
-        icon = "🌍";
-      }
       {
         label = "Tech Logs";
         url = "/logs/technitium.html";
@@ -173,36 +141,11 @@ in
         url = "/status/fail2ban.html";
         icon = "🛡️";
       }
-      {
-        label = "Router SSH";
-        kind = "copy";
-        copyText = "ssh gateway.deepwatercreature.com";
-        icon = "🖥️";
-      }
     ];
   };
 
   router.monitoring = {
-    enable = true;
-    listenAddress = "10.10.10.1";
-    prometheusPort = 9090;
-    grafanaPort = 3001;
     grafanaDomain = "gateway.deepwatercreature.com";
-  };
-
-  services.netdata = {
-    enable = true;
-    package = pkgs.netdataCloud;
-    config = {
-      global = {
-        "default port" = "19999";
-        "bind to" = "10.10.10.1";
-      };
-      web = {
-        "allow connections from" = "10.10.*";
-        "allow dashboard from" = "10.10.*";
-      };
-    };
   };
 
   services.tailscale = {
