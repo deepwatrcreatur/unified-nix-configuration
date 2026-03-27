@@ -170,19 +170,10 @@
     ];
   };
 
-  # GNOME Keyring daemon for credential storage
-  systemd.user.services.gnome-keyring-daemon = {
-    description = "GNOME Keyring daemon for secure credential storage";
-    wantedBy = [ "graphical-session.target" ];
-    after = [ "dbus.service" ];
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${pkgs.gnome-keyring}/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh";
-      Restart = "on-failure";
-      RestartSec = 5;
-      Environment = "GNOME_KEYRING_CONTROL=/run/user/%u/keyring/control";
-    };
-  };
+  # Unlock GNOME Keyring on auto-login (no password prompt).
+  # services.desktopManager.gnome.enable already starts the keyring via gnome-session;
+  # we just need PAM to unlock it for the gdm-autologin path.
+  security.pam.services.gdm-autologin.enableGnomeKeyring = true;
 
   # Thunderbird unified inbox configuration
   environment.etc."thunderbird/prefs.js".text = ''
