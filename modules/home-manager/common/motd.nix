@@ -21,6 +21,63 @@ let
 
     # Default to the standard location our shortcuts expect.
     repo="''${MOTD_FLAKE_REPO:-$HOME/flakes/unified-nix-configuration}"
+    is_nixos=0
+    [ -e /etc/NIXOS ] && is_nixos=1
+
+    # Root on Proxmox/Debian hosts switches a host-specific Home Manager leaf.
+    proxmox_leaf="$host-root"
+
+    print_ip_summary() {
+      if ! command -v ip >/dev/null 2>&1; then
+        return 0
+      fi
+
+      # Summarize stable, globally useful addresses and skip noisy ones such as
+      # IPv4 link-local, IPv6 link-local, and temporary/privacy IPv6 entries.
+      summary="$(
+        {
+          ip -o -4 addr show up scope global 2>/dev/null | awk '
+            {
+              iface=$2
+              split($4, parts, "/")
+              addr=parts[1]
+              if (addr ~ /^127\./ || addr ~ /^169\.254\./) next
+              if (seen[iface SUBSEP addr]++) next
+              print "10 " iface " " addr
+            }
+          '
+
+          ip -o -6 addr show up scope global 2>/dev/null | awk '
+            / temporary / || / mngtmpaddr / { next }
+            {
+              iface=$2
+              split($4, parts, "/")
+              addr=parts[1]
+              if (addr ~ /^fe80:/) next
+              if (seen[iface SUBSEP addr]++) next
+              print "20 " iface " " addr
+            }
+          '
+        } | sort -k1,1n -k2,2 -k3,3
+      )"
+
+      if [ -n "$summary" ]; then
+        first_ip=1
+        while IFS= read -r line; do
+          [ -z "$line" ] && continue
+          iface="$(printf "%s\n" "$line" | awk '{print $2}')"
+          addr="$(printf "%s\n" "$line" | awk '{print $3}')"
+          if [ "$first_ip" -eq 1 ]; then
+            echo "IPs: $addr ($iface)"
+            first_ip=0
+          else
+            echo "     $addr ($iface)"
+          fi
+        done <<EOF
+$summary
+EOF
+      fi
+    }
 
     echo
     hr
@@ -31,7 +88,11 @@ let
 
     echo "Common commands:"
     echo "  - NixOS:   nh os switch -H $host -f $repo"
-    echo "  - Proxmox: cd $repo && home-manager switch --flake .#proxmox-root"
+    if [ "$is_nixos" -eq 0 ] && [ "$(id -u)" -eq 0 ]; then
+      echo "  - Proxmox: cd $repo && home-manager switch --flake .#$proxmox_leaf"
+    else
+      echo "  - Proxmox: cd $repo && home-manager switch --flake .#''${host}-root"
+    fi
     echo
 
     if command -v git >/dev/null 2>&1 && [ -d "$repo/.git" ]; then
@@ -68,22 +129,7 @@ let
       [ -n "$mem" ] && echo "Mem: $mem"
     fi
 
-    if command -v hostname >/dev/null 2>&1; then
-      ips="$(hostname -I 2>/dev/null | tr -s ' ' '\n' | sed '/^$/d' || true)"
-      if [ -n "$ips" ]; then
-        first_ip=1
-        while IFS= read -r ip; do
-          if [ "$first_ip" -eq 1 ]; then
-            echo "IPs: $ip"
-            first_ip=0
-          else
-            echo "     $ip"
-          fi
-        done <<EOF
-$ips
-EOF
-      fi
-    fi
+    print_ip_summary
 
     hr
   '';
