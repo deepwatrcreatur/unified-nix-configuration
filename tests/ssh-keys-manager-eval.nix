@@ -1,4 +1,4 @@
-{ lib }:
+{ lib, pkgs }:
 
 let
   # A minimal stub for the inputs.ssh-keys-manager.nixosModules.default
@@ -17,6 +17,7 @@ let
     ssh-keys-manager = {
       nixosModules = {
         default = mockFlakeModule;
+        ssh-known-hosts = { };
       };
     };
   };
@@ -28,6 +29,11 @@ let
         type = lib.types.attrsOf lib.types.attrs;
         default = {};
       };
+      options.programs.ssh-known-hosts-manager = {
+        enable = lib.mkEnableOption "ssh known hosts manager";
+        keysDirectory = lib.mkOption { type = lib.types.path; };
+        sshConfigFile = lib.mkOption { type = lib.types.path; };
+      };
       options.services.openssh.enable = lib.mkEnableOption "ssh";
       options.services.openssh.extraConfig = lib.mkOption { type = lib.types.str; default = ""; };
       options.systemd.tmpfiles.rules = lib.mkOption { type = lib.types.listOf lib.types.str; default = []; };
@@ -36,7 +42,10 @@ let
 
   # Test case 1: Username is null by default
   evalDefault = lib.evalModules {
-    specialArgs = { inputs = mockInputs; };
+    specialArgs = {
+      inherit pkgs;
+      inputs = mockInputs;
+    };
     modules = dummyModules ++ [
       ../modules/nixos/common/ssh-keys.nix
     ];
@@ -44,7 +53,10 @@ let
 
   # Test case 2: Username can be set
   evalWithUser = lib.evalModules {
-    specialArgs = { inputs = mockInputs; };
+    specialArgs = {
+      inherit pkgs;
+      inputs = mockInputs;
+    };
     modules = dummyModules ++ [
       ../modules/nixos/common/ssh-keys.nix
       {

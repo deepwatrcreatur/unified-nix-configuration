@@ -7,19 +7,15 @@
   ...
 }:
 let
-  # Auto-import all .nix files and directories from common directory
   commonDir = ./common;
-  commonImports = lib.mapAttrsToList (name: _: commonDir + "/${name}") (
-    lib.filterAttrs
-      (name: type: (type == "regular" && lib.hasSuffix ".nix" name) || type == "directory")
-      (builtins.readDir commonDir)
-  );
-
+  moduleLoading = import ../../lib/flake/module-loading.nix { inherit lib; };
   hasZellijVividRounded = inputs ? zellij-vivid-rounded;
 in
 {
   imports =
-    commonImports
+    (moduleLoading.mkAutoImport {
+      dir = commonDir;
+    })
     ++ lib.optionals hasZellijVividRounded [
       inputs.zellij-vivid-rounded.homeManagerModules.default
     ];
@@ -52,6 +48,6 @@ in
       echo "Migrated existing known_hosts to known_hosts_dynamic"
     fi
   '';
-  
+
   programs.home-manager.enable = true;
 }

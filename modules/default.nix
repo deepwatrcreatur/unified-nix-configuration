@@ -1,17 +1,11 @@
 { lib, ... }:
 
 let
-  # Path to the common directory
   commonDir = ./common;
-
-  # Get all files in the common directory
-  commonFiles = builtins.readDir commonDir;
-
-  # Filter only .nix files and import them
-  modules = lib.filterAttrs (name: type: type == "regular" && lib.hasSuffix ".nix" name) commonFiles;
-  moduleImports = lib.mapAttrsToList (name: _: import (commonDir + "/${name}")) modules;
-
+  moduleLoading = import ../lib/flake/module-loading.nix { inherit lib; };
 in
 {
-  imports = moduleImports;
+  imports = moduleLoading.mkAutoImportFilesOnly {
+    dir = commonDir;
+  };
 }

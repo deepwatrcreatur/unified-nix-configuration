@@ -1,8 +1,8 @@
 { lib, ... }:
 
 let
-  # Auto-import all .nix files and directories from current directory
   currentDir = ./.;
+  moduleLoading = import ../../lib/flake/module-loading.nix { inherit lib; };
   excludeItems = [
     "default.nix"
     "attic-client.nix"
@@ -16,13 +16,12 @@ let
     "garuda-themed-kde.nix"
     "x11-session-support.nix"
   ];
-  moduleImports = lib.mapAttrsToList
-    (name: _: currentDir + "/${name}")
-    (lib.filterAttrs
-      (name: _: !lib.elem name excludeItems)
-      (builtins.readDir currentDir)
-    );
 in
 {
-  imports = moduleImports ++ [ ./common ];
+  imports =
+    moduleLoading.mkAutoImportWithBlacklist {
+      dir = currentDir;
+      blacklist = excludeItems;
+    }
+    ++ [ ./common ];
 }

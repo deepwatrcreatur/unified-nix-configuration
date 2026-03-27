@@ -16,6 +16,11 @@ let
   inventoryHomes = denInventory.homes;
   libHosts = (import ../lib/hosts.nix).hosts;
   denAspectRegistry = import ../den/aspects { lib = pkgs.lib; };
+  moduleLoadingEval = import ../tests/module-loading-eval.nix { lib = pkgs.lib; };
+  sshKeysManagerEval = import ../tests/ssh-keys-manager-eval.nix {
+    lib = pkgs.lib;
+    inherit pkgs;
+  };
 
   names = builtins.attrNames;
   inventoryHostNames = names inventoryHosts;
@@ -142,4 +147,10 @@ let
 in
 {
   checks.x86_64-linux.inventory-consistency = checkBody;
+  checks.x86_64-linux.module-loading-eval = pkgs.writeText "module-loading-eval.txt" (
+    if moduleLoadingEval == [ ] then "module-loading-eval=ok\n" else builtins.throw "module-loading-eval failed"
+  );
+  checks.x86_64-linux.ssh-keys-manager-eval = pkgs.writeText "ssh-keys-manager-eval.txt" (
+    if sshKeysManagerEval == [ ] then "ssh-keys-manager-eval=ok\n" else builtins.throw "ssh-keys-manager-eval failed"
+  );
 }
