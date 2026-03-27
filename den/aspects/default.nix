@@ -16,4 +16,6 @@
   podman-containers = context: import ./podman-containers.nix context;
   podman-lxc-suppressions = context: import ./podman-lxc-suppressions.nix context;
   workstation-desktop = context: import ./workstation-desktop.nix context;
+  inference-vm-base = context: import ./inference-vm-base.nix context;
+  inference1-ollama = context: import ./inference1-ollama.nix context;
 }

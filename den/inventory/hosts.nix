@@ -28,24 +28,24 @@
     kind = "nixos";
     name = "inference1";
     system = "x86_64-linux";
-    hostPath = ../../hosts/nixos/inference-vm/hosts/inference1;
-    mode = "legacy";
+    hostPath = ../hosts/inference1;
+    mode = "aspect";
   };
 
   inference2 = {
     kind = "nixos";
     name = "inference2";
     system = "x86_64-linux";
-    hostPath = ../../hosts/nixos/inference-vm/hosts/inference2;
-    mode = "legacy";
+    hostPath = ../hosts/inference2;
+    mode = "aspect";
   };
 
   inference3 = {
     kind = "nixos";
     name = "inference3";
     system = "x86_64-linux";
-    hostPath = ../../hosts/nixos/inference-vm/hosts/inference3;
-    mode = "legacy";
+    hostPath = ../hosts/inference3;
+    mode = "aspect";
   };
 
   inference-fresh = {
