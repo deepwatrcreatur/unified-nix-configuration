@@ -1,8 +1,6 @@
 {
   cacheLocal = [
-    "cache-local:63xryK76L6y/NphTP/iS63yiYqldoWvVlWI0N8rgvBw="
-    "cache-local:92faFQnuzuYUJ4ta3EYpqIaCMIZGenDoaPktsBucTe4="
-    "cache-local:GozZz7XFsUZ7xI5o/Q36JA/BFfjzONWOjiqC+zAhp2g="
+    "cache-local:QuVw+n4mL7j/LQpdAv92LCKb/Jy+g7iuao7vs+K/ctY="
   ];
 
   official = [

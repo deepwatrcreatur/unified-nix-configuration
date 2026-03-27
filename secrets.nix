@@ -35,6 +35,7 @@ let
     "inference1"
     "inference2"
     "inference3"
+    "podman"
     "workstation"
   ];
 
