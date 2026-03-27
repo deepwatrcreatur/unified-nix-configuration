@@ -16,6 +16,9 @@
     agenix.url = "github:ryantm/agenix";
     agenix.inputs.nixpkgs.follows = "nixpkgs";
 
+    disko.url = "github:nix-community/disko";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
+
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
     determinate.inputs.nixpkgs.follows = "nixpkgs";
 

@@ -32,6 +32,9 @@ let
     "attic-cache"
     "gateway"
     "homeserver"
+    "inference1"
+    "inference2"
+    "inference3"
     "workstation"
   ];
 
@@ -63,6 +66,9 @@ let
     "attic-cache"
     "gateway"
     "homeserver"
+    "inference1"
+    "inference2"
+    "inference3"
     "podman"
     "pve-gateway"
     "pve-lattitude"

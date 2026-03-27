@@ -90,6 +90,24 @@ Home Manager activation is blocked by an unrelated package conflict.
 ansible-playbook -i inventory/hosts.yml playbooks/setup-secrets.yml --limit proxmox
 ```
 
+### bootstrap-nixos-inference.yml
+
+Bootstraps `inference1`, `inference2`, or `inference3` from a NixOS live ISO
+using `nixos-anywhere`. This is the first-install path, not the day-2 rebuild
+path.
+
+It runs from the control machine and updates the repo working tree with:
+
+- refreshed `hardware-configuration.nix`
+- `ssh-keys/agenix-machine-identities/<host>.pub`
+- rekeyed `.age` files when recipients changed
+
+```bash
+ansible-playbook -i inventory/hosts.yml playbooks/bootstrap-nixos-inference.yml --limit inference1
+```
+
+See `../docs/inference-vm-bootstrap.md` for the full workflow.
+
 ## Git Handling
 
 The playbooks automatically handle common git issues:

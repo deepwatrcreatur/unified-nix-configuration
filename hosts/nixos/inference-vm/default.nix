@@ -23,5 +23,7 @@ in
   # Common configuration for all inference VMs
   # This automatically imports all modules from the modules/ subdirectory
 
-  imports = importAllModulesInDir ./modules;
+  imports = [
+    inputs.disko.nixosModules.disko
+  ] ++ importAllModulesInDir ./modules;
 }

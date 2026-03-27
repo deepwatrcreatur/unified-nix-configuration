@@ -9,20 +9,18 @@
 {
   imports = [
     ../../../../modules/common/nix-settings.nix
+    ../../../../modules/nixos/common/agenix-machine-identity.nix
     ../../../../modules/nixos/inference-vm-nix-overrides.nix
     ../../../../modules/nixos/root-ssh-identity.nix
+    ../../../../modules/nixos/snapper.nix
     # inputs.nix-attic-infra.nixosModules.attic-client  # Disabled - requires sops-nix
   ];
 
   # Enable fish shell since users set it as default
   programs.fish.enable = true;
 
-  # Prepare inference VMs to use the stable per-host agenix identity from first boot.
-  age.identityPaths = [ "/var/lib/agenix/machine-identity" ];
-
-  systemd.tmpfiles.rules = [
-    "d /var/lib/agenix 0700 root root -"
-  ];
+  # New installs should bootstrap directly onto the stable machine identity path.
+  my.agenix.machineIdentity.enable = true;
 
   my.root-ssh-identity.enable = true;
 
@@ -62,13 +60,23 @@
     # (e.g., inference1 uses custom build with official binaries)
   };
 
-  # Boot loader configuration for UEFI with systemd-boot
+  zramSwap = {
+    enable = true;
+    memoryPercent = 50;
+    algorithm = "zstd";
+    priority = 100;
+  };
+
+  # Boot loader configuration for UEFI with Limine
   boot = {
     loader = {
-      systemd-boot.enable = true;
+      systemd-boot.enable = lib.mkForce false;
+      limine.enable = true;
       efi.canTouchEfiVariables = true;
     };
   };
+
+  services.fstrim.enable = true;
 
   # Time zone
   time.timeZone = "America/Toronto";

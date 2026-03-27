@@ -14,18 +14,6 @@
 
   boot.growPartition = true;
 
-  swapDevices = [
-    {
-      device = "/swapfile";
-      size = 16384;
-    }
-  ];
-
-  zramSwap = {
-    enable = true;
-    memoryPercent = 50;
-  };
-
   boot.kernel.sysctl."vm.overcommit_memory" = 1;
 
   nix.settings = {
