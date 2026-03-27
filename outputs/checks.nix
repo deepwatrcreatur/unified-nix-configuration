@@ -25,6 +25,10 @@ let
   names = builtins.attrNames;
   inventoryHostNames = names inventoryHosts;
   inventoryHomeNames = names inventoryHomes;
+  legacyHostAllowlist = [
+    "gateway"
+    "inference-fresh"
+  ];
 
   hostNamesExpectedInLib =
     builtins.filter
@@ -37,6 +41,15 @@ let
 
   missingInventoryHosts =
     builtins.filter (name: !(builtins.hasAttr name libHosts)) hostNamesExpectedInLib;
+
+  missingInventoryHostPaths =
+    builtins.filter (name: !builtins.pathExists inventoryHosts.${name}.hostPath) inventoryHostNames;
+
+  legacyHostNames =
+    builtins.filter (name: inventoryHosts.${name}.mode or "" == "legacy") inventoryHostNames;
+
+  unexpectedLegacyHosts =
+    builtins.filter (name: !(builtins.elem name legacyHostAllowlist)) legacyHostNames;
 
   managedInfraHosts =
     builtins.filter
@@ -76,6 +89,25 @@ let
 
   missingProxmoxLeaves =
     builtins.filter (name: !(inventoryHomes ? "${name}-root")) proxmoxHostNames;
+
+  homeMissingUserPaths =
+    builtins.concatLists (
+      pkgs.lib.mapAttrsToList
+        (name: home:
+          if home ? userPath && !builtins.pathExists home.userPath then [ "${name}:userPath" ] else [ ])
+        inventoryHomes
+    );
+
+  homeMissingModulePaths =
+    builtins.concatLists (
+      pkgs.lib.mapAttrsToList
+        (name: home:
+          if home ? modules then
+            map (path: "${name}:${toString path}") (builtins.filter (path: !builtins.pathExists path) home.modules)
+          else
+            [ ])
+        inventoryHomes
+    );
 
   ips =
     builtins.filter (ip: ip != null)
@@ -118,12 +150,28 @@ let
       [ "den inventory hosts missing from lib/hosts.nix: ${builtins.concatStringsSep ", " missingInventoryHosts}" ]
     else
       [ ])
+    ++ (if missingInventoryHostPaths != [ ] then
+      [ "den inventory hosts point at missing hostPath values: ${builtins.concatStringsSep ", " missingInventoryHostPaths}" ]
+    else
+      [ ])
     ++ (if missingDenInventoryHosts != [ ] then
       [ "Managed infrastructure hosts missing from den inventory: ${builtins.concatStringsSep ", " missingDenInventoryHosts}" ]
     else
       [ ])
+    ++ (if unexpectedLegacyHosts != [ ] then
+      [ "Unexpected legacy-mode hosts remain in den inventory: ${builtins.concatStringsSep ", " unexpectedLegacyHosts}" ]
+    else
+      [ ])
     ++ (if missingProxmoxLeaves != [ ] then
       [ "Proxmox hosts missing home leaves in den/inventory/homes.nix: ${builtins.concatStringsSep ", " missingProxmoxLeaves}" ]
+    else
+      [ ])
+    ++ (if homeMissingUserPaths != [ ] then
+      [ "den home entries point at missing userPath values: ${builtins.concatStringsSep ", " homeMissingUserPaths}" ]
+    else
+      [ ])
+    ++ (if homeMissingModulePaths != [ ] then
+      [ "den home entries reference missing module paths: ${builtins.concatStringsSep ", " homeMissingModulePaths}" ]
     else
       [ ])
     ++ (if unknownAspectRefs != [ ] then
@@ -140,6 +188,7 @@ let
         inventory-consistency=ok
         checked-hosts=${toString (builtins.length hostNamesExpectedInLib)}
         checked-proxmox-leaves=${toString (builtins.length proxmoxHostNames)}
+        checked-legacy-hosts=${toString (builtins.length legacyHostNames)}
         checked-den-aspect-hosts=${toString (
           builtins.length (builtins.filter (name: inventoryHosts.${name}.mode or "" == "aspect") inventoryHostNames)
         )}

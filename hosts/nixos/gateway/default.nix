@@ -158,6 +158,7 @@ in
     grafanaDataDir = "/var/log/gateway/grafana";
     prometheusStateDir = "gateway-prometheus";
     prometheusBindMountPath = "/var/log/gateway/prometheus";
+    prometheusRetentionSize = "40GB";
   };
 
   services.tailscale = {
