@@ -192,6 +192,7 @@
     xdg-desktop-portal-gtk # GTK desktop portal
     satty # Screenshot annotation tool inspired by Swappy and Flameshot
     gthumb # Image browser and viewer with crop support
+    ventoy-full # Multiboot USB drive tool
     yt-dlp # YouTube and video downloader
     vivaldi # Chromium-based browser with advanced features
   ];
@@ -246,6 +247,9 @@
     "flakes"
   ];
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.permittedInsecurePackages = [
+    "ventoy-1.1.10" # Binary blobs - acceptable for USB tool usage
+  ];
 
   services.resolved.enable = true; # Explicitly enable systemd-resolved for automatic DNS management
   system.stateVersion = "25.05";
