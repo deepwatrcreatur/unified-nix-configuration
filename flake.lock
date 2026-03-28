@@ -972,11 +972,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1774721252,
-        "narHash": "sha256-a2nipxLjlpnvVKiSmltV80n2SMwsv8OSfqtdlqE+TSA=",
+        "lastModified": 1774727909,
+        "narHash": "sha256-kxeJRuwaizLEj9GDxPqy+Q93QaByyNtG3V6l6Haygpk=",
         "owner": "deepwatrcreatur",
         "repo": "nix-authentik",
-        "rev": "68a139b6af6009c64b536f9ed4bc49365f1590f9",
+        "rev": "6d2ae3ff05673e7954915d5044a7fa42f163140d",
         "type": "github"
       },
       "original": {
