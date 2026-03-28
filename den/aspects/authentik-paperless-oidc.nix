@@ -2,6 +2,9 @@
 { config, pkgs, ... }:
 let
   secretPath = config.age.secrets."paperless-authentik-oidc".path;
+  runtimeDir = "/var/lib/authentik/oidc/paperless";
+  clientIdFile = "${runtimeDir}/client-id";
+  clientSecretFile = "${runtimeDir}/client-secret";
 in
 {
   age.secrets."paperless-authentik-oidc" = {
@@ -11,21 +14,34 @@ in
     mode = "0400";
   };
 
-  services.authentik.blueprints.rendered.paperless = {
-    fileName = "paperless-ngx.yaml";
-    script = ''
-      ${pkgs.python3}/bin/python - <<'PY'
+  systemd.tmpfiles.rules = [
+    "d ${runtimeDir} 0750 authentik authentik -"
+  ];
+
+  systemd.services.authentik-prepare-paperless-oidc = {
+    description = "Extract Paperless OIDC runtime credentials for Authentik";
+    before = [ "authentik-render-blueprints.service" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      User = "root";
+      Group = "root";
+      ExecStart = pkgs.writeShellScript "authentik-prepare-paperless-oidc" ''
+        set -euo pipefail
+
+        install -d -m 0750 ${runtimeDir}
+
+        ${pkgs.python3}/bin/python - <<'PY'
 import json
-import os
-import textwrap
 from pathlib import Path
 
 source = Path("${secretPath}")
-target = Path(os.environ["AUTHENTIK_BLUEPRINT_OUTPUT"])
+client_id_target = Path("${clientIdFile}")
+client_secret_target = Path("${clientSecretFile}")
 
 client_id = None
 client_secret = None
-server_url = None
 
 for line in source.read_text().splitlines():
     if not line.startswith("PAPERLESS_SOCIALACCOUNT_PROVIDERS="):
@@ -34,55 +50,30 @@ for line in source.read_text().splitlines():
     app = providers["openid_connect"]["APPS"][0]
     client_id = app["client_id"]
     client_secret = app["secret"]
-    server_url = app["settings"]["server_url"]
     break
 
-if not client_id or not client_secret or not server_url:
+if not client_id or not client_secret:
     raise SystemExit("paperless-authentik-oidc secret is missing required OIDC fields")
 
-if "/application/o/" not in server_url:
-    raise SystemExit(f"unexpected Authentik server_url format: {server_url}")
-
-application_slug = server_url.split("/application/o/", 1)[1].split("/", 1)[0]
-callback_url = "https://paperless.deepwatercreature.com/accounts/oidc/authentik/login/callback/"
-
-target.write_text(
-    textwrap.dedent(
-        f"""\
-version: 1
-metadata:
-  name: Paperless NGX
-entries:
-  - model: authentik_providers_oauth2.oauth2provider
-    id: paperless_provider
-    identifiers:
-      name: {application_slug}
-    attrs:
-      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
-      invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
-      client_type: confidential
-      client_id: {client_id}
-      client_secret: {client_secret}
-      redirect_uris:
-        - matching_mode: strict
-          url: {callback_url}
-      property_mappings:
-        - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-openid]]
-        - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-email]]
-        - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-profile]]
-        - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-offline_access]]
-      signing_key: !Find [authentik_crypto.certificatekeypair, [name, authentik Self-signed Certificate]]
-  - model: authentik_core.application
-    identifiers:
-      slug: {application_slug}
-    attrs:
-      provider: !KeyOf paperless_provider
-      name: Paperless NGX
-      meta_launch_url: https://paperless.deepwatercreature.com/
-"""
-    )
-)
+client_id_target.write_text(client_id)
+client_secret_target.write_text(client_secret)
 PY
-    '';
+
+        chown authentik:authentik ${clientIdFile} ${clientSecretFile}
+        chmod 0400 ${clientIdFile} ${clientSecretFile}
+      '';
+      ReadWritePaths = [ "/var/lib/authentik" ];
+    };
+  };
+
+  services.authentik.applications.oidc.paperless = {
+    slug = "paperless-ngx";
+    displayName = "Paperless NGX";
+    launchUrl = "https://paperless.deepwatercreature.com/";
+    clientIdFile = clientIdFile;
+    clientSecretFile = clientSecretFile;
+    redirectUris = [
+      "https://paperless.deepwatercreature.com/accounts/oidc/authentik/login/callback/"
+    ];
   };
 }
