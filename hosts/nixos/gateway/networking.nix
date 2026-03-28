@@ -12,6 +12,8 @@
     enable = true;
     provider = "technitium";
     searchDomains = [ "deepwatercreature.com" ];
+    # Advertise the gateway's chrony instance to all LAN clients via DHCP option 42.
+    ntpServers = [ "10.10.10.1" ];
     technitium = {
       blockListPresets = [
         "hagezi-normal"
