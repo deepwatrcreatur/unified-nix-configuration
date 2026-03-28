@@ -117,6 +117,23 @@ let
 
   duplicateIpsExist = builtins.length uniqueIps != builtins.length ips;
 
+  # Check that every aspect-based den host has a machine-identity public key file.
+  # Without a .pub file, machineRecipients returns [] for that host, meaning the
+  # machine cannot decrypt its own agenix secrets (only the operator user can).
+  machineIdentityLib = import ../lib/agenix-machine-identities.nix;
+
+  aspectInventoryHostNames =
+    builtins.filter
+      (name: inventoryHosts.${name}.mode or "" == "aspect")
+      inventoryHostNames;
+
+  hostsMissingMachineIdentityKey =
+    builtins.filter
+      (name:
+        let key = machineIdentityLib.readPublicKey name; in
+        key == null || key == "")
+      aspectInventoryHostNames;
+
   # Collect all service names (from the `services` field) across every host.
   # A service name must not collide with a machine hostname to avoid ambiguity
   # like "authentik" (service) vs "authentik-host" (machine) — they are different,
@@ -201,6 +218,13 @@ let
     else
       [ ]);
 
+  # Non-fatal notice embedded in the check output (not in failMessages).
+  missingKeyNotice =
+    if hostsMissingMachineIdentityKey != [ ] then
+      "notice: aspect hosts without a machine-identity key (cannot self-decrypt agenix secrets): ${builtins.concatStringsSep ", " hostsMissingMachineIdentityKey}\n"
+    else
+      "";
+
   checkBody =
     if failMessages != [ ] then
       builtins.throw (builtins.concatStringsSep "\n" failMessages)
@@ -213,6 +237,7 @@ let
         checked-den-aspect-hosts=${toString (
           builtins.length (builtins.filter (name: inventoryHosts.${name}.mode or "" == "aspect") inventoryHostNames)
         )}
+        ${missingKeyNotice}
       '';
 in
 {
