@@ -20,11 +20,30 @@
 
   # Install coding agent packages from llm-agents overlay
   home.packages = with pkgs.llm-agents; [
+    # Core agents
     rtk
     claude-code
     opencode
     codex
     gemini-cli
+    amp
+    copilot-cli
+    cursor-agent
+    forge
+    goose-cli
+    kilocode-cli
+    pi
+    crush
+    agent-deck
+    workmux
+
+    # Usage trackers
     ccusage
+    ccusage-amp
+    ccusage-codex
+    ccusage-opencode
+
+    # Utilities
+    ccstatusline
   ];
 }

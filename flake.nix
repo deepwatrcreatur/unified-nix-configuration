@@ -31,10 +31,9 @@
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
 
     # LLM/AI coding agents - comprehensive package set from numtide
-    llm-agents = {
-      url = "github:numtide/llm-agents.nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # NOTE: intentionally NOT following nixpkgs so derivation hashes match
+    # the garnix.io binary cache (cache.garnix.io), avoiding local compilation
+    llm-agents.url = "github:numtide/llm-agents.nix";
 
     # RTK hook integration for AI coding agents
     nix-rtk = {
