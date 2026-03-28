@@ -25,9 +25,7 @@ let
   names = builtins.attrNames;
   inventoryHostNames = names inventoryHosts;
   inventoryHomeNames = names inventoryHomes;
-  legacyHostAllowlist = [
-    "gateway"
-  ];
+  legacyHostAllowlist = [ ];
 
   hostNamesExpectedInLib =
     builtins.filter

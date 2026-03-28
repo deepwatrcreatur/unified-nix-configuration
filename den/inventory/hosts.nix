@@ -33,9 +33,13 @@
     kind = "nixos";
     name = "gateway";
     system = "x86_64-linux";
-    hostPath = ../../hosts/nixos/gateway;
+    hostPath = ../hosts/gateway;
     isDesktop = false;
-    mode = "legacy";
+    mode = "aspect";
+    aspectsList = [
+      "nixos-base"
+      "gateway-router"
+    ];
   };
 
   homeserver = {
