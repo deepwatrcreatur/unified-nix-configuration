@@ -43,6 +43,12 @@ in
         chgrp ${cfg.group} "${cfg.path}" || true
         chmod 0775 "${cfg.path}" || true
       fi
+
+      netrc_file="${cfg.path}/netrc"
+      if [ -f "$netrc_file" ]; then
+        chgrp ${cfg.group} "$netrc_file" || true
+        chmod 0660 "$netrc_file" || true
+      fi
     '';
   };
 }
