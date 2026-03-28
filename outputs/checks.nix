@@ -117,6 +117,23 @@ let
 
   duplicateIpsExist = builtins.length uniqueIps != builtins.length ips;
 
+  # Collect all service names (from the `services` field) across every host.
+  # A service name must not collide with a machine hostname to avoid ambiguity
+  # like "authentik" (service) vs "authentik-host" (machine) — they are different,
+  # but a collision would mean a CNAME and an A record share the same label.
+  allLibHostNames = names libHosts;
+
+  serviceNameCollisions =
+    builtins.concatLists (
+      map
+        (hostName:
+          let
+            serviceNames = libHosts.${hostName}.services or [];
+          in
+          builtins.filter (svc: builtins.elem svc allLibHostNames) serviceNames)
+        allLibHostNames
+    );
+
   aspectNames = builtins.attrNames denAspectRegistry;
 
   hostAspectLists =
@@ -178,7 +195,11 @@ let
       [ "Aspect-based hosts reference unknown den aspects: ${builtins.concatStringsSep ", " unknownAspectRefs}" ]
     else
       [ ])
-    ++ (if duplicateIpsExist then [ "Duplicate IP addresses detected in lib/hosts.nix" ] else [ ]);
+    ++ (if duplicateIpsExist then [ "Duplicate IP addresses detected in lib/hosts.nix" ] else [ ])
+    ++ (if serviceNameCollisions != [ ] then
+      [ "Service names in lib/hosts.nix collide with machine hostnames (a CNAME and an A record cannot share a label): ${builtins.concatStringsSep ", " serviceNameCollisions}" ]
+    else
+      [ ]);
 
   checkBody =
     if failMessages != [ ] then

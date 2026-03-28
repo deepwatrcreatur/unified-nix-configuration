@@ -10,7 +10,12 @@
   #   ip: IPv4 address (required)
   #   ipv6: IPv6 address (optional)
   #   sshUser: default SSH user (optional, defaults to "deepwatrcreatur")
-  #   aliases: DNS CNAME aliases (optional)
+  #   aliases: DNS CNAME aliases that are other names for this machine itself
+  #            (e.g. "router" and "dns" are identity aliases for the gateway machine)
+  #   services: public service subdomains fronted by this host via a reverse proxy
+  #             (e.g. "authentik" is a service proxied through gateway/Caddy, not the
+  #             gateway machine itself).  Kept separate from aliases so inventory checks
+  #             can detect collisions between service names and machine hostnames.
   #   description: human-readable description (optional)
   #   includeSsh: whether to include in SSH config (default: true)
   #   includeDns: whether to include in DNS zone (default: true)
@@ -20,11 +25,16 @@
     gateway = {
       ip = "10.10.10.1";
       sshUser = "deepwatrcreatur";
+      # Infrastructure identity aliases — other names for the gateway machine itself
       aliases = [
         "router"
         "dns"
         "dhcp"
         "firewall"
+      ];
+      # Public service subdomains fronted by Caddy on this host.
+      # DNS CNAMEs for these point at gateway, but the actual service runs elsewhere.
+      services = [
         "www"
         "dashboard"
         "grafana"
@@ -103,6 +113,12 @@
       sshUser = "deepwatrcreatur";
       aliases = [ "semaphore" ];
       description = "Home automation, Semaphore Ansible UI";
+    };
+
+    authentik-host = {
+      ip = "10.10.11.70";
+      sshUser = "deepwatrcreatur";
+      description = "Dedicated Authentik identity host";
     };
 
     homeassistant = {

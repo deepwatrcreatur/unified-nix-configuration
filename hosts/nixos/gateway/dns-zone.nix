@@ -18,10 +18,16 @@ let
         if (host.includeDns or true) && (host.ip or null) != null
         then {
           inherit name;
-          value = {
-            ipv4 = host.ip;
-            ipv6 = host.ipv6 or null;
-          } // (if host.aliases or [] != [] then { aliases = host.aliases; } else {});
+          value =
+            let
+              # Combine machine-identity aliases and public-service names — both
+              # become CNAME records pointing at this host in the DNS zone.
+              allAliases = (host.aliases or []) ++ (host.services or []);
+            in
+            {
+              ipv4 = host.ip;
+              ipv6 = host.ipv6 or null;
+            } // (if allAliases != [] then { aliases = allAliases; } else {});
         }
         else null
       ) (builtins.attrNames hostsData.hosts)
