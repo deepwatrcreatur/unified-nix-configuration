@@ -170,6 +170,32 @@ let
           [ ])
       inventoryHosts;
 
+  # Assert that every aspect host using lxc-core has an explicit networking aspect.
+  # lxc-core sets up the container base but deliberately does not configure networking,
+  # so each LXC host must opt into a networking aspect.  Hosts that use externally
+  # managed static IP (e.g. set by Proxmox) must be explicitly listed below.
+  lxcStaticNetworkingHosts = [
+    "podman"   # static IP assigned by Proxmox DHCP reservation
+    "rustdesk" # static IP assigned by Proxmox DHCP reservation
+  ];
+
+  knownNetworkingAspects = [
+    "lxc-dhcp-networking"
+    "homeserver-networking"
+  ];
+
+  lxcHostsMissingNetworking =
+    builtins.filter
+      (name:
+        let
+          aspects = hostAspectLists.${name};
+          hasLxcCore = builtins.elem "lxc-core" aspects;
+          hasNetworkingAspect = builtins.any (a: builtins.elem a knownNetworkingAspects) aspects;
+          isStaticException = builtins.elem name lxcStaticNetworkingHosts;
+        in
+        hasLxcCore && !hasNetworkingAspect && !isStaticException)
+      aspectInventoryHostNames;
+
   unknownAspectRefs =
     builtins.concatLists (
       pkgs.lib.mapAttrsToList
@@ -215,6 +241,10 @@ let
     ++ (if duplicateIpsExist then [ "Duplicate IP addresses detected in lib/hosts.nix" ] else [ ])
     ++ (if serviceNameCollisions != [ ] then
       [ "Service names in lib/hosts.nix collide with machine hostnames (a CNAME and an A record cannot share a label): ${builtins.concatStringsSep ", " serviceNameCollisions}" ]
+    else
+      [ ])
+    ++ (if lxcHostsMissingNetworking != [ ] then
+      [ "LXC hosts use lxc-core without a networking aspect and are not in lxcStaticNetworkingHosts: ${builtins.concatStringsSep ", " lxcHostsMissingNetworking}" ]
     else
       [ ]);
 
