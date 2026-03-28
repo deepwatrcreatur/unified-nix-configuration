@@ -59,4 +59,7 @@
     enableBitwardenDecryption = lib.mkForce false; # Not needed for inference work
     enableGpgKeyDecryption = lib.mkForce false; # Not needed for inference work, prevents log exposure
   };
+
+  # Disable user-level Determinate netrc; inference VMs use system-level auth only.
+  services.nix-user-config.netrcMachine = null;
 }
