@@ -109,6 +109,20 @@ The playbook intentionally updates the repo working tree. Review and commit:
 
 Then push and run your normal rebuild/update path.
 
+## Day-2 rebuilds (remote)
+
+After bootstrap, do not rely on GitHub access from the inference VMs.
+Run rebuilds from the control machine using `--target-host`:
+
+```bash
+nixos-rebuild switch \
+  --flake .#inference1 \
+  --target-host deepwatrcreatur@10.10.11.131 \
+  --use-remote-sudo
+```
+
+Repeat for `inference2` / `inference3` with the appropriate IPs.
+
 ## Notes
 
 - The initial install does not depend on stale filesystem UUIDs; the root layout is declarative in `disko`.
