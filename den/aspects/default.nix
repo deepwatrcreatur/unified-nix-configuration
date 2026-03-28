@@ -3,12 +3,12 @@
   nixos-base = context: import ./nixos-base.nix context;
   lxc-core = context: import ./lxc-core.nix context;
   lxc-dhcp-networking = context: import ./lxc-dhcp-networking.nix context;
+  authentik-native = context: import ./authentik-native.nix context;
   attic-client = context: import ./attic-client.nix context;
   nix-daemon-user-ssh = context: import ./nix-daemon-user-ssh.nix context;
   home-manager-users = context: import ./home-manager-users.nix context;
   homeserver-networking = context: import ./homeserver-networking.nix context;
   homeserver-iperf3 = context: import ./homeserver-iperf3.nix context;
-  homeserver-authentik = context: import ./homeserver-authentik.nix context;
   homeserver-homebridge = context: import ./homeserver-homebridge.nix context;
   homeserver-semaphore = context: import ./homeserver-semaphore.nix context;
   attic-cache-core = context: import ./attic-cache-core.nix context;

@@ -21,7 +21,6 @@ in
     ../../../modules/nixos/attic-client.nix # Attic binary cache client
     ../../../modules/nixos/nix-daemon-user-ssh.nix # SSH socket for git+ssh flake inputs
     ./modules/networking.nix
-    ./modules/authentik.nix
     ./modules/configuration.nix
     ./modules/homebridge.nix
     ./modules/home-manager-users.nix

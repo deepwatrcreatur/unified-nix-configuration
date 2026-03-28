@@ -122,6 +122,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-authentik = {
+      url = "github:deepwatrcreatur/nix-authentik";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     dmux-flake = {
       url = "github:deepwatrcreatur/nix-dmux"; # Your new dmux package flake
       inputs.nixpkgs.follows = "nixpkgs";
