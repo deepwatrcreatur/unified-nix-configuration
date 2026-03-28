@@ -1,11 +1,4 @@
 {
-  gateway = {
-    name = "gateway";
-    system = "x86_64-linux";
-    hostPath = ../../hosts/nixos/gateway;
-    isDesktop = false;
-  };
-
   inference1 = {
     name = "inference1";
     system = "x86_64-linux";
