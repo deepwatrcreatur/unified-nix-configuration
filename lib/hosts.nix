@@ -165,6 +165,10 @@
     inference1 = {
       ip = "10.10.11.131";
       sshUser = "deepwatrcreatur";
+      dhcpReservation = {
+        macAddress = "BC:24:11:E4:45:B0";
+        scope = "LAN";
+      };
       description = "GPU inference VM 1";
     };
 

@@ -1,5 +1,11 @@
 ---
 # Bootstrap NixOS inference VMs from a live ISO using nixos-anywhere.
+# Requirements:
+# - Proxmox VM firmware set to plain OVMF (UEFI) on q35
+# - Do not enable Secure Boot or pre-enrolled keys
+# - Do not attach a persistent efidisk0; let Proxmox use temporary efivars
+# - NixOS live installer booted in UEFI mode ("/sys/firmware/efi" must exist)
+# - Disk layout defined by hosts/nixos/inference-vm/modules/disko.nix (Btrfs + Limine + snapper)
 
 - name: Bootstrap inference NixOS hosts with nixos-anywhere
   hosts: nixos_inference
@@ -14,6 +20,14 @@
     bootstrap_machine_identity_pub_path: "{{ repo_root }}/ssh-keys/agenix-machine-identities/{{ flake_target }}.pub"
 
   tasks:
+    - name: Verify the live installer is booted in UEFI mode
+      delegate_to: localhost
+      shell: >
+        ssh -o StrictHostKeyChecking=accept-new {{ bootstrap_target_host }}
+        "test -d /sys/firmware/efi"
+      args:
+        executable: /bin/bash
+
     - name: Install host from local flake with nixos-anywhere
       delegate_to: localhost
       command:
@@ -41,6 +55,17 @@
         host: "{{ ansible_host }}"
         port: 22
         timeout: 300
+
+    - name: Ensure the Limine fallback EFI path exists
+      delegate_to: localhost
+      shell: >
+        ssh -o StrictHostKeyChecking=accept-new root@{{ ansible_host }}
+        "if [ -f /boot/EFI/limine/BOOTX64.EFI ]; then
+          install -d -m 755 /boot/EFI/BOOT &&
+          cp -f /boot/EFI/limine/BOOTX64.EFI /boot/EFI/BOOT/BOOTX64.EFI;
+        fi"
+      args:
+        executable: /bin/bash
 
     - name: Generate stable agenix machine identity on installed host
       delegate_to: localhost

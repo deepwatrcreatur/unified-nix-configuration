@@ -96,6 +96,10 @@ Bootstraps `inference1`, `inference2`, or `inference3` from a NixOS live ISO
 using `nixos-anywhere`. This is the first-install path, not the day-2 rebuild
 path.
 
+For Proxmox, use plain `OVMF` on `q35` with the installer ISO first and the
+system disk second. Do not use Secure Boot, pre-enrolled keys, or a persistent
+`efidisk0` for these inference VMs.
+
 It runs from the control machine and updates the repo working tree with:
 
 - refreshed `hardware-configuration.nix`
