@@ -48,11 +48,14 @@ client_secret = None
 for line in source.read_text().splitlines():
     if not line.startswith("PAPERLESS_SOCIALACCOUNT_PROVIDERS="):
         continue
-    providers = json.loads(line.split("=", 1)[1])
-    app = providers["openid_connect"]["APPS"][0]
-    client_id = app["client_id"]
-    client_secret = app["secret"]
-    break
+    try:
+        providers = json.loads(line.split("=", 1)[1])
+        app = providers["openid_connect"]["APPS"][0]
+        client_id = app["client_id"]
+        client_secret = app["secret"]
+        break
+    except (json.JSONDecodeError, KeyError, IndexError, ValueError) as err:
+        raise SystemExit(f"paperless-authentik-oidc secret has invalid structure: {err}")
 
 if not client_id or not client_secret:
     raise SystemExit("paperless-authentik-oidc secret is missing required OIDC fields")
