@@ -37,6 +37,15 @@ in {
     enable = true;
     keysDirectory = ../../../ssh-keys;
     enableDynamicKeys = true;
+
+    # Include stable operator identity key on all hosts using this module.
+    extraAuthorizedKeys =
+      let
+        stableIdentityPath = ../../../ssh-keys/deepwatrcreatur-stable-identity.pub;
+      in
+      lib.optionals (builtins.pathExists stableIdentityPath) [
+        (lib.strings.trim (builtins.readFile stableIdentityPath))
+      ];
   };
 
   programs.ssh-known-hosts-manager = {

@@ -62,4 +62,6 @@
 
   # Disable user-level Determinate netrc; inference VMs use system-level auth only.
   services.nix-user-config.netrcMachine = null;
+  # Disable GitHub access-tokens on inference VMs to avoid SOPS-dependent tokens.
+  services.nix-user-config.githubTokenPath = null;
 }

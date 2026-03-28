@@ -9,6 +9,10 @@ let
       keysDirectory = lib.mkOption { type = lib.types.path; };
       username = lib.mkOption { type = lib.types.nullOr lib.types.str; default = null; };
       enableDynamicKeys = lib.mkEnableOption "dynamic keys";
+      extraAuthorizedKeys = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [];
+      };
     };
   };
 
