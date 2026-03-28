@@ -22,6 +22,7 @@
       pciutils
       iotop
       strace
+      wl-clipboard
     ]
     ++ [
       # Archive tools

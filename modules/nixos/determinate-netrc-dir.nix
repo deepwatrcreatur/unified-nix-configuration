@@ -36,5 +36,13 @@ in
       # Mode 0775 allows group write access
       "d ${cfg.path} 0775 root ${cfg.group} - -"
     ];
+
+    # Heal permissions if the directory was created earlier with stricter mode.
+    system.activationScripts.determinateNetrcDirPerms = ''
+      if [ -d "${cfg.path}" ]; then
+        chgrp ${cfg.group} "${cfg.path}" || true
+        chmod 0775 "${cfg.path}" || true
+      fi
+    '';
   };
 }
