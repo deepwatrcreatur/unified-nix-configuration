@@ -187,6 +187,31 @@ let
         hasLxcCore && !hasNetworkingAspect && !isStaticException)
       aspectInventoryHostNames;
 
+  # Non-LXC aspect hosts that are missing the "nixos-base" aspect.
+  # nixos-base imports hosts/nixos/default.nix which sets the required base
+  # (timezone, openssh defaults).  Hosts that provide equivalent coverage
+  # through a specialised base aspect are listed in nixosBaseExemptHosts.
+  nixosBaseExemptHosts = [
+    # inference-vm-base imports hosts/nixos/inference-vm which provides its
+    # own base configuration tailored for inference workloads.
+    "inference1"
+    "inference2"
+    "inference3"
+    "inference-fresh"
+  ];
+
+  nonLxcHostsMissingNixosBase =
+    builtins.filter
+      (name:
+        let
+          aspects = hostAspectLists.${name};
+          hasLxcCore = builtins.elem "lxc-core" aspects;
+          hasNixosBase = builtins.elem "nixos-base" aspects;
+          isExempt = builtins.elem name nixosBaseExemptHosts;
+        in
+        !hasLxcCore && !hasNixosBase && !isExempt)
+      aspectInventoryHostNames;
+
   unknownAspectRefs =
     builtins.concatLists (
       pkgs.lib.mapAttrsToList
@@ -236,6 +261,10 @@ let
       [ ])
     ++ (if lxcHostsMissingNetworking != [ ] then
       [ "LXC hosts use lxc-core without a networking aspect and are not in lxcStaticNetworkingHosts: ${builtins.concatStringsSep ", " lxcHostsMissingNetworking}" ]
+    else
+      [ ])
+    ++ (if nonLxcHostsMissingNixosBase != [ ] then
+      [ "Non-LXC aspect hosts missing the nixos-base aspect (add nixos-base or add to nixosBaseExemptHosts with justification): ${builtins.concatStringsSep ", " nonLxcHostsMissingNixosBase}" ]
     else
       [ ]);
 
