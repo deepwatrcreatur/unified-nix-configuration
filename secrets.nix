@@ -94,6 +94,7 @@ let
   githubTokenSecrets = operatorUsers ++ builtins.concatLists (map machineRecipients githubTokenHosts);
 
   podmanServiceSecrets = operatorUsers ++ machineRecipients "podman";
+  paperlessOidcSecrets = operatorUsers ++ machineRecipients "podman" ++ machineRecipients "authentik-host";
 in {
   # Service-scoped secrets
   "secrets-agenix/cloudflare-api-key.age".publicKeys = gatewayServiceSecrets;
@@ -106,7 +107,7 @@ in {
   "secrets-agenix/attic-jwt-secret.age".publicKeys = atticServiceSecrets;
   "secrets-agenix/nix-remote-builder-key.age".publicKeys = remoteBuilderClientSecrets;
   "secrets-agenix/paperless-db-password.age".publicKeys = podmanServiceSecrets;
-  "secrets-agenix/paperless-authentik-oidc.age".publicKeys = podmanServiceSecrets;
+  "secrets-agenix/paperless-authentik-oidc.age".publicKeys = paperlessOidcSecrets;
   "secrets-agenix/nightscout-api-secret.age".publicKeys = podmanServiceSecrets;
   "secrets-agenix/librelinkup-env.age".publicKeys = podmanServiceSecrets;
 

@@ -13,6 +13,7 @@ den.mkHostModule {
     "lxc-core"
     "lxc-dhcp-networking"
     "authentik-native"
+    "authentik-paperless-oidc"
     "attic-client"
     "nix-daemon-user-ssh"
     "home-manager-users"
