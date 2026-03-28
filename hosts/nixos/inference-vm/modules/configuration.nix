@@ -61,8 +61,8 @@
     kernelParams = lib.mkAfter [ "console=ttyS0,115200" ];
   };
 
-  # Enable login on the first serial port (used by Proxmox serial console)
-  services.getty.serial.enable = true;
+  # Run a getty on the Proxmox serial console (ttyS0)
+  systemd.services."serial-getty@ttyS0".enable = true;
 
   services.fstrim.enable = true;
 
