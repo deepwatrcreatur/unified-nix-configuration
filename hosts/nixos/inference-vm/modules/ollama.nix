@@ -106,8 +106,8 @@ in
     # Ensure parent and models directory exist with correct permissions
     systemd.tmpfiles.rules = [
       "d ${builtins.dirOf cfg.modelsPath} 0755 root root -"
-      "d ${cfg.modelsPath} 0755 ollama ollama -"
-      "d ${cfg.modelsPath}/models 0755 ollama ollama -"
+      "Z ${cfg.modelsPath} 0755 ollama ollama -"
+      "Z ${cfg.modelsPath}/models 0755 ollama ollama -"
     ];
 
     # Add ollama user to system if not already present
