@@ -14,6 +14,7 @@
     ../../../../modules/nixos/root-ssh-identity.nix
     ../../../../modules/nixos/deepwatrcreatur-ssh-identity.nix
     ../../../../modules/nixos/snapper.nix
+    ../../../../modules/nixos/determinate-netrc-dir.nix
     # inputs.nix-attic-infra.nixosModules.attic-client  # Disabled - requires sops-nix
   ];
 
