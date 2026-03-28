@@ -24,29 +24,12 @@
 
   my.root-ssh-identity.enable = true;
 
-  # Nixpkgs configuration
-  nixpkgs = {
-    config.allowUnfree = true;
-    config.allowUnsupportedSystem = true; # Allow unsupported packages like cuDNN
-    config.cudaForwardCompat = false; # Skip cuda_compat build
-  };
+  # Nixpkgs configuration — GPU-specific flags live in inference-vm-nvidia.nix
+  nixpkgs.config.allowUnfree = true;
 
   # Attic client configuration (using agenix for token)
   # The nix-attic-infra module is disabled since it requires sops-nix internally
   # Configure attic manually via the attic CLI using the token from agenix
-
-  # GPU Infrastructure configuration - Tesla P40 optimized
-  hardware.nvidia = {
-    modesetting.enable = true;
-    powerManagement.enable = false; # Disable for Tesla P40 stability
-    open = false; # Use proprietary driver
-  };
-  hardware.graphics.enable = true;
-
-  # Add OpenWebUI package for web interface to Ollama
-  environment.systemPackages = with pkgs; [
-    open-webui # Web interface for Ollama
-  ];
 
   # Base VM configuration for inference machines and services
   services = {
@@ -98,5 +81,4 @@
   networking.firewall.enable = false;
 
   system.stateVersion = "25.05";
-  services.xserver.videoDrivers = [ "nvidia" ];
 }

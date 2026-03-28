@@ -17,6 +17,7 @@ den.mkHostModule {
   ];
   aspectsList = [
     "inference-vm-base"
+    "inference-vm-nvidia"
     "inference1-ollama"
   ];
 }
