@@ -112,6 +112,25 @@ in
     conntrack-max = 262144;
   };
 
+  services.router-technitium =
+    let
+      hostsData = import ../../../lib/hosts.nix;
+      reservableHosts = lib.filterAttrs (
+        _name: host: (host.dhcpReservation or null) != null && (host.ip or null) != null
+      ) hostsData.hosts;
+    in
+    {
+      dhcpReservations = lib.mapAttrs (
+        name: host: {
+          scope = host.dhcpReservation.scope or "LAN";
+          macAddress = host.dhcpReservation.macAddress;
+          ipAddress = host.ip;
+          hostName = name;
+          comments = host.description or "";
+        }
+      ) reservableHosts;
+    };
+
   services.router-firewall = {
     enable = true;
     tailscaleInterface = "tailscale0";

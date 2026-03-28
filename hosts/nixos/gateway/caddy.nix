@@ -84,7 +84,7 @@ in
 
       "authentik.deepwatercreature.com" = {
         extraConfig = ''
-          reverse_proxy 10.10.11.69:19000
+          reverse_proxy 10.10.11.70:9000
         '';
       };
 

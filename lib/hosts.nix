@@ -19,6 +19,9 @@
   #   description: human-readable description (optional)
   #   includeSsh: whether to include in SSH config (default: true)
   #   includeDns: whether to include in DNS zone (default: true)
+  #   dhcpReservation: optional DHCP reservation metadata for Technitium-backed
+  #                    dynamic hosts. When present, gateway can derive a stable
+  #                    lease from inventory instead of pinning the guest config.
 
   hosts = {
     # Core Infrastructure
@@ -118,6 +121,10 @@
     authentik-host = {
       ip = "10.10.11.70";
       sshUser = "deepwatrcreatur";
+      dhcpReservation = {
+        macAddress = "BC:24:11:A4:01:6F";
+        scope = "LAN";
+      };
       description = "Dedicated Authentik identity host";
     };
 
