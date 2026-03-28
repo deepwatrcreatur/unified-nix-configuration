@@ -1,4 +1,12 @@
 {
+  authentik-host = {
+    kind = "nixos";
+    name = "authentik-host";
+    system = "x86_64-linux";
+    hostPath = ../hosts/authentik-host;
+    mode = "aspect";
+  };
+
   attic-cache = {
     kind = "nixos";
     name = "attic-cache";

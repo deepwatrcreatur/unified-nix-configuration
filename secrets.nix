@@ -29,6 +29,7 @@ let
 
   # All NixOS hosts that should receive the root SSH key
   rootSshKeyHosts = [
+    "authentik-host"
     "attic-cache"
     "gateway"
     "homeserver"
@@ -64,6 +65,7 @@ let
 
   # All hosts that build from this repo should be able to use the attic cache
   atticClientHosts = [
+    "authentik-host"
     "attic-cache"
     "gateway"
     "homeserver"

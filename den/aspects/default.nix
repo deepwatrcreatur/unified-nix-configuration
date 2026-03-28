@@ -2,6 +2,7 @@
 {
   nixos-base = context: import ./nixos-base.nix context;
   lxc-core = context: import ./lxc-core.nix context;
+  lxc-dhcp-networking = context: import ./lxc-dhcp-networking.nix context;
   attic-client = context: import ./attic-client.nix context;
   nix-daemon-user-ssh = context: import ./nix-daemon-user-ssh.nix context;
   home-manager-users = context: import ./home-manager-users.nix context;
