@@ -152,21 +152,13 @@ let
 
   aspectNames = builtins.attrNames denAspectRegistry;
 
+  # Read aspectsList directly from inventory entries (aspect hosts must declare it there).
+  # Previously this tried to evaluate the host module and read aspectsList from the result,
+  # but mkHostModule returns { imports = [...]; } — a NixOS module — so aspectsList was
+  # never present and every host silently got [].
   hostAspectLists =
     builtins.mapAttrs
-      (_: host:
-        if host.mode or "" == "aspect" then
-          let
-            hostModule = import host.hostPath;
-            evaluated =
-              if builtins.isFunction hostModule then
-                hostModule { lib = pkgs.lib; }
-              else
-                hostModule;
-          in
-          evaluated.aspectsList or [ ]
-        else
-          [ ])
+      (_: host: host.aspectsList or [ ])
       inventoryHosts;
 
   # Assert that every aspect host using lxc-core has an explicit networking aspect.
