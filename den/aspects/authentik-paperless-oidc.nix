@@ -20,6 +20,7 @@ in
 
   systemd.services.authentik-prepare-paperless-oidc = {
     description = "Extract Paperless OIDC runtime credentials for Authentik";
+    after = [ "agenix.service" ];
     before = [ "authentik-render-blueprints.service" ];
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
@@ -34,6 +35,7 @@ in
 
         ${pkgs.python3}/bin/python - <<'PY'
 import json
+import os
 from pathlib import Path
 
 source = Path("${secretPath}")
@@ -55,8 +57,12 @@ for line in source.read_text().splitlines():
 if not client_id or not client_secret:
     raise SystemExit("paperless-authentik-oidc secret is missing required OIDC fields")
 
-client_id_target.write_text(client_id)
-client_secret_target.write_text(client_secret)
+old_umask = os.umask(0o377)
+try:
+    client_id_target.write_text(client_id)
+    client_secret_target.write_text(client_secret)
+finally:
+    os.umask(old_umask)
 PY
 
         chown authentik:authentik ${clientIdFile} ${clientSecretFile}
