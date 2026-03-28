@@ -22,6 +22,7 @@
     hostPath = ../hosts/attic-cache;
     mode = "aspect";
     aspectsList = [
+      "nixos-base"
       "attic-cache-core"
       "attic-cache-build-server"
       "attic-cache-home-manager"
