@@ -10,6 +10,7 @@ let
   cfg = config.services.nix-user-config;
   cacheTrust = import ../../../lib/cache-trust.nix;
   atticCache = import ../../../lib/attic-cache.nix;
+  tokenPath = if cfg.githubTokenPath == null then "" else cfg.githubTokenPath;
   legacyNetrcEntries =
     lib.optional (cfg.netrcMachine != null) {
       machine = cfg.netrcMachine;
@@ -123,10 +124,10 @@ in
           force = true; # Overwrite existing backups to avoid clobbering errors
         };
 
-        # Read GitHub token from file and append to nix.conf when configured
-        home.activation.nixConfigToken = lib.mkIf (cfg.githubTokenPath != null) (lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        # Read GitHub token from file and append to nix.conf
+        home.activation.nixConfigToken = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           nix_conf="$HOME/.config/nix/nix.conf"
-          token_path="${cfg.githubTokenPath}"
+          token_path="${tokenPath}"
 
           token=""
           # Try fnox if available
