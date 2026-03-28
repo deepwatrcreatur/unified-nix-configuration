@@ -11,7 +11,6 @@
     inputs.nix-router-optimized.nixosModules.router-log-storage
     inputs.nix-router-optimized.nixosModules.router-optimizations
     ../../modules/nixos/common
-    ../../modules/nixos/determinate-netrc-dir.nix
     ../../modules/nixos/services/iperf3.nix
     ../../modules/nixos/keyboard-glitches.nix
     ../../modules/nixos/snap.nix
