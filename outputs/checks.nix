@@ -27,7 +27,6 @@ let
   inventoryHomeNames = names inventoryHomes;
   legacyHostAllowlist = [
     "gateway"
-    "inference-fresh"
   ];
 
   hostNamesExpectedInLib =

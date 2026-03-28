@@ -3,20 +3,20 @@ let
   den = import ../../lib.nix { inherit lib; };
 in
 den.mkHostModule {
-  name = "inference2";
+  name = "inference-fresh";
   primaryUser = "deepwatrcreatur";
   extraImports = [
-    ../../../hosts/nixos/inference-vm/hosts/inference2/hardware-configuration.nix
+    ../../../hosts/nixos/inference-vm/hosts/inference-fresh/hardware-configuration.nix
     (
       { ... }:
       {
-        networking.hostName = "inference2";
+        networking.hostName = "inference-fresh";
         boot.growPartition = true;
       }
     )
   ];
+  # No inference-vm-nvidia: this host has no GPU and runs without NVIDIA drivers.
   aspectsList = [
     "inference-vm-base"
-    "inference-vm-nvidia"
   ];
 }

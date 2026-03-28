@@ -60,8 +60,8 @@
     kind = "nixos";
     name = "inference-fresh";
     system = "x86_64-linux";
-    hostPath = ../../hosts/nixos/inference-vm/hosts/inference-fresh;
-    mode = "legacy";
+    hostPath = ../hosts/inference-fresh;
+    mode = "aspect";
   };
 
   podman = {
