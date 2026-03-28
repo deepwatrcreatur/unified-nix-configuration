@@ -80,6 +80,7 @@ _context:
   };
 
   systemd.tmpfiles.rules = [
+    "d /models 0755 root root -"
     "d /models/ollama 0755 root root -"
     "d /models/ollama/.ollama 0700 ollama ollama -"
     "d /models/ollama/models 0755 ollama ollama -"

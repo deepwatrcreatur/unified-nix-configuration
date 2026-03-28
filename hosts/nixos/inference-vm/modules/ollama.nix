@@ -103,8 +103,9 @@ in
       StateDirectory = lib.mkForce "";
     };
 
-    # Ensure models directory exists with correct permissions
+    # Ensure parent and models directory exist with correct permissions
     systemd.tmpfiles.rules = [
+      "d ${builtins.dirOf cfg.modelsPath} 0755 root root -"
       "d ${cfg.modelsPath} 0755 ollama ollama -"
       "d ${cfg.modelsPath}/models 0755 ollama ollama -"
     ];
