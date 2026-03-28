@@ -1,0 +1,26 @@
+name: Nix checks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  inventory-checks:
+    name: Inventory & module checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: DeterminateSystems/nix-installer-action@main
+
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+
+      - name: inventory-consistency
+        run: nix build .#checks.x86_64-linux.inventory-consistency --no-link --print-build-logs
+
+      - name: module-loading-eval
+        run: nix build .#checks.x86_64-linux.module-loading-eval --no-link --print-build-logs
+
+      - name: ssh-keys-manager-eval
+        run: nix build .#checks.x86_64-linux.ssh-keys-manager-eval --no-link --print-build-logs
