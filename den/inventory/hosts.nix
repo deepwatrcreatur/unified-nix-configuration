@@ -5,6 +5,14 @@
     system = "x86_64-linux";
     hostPath = ../hosts/authentik-host;
     mode = "aspect";
+    aspectsList = [
+      "nixos-base"
+      "lxc-core"
+      "lxc-dhcp-networking"
+      "attic-client"
+      "nix-daemon-user-ssh"
+      "home-manager-users"
+    ];
   };
 
   attic-cache = {
@@ -13,15 +21,25 @@
     system = "x86_64-linux";
     hostPath = ../hosts/attic-cache;
     mode = "aspect";
+    aspectsList = [
+      "nixos-base"
+      "attic-cache-core"
+      "attic-cache-build-server"
+      "attic-cache-home-manager"
+    ];
   };
 
   gateway = {
     kind = "nixos";
     name = "gateway";
     system = "x86_64-linux";
-    hostPath = ../../hosts/nixos/gateway;
+    hostPath = ../hosts/gateway;
     isDesktop = false;
-    mode = "legacy";
+    mode = "aspect";
+    aspectsList = [
+      "nixos-base"
+      "gateway-router"
+    ];
   };
 
   homeserver = {
@@ -30,6 +48,18 @@
     system = "x86_64-linux";
     hostPath = ../hosts/homeserver;
     mode = "aspect";
+    aspectsList = [
+      "nixos-base"
+      "lxc-core"
+      "attic-client"
+      "nix-daemon-user-ssh"
+      "home-manager-users"
+      "homeserver-networking"
+      "homeserver-iperf3"
+      "homeserver-homebridge"
+      "homeserver-semaphore"
+      "rustdesk-server"
+    ];
   };
 
   inference1 = {
@@ -38,6 +68,11 @@
     system = "x86_64-linux";
     hostPath = ../hosts/inference1;
     mode = "aspect";
+    aspectsList = [
+      "inference-vm-base"
+      "inference-vm-nvidia"
+      "inference1-ollama"
+    ];
   };
 
   inference2 = {
@@ -46,6 +81,10 @@
     system = "x86_64-linux";
     hostPath = ../hosts/inference2;
     mode = "aspect";
+    aspectsList = [
+      "inference-vm-base"
+      "inference-vm-nvidia"
+    ];
   };
 
   inference3 = {
@@ -54,6 +93,10 @@
     system = "x86_64-linux";
     hostPath = ../hosts/inference3;
     mode = "aspect";
+    aspectsList = [
+      "inference-vm-base"
+      "inference-vm-nvidia"
+    ];
   };
 
   inference-fresh = {
@@ -62,6 +105,9 @@
     system = "x86_64-linux";
     hostPath = ../hosts/inference-fresh;
     mode = "aspect";
+    aspectsList = [
+      "inference-vm-base"
+    ];
   };
 
   podman = {
@@ -70,6 +116,15 @@
     system = "x86_64-linux";
     hostPath = ../hosts/podman;
     mode = "aspect";
+    aspectsList = [
+      "nixos-base"
+      "lxc-core"
+      "attic-client"
+      "nix-daemon-user-ssh"
+      "home-manager-users"
+      "podman-lxc-suppressions"
+      "podman-containers"
+    ];
   };
 
   rustdesk = {
@@ -78,6 +133,14 @@
     system = "x86_64-linux";
     hostPath = ../hosts/rustdesk;
     mode = "aspect";
+    aspectsList = [
+      "nixos-base"
+      "lxc-core"
+      "attic-client"
+      "nix-daemon-user-ssh"
+      "home-manager-users"
+      "rustdesk-server"
+    ];
   };
 
   workstation = {
@@ -87,6 +150,10 @@
     hostPath = ../hosts/workstation;
     isDesktop = true;
     mode = "aspect";
+    aspectsList = [
+      "nixos-base"
+      "workstation-desktop"
+    ];
   };
 
   phoenix = {
@@ -96,5 +163,9 @@
     hostPath = ../hosts/phoenix;
     isDesktop = true;
     mode = "aspect";
+    aspectsList = [
+      "nixos-base"
+      "workstation-desktop"
+    ];
   };
 }

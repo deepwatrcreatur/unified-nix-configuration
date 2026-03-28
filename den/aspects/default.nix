@@ -22,4 +22,5 @@
   inference-vm-base = context: import ./inference-vm-base.nix context;
   inference-vm-nvidia = context: import ./inference-vm-nvidia.nix context;
   inference1-ollama = context: import ./inference1-ollama.nix context;
+  gateway-router = context: import ./gateway-router.nix context;
 }

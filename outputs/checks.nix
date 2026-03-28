@@ -25,9 +25,7 @@ let
   names = builtins.attrNames;
   inventoryHostNames = names inventoryHosts;
   inventoryHomeNames = names inventoryHomes;
-  legacyHostAllowlist = [
-    "gateway"
-  ];
+  legacyHostAllowlist = [ ];
 
   hostNamesExpectedInLib =
     builtins.filter
@@ -152,21 +150,13 @@ let
 
   aspectNames = builtins.attrNames denAspectRegistry;
 
+  # Read aspectsList directly from inventory entries (aspect hosts must declare it there).
+  # Previously this tried to evaluate the host module and read aspectsList from the result,
+  # but mkHostModule returns { imports = [...]; } — a NixOS module — so aspectsList was
+  # never present and every host silently got [].
   hostAspectLists =
     builtins.mapAttrs
-      (_: host:
-        if host.mode or "" == "aspect" then
-          let
-            hostModule = import host.hostPath;
-            evaluated =
-              if builtins.isFunction hostModule then
-                hostModule { lib = pkgs.lib; }
-              else
-                hostModule;
-          in
-          evaluated.aspectsList or [ ]
-        else
-          [ ])
+      (_: host: host.aspectsList or [ ])
       inventoryHosts;
 
   # Assert that every aspect host using lxc-core has an explicit networking aspect.
@@ -193,6 +183,31 @@ let
           isStaticException = builtins.elem name lxcStaticNetworkingHosts;
         in
         hasLxcCore && !hasNetworkingAspect && !isStaticException)
+      aspectInventoryHostNames;
+
+  # Non-LXC aspect hosts that are missing the "nixos-base" aspect.
+  # nixos-base imports hosts/nixos/default.nix which sets the required base
+  # (timezone, openssh defaults).  Hosts that provide equivalent coverage
+  # through a specialised base aspect are listed in nixosBaseExemptHosts.
+  nixosBaseExemptHosts = [
+    # inference-vm-base imports hosts/nixos/inference-vm which provides its
+    # own base configuration tailored for inference workloads.
+    "inference1"
+    "inference2"
+    "inference3"
+    "inference-fresh"
+  ];
+
+  nonLxcHostsMissingNixosBase =
+    builtins.filter
+      (name:
+        let
+          aspects = hostAspectLists.${name};
+          hasLxcCore = builtins.elem "lxc-core" aspects;
+          hasNixosBase = builtins.elem "nixos-base" aspects;
+          isExempt = builtins.elem name nixosBaseExemptHosts;
+        in
+        !hasLxcCore && !hasNixosBase && !isExempt)
       aspectInventoryHostNames;
 
   unknownAspectRefs =
@@ -244,6 +259,10 @@ let
       [ ])
     ++ (if lxcHostsMissingNetworking != [ ] then
       [ "LXC hosts use lxc-core without a networking aspect and are not in lxcStaticNetworkingHosts: ${builtins.concatStringsSep ", " lxcHostsMissingNetworking}" ]
+    else
+      [ ])
+    ++ (if nonLxcHostsMissingNixosBase != [ ] then
+      [ "Non-LXC aspect hosts missing the nixos-base aspect (add nixos-base or add to nixosBaseExemptHosts with justification): ${builtins.concatStringsSep ", " nonLxcHostsMissingNixosBase}" ]
     else
       [ ]);
 

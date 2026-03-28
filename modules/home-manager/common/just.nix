@@ -258,7 +258,7 @@ in
       type = lib.types.lines;
       default =
         if platform == "darwin" then
-          "ulimit -n 65536; sudo /nix/var/nix/profiles/system/sw/bin/darwin-rebuild switch --flake ${config.my.just.flakeDir}#${config.my.just.flakeTarget}"
+          "ulimit -n 65536; /usr/bin/sudo /run/current-system/sw/bin/darwin-rebuild switch --flake ${config.my.just.flakeDir}#${config.my.just.flakeTarget}"
         else if platform == "nixos" then
           "/run/wrappers/bin/sudo nixos-rebuild switch --flake ${config.my.just.flakeDir}#${config.my.just.flakeTarget} --option use-cgroups false"
         else
@@ -282,7 +282,7 @@ in
       type = lib.types.lines;
       default =
         if platform == "darwin" then
-          "ulimit -n 65536; sudo /nix/var/nix/profiles/system/sw/bin/darwin-rebuild build --flake ${config.my.just.flakeDir}#${config.my.just.flakeTarget}"
+          "ulimit -n 65536; /usr/bin/sudo /run/current-system/sw/bin/darwin-rebuild build --flake ${config.my.just.flakeDir}#${config.my.just.flakeTarget}"
         else if platform == "nixos" then
           "/run/wrappers/bin/sudo nixos-rebuild build --flake ${config.my.just.flakeDir}#${config.my.just.flakeTarget} --option use-cgroups false"
         else
@@ -294,7 +294,7 @@ in
       type = lib.types.lines;
       default =
         if platform == "darwin" then
-          "ulimit -n 65536; sudo /nix/var/nix/profiles/system/sw/bin/darwin-rebuild test --flake ${config.my.just.flakeDir}#${config.my.just.flakeTarget}"
+          "ulimit -n 65536; /usr/bin/sudo /run/current-system/sw/bin/darwin-rebuild test --flake ${config.my.just.flakeDir}#${config.my.just.flakeTarget}"
         else if platform == "nixos" then
           "/run/wrappers/bin/sudo nixos-rebuild test --flake ${config.my.just.flakeDir}#${config.my.just.flakeTarget} --option use-cgroups false"
         else

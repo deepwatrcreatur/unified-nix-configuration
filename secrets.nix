@@ -57,6 +57,7 @@ let
 
   gatewayServiceSecrets = operatorUsers ++ machineRecipients "gateway";
   homeserverServiceSecrets = operatorUsers ++ machineRecipients "homeserver";
+  authentikHostServiceSecrets = operatorUsers ++ machineRecipients "authentik-host";
 
   atticServiceSecrets = operatorUsers ++ machineRecipients "attic-cache";
 
@@ -101,7 +102,7 @@ in {
   "secrets-agenix/cloudflare_ddns_API_token.age".publicKeys = gatewayServiceSecrets;
   "secrets-agenix/technitium-api-key.age".publicKeys = gatewayServiceSecrets;
   "secrets-agenix/tailscale-auth-key.age".publicKeys = gatewayServiceSecrets;
-  "secrets-agenix/authentik-env.age".publicKeys = homeserverServiceSecrets;
+  "secrets-agenix/authentik-env.age".publicKeys = authentikHostServiceSecrets;
   "secrets-agenix/attic-client-token.age".publicKeys = atticClientSecrets;
   "secrets-agenix/attic-server-token.age".publicKeys = atticServiceSecrets;
   "secrets-agenix/attic-jwt-secret.age".publicKeys = atticServiceSecrets;
