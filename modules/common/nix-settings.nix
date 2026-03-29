@@ -42,6 +42,10 @@ let
   canUseRemoteBuilder = remoteBuilder.canUse (config.networking.hostName or "");
 in
 {
+  imports = [
+    ../../den/aspects/nix-caches.nix
+  ];
+
   myModules.caches.enable = lib.mkDefault true;
 
   # Cache feature toggles (see den/aspects/nix-caches.nix).
