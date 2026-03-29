@@ -7,6 +7,7 @@
     ../../hosts/nixos-lxc/podman/stacks/nightscout-stack.nix
     ../../hosts/nixos-lxc/podman/stacks/paperless-stack.nix
     ../../hosts/nixos-lxc/podman/stacks/librelinkup-stack.nix
+    ../../hosts/nixos-lxc/podman/stacks/scrypted-stack.nix
   ];
 
   # Enable Podman with settings

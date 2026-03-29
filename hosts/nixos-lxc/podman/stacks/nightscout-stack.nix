@@ -53,7 +53,7 @@ in
           BASE_URL = "https://nightscout.deepwatercreature.com";
 
           # Auth settings - default role for viewers
-          AUTH_DEFAULT_ROLES = "denied";
+          AUTH_DEFAULT_ROLES = "readable";
         };
       };
 
