@@ -93,7 +93,14 @@ in
 
     # Substituters - exclude local cache on the cache server itself to avoid circular dependency
     substituters =
-      lib.optionals (!isCacheServer && enableAttic) (atticCache.defaultSubstituters { includeNixCi = enableNixCi; })
+      (if !isCacheServer then
+        if enableAttic then
+          atticCache.defaultSubstituters { includeNixCi = enableNixCi; }
+        else
+          # Fallback when Attic is disabled: keep using cache.nixos.org
+          [ atticCache.nixosCacheUrl ]
+      else
+        [ ])
       ++ [
         "https://cache.numtide.com" # llm-agents (claude-code, codex, rtk, etc.)
         "https://cuda-maintainers.cachix.org"
@@ -103,8 +110,12 @@ in
       ];
 
     trusted-public-keys =
-      (if enableAttic then atticCache.defaultTrustedPublicKeys { includeNixCi = enableNixCi; } else [ ])
-      ++ (builtins.tail cacheTrust.official);
+      # When Attic is disabled, fall back to the full set of official keys so
+      # cache.nixos.org remains usable.
+      (if enableAttic then
+        atticCache.defaultTrustedPublicKeys { includeNixCi = enableNixCi; }
+      else
+        cacheTrust.official);
 
     # Access tokens - only on non-cache-server hosts
     access-tokens =
