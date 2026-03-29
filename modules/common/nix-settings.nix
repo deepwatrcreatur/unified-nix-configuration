@@ -38,6 +38,8 @@ let
   canUseRemoteBuilder = remoteBuilder.canUse (config.networking.hostName or "");
 in
 {
+  myModules.caches.enable = lib.mkDefault true;
+
   nixpkgs.config.allowUnfree = true;
 
   nix.settings = {
