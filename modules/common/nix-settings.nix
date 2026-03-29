@@ -35,6 +35,10 @@ let
   isCacheServer = config.networking.hostName or "" == "attic-cache";
   hasNixCiNetrc = builtins.pathExists nixCiNetrcFile;
 
+  enableCaches = config.myModules.caches.enable or true;
+  enableAttic = enableCaches && (config.myModules.caches.enableAttic or true);
+  enableNixCi = enableCaches && (config.myModules.caches.enableNixCi or true) && hasNixCiNetrc;
+
   canUseRemoteBuilder = remoteBuilder.canUse (config.networking.hostName or "");
 in
 {
@@ -43,11 +47,6 @@ in
   # Cache feature toggles (see den/aspects/nix-caches.nix).
   # These allow per-host/aspect control over whether the local Attic
   # cache and the paid nix-ci.com cache are used.
-  let
-    enableCaches = config.myModules.caches.enable or true;
-    enableAttic = enableCaches && (config.myModules.caches.enableAttic or true);
-    enableNixCi = enableCaches && (config.myModules.caches.enableNixCi or true) && hasNixCiNetrc;
-  in
 
   nixpkgs.config.allowUnfree = true;
 
