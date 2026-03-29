@@ -40,6 +40,15 @@ in
 {
   myModules.caches.enable = lib.mkDefault true;
 
+  # Cache feature toggles (see den/aspects/nix-caches.nix).
+  # These allow per-host/aspect control over whether the local Attic
+  # cache and the paid nix-ci.com cache are used.
+  let
+    enableCaches = config.myModules.caches.enable or true;
+    enableAttic = enableCaches && (config.myModules.caches.enableAttic or true);
+    enableNixCi = enableCaches && (config.myModules.caches.enableNixCi or true) && hasNixCiNetrc;
+  in
+
   nixpkgs.config.allowUnfree = true;
 
   nix.settings = {
@@ -84,7 +93,7 @@ in
 
     # Substituters - exclude local cache on the cache server itself to avoid circular dependency
     substituters =
-      lib.optionals (!isCacheServer) (atticCache.defaultSubstituters { includeNixCi = hasNixCiNetrc; })
+      lib.optionals (!isCacheServer && enableAttic) (atticCache.defaultSubstituters { includeNixCi = enableNixCi; })
       ++ [
         "https://cache.numtide.com" # llm-agents (claude-code, codex, rtk, etc.)
         "https://cuda-maintainers.cachix.org"
@@ -94,7 +103,7 @@ in
       ];
 
     trusted-public-keys =
-      (atticCache.defaultTrustedPublicKeys { includeNixCi = hasNixCiNetrc; })
+      (if enableAttic then atticCache.defaultTrustedPublicKeys { includeNixCi = enableNixCi; } else [ ])
       ++ (builtins.tail cacheTrust.official);
 
     # Access tokens - only on non-cache-server hosts
