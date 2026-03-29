@@ -45,6 +45,7 @@
         "home-assistant"
         "authentik"
         "paperless"
+        "scrypted"
         "2fauth"
         "nightscout"
         "marreta"
