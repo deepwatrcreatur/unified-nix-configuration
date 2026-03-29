@@ -95,9 +95,9 @@
     "d /models 0755 root root -"
     "d /models/ollama 0755 root root -"
     "Z /models/ollama/.ollama 0700 ollama ollama -"
-    "Z /models/ollama/models 0755 ollama ollama -"
-    "Z /models/ollama/models/blobs 0755 ollama ollama -"
-    "Z /models/ollama/models/manifests 0755 ollama ollama -"
+    "Z /models/ollama/models 0770 ollama ollama -"
+    "Z /models/ollama/models/blobs 0770 ollama ollama -"
+    "Z /models/ollama/models/manifests 0770 ollama ollama -"
   ];
 
   # VirtioFS-backed models volume from pve-tomahawk (rpool/inference-models)
