@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, config, ... }:
 {
   options.myModules.caches = {
     enable = lib.mkEnableOption "Enable shared cache configuration";
