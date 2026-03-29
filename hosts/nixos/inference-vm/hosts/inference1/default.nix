@@ -84,6 +84,9 @@
     serviceConfig = {
       StateDirectory = lib.mkForce "";
       DynamicUser = lib.mkForce false;
+      User = lib.mkForce "ollama";
+      Group = lib.mkForce "ollama";
+      PrivateUsers = lib.mkForce false; # virtiofs uses host UIDs; user namespace breaks ownership
       ReadWritePaths = lib.mkForce [ "/models/ollama" ];
       WorkingDirectory = lib.mkForce "/models/ollama";
       # Allow access to the actual GPU device
