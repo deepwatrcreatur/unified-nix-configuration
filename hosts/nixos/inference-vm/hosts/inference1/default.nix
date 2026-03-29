@@ -97,9 +97,9 @@
     "Z /models/ollama/.ollama 0700 ollama ollama -"
     "Z /models/ollama/.ollama/id_ed25519 0600 ollama ollama -"
     "Z /models/ollama/.ollama/id_ed25519.pub 0644 ollama ollama -"
-    "Z /models/ollama/models 0770 ollama ollama -"
-    "Z /models/ollama/models/blobs 0770 ollama ollama -"
-    "Z /models/ollama/models/manifests 0770 ollama ollama -"
+    "Z /models/ollama/models 0777 ollama ollama -"
+    "Z /models/ollama/models/blobs 0777 ollama ollama -"
+    "Z /models/ollama/models/manifests 0777 ollama ollama -"
   ];
 
   # VirtioFS-backed models volume from pve-tomahawk (rpool/inference-models)
