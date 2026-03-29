@@ -50,6 +50,7 @@ in {
       aliases = {
         # "www" = "gateway";
         # "mail" = "gateway";
+        "scrypted" = "gateway";
       };
     };
   };
