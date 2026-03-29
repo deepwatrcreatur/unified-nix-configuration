@@ -12,3 +12,4 @@ pve-gateway 10.10.11.52 A
 pve-strix 10.10.11.57 A
 workstation 10.10.11.73 A
 podman 10.10.11.84 A
+scrypted 10.10.11.84 A
