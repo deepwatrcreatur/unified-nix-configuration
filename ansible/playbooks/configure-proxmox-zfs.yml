@@ -1,0 +1,81 @@
+---
+# Configure ZFS on Proxmox hosts to log to RAM, reducing disk write wear
+#
+# This writes /etc/modprobe.d/zfs.conf with module parameters that keep
+# ZFS debug messages in an in-RAM ring buffer rather than flushing to disk,
+# then regenerates initramfs so the settings apply on next boot.
+#
+# Usage:
+#   ansible-playbook -i inventory/hosts.yml playbooks/configure-proxmox-zfs.yml
+#
+# Limit to specific hosts:
+#   ansible-playbook -i inventory/hosts.yml playbooks/configure-proxmox-zfs.yml --limit pve-rog
+#
+# The changes take effect after the next reboot. To apply immediately without
+# rebooting, also pass: -e apply_immediately=true
+# (this reloads the zfs kernel module — safe on idle pools only)
+
+- name: Configure ZFS RAM logging on Proxmox hosts
+  hosts: proxmox
+  gather_facts: true
+
+  vars:
+    apply_immediately: false
+
+    # ZFS module parameters written to /etc/modprobe.d/zfs.conf
+    # zfs_dbgmsg_enable=0  — disable ZFS debug message disk writes; messages
+    #                         stay in the in-RAM ring buffer (/proc/spl/kstat/zfs/dbgmsg)
+    #                         instead of being forwarded to syslog → disk.
+    zfs_modprobe_config: |
+      # Managed by Ansible — configure-proxmox-zfs.yml
+      # Keep ZFS debug log in RAM ring buffer, not syslog/disk
+      options zfs zfs_dbgmsg_enable=0
+
+  tasks:
+    - name: Check that ZFS is available
+      stat:
+        path: /proc/spl/kstat/zfs
+      register: zfs_kstat
+
+    - name: Fail if ZFS kernel module is not loaded
+      fail:
+        msg: "ZFS does not appear to be loaded on {{ inventory_hostname }} (/proc/spl/kstat/zfs not found)"
+      when: not zfs_kstat.stat.exists
+
+    - name: Write /etc/modprobe.d/zfs.conf
+      copy:
+        dest: /etc/modprobe.d/zfs.conf
+        content: "{{ zfs_modprobe_config }}"
+        owner: root
+        group: root
+        mode: "0644"
+      register: modprobe_config
+
+    - name: Regenerate initramfs (so settings persist across reboots)
+      command: update-initramfs -u -k all
+      when: modprobe_config.changed
+      register: initramfs_update
+
+    - name: Show initramfs update output
+      debug:
+        msg: "{{ initramfs_update.stdout_lines | default([]) + initramfs_update.stderr_lines | default([]) }}"
+      when: initramfs_update is defined and initramfs_update.changed
+
+    - name: Apply immediately — reload ZFS debug setting via /sys (no module reload needed)
+      shell: |
+        echo 0 > /sys/module/zfs/parameters/zfs_dbgmsg_enable
+      when:
+        - apply_immediately | bool
+        - modprobe_config.changed
+      register: sysfs_apply
+      ignore_errors: true
+
+    - name: Verify current zfs_dbgmsg_enable value
+      command: cat /sys/module/zfs/parameters/zfs_dbgmsg_enable
+      register: dbgmsg_current
+      changed_when: false
+      ignore_errors: true
+
+    - name: Show current zfs_dbgmsg_enable
+      debug:
+        msg: "{{ inventory_hostname }}: zfs_dbgmsg_enable = {{ dbgmsg_current.stdout | default('unknown') }}"
