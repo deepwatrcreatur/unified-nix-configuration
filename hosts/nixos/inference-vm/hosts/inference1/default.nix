@@ -100,10 +100,10 @@
     "Z /models/ollama/models/manifests 0755 ollama ollama -"
   ];
 
-  # NFS-backed models volume from pve-tomahawk (rpool/inference-models)
+  # VirtioFS-backed models volume from pve-tomahawk (rpool/inference-models)
   fileSystems."/models/ollama" = {
-    device = "10.10.11.55:/rpool/inference-models";
-    fsType = "nfs";
-    options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" "_netdev" ];
+    device = "models"; # virtiofs tag configured in Proxmox
+    fsType = "virtiofs";
+    options = [ "x-systemd.automount" "_netdev" ];
   };
 }
