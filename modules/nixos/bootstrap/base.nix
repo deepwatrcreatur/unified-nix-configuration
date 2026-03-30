@@ -23,7 +23,7 @@ in
 
   programs.ssh.startAgent = false;
 
-  environment.systemPackages = lib.mkForce (
+  environment.systemPackages = lib.mkDefault (
     with pkgs;
     [
       attic-client
@@ -61,7 +61,7 @@ in
 
   services.openssh = {
     enable = true;
-    settings.PermitRootLogin = "yes";
+    settings.PermitRootLogin = "prohibit-password";
   };
   services.qemuGuest.enable = true;
   services.fstrim.enable = true;
@@ -104,8 +104,8 @@ in
     Host attic-cache 10.10.11.39
       User deepwatrcreatur
       IdentityFile /root/.ssh/nix-remote
-      StrictHostKeyChecking no
-      UserKnownHostsFile /dev/null
+      StrictHostKeyChecking accept-new
+      UserKnownHostsFile /root/.ssh/known_hosts
   '';
 
   system.stateVersion = "25.11";
