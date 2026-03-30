@@ -214,20 +214,16 @@ in
   home-manager.extraSpecialArgs.hostName = "gateway";
   home-manager.extraSpecialArgs.isDesktop = false;
 
-  # Boot loader and filesystem layout for the rebuilt btrfs-based gateway VM.
+  # Keep the live gateway on the proven BIOS/GRUB + ext4 layout until the
+  # planned disk migration to btrfs is done with console access.
   boot = {
-    growPartition = false;
+    growPartition = true;
     loader = {
-      grub.enable = lib.mkForce false;
+      grub.enable = true;
+      grub.device = "/dev/sda";
       systemd-boot.enable = lib.mkForce false;
       timeout = 5;
-      limine = {
-        enable = true;
-        efiSupport = false;
-        biosSupport = true;
-        biosDevice = lib.mkDefault "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi0";
-        partitionIndex = 1;
-      };
+      limine.enable = lib.mkForce false;
     };
   };
 

@@ -15,7 +15,6 @@
     ../../modules/nixos/services/iperf3.nix
     ../../modules/nixos/keyboard-glitches.nix
     ../../modules/nixos/snap.nix
-    ../../modules/nixos/snapper.nix
     ../../modules/activation-scripts
     ../../hosts/nixos/gateway/configuration.nix
   ];
