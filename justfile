@@ -37,7 +37,7 @@ gen-identity host dir=`pwd`:
         exit 0
     fi
 
-    mkdir -p "$keydir"
+    install -d -m 700 "$keydir"
     ssh-keygen -t ed25519 -N '' \
         -C "agenix-machine-identity {{host}}" \
         -f "$keydir/machine-identity"
@@ -46,12 +46,13 @@ gen-identity host dir=`pwd`:
 
     echo ""
     echo "  public key  → $pubkey_dst"
-    echo "  private key → $keydir/machine-identity"
+    echo "  private key → $keydir/machine-identity  ⚠ delete after install"
     echo ""
     echo "Next steps:"
     echo "  1. Add {{host}} to the appropriate recipient groups in secrets.nix"
     echo "  2. just rekey"
     echo "  3. just install {{host}} <target-ip>"
+    echo "  4. just clean-identity {{host}}  # remove private key from /tmp"
 
 # Step 3 — install NixOS on a new host via nixos-anywhere.
 # Seeds the machine identity into the installed system via --extra-files so
@@ -112,8 +113,24 @@ install host target hw="" disk="" dir=`pwd`:
 
     "${cmd[@]}"
 
+    # Private key no longer needed locally — the installed system has its copy
+    rm -rf "$keydir"
     echo ""
-    echo "Install complete. Review and commit before next rebuild:"
+    echo "Install complete. Private key removed from $keydir."
+    echo ""
+    echo "Review and commit before next rebuild:"
     git -C "{{dir}}" status --short \
         "ssh-keys/agenix-machine-identities/{{host}}.pub" \
         "secrets-agenix/"
+
+# Remove a host's temporary private key from /tmp if install was interrupted.
+# Under normal circumstances 'just install' cleans up automatically.
+clean-identity host:
+    #!/usr/bin/env bash
+    keydir="/tmp/nix-bootstrap-{{host}}"
+    if [ -d "$keydir" ]; then
+        rm -rf "$keydir"
+        echo "Removed $keydir"
+    else
+        echo "Nothing to clean for {{host}}"
+    fi
