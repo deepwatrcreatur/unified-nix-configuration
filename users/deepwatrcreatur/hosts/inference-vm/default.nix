@@ -10,7 +10,6 @@
   # Inference VM specific configuration for deepwatrcreatur
   imports = [
     ../.. # Import default user config
-    ../../../../modules/home-manager
     ../../../../modules/home-manager/gpg-agent-ssh.nix
     ./just.nix
     ../../../../modules/home-manager/gpu-monitoring.nix

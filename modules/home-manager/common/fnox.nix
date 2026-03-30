@@ -5,6 +5,13 @@
   inputs,
   ...
 }:
+let
+  fnoxLib =
+    if inputs ? fnox then
+      import (inputs.fnox + "/lib/default.nix") { inherit lib pkgs; }
+    else
+      null;
+in
 {
   imports = lib.optionals (inputs ? fnox) [ inputs.fnox.homeManagerModules.default ];
 
@@ -52,6 +59,19 @@
             "/run/agenix/proxmox-api-token"
           ];
         };
+
+        # This repo provides its own gh/bw wrappers that expose the canonical
+        # command names (`gh`, `bw`) in addition to `*-fnox`. Drop fnox's
+        # default gh/bw wrapped commands to avoid duplicate home.packages
+        # entries, but keep the rest of fnox's defaults like `opencode-zai`.
+        wrappedCommands = lib.mkDefault (
+          lib.removeAttrs
+            (fnoxLib.defaultWrappedCommandSpecs { inherit pkgs; })
+            [
+              "gh-fnox"
+              "bw-fnox"
+            ]
+        );
       };
     };
 }
