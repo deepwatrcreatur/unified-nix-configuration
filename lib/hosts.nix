@@ -61,6 +61,14 @@
       description = "Next-generation router/firewall output running NixOS";
     };
 
+    router-bootstrap = {
+      ip = null;
+      sshUser = "deepwatrcreatur";
+      includeDns = false;
+      includeSsh = false;
+      description = "Minimal bootstrap output for router-class installs";
+    };
+
     # Proxmox Hypervisors
     pve-gateway = {
       ip = "10.10.11.52";

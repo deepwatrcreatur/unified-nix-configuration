@@ -75,6 +75,19 @@
     ];
   };
 
+  router-bootstrap = {
+    kind = "nixos";
+    name = "router-bootstrap";
+    system = "x86_64-linux";
+    hostPath = ../hosts/router-bootstrap;
+    isDesktop = false;
+    mode = "aspect";
+    aspectsList = [
+      "nixos-base"
+      "bootstrap-base"
+    ];
+  };
+
   inference1 = {
     kind = "nixos";
     name = "inference1";
