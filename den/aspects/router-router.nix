@@ -1,8 +1,6 @@
 { ... }:
 { inputs, ... }:
 {
-  # Import only specific router modules, NOT the nix-router-optimized default
-  # (which includes nftables-fasttrack that conflicts with gateway's nftables.nix).
   imports = [
     inputs.disko.nixosModules.disko
     inputs.nix-router-optimized.nixosModules.router-networking
@@ -17,6 +15,6 @@
     ../../modules/nixos/snap.nix
     ../../modules/nixos/snapper.nix
     ../../modules/activation-scripts
-    ../../hosts/nixos/gateway/configuration.nix
+    ../../hosts/nixos/router/configuration.nix
   ];
 }

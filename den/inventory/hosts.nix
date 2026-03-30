@@ -62,6 +62,19 @@
     ];
   };
 
+  router = {
+    kind = "nixos";
+    name = "router";
+    system = "x86_64-linux";
+    hostPath = ../hosts/router;
+    isDesktop = false;
+    mode = "aspect";
+    aspectsList = [
+      "nixos-base"
+      "router-router"
+    ];
+  };
+
   inference1 = {
     kind = "nixos";
     name = "inference1";

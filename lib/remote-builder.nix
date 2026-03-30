@@ -4,6 +4,7 @@ let
   nixosHosts = [
     "gateway"
     "homeserver"
+    "router"
     "workstation"
   ];
 
@@ -11,6 +12,7 @@ let
   # These use home-manager/ansible for key deployment
   nonNixosHosts = [
     "pve-gateway"
+    "pve-router"
     "pve-rog"
     "pve-strix"
     "pve-tomahawk"

@@ -11,6 +11,7 @@ den.mkHostModule {
   ];
   extraImports = [
     ../../../hosts/nixos/gateway/hardware-configuration.nix
+    ../../../hosts/nixos/gateway/disko.nix
     ../../../hosts/nixos/gateway/networking.nix
     ../../../hosts/nixos/gateway/caddy.nix
   ];

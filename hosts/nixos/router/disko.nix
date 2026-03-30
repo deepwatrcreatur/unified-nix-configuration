@@ -1,0 +1,8 @@
+{
+  ...
+}:
+{
+  imports = [
+    ../gateway/disko.nix
+  ];
+}

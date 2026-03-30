@@ -11,7 +11,7 @@
   #   ipv6: IPv6 address (optional)
   #   sshUser: default SSH user (optional, defaults to "deepwatrcreatur")
   #   aliases: DNS CNAME aliases that are other names for this machine itself
-  #            (e.g. "router" and "dns" are identity aliases for the gateway machine)
+  #            (e.g. "dns" and "dhcp" are identity aliases for the gateway machine)
   #   services: public service subdomains fronted by this host via a reverse proxy
   #             (e.g. "authentik" is a service proxied through gateway/Caddy, not the
   #             gateway machine itself).  Kept separate from aliases so inventory checks
@@ -30,7 +30,6 @@
       sshUser = "deepwatrcreatur";
       # Infrastructure identity aliases — other names for the gateway machine itself
       aliases = [
-        "router"
         "dns"
         "dhcp"
         "firewall"
@@ -54,11 +53,27 @@
       description = "Main router/firewall running NixOS";
     };
 
+    router = {
+      ip = null;
+      sshUser = "deepwatrcreatur";
+      includeDns = false;
+      includeSsh = false;
+      description = "Next-generation router/firewall output running NixOS";
+    };
+
     # Proxmox Hypervisors
     pve-gateway = {
       ip = "10.10.11.52";
       sshUser = "root";
       description = "Proxmox node - gateway";
+    };
+
+    pve-router = {
+      ip = null;
+      sshUser = "root";
+      includeDns = false;
+      includeSsh = false;
+      description = "Proxmox node - router";
     };
 
     pve-lattitude = {

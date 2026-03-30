@@ -214,11 +214,22 @@ in
   home-manager.extraSpecialArgs.hostName = "gateway";
   home-manager.extraSpecialArgs.isDesktop = false;
 
-  # Boot loader (GRUB for MBR/BIOS)
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "/dev/sda"; # Install GRUB on the disk
-  boot.loader.timeout = 5;
-  boot.growPartition = true;
+  # Boot loader and filesystem layout for the rebuilt btrfs-based gateway VM.
+  boot = {
+    growPartition = false;
+    loader = {
+      grub.enable = lib.mkForce false;
+      systemd-boot.enable = lib.mkForce false;
+      timeout = 5;
+      limine = {
+        enable = true;
+        efiSupport = false;
+        biosSupport = true;
+        biosDevice = lib.mkDefault "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi0";
+        partitionIndex = 1;
+      };
+    };
+  };
 
   nix.settings.experimental-features = [
     "nix-command"
