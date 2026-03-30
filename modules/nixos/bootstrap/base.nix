@@ -27,6 +27,7 @@ in
     with pkgs;
     [
       attic-client
+      bashInteractive
       btrfs-progs
       curl
       git
@@ -70,7 +71,7 @@ in
     loader = {
       systemd-boot.enable = lib.mkForce false;
       limine.enable = true;
-      efi.canTouchEfiVariables = true;
+      efi.canTouchEfiVariables = false;
     };
     kernelParams = [ "console=ttyS0,115200" ];
   };
