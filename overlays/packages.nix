@@ -17,4 +17,11 @@
   (final: prev: {
     t3code = prev.callPackage ../pkgs/t3code.nix { };
   })
+
+  # Wrapped GitHub CLI using fnox-backed token lookup
+  (final: prev: {
+    gh-fnox = final.callPackage ../pkgs/gh-fnox.nix {
+      fnox = final.fnox;
+    };
+  })
 ]
