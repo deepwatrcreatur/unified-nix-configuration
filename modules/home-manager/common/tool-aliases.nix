@@ -43,7 +43,8 @@ let
   # Prefer explicit wrappers via aliases (raw remains available)
   wrappedToolAliases =
     (lib.optionalAttrs (pkgs ? gh-fnox) { gh = "gh-fnox"; })
-    // (lib.optionalAttrs (pkgs ? bw-fnox) { bw = "bw-fnox"; });
+    // (lib.optionalAttrs (pkgs ? bw-fnox) { bw = "bw-fnox"; })
+    // (lib.optionalAttrs (pkgs ? attic-fnox) { attic = "attic-fnox"; });
 in
 {
   options.custom.toolAliases = {

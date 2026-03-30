@@ -67,7 +67,7 @@ in
 
   config = lib.mkIf cfg.enable {
     # Install attic-client
-    home.packages = [ pkgs.attic-client ];
+    home.packages = [ (if pkgs ? attic-fnox then pkgs.attic-fnox else pkgs.attic-client) ];
 
     # Merge default servers with user-specified servers
     programs.attic-client.servers = lib.mkDefault cfg.defaultServers;

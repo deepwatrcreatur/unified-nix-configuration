@@ -2,6 +2,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 let
@@ -15,15 +16,17 @@ let
 
   # Raw variants that bypass wrapped aliases
   rawAliasesPosix = {
-    gh-raw = "command gh";
+    gh-raw = "${pkgs.gh}/bin/gh";
     opencode-raw = "command opencode";
-    bw-raw = "command bw";
+    bw-raw = "${pkgs.bitwarden-cli}/bin/bw";
+    attic-raw = "${pkgs.attic-client}/bin/attic";
   };
 
   rawAliasesNushell = {
-    gh-raw = "^gh";
+    gh-raw = "^${pkgs.gh}/bin/gh";
     opencode-raw = "^opencode";
-    bw-raw = "^bw";
+    bw-raw = "^${pkgs.bitwarden-cli}/bin/bw";
+    attic-raw = "^${pkgs.attic-client}/bin/attic";
   };
 in
 {

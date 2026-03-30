@@ -17,6 +17,9 @@
         ];
 
         seedSecretSources = {
+          BW_SESSION = [
+            "${config.home.homeDirectory}/.config/sops/BW_SESSION"
+          ];
           GITHUB_TOKEN = [
             "${config.home.homeDirectory}/.config/git/github-token"
             "${config.home.homeDirectory}/.local/share/agenix-user-secrets/github-token"
