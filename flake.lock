@@ -1139,11 +1139,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1774608419,
-        "narHash": "sha256-QjeIGKR4HevoE/x8Kix931VCxA9OARD+sj85zJHqA2c=",
+        "lastModified": 1774880675,
+        "narHash": "sha256-6oIYhaQ0/kS8SItkiqRZSeOUm+Hme5UOPPHKljTU5CE=",
         "owner": "deepwatrcreatur",
         "repo": "nix-markit",
-        "rev": "0abab96d25cc49919936920d52984b8b2fe8191a",
+        "rev": "c800253a9e2a5105bca70fbc1db478992c842e37",
         "type": "github"
       },
       "original": {
