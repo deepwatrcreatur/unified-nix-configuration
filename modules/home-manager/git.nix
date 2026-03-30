@@ -255,7 +255,7 @@ in
       [
         delta
         mergiraf
-        gh
+        (if pkgs ? gh-fnox then gh-fnox else gh)
         lazygit
         difftastic # Add difftastic to the list of packages
       ]
