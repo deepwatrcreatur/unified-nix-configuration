@@ -15,8 +15,6 @@ let
     ];
 
     text = ''
-      set -euo pipefail
-
       token_file=''${XDG_CONFIG_HOME:-"$HOME/.config"}/sops/attic-client-token
       token=""
 
