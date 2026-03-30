@@ -15,8 +15,6 @@ let
     ];
 
     text = ''
-      set -euo pipefail
-
       session_file=''${XDG_CONFIG_HOME:-"$HOME/.config"}/sops/BW_SESSION
 
       if [ -z "''${BW_SESSION:-}" ]; then

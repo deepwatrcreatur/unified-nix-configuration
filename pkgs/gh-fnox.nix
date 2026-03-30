@@ -15,8 +15,6 @@ let
     ];
 
     text = ''
-      set -euo pipefail
-
       token_file=''${XDG_CONFIG_HOME:-"$HOME/.config"}/git/github-token
 
       if [ -z "''${GH_TOKEN:-}" ]; then
