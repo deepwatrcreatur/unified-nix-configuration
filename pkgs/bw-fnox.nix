@@ -25,7 +25,9 @@ let
           export BW_SESSION="$session"
         elif [ -f "$session_file" ]; then
           session="$(tr -d '\n' < "$session_file")"
-          export BW_SESSION="$session"
+          if [ -n "$session" ]; then
+            export BW_SESSION="$session"
+          fi
         fi
       fi
 

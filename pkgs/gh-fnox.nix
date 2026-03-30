@@ -28,7 +28,9 @@ let
             export GH_TOKEN="$token"
           elif [ -f "$token_file" ]; then
             token="$(tr -d '\n' < "$token_file")"
-            export GH_TOKEN="$token"
+            if [ -n "$token" ]; then
+              export GH_TOKEN="$token"
+            fi
           fi
         fi
       fi
