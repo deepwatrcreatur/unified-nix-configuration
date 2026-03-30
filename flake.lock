@@ -1096,11 +1096,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773708856,
-        "narHash": "sha256-pEZ0CFuB9hribYDrotivsB2RWnYcqLASvOWSCDm4JO0=",
+        "lastModified": 1774878645,
+        "narHash": "sha256-cUuM7jKD2c5ec/Exb2pIRmerjhAedytWF8ah40rCVjY=",
         "owner": "deepwatrcreatur",
         "repo": "nix-lightpanda",
-        "rev": "bd237cb46bea8255db4c30e4efa304a836d6aa3f",
+        "rev": "f50adc582fac6ac8d0a3d2d19a2b1c011065ec28",
         "type": "github"
       },
       "original": {
