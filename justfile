@@ -38,6 +38,7 @@ gen-identity host dir=`pwd`:
     fi
 
     install -d -m 700 "$keydir"
+    install -d -m 755 "$(dirname "$pubkey_dst")"
     ssh-keygen -t ed25519 -N '' \
         -C "agenix-machine-identity {{host}}" \
         -f "$keydir/machine-identity"
@@ -61,15 +62,17 @@ gen-identity host dir=`pwd`:
 # Prerequisites: gen-identity done, secrets.nix updated, rekey done.
 #
 # Optional parameters:
-#   hw     path for auto-generated hardware-configuration.nix (empty = skip)
-#   disk   disko disk device path, e.g. /dev/disk/by-id/...  (empty = skip)
+#   hw          path for auto-generated hardware-configuration.nix (empty = skip)
+#   disk        disko disk device path, e.g. /dev/disk/by-id/...  (empty = skip)
+#   accept_new  set to "true" to pass StrictHostKeyChecking=accept-new (TOFU —
+#               only use when you cannot pre-verify the installer host key)
 #
 # Example:
 #   just install gateway 10.10.10.1
-#   just install inference1 10.10.11.131 \
+#   just install inference1 10.10.11.131 accept_new=true \
 #       hw=hosts/nixos/inference-vm/hosts/inference1/hardware-configuration.nix \
 #       disk=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi0
-install host target hw="" disk="" dir=`pwd`:
+install host target hw="" disk="" accept_new="" dir=`pwd`:
     #!/usr/bin/env bash
     set -euo pipefail
     keydir="/tmp/nix-bootstrap-{{host}}"
@@ -83,6 +86,10 @@ install host target hw="" disk="" dir=`pwd`:
     if [ ! -f "$pubkey" ]; then
         echo "Error: no public key at $pubkey"
         echo "Run: just gen-identity {{host}}"
+        exit 1
+    fi
+    if [ -n "{{hw}}" ] && [ ! -f "{{dir}}/{{hw}}" ]; then
+        echo "Error: hw path not found: {{dir}}/{{hw}}"
         exit 1
     fi
 
@@ -99,8 +106,13 @@ install host target hw="" disk="" dir=`pwd`:
         nix run {{nixos_anywhere_url}} --
         --extra-files "$extra"
         --flake "{{dir}}#{{host}}"
-        --ssh-option StrictHostKeyChecking=accept-new
     )
+
+    # TOFU opt-in: only skip host key verification when explicitly requested.
+    # To pre-verify instead: ssh-keyscan <target> >> ~/.ssh/known_hosts
+    if [ "{{accept_new}}" = "true" ]; then
+        cmd+=(--ssh-option StrictHostKeyChecking=accept-new)
+    fi
 
     if [ -n "{{hw}}" ]; then
         cmd+=(--generate-hardware-config nixos-generate-config "{{dir}}/{{hw}}")

@@ -78,12 +78,19 @@ is interrupted, run `just clean-identity <host>` to remove it manually.
 |---|---|---|
 | `hw=` | Auto-generate `hardware-configuration.nix` via `nixos-generate-config` | `hw=hosts/nixos/myhost/hardware-configuration.nix` |
 | `disk=` | disko disk device (label is always `main`) | `disk=/dev/disk/by-id/scsi-0QEMU_...` |
+| `accept_new=true` | Trust-on-first-use SSH host key verification (see note below) | `accept_new=true` |
 | `dir=` | Path to this repo (defaults to `$PWD`) | `dir=/home/user/flakes/unified-nix-configuration` |
+
+> **SSH host key verification**: by default `just install` uses strict host key
+> checking. Since the installer generates a fresh host key you haven't seen
+> before, you have two options:
+> - Pre-verify: `ssh-keyscan <target> >> ~/.ssh/known_hosts` before running install
+> - TOFU opt-in: pass `accept_new=true` — convenient but skips verification
 
 Full example for an inference VM:
 
 ```bash
-just install inference4 10.10.11.134 \
+just install inference4 10.10.11.134 accept_new=true \
     hw=hosts/nixos/inference-vm/hosts/inference4/hardware-configuration.nix \
     disk=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi0
 ```
