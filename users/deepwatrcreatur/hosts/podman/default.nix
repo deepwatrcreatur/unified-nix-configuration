@@ -14,18 +14,6 @@
     ../../../../modules/home-manager/agenix-user-secrets.nix
   ];
 
-  # User-scoped secrets decrypted via age
-  services.agenix-user-secrets = {
-    enable = true;
-    secrets = {
-      github-token = {
-        source = ../../../../secrets-agenix/github-token.age;
-        target = ".local/share/agenix-user-secrets/github-token";
-        extraTargets = [ ".config/git/github-token" ];
-      };
-    };
-  };
-
   # Set home directory for Home Manager
   home.homeDirectory = "/home/deepwatrcreatur";
 

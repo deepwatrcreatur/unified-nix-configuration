@@ -13,6 +13,7 @@ den.mkHostModule {
     "lxc-core"
     "attic-client"
     "rclone-client"
+    "github-token-client"
     "nix-daemon-user-ssh"
     "home-manager-users"
     "homeserver-networking"

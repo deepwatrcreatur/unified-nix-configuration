@@ -16,6 +16,7 @@
   attic-cache-build-server = context: import ./attic-cache-build-server.nix context;
   attic-cache-home-manager = context: import ./attic-cache-home-manager.nix context;
   rclone-client = context: import ./rclone-client.nix context;
+  github-token-client = context: import ./github-token-client.nix context;
   rustdesk-server = context: import ./rustdesk-server.nix context;
   podman-containers = context: import ./podman-containers.nix context;
   podman-lxc-suppressions = context: import ./podman-lxc-suppressions.nix context;
