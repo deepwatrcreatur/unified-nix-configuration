@@ -14,6 +14,7 @@ let
     less = "bat --plain";
 
     # Just (command runner)
+    j = "just --justfile ~/.justfile --working-directory .";
     update = "just update";
     nh-update = "just nh-update";
 

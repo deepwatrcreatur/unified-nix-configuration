@@ -316,5 +316,11 @@ in
     home.file.".justfile" = lib.mkIf cfg.enable {
       text = fullJustfile;
     };
+
+    # Make 'just' use the home justfile by default, even when deep in a project tree.
+    # This ensures system-wide recipes are always available.
+    home.shellAliases = lib.mkIf cfg.enable {
+      just = "just --justfile ~/.justfile --working-directory .";
+    };
   };
 }
