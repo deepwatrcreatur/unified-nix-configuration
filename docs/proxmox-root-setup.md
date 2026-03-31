@@ -104,12 +104,6 @@ error: An existing package already provides the following file:
 
 Fix: `nix profile remove age` before running `home-manager switch`. The `update-proxmox.yml` playbook now handles this automatically.
 
-### `attic-cache` hostname not in public DNS
-
-`attic-cache` is a LAN-only hostname served by Technitium DNS on the router. New Proxmox hosts can't resolve it until the router is up and serving DNS for the local network. Without it, the nix daemon can't reach the homelab binary cache and falls back to `cache.nixos.org`.
-
-Fix: `update-proxmox.yml` adds `10.10.11.39 attic-cache` to `/etc/hosts` as a bootstrap workaround. Once the router is running Technitium with the full DNS inventory, this `/etc/hosts` entry becomes redundant (DNS takes precedence) but stays harmless.
-
 ### Repo on feature branch breaks `git pull --ff-only origin main`
 
 When bootstrapping with a feature branch checked out (e.g. the previous agent cloned and checked out `feat/router-bootstrap-output`), the git pull step fails with "Not possible to fast-forward". If the branch already has all the commits you need, skip the pull:

@@ -29,7 +29,6 @@
 
   vars:
     skip_git_pull: false
-    attic_cache_ip: "10.10.11.39"
 
   tasks:
     - name: Git pull block
@@ -86,17 +85,6 @@
           debug:
             msg: "{{ git_pull.stdout_lines }}"
           when: git_pull.changed
-
-    - name: Ensure attic-cache resolves (LAN hostname not in public DNS)
-      # attic-cache is a homelab hostname resolved by Technitium on the router.
-      # New hosts can't reach Technitium until after the router is brought up.
-      # This /etc/hosts entry is a bootstrap workaround; once the router is up
-      # and Technitium is serving DNS, the host will resolve via DNS instead.
-      lineinfile:
-        path: /etc/hosts
-        line: "{{ attic_cache_ip }}  attic-cache"
-        state: present
-        regexp: '.*attic-cache.*'
 
     - name: Bootstrap nix substituters before home-manager (speeds up first run)
       # Determinate Nix owns /etc/nix/nix.conf; write to nix.custom.conf instead.
