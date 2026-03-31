@@ -70,12 +70,6 @@
     };
 
     # Proxmox Hypervisors
-    pve-gateway = {
-      ip = "10.10.11.52";
-      sshUser = "root";
-      description = "Proxmox node - gateway";
-    };
-
     pve-router = {
       ip = null;
       sshUser = "root";
@@ -106,6 +100,12 @@
       ip = "10.10.11.55";
       sshUser = "root";
       description = "Proxmox node - Tomahawk";
+    };
+
+    pve-z170 = {
+      ip = "10.10.11.59";
+      sshUser = "root";
+      description = "Proxmox node - ASRock Z170 ITX/AC";
     };
 
     # LXC Containers
