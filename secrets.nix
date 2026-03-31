@@ -37,6 +37,7 @@ let
     "inference3"
     "podman"
     "router"
+    "router-backup"
     "workstation"
   ];
 
@@ -55,7 +56,7 @@ let
 
   userOnlySecrets = operatorUsers;
 
-  gatewayServiceSecrets = operatorUsers ++ machineRecipients "gateway" ++ machineRecipients "router";
+  gatewayServiceSecrets = operatorUsers ++ machineRecipients "gateway" ++ machineRecipients "router" ++ machineRecipients "router-backup";
   homeserverServiceSecrets = operatorUsers ++ machineRecipients "homeserver";
   authentikHostServiceSecrets = operatorUsers ++ machineRecipients "authentik-host";
 
@@ -75,6 +76,7 @@ let
     "inference3"
     "podman"
     "router"
+    "router-backup"
     "pve-router"
     "pve-lattitude"
     "pve-rog"

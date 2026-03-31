@@ -75,6 +75,19 @@
     ];
   };
 
+  router-backup = {
+    kind = "nixos";
+    name = "router-backup";
+    system = "x86_64-linux";
+    hostPath = ../hosts/router-backup;
+    isDesktop = false;
+    mode = "aspect";
+    aspectsList = [
+      "nixos-base"
+      "router-router"
+    ];
+  };
+
   router-bootstrap = {
     kind = "nixos";
     name = "router-bootstrap";
