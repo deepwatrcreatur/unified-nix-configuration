@@ -75,6 +75,18 @@
             msg: "{{ git_pull.stdout_lines }}"
           when: git_pull.changed
 
+    - name: Bootstrap nix substituters before home-manager (speeds up first run)
+      copy:
+        dest: /etc/nix/nix.conf
+        content: |
+          # Bootstrap substituters written by ansible before home-manager first run.
+          # home-manager will overwrite the user-level config; this ensures the
+          # daemon has cache access during the initial build.
+          substituters = http://attic-cache:5001/cache-local https://cache.nix-ci.com https://cache.nixos.org
+          trusted-public-keys = cache-local:GozZz7XFsUZ7xI5o/Q36JA/BFfjzONWOjiqC+zAhp2g= nix-ci:g3xV5BDTLtIBZr/A00IU1x0EtKKlb7YLgBN2SgYgM6A= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
+        mode: '0644'
+        force: false
+
     - name: Run home-manager switch for proxmox-root
       command:
         cmd: "home-manager switch --flake .#{{ home_manager_target }}"
