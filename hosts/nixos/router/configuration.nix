@@ -11,7 +11,9 @@
   services.router-homelab.sshTarget = lib.mkForce "ssh router.deepwatercreature.com";
 
   boot.loader.grub.enable = lib.mkForce false;
-  boot.loader.limine.enable = true;
+  # gateway sets limine.enable = lib.mkForce false (priority 50); use mkOverride 49
+  # to beat it without causing a same-priority conflict.
+  boot.loader.limine.enable = lib.mkOverride 49 true;
   boot.loader.efi.canTouchEfiVariables = false;
 
   # Logs disk is on scsi1 (spinning disk), formatted by disko as disk-logs-logs.
