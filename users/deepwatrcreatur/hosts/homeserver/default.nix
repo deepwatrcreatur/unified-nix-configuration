@@ -26,10 +26,6 @@
         target = ".local/share/agenix-user-secrets/github-token";
         extraTargets = [ ".config/git/github-token" ];
       };
-      rclone-conf = {
-        source = ../../../../secrets-agenix/rclone-conf.age;
-        target = ".local/share/agenix-user-secrets/rclone-conf";
-      };
     };
   };
 

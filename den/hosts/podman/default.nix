@@ -16,6 +16,7 @@ den.mkHostModule {
     "nixos-base"
     "lxc-core"
     "attic-client"
+    "rclone-client"
     "nix-daemon-user-ssh"
     "home-manager-users"
     "podman-lxc-suppressions"
