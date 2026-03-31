@@ -145,6 +145,26 @@ The `proxmox-host-configuration` repo contains additional Proxmox-specific playb
 - APT proxy configuration
 - Proxmox-specific tasks
 
+### Adding a New Proxmox Host
+
+The playbooks assume the host is already registered as an agenix recipient. Do this **in the repo first**, before touching the host:
+
+1. Get the SSH host key: `ssh-keyscan -t ed25519 <ip>`
+2. Add `ssh-keys/agenix-machine-identities/<hostname>.pub`
+3. Add the host to `lib/hosts.nix`, `ansible/inventory/hosts.yml`, `secrets.nix` (`atticClientHosts`), and `lib/remote-builder.nix` (`nonNixosHosts`)
+4. Rekey: `nix run github:ryantm/agenix -- --rekey`
+5. Commit and push
+
+Then bootstrap the host (see `docs/proxmox-root-setup.md` for the full sequence) and run:
+
+```bash
+# Decrypt secrets (uses machine SSH host key, not SOPS age key)
+ansible-playbook -i inventory/hosts.yml playbooks/setup-secrets.yml --limit <hostname>
+
+# Apply home-manager (writes nix.conf substituters before building)
+ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml --limit <hostname>
+```
+
 ## Troubleshooting
 
 ### SSH Connection Issues
