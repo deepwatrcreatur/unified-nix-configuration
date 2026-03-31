@@ -10,6 +10,17 @@
 #
 # Skip git pull (just run Home Manager):
 #   ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml -e skip_git_pull=true
+#
+# Bootstrap notes (first run on a new host):
+#   - The repo on pve-z170 may be on a feature branch; use skip_git_pull=true if git pull
+#     fails due to branch divergence (the repo is already up to date).
+#   - 'age' installed standalone during bootstrap conflicts with home-manager-path.
+#     This playbook removes it automatically before running home-manager.
+#   - Determinate Nix owns /etc/nix/nix.conf; substituters are written to
+#     /etc/nix/nix.custom.conf (included by nix.conf) so they survive Determinate
+#     Nix upgrades and don't conflict with its managed config.
+#   - attic-cache is a LAN hostname; this playbook adds it to /etc/hosts so the
+#     nix daemon can resolve it when fetching from the homelab binary cache.
 
 - name: Update Proxmox hosts with Home Manager
   hosts: proxmox
@@ -18,6 +29,7 @@
 
   vars:
     skip_git_pull: false
+    attic_cache_ip: "10.10.11.39"
 
   tasks:
     - name: Git pull block
@@ -75,24 +87,62 @@
             msg: "{{ git_pull.stdout_lines }}"
           when: git_pull.changed
 
+    - name: Ensure attic-cache resolves (LAN hostname not in public DNS)
+      # attic-cache is a homelab hostname resolved by Technitium on the router.
+      # New hosts can't reach Technitium until after the router is brought up.
+      # This /etc/hosts entry is a bootstrap workaround; once the router is up
+      # and Technitium is serving DNS, the host will resolve via DNS instead.
+      lineinfile:
+        path: /etc/hosts
+        line: "{{ attic_cache_ip }}  attic-cache"
+        state: present
+        regexp: '.*attic-cache.*'
+
     - name: Bootstrap nix substituters before home-manager (speeds up first run)
-      copy:
-        dest: /etc/nix/nix.conf
-        content: |
-          # Bootstrap substituters written by ansible before home-manager first run.
-          # home-manager will overwrite the user-level config; this ensures the
-          # daemon has cache access during the initial build.
-          substituters = http://attic-cache:5001/cache-local https://cache.nix-ci.com https://cache.nixos.org
-          trusted-public-keys = cache-local:GozZz7XFsUZ7xI5o/Q36JA/BFfjzONWOjiqC+zAhp2g= nix-ci:g3xV5BDTLtIBZr/A00IU1x0EtKKlb7YLgBN2SgYgM6A= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
+      # Determinate Nix owns /etc/nix/nix.conf; write to nix.custom.conf instead.
+      # /etc/nix/nix.conf includes nix.custom.conf, so these settings take effect
+      # after a daemon restart. home-manager will configure ~/.config/nix/nix.conf
+      # on first activation; this ensures daemon cache access before that happens.
+      # blockinfile is idempotent and won't clobber any existing custom config.
+      blockinfile:
+        path: /etc/nix/nix.custom.conf
+        create: true
         mode: '0644'
-        force: false
+        marker: "# {mark} ANSIBLE BOOTSTRAP SUBSTITUTERS"
+        block: |
+          extra-substituters = http://attic-cache:5001/cache-local https://cache.nix-ci.com https://cache.nixos.org
+          extra-trusted-substituters = http://attic-cache:5001/cache-local https://cache.nix-ci.com https://cache.nixos.org
+          extra-trusted-public-keys = cache-local:GozZz7XFsUZ7xI5o/Q36JA/BFfjzONWOjiqC+zAhp2g= nix-ci:g3xV5BDTLtIBZr/A00IU1x0EtKKlb7YLgBN2SgYgM6A= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
+      register: nix_custom_conf
+
+    - name: Restart nix-daemon after writing bootstrap nix.custom.conf
+      systemd:
+        name: nix-daemon
+        state: restarted
+      when: nix_custom_conf.changed
+
+    - name: Remove standalone 'age' from nix profile if present
+      # 'age' is often installed during bootstrap (for agenix secret decryption).
+      # home-manager-path also provides age, causing a profile conflict that aborts
+      # the installPackages activation step. Remove it first to avoid this.
+      command:
+        cmd: nix profile remove age
+      register: age_remove
+      changed_when: "'removing' in age_remove.stdout"
+      failed_when: age_remove.rc != 0 and 'not found' not in age_remove.stderr and 'does not match' not in age_remove.stderr
+      environment:
+        PATH: "/nix/var/nix/profiles/default/bin:/root/.nix-profile/bin:{{ ansible_env.PATH }}"
 
     - name: Run home-manager switch for proxmox-root
+      # Use full PATH so home-manager binary is found even if the nix profile is
+      # partially activated. -b backup preserves pre-existing dotfiles.
       command:
-        cmd: "home-manager switch --flake .#{{ home_manager_target }}"
+        cmd: "home-manager switch --flake .#{{ home_manager_target }} -b backup"
         chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
       register: hm_rebuild
       changed_when: true
+      environment:
+        PATH: "/nix/var/nix/profiles/default/bin:/root/.nix-profile/bin:{{ ansible_env.PATH }}"
 
     - name: Show home-manager output
       debug:

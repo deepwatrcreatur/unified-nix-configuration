@@ -92,3 +92,32 @@ On a fresh host, `home-manager switch` builds ~170 derivations locally because n
 ### Nix daemon restart after nix.conf changes
 
 If you manually edit `/etc/nix/nix.conf`, restart the daemon: `systemctl restart nix-daemon`
+
+### `age` profile conflict with home-manager-path
+
+During bootstrap, `age` is typically installed standalone via `nix profile install nixpkgs#age` (needed to run agenix decrypt before home-manager is set up). The `home-manager-path` that home-manager installs also provides `age`, causing a profile conflict:
+
+```
+error: An existing package already provides the following file:
+         /nix/store/.../age-X.Y.Z/share/man/man1/age-inspect.1.gz
+```
+
+Fix: `nix profile remove age` before running `home-manager switch`. The `update-proxmox.yml` playbook now handles this automatically.
+
+### `attic-cache` hostname not in public DNS
+
+`attic-cache` is a LAN-only hostname served by Technitium DNS on the router. New Proxmox hosts can't resolve it until the router is up and serving DNS for the local network. Without it, the nix daemon can't reach the homelab binary cache and falls back to `cache.nixos.org`.
+
+Fix: `update-proxmox.yml` adds `10.10.11.39 attic-cache` to `/etc/hosts` as a bootstrap workaround. Once the router is running Technitium with the full DNS inventory, this `/etc/hosts` entry becomes redundant (DNS takes precedence) but stays harmless.
+
+### Repo on feature branch breaks `git pull --ff-only origin main`
+
+When bootstrapping with a feature branch checked out (e.g. the previous agent cloned and checked out `feat/router-bootstrap-output`), the git pull step fails with "Not possible to fast-forward". If the branch already has all the commits you need, skip the pull:
+
+```bash
+ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml --limit <hostname> -e skip_git_pull=true
+```
+
+### Pre-existing dotfiles block first home-manager activation
+
+A fresh Proxmox root user has `/root/.bashrc`, `/root/.profile`, and `/root/.ssh/config` from Debian's skeleton. home-manager refuses to overwrite them. The `update-proxmox.yml` playbook passes `-b backup` to move them aside automatically (renamed to `.bashrc.backup`, etc.).
