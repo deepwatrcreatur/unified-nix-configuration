@@ -43,14 +43,14 @@ in
   };
 
   # I226-V dual-port NIC via PCI passthrough gets PCI-bus-derived names in the VM.
-  # hostpci0 (0000:03:00.0) → enp1s0 (LAN), hostpci1 (0000:04:00.0) → enp2s0 (WAN).
-  # Management virtio NIC retains ens18.
+  # hostpci0 (0000:03:00.0 on host) → enp6s16 (LAN), hostpci1 (0000:04:00.0 on host) → enp6s17 (WAN).
+  # Inside the VM both NICs appear on bus 6 (slots 16/17). Management virtio NIC retains ens18.
   services.router-networking = {
     enable = true;
-    wan.device = "enp2s0";
+    wan.device = "enp6s17";
     routedInterfaces = {
       lan = {
-        device = "enp1s0";
+        device = "enp6s16";
         ipv4Address = "10.10.10.1/16";
         dns = [ "127.0.0.1" ];
         domains = [ "deepwatercreature.com" ];
@@ -74,13 +74,13 @@ in
     enable = true;
     interfaces = {
       wan = {
-        device = "enp2s0";
+        device = "enp6s17";
         role = "wan";
         label = "WAN";
         bandwidth = "1Gbit";
       };
       lan = {
-        device = "enp1s0";
+        device = "enp6s16";
         role = "lan";
         label = "LAN";
       };
@@ -120,7 +120,7 @@ in
     trustedUdpPorts = [ ];
     wanUdpPorts = [ 41641 ];
     extraInputRules = ''
-      iifname {"enp1s0"} tcp dport 5201 accept comment "iperf3 from LAN"
+      iifname {"enp6s16"} tcp dport 5201 accept comment "iperf3 from LAN"
     '';
   };
 
