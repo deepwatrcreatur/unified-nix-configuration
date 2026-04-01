@@ -65,7 +65,6 @@ let
     "homeassistant"
     "infisical"
     "nixoslxc"
-    "npm"
   ];
 
   missingDenInventoryHosts =

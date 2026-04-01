@@ -1,6 +1,11 @@
 { config, pkgs, lib, ... }:
 
 let
+  hostsData = import ../../../lib/hosts.nix;
+  routerHost = hostsData.hosts.router;
+  ddnsLabels = routerHost.ddnsServices or [ ];
+  ddnsDomainsLine = lib.concatStringsSep " " ([ hostsData.domain ] ++ ddnsLabels);
+
   # Optional secrets library for graceful degradation
   optSec = import ../../../modules/helpers/optional-secrets.nix { inherit lib; };
 
@@ -32,7 +37,7 @@ in
           # `home-assistant` is intentionally excluded here. We publish it as a
           # Cloudflare CNAME to another DDNS-managed hostname so Caddy's DDNS
           # updater does not fight Cloudflare over the same record name.
-          deepwatercreature.com @ homelab authentik paperless scrypted 2fauth nightscout marreta linkwarden
+          ${ddnsDomainsLine}
         }
         check_interval 5m
         versions ipv4 ipv6

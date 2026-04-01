@@ -18,6 +18,13 @@
   #             (e.g. "authentik" is a service proxied through router/Caddy, not the
   #             router machine itself).  Kept separate from aliases so inventory checks
   #             can detect collisions between service names and machine hostnames.
+  #   ddnsServices: public DNS labels that Caddy's dynamic_dns plugin should
+  #                 publish for this host at Cloudflare. This is only for
+  #                 internet-facing ingress names, not general internal host
+  #                 registration, which comes from Technitium/DHCP.
+  #                 This can be narrower than `services` when some names are
+  #                 handled intentionally outside dynamic DNS (for example a
+  #                 manual Cloudflare CNAME).
   #   description: human-readable description (optional)
   #   includeSsh: whether to include in SSH config (default: true)
   #   includeDns: whether to include in DNS zone (default: true)
@@ -45,6 +52,17 @@
         "grafana"
         "homelab"
         "home-assistant"
+        "authentik"
+        "paperless"
+        "scrypted"
+        "2fauth"
+        "nightscout"
+        "marreta"
+        "linkwarden"
+      ];
+      ddnsServices = [
+        "@"
+        "homelab"
         "authentik"
         "paperless"
         "scrypted"
@@ -201,14 +219,6 @@
       ip = "10.10.11.133";
       sshUser = "deepwatrcreatur";
       description = "GPU inference VM 3";
-    };
-
-    # Services (DNS only, no SSH)
-    npm = {
-      ip = "10.10.11.37";
-      aliases = [ "proxy" ];
-      includeSsh = false;
-      description = "Nginx Proxy Manager";
     };
 
     # External/special hosts
