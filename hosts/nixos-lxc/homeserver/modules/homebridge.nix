@@ -18,6 +18,9 @@
     uiSettings.port = 8581;
   };
 
+  # Open firewall for Govee Child Bridge
+  networking.firewall.allowedTCPPorts = [ 42140 ];
+
   # Inject openssl for Govee plugin and potentially other crypto tasks
   systemd.services.homebridge.path = [ pkgs.openssl ];
 
