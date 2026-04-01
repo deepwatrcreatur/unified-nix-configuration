@@ -98,7 +98,6 @@ sudo mount -a
 - High-write workloads (databases, proxies, etc.)
 
 **Current Deployments**:
-- ✅ `pve-router`: Proxmox VE host (465GB HDD for logs)
 - ✅ `router`: NixOS router (10GB HDD for logs) - uses native NixOS config
 - 🔄 Can be deployed to other hosts as needed
 

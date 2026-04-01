@@ -9,9 +9,6 @@ Host router
     Hostname 10.10.10.1
     user deepwatrcreatur
 
-Host pve-router
-    Hostname 10.10.11.52
-    user root
 ```
 
 ## New State (Hostname-based with DNS)
@@ -23,9 +20,6 @@ Host router
     Hostname router.deepwatercreature.com
     user deepwatrcreatur
 
-Host pve-router
-    Hostname pve-router.deepwatercreature.com
-    user root
 ```
 
 ## Benefits
@@ -49,11 +43,8 @@ Host pve-router
 ```bash
 # On any host with router as DNS server
 dig router.deepwatercreature.com
-dig pve-router.deepwatercreature.com
-
-# Should return the correct IPs
+# Should return the correct IP
 # router.deepwatercreature.com -> 10.10.10.1
-# pve-router.deepwatercreature.com -> 10.10.11.52
 ```
 
 ### Step 2: Update SSH config to use hostnames
@@ -71,11 +62,6 @@ Edit `modules/home-manager/ssh-config`:
         user = "deepwatrcreatur";
       };
       
-      "pve-router" = {
-        hostname = "pve-router.deepwatercreature.com";
-        user = "root";
-      };
-      
       # ... repeat for all hosts
     };
   };
@@ -87,7 +73,6 @@ Edit `modules/home-manager/ssh-config`:
 ```bash
 # Should work exactly as before
 ssh router
-ssh pve-router
 ```
 
 ### Step 4: Update other tools
@@ -98,8 +83,6 @@ all:
   hosts:
     router:
       ansible_host: router.deepwatercreature.com
-    pve-router:
-      ansible_host: pve-router.deepwatercreature.com
 ```
 
 **Nix remote builders:**
@@ -150,7 +133,6 @@ networking.search = [ "deepwatercreature.com" ];
 Then use short names everywhere:
 ```bash
 ssh router          # Resolves to router.deepwatercreature.com
-ping pve-router     # Resolves to pve-router.deepwatercreature.com
 ```
 
 ### Option 2: Always use FQDNs
@@ -158,7 +140,6 @@ ping pve-router     # Resolves to pve-router.deepwatercreature.com
 More explicit, works anywhere:
 ```bash
 ssh router.deepwatercreature.com
-ping pve-router.deepwatercreature.com
 ```
 
 ## What About Hosts Not in DNS Yet?

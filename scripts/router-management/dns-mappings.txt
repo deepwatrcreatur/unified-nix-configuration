@@ -8,7 +8,6 @@ apt-cache 10.10.11.42 A
 pve-lattitude 10.10.11.47 A
 pve-rog 10.10.11.53 A
 pve-tomahawk 10.10.11.55 A
-pve-gateway 10.10.11.52 A
 pve-strix 10.10.11.57 A
 workstation 10.10.11.73 A
 podman 10.10.11.84 A

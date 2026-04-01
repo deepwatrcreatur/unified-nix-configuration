@@ -74,7 +74,6 @@ let
     "podman"
     "router"
     "router-backup"
-    "pve-router"
     "pve-lattitude"
     "pve-rog"
     "pve-strix"

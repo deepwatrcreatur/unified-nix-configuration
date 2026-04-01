@@ -10,7 +10,7 @@ Agenix successfully deployed to workstation and router. Core secrets migrated.
 
 ### Infrastructure
 - ✅ Added agenix to flake inputs
-- ✅ Collected host SSH keys (router, workstation, attic-cache, pve-gateway, pve-lattitude, pve-strix, pve-tomahawk)
+- ✅ Collected host SSH keys (router, workstation, attic-cache, pve-lattitude, pve-strix, pve-tomahawk)
 - ✅ Auto-generated `secrets.nix` from ssh-keys directory
 - ✅ Created migration scripts (`collect-host-keys.sh`, `generate-secrets-nix.sh`)
 

@@ -73,14 +73,6 @@
     };
 
     # Proxmox Hypervisors
-    pve-router = {
-      ip = null;
-      sshUser = "root";
-      includeDns = false;
-      includeSsh = false;
-      description = "Proxmox node - router";
-    };
-
     pve-lattitude = {
       ip = "10.10.11.47";
       sshUser = "root";

@@ -10,7 +10,6 @@ let
   # Non-NixOS hosts that can use remote building (Proxmox, Ubuntu)
   # These use home-manager/ansible for key deployment
   nonNixosHosts = [
-    "pve-router"
     "pve-rog"
     "pve-strix"
     "pve-tomahawk"
