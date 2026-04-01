@@ -10,7 +10,9 @@
   #   ip: IPv4 address (required)
   #   ipv6: IPv6 address (optional)
   #   sshUser: default SSH user (optional, defaults to "deepwatrcreatur")
-  #   aliases: DNS CNAME aliases that are other names for this machine itself
+  #   aliases: additional machine names for this host. These are emitted into
+  #            SSH config as aliases for the same target, and may also be used
+  #            by DNS generation when appropriate.
   #            (e.g. "dns" and "dhcp" are identity aliases for the router machine)
   #   services: public service subdomains fronted by this host via a reverse proxy
   #             (e.g. "authentik" is a service proxied through router/Caddy, not the
@@ -33,6 +35,7 @@
         "dns"
         "dhcp"
         "firewall"
+        "router-management"
       ];
       # Public service subdomains fronted by Caddy on this host.
       # DNS CNAMEs for these point at router, but the actual service runs elsewhere.
