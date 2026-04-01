@@ -183,21 +183,6 @@ in
         "${dnsConfig.domain}" = mkZone dnsConfig;
       };
 
-  home-manager.users.deepwatrcreatur = {
-    imports = [
-      ../../../modules/home-manager/git.nix
-      ../../../modules/home-manager/gpg-cli.nix
-      ../../../users/deepwatrcreatur/hosts/router
-    ];
-
-    home.username = "deepwatrcreatur";
-    home.homeDirectory = "/home/deepwatrcreatur";
-    programs.home-manager.enable = true;
-  };
-
-  home-manager.extraSpecialArgs.hostName = "router";
-  home-manager.extraSpecialArgs.isDesktop = false;
-
   # EFI/Limine bootloader — OVMF QEMU VM with no legacy BIOS.
   boot.loader.grub.enable = false;
   boot.loader.limine.enable = true;

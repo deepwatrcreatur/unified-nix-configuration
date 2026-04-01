@@ -58,6 +58,7 @@
     mode = "aspect";
     aspectsList = [
       "nixos-base"
+      "home-manager-users"
       "router-router"
     ];
   };

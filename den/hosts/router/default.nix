@@ -5,8 +5,12 @@ in
 den.mkHostModule {
   name = "router";
   primaryUser = "deepwatrcreatur";
+  primaryUserImports = [
+    ../../../users/deepwatrcreatur/hosts/router
+  ];
   aspectsList = [
     "nixos-base"
+    "home-manager-users"
     "github-token-client"
     "router-router"
   ];
