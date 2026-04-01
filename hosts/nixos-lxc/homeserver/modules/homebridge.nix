@@ -17,6 +17,9 @@
     uiSettings.port = 8581;
   };
 
+  # Inject openssl for Govee plugin and potentially other crypto tasks
+  systemd.services.homebridge.path = [ pkgs.openssl ];
+
   # homebridge-alexa needs unauthenticated accessory access, which Homebridge
   # enables through the UIX_INSECURE_MODE environment variable when using
   # homebridge-config-ui-x / hb-service.
