@@ -6,7 +6,7 @@
 #
 # Limit to specific hosts/groups:
 #   ansible-playbook -i inventory/hosts.yml playbooks/rebuild-all.yml --limit nixos
-#   ansible-playbook -i inventory/hosts.yml playbooks/rebuild-all.yml --limit gateway,homeserver
+#   ansible-playbook -i inventory/hosts.yml playbooks/rebuild-all.yml --limit router,homeserver
 #
 # Dry run (check mode):
 #   ansible-playbook -i inventory/hosts.yml playbooks/rebuild-all.yml --check

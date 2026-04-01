@@ -54,7 +54,7 @@ let
 
   userOnlySecrets = operatorUsers;
 
-  gatewayServiceSecrets = operatorUsers ++ machineRecipients "router" ++ machineRecipients "router-backup";
+  routerServiceSecrets = operatorUsers ++ machineRecipients "router" ++ machineRecipients "router-backup";
   homeserverServiceSecrets = operatorUsers ++ machineRecipients "homeserver";
   authentikHostServiceSecrets = operatorUsers ++ machineRecipients "authentik-host";
 
@@ -99,10 +99,10 @@ let
   paperlessOidcSecrets = operatorUsers ++ machineRecipients "podman" ++ machineRecipients "authentik-host";
 in {
   # Service-scoped secrets
-  "secrets-agenix/cloudflare-api-key.age".publicKeys = gatewayServiceSecrets;
-  "secrets-agenix/cloudflare_ddns_API_token.age".publicKeys = gatewayServiceSecrets;
-  "secrets-agenix/technitium-api-key.age".publicKeys = gatewayServiceSecrets;
-  "secrets-agenix/tailscale-auth-key.age".publicKeys = gatewayServiceSecrets;
+  "secrets-agenix/cloudflare-api-key.age".publicKeys = routerServiceSecrets;
+  "secrets-agenix/cloudflare_ddns_API_token.age".publicKeys = routerServiceSecrets;
+  "secrets-agenix/technitium-api-key.age".publicKeys = routerServiceSecrets;
+  "secrets-agenix/tailscale-auth-key.age".publicKeys = routerServiceSecrets;
   "secrets-agenix/authentik-env.age".publicKeys = authentikHostServiceSecrets;
   "secrets-agenix/attic-client-token.age".publicKeys = atticClientSecrets;
   "secrets-agenix/attic-server-token.age".publicKeys = atticServiceSecrets;

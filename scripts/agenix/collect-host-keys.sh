@@ -21,7 +21,7 @@ log_error() { echo -e "${RED}[ERROR]${NC} $*"; }
 # List of hosts to collect from
 # Add/remove hosts as needed
 HOSTS=(
-  "gateway"
+  "router"
   "workstation"
   "homeserver"
   "attic-cache"

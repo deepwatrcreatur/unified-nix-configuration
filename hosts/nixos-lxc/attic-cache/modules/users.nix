@@ -12,7 +12,7 @@ in
   users.users.root.shell = pkgs.fish;
   users.users.root.openssh.authorizedKeys.keys = [
     deepwatrcreaturStableKey
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEbX1mL3oZyEz1KhjEWww+k4RTXXeOJSqXWqu5N44ZAg root@gateway" # For remote builds
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEbX1mL3oZyEz1KhjEWww+k4RTXXeOJSqXWqu5N44ZAg root@router" # Legacy remote build key
   ];
 
   # Regular user deepwatrcreatur
@@ -24,7 +24,7 @@ in
     shell = pkgs.fish;
     openssh.authorizedKeys.keys = [
       deepwatrcreaturStableKey
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEbX1mL3oZyEz1KhjEWww+k4RTXXeOJSqXWqu5N44ZAg root@gateway" # For remote builds
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEbX1mL3oZyEz1KhjEWww+k4RTXXeOJSqXWqu5N44ZAg root@router" # Legacy remote build key
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBZML6mOtZHRUmxNkIcv32q3kbBXMiOsQXyFzrWcUL4P nix-remote-builder" # For nix remote builder
     ];
   };

@@ -2,7 +2,7 @@
 # Format: hostname ip_address [record_type]
 # Default record_type is A if not specified
 
-gateway 10.10.10.1 A
+router 10.10.10.1 A
 attic-cache 10.10.11.39 A
 apt-cache 10.10.11.42 A
 pve-lattitude 10.10.11.47 A

@@ -5,7 +5,7 @@
 #   ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml
 #
 # Limit to specific Proxmox hosts:
-#   ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml --limit pve-gateway
+#   ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml --limit pve-router
 #   ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml --limit "pve-rog,pve-strix"
 #
 # Skip git pull (just run Home Manager):

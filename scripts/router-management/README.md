@@ -1,6 +1,6 @@
-# Gateway Scripts
+# Router Management Scripts
 
-Scripts for managing the gateway router (10.10.11.97).
+Scripts for managing the NixOS router and its Technitium/Caddy edge services.
 
 ## export-dhcp-reservations.sh
 
@@ -9,7 +9,7 @@ Exports DHCP reservations from Technitium DNS Server to JSON file for backup.
 ### Usage
 
 ```bash
-# Run on gateway host
+# Run on router host
 ./export-dhcp-reservations.sh LAN dhcp-backup.json
 # Will prompt for API token
 
@@ -51,7 +51,7 @@ Imports DHCP reservations from JSON file into Technitium DNS Server via API.
 ### Usage
 
 ```bash
-# Run on gateway host
+# Run on router host
 ./import-dhcp-reservations.sh ~/dhcp-reservations.json LAN
 # Will prompt for API token
 

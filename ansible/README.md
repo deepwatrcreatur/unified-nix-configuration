@@ -33,7 +33,7 @@ ansible-playbook -i inventory/hosts.yml playbooks/rebuild-all.yml
 ansible-playbook -i inventory/hosts.yml playbooks/rebuild-all.yml --limit nixos
 
 # Limit to specific hosts
-ansible-playbook -i inventory/hosts.yml playbooks/rebuild-all.yml --limit "gateway,homeserver"
+ansible-playbook -i inventory/hosts.yml playbooks/rebuild-all.yml --limit "router,homeserver"
 
 # Skip git pull (just rebuild with current state)
 ansible-playbook -i inventory/hosts.yml playbooks/rebuild-all.yml -e skip_git_pull=true

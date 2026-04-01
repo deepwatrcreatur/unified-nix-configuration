@@ -23,7 +23,7 @@
       { path = "/var/lib/scrypted"; mode = "0770"; user = "root"; group = "root"; }
     ];
 
-    # Expose Scrypted HTTPS port on the podman LXC host; Caddy on gateway will
+    # Expose Scrypted HTTPS port on the podman LXC host; Caddy on router will
     # terminate public TLS and reverse-proxy to this.
     firewall.allowedTCPPorts = [ 10443 ];
   };

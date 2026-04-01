@@ -43,7 +43,7 @@ sudo ./setup-hdd-logging.sh /mnt/logs 947be3a2-edf8-49f0-85c9-329ae56a9bf1 10G
 
 **Tested on**:
 - Proxmox VE 8.x (Debian-based)
-- NixOS 25.11 (via similar configuration in `hosts/nixos/gateway/`)
+- NixOS 25.11 (via similar configuration in `hosts/nixos/router/`)
 - Debian 12
 - Ubuntu 22.04+
 
@@ -92,14 +92,14 @@ sudo mount -a
 ```
 
 **Use Cases**:
-- Preserve SSD lifespan on routers/gateways
+- Preserve SSD lifespan on routers
 - Archive logs on larger, cheaper spinning disks
 - Centralized logging on homelab servers
 - High-write workloads (databases, proxies, etc.)
 
 **Current Deployments**:
-- ✅ `pve-gateway`: Proxmox VE host (465GB HDD for logs)
-- ✅ `gateway`: NixOS router (10GB HDD for logs) - uses native NixOS config
+- ✅ `pve-router`: Proxmox VE host (465GB HDD for logs)
+- ✅ `router`: NixOS router (10GB HDD for logs) - uses native NixOS config
 - 🔄 Can be deployed to other hosts as needed
 
 ## Future Scripts

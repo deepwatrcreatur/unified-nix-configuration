@@ -91,8 +91,8 @@ cat >> "$OUTPUT_FILE" << 'EOF'
 in
 {
   # System-level secrets
-  "cloudflare-api-key.age".publicKeys = operatorUsers ++ machineRecipients "gateway";
-  "technitium-api-key.age".publicKeys = operatorUsers ++ machineRecipients "gateway";
+  "cloudflare-api-key.age".publicKeys = operatorUsers ++ machineRecipients "router";
+  "technitium-api-key.age".publicKeys = operatorUsers ++ machineRecipients "router";
   
   # User-level secrets
   "github-token.age".publicKeys = operatorUsers;

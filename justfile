@@ -70,7 +70,7 @@ gen-identity host dir=`pwd`:
 #               only use when you cannot pre-verify the installer host key)
 #
 # Example:
-#   just install gateway 10.10.10.1
+#   just install router 10.10.10.1
 #   just install inference1 10.10.11.131 accept_new=true \
 #       hw=hosts/nixos/inference-vm/hosts/inference1/hardware-configuration.nix \
 #       disk=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi0

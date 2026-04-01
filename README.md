@@ -40,7 +40,7 @@ Common local operations:
 ```bash
 nix flake metadata
 nix flake check
-sudo nixos-rebuild switch --flake .#<hostname>
+/run/wrappers/bin/sudo nixos-rebuild switch --flake .#<hostname>
 home-manager switch --flake .#<home-output>
 nh os switch -H <hostname> -f ~/flakes/unified-nix-configuration
 nh home switch ~/flakes/unified-nix-configuration#<home-output>
@@ -49,8 +49,8 @@ nh home switch ~/flakes/unified-nix-configuration#<home-output>
 Examples:
 
 ```bash
-sudo nixos-rebuild switch --flake .#workstation
-sudo nixos-rebuild switch --flake .#gateway
+/run/wrappers/bin/sudo nixos-rebuild switch --flake .#workstation
+/run/wrappers/bin/sudo nixos-rebuild switch --flake .#router
 home-manager switch --flake .#proxmox-root
 ```
 
