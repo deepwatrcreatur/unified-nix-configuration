@@ -21,11 +21,18 @@
   # Open firewall for Govee Child Bridge
   networking.firewall.allowedTCPPorts = [ 42140 ];
 
-  # Inject openssl for Govee plugin and potentially other crypto tasks
-  systemd.services.homebridge.path = [ pkgs.openssl ];
+  # Inject dependencies for plugins with native modules (SwitchBot, Bluetooth)
+  systemd.services.homebridge.path = [ 
+    pkgs.openssl 
+    pkgs.python3
+    pkgs.gcc
+    pkgs.gnumake
+  ];
 
-  # homebridge-alexa needs unauthenticated accessory access, which Homebridge
-  # enables through the UIX_INSECURE_MODE environment variable when using
-  # homebridge-config-ui-x / hb-service.
-  systemd.services.homebridge.environment.UIX_INSECURE_MODE = "1";
+  # homebridge-alexa needs unauthenticated accessory access
+  # HOMEBRIDGE_CONFIG_UI_SUDO allows the UI to manage plugins correctly
+  systemd.services.homebridge.environment = {
+    UIX_INSECURE_MODE = "1";
+    HOMEBRIDGE_CONFIG_UI_SUDO = "1";
+  };
 }
