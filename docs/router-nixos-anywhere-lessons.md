@@ -7,7 +7,7 @@ pve-z170 (VM 200), replacing the old opnsense/gateway setup.
 
 ## 1. Bootloader priority conflict with inherited config
 
-**Problem:** The gateway configuration set `boot.loader.limine.enable =
+**Problem:** The old inherited router config set `boot.loader.limine.enable =
 lib.mkForce false` (priority 50) to keep GRUB. The router configuration
 overrode it with `boot.loader.limine.enable = true` (priority 100 — the
 default). Priority 100 loses to priority 50, so nixos-anywhere silently
@@ -16,7 +16,7 @@ installed the `no-bootloader` stub. The VM booted but found no bootloader.
 **Fix:** Use `lib.mkOverride 49 true` in the child config to beat priority 50
 without triggering a same-priority conflict error.
 
-**Current state:** Gateway inheritance is gone. Router configuration is now
+**Current state:** The old gateway inheritance is gone. Router configuration is now
 standalone with `boot.loader.limine.enable = true` at default priority, so
 this conflict cannot recur.
 

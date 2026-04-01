@@ -7,7 +7,6 @@ with mode `0400` and owner `root:root`.
 | Machine | Dashlane item | Runtime path | Public key file | Public key |
 | --- | --- | --- | --- | --- |
 | attic-cache | `agenix machine identity - attic-cache` | `/var/lib/agenix/machine-identity` | `ssh-keys/agenix-machine-identities/attic-cache.pub` | `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPT88sva3mAHz0ftQNHztNGOixadYzEHE+ZXoM7U+tbg agenix-machine-identity attic-cache` |
-| gateway | `agenix machine identity - gateway` | `/var/lib/agenix/machine-identity` | `ssh-keys/agenix-machine-identities/gateway.pub` | `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEiXkvxAjZ/9d6l/uii4ZJxmxtqGMCDS4a/ufckCU+3A agenix-machine-identity gateway` |
 | homeserver | `agenix machine identity - homeserver` | `/var/lib/agenix/machine-identity` | `ssh-keys/agenix-machine-identities/homeserver.pub` | `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA1xgUz+rOhRweUPDB0+9MZbG1vJnr9cTFT/uuLVtsGy agenix-machine-identity homeserver` |
 | pve-gateway | `agenix machine identity - pve-gateway` | `/var/lib/agenix/machine-identity` | `ssh-keys/agenix-machine-identities/pve-gateway.pub` | `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJp9P0x51AN4U2K3T20806TPv8jHE7x/mNOVRFz5Cemx agenix-machine-identity pve-gateway` |
 | pve-router | `agenix machine identity - pve-router` | `/var/lib/agenix/machine-identity` | `ssh-keys/agenix-machine-identities/pve-router.pub` | `pending` |

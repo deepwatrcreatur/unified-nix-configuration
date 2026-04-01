@@ -4,13 +4,13 @@
 
 ## Current State: ✅ Phase 2+ - Expanding to Multiple Hosts
 
-Agenix successfully deployed to workstation and gateway. Core secrets migrated.
+Agenix successfully deployed to workstation and router. Core secrets migrated.
 
 ## Completed
 
 ### Infrastructure
 - ✅ Added agenix to flake inputs
-- ✅ Collected host SSH keys (gateway, workstation, attic-cache, pve-gateway, pve-lattitude, pve-strix, pve-tomahawk)
+- ✅ Collected host SSH keys (router, workstation, attic-cache, pve-gateway, pve-lattitude, pve-strix, pve-tomahawk)
 - ✅ Auto-generated `secrets.nix` from ssh-keys directory
 - ✅ Created migration scripts (`collect-host-keys.sh`, `generate-secrets-nix.sh`)
 
@@ -30,7 +30,7 @@ Agenix successfully deployed to workstation and gateway. Core secrets migrated.
 - ✅ Owned by `deepwatrcreatur:users` with correct permissions
 - ✅ Fnox updated to prefer agenix paths
 
-### Gateway
+### Router
 - ✅ Agenix module imported
 - ✅ Migrated secrets (1 total):
   - `technitium-api-key` → `/run/agenix/technitium-api-key`
@@ -64,7 +64,7 @@ Agenix successfully deployed to workstation and gateway. Core secrets migrated.
 1. ✅ **Update fnox config** to support agenix paths alongside sops
 2. **Test applications** using migrated secrets
 3. **Migrate remaining workstation secrets**
-4. **Deploy to gateway** (low-risk, only technitium API key)
+4. **Deploy to router** (low-risk, only technitium API key)
 5. **Deploy to homeserver** (higher-risk, many services)
 
 ## Rollback Plan

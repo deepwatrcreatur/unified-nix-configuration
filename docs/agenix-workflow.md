@@ -148,8 +148,8 @@ sudo nixos-rebuild switch --flake .#podman
 
 ```nix
 # secrets.nix
-gatewayServiceSecrets = operatorUsers ++ machineRecipients "gateway";
-"secrets-agenix/cloudflare-api-key.age".publicKeys = gatewayServiceSecrets;
+routerServiceSecrets = operatorUsers ++ machineRecipients "router";
+"secrets-agenix/cloudflare-api-key.age".publicKeys = routerServiceSecrets;
 ```
 
 ### Multi-Host Client Secrets

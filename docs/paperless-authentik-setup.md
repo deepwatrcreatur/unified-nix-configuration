@@ -4,14 +4,14 @@ This repo now deploys:
 
 - `authentik.deepwatercreature.com` on `homeserver`
 - `paperless.deepwatercreature.com` on `podman`
-- public ingress for both via `gateway` Caddy
+- public ingress for both via `router` Caddy
 
 ## First Deploy
 
 Deploy these hosts in this order:
 
 1. `homeserver`
-2. `gateway`
+2. `router`
 3. `podman`
 
 Authentik will be reachable at `https://authentik.deepwatercreature.com`.

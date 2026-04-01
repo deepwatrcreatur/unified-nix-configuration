@@ -4,18 +4,18 @@ This repo publishes Home Assistant externally at:
 
 - `https://home-assistant.deepwatercreature.com`
 
-The public TLS endpoint is terminated on `gateway` by Caddy and proxied to the
+The public TLS endpoint is terminated on `router` by Caddy and proxied to the
 internal Home Assistant VM at `10.10.11.18:8123`.
 
 Keep the direct host record and the public proxy hostname separate:
 
 - `homeassistant.deepwatercreature.com` -> direct VM address from DHCP/DNS
-- `home-assistant.deepwatercreature.com` -> public Caddy endpoint on `gateway`
+- `home-assistant.deepwatercreature.com` -> public Caddy endpoint on `router`
 
 ## Repo-side pieces
 
 - DNS/source-of-truth host entry: `lib/hosts.nix`
-- Public reverse proxy and Cloudflare dynamic DNS: `hosts/nixos/gateway/caddy.nix`
+- Public reverse proxy and Cloudflare dynamic DNS: `hosts/nixos/router/caddy.nix`
 
 ## Cloudflare DNS
 
@@ -31,11 +31,11 @@ updates.
 
 ## Home Assistant reverse-proxy requirements
 
-Home Assistant must trust the gateway reverse proxy or it may reject requests
+Home Assistant must trust the router reverse proxy or it may reject requests
 with proxy-related HTTP errors.
 
 In Home Assistant, ensure the HTTP integration allows forwarded headers from the
-gateway LAN IP:
+router LAN IP:
 
 ```yaml
 http:
@@ -62,7 +62,7 @@ Requirements:
 - Amazon Developer account
 - AWS account / Lambda
 
-This repo handles the public HTTPS side once `gateway` is rebuilt and the
+This repo handles the public HTTPS side once `router` is rebuilt and the
 Cloudflare CNAME exists.
 
 ## Home Assistant configuration
@@ -215,7 +215,7 @@ skill in Alexa.
 ## Sequence
 
 1. Create the Cloudflare `DNS only` CNAME for `home-assistant`.
-2. Rebuild `gateway` so Caddy serves `home-assistant.deepwatercreature.com`.
+2. Rebuild `router` so Caddy serves `home-assistant.deepwatercreature.com`.
 3. Verify `https://home-assistant.deepwatercreature.com` presents a valid public
    certificate.
 4. Add the `http:` and minimal `alexa:` configuration to Home Assistant and
