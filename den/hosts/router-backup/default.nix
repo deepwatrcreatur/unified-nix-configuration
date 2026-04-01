@@ -7,7 +7,6 @@ den.mkHostModule {
   primaryUser = "deepwatrcreatur";
   aspectsList = [
     "nixos-base"
-    "rclone-client"
     "github-token-client"
     "router-router"
   ];
