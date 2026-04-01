@@ -16,7 +16,9 @@ nixos_anywhere_url := "github:nix-community/nixos-anywhere"
 
 # Re-encrypt all agenix secrets after editing secrets.nix
 rekey dir=`pwd`:
-    nix run {{agenix_url}} -- -r --rules "{{dir}}/secrets.nix"
+    export RULES="{{dir}}/secrets.nix"; \
+    nix run {{agenix_url}} -- -r; \
+    find "{{dir}}/secrets-agenix/" -name "*.age" -size 0 -print -exec false {} +
 
 # ---------------------------------------------------------------------------
 # nixos-anywhere bootstrap

@@ -24,7 +24,8 @@ ssh-keyscan -t ed25519 <host-ip> | awk '{print $2, $3, "agenix-machine-identity 
 # Add "<hostname>" to nonNixosHosts in lib/remote-builder.nix
 
 # Rekey all secrets
-nix run github:ryantm/agenix -- --rekey
+export RULES=./secrets.nix
+nix run github:ryantm/agenix -- -r
 
 # Commit and push
 git add -A && git commit -m "Add <hostname> to inventory and secrets"
@@ -36,6 +37,9 @@ git push
 SSH in as root and run:
 
 ```bash
+# Optional: Speed up bootstrap by pre-resolving the local cache
+echo "10.10.11.39 attic-cache" >> /etc/hosts
+
 # Install Determinate Nix
 curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install --no-confirm
 
