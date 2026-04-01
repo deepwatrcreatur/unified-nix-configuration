@@ -10,9 +10,6 @@
 
   services.router-homelab.sshTarget = lib.mkForce "ssh router-backup.deepwatercreature.com";
 
-  # router/configuration.nix sets limine.enable = true (priority 100);
-  # use mkForce (priority 50) to override it cleanly.
-  boot.loader.limine.enable = lib.mkForce true;
 
   router.monitoring = {
     grafanaDomain = lib.mkForce "router-backup.deepwatercreature.com";

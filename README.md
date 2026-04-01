@@ -9,7 +9,7 @@ Unified flake for NixOS, nix-darwin, and Home Manager configurations across the 
 ├── flake.nix
 ├── flake.lock
 ├── lib/flake/            # Flake builder and output-loading logic
-├── inventory/legacy/     # Data-driven inventory for standard outputs
+├── den/                  # den-style inventory, aspects, and host glue
 ├── outputs/              # Output loaders and special-case outputs
 ├── hosts/                # Host-specific NixOS and Darwin configuration trees
 ├── modules/              # Shared NixOS, Home Manager, Darwin, and helper modules

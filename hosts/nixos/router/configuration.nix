@@ -124,12 +124,9 @@ in
     '';
   };
 
-  services.router-homelab = {
-    enable = true;
-    sshTarget = "ssh router.deepwatercreature.com";
-    netdataAllowConnectionsFrom = "10.10.*";
-    waitForListenAddress = true;
-  };
+  services.router-homelab.sshTarget = "ssh router.deepwatercreature.com";
+
+  imports = [ ../../../modules/nixos/router/common.nix ];
 
   services.router-dashboard = {
     links = [
@@ -146,13 +143,6 @@ in
     ];
   };
 
-  router.monitoring = {
-    grafanaDomain = "router.deepwatercreature.com";
-    grafanaDataDir = "/var/log/router/grafana";
-    prometheusStateDir = "router-prometheus";
-    prometheusBindMountPath = "/var/log/router/prometheus";
-    prometheusRetentionSize = "40GB";
-  };
 
   services.tailscale = {
     useRoutingFeatures = "server";
@@ -222,28 +212,6 @@ in
 
   # Logs disk is on scsi1 (spinning disk), formatted by disko as disk-logs-logs.
   # router-log-storage handles the mount; disko only formats the partition.
-  services.router-log-storage = {
-    enable = true;
-    device = "/dev/disk/by-partlabel/disk-logs-logs";
-    mountPoint = "/var/log/router";
-    serviceName = "setup-router-logs";
-    extraDirectories = [
-      {
-        name = "technitium";
-        mode = "0777";
-      }
-      {
-        name = "prometheus";
-        user = "prometheus";
-        group = "prometheus";
-      }
-      {
-        name = "grafana";
-        user = "grafana";
-        group = "grafana";
-      }
-    ];
-  };
 
   # Enable podman for containers
   virtualisation.podman = {
