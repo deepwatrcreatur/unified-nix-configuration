@@ -131,12 +131,6 @@
       description = "APT caching proxy";
     };
 
-    nixoslxc = {
-      ip = "10.10.11.40";
-      sshUser = "deepwatrcreatur";
-      description = "Generic NixOS LXC template";
-    };
-
     rustdesk = {
       ip = "10.10.11.68";
       sshUser = "root";
@@ -165,12 +159,6 @@
       aliases = [ "ha" ];
       includeSsh = false;
       description = "Home Assistant VM";
-    };
-
-    casaos = {
-      ip = "10.10.11.77";
-      sshUser = "root";
-      description = "CasaOS container host";
     };
 
     podman = {

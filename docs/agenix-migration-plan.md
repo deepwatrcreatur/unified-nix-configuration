@@ -1,5 +1,9 @@
 # Migration from sops-nix to agenix
 
+Historical note: this plan documents the earlier migration path. The repo now
+uses agenix directly; treat this file as background/reference, not current
+step-by-step operating procedure.
+
 ## Why Migrate?
 
 - **Simpler key management**: Use existing SSH keys instead of managing separate age keys

@@ -61,10 +61,8 @@ let
 
   allowedInfraOnlyHosts = [
     "apt-cache"
-    "casaos"
     "homeassistant"
     "infisical"
-    "nixoslxc"
   ];
 
   missingDenInventoryHosts =

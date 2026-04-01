@@ -1,5 +1,9 @@
 # Migrating from IP-based to Hostname-based SSH Config
 
+Historical note: this is a migration/reference document. It explains the move
+from older SSH/DNS patterns to the current hostname-based model, but it is not
+the primary source of truth for the live router/network split.
+
 ## Current State (IP-based)
 
 Your current SSH config in `modules/home-manager/ssh-config`:

@@ -1,5 +1,8 @@
 # Router nixos-anywhere Bootstrap — Lessons Learned
 
+Reference note: this is a lessons-learned document from the initial router VM
+bootstrap. Useful background, but not the authoritative day-2 operating guide.
+
 Captured from the first successful install of the `router` NixOS host onto
 pve-z170 (VM 200), replacing the old opnsense/gateway setup.
 

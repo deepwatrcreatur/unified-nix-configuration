@@ -1,5 +1,9 @@
 # Agenix Migration Status
 
+Historical note: this captures migration-era status and should be read as
+reference only. Current secret ownership and recipient intent live in
+[`secrets.nix`](../secrets.nix) and related checks.
+
 **Last updated:** 2026-03-11 05:28 UTC
 
 ## Current State: ✅ Phase 2+ - Expanding to Multiple Hosts
