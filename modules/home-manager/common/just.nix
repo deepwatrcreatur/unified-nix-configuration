@@ -19,6 +19,44 @@ let
 
   cfg = config.my.just;
 
+  justHomeScript = pkgs.writeShellScriptBin "just-home" ''
+    exec ${pkgs.just}/bin/just --justfile "$HOME/.justfile" --working-directory . "$@"
+  '';
+
+  mkGlobalRecipeScript =
+    name: recipe:
+    pkgs.writeShellScriptBin name ''
+      set -euo pipefail
+
+      flags=()
+      recipe_args=()
+      parsing_flags=1
+
+      for arg in "$@"; do
+        if [ "$parsing_flags" -eq 1 ] && [ "$arg" = "--" ]; then
+          parsing_flags=0
+          continue
+        fi
+
+        if [ "$parsing_flags" -eq 1 ] && [ "''${arg#-}" != "$arg" ]; then
+          flags+=("$arg")
+        else
+          parsing_flags=0
+          recipe_args+=("$arg")
+        fi
+      done
+
+      exec ${pkgs.just}/bin/just \
+        --justfile "$HOME/.justfile" \
+        --working-directory . \
+        "''${flags[@]}" \
+        ${recipe} \
+        "''${recipe_args[@]}"
+    '';
+
+  updateSystemScript = mkGlobalRecipeScript "update-system" "update";
+  nhUpdateSystemScript = mkGlobalRecipeScript "nh-update-system" "nh-update";
+
   # Base justfile content (common commands)
   baseJustfile = ''
     # Default command when 'just' is run without arguments
@@ -310,17 +348,17 @@ in
   };
 
   config = {
-    home.packages = [ pkgs.just ];
+    home.packages = [
+      pkgs.just
+      justHomeScript
+      updateSystemScript
+      nhUpdateSystemScript
+    ];
 
     # Create justfile in home directory
     home.file.".justfile" = lib.mkIf cfg.enable {
       text = fullJustfile;
     };
 
-    # Make 'just' use the home justfile by default, even when deep in a project tree.
-    # This ensures system-wide recipes are always available.
-    home.shellAliases = lib.mkIf cfg.enable {
-      just = "just --justfile ~/.justfile --working-directory .";
-    };
   };
 }
