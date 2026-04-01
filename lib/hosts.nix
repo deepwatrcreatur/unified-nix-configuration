@@ -14,15 +14,16 @@
   #            SSH config as aliases for the same target, and may also be used
   #            by DNS generation when appropriate.
   #            (e.g. "dns" and "dhcp" are identity aliases for the router machine)
-  #   services: public service subdomains fronted by this host via a reverse proxy
-  #             (e.g. "authentik" is a service proxied through router/Caddy, not the
-  #             router machine itself).  Kept separate from aliases so inventory checks
-  #             can detect collisions between service names and machine hostnames.
+  #   publicIngressServices: public service subdomains fronted by this host via
+  #             a reverse proxy (e.g. "authentik" is a service proxied through
+  #             router/Caddy, not the router machine itself). Kept separate
+  #             from aliases so inventory checks can detect collisions between
+  #             service names and machine hostnames.
   #   ddnsServices: public DNS labels that Caddy's dynamic_dns plugin should
   #                 publish for this host at Cloudflare. This is only for
   #                 internet-facing ingress names, not general internal host
   #                 registration, which comes from Technitium/DHCP.
-  #                 This can be narrower than `services` when some names are
+  #                 This can be narrower than `publicIngressServices` when some names are
   #                 handled intentionally outside dynamic DNS (for example a
   #                 manual Cloudflare CNAME).
   #   description: human-readable description (optional)
@@ -46,7 +47,7 @@
       ];
       # Public service subdomains fronted by Caddy on this host.
       # DNS CNAMEs for these point at router, but the actual service runs elsewhere.
-      services = [
+      publicIngressServices = [
         "www"
         "dashboard"
         "grafana"
@@ -55,10 +56,7 @@
         "authentik"
         "paperless"
         "scrypted"
-        "2fauth"
         "nightscout"
-        "marreta"
-        "linkwarden"
       ];
       ddnsServices = [
         "@"
@@ -66,10 +64,7 @@
         "authentik"
         "paperless"
         "scrypted"
-        "2fauth"
         "nightscout"
-        "marreta"
-        "linkwarden"
       ];
       description = "Main router/firewall running NixOS";
     };

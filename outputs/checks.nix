@@ -130,22 +130,56 @@ let
         key == null || key == "")
       aspectInventoryHostNames;
 
-  # Collect all service names (from the `services` field) across every host.
+  # Collect all public ingress service names across every host.
   # A service name must not collide with a machine hostname to avoid ambiguity
   # like "authentik" (service) vs "authentik-host" (machine) — they are different,
   # but a collision would mean a CNAME and an A record share the same label.
   allLibHostNames = names libHosts;
+  publicIngressServicesFor =
+    hostName: libHosts.${hostName}.publicIngressServices or libHosts.${hostName}.services or [ ];
 
   serviceNameCollisions =
     builtins.concatLists (
       map
         (hostName:
-          let
-            serviceNames = libHosts.${hostName}.services or [];
-          in
-          builtins.filter (svc: builtins.elem svc allLibHostNames) serviceNames)
+          builtins.filter (svc: builtins.elem svc allLibHostNames) (publicIngressServicesFor hostName))
         allLibHostNames
     );
+
+  routerPublicIngressServices = publicIngressServicesFor "router";
+  routerDdnsServices = libHosts.router.ddnsServices or [ ];
+
+  routerDdnsOutsideIngress =
+    builtins.filter (name: name != "@" && !(builtins.elem name routerPublicIngressServices)) routerDdnsServices;
+
+  routerCaddyFile = builtins.readFile ../hosts/nixos/router/caddy.nix;
+  routerCaddyVirtualHostMatches =
+    builtins.split "\n[[:space:]]*\"([a-z0-9-]+)\\.deepwatercreature\\.com\"[[:space:]]*=" routerCaddyFile;
+  routerCaddyVirtualHostNames =
+    builtins.attrNames (
+      builtins.listToAttrs (
+        builtins.concatLists (
+          map
+            (
+              part:
+              if builtins.isList part then
+                map (name: {
+                  inherit name;
+                  value = true;
+                }) part
+              else
+                [ ]
+            )
+            routerCaddyVirtualHostMatches
+        )
+      )
+    );
+
+  routerIngressMissingInCaddy =
+    builtins.filter (name: !(builtins.elem name routerCaddyVirtualHostNames)) routerPublicIngressServices;
+
+  routerCaddyHostsMissingInInventory =
+    builtins.filter (name: !(builtins.elem name routerPublicIngressServices)) routerCaddyVirtualHostNames;
 
   aspectNames = builtins.attrNames denAspectRegistry;
 
@@ -254,6 +288,18 @@ let
     ++ (if duplicateIpsExist then [ "Duplicate IP addresses detected in lib/hosts.nix" ] else [ ])
     ++ (if serviceNameCollisions != [ ] then
       [ "Service names in lib/hosts.nix collide with machine hostnames (a CNAME and an A record cannot share a label): ${builtins.concatStringsSep ", " serviceNameCollisions}" ]
+    else
+      [ ])
+    ++ (if routerDdnsOutsideIngress != [ ] then
+      [ "router.ddnsServices contains names that are not declared in router.publicIngressServices: ${builtins.concatStringsSep ", " routerDdnsOutsideIngress}" ]
+    else
+      [ ])
+    ++ (if routerIngressMissingInCaddy != [ ] then
+      [ "router.publicIngressServices are missing matching Caddy virtualHosts in hosts/nixos/router/caddy.nix: ${builtins.concatStringsSep ", " routerIngressMissingInCaddy}" ]
+    else
+      [ ])
+    ++ (if routerCaddyHostsMissingInInventory != [ ] then
+      [ "Caddy virtualHosts in hosts/nixos/router/caddy.nix are missing from router.publicIngressServices: ${builtins.concatStringsSep ", " routerCaddyHostsMissingInInventory}" ]
     else
       [ ])
     ++ (if lxcHostsMissingNetworking != [ ] then
