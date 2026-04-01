@@ -13,5 +13,6 @@ den.mkHostModule {
     ../../../hosts/nixos/router-backup/hardware-configuration.nix
     ../../../hosts/nixos/router-backup/networking.nix
     ../../../hosts/nixos/router-backup/caddy.nix
+    ../../../hosts/nixos/router-backup/configuration.nix
   ];
 }

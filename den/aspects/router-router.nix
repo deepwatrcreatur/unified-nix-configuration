@@ -14,6 +14,5 @@
     ../../modules/nixos/keyboard-glitches.nix
     ../../modules/nixos/snap.nix
     ../../modules/activation-scripts
-    ../../hosts/nixos/router/configuration.nix
   ];
 }

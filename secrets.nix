@@ -9,7 +9,6 @@ let
 
   hosts = {
     attic-cache = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBMzmqOZ301fwZJVQI5KZ9+npuFs+3EvwKet4peLZeLv";
-    gateway = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGjM16WJ9SUCs+moDo8QTTbbEJMd0EYZPGItC6oV4WiO root@nixos";
     homeserver = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOo9lHhuHiT1rAF3RcFwSMYYtQvoheU4IxVsCRBKlPFI root@nixoslxc";
     pve-lattitude = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOz/qnrymEHn6b057GKCOMCfB9fK28HkWmZ6MnXblVO2";
     pve-rog = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFkWE8kICYI4rPsw/SWfEjOcBrKRk0DywrYSOFZkdlDX agenix-machine-identity pve-rog";
@@ -30,7 +29,6 @@ let
   rootSshKeyHosts = [
     "authentik-host"
     "attic-cache"
-    "gateway"
     "homeserver"
     "inference1"
     "inference2"
@@ -56,7 +54,7 @@ let
 
   userOnlySecrets = operatorUsers;
 
-  gatewayServiceSecrets = operatorUsers ++ machineRecipients "gateway" ++ machineRecipients "router" ++ machineRecipients "router-backup";
+  gatewayServiceSecrets = operatorUsers ++ machineRecipients "router" ++ machineRecipients "router-backup";
   homeserverServiceSecrets = operatorUsers ++ machineRecipients "homeserver";
   authentikHostServiceSecrets = operatorUsers ++ machineRecipients "authentik-host";
 
@@ -69,7 +67,6 @@ let
   atticClientHosts = [
     "authentik-host"
     "attic-cache"
-    "gateway"
     "homeserver"
     "inference1"
     "inference2"

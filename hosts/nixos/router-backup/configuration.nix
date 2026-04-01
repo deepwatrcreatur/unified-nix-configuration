@@ -1,7 +1,7 @@
 { lib, inputs, ... }:
 {
   imports = [
-    ../gateway/configuration.nix
+    ../router/configuration.nix
     inputs.disko.nixosModules.disko
     ./disko.nix
   ];
@@ -10,27 +10,28 @@
 
   services.router-homelab.sshTarget = lib.mkForce "ssh router-backup.deepwatercreature.com";
 
-  boot.loader.grub.enable = lib.mkForce false;
-  boot.loader.limine.enable = true;
-  boot.loader.efi.canTouchEfiVariables = false;
+  # router/configuration.nix sets limine.enable = true (priority 100);
+  # use mkForce (priority 50) to override it cleanly.
+  boot.loader.limine.enable = lib.mkForce true;
+
+  router.monitoring = {
+    grafanaDomain = lib.mkForce "router-backup.deepwatercreature.com";
+    grafanaDataDir = lib.mkForce "/var/log/router-backup/grafana";
+    prometheusStateDir = lib.mkForce "router-backup-prometheus";
+    prometheusBindMountPath = lib.mkForce "/var/log/router-backup/prometheus";
+  };
 
   # Intel I219 dual-port NIC via PCI passthrough.
   # Interface names are PCI-bus-derived (enp<bus>s<slot>) — set these to
   # the actual names observed after first boot on the target cluster node.
   services.router-networking = {
     wan.device = lib.mkForce "enp2s0";
-    routedInterfaces = {
-      lan.device = lib.mkForce "enp3s0";
-      # No management interface on backup router — disable by removing the
-      # management entry inherited from gateway configuration.
-      management = lib.mkForce { };
-    };
+    routedInterfaces.lan.device = lib.mkForce "enp3s0";
   };
 
   services.router-optimizations.interfaces = {
     wan.device = lib.mkForce "enp2s0";
     lan.device = lib.mkForce "enp3s0";
-    management = lib.mkForce { };
   };
 
   services.router-firewall.extraInputRules = lib.mkForce ''

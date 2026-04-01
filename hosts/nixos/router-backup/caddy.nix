@@ -1,1 +1,1 @@
-import ../gateway/caddy.nix
+import ../router/caddy.nix

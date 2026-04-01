@@ -29,19 +29,6 @@
     ];
   };
 
-  gateway = {
-    kind = "nixos";
-    name = "gateway";
-    system = "x86_64-linux";
-    hostPath = ../hosts/gateway;
-    isDesktop = false;
-    mode = "aspect";
-    aspectsList = [
-      "nixos-base"
-      "gateway-router"
-    ];
-  };
-
   homeserver = {
     kind = "nixos";
     name = "homeserver";

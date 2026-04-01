@@ -11,7 +11,7 @@ in
 {
   options.host = {
     type = mkOption {
-      type = types.enum [ "workstation" "server" "inference" "lxc" "gateway" ];
+      type = types.enum [ "workstation" "server" "inference" "lxc" "gateway" "router" ];
       default = "server";
       description = "The type of host (affects default settings)";
       example = "workstation";

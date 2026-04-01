@@ -2,7 +2,6 @@
 let
   # NixOS hosts that can use remote building (via agenix)
   nixosHosts = [
-    "gateway"
     "homeserver"
     "router"
     "workstation"

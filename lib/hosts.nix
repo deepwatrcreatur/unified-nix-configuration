@@ -11,31 +11,31 @@
   #   ipv6: IPv6 address (optional)
   #   sshUser: default SSH user (optional, defaults to "deepwatrcreatur")
   #   aliases: DNS CNAME aliases that are other names for this machine itself
-  #            (e.g. "dns" and "dhcp" are identity aliases for the gateway machine)
+  #            (e.g. "dns" and "dhcp" are identity aliases for the router machine)
   #   services: public service subdomains fronted by this host via a reverse proxy
-  #             (e.g. "authentik" is a service proxied through gateway/Caddy, not the
-  #             gateway machine itself).  Kept separate from aliases so inventory checks
+  #             (e.g. "authentik" is a service proxied through router/Caddy, not the
+  #             router machine itself).  Kept separate from aliases so inventory checks
   #             can detect collisions between service names and machine hostnames.
   #   description: human-readable description (optional)
   #   includeSsh: whether to include in SSH config (default: true)
   #   includeDns: whether to include in DNS zone (default: true)
   #   dhcpReservation: optional DHCP reservation metadata for Technitium-backed
-  #                    dynamic hosts. When present, gateway can derive a stable
+  #                    dynamic hosts. When present, router can derive a stable
   #                    lease from inventory instead of pinning the guest config.
 
   hosts = {
     # Core Infrastructure
-    gateway = {
+    router = {
       ip = "10.10.10.1";
       sshUser = "deepwatrcreatur";
-      # Infrastructure identity aliases — other names for the gateway machine itself
+      # Infrastructure identity aliases — other names for the router machine itself
       aliases = [
         "dns"
         "dhcp"
         "firewall"
       ];
       # Public service subdomains fronted by Caddy on this host.
-      # DNS CNAMEs for these point at gateway, but the actual service runs elsewhere.
+      # DNS CNAMEs for these point at router, but the actual service runs elsewhere.
       services = [
         "www"
         "dashboard"
@@ -53,12 +53,12 @@
       description = "Main router/firewall running NixOS";
     };
 
-    router = {
+    router-backup = {
       ip = null;
       sshUser = "deepwatrcreatur";
       includeDns = false;
       includeSsh = false;
-      description = "Next-generation router/firewall output running NixOS";
+      description = "Emergency failover router output running NixOS";
     };
 
     router-bootstrap = {
