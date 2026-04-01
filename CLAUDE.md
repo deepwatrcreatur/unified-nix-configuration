@@ -293,15 +293,16 @@ tmux new-session -d -s minimal-dev -c ~/nix-minimal
 ### Multi-Host Configuration Awareness
 - **Always check hostname first**: Start by running `hostname` to identify which host you're working on
 - **Host-specific commands**: Use appropriate commands based on the host type:
-  - **NixOS hosts** (homeserver, workstation, etc.): Use `sudo nixos-rebuild` commands, account for non-FHS compliance
+  - **NixOS hosts** (homeserver, workstation, etc.): Prefer `/run/wrappers/bin/sudo nixos-rebuild ...`; do not assume plain `sudo` or `/run/current-system/sw/bin/sudo` is usable on NixOS
   - **Darwin hosts** (macminim4): Use `darwin-rebuild` commands, respect macOS peculiarities
   - **LXC containers**: May require special handling for container-specific rebuilds
+- **Privilege escalation on NixOS**: If `sudo` fails with ownership or setuid errors, retry with `/run/wrappers/bin/sudo`
 - **attic-cache safety**: `attic-cache` is a Proxmox LXC guest. Do not run `nixos-rebuild test/switch --flake .#attic-cache` locally on `workstation`; either SSH into `attic-cache`, `git pull`, and rebuild there, or use `--target-host attic-cache --use-remote-sudo`.
 ### Host Detection Examples
 ```bash
 # Check which host you're on
 hostname
 # Then use appropriate rebuild commands:
-# For NixOS: sudo nixos-rebuild switch --flake .#hostname
+# For NixOS: /run/wrappers/bin/sudo nixos-rebuild switch --flake .#hostname
 # For Darwin: darwin-rebuild switch --flake .#hostname
 ```
