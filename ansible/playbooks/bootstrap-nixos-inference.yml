@@ -18,6 +18,13 @@
     bootstrap_target_host: "{{ bootstrap_ssh_user }}@{{ ansible_host }}"
     bootstrap_hardware_config_path: "{{ repo_root }}/hosts/nixos/inference-vm/hosts/{{ flake_target }}/hardware-configuration.nix"
     bootstrap_machine_identity_pub_path: "{{ repo_root }}/ssh-keys/agenix-machine-identities/{{ flake_target }}.pub"
+    # Set use_attic_cache=true when attic-cache is reachable by IP (e.g. when
+    # DNS is unavailable because the router is not yet up).  The cache IP and
+    # public key are stable homelab constants; the token is read from agenix.
+    use_attic_cache: "{{ use_attic_cache | default(false) }}"
+    attic_cache_ip: "{{ attic_cache_ip | default('10.10.11.39') }}"
+    attic_cache_pubkey: "cache-local:GozZz7XFsUZ7xI5o/Q36JA/BFfjzONWOjiqC+zAhp2g="
+    attic_token_path: /run/agenix/attic-client-token
 
   tasks:
     - name: Verify the live installer is booted in UEFI mode
@@ -28,8 +35,30 @@
       args:
         executable: /bin/bash
 
+    # Optional: pre-configure attic substituter by IP so nixos-anywhere can
+    # pull pre-built store paths instead of building everything locally.
+    # Useful when DNS is unavailable (e.g. during router bootstrap itself).
+    # Usage: -e use_attic_cache=true
+    - name: Write temporary attic netrc for nixos-anywhere build
+      delegate_to: localhost
+      shell: |
+        token="$(sudo cat {{ attic_token_path }})"
+        printf 'machine %s\n  password %s\n' "{{ attic_cache_ip }}" "$token" \
+          > /tmp/attic-bootstrap-netrc
+        chmod 600 /tmp/attic-bootstrap-netrc
+      args:
+        executable: /bin/bash
+      when: use_attic_cache | bool
+
     - name: Install host from local flake with nixos-anywhere
       delegate_to: localhost
+      environment:
+        NIX_CONFIG: |
+          {% if use_attic_cache | bool %}
+          extra-substituters = http://{{ attic_cache_ip }}:5001/cache-local
+          extra-trusted-public-keys = {{ attic_cache_pubkey }}
+          netrc-file = /tmp/attic-bootstrap-netrc
+          {% endif %}
       command:
         argv:
           - nix
@@ -48,6 +77,13 @@
           - --disk
           - main
           - "{{ bootstrap_disk_device }}"
+
+    - name: Clean up temporary attic netrc
+      delegate_to: localhost
+      file:
+        path: /tmp/attic-bootstrap-netrc
+        state: absent
+      when: use_attic_cache | bool
 
     - name: Wait for SSH after installation
       delegate_to: localhost
