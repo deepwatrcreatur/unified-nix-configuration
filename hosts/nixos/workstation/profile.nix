@@ -129,13 +129,6 @@
 
   services.printing.enable = true;
 
-  home-manager.users.deepwatrcreatur = {
-    imports = [
-      inputs.nix-whitesur-config.homeManagerModules.default
-      ../../../users/deepwatrcreatur/hosts/workstation
-    ];
-  };
-
   environment.systemPackages = with pkgs; [
     at-spi2-core
     baobab

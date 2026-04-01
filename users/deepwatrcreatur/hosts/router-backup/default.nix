@@ -7,7 +7,7 @@
 
 {
   imports = [
-    ../..
+    ../../default.nix
     ../../../../modules/home-manager/agenix-user-secrets.nix
   ];
 
