@@ -83,3 +83,4 @@ Use `worktrunk` (`wt`) for parallel agent work in separate git worktrees.
 
 - Some operational repo clones on hosts may drift or become conflicted over time; rebuilding from a clean checkout is often safer than repairing in place.
 - The den-style prototype is merged as an experiment and currently targets the LXC-style hosts first.
+- For router/DNS/public-ingress ownership boundaries, see [`docs/network-source-of-truth.md`](./docs/network-source-of-truth.md).
