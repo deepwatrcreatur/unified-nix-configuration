@@ -51,7 +51,6 @@ in
     services = {
       enableSsh = true;
       enableDocker = false;
-      enablePodman = true;
       iperf3.enable = true;
     };
   };
@@ -175,12 +174,6 @@ in
   ];
 
   my.agenix.machineIdentity.enable = true;
-
-  virtualisation.podman = {
-    enable = true;
-    dockerCompat = true;
-  };
-  virtualisation.oci-containers.backend = "podman";
 
   services.qemuGuest.enable = true;
 

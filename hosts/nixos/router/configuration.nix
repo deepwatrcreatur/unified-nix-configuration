@@ -26,7 +26,6 @@
       "technitium-dns-server"
       "tailscaled"
       "fail2ban"
-      "podman"
       "prometheus"
       "grafana"
       "netdata"
