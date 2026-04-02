@@ -9,6 +9,7 @@
     inputs.nix-router-optimized.nixosModules.router-homelab
     inputs.nix-router-optimized.nixosModules.router-log-storage
     inputs.nix-router-optimized.nixosModules.router-optimizations
+    inputs.nix-router-optimized.nixosModules.router-tailscale
     ../../modules/nixos/common
     ../../modules/nixos/services/iperf3.nix
     ../../modules/nixos/keyboard-glitches.nix
