@@ -36,3 +36,35 @@ To promote `router-backup` after a failure or bad rebuild:
 - DHCP scopes are still not clustered in the released Technitium version, so
   the standby router's dynamic pool must still be checked in the web UI
 - static reservations remain declarative in git
+
+### Recommended Setup
+
+Use Technitium clustering only for DNS/admin-state sync between `router` and
+`router-backup`.
+
+- make `router` the primary Technitium node
+- join `router-backup` as a secondary node
+- keep both nodes reachable over the management network
+- do not treat clustering as DHCP failover
+
+### What Clustering Helps With
+
+- DNS zones and records managed in Technitium
+- admin/application configuration inside Technitium
+- reducing drift between the primary and spare router
+
+### What It Does Not Solve
+
+- DHCP scope replication
+- DHCP lease-state failover
+- default-gateway failover
+- WAN ownership
+
+### Standby Checklist
+
+After enabling clustering, still verify the standby router manually:
+
+- Technitium on `router-backup` shows healthy cluster sync
+- the `LAN` DHCP scope exists on `router-backup`
+- the dynamic pool matches the intended standby settings
+- only the active router is connected to production WAN/LAN

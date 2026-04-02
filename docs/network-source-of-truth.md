@@ -58,5 +58,10 @@ for bootstrap safety right now.
 - the repo currently manages reservations and related options, not the base
   dynamic range
 
+If `router` and `router-backup` are both kept online on the management network,
+Technitium clustering can be used to keep DNS/admin configuration aligned
+between them. This does not currently extend to DHCP scopes or lease state, so
+the standby router still needs its DHCP scope checked separately in the web UI.
+
 If that changes later, the preferred path is a reliable blank-state bootstrap
 flow, not a best-effort day-2 sync only.

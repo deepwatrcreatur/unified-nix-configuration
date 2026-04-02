@@ -2,6 +2,25 @@
 
 Scripts for managing the NixOS router and its Technitium/Caddy edge services.
 
+## Technitium Clustering
+
+The current recommended spare-router model is:
+
+- `router` is the primary Technitium node
+- `router-backup` is a management-reachable standby node
+- Technitium clustering is used for DNS/admin configuration sync only
+
+Important limitation:
+
+- released Technitium clustering does not currently replicate DHCP scopes or
+  lease state
+
+So after enabling clustering, still verify on `router-backup`:
+
+- the `LAN` DHCP scope exists
+- the dynamic pool is set correctly in the web UI
+- reservations imported from git are present as expected
+
 ## export-dhcp-reservations.sh
 
 Exports DHCP reservations from Technitium DNS Server to JSON file for backup.
