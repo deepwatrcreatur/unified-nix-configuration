@@ -9,6 +9,8 @@
       "nixos-base"
       "lxc-core"
       "lxc-dhcp-networking"
+      "authentik-native"
+      "authentik-paperless-oidc"
       "attic-client"
       "nix-daemon-user-ssh"
       "home-manager-users"
@@ -39,6 +41,8 @@
       "nixos-base"
       "lxc-core"
       "attic-client"
+      "rclone-client"
+      "github-token-client"
       "nix-daemon-user-ssh"
       "home-manager-users"
       "homeserver-networking"
@@ -59,6 +63,7 @@
     aspectsList = [
       "nixos-base"
       "home-manager-users"
+      "github-token-client"
       "router-router"
     ];
   };
@@ -72,6 +77,8 @@
     mode = "aspect";
     aspectsList = [
       "nixos-base"
+      "home-manager-users"
+      "github-token-client"
       "router-router"
     ];
   };
@@ -147,6 +154,8 @@
       "nixos-base"
       "lxc-core"
       "attic-client"
+      "rclone-client"
+      "github-token-client"
       "nix-daemon-user-ssh"
       "home-manager-users"
       "podman-lxc-suppressions"
@@ -179,6 +188,7 @@
     mode = "aspect";
     aspectsList = [
       "nixos-base"
+      "home-manager-users"
       "workstation-desktop"
     ];
   };
