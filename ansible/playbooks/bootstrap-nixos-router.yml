@@ -25,7 +25,8 @@
 #   192.168.100.0/24. This subnet is not reachable from the homelab 10.10.0.0/16
 #   network without adding a temporary address to the control machine:
 #     sudo ip addr add 192.168.100.1/24 dev <lan-nic>
-#   Or connect the I226-V LAN port to the LAN switch and access via 10.10.10.1.
+#   The primary router uses 192.168.100.100 and router-backup uses 192.168.100.99.
+#   Or connect the production LAN port and reach the active router at 10.10.10.1.
 
 - name: Bootstrap router NixOS host with nixos-anywhere
   hosts: localhost
@@ -116,7 +117,9 @@
       debug:
         msg:
           - "Install complete. Router rebooted into NixOS."
-          - "Management interface: ens18 at 192.168.100.100/24"
+          - "Management interface: ens18 on 192.168.100.0/24"
+          - "Primary router: 192.168.100.100"
+          - "Backup router: 192.168.100.99"
           - "To reach it: sudo ip addr add 192.168.100.1/24 dev <your-lan-nic>"
-          - "Or connect I226-V LAN port to switch and use: ssh deepwatrcreatur@10.10.10.1"
+          - "Or connect the production LAN port and use: ssh deepwatrcreatur@10.10.10.1"
           - "Commit any changed files in the repo (hardware-config, pub key, etc.)"
