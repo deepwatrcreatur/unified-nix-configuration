@@ -23,6 +23,8 @@
   # Configure attic manually via the attic CLI using the token from agenix
 
   networking.hostName = "attic-cache";
+  host.type = "lxc";
+  host.networking.enableTailscale = false;
 
   security.sudo.enable = true;
   security.sudo.wheelNeedsPassword = false;

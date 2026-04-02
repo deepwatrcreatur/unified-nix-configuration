@@ -130,4 +130,8 @@ in {
   # Stable root SSH key - deployed to /root/.ssh/id_ed25519 via agenix
   "secrets-agenix/root-ssh-key.age".publicKeys =
     operatorUsers ++ builtins.concatLists (map machineRecipients rootSshKeyHosts);
+
+  # Stable deepwatrcreatur SSH key - deployed to /home/deepwatrcreatur/.ssh/id_ed25519 via agenix
+  "secrets-agenix/deepwatrcreatur-ssh-key.age".publicKeys =
+    operatorUsers ++ builtins.concatLists (map machineRecipients rootSshKeyHosts);
 }
