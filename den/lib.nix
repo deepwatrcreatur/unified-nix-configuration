@@ -2,8 +2,9 @@
 
 let
   aspects = import ./aspects { inherit lib; };
+  inventoryHosts = import ./inventory/hosts.nix;
 in
-{
+rec {
   mkHostModule =
     {
       name,
@@ -33,6 +34,26 @@ in
             }
           )
           aspectsList) ++ extraImports;
+    };
+
+  mkInventoryHostModule =
+    {
+      name,
+      ...
+    }@args:
+    let
+      inventoryEntry =
+        inventoryHosts.${name}
+        or (throw "mkInventoryHostModule: unknown inventory host '${name}'");
+      inventoryAspects =
+        inventoryEntry.aspectsList
+        or (throw "mkInventoryHostModule: host '${name}' has no aspectsList in den/inventory/hosts.nix");
+    in
+    {
+      imports = (mkHostModule ((builtins.removeAttrs args [ "name" ]) // {
+        inherit name;
+        aspectsList = inventoryAspects;
+      })).imports;
     };
 
   # Borrowed from vic/den: select a value by hostname at eval time.

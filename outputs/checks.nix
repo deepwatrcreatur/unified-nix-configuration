@@ -179,6 +179,17 @@ let
   routerCaddyHostsMissingInInventory =
     builtins.filter (name: !(builtins.elem name routerPublicIngressServices)) routerCaddyVirtualHostNames;
 
+  routerPrimaryHost = libHosts.router;
+  routerBackupHost = libHosts.router-backup;
+  routerPrimarySshTarget = routerPrimaryHost.sshHostname or routerPrimaryHost.hostname or routerPrimaryHost.ip or null;
+  routerBackupSshTarget = routerBackupHost.sshHostname or routerBackupHost.hostname or routerBackupHost.ip or null;
+  routerSpareModelIssues =
+    (pkgs.lib.optional (routerPrimarySshTarget == null) "router is missing an SSH management target in lib/hosts.nix")
+    ++ (pkgs.lib.optional (routerBackupSshTarget == null) "router-backup is missing an SSH management target in lib/hosts.nix")
+    ++ (pkgs.lib.optional (routerPrimarySshTarget == routerBackupSshTarget) "router and router-backup must not share the same management SSH target")
+    ++ (pkgs.lib.optional ((routerBackupHost.includeDns or true)) "router-backup must stay out of DNS inventory while it is a standby spare")
+    ++ (pkgs.lib.optional ((routerBackupHost.ip or null) != null) "router-backup must not advertise a distinct production IP in lib/hosts.nix");
+
   aspectNames = builtins.attrNames denAspectRegistry;
 
   # Read aspectsList directly from inventory entries (aspect hosts must declare it there).
@@ -300,6 +311,7 @@ let
       [ "Caddy virtualHosts in hosts/nixos/router/caddy.nix are missing from router.publicIngressServices: ${builtins.concatStringsSep ", " routerCaddyHostsMissingInInventory}" ]
     else
       [ ])
+    ++ (if routerSpareModelIssues != [ ] then routerSpareModelIssues else [ ])
     ++ (if lxcHostsMissingNetworking != [ ] then
       [ "LXC hosts use lxc-core without a networking aspect and are not in lxcStaticNetworkingHosts: ${builtins.concatStringsSep ", " lxcHostsMissingNetworking}" ]
     else
