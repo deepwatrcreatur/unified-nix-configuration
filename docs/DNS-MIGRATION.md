@@ -1,17 +1,18 @@
 # Migrating from IP-based to Hostname-based SSH Config
 
+Historical note: this is a migration/reference document. It explains the move
+from older SSH/DNS patterns to the current hostname-based model, but it is not
+the primary source of truth for the live router/network split.
+
 ## Current State (IP-based)
 
 Your current SSH config in `modules/home-manager/ssh-config`:
 
 ```ssh-config
-Host gateway
+Host router
     Hostname 10.10.10.1
     user deepwatrcreatur
 
-Host pve-gateway
-    Hostname 10.10.11.52
-    user root
 ```
 
 ## New State (Hostname-based with DNS)
@@ -19,13 +20,10 @@ Host pve-gateway
 After DNS zone module is active:
 
 ```ssh-config
-Host gateway
-    Hostname gateway.deepwatercreature.com
+Host router
+    Hostname router.deepwatercreature.com
     user deepwatrcreatur
 
-Host pve-gateway
-    Hostname pve-gateway.deepwatercreature.com
-    user root
 ```
 
 ## Benefits
@@ -47,13 +45,10 @@ Host pve-gateway
 ### Step 1: Verify DNS is working
 
 ```bash
-# On any host with gateway as DNS server
-dig gateway.deepwatercreature.com
-dig pve-gateway.deepwatercreature.com
-
-# Should return the correct IPs
-# gateway.deepwatercreature.com -> 10.10.10.1
-# pve-gateway.deepwatercreature.com -> 10.10.11.52
+# On any host with router as DNS server
+dig router.deepwatercreature.com
+# Should return the correct IP
+# router.deepwatercreature.com -> 10.10.10.1
 ```
 
 ### Step 2: Update SSH config to use hostnames
@@ -66,14 +61,9 @@ Edit `modules/home-manager/ssh-config`:
     enable = true;
     
     matchBlocks = {
-      "gateway" = {
-        hostname = "gateway.deepwatercreature.com";
+      "router" = {
+        hostname = "router.deepwatercreature.com";
         user = "deepwatrcreatur";
-      };
-      
-      "pve-gateway" = {
-        hostname = "pve-gateway.deepwatercreature.com";
-        user = "root";
       };
       
       # ... repeat for all hosts
@@ -86,8 +76,7 @@ Edit `modules/home-manager/ssh-config`:
 
 ```bash
 # Should work exactly as before
-ssh gateway
-ssh pve-gateway
+ssh router
 ```
 
 ### Step 4: Update other tools
@@ -96,10 +85,8 @@ ssh pve-gateway
 ```yaml
 all:
   hosts:
-    gateway:
-      ansible_host: gateway.deepwatercreature.com
-    pve-gateway:
-      ansible_host: pve-gateway.deepwatercreature.com
+    router:
+      ansible_host: router.deepwatercreature.com
 ```
 
 **Nix remote builders:**
@@ -123,16 +110,16 @@ nix.settings.substituters = [
 If DNS is temporarily down, you can still use IPs by having both entries:
 
 ```ssh-config
-Host gateway
-    Hostname gateway.deepwatercreature.com
+Host router
+    Hostname router.deepwatercreature.com
     user deepwatrcreatur
 
-Host gateway-ip
+Host router-ip
     Hostname 10.10.10.1
     user deepwatrcreatur
 ```
 
-Then use `ssh gateway-ip` as fallback.
+Then use `ssh router-ip` as fallback.
 
 ## Short Names vs FQDNs
 
@@ -149,16 +136,14 @@ networking.search = [ "deepwatercreature.com" ];
 
 Then use short names everywhere:
 ```bash
-ssh gateway          # Resolves to gateway.deepwatercreature.com
-ping pve-gateway     # Resolves to pve-gateway.deepwatercreature.com
+ssh router          # Resolves to router.deepwatercreature.com
 ```
 
 ### Option 2: Always use FQDNs
 
 More explicit, works anywhere:
 ```bash
-ssh gateway.deepwatercreature.com
-ping pve-gateway.deepwatercreature.com
+ssh router.deepwatercreature.com
 ```
 
 ## What About Hosts Not in DNS Yet?
@@ -173,8 +158,8 @@ During migration, some hosts may not be in DNS. You can:
    ```
 
 2. **Add to DNS gradually**
-   - Add host to `staticHosts` in gateway config
-   - Rebuild gateway
+   - Add host to `staticHosts` in router config
+   - Rebuild router
    - Update SSH config to use hostname
 
 3. **Use `/etc/hosts` as bridge**
@@ -201,7 +186,7 @@ If something breaks:
 1. **Revert SSH config** to IP-based temporarily
 2. **Check DNS server** is running: `systemctl status technitium-dns-server`
 3. **Check DNS sync** service: `systemctl status technitium-sync-static-hosts`
-4. **Manual DNS test**: `dig @10.10.10.1 gateway.deepwatercreature.com`
+4. **Manual DNS test**: `dig @10.10.10.1 router.deepwatercreature.com`
 
 ## Final State
 

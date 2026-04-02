@@ -47,7 +47,7 @@ in
       home.packages = lib.optionals pkgs.stdenv.isLinux (
         with pkgs;
         [
-          bitwarden-cli
+          (if pkgs ? bw-fnox then bw-fnox else bitwarden-cli)
         ]
       );
     }

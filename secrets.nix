@@ -9,9 +9,7 @@ let
 
   hosts = {
     attic-cache = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBMzmqOZ301fwZJVQI5KZ9+npuFs+3EvwKet4peLZeLv";
-    gateway = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGjM16WJ9SUCs+moDo8QTTbbEJMd0EYZPGItC6oV4WiO root@nixos";
     homeserver = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOo9lHhuHiT1rAF3RcFwSMYYtQvoheU4IxVsCRBKlPFI root@nixoslxc";
-    pve-gateway = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKneb67aN01m3ygkITF7BOU4YbKsPRZCErT/d5TVcquy";
     pve-lattitude = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOz/qnrymEHn6b057GKCOMCfB9fK28HkWmZ6MnXblVO2";
     pve-rog = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFkWE8kICYI4rPsw/SWfEjOcBrKRk0DywrYSOFZkdlDX agenix-machine-identity pve-rog";
     pve-strix = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAgSeJeuivBkeB92lG8Sup+fQl4AwfRWH3XlCJSMQ3j4";
@@ -31,13 +29,13 @@ let
   rootSshKeyHosts = [
     "authentik-host"
     "attic-cache"
-    "gateway"
     "homeserver"
     "inference1"
     "inference2"
     "inference3"
     "podman"
     "router"
+    "router-backup"
     "workstation"
   ];
 
@@ -56,7 +54,7 @@ let
 
   userOnlySecrets = operatorUsers;
 
-  gatewayServiceSecrets = operatorUsers ++ machineRecipients "gateway" ++ machineRecipients "router";
+  routerServiceSecrets = operatorUsers ++ machineRecipients "router" ++ machineRecipients "router-backup";
   homeserverServiceSecrets = operatorUsers ++ machineRecipients "homeserver";
   authentikHostServiceSecrets = operatorUsers ++ machineRecipients "authentik-host";
 
@@ -69,19 +67,18 @@ let
   atticClientHosts = [
     "authentik-host"
     "attic-cache"
-    "gateway"
     "homeserver"
     "inference1"
     "inference2"
     "inference3"
     "podman"
     "router"
-    "pve-gateway"
-    "pve-router"
+    "router-backup"
     "pve-lattitude"
     "pve-rog"
     "pve-strix"
     "pve-tomahawk"
+    "pve-z170"
     "workstation"
     # TODO: Add hackintosh and macminim4 once their host keys are in the hosts list
   ];
@@ -101,10 +98,10 @@ let
   paperlessOidcSecrets = operatorUsers ++ machineRecipients "podman" ++ machineRecipients "authentik-host";
 in {
   # Service-scoped secrets
-  "secrets-agenix/cloudflare-api-key.age".publicKeys = gatewayServiceSecrets;
-  "secrets-agenix/cloudflare_ddns_API_token.age".publicKeys = gatewayServiceSecrets;
-  "secrets-agenix/technitium-api-key.age".publicKeys = gatewayServiceSecrets;
-  "secrets-agenix/tailscale-auth-key.age".publicKeys = gatewayServiceSecrets;
+  "secrets-agenix/cloudflare-api-key.age".publicKeys = routerServiceSecrets;
+  "secrets-agenix/cloudflare_ddns_API_token.age".publicKeys = routerServiceSecrets;
+  "secrets-agenix/technitium-api-key.age".publicKeys = routerServiceSecrets;
+  "secrets-agenix/tailscale-auth-key.age".publicKeys = routerServiceSecrets;
   "secrets-agenix/authentik-env.age".publicKeys = authentikHostServiceSecrets;
   "secrets-agenix/attic-client-token.age".publicKeys = atticClientSecrets;
   "secrets-agenix/attic-server-token.age".publicKeys = atticServiceSecrets;
@@ -124,7 +121,7 @@ in {
   "secrets-agenix/atuin-key-b64.age".publicKeys = userOnlySecrets;
   "secrets-agenix/oauth-creds.age".publicKeys = userOnlySecrets;
   "secrets-agenix/bitwarden-data.age".publicKeys = userOnlySecrets;
-  "secrets-agenix/rclone-conf.age".publicKeys = userOnlySecrets;
+  "secrets-agenix/rclone-conf.age".publicKeys = userOnlySecrets ++ machineRecipients "homeserver" ++ machineRecipients "podman";
   "secrets-agenix/proxmox-api-token.age".publicKeys = userOnlySecrets;
 
   # nix-ci.com cache authentication (netrc format)

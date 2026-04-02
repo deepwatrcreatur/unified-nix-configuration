@@ -14,10 +14,10 @@ Edit `inventory/hosts.yml` to configure your hosts. Hosts are grouped by rebuild
 
 | Group | Rebuild Command | Hosts |
 |-------|-----------------|-------|
-| `nixos` | `nixos-rebuild switch` | gateway, homeserver, workstation, attic-cache |
+| `nixos` | `nixos-rebuild switch` | router, homeserver, workstation, attic-cache |
 | `nixos_inference` | `nixos-rebuild switch` | inference1, inference2, inference3 |
 | `darwin` | `darwin-rebuild switch` | hackintosh, macminim4 |
-| `proxmox` | `home-manager switch` | pve-gateway, pve-lattitude, pve-rog, pve-strix, pve-tomahawk |
+| `proxmox` | `home-manager switch` | pve-lattitude, pve-rog, pve-strix, pve-tomahawk, pve-z170 |
 
 ## Playbooks
 
@@ -33,7 +33,7 @@ ansible-playbook -i inventory/hosts.yml playbooks/rebuild-all.yml
 ansible-playbook -i inventory/hosts.yml playbooks/rebuild-all.yml --limit nixos
 
 # Limit to specific hosts
-ansible-playbook -i inventory/hosts.yml playbooks/rebuild-all.yml --limit "gateway,homeserver"
+ansible-playbook -i inventory/hosts.yml playbooks/rebuild-all.yml --limit "router,homeserver"
 
 # Skip git pull (just rebuild with current state)
 ansible-playbook -i inventory/hosts.yml playbooks/rebuild-all.yml -e skip_git_pull=true
@@ -63,7 +63,7 @@ This is the simplest playbook to point Semaphore at for routine PVE updates.
 ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml
 
 # Update just one or two Proxmox hosts
-ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml --limit pve-gateway
+ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml --limit pve-z170
 ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml --limit "pve-rog,pve-strix"
 
 # Skip git pull and only re-run Home Manager
@@ -90,6 +90,26 @@ Home Manager activation is blocked by an unrelated package conflict.
 ansible-playbook -i inventory/hosts.yml playbooks/setup-secrets.yml --limit proxmox
 ```
 
+### bootstrap-nixos-router.yml
+
+Bootstraps `router` or `router-backup` from a NixOS live ISO using
+`nixos-anywhere`. Handles SSH agent exhaustion and the optional attic-cache
+pre-configuration needed when DNS is unavailable (which it is when you're
+installing the machine that provides DNS).
+
+```bash
+# Basic install
+ansible-playbook -i inventory/hosts.yml playbooks/bootstrap-nixos-router.yml \
+  -e install_target=10.10.21.82 -e flake_target=router
+
+# With attic-cache by IP (avoids building everything locally, saves ~30 min)
+ansible-playbook -i inventory/hosts.yml playbooks/bootstrap-nixos-router.yml \
+  -e install_target=10.10.21.82 -e flake_target=router -e use_attic_cache=true
+```
+
+See `docs/router-nixos-anywhere-lessons.md` for the full lessons-learned
+writeup, including management network access after install.
+
 ### bootstrap-nixos-inference.yml
 
 Bootstraps `inference1`, `inference2`, or `inference3` from a NixOS live ISO
@@ -107,7 +127,12 @@ It runs from the control machine and updates the repo working tree with:
 - rekeyed `.age` files when recipients changed
 
 ```bash
+# Standard install
 ansible-playbook -i inventory/hosts.yml playbooks/bootstrap-nixos-inference.yml --limit inference1
+
+# With attic-cache by IP (when DNS/router is unavailable)
+ansible-playbook -i inventory/hosts.yml playbooks/bootstrap-nixos-inference.yml \
+  --limit inference1 -e use_attic_cache=true
 ```
 
 See `../docs/inference-vm-bootstrap.md` for the full workflow.
@@ -144,6 +169,26 @@ The `proxmox-host-configuration` repo contains additional Proxmox-specific playb
 - Bootstrap/initial setup
 - APT proxy configuration
 - Proxmox-specific tasks
+
+### Adding a New Proxmox Host
+
+The playbooks assume the host is already registered as an agenix recipient. Do this **in the repo first**, before touching the host:
+
+1. Get the SSH host key: `ssh-keyscan -t ed25519 <ip>`
+2. Add `ssh-keys/agenix-machine-identities/<hostname>.pub`
+3. Add the host to `lib/hosts.nix`, `ansible/inventory/hosts.yml`, `secrets.nix` (`atticClientHosts`), and `lib/remote-builder.nix` (`nonNixosHosts`)
+4. Rekey: `nix run github:ryantm/agenix -- --rekey`
+5. Commit and push
+
+Then bootstrap the host (see `docs/proxmox-root-setup.md` for the full sequence) and run:
+
+```bash
+# Decrypt secrets (uses machine SSH host key, not SOPS age key)
+ansible-playbook -i inventory/hosts.yml playbooks/setup-secrets.yml --limit <hostname>
+
+# Apply home-manager (writes nix.conf substituters before building)
+ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml --limit <hostname>
+```
 
 ## Troubleshooting
 

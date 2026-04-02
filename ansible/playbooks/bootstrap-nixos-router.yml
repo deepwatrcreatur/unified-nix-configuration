@@ -1,0 +1,125 @@
+---
+# Bootstrap router/router-backup NixOS hosts from a live ISO using nixos-anywhere.
+#
+# Prerequisites:
+#   - Proxmox VM booted from NixOS live ISO (UEFI/OVMF, not legacy BIOS)
+#   - sshd running on the live ISO and operator key installed for root
+#   - VM has two SCSI disks: scsi0 (main OS), scsi1 (logs)
+#   - SSH_AUTH_SOCK cleared on control machine to avoid key exhaustion
+#
+# The 'just install' recipe in the repo root is the primary interface.
+# Use this playbook when you want Ansible orchestration or attic-cache
+# pre-configuration without manual environment variable juggling.
+#
+# Usage:
+#   # Basic install (builds locally, no cache)
+#   ansible-playbook -i inventory/hosts.yml playbooks/bootstrap-nixos-router.yml \
+#     -e install_target=10.10.21.82 -e flake_target=router
+#
+#   # With attic-cache by IP (when DNS is unavailable — common during router bootstrap)
+#   ansible-playbook -i inventory/hosts.yml playbooks/bootstrap-nixos-router.yml \
+#     -e install_target=10.10.21.82 -e flake_target=router -e use_attic_cache=true
+#
+# Notes on management network access post-install:
+#   The installed router configures ens18 as a static management interface on
+#   192.168.100.0/24. This subnet is not reachable from the homelab 10.10.0.0/16
+#   network without adding a temporary address to the control machine:
+#     sudo ip addr add 192.168.100.1/24 dev <lan-nic>
+#   The primary router uses 192.168.100.100 and router-backup uses 192.168.100.99.
+#   Or connect the production LAN port and reach the active router at 10.10.10.1.
+
+- name: Bootstrap router NixOS host with nixos-anywhere
+  hosts: localhost
+  gather_facts: false
+  connection: local
+
+  vars:
+    repo_root: "{{ playbook_dir | dirname | dirname }}"
+    # Required: IP of the live ISO SSH target
+    install_target: "{{ install_target | mandatory }}"
+    # Required: flake output name (router or router-backup)
+    flake_target: "{{ flake_target | mandatory }}"
+    bootstrap_ssh_user: "{{ install_ssh_user | default('root') }}"
+    bootstrap_target_host: "{{ bootstrap_ssh_user }}@{{ install_target }}"
+    bootstrap_machine_identity_dir: "/tmp/nix-bootstrap-{{ flake_target }}"
+    bootstrap_machine_identity_pub_path: "{{ repo_root }}/ssh-keys/agenix-machine-identities/{{ flake_target }}.pub"
+    # Attic cache options — useful when DNS is unavailable (router not yet running)
+    use_attic_cache: "{{ use_attic_cache | default(false) }}"
+    attic_cache_ip: "{{ attic_cache_ip | default('10.10.11.39') }}"
+    attic_cache_pubkey: "cache-local:GozZz7XFsUZ7xI5o/Q36JA/BFfjzONWOjiqC+zAhp2g="
+    attic_token_path: /run/agenix/attic-client-token
+
+  tasks:
+    - name: Verify live installer is booted in UEFI mode
+      shell: >
+        SSH_AUTH_SOCK="" ssh -o StrictHostKeyChecking=accept-new
+        -o IdentitiesOnly=yes -i ~/.ssh/id_ed25519
+        {{ bootstrap_target_host }} "test -d /sys/firmware/efi"
+      args:
+        executable: /bin/bash
+
+    - name: Check machine identity directory exists
+      stat:
+        path: "{{ bootstrap_machine_identity_dir }}/machine-identity"
+      register: identity_check
+
+    - name: Fail if machine identity missing
+      fail:
+        msg: |
+          No machine identity at {{ bootstrap_machine_identity_dir }}/machine-identity.
+          Run: just gen-identity {{ flake_target }}
+      when: not identity_check.stat.exists
+
+    - name: Write temporary attic netrc
+      shell: |
+        token="$(sudo cat {{ attic_token_path }})"
+        printf 'machine %s\n  password %s\n' "{{ attic_cache_ip }}" "$token" \
+          > /tmp/attic-bootstrap-netrc
+        chmod 600 /tmp/attic-bootstrap-netrc
+      args:
+        executable: /bin/bash
+      when: use_attic_cache | bool
+
+    - name: Install host with nixos-anywhere (just install wrapper)
+      environment:
+        SSH_AUTH_SOCK: ""
+        NIX_CONFIG: |
+          {% if use_attic_cache | bool %}
+          extra-substituters = http://{{ attic_cache_ip }}:5001/cache-local
+          extra-trusted-public-keys = {{ attic_cache_pubkey }}
+          netrc-file = /tmp/attic-bootstrap-netrc
+          {% endif %}
+      command:
+        argv:
+          - just
+          - install
+          - "{{ flake_target }}"
+          - "{{ install_target }}"
+          - ""
+          - ""
+          - "true"
+        chdir: "{{ repo_root }}"
+
+    - name: Clean up temporary attic netrc
+      file:
+        path: /tmp/attic-bootstrap-netrc
+        state: absent
+      when: use_attic_cache | bool
+
+    - name: Wait for SSH after reboot
+      wait_for:
+        host: "{{ install_target }}"
+        port: 22
+        timeout: 300
+        delay: 10
+
+    - name: Show post-install note
+      debug:
+        msg:
+          - "Install complete. Router rebooted into NixOS."
+          - "Management interface: ens18 on 192.168.100.0/24"
+          - "Primary router: 192.168.100.100"
+          - "Backup router: 192.168.100.99"
+          - "To reach it: sudo ip addr add 192.168.100.1/24 dev <your-lan-nic>"
+          - "Or connect the production LAN port and use: ssh deepwatrcreatur@10.10.10.1"
+          - "Commit any changed files in the repo (hardware-config, pub key, etc.)"

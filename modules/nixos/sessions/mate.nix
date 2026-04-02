@@ -2,30 +2,13 @@
 
 {
   imports = [
+    ./lightdm-autologin-support.nix
+    ./gnome-keyring-support.nix
     ./whitesur-theme.nix
   ];
 
-  # Enable X11 windowing system.
-  services.xserver.enable = true;
-
   # Enable MATE desktop environment.
   services.xserver.desktopManager.mate.enable = true;
-
-  # Enable GNOME Keyring for secure credential storage (needed by Mailspring and other apps)
-  services.gnome.gnome-keyring.enable = true;
-
-  # Configure autorepeat for Proxmox guest to prevent stuck keypresses
-  services.xserver.autoRepeatDelay = 300;
-  services.xserver.autoRepeatInterval = 40;
-
-  # Enable LightDM display manager for MATE
-  services.xserver.displayManager.lightdm.enable = true;
-
-  # Enable autologin
-  services.displayManager.autoLogin = {
-    enable = true;
-    user = "deepwatrcreatur";
-  };
 
   # Packages for MATE with WhiteSur theming
   environment.systemPackages = with pkgs; [

@@ -9,6 +9,8 @@
       "nixos-base"
       "lxc-core"
       "lxc-dhcp-networking"
+      "authentik-native"
+      "authentik-paperless-oidc"
       "attic-client"
       "nix-daemon-user-ssh"
       "home-manager-users"
@@ -29,19 +31,6 @@
     ];
   };
 
-  gateway = {
-    kind = "nixos";
-    name = "gateway";
-    system = "x86_64-linux";
-    hostPath = ../hosts/gateway;
-    isDesktop = false;
-    mode = "aspect";
-    aspectsList = [
-      "nixos-base"
-      "gateway-router"
-    ];
-  };
-
   homeserver = {
     kind = "nixos";
     name = "homeserver";
@@ -52,6 +41,8 @@
       "nixos-base"
       "lxc-core"
       "attic-client"
+      "rclone-client"
+      "github-token-client"
       "nix-daemon-user-ssh"
       "home-manager-users"
       "homeserver-networking"
@@ -71,7 +62,37 @@
     mode = "aspect";
     aspectsList = [
       "nixos-base"
+      "home-manager-users"
+      "github-token-client"
       "router-router"
+    ];
+  };
+
+  router-backup = {
+    kind = "nixos";
+    name = "router-backup";
+    system = "x86_64-linux";
+    hostPath = ../hosts/router-backup;
+    isDesktop = false;
+    mode = "aspect";
+    aspectsList = [
+      "nixos-base"
+      "home-manager-users"
+      "github-token-client"
+      "router-router"
+    ];
+  };
+
+  router-bootstrap = {
+    kind = "nixos";
+    name = "router-bootstrap";
+    system = "x86_64-linux";
+    hostPath = ../hosts/router-bootstrap;
+    isDesktop = false;
+    mode = "aspect";
+    aspectsList = [
+      "nixos-base"
+      "bootstrap-base"
     ];
   };
 
@@ -133,6 +154,8 @@
       "nixos-base"
       "lxc-core"
       "attic-client"
+      "rclone-client"
+      "github-token-client"
       "nix-daemon-user-ssh"
       "home-manager-users"
       "podman-lxc-suppressions"
@@ -165,6 +188,7 @@
     mode = "aspect";
     aspectsList = [
       "nixos-base"
+      "home-manager-users"
       "workstation-desktop"
     ];
   };

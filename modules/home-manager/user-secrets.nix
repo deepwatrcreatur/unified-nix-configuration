@@ -41,6 +41,7 @@ in {
       ATTIC_TOKEN_ENC="$SECRETS_PATH/attic-client-token.yaml.enc"
       GITHUB_TOKEN_ENC="$SECRETS_PATH/github-token.txt.enc"
       AGENIX_GITHUB_TOKEN="${cfg.agenixGithubTokenPath}"
+      SYSTEM_GITHUB_TOKEN="/run/secrets/github-token"
       SYSTEM_ATTIC_TOKEN="${cfg.systemAtticTokenPath}"
 
       if [ -f "$SYSTEM_ATTIC_TOKEN" ] && [ -r "$SYSTEM_ATTIC_TOKEN" ]; then
@@ -65,6 +66,8 @@ in {
       # to the legacy SOPS-encrypted user secret.
       if [ -f "$AGENIX_GITHUB_TOKEN" ]; then
         install -m 600 "$AGENIX_GITHUB_TOKEN" "$HOME/.config/git/github-token"
+      elif [ -f "$SYSTEM_GITHUB_TOKEN" ] && [ -r "$SYSTEM_GITHUB_TOKEN" ]; then
+        install -m 600 "$SYSTEM_GITHUB_TOKEN" "$HOME/.config/git/github-token"
       elif [ -f "$GITHUB_TOKEN_ENC" ]; then
         if [ -f "$SOPS_AGE_KEY_FILE" ]; then
           tmp_github_token="$(mktemp)"

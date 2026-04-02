@@ -2,7 +2,6 @@
 let
   # NixOS hosts that can use remote building (via agenix)
   nixosHosts = [
-    "gateway"
     "homeserver"
     "router"
     "workstation"
@@ -11,12 +10,11 @@ let
   # Non-NixOS hosts that can use remote building (Proxmox, Ubuntu)
   # These use home-manager/ansible for key deployment
   nonNixosHosts = [
-    "pve-gateway"
-    "pve-router"
     "pve-rog"
     "pve-strix"
     "pve-tomahawk"
     "pve-lattitude"
+    "pve-z170"
   ];
 
   supportedHosts = nixosHosts ++ nonNixosHosts;

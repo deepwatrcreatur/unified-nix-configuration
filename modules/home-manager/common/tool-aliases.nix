@@ -14,8 +14,9 @@ let
     less = "bat --plain";
 
     # Just (command runner)
-    update = "just update";
-    nh-update = "just nh-update";
+    j = "just-home";
+    update = "update-system";
+    nh-update = "nh-update-system";
 
     # SSH
     ssh-nocheck = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ";
@@ -43,7 +44,8 @@ let
   # Prefer explicit wrappers via aliases (raw remains available)
   wrappedToolAliases =
     (lib.optionalAttrs (pkgs ? gh-fnox) { gh = "gh-fnox"; })
-    // (lib.optionalAttrs (pkgs ? bw-fnox) { bw = "bw-fnox"; });
+    // (lib.optionalAttrs (pkgs ? bw-fnox) { bw = "bw-fnox"; })
+    // (lib.optionalAttrs (pkgs ? attic-fnox) { attic = "attic-fnox"; });
 in
 {
   options.custom.toolAliases = {

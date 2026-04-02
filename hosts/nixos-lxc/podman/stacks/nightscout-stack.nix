@@ -70,14 +70,14 @@ in
       { path = "/var/lib/nightscout/mongo"; mode = "0755"; }
     ];
 
-    # The public URL terminates at Caddy on gateway. This host port remains for
-    # direct LAN/admin access and for a stable reverse-proxy target from gateway.
+    # The public URL terminates at Caddy on router. This host port remains for
+    # direct LAN/admin access and for a stable reverse-proxy target from router.
     firewall.allowedTCPPorts = [ 11337 ];
   };
 
   # 11337 is intentionally plain HTTP on the host. Browsing to
   # `https://podman:11337` will fail because TLS is only terminated at the
-  # public URL on gateway; use `https://nightscout.deepwatercreature.com`.
+  # public URL on router; use `https://nightscout.deepwatercreature.com`.
   systemd.services.nightscout-host-proxy = hostProxy.mkService {
     description = "Host-side Nightscout proxy";
     containerName = "nightscout";

@@ -7,25 +7,39 @@ let
   hostsData = import ../../../lib/hosts.nix;
 
   # Filter hosts that should be in SSH config
-  sshHosts = builtins.filter (name:
-    let host = hostsData.hosts.${name}; in
-    (host.includeSsh or true) && ((host.ip or null) != null || (host.hostname or null) != null)
-  ) (builtins.attrNames hostsData.hosts);
+  sshHostEntries =
+    builtins.concatLists (
+      map
+        (name:
+          let host = hostsData.hosts.${name}; in
+          if
+            (host.includeSsh or true)
+            && (
+              (host.sshHostname or null) != null
+              || (host.ip or null) != null
+              || (host.hostname or null) != null
+            )
+          then
+            [ { entryName = name; inherit host; } ]
+            ++ map (alias: { entryName = alias; inherit host; }) (host.aliases or [ ])
+          else
+            [ ])
+        (builtins.attrNames hostsData.hosts)
+    );
 
   # Generate Host entry for each host
-  hostEntry = name:
+  hostEntry = entry:
     let
-      host = hostsData.hosts.${name};
-      hostname = host.hostname or host.ip;
-      user = host.sshUser or "deepwatrcreatur";
+      hostname = entry.host.sshHostname or entry.host.hostname or entry.host.ip;
+      user = entry.host.sshUser or "deepwatrcreatur";
     in ''
-      Host ${name}
+      Host ${entry.entryName}
           Hostname ${hostname}
           user ${user}
     '';
 
   # Generate ssh-config content for ssh-keys-manager to parse
-  sshConfigContent = builtins.concatStringsSep "\n" (map hostEntry sshHosts);
+  sshConfigContent = builtins.concatStringsSep "\n" (map hostEntry sshHostEntries);
   sshConfigFile = pkgs.writeText "ssh-config-generated" sshConfigContent;
 
 in {

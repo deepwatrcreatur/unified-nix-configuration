@@ -61,11 +61,8 @@ let
 
   allowedInfraOnlyHosts = [
     "apt-cache"
-    "casaos"
     "homeassistant"
     "infisical"
-    "nixoslxc"
-    "npm"
   ];
 
   missingDenInventoryHosts =
@@ -131,22 +128,67 @@ let
         key == null || key == "")
       aspectInventoryHostNames;
 
-  # Collect all service names (from the `services` field) across every host.
+  # Collect all public ingress service names across every host.
   # A service name must not collide with a machine hostname to avoid ambiguity
   # like "authentik" (service) vs "authentik-host" (machine) — they are different,
   # but a collision would mean a CNAME and an A record share the same label.
   allLibHostNames = names libHosts;
+  publicIngressServicesFor =
+    hostName: libHosts.${hostName}.publicIngressServices or libHosts.${hostName}.services or [ ];
 
   serviceNameCollisions =
     builtins.concatLists (
       map
         (hostName:
-          let
-            serviceNames = libHosts.${hostName}.services or [];
-          in
-          builtins.filter (svc: builtins.elem svc allLibHostNames) serviceNames)
+          builtins.filter (svc: builtins.elem svc allLibHostNames) (publicIngressServicesFor hostName))
         allLibHostNames
     );
+
+  routerPublicIngressServices = publicIngressServicesFor "router";
+  routerDdnsServices = libHosts.router.ddnsServices or [ ];
+
+  routerDdnsOutsideIngress =
+    builtins.filter (name: name != "@" && !(builtins.elem name routerPublicIngressServices)) routerDdnsServices;
+
+  routerCaddyFile = builtins.readFile ../hosts/nixos/router/caddy.nix;
+  routerCaddyVirtualHostMatches =
+    builtins.split "\n[[:space:]]*\"([a-z0-9-]+)\\.deepwatercreature\\.com\"[[:space:]]*=" routerCaddyFile;
+  routerCaddyVirtualHostNames =
+    builtins.attrNames (
+      builtins.listToAttrs (
+        builtins.concatLists (
+          map
+            (
+              part:
+              if builtins.isList part then
+                map (name: {
+                  inherit name;
+                  value = true;
+                }) part
+              else
+                [ ]
+            )
+            routerCaddyVirtualHostMatches
+        )
+      )
+    );
+
+  routerIngressMissingInCaddy =
+    builtins.filter (name: !(builtins.elem name routerCaddyVirtualHostNames)) routerPublicIngressServices;
+
+  routerCaddyHostsMissingInInventory =
+    builtins.filter (name: !(builtins.elem name routerPublicIngressServices)) routerCaddyVirtualHostNames;
+
+  routerPrimaryHost = libHosts.router;
+  routerBackupHost = libHosts.router-backup;
+  routerPrimarySshTarget = routerPrimaryHost.sshHostname or routerPrimaryHost.hostname or routerPrimaryHost.ip or null;
+  routerBackupSshTarget = routerBackupHost.sshHostname or routerBackupHost.hostname or routerBackupHost.ip or null;
+  routerSpareModelIssues =
+    (pkgs.lib.optional (routerPrimarySshTarget == null) "router is missing an SSH management target in lib/hosts.nix")
+    ++ (pkgs.lib.optional (routerBackupSshTarget == null) "router-backup is missing an SSH management target in lib/hosts.nix")
+    ++ (pkgs.lib.optional (routerPrimarySshTarget == routerBackupSshTarget) "router and router-backup must not share the same management SSH target")
+    ++ (pkgs.lib.optional ((routerBackupHost.includeDns or true)) "router-backup must stay out of DNS inventory while it is a standby spare")
+    ++ (pkgs.lib.optional ((routerBackupHost.ip or null) != null) "router-backup must not advertise a distinct production IP in lib/hosts.nix");
 
   aspectNames = builtins.attrNames denAspectRegistry;
 
@@ -257,6 +299,19 @@ let
       [ "Service names in lib/hosts.nix collide with machine hostnames (a CNAME and an A record cannot share a label): ${builtins.concatStringsSep ", " serviceNameCollisions}" ]
     else
       [ ])
+    ++ (if routerDdnsOutsideIngress != [ ] then
+      [ "router.ddnsServices contains names that are not declared in router.publicIngressServices: ${builtins.concatStringsSep ", " routerDdnsOutsideIngress}" ]
+    else
+      [ ])
+    ++ (if routerIngressMissingInCaddy != [ ] then
+      [ "router.publicIngressServices are missing matching Caddy virtualHosts in hosts/nixos/router/caddy.nix: ${builtins.concatStringsSep ", " routerIngressMissingInCaddy}" ]
+    else
+      [ ])
+    ++ (if routerCaddyHostsMissingInInventory != [ ] then
+      [ "Caddy virtualHosts in hosts/nixos/router/caddy.nix are missing from router.publicIngressServices: ${builtins.concatStringsSep ", " routerCaddyHostsMissingInInventory}" ]
+    else
+      [ ])
+    ++ (if routerSpareModelIssues != [ ] then routerSpareModelIssues else [ ])
     ++ (if lxcHostsMissingNetworking != [ ] then
       [ "LXC hosts use lxc-core without a networking aspect and are not in lxcStaticNetworkingHosts: ${builtins.concatStringsSep ", " lxcHostsMissingNetworking}" ]
     else
@@ -289,6 +344,7 @@ let
       '';
 in
 {
+  inherit missingInventoryHosts;
   checks.x86_64-linux.inventory-consistency = checkBody;
   checks.x86_64-linux.module-loading-eval = pkgs.writeText "module-loading-eval.txt" (
     if moduleLoadingEval == [ ] then "module-loading-eval=ok\n" else builtins.throw "module-loading-eval failed"

@@ -2,7 +2,7 @@
 let
   den = import ../../lib.nix { inherit lib; };
 in
-den.mkHostModule {
+den.mkInventoryHostModule {
   name = "inference1";
   primaryUser = "deepwatrcreatur";
   extraImports = [
@@ -14,10 +14,5 @@ den.mkHostModule {
         boot.growPartition = true;
       }
     )
-  ];
-  aspectsList = [
-    "inference-vm-base"
-    "inference-vm-nvidia"
-    "inference1-ollama"
   ];
 }

@@ -1,5 +1,9 @@
 # Migration from sops-nix to agenix
 
+Historical note: this plan documents the earlier migration path. The repo now
+uses agenix directly; treat this file as background/reference, not current
+step-by-step operating procedure.
+
 ## Why Migrate?
 
 - **Simpler key management**: Use existing SSH keys instead of managing separate age keys
@@ -12,7 +16,7 @@
 ### sops-nix setup:
 - System secrets: `/var/lib/sops/age/keys.txt` or `/etc/nixos/secrets/age-key.txt`
 - User secrets: `~/.config/sops/age/keys.txt`
-- Hosts using sops: gateway, workstation, homeserver, attic-cache, rustdesk, inference-vm
+- Hosts using sops: router, workstation, homeserver, attic-cache, rustdesk, inference-vm
 
 ### Existing SSH keys:
 - **Workstation host:** `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKFAzJUqDpasPy2B+vODDAZOdGJ/7DiZ1wWjbWkM1Bi8`
@@ -42,7 +46,7 @@
    # secrets.nix
    let
      # System host keys
-     gateway = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGjM16WJ9SUCs+moDo8QTTbbEJMd0EYZPGItC6oV4WiO";
+     router = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGjM16WJ9SUCs+moDo8QTTbbEJMd0EYZPGItC6oV4WiO";
      workstation = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKFAzJUqDpasPy2B+vODDAZOdGJ/7DiZ1wWjbWkM1Bi8";
      homeserver = "ssh-ed25519 AAAAC3..."; # Get from homeserver
      
@@ -50,14 +54,14 @@
      deepwatrcreatur = builtins.replaceStrings ["\n"] [""] (builtins.readFile ./ssh-keys/deepwatrcreatur-stable-identity.pub);
      
      # Convenience groups
-     allHosts = [ gateway workstation homeserver ];
+     allHosts = [ router workstation homeserver ];
      allUsers = [ deepwatrcreatur ];
      allKeys = allHosts ++ allUsers;
    in
    {
      # System-level secrets (accessible by root)
-     "cloudflare-api-key.age".publicKeys = [ gateway homeserver ] ++ allUsers;
-     "technitium-api-key.age".publicKeys = [ gateway workstation ] ++ allUsers;
+     "cloudflare-api-key.age".publicKeys = [ router homeserver ] ++ allUsers;
+     "technitium-api-key.age".publicKeys = [ router workstation ] ++ allUsers;
      
      # User-level secrets (accessible by user)
      "github-token.age".publicKeys = allKeys;
@@ -116,7 +120,7 @@
 
 9. **Host-by-host migration order:**
    - Start with: **workstation** (easiest to recover)
-   - Then: **gateway** (core infrastructure, test thoroughly)
+   - Then: **router** (core infrastructure, test thoroughly)
    - Then: **homeserver** (many secrets, do carefully)
    - Finally: **LXC containers** (attic-cache, rustdesk, etc.)
 

@@ -2,7 +2,7 @@
 let
   den = import ../../lib.nix { inherit lib; };
 in
-den.mkHostModule {
+den.mkInventoryHostModule {
   name = "podman";
   primaryUser = "deepwatrcreatur";
   extraGroups = [
@@ -11,14 +11,5 @@ den.mkHostModule {
   ];
   primaryUserImports = [
     ../../../users/deepwatrcreatur/hosts/podman
-  ];
-  aspectsList = [
-    "nixos-base"
-    "lxc-core"
-    "attic-client"
-    "nix-daemon-user-ssh"
-    "home-manager-users"
-    "podman-lxc-suppressions"
-    "podman-containers"
   ];
 }

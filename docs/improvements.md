@@ -12,7 +12,7 @@ intentionally actionable: each item describes what to do, what the blocker is
 
 ---
 
-## Immediately actionable (low risk, no external dependencies)
+## Deferred
 
 ### A. Add machine-identity keys for inference1/2/3, phoenix, rustdesk
 
@@ -30,75 +30,6 @@ The `inventory-consistency` check now surfaces these as a non-fatal notice.
 4. Verify `inventory-consistency` notice disappears.
 
 **Hosts:** inference1, inference2, inference3, phoenix, rustdesk
-
----
-
-### C. Derive Caddy dynamic_dns domain list from lib/hosts.nix
-
-**Why it matters:** `hosts/nixos/gateway/caddy.nix` has a manually maintained
-list of DDNS-managed subdomains that must be kept in sync with
-`lib/hosts.nix`'s `gateway.services`.  They can drift.
-
-**Current DDNS list (caddy.nix ~line 35):**
-```
-deepwatercreature.com @ homelab authentik paperless 2fauth nightscout marreta linkwarden
-```
-
-**Excluded intentionally:** `home-assistant` — published as a Cloudflare CNAME
-to a separate DDNS host.
-
-**Not in DDNS list but in `gateway.services`:** `www`, `dashboard`, `grafana`
-(point at internal IPs, no DDNS needed).
-
-**What to do:**
-1. Add a `ddnsServices` field to the gateway entry in `lib/hosts.nix`.
-2. Have `caddy.nix` import `lib/hosts.nix` and derive the domain list from it.
-3. Makes DDNS alignment automatic when new services are added.
-
-**Risk:** Medium — touching live Caddy config.  Test with `nixos-rebuild test`
-before switching.
-
----
-
-### G. Wire NTP DHCP option 42 through Technitium
-
-**Why it matters:** The gateway now runs chrony (10.10.10.1) but clients only
-discover it automatically if DHCP option 42 advertises it.
-
-**What to do:**
-1. In `nix-router-optimized`, add `ntpServers` option to the Technitium
-   provider path of `router-dns-service` to set DHCP scope option 42 via API.
-2. In this repo: `services.router-dns-service.ntpServers = ["10.10.10.1"]`
-   in `hosts/nixos/gateway/networking.nix`.
-
-**Short-term:** Configure option 42 in Technitium web UI manually while the
-nix-router-optimized feature is developed.
-
----
-
-## Needs design work / not immediately safe
-
-### D. Add per-aspect invariant checks (partial)
-
-**Status:** LXC networking check is live in `outputs/checks.nix`.
-
-**Remaining:** Assert every non-LXC aspect host includes `nixos-base`.
-Currently convention but not enforced.
-
----
-
-### E. Gateway legacy → den migration
-
-**Why it matters:** `gateway` is the last host in `legacyHostAllowlist`.
-
-**Blockers:**
-- `dns-zone.nix` and `caddy.nix` are tightly coupled; no obvious aspect
-  boundary yet.
-- `nix-router-optimized` modules don't map cleanly to a simple aspect.
-- Migration would need a `gateway-router` aspect wrapping the
-  nix-router-optimized modules and the local networking/caddy files.
-
-**Do not rush this** — gateway is a live production router.
 
 ---
 

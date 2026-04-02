@@ -2,34 +2,13 @@
 
 {
   imports = [
+    ./lightdm-autologin-support.nix
+    ./gnome-keyring-support.nix
     ./whitesur-theme.nix
   ];
 
-  # ===========================================
-  # Base Configuration
-  # ===========================================
-
-  # Enable X11 windowing system.
-  services.xserver.enable = true;
-
   # Enable Cinnamon desktop environment.
   services.xserver.desktopManager.cinnamon.enable = true;
-
-  # Enable GNOME Keyring for secure credential storage (needed by Mailspring and other apps)
-  services.gnome.gnome-keyring.enable = true;
-
-  # Configure autorepeat for Proxmox guest to prevent stuck keypresses
-  services.xserver.autoRepeatDelay = 300;
-  services.xserver.autoRepeatInterval = 40;
-
-  # Enable LightDM display manager for Cinnamon
-  services.xserver.displayManager.lightdm.enable = true;
-
-  # Enable autologin
-  services.displayManager.autoLogin = {
-    enable = true;
-    user = "deepwatrcreatur";
-  };
 
   # ===========================================
   # Cinnamon-Specific Packages

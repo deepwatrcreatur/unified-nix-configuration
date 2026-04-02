@@ -7,7 +7,10 @@
 }:
 
 {
-  imports = [ inputs."nix-gnome-cosmic-ui".nixosModules.default ];
+  imports = [
+    inputs."nix-gnome-cosmic-ui".nixosModules.default
+    ./gnome-keyring-support.nix
+  ];
 
   # Enable GNOME desktop environment
   # WhiteSur theming is handled by whitesur flake input in user's home-manager config
@@ -107,9 +110,6 @@
     # System tray support
     libappindicator-gtk3
 
-    # GNOME Keyring
-    libsecret
-    gnome-keyring
     glib
     gsettings-desktop-schemas
   ];

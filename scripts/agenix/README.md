@@ -18,7 +18,7 @@ machine identities for machine-scoped secrets and store their public keys in
 `ssh-keys/agenix-machine-identities/{hostname}.pub`.
 
 **Hosts configured:**
-- gateway
+- router
 - workstation  
 - homeserver
 - attic-cache
@@ -65,17 +65,17 @@ Creates `secrets.nix` at repo root with:
 
 ### Host Keys
 Pattern: `{hostname}-host-ed25519.pub`
-- Example: `gateway-host-ed25519.pub`
+- Example: `router-host-ed25519.pub`
 - Used for: Legacy fallback recipients for system-level secrets
 
 ### Machine Identity Keys
 Pattern: `{hostname}.pub`
-- Example: `gateway.pub`
+- Example: `router.pub`
 - Used for: Stable machine-scoped agenix recipients
 
 ### User Keys  
 Pattern: `{username}@{hostname}-ed25519.pub`
-- Example: `deepwatrcreatur@gateway-ed25519.pub`
+- Example: `deepwatrcreatur@router-ed25519.pub`
 - Used for: User-level secrets (home-manager)
 
 The generator extracts unique usernames and uses the first key found per user.

@@ -11,7 +11,7 @@ in
 {
   options.host = {
     type = mkOption {
-      type = types.enum [ "workstation" "server" "inference" "lxc" "gateway" ];
+      type = types.enum [ "workstation" "server" "inference" "lxc" "router" ];
       default = "server";
       description = "The type of host (affects default settings)";
       example = "workstation";
@@ -160,8 +160,8 @@ in
       host.desktop.enable = mkDefault false;
     })
 
-    # Gateway/router configuration
-    (mkIf (cfg.type == "gateway") {
+    # Router configuration
+    (mkIf (cfg.type == "router") {
       host.networking.enableTailscale = mkDefault true;
       host.services.enableSsh = mkDefault true;
     })

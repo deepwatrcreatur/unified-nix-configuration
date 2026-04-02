@@ -1,11 +1,10 @@
 attic-cache: agenix machine identity - attic-cache
-gateway: agenix machine identity - gateway
 homeserver: agenix machine identity - homeserver
-pve-gateway: agenix machine identity - pve-gateway
 pve-lattitude: agenix machine identity - pve-lattitude
 pve-rog: agenix machine identity - pve-rog
 pve-strix: agenix machine identity - pve-strix
 pve-tomahawk: agenix machine identity - pve-tomahawk
 podman: agenix machine identity - podman
+router: agenix machine identity - router
 rustdesk: agenix machine identity - rustdesk
 workstation: agenix machine identity - workstation

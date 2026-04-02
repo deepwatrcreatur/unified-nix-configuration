@@ -23,6 +23,12 @@ in
       default = "${config.home.homeDirectory}/.local/share/agenix-user-secrets/rclone-conf";
       description = "Path to the decrypted agenix rclone config, if present.";
     };
+
+    systemRclonePath = mkOption {
+      type = types.str;
+      default = "/run/secrets/rclone-conf";
+      description = "Path to the system-provisioned rclone config, if present.";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -58,14 +64,17 @@ in
       mkdir -p "$HOME/.config/rclone"
 
       # Prefer the Home Manager agenix secret if present, otherwise fall back to
-      # the legacy SOPS-encrypted user secret.
+      # the system-provisioned secret, and finally the legacy SOPS-encrypted secret.
       SECRETS_PATH="${toString cfg.secretsPath}"
       RCLONE_ENC="$SECRETS_PATH/rclone.conf.enc"
       AGENIX_RCLONE="${cfg.agenixRclonePath}"
+      SYSTEM_RCLONE="${cfg.systemRclonePath}"
       TARGET_RCLONE="$HOME/.config/rclone/rclone.conf"
 
       if [ -f "$AGENIX_RCLONE" ]; then
         install -m 600 "$AGENIX_RCLONE" "$TARGET_RCLONE"
+      elif [ -f "$SYSTEM_RCLONE" ] && [ -r "$SYSTEM_RCLONE" ]; then
+        install -m 600 "$SYSTEM_RCLONE" "$TARGET_RCLONE"
       elif [ -f "$RCLONE_ENC" ]; then
         if [ -f "$SOPS_AGE_KEY_FILE" ]; then
           tmp_rclone="$(mktemp)"

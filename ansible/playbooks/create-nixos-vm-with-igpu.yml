@@ -1,0 +1,83 @@
+---
+# Create a VM with iGPU passthrough for testing graphics/display
+#
+# Usage:
+#   ansible-playbook -i inventory/hosts.yml playbooks/create-nixos-vm-with-igpu.yml
+#   ansible-playbook -i inventory/hosts.yml playbooks/create-nixos-vm-with-igpu.yml --limit pve-z170
+#
+# Options:
+#   ansible-playbook -i inventory/hosts.yml playbooks/create-nixos-vm-with-igpu.yml -e vm_name=test-vm -e gpu_pci=00:02.0
+#   ansible-playbook -i inventory/hosts.yml playbooks/create-nixos-vm-with-igpu.yml -e skip_iso=true  # skip ISO attachment
+
+- name: Create NixOS VM with iGPU passthrough
+  hosts: proxmox
+  gather_facts: false
+
+  vars:
+    vm_name: nixos-test-gpu
+    vm_cores: 4
+    vm_memory: 8192
+    gpu_pci: "00:02.0"  # Intel HD Graphics 530 on pve-z170
+    iso_storage: iso-temp
+    iso_path: tank-z170/iso/template/iso/nixos-graphical-25.11.7198.71caefce12ba-x86_64-linux.iso
+    skip_iso: false
+
+  tasks:
+    - name: Get next available VM ID
+      command: pvesh get /cluster/nextid
+      register: nextid_result
+
+    - name: Parse VM ID
+      set_fact:
+        vmid: "{{ nextid_result.stdout | trim }}"
+
+    - name: Display VM ID
+      debug:
+        msg: "Creating VM {{ vmid }} with name {{ vm_name }}"
+
+    - name: Create VM with iGPU passthrough
+      command:
+        cmd: >
+          qm create {{ vmid }}
+          --name {{ vm_name }}
+          --ostype l26
+          --cores {{ vm_cores }}
+          --memory {{ vm_memory }}
+          --net0 virtio,bridge=vmbr0
+          --bios ovmf
+          --machine q35
+          --hostpci0 {{ gpu_pci }},x-vga=1
+          --scsihw virtio-scsi-single
+          --vga std
+      register: vm_create
+
+    - name: Ensure ISO storage exists
+      command: pvesm add dir {{ iso_storage }} --path /tank-z170/iso --content iso
+      when: not skip_iso
+      ignore_errors: true
+
+    - name: Attach ISO to VM
+      command: qm set {{ vmid }} --ide2 {{ iso_storage }}:iso/{{ iso_path | basename }},media=cdrom
+      when: not skip_iso
+
+    - name: Set boot order to CD-ROM
+      command: qm set {{ vmid }} --boot order=ide2
+
+    - name: Start the VM
+      command: qm start {{ vmid }}
+      register: vm_start
+
+    - name: Show final status
+      debug:
+        msg:
+          - "VM {{ vmid }} ({{ vm_name }}) created and started"
+          - "GPU passthrough: {{ gpu_pci }}"
+          - "Access via: qm console {{ vmid }} or Proxmox UI"
+
+    - name: Get VM configuration
+      command: qm config {{ vmid }}
+      register: vm_config
+
+    - name: Display VM config
+      debug:
+        var: vm_config.stdout

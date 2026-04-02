@@ -55,32 +55,31 @@ in
 
       if [ ! -f "${cfg.identityFile}" ]; then
         echo "Warning: agenix-user-secrets identity not found at ${cfg.identityFile}"
-        exit 0
+      else
+        tmp_dir="$(mktemp -d)"
+        trap 'rm -rf "$tmp_dir"' EXIT
+
+        ${lib.concatStringsSep "\n" (
+          lib.mapAttrsToList (
+            name: secret:
+            let
+              targetPath = "${config.home.homeDirectory}/${secret.target}";
+              installTargets = [ targetPath ] ++ map (target: "${config.home.homeDirectory}/${target}") secret.extraTargets;
+              mkdirCommands = lib.concatStringsSep "\n" (
+                map (path: ''mkdir -p "${builtins.dirOf path}"'') installTargets
+              );
+              installCommands = lib.concatStringsSep "\n" (
+                map (path: ''install -m ${secret.mode} "$tmp_dir/${name}" "${path}"'') installTargets
+              );
+            in
+            ''
+              ${mkdirCommands}
+              ${pkgs.rage}/bin/rage -d -i "${cfg.identityFile}" -o "$tmp_dir/${name}" "${secret.source}"
+              ${installCommands}
+            ''
+          ) cfg.secrets
+        )}
       fi
-
-      tmp_dir="$(mktemp -d)"
-      trap 'rm -rf "$tmp_dir"' EXIT
-
-      ${lib.concatStringsSep "\n" (
-        lib.mapAttrsToList (
-          name: secret:
-          let
-            targetPath = "${config.home.homeDirectory}/${secret.target}";
-            installTargets = [ targetPath ] ++ map (target: "${config.home.homeDirectory}/${target}") secret.extraTargets;
-            mkdirCommands = lib.concatStringsSep "\n" (
-              map (path: ''mkdir -p "${builtins.dirOf path}"'') installTargets
-            );
-            installCommands = lib.concatStringsSep "\n" (
-              map (path: ''install -m ${secret.mode} "$tmp_dir/${name}" "${path}"'') installTargets
-            );
-          in
-          ''
-            ${mkdirCommands}
-            ${pkgs.rage}/bin/rage -d -i "${cfg.identityFile}" -o "$tmp_dir/${name}" "${secret.source}"
-            ${installCommands}
-          ''
-        ) cfg.secrets
-      )}
     '';
   };
 }

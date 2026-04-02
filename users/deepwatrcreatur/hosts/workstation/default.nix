@@ -11,7 +11,6 @@
     ./nh.nix
     ./distrobox.nix
 
-    ../../../../modules/home-manager
     ../../../../modules/home-manager/agenix-user-secrets.nix
     ../../../../modules/home-manager/gnome-cosmic-style.nix
     ../../../../modules/home-manager/ghostty

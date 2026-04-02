@@ -8,6 +8,7 @@
     ../../hosts/nixos-lxc/podman/stacks/paperless-stack.nix
     ../../hosts/nixos-lxc/podman/stacks/librelinkup-stack.nix
     ../../hosts/nixos-lxc/podman/stacks/scrypted-stack.nix
+    ../../hosts/nixos-lxc/podman/stacks/home-assistant-stack.nix
   ];
 
   # Enable Podman with settings
@@ -38,6 +39,7 @@
       3005 # Plex
       8324 # Plex
       32469 # Plex
+      8123 # Home Assistant
     ];
     allowedUDPPorts = [
       1900 # Plex DLNA

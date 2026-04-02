@@ -9,7 +9,7 @@ Unified flake for NixOS, nix-darwin, and Home Manager configurations across the 
 ├── flake.nix
 ├── flake.lock
 ├── lib/flake/            # Flake builder and output-loading logic
-├── inventory/legacy/     # Data-driven inventory for standard outputs
+├── den/                  # den-style inventory, aspects, and host glue
 ├── outputs/              # Output loaders and special-case outputs
 ├── hosts/                # Host-specific NixOS and Darwin configuration trees
 ├── modules/              # Shared NixOS, Home Manager, Darwin, and helper modules
@@ -40,7 +40,7 @@ Common local operations:
 ```bash
 nix flake metadata
 nix flake check
-sudo nixos-rebuild switch --flake .#<hostname>
+/run/wrappers/bin/sudo nixos-rebuild switch --flake .#<hostname>
 home-manager switch --flake .#<home-output>
 nh os switch -H <hostname> -f ~/flakes/unified-nix-configuration
 nh home switch ~/flakes/unified-nix-configuration#<home-output>
@@ -49,8 +49,8 @@ nh home switch ~/flakes/unified-nix-configuration#<home-output>
 Examples:
 
 ```bash
-sudo nixos-rebuild switch --flake .#workstation
-sudo nixos-rebuild switch --flake .#gateway
+/run/wrappers/bin/sudo nixos-rebuild switch --flake .#workstation
+/run/wrappers/bin/sudo nixos-rebuild switch --flake .#router
 home-manager switch --flake .#proxmox-root
 ```
 
@@ -83,3 +83,5 @@ Use `worktrunk` (`wt`) for parallel agent work in separate git worktrees.
 
 - Some operational repo clones on hosts may drift or become conflicted over time; rebuilding from a clean checkout is often safer than repairing in place.
 - The den-style prototype is merged as an experiment and currently targets the LXC-style hosts first.
+- For router/DNS/public-ingress ownership boundaries, see [`docs/network-source-of-truth.md`](./docs/network-source-of-truth.md).
+- For the manual spare-router model and cable-swap cutover, see [`docs/router-spare-cutover.md`](./docs/router-spare-cutover.md).

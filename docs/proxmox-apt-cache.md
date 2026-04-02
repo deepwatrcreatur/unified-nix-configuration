@@ -6,4 +6,4 @@ Current location:
 
 - `/home/deepwatrcreatur/flakes/proxmox-host-configuration/docs/proxmox-apt-cache.md`
 
-`unified-nix-configuration` still owns the authoritative DNS record for `apt-cache.deepwatercreature.com` because that record is part of the NixOS gateway DNS configuration.
+`unified-nix-configuration` still owns the authoritative DNS record for `apt-cache.deepwatercreature.com` because that record is part of the NixOS router DNS configuration.

@@ -14,9 +14,9 @@
     inputs.nixbit.nixosModules.nixbit
     inputs.agenix.nixosModules.default
     ../../../modules/nixos/snap.nix
-    ../../../modules/nixos/sessions/gnome.nix
-    ../../../modules/nixos/hp-print-scan.nix
-    ../../../modules/nixos/printers/phoenix-hp-m477.nix
+    ../../../modules/nixos/sessions/cosmic.nix
+    #../../../modules/nixos/hp-print-scan.nix
+    #../../../modules/nixos/printers/phoenix-hp-m477.nix
     ../../../modules/nixos/keyboard-glitches.nix
     ../../../modules/nixos/snapper.nix
     ../../../modules/nixos/nix-daemon-user-ssh.nix
@@ -128,13 +128,6 @@
   services.displayManager.autoLogin.user = "deepwatrcreatur";
 
   services.printing.enable = true;
-
-  home-manager.users.deepwatrcreatur = {
-    imports = [
-      inputs.nix-whitesur-config.homeManagerModules.default
-      ../../../users/deepwatrcreatur/hosts/workstation
-    ];
-  };
 
   environment.systemPackages = with pkgs; [
     at-spi2-core

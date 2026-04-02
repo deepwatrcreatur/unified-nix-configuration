@@ -10,6 +10,8 @@
   imports = [
     ../../../../modules/common/nix-settings.nix
     ../../../../den/aspects/nix-caches.nix
+    ../../../../modules/nixos/common/agenix.nix
+    ../../../../modules/nixos/common/nix-ci-netrc.nix
     ../../../../modules/nixos/common/agenix-machine-identity.nix
     ../../../../modules/nixos/inference-vm-nix-overrides.nix
     ../../../../modules/nixos/root-ssh-identity.nix

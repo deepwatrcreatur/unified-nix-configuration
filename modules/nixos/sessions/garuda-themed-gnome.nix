@@ -2,6 +2,8 @@
 { config, pkgs, ... }:
 
 {
+  imports = [ ./gnome-keyring-support.nix ];
+
   # Enable GNOME desktop environment
   services.xserver.enable = true;
   services.desktopManager.gnome.enable = true;
@@ -13,9 +15,6 @@
     enable = true;
     user = "deepwatrcreatur";
   };
-
-  # Enable GNOME Keyring for secure credential storage (needed by Mailspring and other apps)
-  services.gnome.gnome-keyring.enable = true;
 
   # GTK theming for applications
   programs.dconf.enable = true;
