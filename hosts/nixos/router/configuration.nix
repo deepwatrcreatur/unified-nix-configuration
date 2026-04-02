@@ -16,6 +16,90 @@
     })
   ];
 
+  services.router-dashboard = {
+    refreshInterval = 10;
+    services = [
+      "systemd-networkd"
+      "sshd"
+      "nftables"
+      "caddy"
+      "technitium-dns-server"
+      "tailscaled"
+      "fail2ban"
+      "podman"
+      "prometheus"
+      "grafana"
+      "netdata"
+      "router-dashboard"
+    ];
+    links = lib.mkForce [
+      {
+        label = "Dashboard";
+        url = "https://dashboard.deepwatercreature.com";
+        icon = "🧭";
+      }
+      {
+        label = "Homelab";
+        url = "https://homelab.deepwatercreature.com";
+        icon = "🏠";
+      }
+      {
+        label = "Grafana";
+        url = "https://grafana.deepwatercreature.com";
+        icon = "📈";
+      }
+      {
+        label = "DNS Admin";
+        url = "http://10.10.10.1:5380/";
+        icon = "🌍";
+      }
+      {
+        label = "Prometheus";
+        url = "http://10.10.10.1:9090/";
+        icon = "🎯";
+      }
+      {
+        label = "Netdata";
+        url = "http://10.10.10.1:19999/";
+        icon = "📊";
+      }
+      {
+        label = "Router SSH";
+        kind = "copy";
+        copyText = "ssh router";
+        icon = "🖥️";
+      }
+      {
+        label = "Backup SSH";
+        kind = "copy";
+        copyText = "ssh router-backup";
+        icon = "🛟";
+      }
+      {
+        label = "Router Mgmt";
+        kind = "copy";
+        copyText = "192.168.100.100";
+        icon = "🔧";
+      }
+      {
+        label = "Backup Mgmt";
+        kind = "copy";
+        copyText = "192.168.100.99";
+        icon = "🧰";
+      }
+      {
+        label = "Tech Logs";
+        url = "/logs/technitium.html";
+        icon = "📜";
+      }
+      {
+        label = "Fail2ban";
+        url = "/status/fail2ban.html";
+        icon = "🛡️";
+      }
+    ];
+  };
+
   # DNS zone management with static hosts imported from external file.
   # Edit ./dns-zone.nix to manage one or more zones.
   services.router.dnsZones =
