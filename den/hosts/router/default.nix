@@ -2,17 +2,11 @@
 let
   den = import ../../lib.nix { inherit lib; };
 in
-den.mkHostModule {
+den.mkInventoryHostModule {
   name = "router";
   primaryUser = "deepwatrcreatur";
   primaryUserImports = [
     ../../../users/deepwatrcreatur/hosts/router
-  ];
-  aspectsList = [
-    "nixos-base"
-    "home-manager-users"
-    "github-token-client"
-    "router-router"
   ];
   extraImports = [
     ../../../hosts/nixos/router/hardware-configuration.nix

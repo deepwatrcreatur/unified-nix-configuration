@@ -2,11 +2,6 @@
 let
   den = import ../../lib.nix { inherit lib; };
 in
-den.mkHostModule {
+den.mkInventoryHostModule {
   name = "attic-cache";
-  aspectsList = [
-    "attic-cache-core"
-    "attic-cache-build-server"
-    "attic-cache-home-manager"
-  ];
 }
