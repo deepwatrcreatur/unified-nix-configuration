@@ -2,7 +2,7 @@
 let
   den = import ../../lib.nix { inherit lib; };
 in
-den.mkHostModule {
+den.mkInventoryHostModule {
   name = "workstation";
   primaryUser = "deepwatrcreatur";
   primaryUserImports = [
@@ -12,10 +12,5 @@ den.mkHostModule {
   extraImports = [
     ../../../hosts/nixos/workstation/hardware-configuration.nix
     ../../../hosts/nixos/workstation/networking.nix
-  ];
-  aspectsList = [
-    "nixos-base"
-    "home-manager-users"
-    "workstation-desktop"
   ];
 }

@@ -2,7 +2,7 @@
 let
   den = import ../../lib.nix { inherit lib; };
 in
-den.mkHostModule {
+den.mkInventoryHostModule {
   name = "inference-fresh";
   primaryUser = "deepwatrcreatur";
   extraImports = [
@@ -16,7 +16,4 @@ den.mkHostModule {
     )
   ];
   # No inference-vm-nvidia: this host has no GPU and runs without NVIDIA drivers.
-  aspectsList = [
-    "inference-vm-base"
-  ];
 }
