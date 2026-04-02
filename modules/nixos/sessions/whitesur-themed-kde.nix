@@ -7,6 +7,7 @@
 }:
 {
   imports = [
+    ./plasma-kwallet-support.nix
     ./whitesur-theme.nix
   ];
 
@@ -48,8 +49,6 @@
 
     # Utilities
     dconf-editor # For GTK app theme configuration
-    libsecret
-    gnome-keyring # For credential storage (works cross-DE)
 
     # Thunderbird and mail support
     thunderbird

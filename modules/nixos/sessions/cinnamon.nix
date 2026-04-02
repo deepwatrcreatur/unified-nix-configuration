@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ./gnome-keyring-support.nix
     ./whitesur-theme.nix
   ];
 
@@ -14,9 +15,6 @@
 
   # Enable Cinnamon desktop environment.
   services.xserver.desktopManager.cinnamon.enable = true;
-
-  # Enable GNOME Keyring for secure credential storage (needed by Mailspring and other apps)
-  services.gnome.gnome-keyring.enable = true;
 
   # Configure autorepeat for Proxmox guest to prevent stuck keypresses
   services.xserver.autoRepeatDelay = 300;

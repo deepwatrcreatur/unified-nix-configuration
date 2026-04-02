@@ -57,6 +57,8 @@ let
   '';
 in
 {
+  imports = [ ./gnome-keyring-support.nix ];
+
   # Enable COSMIC desktop environment with native Wayland support
   services.desktopManager.cosmic.enable = true;
 
@@ -153,9 +155,6 @@ in
     thunderbird # BEST unified inbox + iCloud/Gmail
     # System tray support for Thunderbird notifications
     libappindicator-gtk3
-    # GNOME Keyring for secure credential storage
-    libsecret
-    gnome-keyring
   ];
 
   # COSMIC uses gsettings/dconf; without this you get "No schemas installed".
@@ -177,19 +176,9 @@ in
   # modules/home-manager/gnome-cosmic-style.nix.
   # This approach avoids timing issues and greeter conflicts with systemd services
 
-  # GNOME Keyring daemon for credential storage
-  systemd.user.services.gnome-keyring-daemon = {
-    description = "GNOME Keyring daemon for secure credential storage";
-    wantedBy = [ "graphical-session.target" ];
-    after = [ "dbus.service" ];
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${pkgs.gnome-keyring}/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh";
-      Restart = "on-failure";
-      RestartSec = 5;
-      Environment = "GNOME_KEYRING_CONTROL=/run/user/%u/keyring/control";
-    };
-  };
+  # Greetd sessions do not inherit GNOME's login wiring, so make the keyring
+  # unlock explicit instead of managing a second daemon ourselves.
+  security.pam.services.greetd.enableGnomeKeyring = true;
 
   # Note: GNOME-style keyboard keybindings for the emulated COSMIC look are
   # configured in modules/home-manager/gnome-cosmic-style.nix.

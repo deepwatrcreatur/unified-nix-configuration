@@ -7,6 +7,8 @@
 }:
 
 {
+  imports = [ ./plasma-kwallet-support.nix ];
+
   # Import plasma-manager for home-manager integration
   home-manager.sharedModules = [
     inputs.plasma-manager.homeManagerModules.plasma-manager
