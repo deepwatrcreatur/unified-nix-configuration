@@ -4,6 +4,7 @@
   imports = [
     ../../hosts/nixos/default.nix
     ../../hosts/nixos-lxc/lxc-systemd-suppressions.nix
+    ../../modules/nixos/common
     ../../hosts/nixos-lxc/attic-cache/modules/configuration.nix
     ../../hosts/nixos-lxc/attic-cache/modules/packages.nix
     ../../hosts/nixos-lxc/attic-cache/modules/users.nix

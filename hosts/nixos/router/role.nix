@@ -129,6 +129,9 @@ in
   };
 
   services.router-homelab.sshTarget = sshTarget;
+  services.router-homelab.waitForListenAddress = false;
+  services.router-homelab.netdataAllowConnectionsFrom = "localhost 127.* ::1 10.10.* 192.168.100.*";
+  services.netdata.config.global."bind to" = "0.0.0.0";
 
   services.router-dashboard = {
     links = [
@@ -155,6 +158,7 @@ in
   };
 
   router.monitoring = {
+    listenAddress = "0.0.0.0";
     grafanaDomain = grafanaDomain;
     grafanaDataDir = grafanaDataDir;
     prometheusStateDir = prometheusStateDir;
