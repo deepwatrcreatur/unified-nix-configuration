@@ -31,6 +31,10 @@
     lan.device = lib.mkForce "enp3s0";
   };
 
+  # Keep the backup router reachable on the out-of-band virtio management
+  # network while sharing the same production LAN identity as the primary.
+  services.router-networking.routedInterfaces.management.ipv4Address = lib.mkForce "192.168.100.99/24";
+
   services.router-firewall.extraInputRules = lib.mkForce ''
     iifname {"enp3s0"} tcp dport 5201 accept comment "iperf3 from LAN"
   '';

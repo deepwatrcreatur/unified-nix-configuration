@@ -7,7 +7,8 @@ let
 
   # Filter hosts that should be in SSH config
   sshHosts = lib.filterAttrs (name: host:
-    (host.includeSsh or true) && (host.ip != null || host.hostname or null != null)
+    (host.includeSsh or true)
+    && ((host.sshHostname or null) != null || (host.hostname or null) != null || (host.ip or null) != null)
   ) hostsData.hosts;
 
   expandedSshHosts =
@@ -34,7 +35,7 @@ let
   hostSummary = lib.concatStringsSep "\n" (
     lib.mapAttrsToList (name: host:
       let
-        target = host.hostname or host.ip;
+        target = host.sshHostname or host.hostname or host.ip;
         user = host.sshUser or "deepwatrcreatur";
         description = host.description or "no description";
       in
@@ -44,7 +45,7 @@ let
 
   # Generate matchBlocks from hosts
   matchBlocks = lib.mapAttrs (name: host: {
-    hostname = host.hostname or host.ip;
+    hostname = host.sshHostname or host.hostname or host.ip;
     user = host.sshUser or "deepwatrcreatur";
   }) expandedSshHosts // {
     # Wildcard match block for default settings

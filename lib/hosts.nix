@@ -10,6 +10,9 @@
   #   ip: IPv4 address (required)
   #   ipv6: IPv6 address (optional)
   #   sshUser: default SSH user (optional, defaults to "deepwatrcreatur")
+  #   sshHostname: optional SSH target that differs from the DNS/inventory host
+  #                address. Useful when a machine has a separate management
+  #                interface but still owns a different production IP.
   #   aliases: additional machine names for this host. These are emitted into
   #            SSH config as aliases for the same target, and may also be used
   #            by DNS generation when appropriate.
@@ -37,6 +40,7 @@
     # Core Infrastructure
     router = {
       ip = "10.10.10.1";
+      sshHostname = "192.168.100.100";
       sshUser = "deepwatrcreatur";
       # Infrastructure identity aliases — other names for the router machine itself
       aliases = [
@@ -70,11 +74,10 @@
     };
 
     router-backup = {
-      ip = null;
+      sshHostname = "192.168.100.99";
       sshUser = "deepwatrcreatur";
       includeDns = false;
-      includeSsh = false;
-      description = "Emergency failover router output running NixOS";
+      description = "Emergency failover router with a dedicated management interface";
     };
 
     router-bootstrap = {

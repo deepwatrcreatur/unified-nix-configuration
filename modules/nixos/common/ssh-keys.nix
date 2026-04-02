@@ -9,7 +9,14 @@ let
       map
         (name:
           let host = hostsData.hosts.${name}; in
-          if (host.includeSsh or true) && ((host.ip or null) != null || (host.hostname or null) != null) then
+          if
+            (host.includeSsh or true)
+            && (
+              (host.sshHostname or null) != null
+              || (host.ip or null) != null
+              || (host.hostname or null) != null
+            )
+          then
             [ { entryName = name; inherit host; } ]
             ++ map (alias: { entryName = alias; inherit host; }) (host.aliases or [ ])
           else
@@ -20,7 +27,7 @@ let
   # Generate Host entry for each host
   hostEntry = entry:
     let
-      hostname = entry.host.hostname or entry.host.ip;
+      hostname = entry.host.sshHostname or entry.host.hostname or entry.host.ip;
       user = entry.host.sshUser or "deepwatrcreatur";
     in ''
       Host ${entry.entryName}
