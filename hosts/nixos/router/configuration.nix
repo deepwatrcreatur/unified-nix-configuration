@@ -26,6 +26,7 @@
       "technitium-dns-server"
       "tailscaled"
       "fail2ban"
+      "iperf3"
       "prometheus"
       "grafana"
       "netdata"
@@ -76,6 +77,12 @@
         label = "Netdata Mgmt";
         url = "http://192.168.100.100:19999/";
         icon = "📊";
+      }
+      {
+        label = "iPerf3 Cmd";
+        kind = "copy";
+        copyText = "iperf3 -c 10.10.10.1 -P 4";
+        icon = "📶";
       }
       {
         label = "Router SSH";
