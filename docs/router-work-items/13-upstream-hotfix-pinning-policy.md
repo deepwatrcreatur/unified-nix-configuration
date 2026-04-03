@@ -1,6 +1,6 @@
 # Upstream Hotfix Pinning Policy
 
-Status: `ready`
+Status: `in-progress`
 Suggested branch: `docs/router-hotfix-pinning-policy`
 Priority: `medium`
 
