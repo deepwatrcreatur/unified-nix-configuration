@@ -51,6 +51,10 @@ Highest value first:
 6. `06-boot-and-recovery-hardening.md`
 7. `07-observability-and-flow-logging.md`
 8. `08-vlans-and-vpn-policy-routing.md`
+9. `09-kea-technitium-architecture.md`
+10. `10-router-kea-module-roadmap.md`
+11. `11-internal-admin-hostnames.md`
+12. `12-vpn-module-hardening-and-tests.md`
 
 ## Why This Structure
 
