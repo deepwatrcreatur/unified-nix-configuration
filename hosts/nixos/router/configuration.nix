@@ -18,8 +18,8 @@ in
   imports = [
     (import ./role.nix {
       sshTarget = "ssh router";
-      wanDevice = "enp6s17";
-      lanDevice = "enp6s16";
+      wanDevice = "router-wan";
+      lanDevice = "router-lan";
       inherit lanIpv4Address managementIpv4Address;
       grafanaDomain = mkFqdn "router";
       grafanaDataDir = "/var/log/router/grafana";
