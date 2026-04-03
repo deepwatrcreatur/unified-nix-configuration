@@ -1,6 +1,6 @@
 # Management Plane Independence
 
-Status: `in-progress`
+Status: `done`
 Suggested branch: `feat/router-management-plane-independence`
 Priority: `very high`
 
