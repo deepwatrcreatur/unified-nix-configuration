@@ -75,6 +75,13 @@ in
       '';
     }
     {
+      assertion = config.systemd.services."serial-getty@ttyS0".enable;
+      message = ''
+        Router invariant violated: systemd.services."serial-getty@ttyS0".enable must be true.
+        This provides the login prompt on the Proxmox serial terminal.
+      '';
+    }
+    {
       assertion =
         !builtins.elem "podman" (getAttrByPath [ "services" "router-dashboard" "services" ] [ ] config);
       message = ''

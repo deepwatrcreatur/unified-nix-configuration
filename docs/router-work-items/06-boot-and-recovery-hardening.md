@@ -1,6 +1,6 @@
 # Boot And Recovery Hardening
 
-Status: `in-progress`
+Status: `done`
 Suggested branch: `refactor/router-boot-recovery`
 Priority: `medium-high`
 
