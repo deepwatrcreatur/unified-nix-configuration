@@ -51,7 +51,6 @@ in
     services = {
       enableSsh = true;
       enableDocker = false;
-      enablePodman = true;
       iperf3.enable = true;
     };
   };
@@ -162,6 +161,7 @@ in
   boot.loader.grub.enable = false;
   boot.loader.limine.enable = true;
   boot.loader.efi.canTouchEfiVariables = false;
+  boot.kernelParams = [ "console=ttyS0,115200" ];
 
   nix.settings.experimental-features = [
     "nix-command"
@@ -170,13 +170,12 @@ in
 
   my.agenix.machineIdentity.enable = true;
 
-  virtualisation.podman = {
-    enable = true;
-    dockerCompat = true;
-  };
-  virtualisation.oci-containers.backend = "podman";
-
   services.qemuGuest.enable = true;
+  services.fstrim.enable = true;
+
+  # Proxmox recovery path: keep a serial console available even when SSH or the
+  # graphical console path is broken.
+  systemd.services."serial-getty@ttyS0".enable = true;
 
   services.openssh = {
     enable = true;
