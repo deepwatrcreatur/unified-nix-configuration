@@ -118,7 +118,7 @@
     };
 
     nix-router-optimized = {
-      url = "github:deepwatrcreatur/nix-router-optimized/fix/technitium-ntp-null-scopes";
+      url = "github:deepwatrcreatur/nix-router-optimized";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

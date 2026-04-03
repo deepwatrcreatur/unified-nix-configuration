@@ -1181,16 +1181,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1775208563,
+        "lastModified": 1775210595,
         "narHash": "sha256-bs+BKYQBxMjOPj/49ZRIY1gyC8HEXdegEp3OvsKAHNM=",
         "owner": "deepwatrcreatur",
         "repo": "nix-router-optimized",
-        "rev": "13edc7d2a0470f80bc89171b1c5c08469bf5952c",
+        "rev": "37caf4d6a7b2341f368f848b7242f601a9db6bde",
         "type": "github"
       },
       "original": {
         "owner": "deepwatrcreatur",
-        "ref": "fix/technitium-ntp-null-scopes",
         "repo": "nix-router-optimized",
         "type": "github"
       }
