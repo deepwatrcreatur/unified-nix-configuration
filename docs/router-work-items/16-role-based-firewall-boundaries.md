@@ -26,3 +26,13 @@ Clear role-to-policy mapping makes it easier to reason about router behavior, re
 - Router and router-backup builds succeed.
 - Effective firewall behavior matches current intent (no unexpected exposure or breakage).
 - The relationship between interface roles and rule sets is obvious from config and docs.
+
+## Outcome Notes
+
+- `services.router-optimizations.interfaces` already models WAN / LAN /
+  management roles and devices for the router.
+- `services.router-firewall` automatically derives interface lists from those
+  roles when explicit lists are not set, so the firewall is already
+  role-aware.
+- `docs/router-firewall-roles.md` explains how these pieces fit together and
+  how to extend the router firewall safely.
