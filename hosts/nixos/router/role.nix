@@ -178,6 +178,12 @@ in
   services.router-homelab.listenAddress = "0.0.0.0";
 
   services.router-dashboard = {
+    services = lib.mkAfter [
+      "health-mgmt-ip"
+      "health-lan-ip"
+      "health-wan-carrier"
+      "health-wan-ip"
+    ];
     links = [
       {
         label = "Tech Logs";
