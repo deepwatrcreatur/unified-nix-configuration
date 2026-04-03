@@ -35,7 +35,6 @@ let
 
   topology = config.router.topology;
   lanNetwork = topology.networks.lan;
-  infrastructureNetwork = topology.networks.infrastructure;
   reservableHosts = lib.filterAttrs (
     _name: host: (host.dhcpReservation or null) != null && (host.ip or null) != null
   ) topology.hosts;
@@ -192,7 +191,7 @@ in
     enable = true;
     settings.PermitRootLogin = "prohibit-password";
     extraConfig = ''
-      Match Address ${infrastructureNetwork.cidr}
+      Match Address ${lanNetwork.cidr}
         PermitRootLogin yes
     '';
   };
