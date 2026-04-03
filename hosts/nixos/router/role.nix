@@ -33,11 +33,11 @@ let
     };
   };
 
-  hostsData = import ../../../lib/hosts.nix;
-  lanNetwork = hostsData.networks.lan;
+  topology = config.router.topology;
+  lanNetwork = topology.networks.lan;
   reservableHosts = lib.filterAttrs (
     _name: host: (host.dhcpReservation or null) != null && (host.ip or null) != null
-  ) hostsData.hosts;
+  ) topology.hosts;
 in
 {
   imports = [ ../../../modules/nixos/router/common.nix ];

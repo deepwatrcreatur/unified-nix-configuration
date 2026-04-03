@@ -1,13 +1,14 @@
 {
+  config,
   lib,
   ...
 }:
 let
-  hostsData = import ../../../lib/hosts.nix;
-  routerHost = hostsData.hosts.router;
-  backupHost = hostsData.hosts.router-backup;
-  lanNetwork = hostsData.networks.lan;
-  managementNetwork = hostsData.networks.management;
+  topology = config.router.topology;
+  routerHost = topology.hosts.router;
+  backupHost = topology.hosts.router-backup;
+  lanNetwork = topology.networks.lan;
+  managementNetwork = topology.networks.management;
   lanIpv4Address = "${routerHost.ip}/${toString lanNetwork.prefixLength}";
   managementIpv4Address = "${routerHost.sshHostname}/${toString managementNetwork.prefixLength}";
 in

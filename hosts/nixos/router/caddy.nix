@@ -1,11 +1,11 @@
 { config, pkgs, lib, ... }:
 
 let
-  hostsData = import ../../../lib/hosts.nix;
-  routerHost = hostsData.hosts.router;
-  lanNetwork = hostsData.networks.lan;
+  topology = config.router.topology;
+  routerHost = topology.hosts.router;
+  lanNetwork = topology.networks.lan;
   ddnsLabels = routerHost.ddnsServices or [ ];
-  ddnsDomainsLine = lib.concatStringsSep " " ([ hostsData.domain ] ++ ddnsLabels);
+  ddnsDomainsLine = lib.concatStringsSep " " ([ topology.domain ] ++ ddnsLabels);
 
   # Optional secrets library for graceful degradation
   optSec = import ../../../modules/helpers/optional-secrets.nix { inherit lib; };

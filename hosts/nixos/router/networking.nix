@@ -1,9 +1,10 @@
 {
+  config,
   ...
 }:
 let
-  hostsData = import ../../../lib/hosts.nix;
-  routerHost = hostsData.hosts.router;
+  topology = config.router.topology;
+  routerHost = topology.hosts.router;
 in
 {
   networking.hostName = "router";
