@@ -79,6 +79,43 @@ recovery plane**. It is intentionally independent of WAN and LAN state.
 **Design rule:** any new service added to the router role must be reachable on
 the management interface. Do not bind router services exclusively to the LAN IP.
 
+## Proxmox Recovery Procedures
+
+If the router is unresponsive or the network is misconfigured, use these paths
+to regain control.
+
+### 1. Management SSH
+
+The management interface (`ens18`) is independent of the production LAN. If
+you can reach the management network (e.g., from a jump host or via a static
+route), SSH directly to the management IP:
+
+```bash
+ssh deepwatrcreatur@192.168.100.100  # Primary Router
+ssh deepwatrcreatur@192.168.100.99   # Backup Router
+```
+
+### 2. Proxmox Serial Console (`qm terminal`)
+
+If SSH is unavailable, use the serial console. This is hardened in NixOS and
+does not depend on the graphical stack or network.
+
+1.  Log in to the Proxmox host via SSH.
+2.  Identify the VM ID (e.g., 100).
+3.  Run the terminal command:
+    ```bash
+    qm terminal <VM_ID>
+    ```
+4.  Press **Enter** to see the login prompt.
+5.  To exit the terminal, press **Ctrl+O**.
+
+### 3. Proxmox Web UI Console
+
+If `qm terminal` is not preferred, use the Web UI:
+- Navigate to the Router VM → **Console**.
+- Change the view to **Serial Terminal 0** if the default NoVNC console is
+  blank or unresponsive.
+
 ## Router Standby / Dev Mode
 
 Both `router` and `router-backup` are designed to boot into a debuggable state
