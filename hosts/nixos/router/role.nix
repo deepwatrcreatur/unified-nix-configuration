@@ -17,6 +17,7 @@
 }:
 let
   optSec = import ../../../modules/helpers/optional-secrets.nix { inherit lib; };
+  managementListenAddress = builtins.head (lib.splitString "/" managementIpv4Address);
 
   secrets = optSec.mkSecrets {
     cloudflare-api-key = {
@@ -126,6 +127,7 @@ in
   };
 
   services.router-homelab.sshTarget = sshTarget;
+  services.router-homelab.listenAddress = managementListenAddress;
 
   services.router-dashboard = {
     links = [
@@ -154,9 +156,12 @@ in
   router.monitoring = {
     grafanaDomain = grafanaDomain;
     grafanaDataDir = grafanaDataDir;
+    listenAddress = lib.mkForce "0.0.0.0";
     prometheusStateDir = prometheusStateDir;
     prometheusBindMountPath = prometheusBindMountPath;
   };
+
+  services.netdata.config.global."bind to" = "0.0.0.0";
 
   boot.loader.grub.enable = false;
   boot.loader.limine.enable = true;

@@ -26,7 +26,6 @@
       "technitium-dns-server"
       "tailscaled"
       "fail2ban"
-      "podman"
       "prometheus"
       "grafana"
       "netdata"
@@ -49,17 +48,32 @@
         icon = "📈";
       }
       {
-        label = "DNS Admin";
+        label = "DNS Admin Mgmt";
+        url = "http://192.168.100.100:5380/";
+        icon = "🌍";
+      }
+      {
+        label = "Prometheus Mgmt";
+        url = "http://192.168.100.100:9090/";
+        icon = "🎯";
+      }
+      {
+        label = "Netdata Mgmt";
+        url = "http://192.168.100.100:19999/";
+        icon = "📊";
+      }
+      {
+        label = "DNS Admin LAN";
         url = "http://10.10.10.1:5380/";
         icon = "🌍";
       }
       {
-        label = "Prometheus";
+        label = "Prometheus LAN";
         url = "http://10.10.10.1:9090/";
         icon = "🎯";
       }
       {
-        label = "Netdata";
+        label = "Netdata LAN";
         url = "http://10.10.10.1:19999/";
         icon = "📊";
       }

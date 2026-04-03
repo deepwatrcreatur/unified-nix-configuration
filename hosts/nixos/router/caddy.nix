@@ -66,7 +66,7 @@ in
       # Router dashboard
       "dashboard.deepwatercreature.com" = {
         extraConfig = ''
-          reverse_proxy 10.10.10.1:8888
+          reverse_proxy 127.0.0.1:8888
         '';
       };
 
@@ -74,7 +74,7 @@ in
         extraConfig = ''
           @trusted remote_ip 10.10.0.0/16 100.64.0.0/10
           handle @trusted {
-            reverse_proxy 10.10.10.1:8888
+            reverse_proxy 127.0.0.1:8888
           }
 
           respond "Access restricted to home LAN and Tailnet" 403
@@ -116,7 +116,7 @@ in
       };
       "grafana.deepwatercreature.com" = {
         extraConfig = ''
-          reverse_proxy 10.10.10.1:3001
+          reverse_proxy 127.0.0.1:3001
         '';
       };
     };

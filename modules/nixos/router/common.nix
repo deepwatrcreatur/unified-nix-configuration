@@ -3,13 +3,13 @@
   # Shared defaults for router and router-backup.
   services.router-homelab = {
     enable = lib.mkDefault true;
-    netdataAllowConnectionsFrom = lib.mkDefault "10.10.*";
-    waitForListenAddress = lib.mkDefault true;
+    netdataAllowConnectionsFrom = lib.mkDefault "10.10.* 192.168.100.*";
   };
 
   router.monitoring = {
     grafanaDomain = lib.mkDefault "router.deepwatercreature.com";
     grafanaDataDir = lib.mkDefault "/var/log/router/grafana";
+    listenAddress = lib.mkDefault "0.0.0.0";
     prometheusStateDir = lib.mkDefault "router-prometheus";
     prometheusBindMountPath = lib.mkDefault "/var/log/router/prometheus";
     prometheusRetentionSize = lib.mkDefault "40GB";
