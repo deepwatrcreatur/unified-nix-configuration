@@ -21,109 +21,32 @@ in
       wanDevice = "enp6s17";
       lanDevice = "enp6s16";
       inherit lanIpv4Address managementIpv4Address;
-      grafanaDomain = mkFqdn "router";
+      grafanaDomain = mkFqdn "grafana";
       grafanaDataDir = "/var/log/router/grafana";
       prometheusStateDir = "router-prometheus";
       prometheusBindMountPath = "/var/log/router/prometheus";
     })
   ];
 
-  services.router-dashboard = {
-    refreshInterval = 10;
-    services = [
-      "systemd-networkd"
-      "sshd"
-      "nftables"
-      "caddy"
-      "technitium-dns-server"
-      "tailscaled"
-      "fail2ban"
-      "prometheus"
-      "grafana"
-      "netdata"
-      "router-dashboard"
-    ];
-    links = lib.mkForce [
-      {
-        label = "Dashboard";
-        url = "https://${mkFqdn "dashboard"}";
-        icon = "🧭";
-      }
-      {
-        label = "Homelab";
-        url = "https://${mkFqdn "homelab"}";
-        icon = "🏠";
-      }
-      {
-        label = "Grafana";
-        url = "https://${mkFqdn "grafana"}";
-        icon = "📈";
-      }
-      {
-        label = "DNS Admin Mgmt";
-        url = "http://${routerHost.sshHostname}:5380/";
-        icon = "🌍";
-      }
-      {
-        label = "Prometheus Mgmt";
-        url = "http://${routerHost.sshHostname}:9090/";
-        icon = "🎯";
-      }
-      {
-        label = "Netdata Mgmt";
-        url = "http://${routerHost.sshHostname}:19999/";
-        icon = "📊";
-      }
-      {
-        label = "DNS Admin LAN";
-        url = "http://${routerHost.ip}:5380/";
-        icon = "🌍";
-      }
-      {
-        label = "Prometheus LAN";
-        url = "http://${routerHost.ip}:9090/";
-        icon = "🎯";
-      }
-      {
-        label = "Netdata LAN";
-        url = "http://${routerHost.ip}:19999/";
-        icon = "📊";
-      }
-      {
-        label = "Router SSH";
-        kind = "copy";
-        copyText = "ssh router";
-        icon = "🖥️";
-      }
-      {
-        label = "Backup SSH";
-        kind = "copy";
-        copyText = "ssh router-backup";
-        icon = "🛟";
-      }
-      {
-        label = "Router Mgmt";
-        kind = "copy";
-        copyText = routerHost.sshHostname;
-        icon = "🔧";
-      }
-      {
-        label = "Backup Mgmt";
-        kind = "copy";
-        copyText = backupHost.sshHostname;
-        icon = "🧰";
-      }
-      {
-        label = "Tech Logs";
-        url = "/logs/technitium.html";
-        icon = "📜";
-      }
-      {
-        label = "Fail2ban";
-        url = "/status/fail2ban.html";
-        icon = "🛡️";
-      }
-    ];
+  # Stable NIC identity via systemd .link files.
+  #
+  # Physical passthrough NICs are pinned by MAC so that PCI slot renumbering
+  # (e.g. after adding/removing a Proxmox device) does not silently break
+  # interface-name assumptions in role.nix.
+  #
+  # Mapping confirmed from live router VM inspection:
+  #   enp6s16  LAN   igc   pci-0000:06:10.0   MAC 02:76:c6:01:2a:af
+  #   enp6s17  WAN   igc   pci-0000:06:11.0   MAC 02:76:c6:01:2a:b0
+  #   ens18    mgmt  virtio (Proxmox virtio slot; virtio slot naming already stable)
+  systemd.network.links = {
+    "10-router-lan-stable" = {
+      matchConfig.MACAddress = "02:76:c6:01:2a:af";
+      linkConfig.Name = "enp6s16";
+    };
+    "10-router-wan-stable" = {
+      matchConfig.MACAddress = "02:76:c6:01:2a:b0";
+      linkConfig.Name = "enp6s17";
+    };
   };
 
   # DNS zone management with static hosts imported from external file.

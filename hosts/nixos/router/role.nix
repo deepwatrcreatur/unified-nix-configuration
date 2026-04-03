@@ -18,8 +18,10 @@
 }:
 let
   optSec = import ../../../modules/helpers/optional-secrets.nix { inherit lib; };
-  getAttrByPath = lib.attrByPath;
+  getAttrByPath = lib.attrsets.attrByPath;
+  lanListenAddress = builtins.head (lib.splitString "/" lanIpv4Address);
   managementListenAddress = builtins.head (lib.splitString "/" managementIpv4Address);
+  managementDevice = "ens18";
 
   secrets = optSec.mkSecrets {
     cloudflare-api-key = {
@@ -36,6 +38,7 @@ let
 
   topology = config.router.topology;
   lanNetwork = topology.networks.lan;
+  mkFqdn = label: "${label}.${topology.domain}";
   reservableHosts = lib.filterAttrs (
     _name: host: (host.dhcpReservation or null) != null && (host.ip or null) != null
   ) topology.hosts;
@@ -72,6 +75,13 @@ in
       message = ''
         Router invariant violated: boot.kernelParams must include "console=ttyS0,115200".
         The serial console is the recovery path when SSH and the graphical console are broken.
+      '';
+    }
+    {
+      assertion = config.systemd.services."serial-getty@ttyS0".enable;
+      message = ''
+        Router invariant violated: systemd.services."serial-getty@ttyS0".enable must be true.
+        This provides the login prompt on the Proxmox serial terminal.
       '';
     }
     {
@@ -122,7 +132,7 @@ in
         ];
       };
       management = {
-        device = "ens18";
+        device = managementDevice;
         ipv4Address = managementIpv4Address;
         prefixDelegationMode = "managed";
       };
@@ -144,7 +154,7 @@ in
         label = "LAN";
       };
       management = {
-        device = "ens18";
+        device = managementDevice;
         role = "management";
         label = "Management";
       };
@@ -178,7 +188,94 @@ in
   services.router-homelab.listenAddress = "0.0.0.0";
 
   services.router-dashboard = {
-    links = [
+    refreshInterval = lib.mkDefault 10;
+    services = [
+      "systemd-networkd"
+      "sshd"
+      "nftables"
+      "caddy"
+      "technitium-dns-server"
+      "tailscaled"
+      "fail2ban"
+      "prometheus"
+      "grafana"
+      "netdata"
+      "router-dashboard"
+      "health-mgmt-ip"
+      "health-lan-ip"
+      "health-wan-carrier"
+      "health-wan-ip"
+    ];
+    links = lib.mkForce [
+      {
+        label = "Dashboard";
+        url = "https://${mkFqdn "dashboard"}";
+        icon = "🧭";
+      }
+      {
+        label = "Grafana";
+        url = "https://${mkFqdn "grafana"}";
+        icon = "📈";
+      }
+      {
+        label = "DNS Admin Mgmt";
+        url = "http://${managementListenAddress}:5380/";
+        icon = "🌍";
+      }
+      {
+        label = "Prometheus Mgmt";
+        url = "http://${managementListenAddress}:9090/";
+        icon = "🎯";
+      }
+      {
+        label = "Netdata Mgmt";
+        url = "http://${managementListenAddress}:19999/";
+        icon = "📊";
+      }
+      {
+        label = "Dashboard Mgmt";
+        url = "http://${managementListenAddress}:8888/";
+        icon = "🧭";
+      }
+      {
+        label = "DNS Admin LAN";
+        url = "http://${lanListenAddress}:5380/";
+        icon = "🌍";
+      }
+      {
+        label = "Prometheus LAN";
+        url = "http://${lanListenAddress}:9090/";
+        icon = "🎯";
+      }
+      {
+        label = "Netdata LAN";
+        url = "http://${lanListenAddress}:19999/";
+        icon = "📊";
+      }
+      {
+        label = "Router SSH";
+        kind = "copy";
+        copyText = "ssh router";
+        icon = "🖥️";
+      }
+      {
+        label = "Backup SSH";
+        kind = "copy";
+        copyText = "ssh router-backup";
+        icon = "🛟";
+      }
+      {
+        label = "Router Mgmt";
+        kind = "copy";
+        copyText = topology.routerHost.sshHostname;
+        icon = "🔧";
+      }
+      {
+        label = "Backup Mgmt";
+        kind = "copy";
+        copyText = topology.backupHost.sshHostname;
+        icon = "🧰";
+      }
       {
         label = "Tech Logs";
         url = "/logs/technitium.html";
@@ -246,7 +343,6 @@ in
   # Proxmox recovery path: keep a serial console available even when SSH or the
   # graphical console path is broken.
   systemd.services."serial-getty@ttyS0".enable = true;
-  systemd.services.systemd-update-utmp.enable = false;
 
   services.openssh = {
     enable = true;
@@ -286,6 +382,52 @@ in
   age.secrets = secrets.definitions;
 
   services.router-log-storage.enable = lib.mkForce enableLogStorage;
+
+  # Explicit Health Model Services
+  # These services exit with failure if the health invariant is violated,
+  # allowing the dashboard's service monitor to surface interface-level health.
+  systemd.services = {
+    health-mgmt-ip = {
+      description = "Health Check: Management IP Present";
+      serviceConfig = {
+        Type = "simple";
+        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ip -4 addr show dev ${managementDevice} | grep -q \"inet \" || exit 1; sleep 15; done'";
+        Restart = "always";
+        RestartSec = "15s";
+      };
+      wantedBy = [ "multi-user.target" ];
+    };
+    health-lan-ip = {
+      description = "Health Check: Production LAN IP Present";
+      serviceConfig = {
+        Type = "simple";
+        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ip -4 addr show dev ${lanDevice} | grep -q \"inet \" || exit 1; sleep 15; done'";
+        Restart = "always";
+        RestartSec = "15s";
+      };
+      wantedBy = [ "multi-user.target" ];
+    };
+    health-wan-carrier = {
+      description = "Health Check: WAN Carrier Active";
+      serviceConfig = {
+        Type = "simple";
+        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do cat /sys/class/net/${wanDevice}/operstate | grep -q \"up\" || exit 1; sleep 15; done'";
+        Restart = "always";
+        RestartSec = "15s";
+      };
+      wantedBy = [ "multi-user.target" ];
+    };
+    health-wan-ip = {
+      description = "Health Check: WAN IP Present";
+      serviceConfig = {
+        Type = "simple";
+        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ip -4 addr show dev ${wanDevice} | grep -q \"inet \" || exit 1; sleep 15; done'";
+        Restart = "always";
+        RestartSec = "15s";
+      };
+      wantedBy = [ "multi-user.target" ];
+    };
+  };
 
   nixpkgs.hostPlatform = "x86_64-linux";
   system.stateVersion = "25.05";
