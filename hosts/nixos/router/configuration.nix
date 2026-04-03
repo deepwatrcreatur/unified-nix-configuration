@@ -6,8 +6,10 @@ let
   hostsData = import ../../../lib/hosts.nix;
   routerHost = hostsData.hosts.router;
   backupHost = hostsData.hosts.router-backup;
-  lanIpv4Address = "${routerHost.ip}/16";
-  managementIpv4Address = "${routerHost.sshHostname}/24";
+  lanNetwork = hostsData.networks.lan;
+  managementNetwork = hostsData.networks.management;
+  lanIpv4Address = "${routerHost.ip}/${toString lanNetwork.prefixLength}";
+  managementIpv4Address = "${routerHost.sshHostname}/${toString managementNetwork.prefixLength}";
 in
 {
   imports = [

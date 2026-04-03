@@ -34,6 +34,7 @@ let
   };
 
   hostsData = import ../../../lib/hosts.nix;
+  lanNetwork = hostsData.networks.lan;
   reservableHosts = lib.filterAttrs (
     _name: host: (host.dhcpReservation or null) != null && (host.ip or null) != null
   ) hostsData.hosts;
@@ -69,7 +70,7 @@ in
         requiredForOnline = "routable";
         extraRoutes = [
           {
-            destination = "10.10.0.0/16";
+            destination = lanNetwork.cidr;
             scope = "link";
           }
         ];
@@ -149,7 +150,7 @@ in
     enable = true;
     authKeyFile = secrets.path "tailscale-auth-key";
     advertiseExitNode = secrets.exists "tailscale-auth-key";
-    advertiseRoutes = lib.optionals (secrets.exists "tailscale-auth-key") [ "10.10.0.0/16" ];
+    advertiseRoutes = lib.optionals (secrets.exists "tailscale-auth-key") [ lanNetwork.cidr ];
     trustedInterface = true;
     openFirewall = true;
   };
@@ -197,7 +198,7 @@ in
     maxretry = 5;
     ignoreIP = [
       "127.0.0.1/8"
-      "10.10.0.0/16"
+      lanNetwork.cidr
     ];
   };
 

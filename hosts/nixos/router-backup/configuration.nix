@@ -3,6 +3,8 @@ let
   hostsData = import ../../../lib/hosts.nix;
   routerHost = hostsData.hosts.router;
   backupHost = hostsData.hosts.router-backup;
+  lanNetwork = hostsData.networks.lan;
+  managementNetwork = hostsData.networks.management;
 in
 {
   imports = [
@@ -10,8 +12,8 @@ in
       sshTarget = "ssh router-backup.deepwatercreature.com";
       wanDevice = "enp2s0";
       lanDevice = "enp3s0";
-      lanIpv4Address = "${routerHost.ip}/16";
-      managementIpv4Address = "${backupHost.sshHostname}/24";
+      lanIpv4Address = "${routerHost.ip}/${toString lanNetwork.prefixLength}";
+      managementIpv4Address = "${backupHost.sshHostname}/${toString managementNetwork.prefixLength}";
       grafanaDomain = "router-backup.deepwatercreature.com";
       grafanaDataDir = "/var/log/router-backup/grafana";
       prometheusStateDir = "router-backup-prometheus";

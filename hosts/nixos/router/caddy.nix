@@ -3,6 +3,7 @@
 let
   hostsData = import ../../../lib/hosts.nix;
   routerHost = hostsData.hosts.router;
+  lanNetwork = hostsData.networks.lan;
   ddnsLabels = routerHost.ddnsServices or [ ];
   ddnsDomainsLine = lib.concatStringsSep " " ([ hostsData.domain ] ++ ddnsLabels);
 
@@ -72,7 +73,7 @@ in
 
       "homelab.deepwatercreature.com" = {
         extraConfig = ''
-          @trusted remote_ip 10.10.0.0/16 100.64.0.0/10
+          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10
           handle @trusted {
             reverse_proxy 127.0.0.1:8888
           }
