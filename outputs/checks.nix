@@ -135,6 +135,9 @@ let
   allLibHostNames = names libHosts;
   publicIngressServicesFor =
     hostName: libHosts.${hostName}.publicIngressServices or libHosts.${hostName}.services or [ ];
+  internalAdminServicesFor =
+    hostName:
+    builtins.attrNames (libHosts.${hostName}.internalAdminServices or { });
 
   serviceNameCollisions =
     builtins.concatLists (
@@ -145,6 +148,8 @@ let
     );
 
   routerPublicIngressServices = publicIngressServicesFor "router";
+  routerInternalAdminServices = internalAdminServicesFor "router";
+  routerExpectedCaddyVirtualHostNames = routerPublicIngressServices ++ routerInternalAdminServices;
   routerDdnsServices = libHosts.router.ddnsServices or [ ];
 
   routerDdnsOutsideIngress =
@@ -186,10 +191,10 @@ let
     );
 
   routerIngressMissingInCaddy =
-    builtins.filter (name: !(builtins.elem name routerCaddyVirtualHostNames)) routerPublicIngressServices;
+    builtins.filter (name: !(builtins.elem name routerCaddyVirtualHostNames)) routerExpectedCaddyVirtualHostNames;
 
   routerCaddyHostsMissingInInventory =
-    builtins.filter (name: !(builtins.elem name routerPublicIngressServices)) routerCaddyVirtualHostNames;
+    builtins.filter (name: !(builtins.elem name routerExpectedCaddyVirtualHostNames)) routerCaddyVirtualHostNames;
 
   routerPrimaryHost = libHosts.router;
   routerBackupHost = libHosts.router-backup;
