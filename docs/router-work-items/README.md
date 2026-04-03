@@ -1,5 +1,9 @@
 # Router Work Items
 
+Start here if you are assigning another agent:
+
+- [`START-HERE.md`](./START-HERE.md)
+
 This folder is the working queue for router follow-up after the current
 stability/recovery fixes.
 
@@ -14,6 +18,8 @@ in parallel on separate worktrees.
 - Delete the file when the work is fully merged and no longer needs tracking.
 - If the work changes shape materially, update the file instead of creating
   drift in chat history only.
+- Agents should also check whether the suggested branch/worktree already exists
+  before claiming a `ready` item.
 
 ## Status Model
 
@@ -29,6 +35,8 @@ in parallel on separate worktrees.
    or longer-lived tracking across multiple PRs.
 3. For narrow implementation tasks, the file in this folder is enough and is
    easier for agents to consume than issue threads.
+4. For autonomous agent selection, use the rules in
+   [`START-HERE.md`](./START-HERE.md).
 
 ## Ranking
 

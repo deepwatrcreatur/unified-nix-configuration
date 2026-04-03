@@ -12,6 +12,10 @@ folder. The prompts assume:
   - distinct management identities
   - standby/dev use with production NICs unplugged must remain supported
 
+Before using any prompt, read:
+
+- [`START-HERE.md`](./START-HERE.md)
+
 ## Prompt 1: Recovery Invariants
 
 Work on [`01-router-recovery-invariants.md`](./01-router-recovery-invariants.md).
