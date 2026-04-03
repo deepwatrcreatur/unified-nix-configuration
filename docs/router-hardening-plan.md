@@ -196,6 +196,11 @@ later work once `router` is stable again.
   Worth considering if future router hardware or hypervisor topology uses
   multiple uplinks and you want link redundancy or throughput aggregation.
 
+- `vpn policy routing`
+  High-value future work for subnet- or device-specific VPN egress, especially
+  if you want a dedicated SSID/VLAN or specific hosts to exit via a VPN
+  provider while the rest of the network uses the normal WAN path.
+
 ### Situational / Lower Priority
 
 - `macvlan`
@@ -221,5 +226,28 @@ opt-in work streams rather than part of baseline hardening:
 - `feat/router-vlans`
 - `feat/router-bridging`
 - `feat/router-bonding`
+- `feat/router-vpn-policy-routing`
 - `feat/router-macvlan`
 - `feat/router-non-nft-firewall` only if a real use case emerges
+
+## VPN Use Cases Worth Planning For
+
+These are good candidates once the router is stable again.
+
+### Preferred
+
+- Per-SSID or per-VLAN VPN egress
+  Example: a dedicated Wi-Fi network whose clients always exit through a VPN
+  provider while the main LAN continues to use the normal WAN path.
+
+- Per-device VPN egress
+  Example: route a known workstation or reserved client IP through a VPN
+  tunnel when desired, without changing the rest of the network.
+
+### Lower Value / More Fragile
+
+- Per-domain or per-service geo-routing via router DNS or policy tricks
+  Example: trying to make only Facebook or only a subset of websites appear as
+  US-origin traffic. This is usually brittle because of CDNs, shared
+  infrastructure, HTTPS, and application behavior. Prefer per-device or
+  per-subnet routing instead.
