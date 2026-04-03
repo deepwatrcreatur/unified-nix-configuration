@@ -168,6 +168,11 @@ in
 
   services.netdata.config.global."bind to" = "0.0.0.0";
 
+  # Keep the production LAN address present even when the data-plane cable is
+  # intentionally unplugged on a standby/dev router. That allows dashboard and
+  # router-role services to come up in a degraded-but-testable state.
+  systemd.network.networks."20-router-lan".networkConfig.ConfigureWithoutCarrier = true;
+
   boot.loader.grub.enable = false;
   boot.loader.limine.enable = true;
   boot.loader.efi.canTouchEfiVariables = false;
