@@ -47,6 +47,35 @@ The generic update path on a Proxmox node is:
 home-manager switch --flake .#$(hostname)-root
 ```
 
+<<<<<<< HEAD
+## Router Management Plane
+
+The router management interface (`ens18`, `192.168.100.0/24`) is the **supported
+recovery plane**. It is intentionally independent of WAN and LAN state.
+
+**Recovery guarantees:**
+
+- SSH and all diagnostic services bind to `0.0.0.0`; they are reachable on
+  management even when WAN is absent or the LAN cable is unplugged.
+- `192.168.100.100` (router) and `192.168.100.99` (router-backup) are derived
+  from `lib/hosts.nix` — no raw literals in host config files.
+- Grafana, Prometheus, Netdata, Caddy, and the router dashboard all bind to
+  all interfaces.
+- fail2ban exempts `192.168.100.0/24` from bans so authentication testing
+  from management can never lock you out.
+
+**When the router is broken and you cannot reach `10.10.10.1`:**
+
+1. SSH via management: `ssh deepwatrcreatur@192.168.100.100`
+2. Dashboard via management: `http://192.168.100.100:8888/`
+3. Grafana: `http://192.168.100.100:3001/`
+4. Prometheus: `http://192.168.100.100:9090/`
+5. Technitium DNS admin: `http://192.168.100.100:5380/`
+6. Last resort: Proxmox console → Serial Terminal 0 (ttyS0, 115200 baud)
+
+**Design rule:** any new service added to the router role must be reachable on
+the management interface. Do not bind router services exclusively to the LAN IP.
+
 ## Router Standby / Dev Mode
 
 The management plane is the supported recovery path for all router operations.
