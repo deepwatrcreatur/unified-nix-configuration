@@ -1,6 +1,6 @@
 # VLANs And VPN Policy Routing
 
-Status: `blocked`
+Status: `done`
 Suggested branch: `feat/router-vlans-and-vpn-routing`
 Priority: `medium`
 
