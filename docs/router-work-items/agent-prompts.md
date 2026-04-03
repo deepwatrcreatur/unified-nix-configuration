@@ -312,3 +312,28 @@ Important constraints:
 Deliver:
 - branch commit(s)
 - a ranked upstream task breakdown
+## Prompt 13: VyOS Pattern Study
+
+Work on [`13-vyos-pattern-study.md`](./13-vyos-pattern-study.md).
+
+Create a branch named `docs/router-vyos-pattern-study`.
+
+Task:
+- study the VyOS codebase and docs for router-architecture ideas worth
+  borrowing into this repo
+- produce a concise recommendation, not a platform migration
+
+Focus areas:
+- interface role modeling
+- management/control-plane separation
+- firewall/NAT/policy-routing structure
+- diagnostics and operator workflow
+
+Important constraints:
+- do not turn this into "rewrite the router like VyOS"
+- do not add enterprise-only complexity without a homelab payoff
+- prefer concrete follow-up ideas over broad theory
+
+Deliver:
+- branch commit(s)
+- short note listing patterns to borrow, defer, and reject

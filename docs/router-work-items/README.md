@@ -55,6 +55,7 @@ Highest value first:
 10. `10-router-kea-module-roadmap.md`
 11. `11-internal-admin-hostnames.md`
 12. `12-vpn-module-hardening-and-tests.md`
+13. `13-vyos-pattern-study.md`
 
 ## Why This Structure
 
