@@ -1,7 +1,7 @@
 # Stable Interface Matching
 
-Status: `ready`
-Suggested branch: `refactor/router-stable-interface-matching`
+Status: `in-progress`
+Suggested branch: `refactor/router-stable-interface-matching-clean`
 Priority: `very high`
 
 ## Goal
