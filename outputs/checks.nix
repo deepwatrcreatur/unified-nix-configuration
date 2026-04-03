@@ -128,6 +128,20 @@ let
         key == null || key == "")
       aspectInventoryHostNames;
 
+  # Some aspect hosts are planned but do not exist yet; they should emit a notice
+  # but must not block CI until their machine-identity keys are created.
+  machineIdentityFutureHosts = [
+    "inference-fresh"
+    "inference2"
+    "inference3"
+    "phoenix"
+    "router-bootstrap"
+    "rustdesk"
+  ];
+
+  hostsMissingMachineIdentityKeyNow =
+    builtins.filter (name: !(builtins.elem name machineIdentityFutureHosts)) hostsMissingMachineIdentityKey;
+
   # Collect all public ingress service names across every host.
   # A service name must not collide with a machine hostname to avoid ambiguity
   # like "authentik" (service) vs "authentik-host" (machine) — they are different,
