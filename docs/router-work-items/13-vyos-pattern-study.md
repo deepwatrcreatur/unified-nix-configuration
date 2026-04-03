@@ -1,4 +1,4 @@
-Status: ready
+Status: in-progress
 Priority: low
 Branch: docs/router-vyos-pattern-study
 Blocked By: none
