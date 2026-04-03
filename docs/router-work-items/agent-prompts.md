@@ -236,3 +236,140 @@ Validation target:
 Deliver:
 - branch commit(s)
 - note any upstream `nix-router-optimized` work that should be split out
+
+## Prompt 9: Kea And Technitium Architecture
+
+Work on [`09-kea-technitium-architecture.md`](./09-kea-technitium-architecture.md).
+
+Create a branch named `docs/router-kea-technitium-architecture`.
+
+Task:
+- design the target architecture for Kea DHCP + Technitium DNS in this homelab
+- make the migration stages explicit
+- distinguish DHCP HA from gateway failover
+
+Important constraints:
+- do not implement Kea yet
+- do not pretend DHCP HA alone solves shared-LAN router failover
+- optimize for the real homelab use case, not generic enterprise routing
+
+Deliver:
+- branch commit(s)
+- a concise architecture note with migration stages and open questions
+
+## Prompt 10: Router Kea Module Roadmap
+
+Work on [`10-router-kea-module-roadmap.md`](./10-router-kea-module-roadmap.md).
+
+Create a branch named `docs/router-kea-module-roadmap`.
+
+Task:
+- define the module/API shape for optional Kea support in `nix-router-optimized`
+- separate what belongs upstream from what should stay repo-local at first
+
+Important constraints:
+- Kea must remain optional
+- do not make Technitium-specific assumptions the upstream module cannot support
+- do not implement the module in this task
+
+Deliver:
+- branch commit(s)
+- proposed module boundaries and option schema ideas
+
+## Prompt 11: Internal Router Admin Hostnames
+
+Work on [`11-internal-admin-hostnames.md`](./11-internal-admin-hostnames.md).
+
+Create a branch named `feat/router-internal-admin-hostnames`.
+
+Task:
+- design or implement internal-only admin hostnames such as
+  `technitium.deepwatercreature.com` and `kea.deepwatercreature.com`
+- keep them out of public DDNS/public ingress
+
+Important constraints:
+- preserve raw management-IP recovery access
+- do not leak internal admin names into Cloudflare/public DNS
+
+Deliver:
+- branch commit(s)
+- summary of inventory/Caddy/DNS changes required
+
+## Prompt 12: VPN Module Hardening And Tests
+
+Work on [`12-vpn-module-hardening-and-tests.md`](./12-vpn-module-hardening-and-tests.md).
+
+Create a branch named `docs/router-vpn-module-hardening`.
+
+Task:
+- turn the recent VPN wrapper review feedback into explicit upstream tasks
+- rank testing, guardrails, docs, and helper-refactor work
+
+Important constraints:
+- split into PR-sized work items
+- do not lump all VPN follow-ups into one change
+
+Deliver:
+- branch commit(s)
+- a ranked upstream task breakdown
+## Prompt 13: VyOS Pattern Study
+
+Work on [`13-vyos-pattern-study.md`](./13-vyos-pattern-study.md).
+
+Create a branch named `docs/router-vyos-pattern-study`.
+
+Task:
+- study the VyOS codebase and docs for router-architecture ideas worth
+  borrowing into this repo
+- produce a concise recommendation, not a platform migration
+
+Focus areas:
+- interface role modeling
+- management/control-plane separation
+- firewall/NAT/policy-routing structure
+- diagnostics and operator workflow
+
+Important constraints:
+- do not turn this into "rewrite the router like VyOS"
+- do not add enterprise-only complexity without a homelab payoff
+- prefer concrete follow-up ideas over broad theory
+
+Deliver:
+- branch commit(s)
+- short note listing patterns to borrow, defer, and reject
+## Prompt 14: Upstream Hotfix Pinning Policy
+
+Work on [`14-upstream-hotfix-pinning-policy.md`](./14-upstream-hotfix-pinning-policy.md).
+
+Create a branch named `docs/router-hotfix-pinning-policy`.
+
+Task:
+- document a repeatable policy for temporarily consuming upstream router/infra
+  hotfixes and then returning to stable refs
+- optimize for recent real examples like the Technitium NTP sync fix
+
+Important constraints:
+- keep it short and operational
+- focus on prod-critical inputs, not every flake input in the repo
+
+Deliver:
+- branch commit(s)
+- concise policy/checklist docs
+
+## Prompt 15: Management Plane Smoke Validation
+
+Work on [`15-management-plane-smoke-validation.md`](./15-management-plane-smoke-validation.md).
+
+Create a branch named `feat/router-management-plane-smoke-validation`.
+
+Task:
+- add one repeatable smoke-validation path for management-plane recovery
+- back the existing manual ops guidance with a lightweight automated check
+
+Important constraints:
+- do not require a full VM test harness in the first version
+- keep scope to the management-plane model, not all router behavior
+
+Deliver:
+- branch commit(s)
+- summary of what the smoke check proves and what it does not

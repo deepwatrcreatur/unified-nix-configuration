@@ -15,7 +15,10 @@ in parallel on separate worktrees.
 - Treat each file in this folder as one PR-sized work stream.
 - Prefer one agent per file/branch.
 - Mark the file as `in-progress` in its header once an agent starts it.
-- Delete the file when the work is fully merged and no longer needs tracking.
+- When work is fully merged, either delete the file or keep it briefly as
+  `done` if it records useful outcome notes for follow-up agents.
+- `done` items must not remain in the active ranking; archive or delete them
+  once their notes are no longer useful.
 - If the work changes shape materially, update the file instead of creating
   drift in chat history only.
 - Agents should also check whether the suggested branch/worktree already exists
@@ -27,7 +30,8 @@ in parallel on separate worktrees.
 - `blocked`: do not start yet
 - `ready`: can be started now
 - `in-progress`: owned by an active branch / agent
-- `done`: merged; file can be deleted
+- `done`: merged; may remain briefly for outcome notes, but should be archived
+  or deleted and removed from the active ranking
 
 ## Recommended Process
 
@@ -45,12 +49,18 @@ Highest value first:
 
 1. `01-router-recovery-invariants.md`
 2. `02-stable-interface-matching.md`
-3. `03-management-plane-independence.md`
-4. `04-service-dependency-cleanup.md`
-5. `05-router-health-model.md`
-6. `06-boot-and-recovery-hardening.md`
-7. `07-observability-and-flow-logging.md`
-8. `08-vlans-and-vpn-policy-routing.md`
+3. `04-service-dependency-cleanup.md`
+4. `05-router-health-model.md`
+5. `06-boot-and-recovery-hardening.md`
+6. `07-observability-and-flow-logging.md`
+7. `08-vlans-and-vpn-policy-routing.md`
+8. `09-kea-technitium-architecture.md`
+9. `10-router-kea-module-roadmap.md`
+10. `11-internal-admin-hostnames.md`
+11. `12-vpn-module-hardening-and-tests.md`
+12. `13-vyos-pattern-study.md`
+13. `14-upstream-hotfix-pinning-policy.md`
+14. `15-management-plane-smoke-validation.md`
 
 ## Why This Structure
 
@@ -63,4 +73,5 @@ single long roadmap because they:
 - are easy to delete once merged
 
 Keep GitHub issues for cross-cutting or discussion-heavy items. Keep concrete
-implementation plans here.
+implementation plans here. Keep the active ranking limited to `ready`,
+`blocked`, and `in-progress` work.

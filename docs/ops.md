@@ -48,6 +48,9 @@ home-manager switch --flake .#$(hostname)-root
 ```
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/main
 ## Router Management Plane
 
 The router management interface (`ens18`, `192.168.100.0/24`) is the **supported
