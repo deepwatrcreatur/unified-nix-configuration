@@ -104,7 +104,7 @@ does not depend on the graphical stack or network.
 2.  Identify the VM ID (e.g., 100).
 3.  Run the terminal command:
     ```bash
-    qm terminal 100
+    qm terminal <VM_ID>
     ```
 4.  Press **Enter** to see the login prompt.
 5.  To exit the terminal, press **Ctrl+O**.
