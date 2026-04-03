@@ -14,6 +14,11 @@
       prefixLength = 16;
     };
 
+    infrastructure = {
+      cidr = "10.10.10.0/24";
+      prefixLength = 24;
+    };
+
     management = {
       cidr = "192.168.100.0/24";
       prefixLength = 24;

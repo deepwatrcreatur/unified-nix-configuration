@@ -53,7 +53,7 @@ Do this after PR #9 for `nix-attic-infra` merges and `flake.lock` is updated:
 1. Refactor local Home Manager attic client support to wrap upstream instead of reimplementing it.
 
 Current local file to replace or thin out:
-- [`modules/home-manager/common/attic-client.nix`](/home/deepwatrcreatur/flakes/unified-nix-configuration/modules/home-manager/common/attic-client.nix)
+- [`modules/home-manager/common/attic-client.nix`](../modules/home-manager/common/attic-client.nix)
 
 Why:
 - it still has older portability/correctness issues that upstream now handles better:
@@ -69,7 +69,7 @@ Target shape:
 2. Consider replacing local Darwin attic shim with an upstream wrapper.
 
 Current local file:
-- [`modules/home-manager/attic-client-darwin.nix`](/home/deepwatrcreatur/flakes/unified-nix-configuration/modules/home-manager/attic-client-darwin.nix)
+- [`modules/home-manager/attic-client-darwin.nix`](../modules/home-manager/attic-client-darwin.nix)
 
 Likely action:
 - replace with a compatibility shim importing `inputs.nix-attic-infra.homeManagerModules.attic-client-darwin`
@@ -94,14 +94,14 @@ Note:
 ## Repo-local attic module status
 
 Already in good shape:
-- [`modules/nixos/attic-observatory.nix`](/home/deepwatrcreatur/flakes/unified-nix-configuration/modules/nixos/attic-observatory.nix)
-- [`modules/nixos/attic-post-build-hook.nix`](/home/deepwatrcreatur/flakes/unified-nix-configuration/modules/nixos/attic-post-build-hook.nix)
+- [`modules/nixos/attic-observatory.nix`](../modules/nixos/attic-observatory.nix)
+- [`modules/nixos/attic-post-build-hook.nix`](../modules/nixos/attic-post-build-hook.nix)
 
 These are already compatibility shims importing upstream implementation.
 
 Not yet upstream-backed:
-- [`modules/home-manager/common/attic-client.nix`](/home/deepwatrcreatur/flakes/unified-nix-configuration/modules/home-manager/common/attic-client.nix)
-- [`modules/home-manager/attic-client-darwin.nix`](/home/deepwatrcreatur/flakes/unified-nix-configuration/modules/home-manager/attic-client-darwin.nix)
+- [`modules/home-manager/common/attic-client.nix`](../modules/home-manager/common/attic-client.nix)
+- [`modules/home-manager/attic-client-darwin.nix`](../modules/home-manager/attic-client-darwin.nix)
 
 ## Good validation commands for the follow-up refactor
 
@@ -129,7 +129,7 @@ GIT_SSH_COMMAND='ssh -F /dev/null' git -C /tmp/<repo> push origin <branch>
 ## Router follow-up
 
 Once `router` is back in a known-good booting and routing state, use:
-- [`docs/router-hardening-plan.md`](/home/deepwatrcreatur/flakes/unified-nix-configuration/docs/router-hardening-plan.md)
+- [`docs/router-hardening-plan.md`](./router-hardening-plan.md)
 
 That document captures:
 - the most useful router-specific ideas to borrow from existing Nix router work

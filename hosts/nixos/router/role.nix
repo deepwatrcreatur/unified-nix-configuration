@@ -35,6 +35,7 @@ let
 
   topology = config.router.topology;
   lanNetwork = topology.networks.lan;
+  infrastructureNetwork = topology.networks.infrastructure;
   reservableHosts = lib.filterAttrs (
     _name: host: (host.dhcpReservation or null) != null && (host.ip or null) != null
   ) topology.hosts;
@@ -132,7 +133,7 @@ in
   };
 
   services.router-homelab.sshTarget = sshTarget;
-  services.router-homelab.listenAddress = managementListenAddress;
+  services.router-homelab.listenAddress = "0.0.0.0";
 
   services.router-dashboard = {
     links = [
@@ -191,7 +192,7 @@ in
     enable = true;
     settings.PermitRootLogin = "prohibit-password";
     extraConfig = ''
-      Match Address ${lanNetwork.cidr}
+      Match Address ${infrastructureNetwork.cidr}
         PermitRootLogin yes
     '';
   };
