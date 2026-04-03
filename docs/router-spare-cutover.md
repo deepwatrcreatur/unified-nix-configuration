@@ -68,3 +68,11 @@ After enabling clustering, still verify the standby router manually:
 - the `LAN` DHCP scope exists on `router-backup`
 - the dynamic pool matches the intended standby settings
 - only the active router is connected to production WAN/LAN
+
+## Standby / Dev Router Behavior
+
+When a router is used as a spare or dev box:
+
+- the management IP on the virtio interface stays reachable even with WAN/LAN unplugged
+- the production LAN IP (`10.10.10.1/16`) remains configured without carrier so dashboard and monitoring can start in a degraded state
+- LAN/WAN-dependent checks are expected to show degraded or failed until cables are reattached
