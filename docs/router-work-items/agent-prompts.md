@@ -236,3 +236,79 @@ Validation target:
 Deliver:
 - branch commit(s)
 - note any upstream `nix-router-optimized` work that should be split out
+
+## Prompt 9: Kea And Technitium Architecture
+
+Work on [`09-kea-technitium-architecture.md`](./09-kea-technitium-architecture.md).
+
+Create a branch named `docs/router-kea-technitium-architecture`.
+
+Task:
+- design the target architecture for Kea DHCP + Technitium DNS in this homelab
+- make the migration stages explicit
+- distinguish DHCP HA from gateway failover
+
+Important constraints:
+- do not implement Kea yet
+- do not pretend DHCP HA alone solves shared-LAN router failover
+- optimize for the real homelab use case, not generic enterprise routing
+
+Deliver:
+- branch commit(s)
+- a concise architecture note with migration stages and open questions
+
+## Prompt 10: Router Kea Module Roadmap
+
+Work on [`10-router-kea-module-roadmap.md`](./10-router-kea-module-roadmap.md).
+
+Create a branch named `docs/router-kea-module-roadmap`.
+
+Task:
+- define the module/API shape for optional Kea support in `nix-router-optimized`
+- separate what belongs upstream from what should stay repo-local at first
+
+Important constraints:
+- Kea must remain optional
+- do not make Technitium-specific assumptions the upstream module cannot support
+- do not implement the module in this task
+
+Deliver:
+- branch commit(s)
+- proposed module boundaries and option schema ideas
+
+## Prompt 11: Internal Router Admin Hostnames
+
+Work on [`11-internal-admin-hostnames.md`](./11-internal-admin-hostnames.md).
+
+Create a branch named `feat/router-internal-admin-hostnames`.
+
+Task:
+- design or implement internal-only admin hostnames such as
+  `technitium.deepwatercreature.com` and `kea.deepwatercreature.com`
+- keep them out of public DDNS/public ingress
+
+Important constraints:
+- preserve raw management-IP recovery access
+- do not leak internal admin names into Cloudflare/public DNS
+
+Deliver:
+- branch commit(s)
+- summary of inventory/Caddy/DNS changes required
+
+## Prompt 12: VPN Module Hardening And Tests
+
+Work on [`12-vpn-module-hardening-and-tests.md`](./12-vpn-module-hardening-and-tests.md).
+
+Create a branch named `docs/router-vpn-module-hardening`.
+
+Task:
+- turn the recent VPN wrapper review feedback into explicit upstream tasks
+- rank testing, guardrails, docs, and helper-refactor work
+
+Important constraints:
+- split into PR-sized work items
+- do not lump all VPN follow-ups into one change
+
+Deliver:
+- branch commit(s)
+- a ranked upstream task breakdown
