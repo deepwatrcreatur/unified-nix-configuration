@@ -155,4 +155,20 @@ in
       {
         "${dnsConfig.domain}" = mkZone dnsConfig;
       };
+  # Pin the physical passthrough NICs to stable names via MAC-based udev rules.
+  # The igc NICs on pve-z170 have stable MACs assigned by Proxmox; using them
+  # here ensures the names survive PCIe slot changes or kernel renaming changes.
+  # The management virtio NIC (ens18) is already stable and does not need a rule.
+  systemd.network.links = {
+    "10-router-lan-stable" = {
+      matchConfig.MACAddress = "02:76:c6:01:2a:af";
+      linkConfig.Name = "enp6s16";
+    };
+    "10-router-wan-stable" = {
+      matchConfig.MACAddress = "02:76:c6:01:2a:b0";
+      linkConfig.Name = "enp6s17";
+    };
+  };
+
+
 }
