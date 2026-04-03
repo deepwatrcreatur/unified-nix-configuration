@@ -1,6 +1,6 @@
 # Kea And Technitium Architecture
 
-Status: `ready`
+Status: `done`
 Suggested branch: `docs/router-kea-technitium-architecture`
 Priority: `high`
 
@@ -39,12 +39,7 @@ Preferred assumption unless research disproves it:
 
 ## Deliverable
 
-Produce a concise design note under `docs/` or extend this file with:
-
-- recommended architecture
-- migration stages
-- hard blockers / unknowns
-- explicit distinction between DHCP HA and first-hop gateway failover
+The recommended architecture is documented in [`docs/kea-technitium-architecture.md`](../kea-technitium-architecture.md).
 
 ## Do Not
 

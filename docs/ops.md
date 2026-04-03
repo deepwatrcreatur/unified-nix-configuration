@@ -47,10 +47,6 @@ The generic update path on a Proxmox node is:
 home-manager switch --flake .#$(hostname)-root
 ```
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> origin/main
 ## Router Management Plane
 
 The router management interface (`ens18`, `192.168.100.0/24`) is the **supported
@@ -132,8 +128,7 @@ even with all production cables unplugged.
   degraded-but-functional state once the LAN address exists, even if no LAN
   traffic flows.
 - The serial console (`ttyS0` at 115200 baud) is always enabled as a recovery
-  path when SSH or the graphical console is unavailable (Proxmox → Console →
-  Serial Terminal 0).
+  path when SSH or the graphical console path is broken.
 
 **When swapping to the backup router:**
 

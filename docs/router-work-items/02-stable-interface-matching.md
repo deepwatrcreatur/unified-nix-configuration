@@ -1,6 +1,10 @@
 # Stable Interface Matching
 
-Status: `in-progress`
+<<<<<<< HEAD
+Status: `done`
+=======
+Status: `done`
+>>>>>>> feat/router-management-plane-smoke-validation
 Suggested branch: `refactor/router-stable-interface-matching`
 Priority: `very high`
 

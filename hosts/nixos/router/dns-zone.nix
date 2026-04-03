@@ -22,7 +22,11 @@ let
             let
               # Combine machine-identity aliases and public-service names — both
               # become CNAME records pointing at this host in the DNS zone.
-              allAliases = (host.aliases or []) ++ (host.publicIngressServices or host.services or []);
+              # internalAdminServices also become internal CNAMEs.
+              allAliases =
+                (host.aliases or [])
+                ++ (host.publicIngressServices or host.services or [])
+                ++ (builtins.attrNames (host.internalAdminServices or {}));
             in
             {
               ipv4 = host.ip;

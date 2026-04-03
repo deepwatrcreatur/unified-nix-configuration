@@ -18,9 +18,10 @@
 }:
 let
   optSec = import ../../../modules/helpers/optional-secrets.nix { inherit lib; };
-  getAttrByPath = lib.attrByPath;
+  getAttrByPath = lib.attrsets.attrByPath;
+  lanListenAddress = builtins.head (lib.splitString "/" lanIpv4Address);
   managementListenAddress = builtins.head (lib.splitString "/" managementIpv4Address);
-  managementDevice = config.services.router-optimizations.interfaces.management.device;
+  managementDevice = "ens18";
 
   secrets = optSec.mkSecrets {
     cloudflare-api-key = {
@@ -37,6 +38,7 @@ let
 
   topology = config.router.topology;
   lanNetwork = topology.networks.lan;
+  mkFqdn = label: "${label}.${topology.domain}";
   reservableHosts = lib.filterAttrs (
     _name: host: (host.dhcpReservation or null) != null && (host.ip or null) != null
   ) topology.hosts;
@@ -186,13 +188,94 @@ in
   services.router-homelab.listenAddress = "0.0.0.0";
 
   services.router-dashboard = {
-    services = lib.mkAfter [
+    refreshInterval = lib.mkDefault 10;
+    services = [
+      "systemd-networkd"
+      "sshd"
+      "nftables"
+      "caddy"
+      "technitium-dns-server"
+      "tailscaled"
+      "fail2ban"
+      "prometheus"
+      "grafana"
+      "netdata"
+      "router-dashboard"
       "health-mgmt-ip"
       "health-lan-ip"
       "health-wan-carrier"
       "health-wan-ip"
     ];
-    links = [
+    links = lib.mkForce [
+      {
+        label = "Dashboard";
+        url = "https://${mkFqdn "dashboard"}";
+        icon = "🧭";
+      }
+      {
+        label = "Grafana";
+        url = "https://${mkFqdn "grafana"}";
+        icon = "📈";
+      }
+      {
+        label = "DNS Admin Mgmt";
+        url = "http://${managementListenAddress}:5380/";
+        icon = "🌍";
+      }
+      {
+        label = "Prometheus Mgmt";
+        url = "http://${managementListenAddress}:9090/";
+        icon = "🎯";
+      }
+      {
+        label = "Netdata Mgmt";
+        url = "http://${managementListenAddress}:19999/";
+        icon = "📊";
+      }
+      {
+        label = "Dashboard Mgmt";
+        url = "http://${managementListenAddress}:8888/";
+        icon = "🧭";
+      }
+      {
+        label = "DNS Admin LAN";
+        url = "http://${lanListenAddress}:5380/";
+        icon = "🌍";
+      }
+      {
+        label = "Prometheus LAN";
+        url = "http://${lanListenAddress}:9090/";
+        icon = "🎯";
+      }
+      {
+        label = "Netdata LAN";
+        url = "http://${lanListenAddress}:19999/";
+        icon = "📊";
+      }
+      {
+        label = "Router SSH";
+        kind = "copy";
+        copyText = "ssh router";
+        icon = "🖥️";
+      }
+      {
+        label = "Backup SSH";
+        kind = "copy";
+        copyText = "ssh router-backup";
+        icon = "🛟";
+      }
+      {
+        label = "Router Mgmt";
+        kind = "copy";
+        copyText = topology.routerHost.sshHostname;
+        icon = "🔧";
+      }
+      {
+        label = "Backup Mgmt";
+        kind = "copy";
+        copyText = topology.backupHost.sshHostname;
+        icon = "🧰";
+      }
       {
         label = "Tech Logs";
         url = "/logs/technitium.html";
@@ -260,7 +343,6 @@ in
   # Proxmox recovery path: keep a serial console available even when SSH or the
   # graphical console path is broken.
   systemd.services."serial-getty@ttyS0".enable = true;
-  systemd.services.systemd-update-utmp.enable = false;
 
   services.openssh = {
     enable = true;

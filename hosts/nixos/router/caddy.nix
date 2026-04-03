@@ -124,6 +124,37 @@ in
           reverse_proxy 127.0.0.1:3001
         '';
       };
+
+      # Internal-only admin services
+      "${mkFqdn "technitium"}" = {
+        extraConfig = ''
+          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10
+          handle @trusted {
+            reverse_proxy 127.0.0.1:5380
+          }
+          respond "Access restricted to home LAN and Tailnet" 403
+        '';
+      };
+
+      "${mkFqdn "netdata"}" = {
+        extraConfig = ''
+          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10
+          handle @trusted {
+            reverse_proxy 127.0.0.1:19999
+          }
+          respond "Access restricted to home LAN and Tailnet" 403
+        '';
+      };
+
+      "${mkFqdn "prometheus"}" = {
+        extraConfig = ''
+          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10
+          handle @trusted {
+            reverse_proxy 127.0.0.1:9090
+          }
+          respond "Access restricted to home LAN and Tailnet" 403
+        '';
+      };
     };
   };
 

@@ -148,3 +148,40 @@ clean-identity host:
     else
         echo "Nothing to clean for {{host}}"
     fi
+
+# Verify router management plane invariants (smoke validation)
+router-smoke-check host="router" dir=`pwd`:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "Running management plane smoke check for {{host}}..."
+    
+    # 1. Check if management IP is present in routedInterfaces
+    mgmt_ip=$(nix eval --raw "{{dir}}#nixosConfigurations.{{host}}.config.services.router-networking.routedInterfaces.management.ipv4Address")
+    echo "  - Management IP: $mgmt_ip"
+    
+    # 2. Check if dashboard binds to 0.0.0.0
+    dashboard_listen=$(nix eval --raw "{{dir}}#nixosConfigurations.{{host}}.config.services.router-homelab.listenAddress")
+    if [ "$dashboard_listen" != "0.0.0.0" ]; then
+        echo "FAIL: Dashboard must listen on 0.0.0.0 for management access (found $dashboard_listen)"
+        exit 1
+    fi
+    echo "  - Dashboard listen: $dashboard_listen (OK)"
+    
+    # 3. Check if fail2ban ignores management CIDR
+    mgmt_cidr=$(nix eval --raw "{{dir}}#nixosConfigurations.{{host}}.config.router.topology.networks.management.cidr")
+    f2b_ignore=$(nix eval --json "{{dir}}#nixosConfigurations.{{host}}.config.services.fail2ban.ignoreIP")
+    if [[ ! "$f2b_ignore" =~ "$mgmt_cidr" ]]; then
+        echo "FAIL: fail2ban must ignore management CIDR $mgmt_cidr (found $f2b_ignore)"
+        exit 1
+    fi
+    echo "  - fail2ban ignore: includes $mgmt_cidr (OK)"
+    
+    # 4. Check if serial console is enabled
+    serial_console=$(nix eval --json "{{dir}}#nixosConfigurations.{{host}}.config.boot.kernelParams")
+    if [[ ! "$serial_console" =~ "console=ttyS0,115200" ]]; then
+        echo "FAIL: Serial console must be enabled in kernelParams"
+        exit 1
+    fi
+    echo "  - Serial console: enabled (OK)"
+    
+    echo "Smoke check PASSED for {{host}}"

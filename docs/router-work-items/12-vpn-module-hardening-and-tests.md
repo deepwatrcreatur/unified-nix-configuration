@@ -1,6 +1,6 @@
 # VPN Module Hardening And Tests
 
-Status: `ready`
+Status: `done`
 Suggested branch: `docs/router-vpn-module-hardening`
 Priority: `medium`
 

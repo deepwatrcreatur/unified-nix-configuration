@@ -1,6 +1,6 @@
 # Management Plane Smoke Validation
 
-Status: `ready`
+Status: `done`
 Suggested branch: `feat/router-management-plane-smoke-validation`
 Priority: `medium`
 
