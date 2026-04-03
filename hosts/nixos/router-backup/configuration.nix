@@ -50,17 +50,6 @@ in
   # Pin the physical passthrough NICs to stable names via PCI path-based udev
   # rules. Unlike the primary router (where we use MAC matching), the backup
   # router's PCIe slot layout is the primary stable identifier.
-  # The management virtio NIC (ens18) is already stable and does not need a rule.
-  systemd.network.links = {
-    "10-router-backup-lan-stable" = {
-      matchConfig.Path = "pci-0000:03:00.0";
-      linkConfig.Name = "enp3s0";
-    };
-    "10-router-backup-wan-stable" = {
-      matchConfig.Path = "pci-0000:02:00.0";
-      linkConfig.Name = "enp2s0";
-    };
-  };
 
 
 }
