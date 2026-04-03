@@ -234,6 +234,7 @@ in
   # Proxmox recovery path: keep a serial console available even when SSH or the
   # graphical console path is broken.
   systemd.services."serial-getty@ttyS0".enable = true;
+  systemd.services.systemd-update-utmp.enable = false;
 
   services.openssh = {
     enable = true;
