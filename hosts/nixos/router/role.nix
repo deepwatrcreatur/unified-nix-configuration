@@ -118,11 +118,9 @@ in
 
   services.router-firewall = {
     enable = true;
-    tailscaleInterface = "tailscale0";
     trustedTcpPorts = [ 80 443 ];
     hairpinNat.enable = true;
     trustedUdpPorts = [ ];
-    wanUdpPorts = [ 41641 ];
     extraInputRules = ''
       iifname {"${lanDevice}"} tcp dport 5201 accept comment "iperf3 from LAN"
     '';
@@ -145,13 +143,13 @@ in
     ];
   };
 
-  services.tailscale = {
-    useRoutingFeatures = "server";
+  services.router-tailscale = {
+    enable = true;
     authKeyFile = secrets.path "tailscale-auth-key";
-    extraUpFlags = lib.optionals (secrets.exists "tailscale-auth-key") [
-      "--advertise-exit-node"
-      "--advertise-routes=10.10.0.0/16"
-    ];
+    advertiseExitNode = secrets.exists "tailscale-auth-key";
+    advertiseRoutes = lib.optionals (secrets.exists "tailscale-auth-key") [ "10.10.0.0/16" ];
+    trustedInterface = true;
+    openFirewall = true;
   };
 
   router.monitoring = {
