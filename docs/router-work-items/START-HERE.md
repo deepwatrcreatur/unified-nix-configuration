@@ -64,14 +64,8 @@ Preserve these unless the work item explicitly says otherwise:
 
 ## Current High-Value Order
 
-1. [`01-router-recovery-invariants.md`](./01-router-recovery-invariants.md)
-2. [`02-stable-interface-matching.md`](./02-stable-interface-matching.md)
-3. [`03-management-plane-independence.md`](./03-management-plane-independence.md)
-4. [`04-service-dependency-cleanup.md`](./04-service-dependency-cleanup.md)
-5. [`05-router-health-model.md`](./05-router-health-model.md)
-6. [`06-boot-and-recovery-hardening.md`](./06-boot-and-recovery-hardening.md)
-7. [`07-observability-and-flow-logging.md`](./07-observability-and-flow-logging.md)
-8. [`08-vlans-and-vpn-policy-routing.md`](./08-vlans-and-vpn-policy-routing.md)
+Use the ordered list in [`README.md`](./README.md). Do not duplicate or edit a
+second ranked list in this file; `README.md` is the authoritative queue.
 
 ## Fast Start
 
