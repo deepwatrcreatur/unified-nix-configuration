@@ -1,6 +1,6 @@
 # Role-Based Firewall Boundaries
 
-Status: `ready`
+Status: `in-progress`
 Suggested branch: `feat/router-role-based-firewall-boundaries`
 Priority: `medium`
 Blocked By: `07-observability-and-flow-logging.md`
