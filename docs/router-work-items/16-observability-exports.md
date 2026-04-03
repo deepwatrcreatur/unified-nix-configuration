@@ -1,6 +1,6 @@
 # Observability Exports
 
-Status: `in-progress`
+Status: `done`
 Suggested branch: `feat/router-observability-exports`
 Priority: `medium`
 
