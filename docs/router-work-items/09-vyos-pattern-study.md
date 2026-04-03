@@ -1,6 +1,6 @@
 # VyOS Pattern Study
 
-Status: `ready`
+Status: `done`
 Suggested branch: `docs/router-vyos-pattern-study`
 Priority: `low`
 
