@@ -1,4 +1,7 @@
 { ... }:
+let
+  hostsData = import ../../lib/hosts.nix;
+in
 { ... }:
 {
   imports = [
@@ -12,5 +15,8 @@
     ../../modules/nixos/attic-observatory.nix
   ];
 
-  host.services.iperf3.enable = true;
+  host.services.iperf3 = {
+    enable = true;
+    bindProbeAddress = hostsData.hosts.attic-cache.ip;
+  };
 }

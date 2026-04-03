@@ -1,15 +1,27 @@
 {
+  config,
   lib,
   ...
 }:
+let
+  topology = config.router.topology;
+  routerHost = topology.routerHost;
+  backupHost = topology.backupHost;
+  domain = topology.domain;
+  lanNetwork = topology.networks.lan;
+  managementNetwork = topology.networks.management;
+  lanIpv4Address = "${routerHost.ip}/${toString lanNetwork.prefixLength}";
+  managementIpv4Address = "${routerHost.sshHostname}/${toString managementNetwork.prefixLength}";
+  mkFqdn = label: "${label}.${domain}";
+in
 {
   imports = [
     (import ./role.nix {
-      sshTarget = "ssh router.deepwatercreature.com";
+      sshTarget = "ssh router";
       wanDevice = "enp6s17";
       lanDevice = "enp6s16";
-      managementIpv4Address = "192.168.100.100/24";
-      grafanaDomain = "router.deepwatercreature.com";
+      inherit lanIpv4Address managementIpv4Address;
+      grafanaDomain = mkFqdn "router";
       grafanaDataDir = "/var/log/router/grafana";
       prometheusStateDir = "router-prometheus";
       prometheusBindMountPath = "/var/log/router/prometheus";
@@ -26,7 +38,6 @@
       "technitium-dns-server"
       "tailscaled"
       "fail2ban"
-      "podman"
       "prometheus"
       "grafana"
       "netdata"
@@ -35,32 +46,47 @@
     links = lib.mkForce [
       {
         label = "Dashboard";
-        url = "https://dashboard.deepwatercreature.com";
+        url = "https://${mkFqdn "dashboard"}";
         icon = "🧭";
       }
       {
         label = "Homelab";
-        url = "https://homelab.deepwatercreature.com";
+        url = "https://${mkFqdn "homelab"}";
         icon = "🏠";
       }
       {
         label = "Grafana";
-        url = "https://grafana.deepwatercreature.com";
+        url = "https://${mkFqdn "grafana"}";
         icon = "📈";
       }
       {
-        label = "DNS Admin";
-        url = "http://10.10.10.1:5380/";
+        label = "DNS Admin Mgmt";
+        url = "http://${routerHost.sshHostname}:5380/";
         icon = "🌍";
       }
       {
-        label = "Prometheus";
-        url = "http://10.10.10.1:9090/";
+        label = "Prometheus Mgmt";
+        url = "http://${routerHost.sshHostname}:9090/";
         icon = "🎯";
       }
       {
-        label = "Netdata";
-        url = "http://10.10.10.1:19999/";
+        label = "Netdata Mgmt";
+        url = "http://${routerHost.sshHostname}:19999/";
+        icon = "📊";
+      }
+      {
+        label = "DNS Admin LAN";
+        url = "http://${routerHost.ip}:5380/";
+        icon = "🌍";
+      }
+      {
+        label = "Prometheus LAN";
+        url = "http://${routerHost.ip}:9090/";
+        icon = "🎯";
+      }
+      {
+        label = "Netdata LAN";
+        url = "http://${routerHost.ip}:19999/";
         icon = "📊";
       }
       {
@@ -78,13 +104,13 @@
       {
         label = "Router Mgmt";
         kind = "copy";
-        copyText = "192.168.100.100";
+        copyText = routerHost.sshHostname;
         icon = "🔧";
       }
       {
         label = "Backup Mgmt";
         kind = "copy";
-        copyText = "192.168.100.99";
+        copyText = backupHost.sshHostname;
         icon = "🧰";
       }
       {
@@ -110,7 +136,7 @@
         "10.10.11.0/24"
       ];
       mkZone = zone: {
-        nameserverIP = zone.nameserverIP or "10.10.10.1";
+        nameserverIP = zone.nameserverIP or routerHost.ip;
         allowDynamicUpdates = zone.allowDynamicUpdates or true;
         aliases = zone.aliases or { };
         staticHosts = lib.mapAttrs (_name: host: {

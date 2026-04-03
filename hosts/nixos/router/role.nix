@@ -2,6 +2,7 @@
   sshTarget,
   wanDevice,
   lanDevice,
+  lanIpv4Address,
   managementIpv4Address,
   grafanaDomain,
   grafanaDataDir,
@@ -17,6 +18,7 @@
 }:
 let
   optSec = import ../../../modules/helpers/optional-secrets.nix { inherit lib; };
+  managementListenAddress = builtins.head (lib.splitString "/" managementIpv4Address);
 
   secrets = optSec.mkSecrets {
     cloudflare-api-key = {
@@ -31,10 +33,11 @@ let
     };
   };
 
-  hostsData = import ../../../lib/hosts.nix;
+  topology = config.router.topology;
+  lanNetwork = topology.networks.lan;
   reservableHosts = lib.filterAttrs (
     _name: host: (host.dhcpReservation or null) != null && (host.ip or null) != null
-  ) hostsData.hosts;
+  ) topology.hosts;
 in
 {
   imports = [ ../../../modules/nixos/router/common.nix ];
@@ -51,7 +54,10 @@ in
     services = {
       enableSsh = true;
       enableDocker = false;
-      iperf3.enable = true;
+      iperf3 = {
+        enable = true;
+        bindProbeAddress = topology.routerHost.ip;
+      };
     };
   };
 
@@ -61,13 +67,13 @@ in
     routedInterfaces = {
       lan = {
         device = lanDevice;
-        ipv4Address = "10.10.10.1/16";
+        ipv4Address = lanIpv4Address;
         dns = [ "127.0.0.1" ];
-        domains = [ "deepwatercreature.com" ];
+        domains = [ topology.domain ];
         requiredForOnline = "routable";
         extraRoutes = [
           {
-            destination = "10.10.0.0/16";
+            destination = lanNetwork.cidr;
             scope = "link";
           }
         ];
@@ -126,6 +132,7 @@ in
   };
 
   services.router-homelab.sshTarget = sshTarget;
+  services.router-homelab.listenAddress = "0.0.0.0";
 
   services.router-dashboard = {
     links = [
@@ -146,7 +153,7 @@ in
     enable = true;
     authKeyFile = secrets.path "tailscale-auth-key";
     advertiseExitNode = secrets.exists "tailscale-auth-key";
-    advertiseRoutes = lib.optionals (secrets.exists "tailscale-auth-key") [ "10.10.0.0/16" ];
+    advertiseRoutes = lib.optionals (secrets.exists "tailscale-auth-key") [ lanNetwork.cidr ];
     trustedInterface = true;
     openFirewall = true;
   };
@@ -154,9 +161,12 @@ in
   router.monitoring = {
     grafanaDomain = grafanaDomain;
     grafanaDataDir = grafanaDataDir;
+    listenAddress = lib.mkForce "0.0.0.0";
     prometheusStateDir = prometheusStateDir;
     prometheusBindMountPath = prometheusBindMountPath;
   };
+
+  services.netdata.config.global."bind to" = "0.0.0.0";
 
   boot.loader.grub.enable = false;
   boot.loader.limine.enable = true;
@@ -181,7 +191,7 @@ in
     enable = true;
     settings.PermitRootLogin = "prohibit-password";
     extraConfig = ''
-      Match Address 10.10.10.0/24
+      Match Address ${lanNetwork.cidr}
         PermitRootLogin yes
     '';
   };
@@ -191,7 +201,7 @@ in
     maxretry = 5;
     ignoreIP = [
       "127.0.0.1/8"
-      "10.10.0.0/16"
+      lanNetwork.cidr
     ];
   };
 

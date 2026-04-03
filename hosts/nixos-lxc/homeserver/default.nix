@@ -5,12 +5,16 @@
 }:
 let
   atticClientTokenFile = ../../../secrets-agenix/attic-client-token.age;
+  hostsData = import ../../../lib/hosts.nix;
 in
 {
   # Declarative host configuration
   host.type = "lxc";
   host.networking.enableTailscale = false; # LXC containers can't run Tailscale
-  host.services.iperf3.enable = true;
+  host.services.iperf3 = {
+    enable = true;
+    bindProbeAddress = hostsData.hosts.homeserver.ip;
+  };
   host.services.enablePodman = true;
 
   imports = [

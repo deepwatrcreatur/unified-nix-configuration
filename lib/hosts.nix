@@ -5,6 +5,21 @@
   # Domain for all hosts
   domain = "deepwatercreature.com";
 
+  # Shared network definitions for the homelab router role. Host entries below
+  # should derive their concrete addresses from these where possible instead of
+  # repeating raw CIDR/prefix literals across modules.
+  networks = {
+    lan = {
+      cidr = "10.10.0.0/16";
+      prefixLength = 16;
+    };
+
+    management = {
+      cidr = "192.168.100.0/24";
+      prefixLength = 24;
+    };
+  };
+
   # Host definitions
   # Each host can have:
   #   ip: IPv4 address (required)
