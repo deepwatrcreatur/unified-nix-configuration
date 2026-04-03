@@ -78,11 +78,6 @@ the management interface. Do not bind router services exclusively to the LAN IP.
 
 ## Router Standby / Dev Mode
 
-The management plane is the supported recovery path for all router operations.
-Even if WAN or LAN connectivity is lost, the router remains reachable via
-its dedicated management IP (`192.168.100.100` for `router` and
-`192.168.100.99` for `router-backup`).
-
 Both `router` and `router-backup` are designed to boot into a debuggable state
 even with all production cables unplugged.
 
