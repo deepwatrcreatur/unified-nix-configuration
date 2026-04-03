@@ -835,6 +835,27 @@
     "home-manager_3": {
       "inputs": {
         "nixpkgs": [
+          "nix-attic-infra",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1775080052,
+        "narHash": "sha256-jAB4ZZbx8ECu9GcE/PUUwT+wpooZ0Ssmn2imB8PVTdM=",
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "rev": "6267895e9898399f0ce2fe79b645e9ee4858aaff",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "type": "github"
+      }
+    },
+    "home-manager_4": {
+      "inputs": {
+        "nixpkgs": [
           "nix-linuxbrew",
           "nixpkgs"
         ]
@@ -946,16 +967,17 @@
         "flake-utils": [
           "flake-utils"
         ],
+        "home-manager": "home-manager_3",
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1773621656,
-        "narHash": "sha256-fI+zrTJuxLV0YwlWnQnHzz81qwKoN5s2g/zwn6cs3dU=",
+        "lastModified": 1775126295,
+        "narHash": "sha256-0QiLWBwPpRzMGyI2ZN+J2f0oZsA7MAurE3MWLwPhXa4=",
         "owner": "deepwatrcreatur",
         "repo": "nix-attic-infra",
-        "rev": "6c963661dea080dfc335b256fdc2022032de4f67",
+        "rev": "cfa2bdac61190da7514c655dc5e7f942c5aa8b14",
         "type": "github"
       },
       "original": {
@@ -1112,7 +1134,7 @@
     "nix-linuxbrew": {
       "inputs": {
         "flake-utils": "flake-utils_6",
-        "home-manager": "home-manager_3",
+        "home-manager": "home-manager_4",
         "nixpkgs": [
           "nixpkgs"
         ]

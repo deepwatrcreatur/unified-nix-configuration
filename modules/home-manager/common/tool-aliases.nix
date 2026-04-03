@@ -45,7 +45,11 @@ let
   wrappedToolAliases =
     (lib.optionalAttrs (pkgs ? gh-fnox) { gh = "gh-fnox"; })
     // (lib.optionalAttrs (pkgs ? bw-fnox) { bw = "bw-fnox"; })
-    // (lib.optionalAttrs (pkgs ? attic-fnox) { attic = "attic-fnox"; });
+    // (
+      lib.optionalAttrs ((pkgs ? attic-fnox) && !(config.programs.attic-client.enable or false)) {
+        attic = "attic-fnox";
+      }
+    );
 in
 {
   options.custom.toolAliases = {
