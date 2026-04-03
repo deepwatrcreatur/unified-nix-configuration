@@ -337,3 +337,39 @@ Important constraints:
 Deliver:
 - branch commit(s)
 - short note listing patterns to borrow, defer, and reject
+## Prompt 14: Upstream Hotfix Pinning Policy
+
+Work on [`14-upstream-hotfix-pinning-policy.md`](./14-upstream-hotfix-pinning-policy.md).
+
+Create a branch named `docs/router-hotfix-pinning-policy`.
+
+Task:
+- document a repeatable policy for temporarily consuming upstream router/infra
+  hotfixes and then returning to stable refs
+- optimize for recent real examples like the Technitium NTP sync fix
+
+Important constraints:
+- keep it short and operational
+- focus on prod-critical inputs, not every flake input in the repo
+
+Deliver:
+- branch commit(s)
+- concise policy/checklist docs
+
+## Prompt 15: Management Plane Smoke Validation
+
+Work on [`15-management-plane-smoke-validation.md`](./15-management-plane-smoke-validation.md).
+
+Create a branch named `feat/router-management-plane-smoke-validation`.
+
+Task:
+- add one repeatable smoke-validation path for management-plane recovery
+- back the existing manual ops guidance with a lightweight automated check
+
+Important constraints:
+- do not require a full VM test harness in the first version
+- keep scope to the management-plane model, not all router behavior
+
+Deliver:
+- branch commit(s)
+- summary of what the smoke check proves and what it does not
