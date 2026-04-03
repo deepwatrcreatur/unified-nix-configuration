@@ -287,6 +287,52 @@ in
 
   services.router-log-storage.enable = lib.mkForce enableLogStorage;
 
+  # Explicit Health Model Services
+  # These services exit with failure if the health invariant is violated,
+  # allowing the dashboard's service monitor to surface interface-level health.
+  systemd.services = {
+    health-mgmt-ip = {
+      description = "Health Check: Management IP Present";
+      serviceConfig = {
+        Type = "simple";
+        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ip -4 addr show dev ens18 | grep -q \"inet \" || exit 1; sleep 15; done'";
+        Restart = "always";
+        RestartSec = "15s";
+      };
+      wantedBy = [ "multi-user.target" ];
+    };
+    health-lan-ip = {
+      description = "Health Check: Production LAN IP Present";
+      serviceConfig = {
+        Type = "simple";
+        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ip -4 addr show dev ${lanDevice} | grep -q \"inet \" || exit 1; sleep 15; done'";
+        Restart = "always";
+        RestartSec = "15s";
+      };
+      wantedBy = [ "multi-user.target" ];
+    };
+    health-wan-carrier = {
+      description = "Health Check: WAN Carrier Active";
+      serviceConfig = {
+        Type = "simple";
+        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do cat /sys/class/net/${wanDevice}/operstate | grep -q \"up\" || exit 1; sleep 15; done'";
+        Restart = "always";
+        RestartSec = "15s";
+      };
+      wantedBy = [ "multi-user.target" ];
+    };
+    health-wan-ip = {
+      description = "Health Check: WAN IP Present";
+      serviceConfig = {
+        Type = "simple";
+        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ip -4 addr show dev ${wanDevice} | grep -q \"inet \" || exit 1; sleep 15; done'";
+        Restart = "always";
+        RestartSec = "15s";
+      };
+      wantedBy = [ "multi-user.target" ];
+    };
+  };
+
   nixpkgs.hostPlatform = "x86_64-linux";
   system.stateVersion = "25.05";
 }
