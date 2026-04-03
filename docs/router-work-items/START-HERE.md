@@ -19,16 +19,22 @@ The authoritative work queue is the ordered list in [`README.md`](./README.md).
 
 ## How To Choose Work
 
+0. Refresh remote state first if multiple agents may be active (`git fetch origin`).
 1. Start with the ordered list in [`README.md`](./README.md).
 2. Find the first item whose header says `Status: ready`.
 3. Before taking it, check whether the suggested branch/worktree already
    appears to exist.
-4. If the suggested branch/worktree already exists, assume another agent may
-   already own it and skip to the next `ready` item unless the file header
-   clearly says otherwise.
-5. Once you take an item:
+4. If the suggested branch/worktree exists, do not treat that alone as active
+   ownership. Check for evidence such as:
+   - a recent commit on the branch
+   - an open PR tied to the task
+   - the task file already marked `in-progress`
+5. If the branch/worktree exists but there is no clear evidence of active
+   ownership, treat it as stale and continue with the task.
+6. Once you take an item:
    - create/switch to the suggested branch
    - update that work-item file header from `ready` to `in-progress`
+   - commit and push that claim promptly if the queue is shared through git
    - make only the changes needed for that item
 
 ## Ownership Rules
@@ -45,7 +51,7 @@ Use both:
 - secondary: existing branch/worktree presence
 
 Do not rely only on worktrees, because a stale worktree may exist without an
-active owner.
+active owner. Existing branches/worktrees are a hint, not a lock.
 
 ## Required Constraints
 

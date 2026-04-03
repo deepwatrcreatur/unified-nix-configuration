@@ -19,7 +19,8 @@ in parallel on separate worktrees.
 - If the work changes shape materially, update the file instead of creating
   drift in chat history only.
 - Agents should also check whether the suggested branch/worktree already exists
-  before claiming a `ready` item.
+  before claiming a `ready` item, but treat that only as a hint unless there is
+  clear evidence of active ownership.
 
 ## Status Model
 

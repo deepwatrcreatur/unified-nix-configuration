@@ -16,6 +16,13 @@ Before using any prompt, read:
 
 - [`START-HERE.md`](./START-HERE.md)
 
+Important:
+
+- task-file status is authoritative
+- existing branches/worktrees are only a hint
+- if a suggested branch exists but there is no clear evidence of active
+  ownership, treat it as stale rather than automatically skipping the task
+
 ## Prompt 1: Recovery Invariants
 
 Work on [`01-router-recovery-invariants.md`](./01-router-recovery-invariants.md).
