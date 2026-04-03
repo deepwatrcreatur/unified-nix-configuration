@@ -18,6 +18,7 @@
 }:
 let
   optSec = import ../../../modules/helpers/optional-secrets.nix { inherit lib; };
+  getAttrByPath = lib.attrsets.attrByPath;
   managementListenAddress = builtins.head (lib.splitString "/" managementIpv4Address);
 
   secrets = optSec.mkSecrets {
@@ -41,6 +42,48 @@ let
 in
 {
   imports = [ ../../../modules/nixos/router/common.nix ];
+
+  # Recovery invariants: these assertions fail the build if the properties
+  # that make the router usable in standby/dev mode are ever regressed.
+  assertions = [
+    {
+      assertion =
+        getAttrByPath
+          [ "systemd" "network" "networks" "20-router-lan" "networkConfig" "ConfigureWithoutCarrier" ]
+          false
+          config
+        == true;
+      message = ''
+        Router invariant violated: 20-router-lan must have ConfigureWithoutCarrier = true.
+        Without this, the LAN static IP disappears when the data-plane cable is unplugged,
+        causing monitoring (Prometheus, Grafana, Netdata) to cascade into failure on standby/dev boxes.
+      '';
+    }
+    {
+      assertion = config.services.qemuGuest.enable;
+      message = ''
+        Router invariant violated: services.qemuGuest.enable must be true.
+        The QEMU guest agent is required for Proxmox to report accurate VM state and
+        to support clean shutdown/snapshot from the hypervisor.
+      '';
+    }
+    {
+      assertion = builtins.elem "console=ttyS0,115200" config.boot.kernelParams;
+      message = ''
+        Router invariant violated: boot.kernelParams must include "console=ttyS0,115200".
+        The serial console is the recovery path when SSH and the graphical console are broken.
+      '';
+    }
+    {
+      assertion =
+        !builtins.elem "podman" (getAttrByPath [ "services" "router-dashboard" "services" ] [ ] config);
+      message = ''
+        Router invariant violated: "podman" must not appear in router-dashboard.services.
+        Podman was removed from the router role; leaving it in the dashboard list causes
+        the status panel to show a permanently-failed service that no longer exists.
+      '';
+    }
+  ];
 
   host = {
     type = "router";
