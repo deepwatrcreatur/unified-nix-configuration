@@ -1,6 +1,6 @@
 # Kea And Technitium Architecture
 
-Status: `ready`
+Status: `in-progress`
 Suggested branch: `docs/router-kea-technitium-architecture`
 Priority: `high`
 
