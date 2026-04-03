@@ -43,11 +43,6 @@ in parallel on separate worktrees.
 4. For autonomous agent selection, use the rules in
    [`START-HERE.md`](./START-HERE.md).
 
-## Current Ranked Queue
+## Ranking
 
-All items from the original queue (01–15, 23–24) and the den-migration batch
-(18–22) are done or in open PRs awaiting merge. The queue is currently empty.
-
-Items still open in PRs (not yet merged to main):
-- `20-router-den-import-audit.md` — PR #84 (docs, green checks)
-- `19-router-den-migration-boundary.md` — umbrella; closes when #84 merges
+Queue is currently empty. All stability and recovery items are done.
