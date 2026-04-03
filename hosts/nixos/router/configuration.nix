@@ -80,9 +80,5 @@ in
       {
         "${dnsConfig.domain}" = mkZone dnsConfig;
       };
-  # Pin the physical passthrough NICs to stable names via MAC-based udev rules.
-  # The igc NICs on pve-z170 have stable MACs assigned by Proxmox; using them
-  # here ensures the names survive PCIe slot changes or kernel renaming changes.
-
 
 }
