@@ -89,6 +89,10 @@ The ranked router queue lives in:
 
 - [`docs/router-work-items/README.md`](./docs/router-work-items/README.md)
 
+For repo-wide tooling and secret-wrapper follow-up, use:
+
+- [`docs/tooling-work-items/START-HERE.md`](./docs/tooling-work-items/START-HERE.md)
+
 ## Notes
 
 - Some operational repo clones on hosts may drift or become conflicted over time; rebuilding from a clean checkout is often safer than repairing in place.
