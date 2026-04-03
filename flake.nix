@@ -118,8 +118,7 @@
     };
 
     nix-router-optimized = {
-      # Temporary branch pin while testing upstream router-tailscale integration.
-      url = "github:deepwatrcreatur/nix-router-optimized/feat/router-tailscale";
+      url = "github:deepwatrcreatur/nix-router-optimized";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
