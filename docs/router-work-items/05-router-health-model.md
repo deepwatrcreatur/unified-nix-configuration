@@ -1,6 +1,6 @@
 # Router Health Model
 
-Status: `ready`
+Status: `done`
 Suggested branch: `feat/router-health-model`
 Priority: `high`
 

@@ -20,6 +20,7 @@ let
   optSec = import ../../../modules/helpers/optional-secrets.nix { inherit lib; };
   getAttrByPath = lib.attrByPath;
   managementListenAddress = builtins.head (lib.splitString "/" managementIpv4Address);
+  managementDevice = config.services.router-optimizations.interfaces.management.device;
 
   secrets = optSec.mkSecrets {
     cloudflare-api-key = {
@@ -122,7 +123,7 @@ in
         ];
       };
       management = {
-        device = "ens18";
+        device = managementDevice;
         ipv4Address = managementIpv4Address;
         prefixDelegationMode = "managed";
       };
@@ -144,7 +145,7 @@ in
         label = "LAN";
       };
       management = {
-        device = "ens18";
+        device = managementDevice;
         role = "management";
         label = "Management";
       };
@@ -178,6 +179,12 @@ in
   services.router-homelab.listenAddress = "0.0.0.0";
 
   services.router-dashboard = {
+    services = lib.mkAfter [
+      "health-mgmt-ip"
+      "health-lan-ip"
+      "health-wan-carrier"
+      "health-wan-ip"
+    ];
     links = [
       {
         label = "Tech Logs";
@@ -286,6 +293,52 @@ in
   age.secrets = secrets.definitions;
 
   services.router-log-storage.enable = lib.mkForce enableLogStorage;
+
+  # Explicit Health Model Services
+  # These services exit with failure if the health invariant is violated,
+  # allowing the dashboard's service monitor to surface interface-level health.
+  systemd.services = {
+    health-mgmt-ip = {
+      description = "Health Check: Management IP Present";
+      serviceConfig = {
+        Type = "simple";
+        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ip -4 addr show dev ${managementDevice} | grep -q \"inet \" || exit 1; sleep 15; done'";
+        Restart = "always";
+        RestartSec = "15s";
+      };
+      wantedBy = [ "multi-user.target" ];
+    };
+    health-lan-ip = {
+      description = "Health Check: Production LAN IP Present";
+      serviceConfig = {
+        Type = "simple";
+        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ip -4 addr show dev ${lanDevice} | grep -q \"inet \" || exit 1; sleep 15; done'";
+        Restart = "always";
+        RestartSec = "15s";
+      };
+      wantedBy = [ "multi-user.target" ];
+    };
+    health-wan-carrier = {
+      description = "Health Check: WAN Carrier Active";
+      serviceConfig = {
+        Type = "simple";
+        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do cat /sys/class/net/${wanDevice}/operstate | grep -q \"up\" || exit 1; sleep 15; done'";
+        Restart = "always";
+        RestartSec = "15s";
+      };
+      wantedBy = [ "multi-user.target" ];
+    };
+    health-wan-ip = {
+      description = "Health Check: WAN IP Present";
+      serviceConfig = {
+        Type = "simple";
+        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ip -4 addr show dev ${wanDevice} | grep -q \"inet \" || exit 1; sleep 15; done'";
+        Restart = "always";
+        RestartSec = "15s";
+      };
+      wantedBy = [ "multi-user.target" ];
+    };
+  };
 
   nixpkgs.hostPlatform = "x86_64-linux";
   system.stateVersion = "25.05";
