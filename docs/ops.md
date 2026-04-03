@@ -54,7 +54,7 @@ even with all production cables unplugged.
 
 **What this means in practice:**
 
-- The production LAN static IP (`10.10.10.1/24`) is configured with
+- The production LAN static IP (`10.10.10.1/16`) is configured with
   `ConfigureWithoutCarrier = true`, so it remains present even when the
   data-plane NIC has no link.
 - Management IP is on a separate NIC (`ens18`) and is independent of WAN/LAN
@@ -69,7 +69,10 @@ even with all production cables unplugged.
 **When swapping to the backup router:**
 
 1. Unplug WAN and LAN cables from the production router.
-2. Plug them into the backup router (same NIC names: `enp2s0` WAN, `enp3s0` LAN).
+2. Plug them into the backup router.
+   Current interface names differ by host:
+   - `router`: WAN `enp6s17`, LAN `enp6s16`
+   - `router-backup`: WAN `enp2s0`, LAN `enp3s0`
 3. Both routers share the same production LAN identity (`10.10.10.1`), so no
    DNS or DHCP reconfiguration is needed on clients.
 4. Use the management IP to reach the new active router after cutover.

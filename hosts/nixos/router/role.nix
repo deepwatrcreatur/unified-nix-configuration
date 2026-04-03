@@ -18,6 +18,7 @@
 }:
 let
   optSec = import ../../../modules/helpers/optional-secrets.nix { inherit lib; };
+  getAttrByPath = lib.attrsets.attrByPath;
   managementListenAddress = builtins.head (lib.splitString "/" managementIpv4Address);
 
   secrets = optSec.mkSecrets {
@@ -47,7 +48,11 @@ in
   assertions = [
     {
       assertion =
-        (config.systemd.network.networks."20-router-lan".networkConfig.ConfigureWithoutCarrier or false) == true;
+        getAttrByPath
+          [ "systemd" "network" "networks" "20-router-lan" "networkConfig" "ConfigureWithoutCarrier" ]
+          false
+          config
+        == true;
       message = ''
         Router invariant violated: 20-router-lan must have ConfigureWithoutCarrier = true.
         Without this, the LAN static IP disappears when the data-plane cable is unplugged,
@@ -70,7 +75,8 @@ in
       '';
     }
     {
-      assertion = !builtins.elem "podman" (config.services.router-dashboard.services or []);
+      assertion =
+        !builtins.elem "podman" (getAttrByPath [ "services" "router-dashboard" "services" ] [ ] config);
       message = ''
         Router invariant violated: "podman" must not appear in router-dashboard.services.
         Podman was removed from the router role; leaving it in the dashboard list causes
