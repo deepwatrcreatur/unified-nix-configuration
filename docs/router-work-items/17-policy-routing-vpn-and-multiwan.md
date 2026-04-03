@@ -1,6 +1,6 @@
 # Policy Routing For VPN And Multi-WAN
 
-Status: `blocked`
+Status: `ready`
 Suggested branch: `feat/router-policy-routing-vpn-and-multiwan`
 Priority: `medium`
 Blocked By: `08-vlans-and-vpn-policy-routing.md`
