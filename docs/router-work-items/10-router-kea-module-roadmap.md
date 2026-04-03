@@ -1,6 +1,6 @@
 # Router Kea Module Roadmap
 
-Status: `ready`
+Status: `in-progress`
 Suggested branch: `docs/router-kea-module-roadmap`
 Priority: `high`
 
