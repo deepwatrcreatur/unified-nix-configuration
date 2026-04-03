@@ -3,8 +3,14 @@
   inputs,
   ...
 }:
+let
+  hostsData = import ../../../lib/hosts.nix;
+in
 {
-  host.services.iperf3.enable = true;
+  host.services.iperf3 = {
+    enable = true;
+    bindProbeAddress = hostsData.hosts.attic-cache.ip;
+  };
 
   imports = [
     ../../../modules/nixos/services/iperf3.nix

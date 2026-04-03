@@ -2,6 +2,7 @@
   sshTarget,
   wanDevice,
   lanDevice,
+  lanIpv4Address,
   managementIpv4Address,
   grafanaDomain,
   grafanaDataDir,
@@ -17,6 +18,7 @@
 }:
 let
   optSec = import ../../../modules/helpers/optional-secrets.nix { inherit lib; };
+  managementListenAddress = builtins.head (lib.splitString "/" managementIpv4Address);
 
   secrets = optSec.mkSecrets {
     cloudflare-api-key = {
@@ -31,10 +33,11 @@ let
     };
   };
 
-  hostsData = import ../../../lib/hosts.nix;
+  topology = config.router.topology;
+  lanNetwork = topology.networks.lan;
   reservableHosts = lib.filterAttrs (
     _name: host: (host.dhcpReservation or null) != null && (host.ip or null) != null
-  ) hostsData.hosts;
+  ) topology.hosts;
 in
 {
   imports = [ ../../../modules/nixos/router/common.nix ];
@@ -51,8 +54,10 @@ in
     services = {
       enableSsh = true;
       enableDocker = false;
-      enablePodman = true;
-      iperf3.enable = true;
+      iperf3 = {
+        enable = true;
+        bindProbeAddress = topology.routerHost.ip;
+      };
     };
   };
 
@@ -62,13 +67,13 @@ in
     routedInterfaces = {
       lan = {
         device = lanDevice;
-        ipv4Address = "10.10.10.1/16";
+        ipv4Address = lanIpv4Address;
         dns = [ "127.0.0.1" ];
-        domains = [ "deepwatercreature.com" ];
+        domains = [ topology.domain ];
         requiredForOnline = "routable";
         extraRoutes = [
           {
-            destination = "10.10.0.0/16";
+            destination = lanNetwork.cidr;
             scope = "link";
           }
         ];
@@ -127,6 +132,7 @@ in
   };
 
   services.router-homelab.sshTarget = sshTarget;
+  services.router-homelab.listenAddress = "0.0.0.0";
 
   services.router-dashboard = {
     links = [
@@ -147,7 +153,7 @@ in
     enable = true;
     authKeyFile = secrets.path "tailscale-auth-key";
     advertiseExitNode = secrets.exists "tailscale-auth-key";
-    advertiseRoutes = lib.optionals (secrets.exists "tailscale-auth-key") [ "10.10.0.0/16" ];
+    advertiseRoutes = lib.optionals (secrets.exists "tailscale-auth-key") [ lanNetwork.cidr ];
     trustedInterface = true;
     openFirewall = true;
   };
@@ -155,13 +161,22 @@ in
   router.monitoring = {
     grafanaDomain = grafanaDomain;
     grafanaDataDir = grafanaDataDir;
+    listenAddress = lib.mkForce "0.0.0.0";
     prometheusStateDir = prometheusStateDir;
     prometheusBindMountPath = prometheusBindMountPath;
   };
 
+  services.netdata.config.global."bind to" = "0.0.0.0";
+
+  # Keep the production LAN address present even when the data-plane cable is
+  # intentionally unplugged on a standby/dev router. That allows dashboard and
+  # router-role services to come up in a degraded-but-testable state.
+  systemd.network.networks."20-router-lan".networkConfig.ConfigureWithoutCarrier = true;
+
   boot.loader.grub.enable = false;
   boot.loader.limine.enable = true;
   boot.loader.efi.canTouchEfiVariables = false;
+  boot.kernelParams = [ "console=ttyS0,115200" ];
 
   nix.settings.experimental-features = [
     "nix-command"
@@ -170,19 +185,18 @@ in
 
   my.agenix.machineIdentity.enable = true;
 
-  virtualisation.podman = {
-    enable = true;
-    dockerCompat = true;
-  };
-  virtualisation.oci-containers.backend = "podman";
-
   services.qemuGuest.enable = true;
+  services.fstrim.enable = true;
+
+  # Proxmox recovery path: keep a serial console available even when SSH or the
+  # graphical console path is broken.
+  systemd.services."serial-getty@ttyS0".enable = true;
 
   services.openssh = {
     enable = true;
     settings.PermitRootLogin = "prohibit-password";
     extraConfig = ''
-      Match Address 10.10.10.0/24
+      Match Address ${lanNetwork.cidr}
         PermitRootLogin yes
     '';
   };
@@ -192,7 +206,7 @@ in
     maxretry = 5;
     ignoreIP = [
       "127.0.0.1/8"
-      "10.10.0.0/16"
+      lanNetwork.cidr
     ];
   };
 

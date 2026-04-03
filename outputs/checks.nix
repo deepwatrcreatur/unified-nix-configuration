@@ -151,9 +151,12 @@ let
     builtins.filter (name: name != "@" && !(builtins.elem name routerPublicIngressServices)) routerDdnsServices;
 
   routerCaddyFile = builtins.readFile ../hosts/nixos/router/caddy.nix;
-  routerCaddyVirtualHostMatches =
+  routerCaddyLiteralVirtualHostMatches =
     builtins.split "\n[[:space:]]*\"([a-z0-9-]+)\\.deepwatercreature\\.com\"[[:space:]]*=" routerCaddyFile;
-  routerCaddyVirtualHostNames =
+  routerCaddyMkFqdnVirtualHostMatches =
+    builtins.split "mkFqdn \"([a-z0-9-]+)\"" routerCaddyFile;
+  matchCapturesToNames =
+    matches:
     builtins.attrNames (
       builtins.listToAttrs (
         builtins.concatLists (
@@ -168,8 +171,17 @@ let
               else
                 [ ]
             )
-            routerCaddyVirtualHostMatches
+            matches
         )
+      )
+    );
+  routerCaddyVirtualHostNames =
+    builtins.attrNames (
+      builtins.listToAttrs (
+        map (name: {
+          inherit name;
+          value = true;
+        }) ((matchCapturesToNames routerCaddyLiteralVirtualHostMatches) ++ (matchCapturesToNames routerCaddyMkFqdnVirtualHostMatches))
       )
     );
 

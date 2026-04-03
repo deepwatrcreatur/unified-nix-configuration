@@ -1,17 +1,21 @@
 {
+  config,
   ...
 }:
-
+let
+  topology = config.router.topology;
+  routerHost = topology.routerHost;
+in
 {
   networking.hostName = "router";
-  networking.domain = "deepwatercreature.com";
+  networking.domain = topology.domain;
 
   services.router-dns-service = {
     enable = true;
     provider = "technitium";
-    searchDomains = [ "deepwatercreature.com" ];
+    searchDomains = [ topology.domain ];
     # Advertise the router's chrony instance to all LAN clients via DHCP option 42.
-    ntpServers = [ "10.10.10.1" ];
+    ntpServers = [ routerHost.ip ];
     technitium = {
       blockListPresets = [
         "hagezi-normal"

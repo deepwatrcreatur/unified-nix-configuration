@@ -1,10 +1,15 @@
 { config, pkgs, lib, ... }:
 
 let
-  hostsData = import ../../../lib/hosts.nix;
-  routerHost = hostsData.hosts.router;
+  topology = config.router.topology;
+  routerHost = topology.routerHost;
+  lanNetwork = topology.networks.lan;
+  homeAssistantHost = topology.hosts.homeassistant;
+  authentikHost = topology.hosts.authentik-host;
+  podmanHost = topology.hosts.podman;
   ddnsLabels = routerHost.ddnsServices or [ ];
-  ddnsDomainsLine = lib.concatStringsSep " " ([ hostsData.domain ] ++ ddnsLabels);
+  ddnsDomainsLine = lib.concatStringsSep " " ([ topology.domain ] ++ ddnsLabels);
+  mkFqdn = label: "${label}.${topology.domain}";
 
   # Optional secrets library for graceful degradation
   optSec = import ../../../modules/helpers/optional-secrets.nix { inherit lib; };
@@ -50,73 +55,73 @@ in
 
     virtualHosts = {
       # Main domain - redirect to www or dashboard
-      "deepwatercreature.com" = {
+      "${topology.domain}" = {
         extraConfig = ''
           redir https://x.com/deepwatrcreatur permanent
         '';
       };
 
       # WWW subdomain - serve main site or redirect to dashboard
-      "www.deepwatercreature.com" = {
+      "${mkFqdn "www"}" = {
         extraConfig = ''
           redir https://x.com/deepwatrcreatur permanent
         '';
       };
 
       # Router dashboard
-      "dashboard.deepwatercreature.com" = {
+      "${mkFqdn "dashboard"}" = {
         extraConfig = ''
-          reverse_proxy 10.10.10.1:8888
+          reverse_proxy 127.0.0.1:8888
         '';
       };
 
-      "homelab.deepwatercreature.com" = {
+      "${mkFqdn "homelab"}" = {
         extraConfig = ''
-          @trusted remote_ip 10.10.0.0/16 100.64.0.0/10
+          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10
           handle @trusted {
-            reverse_proxy 10.10.10.1:8888
+            reverse_proxy 127.0.0.1:8888
           }
 
           respond "Access restricted to home LAN and Tailnet" 403
         '';
       };
 
-      "home-assistant.deepwatercreature.com" = {
+      "${mkFqdn "home-assistant"}" = {
         extraConfig = ''
-          reverse_proxy 10.10.11.18:8123
+          reverse_proxy ${homeAssistantHost.ip}:8123
         '';
       };
 
-      "authentik.deepwatercreature.com" = {
+      "${mkFqdn "authentik"}" = {
         extraConfig = ''
-          reverse_proxy 10.10.11.70:9000
+          reverse_proxy ${authentikHost.ip}:9000
         '';
       };
 
-      "paperless.deepwatercreature.com" = {
+      "${mkFqdn "paperless"}" = {
         extraConfig = ''
-          reverse_proxy 10.10.11.84:18000
+          reverse_proxy ${podmanHost.ip}:18000
         '';
       };
 
-      "nightscout.deepwatercreature.com" = {
+      "${mkFqdn "nightscout"}" = {
         extraConfig = ''
-          reverse_proxy 10.10.11.84:11337
+          reverse_proxy ${podmanHost.ip}:11337
         '';
       };
 
-      "scrypted.deepwatercreature.com" = {
+      "${mkFqdn "scrypted"}" = {
         extraConfig = ''
-          reverse_proxy https://10.10.11.84:10443 {
+          reverse_proxy https://${podmanHost.ip}:10443 {
             transport http {
               tls_insecure_skip_verify
             }
           }
         '';
       };
-      "grafana.deepwatercreature.com" = {
+      "${mkFqdn "grafana"}" = {
         extraConfig = ''
-          reverse_proxy 10.10.10.1:3001
+          reverse_proxy 127.0.0.1:3001
         '';
       };
     };

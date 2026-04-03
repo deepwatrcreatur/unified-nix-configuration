@@ -1181,16 +1181,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1775171534,
-        "narHash": "sha256-S2trnbSPYWBg3yi+G7yUZh9OzFd1phJl+H5SsSXn+IE=",
+        "lastModified": 1775176663,
+        "narHash": "sha256-RNVw7tgfPpqNnmMEyLWTZ7igmah3GjYehPLJZZgywQo=",
         "owner": "deepwatrcreatur",
         "repo": "nix-router-optimized",
-        "rev": "8185b2ee1c9ef6509b03b4cf8eaadc8aa54d7ac5",
+        "rev": "46a97441d174d392a7552cac6961f346cade9815",
         "type": "github"
       },
       "original": {
         "owner": "deepwatrcreatur",
-        "ref": "feat/router-tailscale",
         "repo": "nix-router-optimized",
         "type": "github"
       }

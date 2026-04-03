@@ -13,13 +13,20 @@ in
     enable = lib.mkEnableOption "LAN-bound iperf3 server";
 
     bindProbeAddress = lib.mkOption {
-      type = lib.types.str;
-      default = "10.10.10.1";
+      type = lib.types.nullOr lib.types.str;
+      default = null;
       description = "Address used to discover the LAN source IP for iperf3 binding.";
     };
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = cfg.bindProbeAddress != null;
+        message = "host.services.iperf3.bindProbeAddress must be set explicitly when iperf3 is enabled.";
+      }
+    ];
+
     networking.firewall.allowedTCPPorts = lib.mkIf config.networking.firewall.enable [ 5201 ];
 
     systemd.services.iperf3 = {
