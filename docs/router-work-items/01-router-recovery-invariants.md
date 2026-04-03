@@ -1,6 +1,6 @@
 # Router Recovery Invariants
 
-Status: `ready`
+Status: `done`
 Suggested branch: `fix/router-recovery-invariants`
 Priority: `highest`
 
