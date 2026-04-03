@@ -21,10 +21,13 @@ multi-service router stack without relying on raw IPs and ports.
 ## Tasks
 
 - define how internal-only hostnames should be represented in inventory
-- decide whether these belong in `publicIngressServices` or a separate
-  internal/admin hostname list
+- use a separate internal/admin hostname list such as
+  `internalAdminHostnames` or `internalIngressServices`; do not place these
+  names under `publicIngressServices`
 - route them through Caddy or another local reverse-proxy path
 - ensure they resolve only inside the homelab / management paths
+- document validation rules so internal/admin names are excluded from public
+  ingress checks and public DDNS intent stays explicit
 
 ## Constraints
 
