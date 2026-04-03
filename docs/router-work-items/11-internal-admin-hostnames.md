@@ -1,6 +1,6 @@
 # Internal Router Admin Hostnames
 
-Status: `ready`
+Status: `done`
 Suggested branch: `feat/router-internal-admin-hostnames`
 Priority: `medium`
 
