@@ -1,6 +1,6 @@
 # Observability And Flow Logging
 
-Status: `blocked`
+Status: `in-progress`
 Suggested branch: `feat/router-flow-logging`
 Priority: `medium`
 
