@@ -1,6 +1,6 @@
 # Service Dependency Cleanup
 
-Status: `in-progress`
+Status: `done`
 Suggested branch: `refactor/router-service-dependencies`
 Priority: `high`
 
