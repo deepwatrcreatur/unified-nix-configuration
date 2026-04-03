@@ -1,7 +1,10 @@
 {
   ...
 }:
-
+let
+  hostsData = import ../../../lib/hosts.nix;
+  routerHost = hostsData.hosts.router;
+in
 {
   networking.hostName = "router";
   networking.domain = "deepwatercreature.com";
@@ -11,7 +14,7 @@
     provider = "technitium";
     searchDomains = [ "deepwatercreature.com" ];
     # Advertise the router's chrony instance to all LAN clients via DHCP option 42.
-    ntpServers = [ "10.10.10.1" ];
+    ntpServers = [ routerHost.ip ];
     technitium = {
       blockListPresets = [
         "hagezi-normal"

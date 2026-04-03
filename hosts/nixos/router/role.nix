@@ -2,6 +2,7 @@
   sshTarget,
   wanDevice,
   lanDevice,
+  lanIpv4Address,
   managementIpv4Address,
   grafanaDomain,
   grafanaDataDir,
@@ -62,7 +63,7 @@ in
     routedInterfaces = {
       lan = {
         device = lanDevice;
-        ipv4Address = "10.10.10.1/16";
+        ipv4Address = lanIpv4Address;
         dns = [ "127.0.0.1" ];
         domains = [ "deepwatercreature.com" ];
         requiredForOnline = "routable";

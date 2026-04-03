@@ -2,13 +2,20 @@
   lib,
   ...
 }:
+let
+  hostsData = import ../../../lib/hosts.nix;
+  routerHost = hostsData.hosts.router;
+  backupHost = hostsData.hosts.router-backup;
+  lanIpv4Address = "${routerHost.ip}/16";
+  managementIpv4Address = "${routerHost.sshHostname}/24";
+in
 {
   imports = [
     (import ./role.nix {
       sshTarget = "ssh router.deepwatercreature.com";
       wanDevice = "enp6s17";
       lanDevice = "enp6s16";
-      managementIpv4Address = "192.168.100.100/24";
+      inherit lanIpv4Address managementIpv4Address;
       grafanaDomain = "router.deepwatercreature.com";
       grafanaDataDir = "/var/log/router/grafana";
       prometheusStateDir = "router-prometheus";
@@ -49,32 +56,32 @@
       }
       {
         label = "DNS Admin Mgmt";
-        url = "http://192.168.100.100:5380/";
+        url = "http://${routerHost.sshHostname}:5380/";
         icon = "🌍";
       }
       {
         label = "Prometheus Mgmt";
-        url = "http://192.168.100.100:9090/";
+        url = "http://${routerHost.sshHostname}:9090/";
         icon = "🎯";
       }
       {
         label = "Netdata Mgmt";
-        url = "http://192.168.100.100:19999/";
+        url = "http://${routerHost.sshHostname}:19999/";
         icon = "📊";
       }
       {
         label = "DNS Admin LAN";
-        url = "http://10.10.10.1:5380/";
+        url = "http://${routerHost.ip}:5380/";
         icon = "🌍";
       }
       {
         label = "Prometheus LAN";
-        url = "http://10.10.10.1:9090/";
+        url = "http://${routerHost.ip}:9090/";
         icon = "🎯";
       }
       {
         label = "Netdata LAN";
-        url = "http://10.10.10.1:19999/";
+        url = "http://${routerHost.ip}:19999/";
         icon = "📊";
       }
       {
@@ -92,13 +99,13 @@
       {
         label = "Router Mgmt";
         kind = "copy";
-        copyText = "192.168.100.100";
+        copyText = routerHost.sshHostname;
         icon = "🔧";
       }
       {
         label = "Backup Mgmt";
         kind = "copy";
-        copyText = "192.168.100.99";
+        copyText = backupHost.sshHostname;
         icon = "🧰";
       }
       {
@@ -124,7 +131,7 @@
         "10.10.11.0/24"
       ];
       mkZone = zone: {
-        nameserverIP = zone.nameserverIP or "10.10.10.1";
+        nameserverIP = zone.nameserverIP or routerHost.ip;
         allowDynamicUpdates = zone.allowDynamicUpdates or true;
         aliases = zone.aliases or { };
         staticHosts = lib.mapAttrs (_name: host: {
