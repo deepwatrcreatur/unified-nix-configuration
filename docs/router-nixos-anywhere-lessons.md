@@ -152,5 +152,6 @@ The I226-V dual-port NIC via PCI passthrough gets PCI-bus-derived names:
 | `enp2s0`  | I226-V hostpci1 (0000:04:00.0) | WAN |
 | `ens18`   | virtio management (Proxmox) | Management |
 
-These were confirmed by booting the live ISO and running `ip a`. The names
-are now hardcoded in `hosts/nixos/router/configuration.nix`.
+These were confirmed by booting the live ISO and running `ip a`. The raw kernel
+names may change, but the router role now uses stable `lan0` / `wan0` names via
+systemd `.link` matching on NIC MAC addresses.

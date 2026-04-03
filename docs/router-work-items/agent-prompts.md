@@ -373,3 +373,26 @@ Important constraints:
 Deliver:
 - branch commit(s)
 - summary of what the smoke check proves and what it does not
+
+## Prompt 16: Observability Exports
+
+Work on [`16-observability-exports.md`](./16-observability-exports.md).
+
+Create a branch named `feat/router-observability-exports`.
+
+Task:
+- add remote-write and log-shipping capabilities to the observability module
+- ensure the design is robust against external collector downtime
+
+Important constraints:
+- keep exports optional
+- prefer the management plane for outbound export traffic
+- include basic retry and buffering configuration
+
+Validation target:
+- router build
+- verify new options are visible in evaluation
+
+Deliver:
+- branch commit(s)
+- summary of the export schema and documented central-stack requirements

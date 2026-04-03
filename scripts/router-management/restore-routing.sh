@@ -22,7 +22,7 @@ nft add chain inet filter forward { type filter hook forward priority 0\; policy
 nft add chain inet filter input { type filter hook input priority 0\; policy accept\; }
 nft add table ip nat
 nft add chain ip nat postrouting { type nat hook postrouting priority 100\; }
-nft add rule ip nat postrouting oifname "ens17" masquerade
+nft add rule ip nat postrouting oifname "wan0" masquerade
 
 echo -e "\n=== New nftables Rules ==="
 nft list ruleset
