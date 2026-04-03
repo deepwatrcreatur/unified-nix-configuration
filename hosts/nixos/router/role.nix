@@ -54,7 +54,10 @@ in
     services = {
       enableSsh = true;
       enableDocker = false;
-      iperf3.enable = true;
+      iperf3 = {
+        enable = true;
+        bindProbeAddress = topology.routerHost.ip;
+      };
     };
   };
 
@@ -66,7 +69,7 @@ in
         device = lanDevice;
         ipv4Address = lanIpv4Address;
         dns = [ "127.0.0.1" ];
-        domains = [ "deepwatercreature.com" ];
+        domains = [ topology.domain ];
         requiredForOnline = "routable";
         extraRoutes = [
           {
@@ -188,7 +191,7 @@ in
     enable = true;
     settings.PermitRootLogin = "prohibit-password";
     extraConfig = ''
-      Match Address 10.10.10.0/24
+      Match Address ${lanNetwork.cidr}
         PermitRootLogin yes
     '';
   };

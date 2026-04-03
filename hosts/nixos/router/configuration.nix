@@ -5,21 +5,23 @@
 }:
 let
   topology = config.router.topology;
-  routerHost = topology.hosts.router;
-  backupHost = topology.hosts.router-backup;
+  routerHost = topology.routerHost;
+  backupHost = topology.backupHost;
+  domain = topology.domain;
   lanNetwork = topology.networks.lan;
   managementNetwork = topology.networks.management;
   lanIpv4Address = "${routerHost.ip}/${toString lanNetwork.prefixLength}";
   managementIpv4Address = "${routerHost.sshHostname}/${toString managementNetwork.prefixLength}";
+  mkFqdn = label: "${label}.${domain}";
 in
 {
   imports = [
     (import ./role.nix {
-      sshTarget = "ssh router.deepwatercreature.com";
+      sshTarget = "ssh router";
       wanDevice = "enp6s17";
       lanDevice = "enp6s16";
       inherit lanIpv4Address managementIpv4Address;
-      grafanaDomain = "router.deepwatercreature.com";
+      grafanaDomain = mkFqdn "router";
       grafanaDataDir = "/var/log/router/grafana";
       prometheusStateDir = "router-prometheus";
       prometheusBindMountPath = "/var/log/router/prometheus";
@@ -44,17 +46,17 @@ in
     links = lib.mkForce [
       {
         label = "Dashboard";
-        url = "https://dashboard.deepwatercreature.com";
+        url = "https://${mkFqdn "dashboard"}";
         icon = "🧭";
       }
       {
         label = "Homelab";
-        url = "https://homelab.deepwatercreature.com";
+        url = "https://${mkFqdn "homelab"}";
         icon = "🏠";
       }
       {
         label = "Grafana";
-        url = "https://grafana.deepwatercreature.com";
+        url = "https://${mkFqdn "grafana"}";
         icon = "📈";
       }
       {
