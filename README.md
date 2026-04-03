@@ -79,6 +79,16 @@ Use `worktrunk` (`wt`) for parallel agent work in separate git worktrees.
 - List: `wt list`
 - Remove: `wt remove`
 
+## Agent Work Queue
+
+If you are assigning or running agents against this repo, start with:
+
+- [`docs/router-work-items/START-HERE.md`](./docs/router-work-items/START-HERE.md)
+
+The ranked router queue lives in:
+
+- [`docs/router-work-items/README.md`](./docs/router-work-items/README.md)
+
 ## Notes
 
 - Some operational repo clones on hosts may drift or become conflicted over time; rebuilding from a clean checkout is often safer than repairing in place.
