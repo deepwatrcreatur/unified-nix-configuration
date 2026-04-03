@@ -16,6 +16,7 @@ in
 {
   imports = [
     (import ../router/role.nix {
+      inherit inputs;
       sshTarget = "ssh router-backup";
       wanDevice = "enp2s0";
       lanDevice = "enp3s0";

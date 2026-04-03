@@ -1,6 +1,6 @@
 # Operational Diagnostics CLI (`router-diag`)
 
-Status: `in-progress`
+Status: `done`
 Suggested branch: `feat/router-diag-cli`
 Priority: `medium`
 Unblocks: improved operator workflow

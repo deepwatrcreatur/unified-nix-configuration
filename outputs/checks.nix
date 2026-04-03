@@ -189,7 +189,11 @@ let
     builtins.filter (name: !(builtins.elem name routerCaddyVirtualHostNames)) routerPublicIngressServices;
 
   routerCaddyHostsMissingInInventory =
-    builtins.filter (name: !(builtins.elem name routerPublicIngressServices)) routerCaddyVirtualHostNames;
+    builtins.filter
+      (name:
+        !(builtins.elem name routerPublicIngressServices)
+        && !(builtins.elem name (builtins.attrNames (libHosts.router.internalAdminServices or { }))))
+      routerCaddyVirtualHostNames;
 
   routerPrimaryHost = libHosts.router;
   routerBackupHost = libHosts.router-backup;
