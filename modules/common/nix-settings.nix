@@ -40,6 +40,15 @@ let
   enableNixCi = enableCaches && (config.myModules.caches.enableNixCi or true) && hasNixCiNetrc;
 
   canUseRemoteBuilder = remoteBuilder.canUse (config.networking.hostName or "");
+  daemonExperimentalFeatures =
+    [
+      "nix-command"
+      "flakes"
+      "impure-derivations"
+      "ca-derivations"
+      "pipe-operators"
+    ]
+    ++ lib.optionals (!isContainer) [ "cgroups" ];
 in
 {
   imports = [
@@ -55,16 +64,7 @@ in
   nixpkgs.config.allowUnfree = true;
 
   nix.settings = {
-    experimental-features = [
-      "nix-command"
-      "flakes"
-      "impure-derivations"
-      "ca-derivations"
-      "pipe-operators"
-    ]
-    ++ lib.optionals (!isContainer) [
-      "cgroups" # Process isolation for builds - not available in containers
-    ];
+    experimental-features = daemonExperimentalFeatures;
 
     # Performance settings
     download-buffer-size = 1048576000;
@@ -141,6 +141,9 @@ in
   # Container-specific settings
   nix.settings.sandbox = lib.mkIf isContainer false;
   nix.settings.use-cgroups = lib.mkIf (!isContainer) true;
+  systemd.services.nix-daemon.environment.NIX_CONFIG = lib.mkForce ''
+    experimental-features = ${lib.concatStringsSep " " daemonExperimentalFeatures}
+  '';
 
   # Remote building configuration
   nix.distributedBuilds = lib.mkIf canUseRemoteBuilder true;
