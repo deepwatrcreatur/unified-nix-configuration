@@ -1,6 +1,6 @@
 # Management Plane Independence
 
-Status: `in-progress`
+Status: `done`
 Suggested branch: `feat/router-management-plane-independence`
 Priority: `very high`
 
@@ -46,6 +46,24 @@ intentional design, not an accident.
 - eval/build of router and router-backup
 - manual management reachability after switch
 - dashboard links render correctly for management and LAN
+
+## Outcome
+
+Completed via PR `#53` on April 3, 2026.
+
+What changed:
+
+- management-plane recovery behavior is documented in [`docs/ops.md`](../ops.md)
+- router fail2ban configuration exempts the management CIDR so recovery access
+  cannot self-ban
+- management IPs continue to derive from inventory rather than repeated
+  literals
+
+Follow-up work stays in separate items:
+
+- service dependency cleanup
+- router health model
+- automated management-plane smoke validation
 
 ## Do Not
 
