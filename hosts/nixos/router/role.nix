@@ -20,6 +20,7 @@ let
   optSec = import ../../../modules/helpers/optional-secrets.nix { inherit lib; };
   getAttrByPath = lib.attrByPath;
   managementListenAddress = builtins.head (lib.splitString "/" managementIpv4Address);
+  managementDevice = config.services.router-optimizations.interfaces.management.device;
 
   secrets = optSec.mkSecrets {
     cloudflare-api-key = {
@@ -122,7 +123,7 @@ in
         ];
       };
       management = {
-        device = "ens18";
+        device = managementDevice;
         ipv4Address = managementIpv4Address;
         prefixDelegationMode = "managed";
       };
@@ -144,7 +145,7 @@ in
         label = "LAN";
       };
       management = {
-        device = "ens18";
+        device = managementDevice;
         role = "management";
         label = "Management";
       };
@@ -301,7 +302,7 @@ in
       description = "Health Check: Management IP Present";
       serviceConfig = {
         Type = "simple";
-        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ip -4 addr show dev ens18 | grep -q \"inet \" || exit 1; sleep 15; done'";
+        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ip -4 addr show dev ${managementDevice} | grep -q \"inet \" || exit 1; sleep 15; done'";
         Restart = "always";
         RestartSec = "15s";
       };
