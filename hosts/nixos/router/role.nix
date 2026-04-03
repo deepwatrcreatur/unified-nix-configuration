@@ -45,7 +45,7 @@ in
     gpu.type = "none";
     desktop.enable = false;
     networking = {
-      enableTailscale = false;
+      enableTailscale = true;
       enableAvahi = false;
     };
     services = {
@@ -146,8 +146,8 @@ in
   services.router-tailscale = {
     enable = true;
     authKeyFile = secrets.path "tailscale-auth-key";
-    advertiseExitNode = true;
-    advertiseRoutes = [ "10.10.0.0/16" ];
+    advertiseExitNode = secrets.exists "tailscale-auth-key";
+    advertiseRoutes = lib.optionals (secrets.exists "tailscale-auth-key") [ "10.10.0.0/16" ];
     trustedInterface = true;
     openFirewall = true;
   };
