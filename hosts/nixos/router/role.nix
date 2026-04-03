@@ -18,7 +18,7 @@
 }:
 let
   optSec = import ../../../modules/helpers/optional-secrets.nix { inherit lib; };
-  getAttrByPath = lib.attrsets.attrByPath;
+  getAttrByPath = lib.attrByPath;
   managementListenAddress = builtins.head (lib.splitString "/" managementIpv4Address);
 
   secrets = optSec.mkSecrets {
@@ -215,6 +215,18 @@ in
   # intentionally unplugged on a standby/dev router. That allows dashboard and
   # router-role services to come up in a degraded-but-testable state.
   systemd.network.networks."20-router-lan".networkConfig.ConfigureWithoutCarrier = true;
+
+  # Do not block network-online.target on the data-plane LAN NIC.
+  #
+  # caddy and router-dashboard wait on network-online.target. With the default
+  # anyInterface = false, systemd-networkd-wait-online waits for ALL required
+  # interfaces — including LAN (RequiredForOnline = routable). Without carrier,
+  # LAN cannot reach "routable", so caddy/dashboard appear stuck in activating
+  # even though the management plane is fully usable.
+  #
+  # anyInterface = true: exit as soon as any one managed interface (management
+  # always has carrier) reaches its required state.
+  systemd.network.wait-online.anyInterface = true;
 
   boot.loader.grub.enable = false;
   boot.loader.limine.enable = true;
