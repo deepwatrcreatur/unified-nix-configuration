@@ -247,9 +247,12 @@ in
   services.fail2ban = {
     enable = true;
     maxretry = 5;
+    # Management CIDR must be exempt: if authentication failures from the
+    # management interface trigger a ban, the recovery path is cut off.
     ignoreIP = [
       "127.0.0.1/8"
       lanNetwork.cidr
+      topology.networks.management.cidr
     ];
   };
 
