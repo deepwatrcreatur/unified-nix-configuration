@@ -176,3 +176,50 @@ Other agents should not start these branches until:
   - shared production identity
   - distinct management identities
 - Prefer explicit invariants and checks over hidden convenience behavior.
+
+## Future Networking Capabilities
+
+These are not part of immediate router recovery. They are worth tracking for
+later work once `router` is stable again.
+
+### High Value For This Repo
+
+- `vlan`
+  Add first-class VLAN modeling if you want segmented LANs, guest networks, or
+  separate management/storage domains.
+
+- `bridge`
+  Useful if the router needs to bridge virtual or physical interfaces in a more
+  explicit way than today, especially for VM/lab scenarios.
+
+- `bonding`
+  Worth considering if future router hardware or hypervisor topology uses
+  multiple uplinks and you want link redundancy or throughput aggregation.
+
+### Situational / Lower Priority
+
+- `macvlan`
+  Potentially useful for service-isolation edge cases, but not an obvious
+  router requirement for the current design.
+
+- `notnft`
+  Only worth tracking if there is a real need to support a non-`nftables`
+  firewall path. Current router direction should stay nftables-first unless a
+  concrete requirement appears.
+
+### Probably Not Worth Prioritizing Now
+
+- `6-to-4`
+  Add only if you actually intend to do tunnel-based IPv6 transition work.
+  It does not look like a near-term need for the current homelab.
+
+## Post-Recovery Branch Ideas
+
+If the above become relevant after router recovery, treat them as separate,
+opt-in work streams rather than part of baseline hardening:
+
+- `feat/router-vlans`
+- `feat/router-bridging`
+- `feat/router-bonding`
+- `feat/router-macvlan`
+- `feat/router-non-nft-firewall` only if a real use case emerges
