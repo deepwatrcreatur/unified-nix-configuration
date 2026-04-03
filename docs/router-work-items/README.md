@@ -61,6 +61,8 @@ Highest value first:
 12. `13-vyos-pattern-study.md`
 13. `14-upstream-hotfix-pinning-policy.md`
 14. `15-management-plane-smoke-validation.md`
+15. `16-role-based-firewall-boundaries.md`
+16. `17-policy-routing-vpn-and-multiwan.md`
 
 ## Why This Structure
 
