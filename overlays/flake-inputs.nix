@@ -30,4 +30,24 @@
       else
         inputs.fnox.packages.${prev.stdenv.hostPlatform.system}.default;
   })
+
+  # llama-cpp-python: override inherited dotted CUDA architectures with the
+  # integer form expected by modern CMake/CUDA.
+  (final: prev: {
+    pythonPackagesExtensions = (prev.pythonPackagesExtensions or [ ]) ++ [
+      (pyFinal: pyPrev: {
+        llama-cpp-python = pyPrev.llama-cpp-python.overrideAttrs (old: {
+          cmakeFlags =
+            let
+              keepFlag =
+                flag:
+                !(prev.lib.hasPrefix "-DCMAKE_CUDA_ARCHITECTURES=" flag)
+                && !(prev.lib.hasPrefix "-DGGML_CUDA_ARCHITECTURES=" flag);
+            in
+            builtins.filter keepFlag (old.cmakeFlags or [ ])
+            ++ [ "-DCMAKE_CUDA_ARCHITECTURES=61;70;75;80;86;89;90" ];
+        });
+      })
+    ];
+  })
 ]
