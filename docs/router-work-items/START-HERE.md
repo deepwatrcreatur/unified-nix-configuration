@@ -82,6 +82,23 @@ If you want the shortest path:
 - update the selected file to `Status: in-progress`
 - implement and validate
 
+## PR Workflow
+
+The normal end state for a work item is a PR, not an unreviewed direct merge.
+
+Recommended loop:
+
+1. implement and validate locally
+2. push the branch and open a PR
+3. wait briefly for CI and bot review to appear
+4. read GitHub comments and checks
+5. fix substantive issues
+6. merge only after checks are green or remaining comments are intentionally
+   judged non-blocking
+
+Do not skip the “read comments after a few minutes” step when bot review is
+part of the project workflow.
+
 ## When To Use GitHub Issues Instead
 
 Do not create a GitHub issue for a narrow implementation task that already has
