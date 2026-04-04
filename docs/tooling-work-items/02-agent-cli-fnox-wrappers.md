@@ -1,6 +1,10 @@
 # 02 Agent CLI Fnox Wrappers
 
-Status: `in-progress`
+<<<<<<< HEAD
+Status: `done`
+=======
+Status: `done`
+>>>>>>> feat/tooling-agent-cli-fnox-wrappers
 
 Suggested branch: `feat/tooling-agent-cli-fnox-wrappers`
 
@@ -30,3 +34,14 @@ keeping the current repo conventions around canonical names and fallbacks.
 - wrapped command aliases or package selections resolve correctly when
   `<tool>-fnox` exists and fall back cleanly when it does not
 - docs/comments make the policy obvious to future maintainers
+
+## Implementation
+
+- Audited `fnox` default wrapped commands; currently only `opencode-zai` exists
+  for agent CLIs.
+- Updated `modules/home-manager/common/tool-aliases.nix` so that when
+  `programs.fnox.enable` is true, `opencode` resolves to `opencode-zai` while
+  `opencode-raw` continues to call the unwrapped binary via shell aliases.
+- Left `claude-code`, `gemini-cli`, and `droid` unwrapped until `fnox`
+  exposes wrappers for them.
+- Verified `nix flake check` passes for this branch.
