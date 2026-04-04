@@ -51,6 +51,13 @@ _context:
 
     host = "0.0.0.0";
     port = 11434;
+    # The upstream NixOS module only emits User=/Group= when these options are
+    # non-null. Leaving them unset while forcing DynamicUser=false makes the
+    # service silently run as root.
+    user = "ollama";
+    group = "ollama";
+    home = "/models/ollama";
+    models = "/models/ollama/models";
     environmentVariables = {
       CUDA_VISIBLE_DEVICES = "0";
       OLLAMA_GPU_OVERHEAD = "0";
@@ -73,9 +80,22 @@ _context:
     serviceConfig = {
       StateDirectory = lib.mkForce "";
       DynamicUser = lib.mkForce false;
+      # Virtiofs exposes host UIDs/GIDs directly; user namespaces can make the
+      # shared mount appear mismatched even when ownership is correct.
+      PrivateUsers = lib.mkForce false;
       ReadWritePaths = lib.mkForce [ "/models/ollama" ];
       WorkingDirectory = lib.mkForce "/models/ollama";
-      DeviceAllow = [ "/dev/nvidia0" ];
+      DeviceAllow = [
+        "char-nvidiactl"
+        "char-nvidia-caps"
+        "char-nvidia-frontend"
+        "char-nvidia-uvm"
+        "char-drm"
+        "char-fb"
+        "char-kfd"
+        "/dev/dxg"
+        "/dev/nvidia0"
+      ];
     };
   };
 
