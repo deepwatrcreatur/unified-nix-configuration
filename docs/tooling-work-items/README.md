@@ -26,21 +26,10 @@ wrappers, shell defaults, and related repo operations.
 
 ## Current Ranked Queue
 
-1. `01-github-token-shell-export-removal.md`
-2. `02-agent-cli-fnox-wrappers.md`
-3. `03-token-file-health-and-fallbacks.md`
-4. `04-api-and-proxmox-wrapper-candidates.md`
-5. `05-wrapper-policy-and-rollout.md`
-6. `06-sudo-wrapper-path-precedence.md`
-7. `07-github-token-source-health.md`
-
-## Why This Structure
-
-This repo already has a router-specific queue. Keeping tooling work separate:
-
-- avoids mixing unrelated work into router planning
-- lets agents take shell/tooling tasks without router context
-- keeps wrapper policy changes reviewable as small PRs
-
-Keep GitHub issues for discussion-heavy or cross-repo topics. Keep concrete
-implementation plans here.
+1. `01-agent-cli-fnox-wrappers.md`
+2. `02-api-and-proxmox-wrapper-candidates.md`
+3. `03-wrapper-policy-and-rollout.md`
+4. `04-sudo-wrapper-path-precedence.md`
+5. `05-github-token-source-health.md`
+6. `06-sops-compatibility-layer-cleanup.md`
+7. `07-agenix-helper-flake-evaluation.md`

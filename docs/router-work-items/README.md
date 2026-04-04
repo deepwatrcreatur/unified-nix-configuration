@@ -53,29 +53,13 @@ Highest value first:
 4. `05-router-health-model.md`
 5. `06-boot-and-recovery-hardening.md`
 6. `07-observability-and-flow-logging.md`
-7. `08-vlans-and-vpn-policy-routing.md`
-8. `09-kea-technitium-architecture.md`
-9. `10-router-kea-module-roadmap.md`
-10. `11-internal-admin-hostnames.md`
-11. `12-vpn-module-hardening-and-tests.md`
-12. `13-vyos-pattern-study.md`
-13. `14-upstream-hotfix-pinning-policy.md`
-14. `15-management-plane-smoke-validation.md`
-15. `19-router-den-migration-boundary.md`
-16. `20-router-den-import-audit.md`
-17. `21-router-leaf-inline-migration.md`
-18. `22-router-backup-den-parity.md`
-
-## Why This Structure
-
-This repo is agent-heavy and branch-heavy. Small files work better than a
-single long roadmap because they:
-
-- reduce context loading for follow-up agents
-- make ownership clearer
-- map cleanly to one branch / one PR
-- are easy to delete once merged
-
-Keep GitHub issues for cross-cutting or discussion-heavy items. Keep concrete
-implementation plans here. Keep the active ranking limited to `ready`,
-`blocked`, and `in-progress` work.
+7. `23-ulogd-plugin-mismatch-repair.md`
+8. `24-ulogd-package-vs-design-alignment.md`
+9. `08-vlans-and-vpn-policy-routing.md`
+10. `09-kea-technitium-architecture.md`
+11. `10-router-kea-module-roadmap.md`
+12. `11-internal-admin-hostnames.md`
+13. `12-vpn-module-hardening-and-tests.md`
+14. `13-vyos-pattern-study.md`
+15. `14-upstream-hotfix-pinning-policy.md`
+16. `15-management-plane-smoke-validation.md`

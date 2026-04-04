@@ -578,17 +578,27 @@ in
   # nix-router-optimized currently writes `global.loglevel` into the ulogd
   # config file, but ulogd 2.0.9 rejects that key. Keep the service-level
   # logLevel, but override the generated config to omit the invalid entry.
-  services.ulogd.settings.global = lib.mkForce {
-    logfile = "/var/log/ulogd/ulogd.log";
-    plugin = [
-      "${pkgs.ulogd}/lib/ulogd/ulogd_inppkt_NFLOG.so"
-      "${pkgs.ulogd}/lib/ulogd/ulogd_filter_BASE.so"
-      "${pkgs.ulogd}/lib/ulogd/ulogd_filter_IFINDEX.so"
-      "${pkgs.ulogd}/lib/ulogd/ulogd_filter_IP2STR.so"
-      "${pkgs.ulogd}/lib/ulogd/ulogd_filter_PRINTPKT.so"
-      "${pkgs.ulogd}/lib/ulogd/ulogd_output_JSON.so"
-    ];
-    stack = "log1:NFLOG,base1:BASE,ifi1:IFINDEX,ip2str1:IP2STR,print1:PRINTPKT,json1:JSON";
+  # Also align plugins with what is actually shipped in pkgs.ulogd.
+  services.ulogd.settings = lib.mkForce {
+    global = {
+      logfile = "/var/log/ulogd/ulogd.log";
+      plugin = [
+        "${pkgs.ulogd}/lib/ulogd/ulogd_inppkt_NFLOG.so"
+        "${pkgs.ulogd}/lib/ulogd/ulogd_raw2packet_BASE.so"
+        "${pkgs.ulogd}/lib/ulogd/ulogd_filter_IFINDEX.so"
+        "${pkgs.ulogd}/lib/ulogd/ulogd_filter_IP2STR.so"
+        "${pkgs.ulogd}/lib/ulogd/ulogd_filter_PRINTPKT.so"
+        "${pkgs.ulogd}/lib/ulogd/ulogd_output_LOGEMU.so"
+      ];
+      stack = "log1:NFLOG,base1:BASE,ifi1:IFINDEX,ip2str1:IP2STR,print1:PRINTPKT,emu1:LOGEMU";
+    };
+    log1 = {
+      group = 1;
+    };
+    emu1 = {
+      file = "/var/log/ulogd/flow.log";
+      sync = 1;
+    };
   };
 
   nixpkgs.hostPlatform = "x86_64-linux";
