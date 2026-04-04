@@ -14,18 +14,10 @@ let
 
   # Path to GitHub token (works for both user and root contexts)
   githubTokenPath =
-    if
-      (
-        config ? sops
-        && config.sops.secrets ? "github-token-root"
-        && config.sops.secrets."github-token-root" != null
-      )
-    then
-      config.sops.secrets."github-token-root".path
-    else if config ? home then
+    if config ? home then
       "${config.home.homeDirectory}/.config/git/github-token"
     else
-      "/root/.config/git/github-token";
+      "/run/secrets/github-token";
 
   # Detect if we're running in a container (LXC/Docker)
   # boot.isContainer is set by virtualisation/lxc-container.nix and similar
@@ -124,18 +116,7 @@ in
     access-tokens =
       lib.optionals (!isCacheServer) [
         "${atticCache.serverName}:5001 = /run/nix/attic-token-bearer"
-      ]
-      # Only try to read GitHub token if it's a SOPS secret (avoid file system access during evaluation)
-      ++
-        lib.optionals
-          (
-            config ? sops
-            && config.sops.secrets ? "github-token-root"
-            && config.sops.secrets."github-token-root" != null
-          )
-          [
-            "github.com=${builtins.readFile config.sops.secrets."github-token-root".path}"
-          ];
+      ];
   };
 
   # Container-specific settings
