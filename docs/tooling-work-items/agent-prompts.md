@@ -29,3 +29,17 @@ Implement [`03-wrapper-policy-and-rollout.md`](./03-wrapper-policy-and-rollout.m
 Document and encode a repo-wide policy for when commands should or should not
 be wrapped with `fnox`, and make sure the rollout path stays reviewable and
 predictable across hosts.
+
+## Prompt 5
+
+Implement [`06-sops-compatibility-layer-cleanup.md`](./06-sops-compatibility-layer-cleanup.md).
+Audit the remaining SOPS-era references and fallback logic, remove or clearly
+mark the stale ones, and keep only the compatibility paths that are still
+actually needed for agenix-first hosts.
+
+## Prompt 6
+
+Implement [`07-agenix-helper-flake-evaluation.md`](./07-agenix-helper-flake-evaluation.md).
+Assess whether the repo’s agenix helper patterns are mature enough for
+extraction into a reusable flake, and leave a concrete recommendation with a
+minimal proposed surface if extraction is justified.

@@ -1,6 +1,6 @@
 # 01 Agent CLI Fnox Wrappers
 
-Status: `ready`
+Status: `in-progress`
 
 Suggested branch: `feat/tooling-agent-cli-fnox-wrappers`
 

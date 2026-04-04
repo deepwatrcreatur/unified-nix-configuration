@@ -396,3 +396,53 @@ Validation target:
 Deliver:
 - branch commit(s)
 - summary of the tool's capabilities and usage
+
+## Prompt 23: Ulogd Plugin Mismatch Repair
+
+Work on [`23-ulogd-plugin-mismatch-repair.md`](./23-ulogd-plugin-mismatch-repair.md).
+
+Create a branch named `fix/router-ulogd-plugin-mismatch`.
+
+Task:
+- repair the current `ulogd` startup failure on router/router-backup
+- align the generated config with the plugin set actually shipped by the
+  packaged `ulogd`
+
+Important constraints:
+- keep this as a narrow runtime repair
+- do not redesign all router observability in the same PR
+- validate against the real packaged plugin files, not assumptions from older
+  configs or upstream examples
+
+Validation target:
+- router/router-backup build
+- `ulogd.service` starts successfully after switch
+
+Deliver:
+- branch commit(s)
+- short note listing which plugins were expected, which were actually present,
+  and what changed
+
+## Prompt 24: Ulogd Package Vs Design Alignment
+
+Work on [`24-ulogd-package-vs-design-alignment.md`](./24-ulogd-package-vs-design-alignment.md).
+
+Create a branch named `docs/router-ulogd-design-alignment`.
+
+Task:
+- document the supported `ulogd` stack for this repo and decide how tightly the
+  router design should depend on packaged plugin availability
+- add comments/docs so future agents stop reintroducing unsupported plugin
+  references casually
+
+Important constraints:
+- keep this focused on design clarity and follow-up hardening
+- do not turn it into a full observability platform redesign
+
+Validation target:
+- docs/comments make the supported flow-logging path clear
+- future follow-up work can distinguish package mismatch from design drift
+
+Deliver:
+- branch commit(s)
+- concise summary of the chosen support boundary

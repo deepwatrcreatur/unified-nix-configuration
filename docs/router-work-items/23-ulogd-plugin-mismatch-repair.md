@@ -1,6 +1,6 @@
 # Ulogd Plugin Mismatch Repair
 
-Status: `in-progress`
+Status: `done`
 Priority: `high`
 Branch: `fix/router-ulogd-plugin-mismatch`
 

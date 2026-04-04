@@ -31,6 +31,8 @@ wrappers, shell defaults, and related repo operations.
 3. `03-wrapper-policy-and-rollout.md`
 4. `04-sudo-wrapper-path-precedence.md`
 5. `05-github-token-source-health.md`
+6. `06-sops-compatibility-layer-cleanup.md`
+7. `07-agenix-helper-flake-evaluation.md`
 
 ## Why This Structure
 
