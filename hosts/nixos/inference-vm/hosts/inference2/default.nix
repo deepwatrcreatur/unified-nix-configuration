@@ -6,6 +6,9 @@
 }:
 
 {
+  # Legacy path: the active `.#inference2` output is built from `den/hosts`
+  # and den aspects. Keep this file only as migration context while the old
+  # inference host tree still exists.
   imports = [
     ./hardware-configuration.nix
 

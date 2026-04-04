@@ -7,6 +7,10 @@
 }:
 
 {
+  # Legacy path: `.#inference1` is now composed from `den/hosts/inference1`
+  # plus `den/aspects/inference1-ollama.nix`. Keep this file only as migration
+  # context until the old inference host tree is deleted or folded fully into
+  # den. Do not land active inference1 fixes here first.
   imports = [
     ./hardware-configuration.nix
     ../..

@@ -6,6 +6,9 @@
 }:
 
 {
+  # Legacy path: inference VM outputs are moving to den leaves and aspects.
+  # Keep this file only while the fresh-host experiment still depends on the
+  # older tree layout.
   imports = [
     # Hardware configuration
     ./hardware-configuration.nix

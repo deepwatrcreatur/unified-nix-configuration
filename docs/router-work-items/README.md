@@ -61,6 +61,7 @@ Highest value first:
 12. `13-vyos-pattern-study.md`
 13. `14-upstream-hotfix-pinning-policy.md`
 14. `15-management-plane-smoke-validation.md`
+15. `19-router-den-migration-boundary.md`
 
 ## Why This Structure
 
