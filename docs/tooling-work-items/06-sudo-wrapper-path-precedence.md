@@ -1,6 +1,6 @@
 # 06 Sudo Wrapper Path Precedence
 
-Status: `ready`
+Status: `done`
 
 Suggested branch: `fix/tooling-sudo-wrapper-path`
 
