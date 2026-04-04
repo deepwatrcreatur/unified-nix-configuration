@@ -28,4 +28,4 @@ To prevent "poisoning" the token file with error messages (e.g., SOPS decryption
 
 These paths and behaviors are managed by:
 - `modules/home-manager/user-secrets.nix`: Handles fallback logic and sanity checks.
-- `modules/home-manager/secrets-activation.nix`: Handles atomic SOPS decryption.
+- `modules/home-manager/secrets-activation.nix`: Handles SOPS-based decryption on legacy hosts; agenix-first hosts should not rely on it for new secrets.

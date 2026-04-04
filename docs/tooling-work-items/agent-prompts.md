@@ -55,3 +55,22 @@ is easier to distinguish from temporary compatibility logic.
 Implement [`09-agenix-helper-flake-threshold.md`](./09-agenix-helper-flake-threshold.md).
 Define a concrete threshold for when the repo’s agenix helper patterns should
 stay local versus be extracted into a reusable flake.
+
+## Prompt 9
+
+Implement [`10-den-legacy-inventory-reduction.md`](./10-den-legacy-inventory-reduction.md).
+Audit the remaining non-router `mode = "legacy"` inventory entries and make it
+clear which ones are intentional, blocked, or ready for den-native cleanup.
+
+## Prompt 10
+
+Implement [`11-host-metadata-source-of-truth.md`](./11-host-metadata-source-of-truth.md).
+Clarify the split between `den/inventory` and `lib/hosts.nix`, and reduce one
+real drift-prone edge if you can do so without destabilizing outputs.
+
+## Prompt 11
+
+Implement [`12-retire-home-manager-sops-secrets-activation.md`](./12-retire-home-manager-sops-secrets-activation.md).
+Figure out whether `modules/home-manager/secrets-activation.nix` should be
+retired or explicitly fenced as temporary compatibility, then make the import
+story clearer for future agents.

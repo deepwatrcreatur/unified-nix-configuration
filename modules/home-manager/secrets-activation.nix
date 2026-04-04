@@ -9,6 +9,9 @@ let
   cfg = config.services.secrets-activation;
 in
 {
+  # SOPS compatibility layer for hosts that still rely on ~/.config/sops and SOPS-encrypted home secrets.
+  # New agenix-first hosts should prefer agenix-user-secrets and avoid enabling
+  # this module unless they still need SOPS-based flows.
   options.services.secrets-activation = {
     enable = mkEnableOption "SOPS secrets and GPG key activation";
 

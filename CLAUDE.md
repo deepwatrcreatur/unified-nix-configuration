@@ -118,7 +118,7 @@ The `max-open-files` nix setting is a perfect example of why this architecture i
 ### Module Dependencies
 - System modules receive `inputs` and pure `nixpkgsLib`
 - Home Manager modules receive `inputs` and `mac-app-util` for macOS app management
-- SOPS-nix is integrated for secrets management across all configurations
+- agenix is the primary secrets backend; SOPS-nix remains only as a limited compatibility layer for a few user/home flows.
 
 ### Justfile Integration
 Each host/user combination has justfiles with common commands. The `just` command runner is available system-wide through `modules/common/just.nix`.

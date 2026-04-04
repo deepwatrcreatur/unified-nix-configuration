@@ -35,3 +35,6 @@ wrappers, shell defaults, and related repo operations.
 7. `07-agenix-helper-flake-evaluation.md`
 8. `08-agenix-migration-layer-stabilization.md`
 9. `09-agenix-helper-flake-threshold.md`
+10. `10-den-legacy-inventory-reduction.md`
+11. `11-host-metadata-source-of-truth.md`
+12. `12-retire-home-manager-sops-secrets-activation.md`

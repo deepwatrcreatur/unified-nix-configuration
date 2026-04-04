@@ -39,6 +39,9 @@ in {
 
   config = mkIf cfg.enable {
     home.activation.userSecretsActivation = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      # Compatibility layer: prefer agenix and system tokens first; SOPS CLI is
+      # only used as a final fallback for hosts that still ship legacy
+      # ~/.config/sops secrets.
       export SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
       export PATH="${lib.makeBinPath [pkgs.sops]}:$PATH"
 

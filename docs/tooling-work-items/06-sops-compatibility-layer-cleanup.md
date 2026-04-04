@@ -51,3 +51,15 @@ agents to tell whether a SOPS path is still required or just historical debt.
 
 Prefer tightening active modules first. Historical docs can be downgraded or
 annotated later if they are useful for migration history.
+
+## Implementation
+
+- Updated top-level agent docs (`AGENTS.md`, `agents.md`) to describe agenix as
+  the primary secrets backend and SOPS-nix as a limited compatibility layer.
+- Clarified SOPS compatibility responsibilities in
+  `modules/home-manager/user-secrets.nix` and
+  `modules/home-manager/secrets-activation.nix` so that SOPS usage is clearly
+  documented as a fallback.
+- Updated `docs/github-token-fallbacks.md` to explain that
+  `secrets-activation.nix` only applies on legacy SOPS hosts; agenix-first hosts
+  rely on `user-secrets.nix` and agenix paths instead.
