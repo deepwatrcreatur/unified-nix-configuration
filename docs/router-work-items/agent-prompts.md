@@ -373,3 +373,26 @@ Important constraints:
 Deliver:
 - branch commit(s)
 - summary of what the smoke check proves and what it does not
+
+## Prompt 18: Operational Diagnostics CLI
+
+Work on [`18-router-diag-cli.md`](./18-router-diag-cli.md).
+
+Create a branch named `feat/router-diag-cli`.
+
+Task:
+- create a lightweight `router-diag` CLI tool for terminal-based diagnostics
+- implement subcommands for interfaces, firewall, VPN, and health status
+
+Important constraints:
+- keep it read-only (diagnostics only)
+- prefer simple bash or python with minimal dependencies
+- surface the explicit health checks from Task 05
+
+Validation target:
+- `router-diag show health` returns accurate results
+- tool is available in the default system path on the router
+
+Deliver:
+- branch commit(s)
+- summary of the tool's capabilities and usage

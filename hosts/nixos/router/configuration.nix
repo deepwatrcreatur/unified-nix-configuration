@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  inputs,
   ...
 }:
 let
@@ -17,6 +18,7 @@ in
 {
   imports = [
     (import ./role.nix {
+      inherit inputs;
       sshTarget = "ssh router";
       wanDevice = "enp6s17";
       lanDevice = "enp6s16";

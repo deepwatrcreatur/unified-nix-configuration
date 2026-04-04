@@ -75,6 +75,18 @@ recovery plane**. It is intentionally independent of WAN and LAN state.
 **Design rule:** any new service added to the router role must be reachable on
 the management interface. Do not bind router services exclusively to the LAN IP.
 
+## Operational Diagnostics CLI (`router-diag`)
+
+The `router-diag` tool provides VyOS-inspired "show" commands for quick terminal-based debugging.
+
+Usage:
+```bash
+router-diag show health      # Display explicit health check results
+router-diag show interfaces  # Display interface status and IP addresses
+router-diag show firewall    # Summary of active nftables chains and hits
+router-diag show vpn         # WireGuard and Tailscale status
+```
+
 ## Proxmox Recovery Procedures
 
 If the router is unresponsive or the network is misconfigured, use these paths

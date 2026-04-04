@@ -9,6 +9,7 @@
   prometheusStateDir,
   prometheusBindMountPath,
   enableLogStorage ? true,
+  inputs,
 }:
 {
   config,
@@ -141,6 +142,7 @@ in
 
   services.router-optimizations = {
     enable = true;
+    package = inputs.nix-router-optimized.packages.${pkgs.system}.router-diag;
     interfaces = {
       wan = {
         device = wanDevice;
