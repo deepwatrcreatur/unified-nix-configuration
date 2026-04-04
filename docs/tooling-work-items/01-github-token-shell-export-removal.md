@@ -1,4 +1,4 @@
-# 01 Github Token Shell Export Removal
+# 01 GitHub Token Shell Export Removal
 
 Status: `ready`
 
