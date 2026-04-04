@@ -1,8 +1,12 @@
 # 05 Wrapper Policy And Rollout
 
-Status: `in-progress`
+Status: `done`
 
 Suggested branch: `docs/tooling-wrapper-policy`
+
+## Deliverable
+
+The repo-wide fnox wrapper policy is documented in [`docs/fnox-wrapper-policy.md`](../fnox-wrapper-policy.md).
 
 ## Goal
 
