@@ -1,6 +1,6 @@
 # 06 SOPS Compatibility Layer Cleanup
 
-Status: `ready`
+Status: `in-progress`
 
 Suggested branch: `refactor/tooling-sops-compat-cleanup`
 
