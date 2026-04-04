@@ -1,8 +1,12 @@
 # 09 Agenix Helper Flake Threshold
 
-Status: `in-progress`
+Status: `done`
 
 Suggested branch: `docs/tooling-agenix-helper-threshold`
+
+## Deliverable
+
+The extraction threshold and current recommendation are documented in [`docs/agenix-helper-threshold.md`](../agenix-helper-threshold.md).
 
 ## Goal
 
