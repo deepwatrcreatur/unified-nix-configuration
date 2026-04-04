@@ -140,7 +140,7 @@ in
       iot = {
         device = "enp6s16.20";
         vlanId = 20;
-        parentDevice = "enp6s16";
+        parentDevice = lanDevice;
         ipv4Address = "10.20.20.1/24";
         policyRouting = {
           enable = true;
@@ -150,7 +150,7 @@ in
       guest = {
         device = "enp6s16.30";
         vlanId = 30;
-        parentDevice = "enp6s16";
+        parentDevice = lanDevice;
         ipv4Address = "10.30.30.1/24";
         policyRouting = {
           # Use default routing (WAN) by default
@@ -549,8 +549,8 @@ in
     ];
     networkConfig = {
       VLAN = [
-        "enp6s16.20"
-        "enp6s16.30"
+        "${lanDevice}.20"
+        "${lanDevice}.30"
       ];
       ConfigureWithoutCarrier = true;
       DHCPPrefixDelegation = true;
@@ -582,6 +582,7 @@ in
     logfile = "/var/log/ulogd/ulogd.log";
     plugin = [
       "${pkgs.ulogd}/lib/ulogd/ulogd_inppkt_NFLOG.so"
+      "${pkgs.ulogd}/lib/ulogd/ulogd_filter_BASE.so"
       "${pkgs.ulogd}/lib/ulogd/ulogd_filter_IFINDEX.so"
       "${pkgs.ulogd}/lib/ulogd/ulogd_filter_IP2STR.so"
       "${pkgs.ulogd}/lib/ulogd/ulogd_filter_PRINTPKT.so"
