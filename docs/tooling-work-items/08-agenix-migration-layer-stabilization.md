@@ -1,8 +1,12 @@
 # 08 Agenix Migration Layer Stabilization
 
-Status: `in-progress`
+Status: `done`
 
 Suggested branch: `refactor/tooling-agenix-migration-layer`
+
+## Deliverable
+
+The stable agenix-first architecture and migration layer are documented in [`docs/agenix-first-secrets.md`](../agenix-first-secrets.md).
 
 ## Goal
 

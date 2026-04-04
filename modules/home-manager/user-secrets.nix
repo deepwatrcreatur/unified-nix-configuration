@@ -8,11 +8,20 @@ with lib; let
   cfg = config.services.user-secrets;
 in {
   options.services.user-secrets = {
-    enable = mkEnableOption "User-specific SOPS secrets activation";
+    enable = mkEnableOption "User-specific secrets activation";
+
+    migrationMode = mkOption {
+      type = types.bool;
+      default = true;
+      description = ''
+        Whether to enable SOPS fallback/migration logic.
+        Disable this for hosts that are fully migrated to agenix.
+      '';
+    };
 
     secretsPath = mkOption {
       type = types.path;
-      description = "Path to the user secrets directory";
+      description = "Path to the user secrets directory (for SOPS migration)";
     };
 
     agenixGithubTokenPath = mkOption {
@@ -75,20 +84,15 @@ in {
 
       if [ -f "$SYSTEM_ATTIC_TOKEN" ] && [ -r "$SYSTEM_ATTIC_TOKEN" ]; then
         install -m 600 "$SYSTEM_ATTIC_TOKEN" "$HOME/.config/sops/attic-client-token"
-      elif [ -f "$ATTIC_TOKEN_ENC" ]; then
+      elif [ "${if cfg.migrationMode then "1" else "0"}" = "1" ] && [ -f "$ATTIC_TOKEN_ENC" ]; then
+        # LEGACY SOPS MIGRATION PATH
         if [ -f "$SOPS_AGE_KEY_FILE" ]; then
           tmp_attic_token="$(mktemp)"
           if sops -d "$ATTIC_TOKEN_ENC" > "$tmp_attic_token" 2>/dev/null; then
             install -m 600 "$tmp_attic_token" "$HOME/.config/sops/attic-client-token"
           fi
           rm -f "$tmp_attic_token"
-        else
-          # echo "Warning: SOPS age key not found at $SOPS_AGE_KEY_FILE, skipping attic-client-token decryption"
-          true
         fi
-      else
-        # echo "Warning: no system or SOPS attic-client-token source found; leaving existing token in place"
-        true
       fi
 
       # Prefer agenix GitHub token for nix flake operations, then fall back to
@@ -112,7 +116,8 @@ in {
         fi
       fi
 
-      if [ "$github_token_installed" -eq 0 ] && [ -f "$GITHUB_TOKEN_ENC" ]; then
+      if [ "$github_token_installed" -eq 0 ] && [ "${if cfg.migrationMode then "1" else "0"}" = "1" ] && [ -f "$GITHUB_TOKEN_ENC" ]; then
+        # LEGACY SOPS MIGRATION PATH
         if [ -f "$SOPS_AGE_KEY_FILE" ]; then
           tmp_github_token="$(mktemp)"
           if sops -d "$GITHUB_TOKEN_ENC" > "$tmp_github_token" 2>/dev/null; then
@@ -123,13 +128,7 @@ in {
             fi
           fi
           rm -f "$tmp_github_token"
-        else
-          # echo "Warning: SOPS age key not found at $SOPS_AGE_KEY_FILE, skipping github-token decryption"
-          true
         fi
-      else
-        # echo "Warning: no agenix or SOPS GitHub token found; leaving existing github-token in place"
-        true
       fi
 
       # If no valid source was installed this run, drop obviously invalid stale
