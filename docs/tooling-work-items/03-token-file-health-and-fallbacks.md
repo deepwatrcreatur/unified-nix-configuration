@@ -1,6 +1,6 @@
 # 03 Token File Health And Fallbacks
 
-Status: `in-progress`
+Status: `done`
 
 Suggested branch: `fix/tooling-token-file-health`
 

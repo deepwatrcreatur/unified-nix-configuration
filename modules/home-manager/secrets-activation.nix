@@ -100,13 +100,20 @@ in
           if [ -n "$DRY_RUN_CMD" ]; then
             echo "DRY RUN: Would decrypt GPG private key"
           else
-            if SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" sops -d "${cfg.secretsPath}/gpg-private-key.asc.enc" > $HOME/.gnupg/private-key.asc 2>&1; then
-              chmod 600 $HOME/.gnupg/private-key.asc
-              echo "GPG private key decrypted successfully"
+            tmp_gpg=$(mktemp)
+            if SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" sops -d "${cfg.secretsPath}/gpg-private-key.asc.enc" > "$tmp_gpg" 2>/dev/null; then
+              if [ -s "$tmp_gpg" ]; then
+                mv "$tmp_gpg" $HOME/.gnupg/private-key.asc
+                chmod 600 $HOME/.gnupg/private-key.asc
+                echo "GPG private key decrypted successfully"
+              else
+                echo "Warning: Decrypted GPG private key is empty"
+                rm -f "$tmp_gpg"
+                ${optionalString (!cfg.continueOnError) "exit 1"}
+              fi
             else
-              echo "Warning: Failed to decrypt GPG private key"
-              echo "Debug: SOPS error output:"
-              SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" sops -d "${cfg.secretsPath}/gpg-private-key.asc.enc" 2>&1 || true
+              echo "Warning: Failed to decrypt GPG private key (SOPS error)"
+              rm -f "$tmp_gpg"
               ${optionalString (!cfg.continueOnError) "exit 1"}
             fi
           fi
@@ -122,15 +129,20 @@ in
           if [ -n "$DRY_RUN_CMD" ]; then
             echo "DRY RUN: Would decrypt Bitwarden session"
           else
-            SOPS_OUTPUT=$(SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" sops -d --extract '["BW_SESSION"]' "${cfg.secretsPath}/bitwarden.yaml" 2>&1)
-            if [ $? -eq 0 ]; then
-              echo "$SOPS_OUTPUT" > $HOME/.config/sops/BW_SESSION
-              chmod 600 $HOME/.config/sops/BW_SESSION
-              echo "Bitwarden session decrypted successfully"
+            tmp_bw=$(mktemp)
+            if SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" sops -d --extract '["BW_SESSION"]' "${cfg.secretsPath}/bitwarden.yaml" > "$tmp_bw" 2>/dev/null; then
+              if [ -s "$tmp_bw" ]; then
+                mv "$tmp_bw" $HOME/.config/sops/BW_SESSION
+                chmod 600 $HOME/.config/sops/BW_SESSION
+                echo "Bitwarden session decrypted successfully"
+              else
+                echo "Warning: Decrypted Bitwarden session is empty"
+                rm -f "$tmp_bw"
+                ${optionalString (!cfg.continueOnError) "exit 1"}
+              fi
             else
-              echo "Warning: Failed to decrypt Bitwarden session"
-              echo "Debug: SOPS error output:"
-              echo "$SOPS_OUTPUT"
+              echo "Warning: Failed to decrypt Bitwarden session (SOPS error)"
+              rm -f "$tmp_bw"
               ${optionalString (!cfg.continueOnError) "exit 1"}
             fi
           fi
@@ -144,13 +156,20 @@ in
           if [ -n "$DRY_RUN_CMD" ]; then
             echo "DRY RUN: Would decrypt Bitwarden data.json"
           else
-            if SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" sops -d "${cfg.secretsPath}/data.json.enc" > "$HOME/.config/Bitwarden CLI/data.json" 2>&1; then
-              chmod 600 "$HOME/.config/Bitwarden CLI/data.json"
-              echo "Bitwarden data.json decrypted successfully"
+            tmp_data=$(mktemp)
+            if SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" sops -d "${cfg.secretsPath}/data.json.enc" > "$tmp_data" 2>/dev/null; then
+              if [ -s "$tmp_data" ]; then
+                mv "$tmp_data" "$HOME/.config/Bitwarden CLI/data.json"
+                chmod 600 "$HOME/.config/Bitwarden CLI/data.json"
+                echo "Bitwarden data.json decrypted successfully"
+              else
+                echo "Warning: Decrypted Bitwarden data.json is empty"
+                rm -f "$tmp_data"
+                ${optionalString (!cfg.continueOnError) "exit 1"}
+              fi
             else
-              echo "Warning: Failed to decrypt Bitwarden data.json"
-              echo "Debug: SOPS error output:"
-              SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" sops -d "${cfg.secretsPath}/data.json.enc" 2>&1 || true
+              echo "Warning: Failed to decrypt Bitwarden data.json (SOPS error)"
+              rm -f "$tmp_data"
               ${optionalString (!cfg.continueOnError) "exit 1"}
             fi
           fi
@@ -168,13 +187,23 @@ in
           else
             # Ensure the target directory exists
             mkdir -p "$HOME/.config/git"
-            if SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" sops -d "${cfg.secretsPath}/github-token.txt.enc" > "$HOME/.config/git/github-token" 2>&1; then
-              chmod 600 "$HOME/.config/git/github-token"
-              echo "GitHub token decrypted successfully"
+            
+            # Decrypt to a temporary file first to avoid overwriting with error text
+            tmp_token=$(mktemp)
+            if SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" sops -d "${cfg.secretsPath}/github-token.txt.enc" > "$tmp_token" 2>/dev/null; then
+              # Sanity check: token should be one line, no whitespace
+              if [ -s "$tmp_token" ] && [ "$(${pkgs.coreutils}/bin/wc -l < "$tmp_token")" -le 1 ] && ! ${pkgs.gnugrep}/bin/grep -q '[[:space:]]' "$tmp_token"; then
+                mv "$tmp_token" "$HOME/.config/git/github-token"
+                chmod 600 "$HOME/.config/git/github-token"
+                echo "GitHub token decrypted successfully"
+              else
+                echo "Warning: Decrypted GitHub token failed sanity check (empty, multiline, or contains whitespace)"
+                rm -f "$tmp_token"
+                ${optionalString (!cfg.continueOnError) "exit 1"}
+              fi
             else
-              echo "Warning: Failed to decrypt GitHub token"
-              echo "Debug: SOPS error output:"
-              SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" sops -d "${cfg.secretsPath}/github-token.txt.enc" 2>&1 || true
+              echo "Warning: Failed to decrypt GitHub token (SOPS error)"
+              rm -f "$tmp_token"
               ${optionalString (!cfg.continueOnError) "exit 1"}
             fi
           fi
