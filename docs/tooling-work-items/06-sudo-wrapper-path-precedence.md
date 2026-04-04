@@ -1,4 +1,4 @@
-# 04 Sudo Wrapper Path Precedence
+# 06 Sudo Wrapper Path Precedence
 
 Status: `ready`
 
