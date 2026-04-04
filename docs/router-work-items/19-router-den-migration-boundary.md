@@ -51,7 +51,7 @@ problem statement and rationale.
 
 - `nix build .#nixosConfigurations.router.config.system.build.toplevel`
 - `nix build .#nixosConfigurations.router-backup.config.system.build.toplevel`
-- confirm the active router source-of-truth is easier to follow after the
+- confirm the active router source-of-truth is easier to follow once the
   follow-up tasks land
 
 ## Notes

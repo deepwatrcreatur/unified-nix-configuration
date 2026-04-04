@@ -6,9 +6,10 @@
 }:
 
 {
-  # Legacy path: inference VM outputs are moving to den leaves and aspects.
-  # Keep this file only while the fresh-host experiment still depends on the
-  # older tree layout.
+  # Legacy path: the active `.#inference-fresh` output is built from
+  # `den/hosts` and den aspects. Keep this file only while the fresh-host
+  # experiment still depends on the older tree layout. Do not land active
+  # inference-fresh fixes here first.
   imports = [
     # Hardware configuration
     ./hardware-configuration.nix

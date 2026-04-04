@@ -8,7 +8,8 @@
 {
   # Legacy path: the active `.#inference3` output is built from `den/hosts`
   # and den aspects. Keep this file only as migration context while the old
-  # inference host tree still exists.
+  # inference host tree still exists. Do not land active inference3 fixes here
+  # first.
   imports = [
     # Hardware configuration (you'll need to copy this from your VM)
     ./hardware-configuration.nix
