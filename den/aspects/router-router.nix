@@ -10,6 +10,8 @@
     inputs.nix-router-optimized.nixosModules.router-log-storage
     inputs.nix-router-optimized.nixosModules.router-optimizations
     inputs.nix-router-optimized.nixosModules.router-tailscale
+    inputs.nix-router-optimized.nixosModules.router-observability
+    inputs.nix-router-optimized.nixosModules.router-vpn
     ../../modules/nixos/common
     ../../modules/nixos/services/iperf3.nix
     ../../modules/nixos/keyboard-glitches.nix
