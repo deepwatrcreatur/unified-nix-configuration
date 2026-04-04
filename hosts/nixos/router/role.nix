@@ -137,6 +137,70 @@ in
         ipv4Address = managementIpv4Address;
         prefixDelegationMode = "managed";
       };
+      iot = {
+        device = "enp6s16.20";
+        vlanId = 20;
+        parentDevice = "enp6s16";
+        ipv4Address = "10.20.20.1/24";
+        policyRouting = {
+          enable = true;
+          table = 200; # All traffic via table 200 (VPN)
+        };
+      };
+      guest = {
+        device = "enp6s16.30";
+        vlanId = 30;
+        parentDevice = "enp6s16";
+        ipv4Address = "10.30.30.1/24";
+        policyRouting = {
+          # Use default routing (WAN) by default
+          enable = false;
+          # But route traffic to 8.8.8.8 via table 300 (VPN)
+          rules = [
+            {
+              to = "8.8.8.8/32";
+              table = 300;
+              priority = 50;
+            }
+          ];
+        };
+      };
+    };
+  };
+
+  services.router-vpn = {
+    enable = true;
+    interfaces = {
+      wg0 = {
+        device = "wg0";
+        ipv4Address = "10.0.0.2/32";
+        privateKeyFile = "/var/lib/wireguard/private.key";
+        policyRouting = {
+          enable = true;
+          table = 200;
+        };
+        peers = [
+          {
+            publicKey = "PLACEHOLDER_PUBLIC_KEY_1";
+            endpoint = "vpn1.example.com:51820";
+          }
+        ];
+      };
+      wg1 = {
+        device = "wg1";
+        ipv4Address = "10.0.1.2/32";
+        privateKeyFile = "/var/lib/wireguard/private_guest.key";
+        policyRouting = {
+          enable = true;
+          table = 300;
+        };
+        peers = [
+          {
+            publicKey = "PLACEHOLDER_PUBLIC_KEY_2";
+            endpoint = "vpn2.example.com:51820";
+          }
+        ];
+      };
     };
   };
 
@@ -154,6 +218,16 @@ in
         device = lanDevice;
         role = "lan";
         label = "LAN";
+      };
+      iot = {
+        device = "enp6s16.20";
+        role = "lan";
+        label = "IoT VLAN";
+      };
+      guest = {
+        device = "enp6s16.30";
+        role = "lan";
+        label = "Guest VLAN";
       };
       management = {
         device = managementDevice;
@@ -184,7 +258,10 @@ in
     extraInputRules = ''
       iifname {"${lanDevice}"} tcp dport 5201 accept comment "iperf3 from LAN"
     '';
+    flowLogging.enable = true;
   };
+
+  services.router-observability.enable = true;
 
   services.router-homelab.sshTarget = sshTarget;
   services.router-homelab.listenAddress = "0.0.0.0";
@@ -207,6 +284,8 @@ in
       "health-lan-ip"
       "health-wan-carrier"
       "health-wan-ip"
+      "ulogd"
+      "vector"
     ];
     links = lib.mkForce [
       {

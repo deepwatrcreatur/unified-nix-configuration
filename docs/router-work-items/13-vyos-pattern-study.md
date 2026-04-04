@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 Status: `done`
+=======
+Status: in-progress
+>>>>>>> cbd6a612 (docs(router): start VyOS pattern study)
 Priority: low
 Branch: docs/router-vyos-pattern-study
 Blocked By: none
