@@ -345,6 +345,9 @@ in
   # Proxmox recovery path: keep a serial console available even when SSH or the
   # graphical console path is broken.
   systemd.services."serial-getty@ttyS0".enable = true;
+  # Legacy utmp bookkeeping is not useful on this appliance-style VM and
+  # causes switch-to-configuration to fail noisily on Proxmox.
+  systemd.services.systemd-update-utmp.enable = false;
 
   services.openssh = {
     enable = true;
@@ -388,6 +391,15 @@ in
   # Explicit Health Model Services
   # These services exit with failure if the health invariant is violated,
   # allowing the dashboard's service monitor to surface interface-level health.
+  #
+  # RestartMode=direct is intentional here: during `nixos-rebuild switch`,
+  # networkd briefly tears down and re-adds addresses/carrier state. Without
+  # direct restarts, systemd records these health probes as failed units during
+  # activation, which makes an otherwise healthy switch return non-zero.
+  #
+  # We still want sustained interface loss to remain visible as a restart loop,
+  # but we do not want a transient network restart during activation to poison
+  # the whole system switch result.
   systemd.services = {
     health-mgmt-ip = {
       description = "Health Check: Management IP Present";
@@ -395,6 +407,7 @@ in
         Type = "simple";
         ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ip -4 addr show dev ${managementDevice} | grep -q \"inet \" || exit 1; sleep 15; done'";
         Restart = "always";
+        RestartMode = "direct";
         RestartSec = "15s";
       };
       wantedBy = [ "multi-user.target" ];
@@ -405,6 +418,7 @@ in
         Type = "simple";
         ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ip -4 addr show dev ${lanDevice} | grep -q \"inet \" || exit 1; sleep 15; done'";
         Restart = "always";
+        RestartMode = "direct";
         RestartSec = "15s";
       };
       wantedBy = [ "multi-user.target" ];
@@ -415,6 +429,7 @@ in
         Type = "simple";
         ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do cat /sys/class/net/${wanDevice}/operstate | grep -q \"up\" || exit 1; sleep 15; done'";
         Restart = "always";
+        RestartMode = "direct";
         RestartSec = "15s";
       };
       wantedBy = [ "multi-user.target" ];
@@ -425,6 +440,7 @@ in
         Type = "simple";
         ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ip -4 addr show dev ${wanDevice} | grep -q \"inet \" || exit 1; sleep 15; done'";
         Restart = "always";
+        RestartMode = "direct";
         RestartSec = "15s";
       };
       wantedBy = [ "multi-user.target" ];
