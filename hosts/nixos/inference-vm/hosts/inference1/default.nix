@@ -62,6 +62,13 @@
 
     host = "0.0.0.0";
     port = 11434;
+    # The upstream NixOS module only sets User=/Group= when these options are
+    # non-null. Leaving them unset while forcing DynamicUser=false makes the
+    # service silently run as root.
+    user = "ollama";
+    group = "ollama";
+    home = "/models/ollama";
+    models = "/models/ollama/models";
     environmentVariables = {
       CUDA_VISIBLE_DEVICES = "0";
       OLLAMA_GPU_OVERHEAD = "0";
@@ -82,11 +89,6 @@
       HOME = lib.mkForce "/models/ollama";
     };
     serviceConfig = {
-      # Keep Ollama running as the dedicated service user. If User= is omitted
-      # while DynamicUser=false, systemd falls back to root, which has proven
-      # brittle with this hardened unit and the virtiofs-backed model store.
-      User = lib.mkForce "ollama";
-      Group = lib.mkForce "ollama";
       StateDirectory = lib.mkForce "";
       DynamicUser = lib.mkForce false;
       # Virtiofs exposes host UIDs/GIDs directly; user namespaces can make the
@@ -94,8 +96,19 @@
       PrivateUsers = lib.mkForce false;
       ReadWritePaths = lib.mkForce [ "/models/ollama" ];
       WorkingDirectory = lib.mkForce "/models/ollama";
-      # Allow access to the actual GPU device
-      DeviceAllow = [ "/dev/nvidia0" ];
+      # Preserve the upstream GPU device allowances and add the actual NVIDIA
+      # device node used on this VM.
+      DeviceAllow = [
+        "char-nvidiactl"
+        "char-nvidia-caps"
+        "char-nvidia-frontend"
+        "char-nvidia-uvm"
+        "char-drm"
+        "char-fb"
+        "char-kfd"
+        "/dev/dxg"
+        "/dev/nvidia0"
+      ];
     };
   };
 
