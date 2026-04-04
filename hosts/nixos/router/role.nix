@@ -531,6 +531,65 @@ in
     };
   };
 
+  # The upstream router-networking module currently emits both:
+  # - 08-router-parent-${lanDevice}.network
+  # - 20-router-lan.network
+  #
+  # Because systemd-networkd applies the first matching .network file, the
+  # parent VLAN file wins and the later LAN file never assigns the production
+  # LAN address. Keep the active parent file carrying the LAN L3 config until
+  # the upstream module is corrected.
+  systemd.network.networks."08-router-parent-${lanDevice}" = {
+    address = [ lanIpv4Address ];
+    routes = [
+      {
+        Destination = lanNetwork.cidr;
+        Scope = "link";
+      }
+    ];
+    networkConfig = {
+      VLAN = [
+        "enp6s16.20"
+        "enp6s16.30"
+      ];
+      ConfigureWithoutCarrier = true;
+      DHCPPrefixDelegation = true;
+      DHCPServer = false;
+      DNS = [ "127.0.0.1" ];
+      Domains = [ topology.domain ];
+      IPv6PrivacyExtensions = "no";
+      IPv6SendRA = true;
+    };
+    linkConfig.RequiredForOnline = lib.mkForce "routable";
+    ipv6SendRAConfig = {
+      EmitDNS = true;
+      Managed = false;
+      OtherInformation = false;
+    };
+    ipv6Prefixes = [
+      {
+        Prefix = "::/64";
+        PreferredLifetimeSec = 1800;
+        ValidLifetimeSec = 3600;
+      }
+    ];
+  };
+
+  # nix-router-optimized currently writes `global.loglevel` into the ulogd
+  # config file, but ulogd 2.0.9 rejects that key. Keep the service-level
+  # logLevel, but override the generated config to omit the invalid entry.
+  services.ulogd.settings.global = lib.mkForce {
+    logfile = "/var/log/ulogd/ulogd.log";
+    plugin = [
+      "${pkgs.ulogd}/lib/ulogd/ulogd_inppkt_NFLOG.so"
+      "${pkgs.ulogd}/lib/ulogd/ulogd_filter_IFINDEX.so"
+      "${pkgs.ulogd}/lib/ulogd/ulogd_filter_IP2STR.so"
+      "${pkgs.ulogd}/lib/ulogd/ulogd_filter_PRINTPKT.so"
+      "${pkgs.ulogd}/lib/ulogd/ulogd_output_JSON.so"
+    ];
+    stack = "log1:NFLOG,base1:BASE,ifi1:IFINDEX,ip2str1:IP2STR,print1:PRINTPKT,json1:JSON";
+  };
+
   nixpkgs.hostPlatform = "x86_64-linux";
   system.stateVersion = "25.05";
 }
