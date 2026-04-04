@@ -62,6 +62,9 @@ Highest value first:
 13. `14-upstream-hotfix-pinning-policy.md`
 14. `15-management-plane-smoke-validation.md`
 15. `19-router-den-migration-boundary.md`
+16. `20-router-den-import-audit.md`
+17. `21-router-leaf-inline-migration.md`
+18. `22-router-backup-den-parity.md`
 
 ## Why This Structure
 

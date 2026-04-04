@@ -31,17 +31,14 @@ repository harder for agents to navigate.
 
 ## Suggested Scope
 
-Do this in one reviewable PR only if the split stays small. Otherwise, break it
-into follow-up tasks.
+This item is now the umbrella note for the more concrete follow-up tasks:
 
-Good first target:
+- `20-router-den-import-audit.md`
+- `21-router-leaf-inline-migration.md`
+- `22-router-backup-den-parity.md`
 
-- move non-hardware composition out of `den/hosts/router*.nix` legacy imports
-- keep `hardware-configuration.nix` as the last host-local import if needed
-- decide whether `networking.nix`, `caddy.nix`, and `configuration.nix` should
-  become:
-  - den aspects, or
-  - inlined host-leaf imports inside `den/hosts/router*.nix`
+Use those files for implementation work. Keep this file as the high-level
+problem statement and rationale.
 
 ## Constraints
 
@@ -54,7 +51,8 @@ Good first target:
 
 - `nix build .#nixosConfigurations.router.config.system.build.toplevel`
 - `nix build .#nixosConfigurations.router-backup.config.system.build.toplevel`
-- confirm `den/hosts/router*.nix` import graph is simpler after the change
+- confirm the active router source-of-truth is easier to follow after the
+  follow-up tasks land
 
 ## Notes
 
