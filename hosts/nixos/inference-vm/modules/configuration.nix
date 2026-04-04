@@ -71,6 +71,10 @@
   systemd.services."serial-getty@ttyS0".enable = true;
 
   services.fstrim.enable = true;
+  # Proxmox expects qemu-ga to be running continuously for IP reporting,
+  # shutdown, and filesystem freeze support. The upstream qemuGuest module is
+  # only udev-triggered, so start it explicitly on inference VMs as well.
+  systemd.services.qemu-guest-agent.wantedBy = [ "multi-user.target" ];
 
   # Time zone
   time.timeZone = "America/Toronto";
