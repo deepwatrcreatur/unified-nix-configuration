@@ -341,6 +341,11 @@ in
 
   services.qemuGuest.enable = true;
   services.fstrim.enable = true;
+  # NixOS's qemuGuest module only wires qemu-ga to a udev-triggered virtio-port
+  # event. On Proxmox VMs that can leave the agent installed but never started,
+  # so Proxmox reports the guest agent as missing after boot. Start it
+  # explicitly as part of the normal boot target on router-class VMs.
+  systemd.services.qemu-guest-agent.wantedBy = [ "multi-user.target" ];
 
   # Proxmox recovery path: keep a serial console available even when SSH or the
   # graphical console path is broken.
