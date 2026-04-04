@@ -38,3 +38,14 @@ outputs should be treated as `den/inventory`, not `inventory/legacy`.
 - Some `den` leaves still import legacy host-local files for hardware and networking.
 - Some exported leaves remain `mode = "legacy"` while their inventory is already under `den/`.
 - Support metadata such as SSH and DNS still lives in [`lib/hosts.nix`](/home/deepwatrcreatur/flakes/unified-nix-configuration/lib/hosts.nix), so checks must keep `den/inventory` and `lib/hosts.nix` aligned.
+
+## Active vs Legacy Paths
+
+- Inference VMs now use `den/hosts/<name>/default.nix` plus den aspects as the
+  active source of truth for exported `.#inference*` outputs.
+- The old `hosts/nixos/inference-vm/hosts/*/default.nix` files are legacy and
+  should not receive active fixes unless they are being migrated or deleted.
+- Router leaves are still intentionally hybrid: den owns the exported leaf,
+  while `den/hosts/router*.nix` still import legacy router host-local files for
+  hardware, networking, Caddy, and configuration until that migration is split
+  into reviewable PRs.

@@ -85,7 +85,15 @@ Because VirtioFS does not virtualise permissions, any persistent "permission den
 
 ### 1. VirtioFS mount
 
-In the NixOS host config (e.g. `hosts/nixos/inference-vm/hosts/inference1/default.nix` in this repo):
+For the active `.#inference1` output, the source of truth is the den layer:
+
+- `den/hosts/inference1/default.nix`
+- `den/aspects/inference1-ollama.nix`
+
+The old `hosts/nixos/inference-vm/hosts/inference1/default.nix` path is legacy
+and is no longer the active place to land fixes for `.#inference1`.
+
+Example from the active inference1 config:
 
 ```nix
 fileSystems."/models/ollama" = {
@@ -106,9 +114,10 @@ mount | grep models
 
 ### 2. Ollama layout and tmpfiles
 
-On the guest we treat `/models/ollama` as Ollama's "home" and ensure its layout is created with the right owner/mode.
+On the guest we treat `/models/ollama` as Ollama's "home" and ensure its layout
+is created with the right owner/mode.
 
-Example (in `hosts/nixos/inference-vm/hosts/inference1/default.nix`):
+Example (in `den/aspects/inference1-ollama.nix`):
 
 ```nix
 users.users.ollama = {
@@ -146,8 +155,10 @@ systemd.tmpfiles.rules = [
 
 Notes:
 
-- We currently use `0777` for the shared `models` subdirs while iterating on virtiofs id‑mapping; this is intentionally permissive. Once UID/GID mapping is nailed down, we can tighten this to `0770` or a more conservative mode.
-- The **generic** version of these rules lives in `tesla-inference-flake` as a module option; here we override them specifically for inference VMs.
+- The active inference1 logic now lives in the den aspect layer, not the old
+  host-specific file tree.
+- The **generic** version of these rules lives in `tesla-inference-flake` as a
+  module option; here we override them specifically for inference VMs.
 
 ### 3. End‑to‑end check
 
