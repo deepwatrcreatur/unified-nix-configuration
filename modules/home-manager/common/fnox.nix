@@ -58,18 +58,31 @@ in
             "${config.home.homeDirectory}/.local/share/agenix-user-secrets/proxmox-api-token"
             "/run/agenix/proxmox-api-token"
           ];
+          PBS_PASSWORD = [
+            "${config.home.homeDirectory}/.local/share/agenix-user-secrets/pbs-password"
+            "/run/agenix/pbs-password"
+          ];
+          PBS_REPOSITORY = [
+            "${config.home.homeDirectory}/.local/share/agenix-user-secrets/pbs-repository"
+            "/run/agenix/pbs-repository"
+          ];
+          FACTORY_API_KEY = [
+            "${config.home.homeDirectory}/.local/share/agenix-user-secrets/factory-api-key"
+            "/run/agenix/factory-api-key"
+          ];
         };
 
-        # This repo provides its own gh/bw wrappers that expose the canonical
-        # command names (`gh`, `bw`) in addition to `*-fnox`. Drop fnox's
-        # default gh/bw wrapped commands to avoid duplicate home.packages
-        # entries, but keep the rest of fnox's defaults like `opencode-zai`.
+        # This repo provides its own gh/bw/droid/pbs wrappers that expose the
+        # canonical command names in addition to `*-fnox`. Drop fnox's
+        # default ones to avoid duplicate home.packages entries.
         wrappedCommands = lib.mkDefault (
           lib.removeAttrs
             (fnoxLib.defaultWrappedCommandSpecs { inherit pkgs; })
             [
               "gh-fnox"
               "bw-fnox"
+              "factory-droid-fnox"
+              "proxmox-backup-client-fnox"
             ]
         );
       };

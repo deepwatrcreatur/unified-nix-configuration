@@ -38,4 +38,18 @@
       fnox = final.fnox;
     };
   })
+
+  # Wrapped Proxmox Backup Client with fnox-backed password lookup
+  (final: prev: {
+    proxmox-backup-client-fnox = final.callPackage ../pkgs/proxmox-backup-client-fnox.nix {
+      fnox = final.fnox;
+    };
+  })
+
+  # Wrapped Factory.ai Droid CLI with fnox-backed API key lookup
+  (final: prev: {
+    factory-droid-fnox = final.callPackage ../pkgs/factory-droid-fnox.nix {
+      fnox = final.fnox;
+    };
+  })
 ]

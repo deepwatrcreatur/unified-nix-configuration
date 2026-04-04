@@ -26,9 +26,6 @@ let
     rsync = "/run/current-system/sw/bin/rsync";
     sudo = "/run/wrappers/bin/sudo";  # Use wrapped sudo with correct setuid permissions
 
-    # Tailspin
-    tailspin = "tspin";
-
     # Atuin (shell history)
     asr = "atuin script run";
   };
@@ -45,6 +42,8 @@ let
   wrappedToolAliases =
     (lib.optionalAttrs (pkgs ? gh-fnox) { gh = "gh-fnox"; })
     // (lib.optionalAttrs (pkgs ? bw-fnox) { bw = "bw-fnox"; })
+    // (lib.optionalAttrs (pkgs ? factory-droid-fnox) { droid = "factory-droid-fnox"; })
+    // (lib.optionalAttrs (pkgs ? proxmox-backup-client-fnox) { pbs = "proxmox-backup-client-fnox"; })
     // (
       lib.optionalAttrs ((pkgs ? attic-fnox) && !(config.programs.attic-client.enable or false)) {
         attic = "attic-fnox";

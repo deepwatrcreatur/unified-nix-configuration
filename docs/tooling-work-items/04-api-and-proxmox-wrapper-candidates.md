@@ -1,6 +1,6 @@
 # 04 API And Proxmox Wrapper Candidates
 
-Status: `ready`
+Status: `done`
 
 Suggested branch: `feat/tooling-api-proxmox-wrappers`
 
