@@ -82,8 +82,16 @@
       HOME = lib.mkForce "/models/ollama";
     };
     serviceConfig = {
+      # Keep Ollama running as the dedicated service user. If User= is omitted
+      # while DynamicUser=false, systemd falls back to root, which has proven
+      # brittle with this hardened unit and the virtiofs-backed model store.
+      User = lib.mkForce "ollama";
+      Group = lib.mkForce "ollama";
       StateDirectory = lib.mkForce "";
       DynamicUser = lib.mkForce false;
+      # Virtiofs exposes host UIDs/GIDs directly; user namespaces can make the
+      # shared mount appear mismatched even when the on-disk ownership is right.
+      PrivateUsers = lib.mkForce false;
       ReadWritePaths = lib.mkForce [ "/models/ollama" ];
       WorkingDirectory = lib.mkForce "/models/ollama";
       # Allow access to the actual GPU device
