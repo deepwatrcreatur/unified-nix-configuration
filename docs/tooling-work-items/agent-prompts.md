@@ -43,3 +43,15 @@ Implement [`07-agenix-helper-flake-evaluation.md`](./07-agenix-helper-flake-eval
 Assess whether the repo’s agenix helper patterns are mature enough for
 extraction into a reusable flake, and leave a concrete recommendation with a
 minimal proposed surface if extraction is justified.
+
+## Prompt 7
+
+Implement [`08-agenix-migration-layer-stabilization.md`](./08-agenix-migration-layer-stabilization.md).
+Tighten the repo’s agenix migration layer so the active agenix-first behavior
+is easier to distinguish from temporary compatibility logic.
+
+## Prompt 8
+
+Implement [`09-agenix-helper-flake-threshold.md`](./09-agenix-helper-flake-threshold.md).
+Define a concrete threshold for when the repo’s agenix helper patterns should
+stay local versus be extracted into a reusable flake.

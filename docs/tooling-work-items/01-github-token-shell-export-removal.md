@@ -1,6 +1,6 @@
 # 01 GitHub Token Shell Export Removal
 
-Status: `ready`
+Status: `done`
 
 Suggested branch: `feat/tooling-remove-global-github-token-export`
 
@@ -40,3 +40,15 @@ actually need them.
 - `gh` still works through the intended wrapped/credential-helper path
 - new shells no longer inherit `GITHUB_TOKEN` by default
 - docs clearly state the policy change and fallback path
+
+## Implementation
+
+- Removed `GITHUB_TOKEN` exports from bash, zsh, fish, and nushell init in
+  `modules/home-manager/git.nix`.
+- Left GPG/SSH environment logic unchanged.
+- Rely on `gh-fnox` and `fnox` seed sources plus
+  `modules/home-manager/user-secrets.nix` to supply tokens when needed instead
+  of ambient shell exports.
+- `nix flake check` for this repo currently fails on a pre-existing missing
+  `modules/nixos/bootstrap/default.nix` import; this branch does not change
+  that behavior.

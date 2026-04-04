@@ -164,15 +164,9 @@ in
   config = {
     # Shell configurations that merge with existing configs from other modules
     programs.bash.initExtra = lib.mkAfter ''
-      # Only export a token that looks like an actual single-line secret. This
-      # keeps failed decrypt output from poisoning interactive shells until the
-      # wrapper-first migration is complete.
-      if [ -f ~/.config/git/github-token ] \
-        && [ -s ~/.config/git/github-token ] \
-        && [ "$(${pkgs.coreutils}/bin/wc -l < ~/.config/git/github-token)" -le 1 ] \
-        && ! ${pkgs.gnugrep}/bin/grep -q '[[:space:]]' ~/.config/git/github-token; then
-        export GITHUB_TOKEN="$(cat ~/.config/git/github-token)"
-      fi
+      # GitHub token is intentionally not exported globally anymore.
+      # See docs/tooling-work-items/01-github-token-shell-export-removal.md
+      # and pkgs/gh-fnox.nix for the wrapper/credential flow.
 
       # GPG settings for automated commits (prevents password prompts in CI/agents)
       export GPG_TTY=$(tty 2>/dev/null || echo "")
@@ -190,15 +184,9 @@ in
     '';
 
     programs.zsh.initContent = lib.mkAfter ''
-      # Only export a token that looks like an actual single-line secret. This
-      # keeps failed decrypt output from poisoning interactive shells until the
-      # wrapper-first migration is complete.
-      if [ -f ~/.config/git/github-token ] \
-        && [ -s ~/.config/git/github-token ] \
-        && [ "$(${pkgs.coreutils}/bin/wc -l < ~/.config/git/github-token)" -le 1 ] \
-        && ! ${pkgs.gnugrep}/bin/grep -q '[[:space:]]' ~/.config/git/github-token; then
-        export GITHUB_TOKEN="$(cat ~/.config/git/github-token)"
-      fi
+      # GitHub token is intentionally not exported globally anymore.
+      # See docs/tooling-work-items/01-github-token-shell-export-removal.md
+      # and pkgs/gh-fnox.nix for the wrapper/credential flow.
 
       # GPG settings for automated commits (prevents password prompts in CI/agents)
       export GPG_TTY=$(tty 2>/dev/null || echo "")
@@ -216,12 +204,9 @@ in
     '';
 
     programs.fish.interactiveShellInit = lib.mkAfter ''
-      # Only export a token that looks like an actual single-line secret. This
-      # keeps failed decrypt output from poisoning interactive shells until the
-      # wrapper-first migration is complete.
-      if test -f ~/.config/git/github-token; and test -s ~/.config/git/github-token; and test (${pkgs.coreutils}/bin/wc -l < ~/.config/git/github-token) -le 1; and not ${pkgs.gnugrep}/bin/grep -q '[[:space:]]' ~/.config/git/github-token
-        set -gx GITHUB_TOKEN (cat ~/.config/git/github-token)
-      end
+      # GitHub token is intentionally not exported globally anymore.
+      # See docs/tooling-work-items/01-github-token-shell-export-removal.md
+      # and pkgs/gh-fnox.nix for the wrapper/credential flow.
 
       # GPG settings for automated commits (prevents password prompts in CI/agents)
       set -gx GPG_TTY (tty 2>/dev/null; or echo "")
@@ -239,15 +224,9 @@ in
     '';
 
     programs.nushell.extraConfig = lib.mkAfter ''
-      # Only export a token that looks like an actual single-line secret. This
-      # keeps failed decrypt output from poisoning interactive shells until the
-      # wrapper-first migration is complete.
-      if ("~/.config/git/github-token" | path exists)
-        and ((open ~/.config/git/github-token | lines | length) <= 1)
-        and (((open ~/.config/git/github-token | str trim) | str contains " ") == false)
-        and (((open ~/.config/git/github-token | str trim) | is-not-empty)) {
-        $env.GITHUB_TOKEN = (open ~/.config/git/github-token | str trim)
-      }
+      # GitHub token is intentionally not exported globally anymore.
+      # See docs/tooling-work-items/01-github-token-shell-export-removal.md
+      # and pkgs/gh-fnox.nix for the wrapper/credential flow.
 
       # GPG settings for automated commits (prevents password prompts in CI/agents)
       $env.GPG_TTY = (try { tty } catch { "" })

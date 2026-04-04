@@ -33,3 +33,5 @@ wrappers, shell defaults, and related repo operations.
 5. `05-github-token-source-health.md`
 6. `06-sops-compatibility-layer-cleanup.md`
 7. `07-agenix-helper-flake-evaluation.md`
+8. `08-agenix-migration-layer-stabilization.md`
+9. `09-agenix-helper-flake-threshold.md`
