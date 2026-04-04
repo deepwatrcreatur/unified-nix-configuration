@@ -29,6 +29,8 @@ wrappers, shell defaults, and related repo operations.
 1. `01-agent-cli-fnox-wrappers.md`
 2. `02-api-and-proxmox-wrapper-candidates.md`
 3. `03-wrapper-policy-and-rollout.md`
+4. `04-sudo-wrapper-path-precedence.md`
+5. `05-github-token-source-health.md`
 
 ## Why This Structure
 
