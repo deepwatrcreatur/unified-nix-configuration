@@ -141,8 +141,11 @@ in
   # Container-specific settings
   nix.settings.sandbox = lib.mkIf isContainer false;
   nix.settings.use-cgroups = lib.mkIf (!isContainer) true;
+  # Keep the daemon environment in sync with the final merged nix.settings value.
+  # Some hosts (notably inference VMs) intentionally override experimental
+  # features, and duplicating that override here causes conflicting definitions.
   systemd.services.nix-daemon.environment.NIX_CONFIG = lib.mkForce ''
-    experimental-features = ${lib.concatStringsSep " " daemonExperimentalFeatures}
+    experimental-features = ${lib.concatStringsSep " " config.nix.settings.experimental-features}
   '';
 
   # Remote building configuration

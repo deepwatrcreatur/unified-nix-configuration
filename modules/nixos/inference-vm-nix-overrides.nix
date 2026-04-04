@@ -21,6 +21,7 @@
     use-cgroups = lib.mkForce false;
   };
 
-  # Override systemd service environment to exclude cgroups
-  systemd.services.nix-daemon.environment.NIX_CONFIG = lib.mkForce "experimental-features = nix-command flakes impure-derivations ca-derivations pipe-operators";
-}
+  # The common nix-settings module now derives nix-daemon's NIX_CONFIG from the
+  # final merged nix.settings.experimental-features value, so no separate daemon
+  # environment override is needed here.
+} 
