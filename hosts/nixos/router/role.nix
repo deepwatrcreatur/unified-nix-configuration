@@ -405,7 +405,7 @@ in
       description = "Health Check: Management IP Present";
       serviceConfig = {
         Type = "simple";
-        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ip -4 addr show dev ${managementDevice} | grep -q \"inet \" || exit 1; sleep 15; done'";
+        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ${pkgs.iproute2}/bin/ip -4 addr show dev ${managementDevice} | ${pkgs.gnugrep}/bin/grep -q \"inet \" || exit 1; ${pkgs.coreutils}/bin/sleep 15; done'";
         Restart = "always";
         RestartMode = "direct";
         RestartSec = "15s";
@@ -416,7 +416,7 @@ in
       description = "Health Check: Production LAN IP Present";
       serviceConfig = {
         Type = "simple";
-        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ip -4 addr show dev ${lanDevice} | grep -q \"inet \" || exit 1; sleep 15; done'";
+        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ${pkgs.iproute2}/bin/ip -4 addr show dev ${lanDevice} | ${pkgs.gnugrep}/bin/grep -q \"inet \" || exit 1; ${pkgs.coreutils}/bin/sleep 15; done'";
         Restart = "always";
         RestartMode = "direct";
         RestartSec = "15s";
@@ -427,7 +427,7 @@ in
       description = "Health Check: WAN Carrier Active";
       serviceConfig = {
         Type = "simple";
-        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do cat /sys/class/net/${wanDevice}/operstate | grep -q \"up\" || exit 1; sleep 15; done'";
+        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ${pkgs.iproute2}/bin/ip -o link show dev ${wanDevice} | ${pkgs.gnugrep}/bin/grep -q \"LOWER_UP\" || exit 1; ${pkgs.coreutils}/bin/sleep 15; done'";
         Restart = "always";
         RestartMode = "direct";
         RestartSec = "15s";
@@ -438,7 +438,7 @@ in
       description = "Health Check: WAN IP Present";
       serviceConfig = {
         Type = "simple";
-        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ip -4 addr show dev ${wanDevice} | grep -q \"inet \" || exit 1; sleep 15; done'";
+        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ${pkgs.iproute2}/bin/ip -4 addr show dev ${wanDevice} | ${pkgs.gnugrep}/bin/grep -q \"inet \" || exit 1; ${pkgs.coreutils}/bin/sleep 15; done'";
         Restart = "always";
         RestartMode = "direct";
         RestartSec = "15s";
