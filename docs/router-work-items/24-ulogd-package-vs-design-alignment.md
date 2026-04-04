@@ -1,6 +1,6 @@
 # Ulogd Package Vs Design Alignment
 
-Status: `ready`
+Status: `done`
 Priority: `medium`
 Branch: `docs/router-ulogd-design-alignment`
 
