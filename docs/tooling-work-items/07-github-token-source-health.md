@@ -1,4 +1,4 @@
-# 05 GitHub Token Source Health
+# 07 GitHub Token Source Health
 
 Status: `ready`
 
