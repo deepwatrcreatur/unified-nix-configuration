@@ -43,6 +43,35 @@ in {
       AGENIX_GITHUB_TOKEN="${cfg.agenixGithubTokenPath}"
       SYSTEM_GITHUB_TOKEN="/run/secrets/github-token"
       SYSTEM_ATTIC_TOKEN="${cfg.systemAtticTokenPath}"
+      USER_GITHUB_TOKEN="$HOME/.config/git/github-token"
+
+      token_file_is_sane() {
+        local token_file="$1"
+        local line_count
+
+        [ -f "$token_file" ] || return 1
+        [ -r "$token_file" ] || return 1
+
+        # Refuse empty, multiline, or whitespace-containing content so failed
+        # decrypt output does not masquerade as a usable GitHub token.
+        [ -s "$token_file" ] || return 1
+        line_count="$(${pkgs.coreutils}/bin/wc -l < "$token_file")"
+        [ "$line_count" -le 1 ] || return 1
+        ${pkgs.gnugrep}/bin/grep -q '[[:space:]]' "$token_file" && return 1
+
+        return 0
+      }
+
+      install_github_token_if_sane() {
+        local source_file="$1"
+
+        if token_file_is_sane "$source_file"; then
+          install -m 600 "$source_file" "$USER_GITHUB_TOKEN"
+          return $?
+        fi
+
+        return 1
+      }
 
       if [ -f "$SYSTEM_ATTIC_TOKEN" ] && [ -r "$SYSTEM_ATTIC_TOKEN" ]; then
         install -m 600 "$SYSTEM_ATTIC_TOKEN" "$HOME/.config/sops/attic-client-token"
@@ -62,17 +91,36 @@ in {
         true
       fi
 
-      # Prefer agenix GitHub token for nix flake operations, otherwise fall back
-      # to the legacy SOPS-encrypted user secret.
+      # Prefer agenix GitHub token for nix flake operations, then fall back to
+      # system and finally the legacy SOPS-encrypted user secret. Invalid
+      # higher-priority sources must not block lower-priority fallbacks.
+      github_token_installed=0
+
       if [ -f "$AGENIX_GITHUB_TOKEN" ]; then
-        install -m 600 "$AGENIX_GITHUB_TOKEN" "$HOME/.config/git/github-token"
-      elif [ -f "$SYSTEM_GITHUB_TOKEN" ] && [ -r "$SYSTEM_GITHUB_TOKEN" ]; then
-        install -m 600 "$SYSTEM_GITHUB_TOKEN" "$HOME/.config/git/github-token"
-      elif [ -f "$GITHUB_TOKEN_ENC" ]; then
+        if install_github_token_if_sane "$AGENIX_GITHUB_TOKEN"; then
+          github_token_installed=1
+        else
+          echo "Warning: refusing invalid agenix GitHub token at $AGENIX_GITHUB_TOKEN" >&2
+        fi
+      fi
+
+      if [ "$github_token_installed" -eq 0 ] && [ -f "$SYSTEM_GITHUB_TOKEN" ] && [ -r "$SYSTEM_GITHUB_TOKEN" ]; then
+        if install_github_token_if_sane "$SYSTEM_GITHUB_TOKEN"; then
+          github_token_installed=1
+        else
+          echo "Warning: refusing invalid system GitHub token at $SYSTEM_GITHUB_TOKEN" >&2
+        fi
+      fi
+
+      if [ "$github_token_installed" -eq 0 ] && [ -f "$GITHUB_TOKEN_ENC" ]; then
         if [ -f "$SOPS_AGE_KEY_FILE" ]; then
           tmp_github_token="$(mktemp)"
           if sops -d "$GITHUB_TOKEN_ENC" > "$tmp_github_token" 2>/dev/null; then
-            install -m 600 "$tmp_github_token" "$HOME/.config/git/github-token"
+            if install_github_token_if_sane "$tmp_github_token"; then
+              github_token_installed=1
+            else
+              echo "Warning: refusing invalid decrypted GitHub token from $GITHUB_TOKEN_ENC" >&2
+            fi
           fi
           rm -f "$tmp_github_token"
         else
@@ -82,6 +130,13 @@ in {
       else
         # echo "Warning: no agenix or SOPS GitHub token found; leaving existing github-token in place"
         true
+      fi
+
+      # If no valid source was installed this run, drop obviously invalid stale
+      # content so shells and flake operations do not keep exporting garbage.
+      if [ -f "$USER_GITHUB_TOKEN" ] && ! token_file_is_sane "$USER_GITHUB_TOKEN"; then
+        rm -f "$USER_GITHUB_TOKEN"
+        echo "Warning: removed invalid GitHub token file at $USER_GITHUB_TOKEN" >&2
       fi
     '';
   };
