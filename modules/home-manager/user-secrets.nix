@@ -67,7 +67,7 @@ in {
 
         if token_file_is_sane "$source_file"; then
           install -m 600 "$source_file" "$USER_GITHUB_TOKEN"
-          return 0
+          return $?
         fi
 
         return 1
@@ -91,20 +91,36 @@ in {
         true
       fi
 
-      # Prefer agenix GitHub token for nix flake operations, otherwise fall back
-      # to the legacy SOPS-encrypted user secret.
+      # Prefer agenix GitHub token for nix flake operations, then fall back to
+      # system and finally the legacy SOPS-encrypted user secret. Invalid
+      # higher-priority sources must not block lower-priority fallbacks.
+      github_token_installed=0
+
       if [ -f "$AGENIX_GITHUB_TOKEN" ]; then
-        install_github_token_if_sane "$AGENIX_GITHUB_TOKEN" || \
+        if install_github_token_if_sane "$AGENIX_GITHUB_TOKEN"; then
+          github_token_installed=1
+        else
           echo "Warning: refusing invalid agenix GitHub token at $AGENIX_GITHUB_TOKEN" >&2
-      elif [ -f "$SYSTEM_GITHUB_TOKEN" ] && [ -r "$SYSTEM_GITHUB_TOKEN" ]; then
-        install_github_token_if_sane "$SYSTEM_GITHUB_TOKEN" || \
+        fi
+      fi
+
+      if [ "$github_token_installed" -eq 0 ] && [ -f "$SYSTEM_GITHUB_TOKEN" ] && [ -r "$SYSTEM_GITHUB_TOKEN" ]; then
+        if install_github_token_if_sane "$SYSTEM_GITHUB_TOKEN"; then
+          github_token_installed=1
+        else
           echo "Warning: refusing invalid system GitHub token at $SYSTEM_GITHUB_TOKEN" >&2
-      elif [ -f "$GITHUB_TOKEN_ENC" ]; then
+        fi
+      fi
+
+      if [ "$github_token_installed" -eq 0 ] && [ -f "$GITHUB_TOKEN_ENC" ]; then
         if [ -f "$SOPS_AGE_KEY_FILE" ]; then
           tmp_github_token="$(mktemp)"
           if sops -d "$GITHUB_TOKEN_ENC" > "$tmp_github_token" 2>/dev/null; then
-            install_github_token_if_sane "$tmp_github_token" || \
+            if install_github_token_if_sane "$tmp_github_token"; then
+              github_token_installed=1
+            else
               echo "Warning: refusing invalid decrypted GitHub token from $GITHUB_TOKEN_ENC" >&2
+            fi
           fi
           rm -f "$tmp_github_token"
         else
