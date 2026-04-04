@@ -1,6 +1,6 @@
 # 07 GitHub Token Source Health
 
-Status: `ready`
+Status: `done`
 
 Suggested branch: `fix/tooling-github-token-health`
 
