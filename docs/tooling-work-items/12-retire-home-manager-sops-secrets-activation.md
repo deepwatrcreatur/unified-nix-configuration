@@ -1,6 +1,6 @@
 # 12 Retire Home Manager SOPS Secrets Activation
 
-Status: `ready`
+Status: `in-progress`
 
 Suggested branch: `refactor/tooling-retire-hm-sops-activation`
 
