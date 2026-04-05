@@ -91,9 +91,8 @@ let
 in
 {
   imports = [
-    # Note: sops CLI is still used for manual decryption in secrets-activation.nix
     # System-level secrets are handled by agenix at /run/agenix/
-    ../../modules/home-manager/secrets-activation.nix
+    # User-level SOPS secrets are handled as a legacy fallback in user-secrets.nix
     ../../modules/home-manager/user-secrets.nix
     ./rbw.nix
     ./env.nix

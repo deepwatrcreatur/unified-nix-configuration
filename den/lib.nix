@@ -2,7 +2,12 @@
 
 let
   aspects = import ./aspects { inherit lib; };
-  inventoryHosts = import ./inventory/hosts.nix;
+  inventory = import ./inventory;
+  inventoryHosts =
+    inventory.hosts
+    // inventory.homes
+    // inventory.darwin
+    // (inventory.bootstrap or { });
 in
 rec {
   mkHostModule =

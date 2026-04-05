@@ -1,6 +1,6 @@
 # 10 Den Legacy Inventory Reduction
 
-Status: `ready`
+Status: `in-progress`
 
 Suggested branch: `refactor/tooling-den-legacy-inventory`
 

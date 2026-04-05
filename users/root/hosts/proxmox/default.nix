@@ -16,7 +16,6 @@ in
     ../../../../modules/home-manager/git.nix
     ../../../../modules/home-manager/gpg-cli.nix
     # Selectively import only essential modules to avoid activation issues
-    ../../../../modules/home-manager/secrets-activation.nix
     ../../../../modules/home-manager/user-secrets.nix
     ../../../../modules/home-manager/agenix-user-secrets.nix
     ../../../../modules/home-manager/common/nix-user-config.nix
