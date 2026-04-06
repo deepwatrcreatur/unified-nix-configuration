@@ -178,13 +178,13 @@ If you're fixing a package installation error:
 **Problem**: git commit opens password dialog that is difficult to handle in TUI
 **Solution**: use --no-gpg-sign option
 
-## gstack
+## Web Browsing and External Resources
 
-Use /browse from gstack for all web browsing. Never use mcp__claude-in-chrome__* tools.
-
-Available skills: /office-hours, /plan-ceo-review, /plan-eng-review, /plan-design-review, /design-consultation, /review, /ship, /land-and-deploy, /canary, /benchmark, /browse, /qa, /qa-only, /design-review, /setup-browser-cookies, /setup-deploy, /retro, /investigate, /document-release, /codex, /cso, /autoplan, /careful, /freeze, /guard, /unfreeze, /gstack-upgrade.
-
-If gstack skills aren't working, run `cd ~/.claude/skills/gstack && ./setup` to build the binary and register skills.
+For web browsing and external resource lookups, use whatever browser or fetch
+tooling is available in the current agent environment. Do not assume any
+specific browser automation stack is installed. Prefer reading documentation
+from local files or fetching URLs directly over any agent-specific GUI browsing
+workflow.
 
 ## Agent Instructions
 

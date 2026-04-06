@@ -1,6 +1,6 @@
 # 10 Remove Gstack And Browse Coupling
 
-Status: `ready`
+Status: `done`
 
 Suggested branch: `refactor/tooling-remove-gstack`
 
@@ -34,3 +34,14 @@ model and is awkward for other agents to follow consistently.
 - repo docs no longer assume `gstack` is installed
 - remaining agent instructions are internally consistent
 - no stale references point agents at missing local tooling
+
+## Implementation
+
+- Audited all repo docs, agent guides, and CLAUDE.md for `gstack` and `/browse`
+  references. Only CLAUDE.md carried a live gstack-specific instruction block.
+- Replaced the `## gstack` section in CLAUDE.md with a generic `## Web Browsing
+  and External Resources` section that does not assume any specific browser
+  automation stack is installed.
+- The `.claude/skills/gstack/` tooling installation is intentionally left
+  outside this PR's scope — it lives in a gitignored local config path and is
+  not part of the repo's systems configuration model.
