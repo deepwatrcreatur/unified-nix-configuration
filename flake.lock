@@ -1560,6 +1560,29 @@
         "type": "github"
       }
     },
+    "qmd": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1775431035,
+        "narHash": "sha256-m3Z9AyfRFuXSmIac0mt+8BfV/bCjaInooGghvMXo9YI=",
+        "owner": "tobi",
+        "repo": "qmd",
+        "rev": "c2f3a4037204066455662492518384c9f3a4d247",
+        "type": "github"
+      },
+      "original": {
+        "owner": "tobi",
+        "repo": "qmd",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "agenix": "agenix",
@@ -1593,6 +1616,7 @@
         "nixpkgs-stable": "nixpkgs-stable_2",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "plasma-manager": "plasma-manager",
+        "qmd": "qmd",
         "ssh-keys-manager": "ssh-keys-manager",
         "tesla-inference-flake": "tesla-inference-flake",
         "worktrunk": "worktrunk",

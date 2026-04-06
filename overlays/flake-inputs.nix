@@ -31,6 +31,11 @@
         inputs.fnox.packages.${prev.stdenv.hostPlatform.system}.default;
   })
 
+  # qmd - local document search CLI from its upstream flake
+  (final: prev: {
+    qmd = inputs.qmd.packages.${prev.stdenv.hostPlatform.system}.default;
+  })
+
   # llama-cpp-python: override inherited dotted CUDA architectures with the
   # integer form expected by modern CMake/CUDA.
   (final: prev: {

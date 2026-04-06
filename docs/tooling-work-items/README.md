@@ -26,15 +26,4 @@ wrappers, shell defaults, and related repo operations.
 
 ## Current Ranked Queue
 
-1. `01-agent-cli-fnox-wrappers.md`
-2. `02-api-and-proxmox-wrapper-candidates.md`
-3. `03-wrapper-policy-and-rollout.md`
-4. `04-sudo-wrapper-path-precedence.md`
-5. `05-github-token-source-health.md`
-6. `06-sops-compatibility-layer-cleanup.md`
-7. `07-agenix-helper-flake-evaluation.md`
-8. `08-agenix-migration-layer-stabilization.md`
-9. `09-agenix-helper-flake-threshold.md`
-10. `10-den-legacy-inventory-reduction.md`
-11. `11-host-metadata-source-of-truth.md`
-12. `12-retire-home-manager-sops-secrets-activation.md`
+1. `10-remove-gstack-and-browse-coupling.md`

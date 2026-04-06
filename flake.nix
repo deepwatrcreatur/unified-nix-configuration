@@ -89,6 +89,12 @@
       flake = true;
     };
 
+    qmd = {
+      url = "github:tobi/qmd";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+    };
+
     zellij-vivid-rounded = {
       url = "github:deepwatrcreatur/nix-zellij-vivid-rounded";
       inputs.nixpkgs.follows = "nixpkgs";
