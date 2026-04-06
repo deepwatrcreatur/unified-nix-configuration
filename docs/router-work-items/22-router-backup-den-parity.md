@@ -1,6 +1,6 @@
 # Router-Backup Den Parity
 
-Status: `ready`
+Status: `done`
 Priority: `medium`
 Branch: `refactor/router-backup-den-parity`
 
@@ -14,7 +14,7 @@ router leaf is better understood.
 `router-backup` is still a hybrid den leaf with imports from:
 
 - `hosts/nixos/router-backup/hardware-configuration.nix`
-- `hosts/nixos/router-backup/networking.nix`
+- `hosts/nixos/router/networking.nix`
 - `hosts/nixos/router-backup/caddy.nix`
 - `hosts/nixos/router-backup/configuration.nix`
 
@@ -38,3 +38,14 @@ It should not drift into a different organizational model than `router`.
 - `nix build .#nixosConfigurations.router-backup.config.system.build.toplevel`
 - compare active import structure against `router`
 - confirm the remaining differences are host-specific and not accidental drift
+
+## Outcome
+
+- `den/hosts/router-backup/default.nix` now mirrors the router leaf’s den/legacy
+  boundary comments and imports, while keeping only backup-specific differences
+  (hostname override, backup-specific configuration args).
+- The thin `hosts/nixos/router-backup/networking.nix` wrapper was removed in
+  favour of importing `hosts/nixos/router/networking.nix` directly from the den
+  leaf, with the hostname override inlined.
+- Compared the router and router-backup den leaves; remaining differences are
+  intentional and host-specific rather than accidental drift.
