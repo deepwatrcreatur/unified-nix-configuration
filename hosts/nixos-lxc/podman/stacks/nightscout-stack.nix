@@ -3,7 +3,7 @@
 { config, lib, pkgs, ... }:
 
 let
-  optSec = import ../../../../modules/helpers/optional-secrets.nix { inherit lib; };
+  optSec = import ../../../../lib/optional-secrets.nix { inherit lib; };
   hostProxy = import ../../../../modules/helpers/container-host-proxy.nix { inherit pkgs; };
 
   nightscoutSecret = optSec.mkSecret "nightscout-api-secret" {

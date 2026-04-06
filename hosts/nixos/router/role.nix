@@ -18,7 +18,7 @@
   ...
 }:
 let
-  optSec = import ../../../modules/helpers/optional-secrets.nix { inherit lib; };
+  optSec = import ../../../lib/optional-secrets.nix { inherit lib; };
   getAttrByPath = lib.attrsets.attrByPath;
   lanListenAddress = builtins.head (lib.splitString "/" lanIpv4Address);
   managementListenAddress = builtins.head (lib.splitString "/" managementIpv4Address);

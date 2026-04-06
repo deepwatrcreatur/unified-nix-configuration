@@ -3,7 +3,7 @@
 { config, lib, pkgs, ... }:
 
 let
-  optSec = import ../../../../modules/helpers/optional-secrets.nix { inherit lib; };
+  optSec = import ../../../../lib/optional-secrets.nix { inherit lib; };
 
   librelinkupSecret = optSec.mkSecret "librelinkup-env" {
     file = ../../../../secrets-agenix/librelinkup-env.age;

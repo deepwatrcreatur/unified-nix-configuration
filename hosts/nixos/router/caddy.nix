@@ -12,7 +12,7 @@ let
   mkFqdn = label: "${label}.${topology.domain}";
 
   # Optional secrets library for graceful degradation
-  optSec = import ../../../modules/helpers/optional-secrets.nix { inherit lib; };
+  optSec = import ../../../lib/optional-secrets.nix { inherit lib; };
 
   # Check if cloudflare secret exists (defined in configuration.nix, checked here for preStart logic)
   cfSecret = optSec.mkSecret "cloudflare-api-key" {
