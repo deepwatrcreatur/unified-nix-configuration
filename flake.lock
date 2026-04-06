@@ -1181,11 +1181,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1775311948,
-        "narHash": "sha256-/xTO3AKnwUHEnideUGwa1+yuT0q7e1HQ3BiKBTFJ4HY=",
+        "lastModified": 1775460652,
+        "narHash": "sha256-u66ruWETxm/GSRhGQG9SyQmKIN04b5UkI0pktWbBdQ8=",
         "owner": "deepwatrcreatur",
         "repo": "nix-router-optimized",
-        "rev": "89642d67ee3b0bb50ce09c34198ceafda4c5a0cc",
+        "rev": "e6bdc2aa0fd42caf0fda79ec342b4fd22fddfdf5",
         "type": "github"
       },
       "original": {
