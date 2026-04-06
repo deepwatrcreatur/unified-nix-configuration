@@ -43,23 +43,13 @@ in parallel on separate worktrees.
 4. For autonomous agent selection, use the rules in
    [`START-HERE.md`](./START-HERE.md).
 
-## Ranking
+## Current Ranked Queue
 
-Highest value first:
+All items from the original queue (01–15, 23–24) and the den-migration batch
+(18–22) are done or in open PRs awaiting merge. The queue is currently empty.
 
-1. `01-router-recovery-invariants.md`
-2. `02-stable-interface-matching.md`
-3. `04-service-dependency-cleanup.md`
-4. `05-router-health-model.md`
-5. `06-boot-and-recovery-hardening.md`
-6. `07-observability-and-flow-logging.md`
-7. `23-ulogd-plugin-mismatch-repair.md`
-8. `24-ulogd-package-vs-design-alignment.md`
-9. `08-vlans-and-vpn-policy-routing.md`
-10. `09-kea-technitium-architecture.md`
-11. `10-router-kea-module-roadmap.md`
-12. `11-internal-admin-hostnames.md`
-13. `12-vpn-module-hardening-and-tests.md`
-14. `13-vyos-pattern-study.md`
-15. `14-upstream-hotfix-pinning-policy.md`
-16. `15-management-plane-smoke-validation.md`
+Items still open in PRs (not yet merged to main):
+- `20-router-den-import-audit.md` — PR #84 (docs, green checks)
+- `21-router-leaf-inline-migration.md` — merged (#83)
+- `22-router-backup-den-parity.md` — PR #87 (green checks)
+- `19-router-den-migration-boundary.md` — umbrella; closes when 20 and 22 merge

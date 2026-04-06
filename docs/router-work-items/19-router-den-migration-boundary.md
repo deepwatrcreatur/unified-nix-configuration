@@ -67,3 +67,16 @@ problem statement and rationale.
 This is organizational debt, not an emergency runtime fix. It matters because
 recent inference work showed how easy it is to patch a dead legacy path when den
 is the real source of truth.
+
+## Progress
+
+Sub-tasks complete (merged or in open PRs with green checks):
+
+- `21-router-leaf-inline-migration.md` — merged (#83): inlined `networking.nix`
+  wrapper, added per-import comments to both den leaves
+- `20-router-den-import-audit.md` — PR #84: added `docs/router-source-of-truth.md`
+  with full import graph and per-concern ownership table
+- `22-router-backup-den-parity.md` — PR #87: inlined `caddy.nix` single-line
+  passthrough wrapper
+
+Once #84 and #87 merge, mark this item `done`.
