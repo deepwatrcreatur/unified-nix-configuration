@@ -40,7 +40,6 @@ let
 
   # Prefer explicit wrappers via aliases (raw remains available)
   wrappedToolAliases =
-<<<<<<< HEAD
     (lib.optionalAttrs (pkgs ? gh-fnox) { gh = "gh-fnox"; })
     // (lib.optionalAttrs (pkgs ? bw-fnox) { bw = "bw-fnox"; })
     // (lib.optionalAttrs (pkgs ? factory-droid-fnox) { droid = "factory-droid-fnox"; })
@@ -57,23 +56,6 @@ let
     // (lib.optionalAttrs (config.programs.fnox.enable or false) {
       opencode = "opencode-zai";
     });
-=======
-    let
-      ghAlias = if pkgs ? gh-fnox then { gh = "gh-fnox"; } else { };
-      bwAlias = if pkgs ? bw-fnox then { bw = "bw-fnox"; } else { };
-      atticAlias =
-        if (pkgs ? attic-fnox) && !(config.programs.attic-client.enable or false)
-        then { attic = "attic-fnox"; }
-        else { };
-      # When fnox is enabled, prefer the opencode-zai wrapper; keep opencode-raw
-      # as an escape hatch to the unwrapped binary.
-      opencodeFnoxAlias =
-        if config.programs.fnox.enable or false
-        then { opencode = "opencode-zai"; }
-        else { };
-    in
-    ghAlias // bwAlias // atticAlias // opencodeFnoxAlias;
->>>>>>> feat/tooling-agent-cli-fnox-wrappers
 in
 {
   options.custom.toolAliases = {
