@@ -21,6 +21,8 @@
     ../../rbw.nix
   ];
 
+  programs.qmd.enable = true;
+
   home.packages = with pkgs; [
     bitwarden-desktop
     cyberduck
