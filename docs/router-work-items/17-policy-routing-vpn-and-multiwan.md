@@ -1,10 +1,14 @@
 # Policy Routing For VPN And Multi-WAN
 
-Status: `ready`
+Status: `done`
 Suggested branch: `feat/router-policy-routing-vpn-and-multiwan`
 Priority: `medium`
 Blocked By: `08-vlans-and-vpn-policy-routing.md`
 Unblocks: future router multi-edge and split-routing work
+
+## Deliverable
+
+The PBR design and patterns are documented in [`docs/policy-routing-pbr.md`](../policy-routing-pbr.md).
 
 ## Goal
 
