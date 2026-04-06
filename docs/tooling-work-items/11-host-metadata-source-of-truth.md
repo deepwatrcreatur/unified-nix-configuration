@@ -1,6 +1,6 @@
 # 11 Host Metadata Source Of Truth
 
-Status: `ready`
+Status: `done`
 
 Suggested branch: `refactor/tooling-host-metadata-boundary`
 
@@ -42,3 +42,12 @@ easy to get wrong.
 - docs/comments make the boundary clear
 - inventory-related checks still pass
 - one concrete drift-prone edge is improved or explicitly documented
+
+## Outcome
+
+- Added authority-scope comments to `lib/hosts.nix` and `den/inventory/hosts.nix`
+  explaining what each file owns and cross-referencing the other.
+- Created `docs/host-metadata-boundary.md` with the full boundary description,
+  drift-prone edge documentation, and guidance for future agents.
+- No Nix behaviour was changed; alignment checks in `outputs/checks.nix` remain
+  the enforcement mechanism.

@@ -1,4 +1,11 @@
 # lib/hosts.nix
+# Authority: operational/network-layer metadata — SSH access, DNS names, IP
+# addresses, DHCP reservations, public ingress routing, and DDNS labels.
+# This file does NOT own NixOS build composition (system type, hostPath,
+# aspects); that lives in den/inventory/hosts.nix. The two files are kept in
+# sync by the alignment checks in outputs/checks.nix. If you rename a host,
+# update both files.
+#
 # Single source of truth for all homelab hosts
 # Used by: DNS zone config, SSH config, Ansible inventory
 {
