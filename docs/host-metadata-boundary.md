@@ -39,12 +39,16 @@ not carry any network or SSH metadata.
 
 outputs/checks.nix enforces consistency between the two files:
 
-- Every host in den/inventory/hosts.nix (except an explicit allowlist) must
-  also appear in lib/hosts.nix.
-- If a host is present in inventory but missing from lib/hosts.nix, the check
-  outputs a failing derivation with a descriptive error.
-- Legacy mode hosts are tracked separately and must be on an allowlist to
-  avoid blocking the build.
+- Every host in den/inventory/hosts.nix is expected to appear in lib/hosts.nix,
+  except explicitly excluded transitional cases and any separately allowlisted
+  legacy-mode entries. Two distinct exception mechanisms exist:
+  - **hardcoded exclusion list**: for permanently excluded host entries (e.g.,
+    bootstrap nodes that have no operational metadata)
+  - **legacy allowlist**: for legacy-mode hosts that are permitted to bypass
+    the check without blocking the build
+- If a host is present in inventory but missing from lib/hosts.nix (and not on
+  either exception list), the check outputs a failing derivation with a
+  descriptive error.
 
 These checks are the primary drift-detection mechanism. They do not prevent
 drift in the other direction (a host in lib/hosts.nix with no inventory
@@ -69,8 +73,10 @@ validated and must be updated manually.
 **Adding a new host:**
 1. Add the entry to den/inventory/hosts.nix with kind, system, hostPath, mode,
    and aspectsList.
-2. Add a corresponding entry to lib/hosts.nix with at minimum an ip and
-   description. Set includeDns/includeSsh as appropriate.
+2. Add a corresponding entry to lib/hosts.nix with at minimum an ip (or, for
+   bootstrap/external hosts that use DNS-only addressing, explicit non-IP
+   metadata such as ip = null with a dns/address field) and a description.
+   Set includeDns/includeSsh as appropriate.
 3. Create the host directory at the path referenced by hostPath.
 
 **Adding metadata to an existing host:**
