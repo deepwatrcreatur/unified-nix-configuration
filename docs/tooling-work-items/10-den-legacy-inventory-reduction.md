@@ -1,6 +1,6 @@
 # 10 Den Legacy Inventory Reduction
 
-Status: `in-progress`
+Status: `done`
 
 Suggested branch: `refactor/tooling-den-legacy-inventory`
 
@@ -43,3 +43,25 @@ intentionally legacy or simply not migrated yet.
 - den docs and inventory make the remaining legacy boundaries easier to follow
 - any changed outputs still evaluate cleanly
 - future agents can tell which legacy inventory entries are intentional
+
+## Outcome
+
+Audited all three non-router legacy inventory files. All are **intentionally
+legacy** for different structural reasons:
+
+- `bootstrap.nix` (`nixos_lxc_without_determinate`, `nixos_lxc_with_determinate`):
+  `kind = "special"` — these are NOT processed by `mkInventoryOutputs`. Their
+  actual NixOS outputs live in `outputs/nixos-lxc.nix`. Legacy by design because
+  the bootstrap sequence deliberately omits Determinate Nix in step 1.
+
+- `darwin.nix` (`hackintosh`, `macminim4`): consumed by `mkDarwinOutput` but
+  legacy because no darwin aspects exist in `den/aspects/`. `hackintosh` is also
+  absent from `lib/hosts.nix` (likely inactive). `macminim4` is active; can be
+  migrated once darwin-specific aspects are defined.
+
+- `homes.nix` (proxmox-root homes): consumed by `mkHomeOutput` but legacy
+  because the den framework has no home-manager aspect concept. The proxmox-root
+  profile is stable and small; no migration planned.
+
+Added explanatory comments to each file making the intentional/blocked status
+explicit so future agents stop debating whether to migrate them.
