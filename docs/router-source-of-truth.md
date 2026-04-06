@@ -22,6 +22,7 @@ den/inventory/hosts.nix          ← entry point; declares aspects and hostPath
             │    ├─ github-token-client
             │    └─ router-router
             │         └─ den/aspects/router-router.nix
+            │              ├─ inputs.disko.nixosModules.disko
             │              ├─ inputs.nix-router-optimized.nixosModules.router-networking
             │              ├─ inputs.nix-router-optimized.nixosModules.router-firewall
             │              ├─ inputs.nix-router-optimized.nixosModules.router-dns-service
@@ -60,11 +61,11 @@ den/inventory/hosts.nix          ← entry point
             │    └─ users/deepwatrcreatur/hosts/router-backup/default.nix
             └─ extraImports  (legacy host-local files)
                  ├─ hosts/nixos/router-backup/hardware-configuration.nix
-                 ├─ hosts/nixos/router-backup/networking.nix
-                 │    └─ hosts/nixos/router/networking.nix  (+ hostName override)
-                 ├─ hosts/nixos/router-backup/caddy.nix
-                 │    └─ hosts/nixos/router/caddy.nix  (single-line re-export)
+                 ├─ hosts/nixos/router/networking.nix  (shared; hostName override applied below)
+                 ├─ hosts/nixos/router/caddy.nix  (shared; wrapper inlined into den leaf)
                  └─ hosts/nixos/router-backup/configuration.nix
+                      ├─ inputs.disko.nixosModules.disko
+                      ├─ hosts/nixos/router-backup/disko.nix
                       └─ hosts/nixos/router/role.nix  (backup-specific args)
 ```
 
@@ -80,8 +81,8 @@ den/inventory/hosts.nix          ← entry point
 | DNS service (Technitium) | `hosts/nixos/router/networking.nix` | Config applies to both hosts via shared import |
 | NAT policy | `hosts/nixos/router/networking.nix` | `networking.nat.enable = false`; nftables handles NAT in role.nix |
 | Disk layout (router) | `hosts/nixos/router/disko.nix` | Hardware-adjacent; keep separate |
-| Disk layout (backup) | `hosts/nixos/router-backup/configuration.nix` | disko imported inline here; no separate disko.nix |
-| Caddy / ingress | `hosts/nixos/router/caddy.nix` | 194 lines; both hosts share this file |
+| Disk layout (backup) | `hosts/nixos/router-backup/disko.nix` | Imported by `configuration.nix`; hardware-adjacent, keep separate |
+| Caddy / ingress | `hosts/nixos/router/caddy.nix` | Both hosts share this file directly |
 | Router role (networking, firewall, DNS, observability, VPN) | `den/aspects/router-router.nix` + upstream `nix-router-optimized` modules | The den aspect selects which upstream modules to import |
 | Host-specific role args (WAN/LAN devices, IPs, Grafana paths) | `hosts/nixos/router/configuration.nix` and `hosts/nixos/router-backup/configuration.nix` | Each calls `role.nix` as a function with per-host arguments |
 | NIC stable names | `hosts/nixos/router/configuration.nix` (MAC-based) and `hosts/nixos/router-backup/configuration.nix` (PCI path-based) | Separate rules because the two machines use different matching strategies |
