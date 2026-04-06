@@ -174,6 +174,29 @@ If you're fixing a package installation error:
 3. Verify your fix resolves the actual issue
 4. Don't assume "build succeeded" means "installation worked"
 
+### Conflict Markers Must Never Be Committed
+
+**Before every `git commit` and before pushing any branch, check for conflict
+markers:**
+
+```bash
+grep -r '<<<<<<\|=======\|>>>>>>>' modules/ hosts/ users/ lib/ den/ --include="*.nix" -l
+```
+
+If any file is listed, resolve the conflict before committing. A file with
+conflict markers is invalid Nix syntax and will break evaluation for every host
+that imports it.
+
+**This applies equally to merge/rebase workflows:** after resolving a conflict,
+always run a quick eval to confirm the file is valid before pushing:
+
+```bash
+nix --extra-experimental-features 'nix-command flakes' eval '.#nixosConfigurations.<hostname>.config.networking.hostName'
+```
+
+A passing `module-loading-eval` CI check is the safety net, but CI is slow.
+Catch this locally first.
+
 ### Commit without signing
 **Problem**: git commit opens password dialog that is difficult to handle in TUI
 **Solution**: use --no-gpg-sign option
