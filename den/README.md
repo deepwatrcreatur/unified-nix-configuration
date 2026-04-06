@@ -64,7 +64,7 @@ For the `router` and `router-backup` hosts, the current ownership is:
 
 - **Networking (active, shared role logic)**
   - `hosts/nixos/router/networking.nix` (shared router role and DNS topology)
-  - `hosts/nixos/router-backup/networking.nix` (imports `../router/networking.nix`, overrides hostname only)
+  - `den/hosts/router-backup/default.nix` (inlines hostname override and imports shared logic directly)
 
 - **Caddy / ingress and DNS**
   - Primary HTTPS ingress: `hosts/nixos/router/caddy.nix` (Caddy and public-facing routes)
