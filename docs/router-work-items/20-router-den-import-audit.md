@@ -1,6 +1,6 @@
 # Router Den Import Audit
 
-Status: `ready`
+Status: `done`
 Priority: `medium`
 Branch: `docs/router-den-import-audit`
 
@@ -55,3 +55,15 @@ Add or update one doc under `docs/` or `den/README.md` with:
 
 - verify the documented import graph matches `den/hosts/router*.nix`
 - verify the doc names the current active router role and Caddy paths correctly
+
+## Outcome
+
+Added `docs/router-source-of-truth.md` with:
+
+- full import graph for both `router` and `router-backup` (den aspects,
+  primaryUserImports, and all legacy extraImports)
+- per-concern table mapping each operational concern to its authoritative file
+- "where to land fixes" guidance for DNS, firewall, Caddy, DNS zones, and
+  new shared behaviour
+- migration status table for all legacy `extraImports`, noting which are
+  trivial inline candidates vs. structurally blocked
