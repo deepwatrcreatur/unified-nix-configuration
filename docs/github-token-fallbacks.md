@@ -27,5 +27,4 @@ To prevent "poisoning" the token file with error messages (e.g., SOPS decryption
 ## Configuration
 
 These paths and behaviors are managed by:
-- `modules/home-manager/user-secrets.nix`: Handles fallback logic and sanity checks.
-- `modules/home-manager/secrets-activation.nix`: Handles atomic SOPS decryption.
+- `modules/home-manager/user-secrets.nix`: Handles fallback logic, sanity checks, and legacy SOPS-based decryption for hosts still in transition.

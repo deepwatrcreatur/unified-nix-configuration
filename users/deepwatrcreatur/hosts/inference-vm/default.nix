@@ -51,12 +51,9 @@
   };
 
   # Override secrets activation for inference VMs - disable GPG key decryption to prevent failures
-  services.secrets-activation = {
-    enable = true;
-    secretsPath = toString ../../secrets;
-    continueOnError = lib.mkForce true; # Be more lenient for inference VMs
-    enableBitwardenDecryption = lib.mkForce false; # Not needed for inference work
-    enableGpgKeyDecryption = lib.mkForce false; # Not needed for inference work, prevents log exposure
+  services.user-secrets = {
+    enableBitwarden = lib.mkForce false; # Not needed for inference work
+    enableGpg = lib.mkForce false; # Not needed for inference work, prevents log exposure
   };
 
   # Disable user-level Determinate netrc; inference VMs use system-level auth only.

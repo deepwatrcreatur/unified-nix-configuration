@@ -27,6 +27,5 @@ To prevent the "broken secret" failure mode (where a file contains a decryption 
 
 ## Responsibility Split
 
-- `modules/home-manager/user-secrets.nix`: Handles the high-level fallback logic and sanity checks.
-- `modules/home-manager/secrets-activation.nix`: Provides the low-level SOPS decryption implementation (Legacy).
+- `modules/home-manager/user-secrets.nix`: Handles the high-level fallback logic, sanity checks, and legacy SOPS decryption (transitioned from the retired `secrets-activation.nix`).
 - `modules/helpers/optional-secrets.nix`: Provides system-level agenix helpers.

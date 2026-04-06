@@ -2,7 +2,12 @@
 
 let
   aspects = import ./aspects { inherit lib; };
-  inventoryHosts = import ./inventory/hosts.nix;
+  inventory = import ./inventory;
+  inventoryHosts =
+    inventory.hosts
+    // inventory.homes
+    // inventory.darwin
+    // (inventory.bootstrap or { });
 in
 rec {
   mkHostModule =
@@ -47,7 +52,7 @@ rec {
         or (throw "mkInventoryHostModule: unknown inventory host '${name}'");
       inventoryAspects =
         inventoryEntry.aspectsList
-        or (throw "mkInventoryHostModule: host '${name}' has no aspectsList in den/inventory/hosts.nix");
+        or (throw "mkInventoryHostModule: host '${name}' has no aspectsList in den/inventory");
     in
     {
       imports = (mkHostModule ((builtins.removeAttrs args [ "name" ]) // {

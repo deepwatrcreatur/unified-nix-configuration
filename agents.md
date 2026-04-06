@@ -8,7 +8,7 @@ The primary goal of this repository is to provide a single source of truth for s
 
 -   System-level settings (e.g., networking, services)
 -   User-specific configurations (e.g., shell environment, applications)
--   Secret management using `sops-nix`
+-   Secret management primarily using `agenix` (with a small SOPS compatibility layer for legacy user secrets).
 
 ## Technologies
 
@@ -16,7 +16,7 @@ The primary goal of this repository is to provide a single source of truth for s
 -   **NixOS:** A Linux distribution built on top of the Nix package manager.
 -   **home-manager:** A tool to manage user-level dotfiles and packages.
 -   **Nix Flakes:** A new feature in Nix that improves reproducibility and composability.
--   **sops-nix:** A tool for managing secrets in Nix configurations.
+-   **agenix:** Primary tool for managing secrets; SOPS-nix remains only as a compatibility layer in a few Home Manager modules.
 
 ## Directory Structure
 
