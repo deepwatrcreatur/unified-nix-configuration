@@ -16,8 +16,10 @@ let
       # here. The hostname override below replaces that wrapper.
       ../../../hosts/nixos/router/networking.nix
 
-      # caddy.nix — Caddy config for router-backup. Keep separate (large, host-local).
-      ../../../hosts/nixos/router-backup/caddy.nix
+      # router/caddy.nix — full Caddy config (194 lines); shared with router directly
+      # now that the single-line hosts/nixos/router-backup/caddy.nix wrapper has been
+      # inlined here. Large and host-local; keep as a separate file.
+      ../../../hosts/nixos/router/caddy.nix
 
       # configuration.nix — main composition: imports role.nix with backup-specific
       # args (wanDevice, lanDevice, managementIP, backup-specific Grafana/Prometheus

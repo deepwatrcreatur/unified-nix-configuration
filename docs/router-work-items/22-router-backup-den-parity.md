@@ -1,6 +1,6 @@
 # Router-Backup Den Parity
 
-Status: `ready`
+Status: `done`
 Priority: `medium`
 Branch: `refactor/router-backup-den-parity`
 
@@ -38,3 +38,22 @@ It should not drift into a different organizational model than `router`.
 - `nix build .#nixosConfigurations.router-backup.config.system.build.toplevel`
 - compare active import structure against `router`
 - confirm the remaining differences are host-specific and not accidental drift
+
+## Outcome
+
+Building on item 21 (which inlined `networking.nix` and added per-import comments),
+this PR removes the remaining single-line passthrough wrapper:
+
+- Deleted `hosts/nixos/router-backup/caddy.nix` (`import ../router/caddy.nix`)
+- Updated `den/hosts/router-backup/default.nix` to import `router/caddy.nix` directly
+- Fixed the comment (was "large, host-local"; clarified it's the shared Caddy config)
+
+Remaining `extraImports` that differ from `router` are all intentionally backup-specific:
+- `hardware-configuration.nix` — different physical hardware
+- `router/networking.nix` — shared config with hostname override inline in den leaf
+- `router/caddy.nix` — same shared Caddy config, now imported directly
+- `configuration.nix` — backup-specific args: different WAN/LAN devices, separate
+  Grafana/Prometheus paths, `enableLogStorage=false`
+
+Validated: `nix eval .#nixosConfigurations.router-backup.config.networking.hostName`
+→ `"router-backup"` and `.config.services.caddy.enable` → `true`.
