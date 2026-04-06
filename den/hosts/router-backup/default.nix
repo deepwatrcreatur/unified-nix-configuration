@@ -16,9 +16,9 @@ let
       # here. The hostname override below replaces that wrapper.
       ../../../hosts/nixos/router/networking.nix
 
-      # router/caddy.nix — full Caddy config (194 lines); shared with router directly
+      # router/caddy.nix — full Caddy config shared with router; imported directly
       # now that the single-line hosts/nixos/router-backup/caddy.nix wrapper has been
-      # inlined here. Large and host-local; keep as a separate file.
+      # inlined here. Keep as a separate file (large, shared).
       ../../../hosts/nixos/router/caddy.nix
 
       # configuration.nix — main composition: imports role.nix with backup-specific
