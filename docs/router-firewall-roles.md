@@ -50,8 +50,8 @@ services.router-firewall = {
   trustedTcpPorts = [ 80 443 ];
   hairpinNat.enable = true;
   trustedUdpPorts = [ ];
-  extraInputRules = ''
-    iifname {"${lanDevice}"} tcp dport 5201 accept comment "iperf3 from LAN"
+  extraLanLocalRules = ''
+    tcp dport 5201 accept comment "iperf3 from LAN"
   '';
 };
 ```
@@ -61,7 +61,7 @@ explicitly:
 
 - allowing HTTP/HTTPS from trusted interfaces
 - enabling IPv4 hairpin NAT for routed LAN/management CIDRs
-- exposing iperf3 on LAN for testing
+- exposing iperf3 on LAN for testing using the role-specific `extraLanLocalRules`
 
 ## How To Extend Safely
 
@@ -70,6 +70,10 @@ When adding new firewall behavior:
 - prefer adjusting role-aware options (`wanTcpPorts`, `wanUdpPorts`,
   `trustedTcpPorts`, `trustedUdpPorts`, `dnsInterfaces`) over hand-written
   nftables in `extra*Rules`
+- use role-specific extension points for custom nftables:
+  - `extraWanLocalRules` / `extraWanInRules`
+  - `extraLanLocalRules` / `extraLanInRules`
+  - `extraMgmtLocalRules` / `extraMgmtInRules`
 - keep WAN exposure explicit and minimal; use LAN/management for admin access
 - update this doc and the router work-items queue if you introduce new
   role-specific behavior

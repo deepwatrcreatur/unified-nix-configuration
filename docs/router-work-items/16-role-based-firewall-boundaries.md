@@ -16,10 +16,10 @@ Clear role-to-policy mapping makes it easier to reason about router behavior, re
 
 ## Tasks
 
-- Inventory current firewall rules and how they relate to WAN/LAN/management roles.
-- Propose a role-oriented grouping (e.g., LAN_IN, WAN_LOCAL, MGMT_IN) that matches existing behavior.
-- Update router modules/config to make the role-to-rule-set mapping explicit without large behavior changes.
-- Document the new mapping for operators, including how to extend it safely.
+- [x] Inventory current firewall rules and how they relate to WAN/LAN/management roles.
+- [x] Propose a role-oriented grouping (e.g., LAN_IN, WAN_LOCAL, MGMT_IN) that matches existing behavior.
+- [x] Update router modules/config to make the role-to-rule-set mapping explicit without large behavior changes.
+- [x] Document the new mapping for operators, including how to extend it safely.
 
 ## Validation
 
@@ -29,10 +29,8 @@ Clear role-to-policy mapping makes it easier to reason about router behavior, re
 
 ## Outcome Notes
 
-- `services.router-optimizations.interfaces` already models WAN / LAN /
-  management roles and devices for the router.
-- `services.router-firewall` automatically derives interface lists from those
-  roles when explicit lists are not set, so the firewall is already
-  role-aware.
-- `docs/router-firewall-roles.md` explains how these pieces fit together and
-  how to extend the router firewall safely.
+- `nix-router-optimized` has been refactored to use role-based chains (`WAN_LOCAL`, `LAN_LOCAL`, `MGMT_LOCAL`, `WAN_IN`, `LAN_IN`, `MGMT_IN`) internally.
+- New role-specific extension options (`extraWanLocalRules`, `extraLanLocalRules`, etc.) have been added to the `router-firewall` module.
+- `hosts/nixos/router/role.nix` now uses `extraLanLocalRules` for iperf3, making the role-to-rule mapping explicit.
+- `docs/router-firewall-roles.md` provides comprehensive documentation on the new role-based firewall structure.
+

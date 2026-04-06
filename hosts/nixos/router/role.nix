@@ -255,8 +255,8 @@ in
     trustedTcpPorts = [ 80 443 ];
     hairpinNat.enable = true;
     trustedUdpPorts = [ ];
-    extraInputRules = ''
-      iifname {"${lanDevice}"} tcp dport 5201 accept comment "iperf3 from LAN"
+    extraLanLocalRules = ''
+      tcp dport 5201 accept comment "iperf3 from LAN"
     '';
     flowLogging.enable = true;
   };
