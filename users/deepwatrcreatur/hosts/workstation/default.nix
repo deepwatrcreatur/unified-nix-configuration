@@ -20,6 +20,7 @@
   ];
 
   programs.dmux.enable = true;
+  programs.qmd.enable = true;
 
   programs.rtk-hooks.integrations = {
     claude.enable = true;
