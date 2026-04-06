@@ -14,7 +14,7 @@ router leaf is better understood.
 `router-backup` is still a hybrid den leaf with imports from:
 
 - `hosts/nixos/router-backup/hardware-configuration.nix`
-- `hosts/nixos/router-backup/networking.nix`
+- `hosts/nixos/router/networking.nix`
 - `hosts/nixos/router-backup/caddy.nix`
 - `hosts/nixos/router-backup/configuration.nix`
 
@@ -42,18 +42,18 @@ It should not drift into a different organizational model than `router`.
 ## Outcome
 
 Building on item 21 (which inlined `networking.nix` and added per-import comments),
-this PR removes the remaining single-line passthrough wrapper:
+this PR removes the remaining single-line passthrough wrappers:
 
-- Deleted `hosts/nixos/router-backup/caddy.nix` (`import ../router/caddy.nix`)
-- Updated `den/hosts/router-backup/default.nix` to import `router/caddy.nix` directly
-- Fixed the comment (was "large, host-local"; clarified it's the shared Caddy config)
+- Deleted `hosts/nixos/router-backup/networking.nix` (`import ../router/networking.nix` with hostname override).
+- Deleted `hosts/nixos/router-backup/caddy.nix` (`import ../router/caddy.nix`).
+- Updated `den/hosts/router-backup/default.nix` to import `router/networking.nix` and `router/caddy.nix` directly.
+- Inlined the hostname override directly into the den leaf.
+- Added per-import status comments mirroring the router leaf.
 
 Remaining `extraImports` that differ from `router` are all intentionally backup-specific:
-- `hardware-configuration.nix` — different physical hardware
-- `router/networking.nix` — shared config with hostname override inline in den leaf
-- `router/caddy.nix` — same shared Caddy config, now imported directly
+- `hardware-configuration.nix` — different physical hardware.
 - `configuration.nix` — backup-specific args: different WAN/LAN devices, separate
-  Grafana/Prometheus paths, `enableLogStorage=false`
+  Grafana/Prometheus paths, `enableLogStorage=false`.
 
 Validated: `nix eval .#nixosConfigurations.router-backup.config.networking.hostName`
 → `"router-backup"` and `.config.services.caddy.enable` → `true`.

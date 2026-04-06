@@ -1,6 +1,6 @@
 # Router Den Migration Boundary
 
-Status: `ready`
+Status: `done`
 Priority: `medium`
 Branch: `refactor/router-den-boundary`
 
@@ -53,6 +53,14 @@ problem statement and rationale.
 - `nix build .#nixosConfigurations.router-backup.config.system.build.toplevel`
 - confirm the active router source-of-truth is easier to follow once the
   follow-up tasks land
+
+## Outcome
+
+- Completed follow-up tasks 20, 21, and 22.
+- Produced a source-of-truth map in `den/README.md`.
+- Inlined the thin router-backup networking wrapper.
+- Added per-import status comments to the router den leaf.
+- High-level composition is now clearly driven from the den leaves.
 
 ## Notes
 
