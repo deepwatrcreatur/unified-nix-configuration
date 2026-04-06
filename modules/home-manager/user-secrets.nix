@@ -216,17 +216,17 @@ in {
       ${optionalString cfg.enableGpg ''
         # Import public key
         if [ -f "$HOME/.gnupg/public-key.asc" ]; then
-          gpg --import "$HOME/.gnupg/public-key.asc" || true
+          gpg --import "$HOME/.gnupg/public-key.asc" 2>/dev/null || echo "Note: GPG public key import skipped or failed" >&2
         fi
 
         # Import private key
         if [ -f "$HOME/.gnupg/private-key.asc" ]; then
-          gpg-connect-agent /bye || true
-          gpg --batch --pinentry-mode loopback --passphrase "" --import "$HOME/.gnupg/private-key.asc" || true
+          gpg-connect-agent /bye 2>/dev/null || echo "Note: GPG agent start skipped or failed" >&2
+          gpg --batch --pinentry-mode loopback --passphrase "" --import "$HOME/.gnupg/private-key.asc" 2>/dev/null || echo "Note: GPG private key import skipped or failed" >&2
         fi
 
         # Set trust for the key
-        echo "${cfg.gpgKeyId}:6:" | gpg --import-ownertrust || true
+        echo "${cfg.gpgKeyId}:6:" | gpg --import-ownertrust 2>/dev/null || echo "Note: GPG ownertrust import skipped or failed" >&2
       ''}
     '';
   };

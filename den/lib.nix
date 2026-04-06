@@ -52,7 +52,7 @@ rec {
         or (throw "mkInventoryHostModule: unknown inventory host '${name}'");
       inventoryAspects =
         inventoryEntry.aspectsList
-        or (throw "mkInventoryHostModule: host '${name}' has no aspectsList in den/inventory/hosts.nix");
+        or (throw "mkInventoryHostModule: host '${name}' has no aspectsList in den/inventory");
     in
     {
       imports = (mkHostModule ((builtins.removeAttrs args [ "name" ]) // {
