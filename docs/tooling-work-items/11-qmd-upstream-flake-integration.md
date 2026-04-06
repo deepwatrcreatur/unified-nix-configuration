@@ -1,6 +1,6 @@
 # 11 Qmd Upstream Flake Integration
 
-Status: `ready`
+Status: `done`
 
 Suggested branch: `feat/tooling-qmd-upstream-flake`
 
@@ -35,3 +35,11 @@ later.
 - flake evaluation still works after adding the upstream input
 - `qmd` is available in the intended package set or shell path
 - docs make it clear that the repo consumes the upstream flake directly
+
+## Outcome
+
+Implemented in this PR by:
+
+- adding `tobi/qmd` as a flake input
+- exposing `pkgs.qmd` through the shared flake-input overlay
+- enabling `programs.qmd` in the common coding-agent Home Manager layer

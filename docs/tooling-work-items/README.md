@@ -27,4 +27,3 @@ wrappers, shell defaults, and related repo operations.
 ## Current Ranked Queue
 
 1. `10-remove-gstack-and-browse-coupling.md`
-2. `11-qmd-upstream-flake-integration.md`
