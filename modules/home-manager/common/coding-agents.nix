@@ -8,7 +8,10 @@
   ...
 }:
 {
-  imports = [ inputs.nix-rtk.homeManagerModules.default ];
+  imports = [
+    inputs.nix-rtk.homeManagerModules.default
+    inputs.qmd.homeModules.default
+  ];
 
   # Enable RTK hooks with Claude enabled by default
   programs.rtk-hooks = {
@@ -16,6 +19,11 @@
     integrations = {
       claude.enable = lib.mkDefault true;
     };
+  };
+
+  programs.qmd = {
+    enable = lib.mkDefault true;
+    package = lib.mkDefault pkgs.qmd;
   };
 
   # Install coding agent packages from llm-agents overlay
