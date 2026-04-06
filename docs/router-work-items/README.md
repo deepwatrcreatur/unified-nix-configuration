@@ -50,6 +50,4 @@ All items from the original queue (01–15, 23–24) and the den-migration batch
 
 Items still open in PRs (not yet merged to main):
 - `20-router-den-import-audit.md` — PR #84 (docs, green checks)
-- `21-router-leaf-inline-migration.md` — merged (#83)
-- `22-router-backup-den-parity.md` — PR #87 (green checks)
-- `19-router-den-migration-boundary.md` — umbrella; closes when 20 and 22 merge
+- `19-router-den-migration-boundary.md` — umbrella; closes when #84 merges

@@ -70,13 +70,13 @@ is the real source of truth.
 
 ## Progress
 
-Sub-tasks complete (merged or in open PRs with green checks):
+Sub-tasks:
 
 - `21-router-leaf-inline-migration.md` — merged (#83): inlined `networking.nix`
   wrapper, added per-import comments to both den leaves
-- `20-router-den-import-audit.md` — PR #84: added `docs/router-source-of-truth.md`
-  with full import graph and per-concern ownership table
-- `22-router-backup-den-parity.md` — PR #87: inlined `caddy.nix` single-line
+- `22-router-backup-den-parity.md` — merged (#87): inlined `caddy.nix` single-line
   passthrough wrapper
+- `20-router-den-import-audit.md` — PR #84 open: added `docs/router-source-of-truth.md`
+  with full import graph and per-concern ownership table
 
-Once #84 and #87 merge, mark this item `done`.
+Once #84 merges, mark this item `done`.
