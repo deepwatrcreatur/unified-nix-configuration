@@ -1,6 +1,6 @@
 # Router Leaf Inline Migration
 
-Status: `ready`
+Status: `done`
 Priority: `medium`
 Branch: `refactor/router-leaf-inline-migration`
 
@@ -51,3 +51,17 @@ The desired outcome is:
 - confirm resulting router output is equivalent at a high level
 - ensure comments explain any remaining legacy imports that are still
   intentional
+
+## Outcome
+
+- Added per-import comments to `den/hosts/router/default.nix` explaining
+  why each legacy file is kept separate (hardware-adjacent, large host-local,
+  or still uses topology config).
+- Inlined `hosts/nixos/router-backup/networking.nix` into
+  `den/hosts/router-backup/default.nix`. That file was a 7-line thin wrapper
+  that set `networking.hostName = "router-backup"` and imported
+  `router/networking.nix`. The hostname override is now inline; the wrapper
+  is deleted.
+- Validated: `nix eval .#nixosConfigurations.router.config.networking.hostName`
+  → `"router"` and `.#nixosConfigurations.router-backup.config.networking.hostName`
+  → `"router-backup"`.
