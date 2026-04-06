@@ -1,3 +1,9 @@
+# den/inventory/hosts.nix
+# Authority: NixOS build composition — system architecture, hostPath, and the
+# aspectsList that assembles each host's NixOS configuration. Operational and
+# network metadata (IPs, SSH config, DNS, DHCP, ingress) belongs in
+# lib/hosts.nix. Host names must be kept in sync across both files; the
+# alignment checks in outputs/checks.nix enforce this.
 {
   authentik-host = {
     kind = "nixos";
