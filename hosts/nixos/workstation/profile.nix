@@ -53,7 +53,10 @@
   };
 
   programs.linuxbrew = {
-    enableSystemSetup = true;
+    # The generated setup hook recursively chowns the entire Linuxbrew prefix
+    # on every activation, which causes workstation switches to time out.
+    # The prefix already exists with the correct ownership on this host.
+    enableSystemSetup = false;
     owner = "deepwatrcreatur";
   };
 
@@ -72,9 +75,16 @@
   boot.loader.systemd-boot.consoleMode = "auto";
 
   boot.kernelModules = [ "amdgpu" ];
-  # Disable GFX power gating — prevents the amdgpu SMU gfxoff hang that causes
-  # "GPU reset failed: device lost from bus" and a black screen requiring reboot.
-  boot.kernelParams = [ "amdgpu.gfxoff=0" ];
+  # AMD RX 6600 PCIe passthrough fixes:
+  # - amdgpu.gfxoff=0: disable SMU GFX power gating (prevents DisallowGfxOff hang)
+  # - amdgpu.runpm=0: disable runtime power management (prevents D3cold → PCIe bus loss)
+  # - pcie_aspm=off: disable PCIe ASPM link power states (prevents "device lost from bus")
+  # These together prevent "GPU reset failed: -19" that causes black screen on COSMIC login.
+  boot.kernelParams = [
+    "amdgpu.gfxoff=0"
+    "amdgpu.runpm=0"
+    "pcie_aspm=off"
+  ];
   boot.blacklistedKernelModules = [
     "virtio_gpu"
     "bochs_drm"
