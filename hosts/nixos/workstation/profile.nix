@@ -72,6 +72,9 @@
   boot.loader.systemd-boot.consoleMode = "auto";
 
   boot.kernelModules = [ "amdgpu" ];
+  # Disable GFX power gating — prevents the amdgpu SMU gfxoff hang that causes
+  # "GPU reset failed: device lost from bus" and a black screen requiring reboot.
+  boot.kernelParams = [ "amdgpu.gfxoff=0" ];
   boot.blacklistedKernelModules = [
     "virtio_gpu"
     "bochs_drm"
