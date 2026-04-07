@@ -53,7 +53,10 @@
   };
 
   programs.linuxbrew = {
-    enableSystemSetup = true;
+    # The generated setup hook recursively chowns the entire Linuxbrew prefix
+    # on every activation, which causes workstation switches to time out.
+    # The prefix already exists with the correct ownership on this host.
+    enableSystemSetup = false;
     owner = "deepwatrcreatur";
   };
 
