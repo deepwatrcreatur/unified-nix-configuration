@@ -1,6 +1,6 @@
 # 13 Codex Bubblewrap Dependency
 
-Status: `in-progress`
+Status: `done`
 
 Suggested branch: `fix/tooling-codex-bubblewrap`
 

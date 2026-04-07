@@ -71,9 +71,20 @@ Relevant token plumbing lives in:
 - `modules/home-manager/user-secrets.nix`
 - `modules/nixos/common/nix-ci-netrc.nix`
 
-## Worktrees
+## Checkout Strategy
 
-Use `worktrunk` (`wt`) for parallel agent work in separate git worktrees.
+This repo supports both shared-checkout work and worktree-based parallel work.
+Use the model that matches the task:
+
+- shared checkout: best for one-agent, sequential, or mostly docs/research work
+- `worktrunk` (`wt`): best for parallel implementation work that should land in
+  separate branches or PRs
+
+Decision guide:
+
+- [`agent-guides/checkout-strategies.md`](./agent-guides/checkout-strategies.md)
+
+Worktree quickstart:
 
 - Create or switch: `wt switch -c feat/my-change`
 - List: `wt list`
@@ -81,7 +92,12 @@ Use `worktrunk` (`wt`) for parallel agent work in separate git worktrees.
 
 ## Agent Work Queue
 
-If you are assigning or running agents against this repo, start with:
+Fresh agent onboarding starts here:
+
+- [`agent-guides/START-HERE.md`](./agent-guides/START-HERE.md)
+
+If you are assigning or running agents against this repo and the task comes from
+the ranked queues, continue with:
 
 - [`docs/router-work-items/START-HERE.md`](./docs/router-work-items/START-HERE.md)
 

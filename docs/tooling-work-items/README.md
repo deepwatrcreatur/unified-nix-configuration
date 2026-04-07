@@ -26,4 +26,14 @@ wrappers, shell defaults, and related repo operations.
 
 ## Current Ranked Queue
 
-Queue is currently empty. All items are done.
+1. [`13-codex-bubblewrap-dependency.md`](./13-codex-bubblewrap-dependency.md) - `done`
+2. [`14-dcg-pretooluse-guard.md`](./14-dcg-pretooluse-guard.md) - `ready`
+3. [`15-cass-session-search-integration.md`](./15-cass-session-search-integration.md) - `ready`
+4. [`16-cm-procedural-memory-bootstrap.md`](./16-cm-procedural-memory-bootstrap.md) - `ready`
+5. [`17-agent-mail-workflow-fit.md`](./17-agent-mail-workflow-fit.md) - `ready`
+6. [`18-beads-task-graph-integration.md`](./18-beads-task-graph-integration.md) - `ready`
+7. [`19-repo-updater-sync-workflow.md`](./19-repo-updater-sync-workflow.md) - `ready`
+8. [`20-robot-triage-prioritization.md`](./20-robot-triage-prioritization.md) - `ready`
+9. [`21-fleet-integration-flake-design.md`](./21-fleet-integration-flake-design.md) - `ready`
+10. [`22-mem0-integration-fleet-memory.md`](./22-mem0-integration-fleet-memory.md) - `ready`
+11. [`23-cross-agent-memory-extraction-pipeline.md`](./23-cross-agent-memory-extraction-pipeline.md) - `ready`

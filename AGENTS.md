@@ -134,9 +134,13 @@ For testing changes across hosts (especially build failures):
 - **Preferred attic-cache workflow**: `ssh attic-cache`, `cd ~/flakes/unified-nix-configuration`, `git pull`, then run the local rebuild on `attic-cache`.
 - **Alternative attic-cache workflow from workstation**: use a remote target rebuild such as `just remote-test attic-cache` or `sudo nixos-rebuild test --flake .#attic-cache --target-host attic-cache --use-remote-sudo`.
 
-### Worktrees
-- Prefer `wt` (worktrunk) over `git worktree` when working in parallel.
-- Quickstart:
+### Checkout Strategy
+- Choose the checkout model based on the work:
+  - shared checkout is fine for one-agent, sequential, or mostly read-only work
+  - prefer `wt` (worktrunk) over raw `git worktree` when multiple agents are
+    working in parallel or when the work should land as isolated PRs
+- Decision guide: see `agent-guides/checkout-strategies.md`.
+- Worktree quickstart:
   - `wt list`
   - `wt switch -c feat/my-change`
   - `wt switch feat/my-change`
