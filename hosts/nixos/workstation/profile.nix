@@ -16,7 +16,7 @@
     ../../../modules/nixos/snap.nix
     ../../../modules/nixos/sessions/cosmic.nix
     ../../../modules/nixos/hp-print-scan.nix
-    #../../../modules/nixos/printers/phoenix-hp-m477.nix
+    ../../../modules/nixos/printers/phoenix-hp-m477.nix
     ../../../modules/nixos/keyboard-glitches.nix
     ../../../modules/nixos/snapper.nix
     ../../../modules/nixos/nix-daemon-user-ssh.nix

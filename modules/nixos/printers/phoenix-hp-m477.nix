@@ -15,6 +15,10 @@
       hplip
       sane-airscan
     ];
+    # Since Avahi is disabled in the profile, we manually define the scanner IP
+    config.airscan = {
+      "HP PageWide Pro 477dn MFP" = "http://10.10.21.56:80/eSCL/";
+    };
   };
 
   environment.systemPackages = with pkgs; [
@@ -31,8 +35,8 @@
 
         # Prefer a stable URI over dnssd:// so we don't depend on browsing state.
         # If you get a "Host is down" error from `ensure-printers.service`,
-        # check that the printer is online and reachable from this host, e.g., `ping 10.10.10.51`.
-        deviceUri = "ipp://10.10.10.51/ipp/print";
+        # check that the printer is online and reachable from this host, e.g., `ping 10.10.21.56`.
+        deviceUri = "ipp://10.10.21.56/ipp/print";
 
         # Driverless printing for IPP Everywhere/AirPrint devices.
         # `lpinfo -m | rg -n 'everywhere'` should show the exact available model.
