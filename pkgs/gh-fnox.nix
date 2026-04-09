@@ -16,19 +16,25 @@ let
 
     text = ''
       token_file=''${XDG_CONFIG_HOME:-"$HOME/.config"}/git/github-token
+      agenix_token_file=''${XDG_DATA_HOME:-"$HOME/.local/share"}/agenix-user-secrets/github-token
 
       if [ -z "''${GH_TOKEN:-}" ]; then
         if [ -n "''${GITHUB_TOKEN:-}" ]; then
           export GH_TOKEN="$GITHUB_TOKEN"
+        elif [ -f "$agenix_token_file" ]; then
+          token="$(tr -d '\n' < "$agenix_token_file")"
+          if [ -n "$token" ]; then
+            export GH_TOKEN="$token"
+          fi
+        elif [ -f "$token_file" ]; then
+          token="$(tr -d '\n' < "$token_file")"
+          if [ -n "$token" ]; then
+            export GH_TOKEN="$token"
+          fi
         else
           token="$(fnox get GITHUB_TOKEN 2>/dev/null || true)"
           if [ -n "$token" ]; then
             export GH_TOKEN="$token"
-          elif [ -f "$token_file" ]; then
-            token="$(tr -d '\n' < "$token_file")"
-            if [ -n "$token" ]; then
-              export GH_TOKEN="$token"
-            fi
           fi
         fi
       fi

@@ -27,7 +27,7 @@ wrappers, shell defaults, and related repo operations.
 ## Current Ranked Queue
 
 1. [`13-codex-bubblewrap-dependency.md`](./13-codex-bubblewrap-dependency.md) - `done`
-2. [`24-gh-fnox-wrapper-completion.md`](./24-gh-fnox-wrapper-completion.md) - `ready`
+2. [`24-gh-fnox-wrapper-completion.md`](./24-gh-fnox-wrapper-completion.md) - `in-progress`
 3. [`25-agent-build-cache-fallback-and-trust.md`](./25-agent-build-cache-fallback-and-trust.md) - `ready`
 4. [`14-dcg-pretooluse-guard.md`](./14-dcg-pretooluse-guard.md) - `ready`
 5. [`15-cass-session-search-integration.md`](./15-cass-session-search-integration.md) - `ready`
