@@ -6,6 +6,25 @@
   # LLM/AI coding agents from numtide (claude-code, opencode, codex, rtk, etc.)
   inputs.llm-agents.overlays.default
 
+  # Patch Codex to use the Nix store bubblewrap path on Linux instead of the
+  # FHS-specific /usr/bin/bwrap probe used upstream.
+  (final: prev: {
+    llm-agents = prev.llm-agents // {
+      codex = prev.llm-agents.codex.overrideAttrs (old: {
+        postPatch =
+          (old.postPatch or "")
+          + ''
+            substituteInPlace \
+              core/src/config/mod.rs \
+              core/src/config/config_tests.rs \
+              linux-sandbox/src/launcher.rs \
+              core/README.md \
+              --replace-fail '"/usr/bin/bwrap"' '"${final.bubblewrap}/bin/bwrap"'
+          '';
+      });
+    };
+  })
+
   # Worktrunk (git worktree management for parallel agents)
   (final: prev: {
     worktrunk = inputs.worktrunk.packages.${prev.stdenv.hostPlatform.system}.default;

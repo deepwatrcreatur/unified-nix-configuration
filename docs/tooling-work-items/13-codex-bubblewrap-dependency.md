@@ -6,20 +6,23 @@ Suggested branch: `fix/tooling-codex-bubblewrap`
 
 ## Goal
 
-Ensure `bubblewrap` (bwrap) is correctly available for Codex so it doesn't fall back to its vendored version or fail to find the system binary at `/usr/bin/bwrap`.
+Ensure Codex uses a valid system `bubblewrap` path on NixOS instead of probing
+the FHS-specific `/usr/bin/bwrap`.
 
 ## Why
 
 Codex reported the following error:
 `Codex could not find system bubblewrap at /usr/bin/bwrap. Please install bubblewrap with your package manager. Codex will use the vendored bubblewrap in the meantime.`
 
-In a Nix-managed system, we should either provide `bubblewrap` in the PATH or ensure it's available in the expected location if Codex is hardcoded to look for it at `/usr/bin/bwrap`.
+On NixOS, `/usr/bin/bwrap` is the wrong integration point. The real fix is to
+patch the packaged Codex binary so its Linux sandbox code prefers the Nix store
+path for `bubblewrap`.
 
 ## Scope
 
 - Identify where Codex is installed or configured in this repo (likely in Home Manager or a coding-agent layer).
-- Add `bubblewrap` to the environment's `home.packages` or `environment.systemPackages`.
-- If Codex specifically requires `/usr/bin/bwrap`, ensure `programs.bubblewrap.enable = true;` is set on NixOS hosts or provide a suitable workaround.
+- Patch the packaged Codex derivation so its Linux sandbox code uses the Nix
+  store path for `bubblewrap`.
 - Verify if this affects all hosts or just specific ones (e.g., those using coding-agent modules).
 
 ## Non-Goals
@@ -29,17 +32,15 @@ In a Nix-managed system, we should either provide `bubblewrap` in the PATH or en
 
 ## Implementation Notes
 
-`pkgs.bubblewrap` added to `home.packages` in `modules/home-manager/common/coding-agents.nix`
-guarded by `pkgs.stdenv.hostPlatform.isLinux` (bubblewrap is not available on Darwin).
+`pkgs.llm-agents.codex` is overridden in [`overlays/flake-inputs.nix`](../../overlays/flake-inputs.nix)
+to rewrite Codex's hardcoded Linux `bubblewrap` path from `/usr/bin/bwrap` to the
+Nix store path `${pkgs.bubblewrap}/bin/bwrap` at build time.
 
-On NixOS, `/usr/bin/bwrap` cannot be provided — NixOS only manages `/usr/bin/env` and `/usr`
-is read-only from the Nix store. Codex's check for `/usr/bin/bwrap` will still fail on NixOS
-hosts, but the vendored fallback is functional and `bwrap` is available in PATH for any
-subsequent PATH-based lookups. Modern NixOS enables unprivileged user namespaces so the
-in-PATH bwrap works without setuid.
+This removes the NixOS-specific startup warning without needing to mutate `/usr`
+or rely on the vendored fallback.
 
 ## Validation
 
-- `command -v bwrap` should return a valid path in the agent's shell after rebuild.
-- The Codex `/usr/bin/bwrap` warning is a NixOS limitation (read-only `/usr`) and cannot
-  be fully eliminated without patching Codex itself.
+- `strings $(command -v codex) | rg '/nix/store/.*/bin/bwrap'` should show the
+  patched system `bubblewrap` path.
+- Starting Codex on NixOS should no longer emit the `/usr/bin/bwrap` warning.
