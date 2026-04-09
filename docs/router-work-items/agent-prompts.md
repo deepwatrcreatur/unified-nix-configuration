@@ -524,3 +524,26 @@ Important constraints:
 Deliver:
 - branch commit(s)
 - concise design note with follow-up implementation slices
+
+## Prompt 29: Router Caddy Source Drift Repair
+
+Work on [`29-router-caddy-source-drift-repair.md`](./29-router-caddy-source-drift-repair.md).
+
+Create a branch named `fix/router-caddy-source-drift`.
+
+Task:
+- repair the current router rebuild failure caused by the Caddy-with-plugins
+  fixed-output hash mismatch
+- keep the change narrow and explain the source of the drift
+
+Important constraints:
+- do not mix in unrelated reverse-proxy or router refactors
+- treat this as an immediate rebuild blocker
+- prefer a deterministic pinned fix over a speculative workaround
+
+Validation target:
+- router build progresses past the current Caddy derivation failure
+
+Deliver:
+- branch commit(s)
+- short note on what drifted and what was pinned or regenerated

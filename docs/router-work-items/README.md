@@ -49,3 +49,4 @@ in parallel on separate worktrees.
 2. [`26-router-dashboard-runtime-repair.md`](./26-router-dashboard-runtime-repair.md) - `done`
 3. [`27-router-post-cutover-validation.md`](./27-router-post-cutover-validation.md) - `done`
 4. [`28-dhcp-provider-pluggable-observability.md`](./28-dhcp-provider-pluggable-observability.md) - `in-progress`
+5. [`29-router-caddy-source-drift-repair.md`](./29-router-caddy-source-drift-repair.md) - `ready`
