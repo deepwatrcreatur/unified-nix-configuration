@@ -33,6 +33,9 @@ in
       serviceConfig = {
         Type = "oneshot";
         ExecStart = "${pkgs.python3}/bin/python3 ${fail2banSnapshotScript}";
+        User = "root";
+        Group = "root";
+        PrivateTmp = false;
       };
       environment = {
         DASHBOARD_FAIL2BAN_CLIENT = "${pkgs.fail2ban}/bin/fail2ban-client";
