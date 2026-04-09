@@ -446,3 +446,81 @@ Validation target:
 Deliver:
 - branch commit(s)
 - concise summary of the chosen support boundary
+
+## Prompt 25: Technitium DHCP Sync Hardening
+
+Work on [`25-technitium-dhcp-sync-hardening.md`](./25-technitium-dhcp-sync-hardening.md).
+
+Create a branch named `fix/router-technitium-dhcp-sync-hardening`.
+
+Task:
+- harden the `router-technitium` DHCP sync behavior in
+  `nix-router-optimized`
+- make convergence and failure semantics explicit for scopes and reservations
+
+Important constraints:
+- treat this as upstream-quality module work
+- keep dashboard and host-local router changes out of the branch
+- optimize for a PR and bot review, not an unreviewed direct merge
+
+Deliver:
+- branch commit(s)
+- PR-ready summary of what convergence cases were handled
+
+## Prompt 26: Router Dashboard Runtime Repair
+
+Work on [`26-router-dashboard-runtime-repair.md`](./26-router-dashboard-runtime-repair.md).
+
+Create a branch named `fix/router-dashboard-runtime-repair`.
+
+Task:
+- repair the current router-dashboard runtime regressions around interface
+  cards, fail2ban status, and Caddy token visibility
+
+Important constraints:
+- keep the fix narrow and operational
+- split upstream-vs-host-local changes cleanly if both repos are touched
+- do not mix Technitium DHCP sync logic into this branch
+
+Deliver:
+- branch commit(s)
+- short live-router verification note
+
+## Prompt 27: Router Post-Cutover Validation
+
+Work on [`27-router-post-cutover-validation.md`](./27-router-post-cutover-validation.md).
+
+Create a branch named `ops/router-post-cutover-validation`.
+
+Task:
+- define and, if useful, lightly automate the post-cutover checks that catch
+  DHCP-reservation-dependent failures such as `attic-cache` landing on the
+  wrong address
+
+Important constraints:
+- keep this lightweight and operator-facing
+- do not turn it into a full integration test harness
+- document blocking vs advisory checks clearly
+
+Deliver:
+- branch commit(s)
+- concise validation checklist and any helper command/script additions
+
+## Prompt 28: DHCP Provider Pluggable Observability
+
+Work on [`28-dhcp-provider-pluggable-observability.md`](./28-dhcp-provider-pluggable-observability.md).
+
+Create a branch named `design/router-dhcp-provider-observability`.
+
+Task:
+- design how router-dashboard and related diagnostics should expose DHCP leases
+  and status when DHCP may come from Technitium or Kea
+
+Important constraints:
+- keep this as architecture/design work
+- do not implement Kea in this task
+- avoid cementing Technitium-specific assumptions into the future boundary
+
+Deliver:
+- branch commit(s)
+- concise design note with follow-up implementation slices

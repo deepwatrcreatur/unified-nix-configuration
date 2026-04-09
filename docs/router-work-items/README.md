@@ -45,4 +45,7 @@ in parallel on separate worktrees.
 
 ## Ranking
 
-Queue is currently empty. All stability and recovery items are done.
+1. [`25-technitium-dhcp-sync-hardening.md`](./25-technitium-dhcp-sync-hardening.md) - `in-progress`
+2. [`26-router-dashboard-runtime-repair.md`](./26-router-dashboard-runtime-repair.md) - `ready`
+3. [`27-router-post-cutover-validation.md`](./27-router-post-cutover-validation.md) - `ready`
+4. [`28-dhcp-provider-pluggable-observability.md`](./28-dhcp-provider-pluggable-observability.md) - `ready`
