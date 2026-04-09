@@ -29,7 +29,7 @@ wrappers, shell defaults, and related repo operations.
 1. [`13-codex-bubblewrap-dependency.md`](./13-codex-bubblewrap-dependency.md) - `done`
 2. [`14-dcg-pretooluse-guard.md`](./14-dcg-pretooluse-guard.md) - `ready`
 3. [`15-cass-session-search-integration.md`](./15-cass-session-search-integration.md) - `done`
-4. [`16-cm-procedural-memory-bootstrap.md`](./16-cm-procedural-memory-bootstrap.md) - `ready`
+4. [`16-cm-procedural-memory-bootstrap.md`](./16-cm-procedural-memory-bootstrap.md) - `done`
 5. [`17-agent-mail-workflow-fit.md`](./17-agent-mail-workflow-fit.md) - `ready`
 6. [`18-beads-task-graph-integration.md`](./18-beads-task-graph-integration.md) - `ready`
 7. [`19-repo-updater-sync-workflow.md`](./19-repo-updater-sync-workflow.md) - `ready`

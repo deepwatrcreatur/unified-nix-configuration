@@ -1,8 +1,20 @@
 # 16 CM Procedural Memory Bootstrap
 
-Status: `ready`
+Status: `done`
 
 Suggested branch: `docs/tooling-cm-procedural-memory`
+
+## Implementation Notes
+
+- Decided to adopt a **Markdown-based procedural memory layer** (Repo Playbook) as the
+  most lightweight and compatible integration for now.
+- Created `docs/playbook/` directory to store distilled procedures.
+- Seeded the Playbook with three high-value recurring workflows:
+  - `remote-router-rebuild.md`
+  - `agenix-migration.md`
+  - `agent-workflows.md`
+- Added `~/.cm-guide.md` and `~/.cass-guide.md` documentation for agents.
+- Integrated the guides into the `programs.session-search` module.
 
 ## Goal
 
