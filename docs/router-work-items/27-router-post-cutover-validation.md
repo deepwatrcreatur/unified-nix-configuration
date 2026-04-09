@@ -1,6 +1,6 @@
 # Router Post-Cutover Validation
 
-Status: `in-progress`
+Status: `done`
 Suggested branch: `ops/router-post-cutover-validation`
 Priority: `medium`
 

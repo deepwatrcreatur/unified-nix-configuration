@@ -60,6 +60,9 @@ let
       (names libHosts);
 
   allowedInfraOnlyHosts = [
+    "ap-nosheen-bedroom"
+    "ap-nosheen-living"
+    "ap-ruqayya"
     "apt-cache"
     "homeassistant"
     "infisical"
