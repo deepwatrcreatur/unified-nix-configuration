@@ -70,6 +70,13 @@ in
             "${config.home.homeDirectory}/.local/share/agenix-user-secrets/factory-api-key"
             "/run/agenix/factory-api-key"
           ];
+          SEED_GEMINI_OAUTH = [
+            "${config.home.homeDirectory}/.local/share/agenix-user-secrets/oauth-creds"
+            "${config.home.homeDirectory}/.gemini/oauth_creds.json"
+          ];
+          SEED_CLAUDE_CONFIG = [
+            "${config.home.homeDirectory}/.claude/config.json"
+          ];
         };
 
         # This repo provides its own gh/bw/droid/pbs wrappers that expose the

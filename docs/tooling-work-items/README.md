@@ -27,8 +27,8 @@ wrappers, shell defaults, and related repo operations.
 ## Current Ranked Queue
 
 1. [`24-gh-fnox-wrapper-completion.md`](./24-gh-fnox-wrapper-completion.md) - `in-progress`
-2. [`26-claude-code-managed-auth-path.md`](./26-claude-code-managed-auth-path.md) - `ready`
-3. [`27-gemini-cli-managed-auth-path.md`](./27-gemini-cli-managed-auth-path.md) - `ready`
+2. [`26-claude-code-managed-auth-path.md`](./26-claude-code-managed-auth-path.md) - `done`
+3. [`27-gemini-cli-managed-auth-path.md`](./27-gemini-cli-managed-auth-path.md) - `done`
 4. [`25-agent-build-cache-fallback-and-trust.md`](./25-agent-build-cache-fallback-and-trust.md) - `ready`
 5. [`14-dcg-pretooluse-guard.md`](./14-dcg-pretooluse-guard.md) - `ready`
 6. [`15-cass-session-search-integration.md`](./15-cass-session-search-integration.md) - `ready`

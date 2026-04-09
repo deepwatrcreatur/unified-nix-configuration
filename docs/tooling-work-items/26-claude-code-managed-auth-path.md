@@ -1,6 +1,6 @@
 # 26 Claude Code Managed Auth Path
 
-Status: `ready`
+Status: `done` (documented in [`docs/tooling-managed-auth.md`](../tooling-managed-auth.md))
 
 Suggested branch: `fix/tooling-claude-code-auth-path`
 
