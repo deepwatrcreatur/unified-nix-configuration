@@ -84,7 +84,6 @@
     geary # Email client (using Thunderbird instead)
     gnome-music
     gnome-photos
-    simple-scan
   ];
 
   # System packages for GNOME
