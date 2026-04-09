@@ -161,6 +161,23 @@ These are installed across hosts (or intended to be):
 **Recent additions**
 - Added `ast-grep` (`sg`) to the common tool set.
 
+### Destructive Command Guard (agent-guard)
+This repo enables an always-on safety guard for AI coding agents (`Claude Code`, `Gemini CLI`, etc.).
+It blocks or warns before executing potentially destructive commands:
+- `rm -rf` (except for known build artifacts like `node_modules`, `dist`, `.direnv`)
+- `git push --force`
+- `git reset --hard`
+- `git branch -D`
+- SQL `DROP`, `TRUNCATE`, or `DELETE` without `WHERE`
+- `kubectl delete`
+- `docker rm -f` / `prune`
+
+#### How to Bypass
+If you MUST run a destructive command and are sure it is safe:
+1. **Interactive agents (Claude Code)**: The guard returns a JSON "ask" decision. You should see a prompt to confirm the execution.
+2. **One-off bypass**: Prepend `RTK_BYPASS=1` to your command (if supported by the proxy) or use the raw tool directly if available (e.g., `/run/current-system/sw/bin/git push --force` instead of just `git push --force`).
+3. **Environment variable**: Set `AGENT_GUARD_SKIP=1` in your shell to temporarily disable the guard script.
+
 ### Git Workflow
 Before pushing changes that affect remote hosts:
 1. **Check local files exist** with `git status`

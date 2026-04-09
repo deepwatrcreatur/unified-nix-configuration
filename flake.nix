@@ -184,7 +184,13 @@
       hm-opts = flakeLib.helpers.mkHomeConfig {
         targetSystem = "x86_64-linux";
         hostName = "";
-        userPath = ./modules/home-manager/non-nixos.nix;
+        userPath = ./modules/home-manager/default.nix;
+        modules = [
+          {
+            home.username = "deepwatrcreatur";
+            home.homeDirectory = "/home/deepwatrcreatur";
+          }
+        ];
       };
     };
 }

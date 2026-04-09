@@ -8,6 +8,20 @@
 
   services.printing.enable = lib.mkDefault true;
 
+  # Ensure scanning support for this MFP
+  hardware.sane = {
+    enable = lib.mkDefault true;
+    extraBackends = with pkgs; [
+      hplip
+      sane-airscan
+    ];
+  };
+
+  environment.systemPackages = with pkgs; [
+    simple-scan
+    hplip
+  ];
+
   hardware.printers = {
     ensurePrinters = [
       {

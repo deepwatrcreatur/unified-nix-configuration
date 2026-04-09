@@ -1,0 +1,6 @@
+schema_version = 1
+
+[filter.test-guard]
+matcher = "rm -rf /"
+action = "block"
+message = "Destructive command blocked by repo-wide guard!"

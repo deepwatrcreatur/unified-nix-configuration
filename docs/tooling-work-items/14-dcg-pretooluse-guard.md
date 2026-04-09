@@ -1,8 +1,19 @@
 # 14 DCG PreToolUse Guard
 
-Status: `ready`
+Status: `done`
 
 Suggested branch: `feat/tooling-dcg-guard`
+
+## Implementation Notes
+
+- Created a central `scripts/check-destructive.sh` script that supports both
+  direct CLI arguments and JSON stdin (for agent hooks).
+- Added a `programs.agent-guards` Home Manager module in
+  `modules/home-manager/common/agent-guards.nix`.
+- Integrated with `Claude Code` by automatically installing a `repo-guard` skill.
+- Integrated with `Gemini CLI` by managing `~/.gemini/config.json`.
+- Enabled by default in `modules/home-manager/common/coding-agents.nix`.
+- Added bypass instructions to `AGENTS.md`.
 
 ## Goal
 

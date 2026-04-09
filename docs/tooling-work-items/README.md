@@ -27,7 +27,7 @@ wrappers, shell defaults, and related repo operations.
 ## Current Ranked Queue
 
 1. [`13-codex-bubblewrap-dependency.md`](./13-codex-bubblewrap-dependency.md) - `done`
-2. [`14-dcg-pretooluse-guard.md`](./14-dcg-pretooluse-guard.md) - `ready`
+2. [`14-dcg-pretooluse-guard.md`](./14-dcg-pretooluse-guard.md) - `done`
 3. [`15-cass-session-search-integration.md`](./15-cass-session-search-integration.md) - `ready`
 4. [`16-cm-procedural-memory-bootstrap.md`](./16-cm-procedural-memory-bootstrap.md) - `ready`
 5. [`17-agent-mail-workflow-fit.md`](./17-agent-mail-workflow-fit.md) - `ready`
