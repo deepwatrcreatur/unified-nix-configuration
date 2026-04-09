@@ -218,6 +218,16 @@ For comprehensive Nix agent workflows and advanced patterns, see the [Nix Agent 
 - **Default shell is Fish**: Use Fish shell syntax for all commands to ensure compatibility with coding agents
 - **Avoid Nushell**: While Nushell is configured, Fish is set as default to prevent agent compatibility issues
 
+### Destructive Command Guard (agent-guard)
+This repo enables an always-on safety guard for AI coding agents.
+It blocks or warns before executing potentially destructive commands (rm -rf, force-push, reset --hard, etc.).
+
+#### How to Bypass
+If you MUST run a destructive command and are sure it is safe:
+1. **Interactive confirmation**: The guard returns a JSON "ask" decision. Confirm the execution if prompted.
+2. **One-off bypass**: Prepend `RTK_BYPASS=1` to your command.
+3. **Environment variable**: Set `AGENT_GUARD_SKIP=1` in your shell to temporarily disable the guard.
+
 ### Git Worktrees for This Project
 This project uses git worktrees for parallel development of different configuration approaches:
 
