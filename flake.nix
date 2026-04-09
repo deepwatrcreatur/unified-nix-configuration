@@ -169,6 +169,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-session-search = {
+      url = "path:/home/deepwatrcreatur/flakes/nix-session-search";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs =
@@ -184,7 +189,13 @@
       hm-opts = flakeLib.helpers.mkHomeConfig {
         targetSystem = "x86_64-linux";
         hostName = "";
-        userPath = ./modules/home-manager/non-nixos.nix;
+        userPath = ./modules/home-manager/default.nix;
+        modules = [
+          {
+            home.username = "deepwatrcreatur";
+            home.homeDirectory = "/home/deepwatrcreatur";
+          }
+        ];
       };
     };
 }

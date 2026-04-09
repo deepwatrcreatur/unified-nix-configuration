@@ -11,7 +11,15 @@
   imports = [
     inputs.nix-rtk.homeManagerModules.default
     inputs.qmd.homeModules.default
+    ./agent-guards.nix
+    ./session-search.nix
   ];
+
+  # Enable destructive command guard for all agents
+  programs.agent-guards.enable = lib.mkDefault true;
+
+  # Enable CASS session search
+  programs.session-search.enable = lib.mkDefault true;
 
   # Enable RTK hooks with Claude enabled by default
   programs.rtk-hooks = {
@@ -54,6 +62,7 @@
 
       # Utilities
       ccstatusline
+      inputs.nix-session-search.packages.${pkgs.system}.default
     ])
     ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
       pkgs.bubblewrap

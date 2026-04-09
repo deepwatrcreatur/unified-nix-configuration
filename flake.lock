@@ -1238,6 +1238,23 @@
         "type": "github"
       }
     },
+    "nix-session-search": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1775758025,
+        "narHash": "sha256-h7MlC/tapPtTfyhFXLOsYbgWGukMv0EYbsV+D0ZjxxQ=",
+        "path": "/home/deepwatrcreatur/flakes/nix-session-search",
+        "type": "path"
+      },
+      "original": {
+        "path": "/home/deepwatrcreatur/flakes/nix-session-search",
+        "type": "path"
+      }
+    },
     "nix-snapd": {
       "inputs": {
         "flake-compat": "flake-compat_4",
@@ -1610,6 +1627,7 @@
         "nix-router-optimized": "nix-router-optimized",
         "nix-rtk": "nix-rtk",
         "nix-semaphore": "nix-semaphore",
+        "nix-session-search": "nix-session-search",
         "nix-snapd": "nix-snapd",
         "nix-whitesur-config": "nix-whitesur-config",
         "nixbit": "nixbit",

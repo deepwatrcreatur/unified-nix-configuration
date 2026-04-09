@@ -1,8 +1,18 @@
 # 15 CASS Session Search Integration
 
-Status: `ready`
+Status: `done`
 
 Suggested branch: `feat/tooling-cass-session-search`
+
+## Implementation Notes
+
+- Packaged `cass` (Coding Agent Session Search) in `nix-session-search` repository.
+- Integrated `nix-session-search` as a flake input.
+- Added `programs.session-search` Home Manager module in
+  `modules/home-manager/common/session-search.nix`.
+- Enabled `hourly` auto-indexing of agent sessions via systemd user timer.
+- Added `qs` (quick search) and `cs` (TUI search) shell aliases for agents and humans.
+- Added `~/.cass-guide.md` documentation for future agents.
 
 ## Goal
 
