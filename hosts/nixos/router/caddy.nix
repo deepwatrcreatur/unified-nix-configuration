@@ -25,10 +25,10 @@ in
     email = "deepwatrcreatur@gmail.com";
     package = pkgs.caddy.withPlugins {
       plugins = [
-        "github.com/caddy-dns/cloudflare@v0.2.3"
+        "github.com/caddy-dns/cloudflare@v0.2.4" # Updated March 2026
         "github.com/mholt/caddy-dynamicdns@v0.0.0-20251231002810-1af4f8876598"
       ];
-      hash = "sha256-cx7C7x9PG0RQh5ZaXIi2pDIiC2d3kdgBPE4SMApCY5o=";
+      hash = "sha256-w295JHun5MnkQCMRkWPJGKY4x/eb1dQah14rriilgC4=";
     };
     environmentFile = "/run/caddy/caddy.env";
 
