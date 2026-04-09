@@ -501,7 +501,6 @@ Task:
 - keep the feature modular and disabled by default
 
 Important constraints:
-- do not start this until the blockers in the task file are resolved
 - do not fold in unrelated DHCP redesign work
 - keep the first slice narrow and operator-comprehensible
 

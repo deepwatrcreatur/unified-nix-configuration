@@ -1,6 +1,6 @@
 # Router iVentoy Evaluation
 
-Status: `ready`
+Status: `done`
 Priority: `medium`
 Branch: `docs/router-iventoy-evaluation`
 
@@ -49,3 +49,8 @@ entirely or making premature assumptions about how it should be deployed.
 
 This item is intentionally evaluation-heavy. A clear "not now" outcome is still
 useful if it reduces future thrash.
+
+## Deliverable
+
+The recommendation is documented in
+[`docs/router-iventoy-evaluation.md`](../router-iventoy-evaluation.md).

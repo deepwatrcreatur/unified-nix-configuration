@@ -1,6 +1,6 @@
 # Router PXE Boot Module Plumbing
 
-Status: `blocked`
+Status: `ready`
 Priority: `medium`
 Branch: `feat/router-pxe-boot-config`
 
@@ -35,13 +35,12 @@ configured intentionally from the router model".
   target
 - large DHCP architecture rewrites unrelated to the initial PXE path
 
-## Blockers
+## Inputs
 
-- needs the architecture decision from
+- architecture decision from
   [`25-router-pxe-boot-architecture.md`](./25-router-pxe-boot-architecture.md)
-- should take the recommendation from
-  [`26-router-iventoy-evaluation.md`](./26-router-iventoy-evaluation.md) into
-  account before selecting the first implementation target
+- iVentoy recommendation from
+  [`26-router-iventoy-evaluation.md`](./26-router-iventoy-evaluation.md)
 
 ## Validation
 
@@ -51,5 +50,5 @@ configured intentionally from the router model".
 
 ## Notes
 
-This is intentionally blocked so implementation does not outrun module-boundary
-decisions.
+The architecture and iVentoy evaluation are now recorded, so implementation can
+proceed as a narrow first slice.
