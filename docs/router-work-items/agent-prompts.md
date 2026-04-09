@@ -446,3 +446,69 @@ Validation target:
 Deliver:
 - branch commit(s)
 - concise summary of the chosen support boundary
+
+## Prompt 25: Router PXE Boot Architecture
+
+Work on [`25-router-pxe-boot-architecture.md`](./25-router-pxe-boot-architecture.md).
+
+Create a branch named `docs/router-pxe-boot-architecture`.
+
+Task:
+- design the module and service boundary for PXE/netboot support driven from
+  Nix
+- decide what should live in `nix-router-optimized` versus this repo
+- leave a concrete recommendation for the first implementation PR
+
+Important constraints:
+- do not implement the full PXE stack in this task
+- keep the result grounded in the current router/DHCP model
+- make BIOS/UEFI expectations explicit rather than hand-waving them
+
+Deliver:
+- branch commit(s)
+- concise architecture note
+- explicit recommendation for the first implementation slice
+
+## Prompt 26: Router iVentoy Evaluation
+
+Work on [`26-router-iventoy-evaluation.md`](./26-router-iventoy-evaluation.md).
+
+Create a branch named `docs/router-iventoy-evaluation`.
+
+Task:
+- evaluate whether iVentoy is a good fit for the homelab PXE goal
+- compare it to a simpler native PXE/TFTP/HTTP path where relevant
+- recommend whether to pursue, defer, or reject it for this repo
+
+Important constraints:
+- keep this as an evaluation task, not a packaging sprint
+- optimize for this repo's operational model rather than generic feature lists
+- capture packaging and Nix integration unknowns clearly
+
+Deliver:
+- branch commit(s)
+- short decision note with risks and recommendation
+
+## Prompt 27: Router PXE Boot Module Plumbing
+
+Work on [`27-router-pxe-boot-module-plumbing.md`](./27-router-pxe-boot-module-plumbing.md).
+
+Create a branch named `feat/router-pxe-boot-config`.
+
+Task:
+- implement the first approved PXE configuration surface after the architecture
+  and iVentoy evaluation work is done
+- keep the feature modular and disabled by default
+
+Important constraints:
+- do not start this until the blockers in the task file are resolved
+- do not fold in unrelated DHCP redesign work
+- keep the first slice narrow and operator-comprehensible
+
+Validation target:
+- the PXE feature evaluates cleanly
+- docs show one concrete enablement path
+
+Deliver:
+- branch commit(s)
+- short note describing what PXE path is supported first
