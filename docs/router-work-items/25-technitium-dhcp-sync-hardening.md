@@ -1,6 +1,6 @@
 # Technitium DHCP Sync Hardening
 
-Status: `in-progress`
+Status: `ready`
 Suggested branch: `fix/router-technitium-dhcp-sync-hardening`
 Priority: `high`
 
