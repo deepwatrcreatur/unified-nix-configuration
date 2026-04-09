@@ -270,7 +270,12 @@ in
 
   services.router-dashboard = {
     refreshInterval = lib.mkDefault 10;
-    interfaces = lib.attrValues config.services.router-optimizations.interfaces;
+    interfaces = map
+      (iface: {
+        inherit (iface) device label;
+        role = if iface.role == "management" then "mgmt" else iface.role;
+      })
+      (lib.attrValues config.services.router-optimizations.interfaces);
     services = [
       "systemd-networkd"
       "sshd"

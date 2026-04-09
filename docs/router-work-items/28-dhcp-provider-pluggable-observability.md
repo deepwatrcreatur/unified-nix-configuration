@@ -1,6 +1,6 @@
 # DHCP Provider Pluggable Observability
 
-Status: `in-progress`
+Status: `done`
 Suggested branch: `design/router-dhcp-provider-observability`
 Priority: `medium`
 
@@ -24,49 +24,71 @@ If the provider is meant to be switchable, the observability/reporting layer
 also needs an explicit provider boundary instead of hardcoded Technitium API
 calls.
 
-## Questions To Answer
+## Proposed Data Model (Provider-Agnostic)
 
-- what DHCP-provider choice should be surfaced by `nix-router-optimized`:
-  - existing router DNS/DHCP provider shape
-  - a separate DHCP-specific provider option
-- what should the dashboard consume:
-  - a unified local JSON/state artifact
-  - a provider-specific backend adapter
-  - direct provider-specific API calls behind a common interface
-- what is the minimum lease/status model that should be provider-agnostic
-- which fields are provider-specific and should degrade gracefully
-- should `router-diag` and dashboard share the same abstraction
+A common JSON structure located at `/run/router/dhcp-status.json` should include:
 
-## Tasks
+```json
+{
+  "available": true,
+  "provider": "technitium",
+  "lastUpdated": "2026-04-09T12:00:00Z",
+  "scopes": [
+    {
+      "name": "LAN",
+      "interface": "ens16",
+      "enabled": true,
+      "startAddress": "10.10.10.100",
+      "endAddress": "10.10.10.250",
+      "leaseCount": 15
+    }
+  ],
+  "leases": [
+    {
+      "address": "10.10.11.39",
+      "hostname": "attic-cache",
+      "hardwareAddress": "BC:24:11:CE:9D:D6",
+      "leaseExpires": "2026-04-10T12:00:00Z",
+      "type": "reserved",
+      "scope": "LAN"
+    }
+  ]
+}
+```
 
-- inspect the existing provider/config shape in `nix-router-optimized`
-- define a provider-neutral data model for:
-  - lease list
-  - reservation visibility
-  - scope/subnet summary
-  - provider availability/error state
-- recommend where the abstraction should live:
-  - dashboard backend only
-  - separate upstream module/library/script
-  - generated state file(s)
-- identify what would need to change for Kea support without implementing Kea
-- split any resulting implementation into future PR-sized work items
+## Proposed Architecture
+
+1.  **State Snapshot Model:** Instead of the dashboard making live API calls to
+    the provider, a dedicated sidecar service will poll the active provider and
+    write a normalized `/run/router/dhcp-status.json` file.
+2.  **Provider Scripts:**
+    - `router-dhcp-poll-technitium.py`: already partially implemented in dashboard logic.
+    - `router-dhcp-poll-kea.py`: future work using Kea Control Agent.
+3.  **Dashboard/CLI Consumption:**
+    - Both `router-dashboard` and `router-diag` will read the JSON file.
+    - If the file is stale or missing, they report "DHCP data unavailable".
+
+## Tasks for Implementation
+
+- [ ] **Phase 1: Extraction (Upstream)**
+  - Move Technitium lease-fetching logic out of `server.py` into a standalone
+    `router-dhcp-poll-technitium` script in `nix-router-optimized`.
+  - Add a systemd timer/service to run this script periodically.
+  - Update `router-dashboard` to read the JSON file instead of calling the API.
+- [ ] **Phase 2: CLI Integration (Upstream)**
+  - Add `router-diag show dhcp` which consumes the same JSON file.
+- [ ] **Phase 3: Kea Support (Future)**
+  - Implement `router-dhcp-poll-kea` when the Kea module is ready.
 
 ## Constraints
 
-- this is a design task, not a full implementation task
-- do not assume Technitium remains the only provider
-- do not force Kea-specific concepts into the generic interface unless they
-  clearly belong there
+- The dashboard should not fail if the JSON file is missing; it should show a
+  clean "Data Unavailable" state.
+- The JSON file must be readable by the `router-dashboard` user.
 
 ## Validation
 
-- the design makes it obvious how the dashboard would select Technitium vs Kea
-- follow-up implementation tasks are concrete and separable
-- the proposal fits the current `nix-router-optimized` module boundaries or
-  explains what should change upstream
+- `router-diag show dhcp` returns accurate results from the JSON file.
+- Dashboard lease list remains functional after removing Technitium credentials
+  from the dashboard environment.
 
-## Deliverable
-
-- branch commit(s)
-- concise design note and follow-up task breakdown
