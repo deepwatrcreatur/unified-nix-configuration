@@ -1,6 +1,6 @@
 # Router PXE Boot Architecture
 
-Status: `ready`
+Status: `done`
 Priority: `medium`
 Branch: `docs/router-pxe-boot-architecture`
 
@@ -55,3 +55,8 @@ Before implementation, the repo needs an explicit design for:
 
 Treat this as the design gate for future PXE work. The output should be
 practical enough that the next implementation task can stay PR-sized.
+
+## Deliverable
+
+The recommended architecture is documented in
+[`docs/router-pxe-boot-architecture.md`](../router-pxe-boot-architecture.md).
