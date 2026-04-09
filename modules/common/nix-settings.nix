@@ -105,10 +105,12 @@ in
       ];
 
     trusted-public-keys =
-      # When Attic is disabled, fall back to the full set of official keys so
-      # cache.nixos.org remains usable.
+      # Keep the trusted key set aligned with the substituters we enable by
+      # default. Otherwise Nix still queries public caches like garnix and
+      # nix-community but then ignores their results as untrusted noise.
       (if enableAttic then
         atticCache.defaultTrustedPublicKeys { includeNixCi = enableNixCi; }
+        ++ cacheTrust.official
       else
         cacheTrust.official);
 

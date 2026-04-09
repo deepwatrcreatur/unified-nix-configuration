@@ -9,10 +9,12 @@ On systems using Determinate Nix, the system-level `nix.settings` configuration 
 ## Default Configuration
 
 By default, this module:
-- Enables Attic cache at `http://cache-build-server:5001/cache-local`
+- Enables the local Attic cache at `http://attic-cache:5001/cache-local`
 - Falls back to `cache.nixos.org`
 - Configures authentication via a managed Determinate Nix netrc block
 - Enables common experimental features (flakes, nix-command, etc.)
+- prefers the repo-managed GitHub token file over `fnox` when writing
+  `access-tokens` into `~/.config/nix/nix.conf`
 
 ## Per-Host Customization
 
@@ -67,6 +69,23 @@ To customize for a specific host, add to your user's host configuration:
 
 - `~/.config/nix/nix.conf` - Nix configuration (substituters, keys, features)
 - `/nix/var/determinate/netrc` - managed netrc block for private cache authentication
+
+## Degraded Cache Path
+
+When `attic-cache` is unhealthy or misaddressed, agent builds should still be
+able to run against `cache.nixos.org` and any explicitly trusted public caches.
+
+For one-off degraded-mode builds, prefer passing a narrowed substituter set such
+as:
+
+```bash
+nix build .#someTarget \
+  --option substituters https://cache.nixos.org/ \
+  --option trusted-public-keys cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
+```
+
+That avoids waiting on a broken local Attic endpoint while still keeping the
+build path explicit and reproducible.
 
 ## Integration with Attic
 

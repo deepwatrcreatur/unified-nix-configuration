@@ -130,14 +130,15 @@ in
           token_path="${tokenPath}"
 
           token=""
-          # Try fnox if available
-          if command -v fnox &> /dev/null && [ -f "$HOME/.config/sops/age/keys.txt" ]; then
-            export FNOX_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
-            token=$(fnox get GITHUB_TOKEN 2>/dev/null || echo "")
+          # Prefer the repo-managed token file first. fnox may still have a
+          # stale cached value even when agenix has already rotated the file.
+          if [[ -f "$token_path" ]]; then
+            token=$(cat "$token_path")
           fi
 
-          if [[ -z "$token" && -f "$token_path" ]]; then
-            token=$(cat "$token_path")
+          if [[ -z "$token" ]] && command -v fnox &> /dev/null && [ -f "$HOME/.config/sops/age/keys.txt" ]; then
+            export FNOX_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
+            token=$(fnox get GITHUB_TOKEN 2>/dev/null || echo "")
           fi
 
           if [[ -n "$token" ]]; then
