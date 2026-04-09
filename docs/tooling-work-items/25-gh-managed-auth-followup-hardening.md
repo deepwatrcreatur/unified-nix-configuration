@@ -1,6 +1,6 @@
 # 25 GH Managed Auth Follow-Up Hardening
 
-Status: `ready`
+Status: `in-progress`
 
 Suggested branch: `fix/tooling-gh-managed-auth-hardening`
 
@@ -15,8 +15,8 @@ The first `gh` wrapper fix restored working auth, but review feedback surfaced
 two concrete edge cases that still need deliberate cleanup:
 
 - existing-but-empty managed token files can block fallback behavior
-- some docs still describe `fnox` as the primary source even though the repo is
-  moving toward managed token files first
+- some docs still describe `fnox` as the primary source even though managed
+  token files are now the intended first-class source
 
 These are small but real correctness issues, and they are easier to fix now
 than after more agent CLI wrappers copy the same behavior.

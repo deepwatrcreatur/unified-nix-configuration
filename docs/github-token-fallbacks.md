@@ -1,6 +1,7 @@
 # GitHub Token Fallback Order
 
-This document explains how the `unified-nix-configuration` determines which GitHub token to use for flake operations and shell environments.
+This document explains how the `unified-nix-configuration` determines which
+GitHub token to use for flake operations and wrapped command environments.
 
 ## Precedence (Highest to Lowest)
 
@@ -12,6 +13,9 @@ If multiple token sources are available, the first valid one found is used:
     - Provisioned by the system (e.g., via Agenix or another system-wide secret manager).
 3.  **Legacy SOPS User Secret**: `~/.config/git/github-token`
     - Decrypted during Home Manager activation from the local secrets directory.
+4.  **`fnox` Lookup**
+    - Used as a fallback path for wrappers such as `gh` when the managed files
+      are absent or empty.
 
 ## Guardrails and Health Checks
 

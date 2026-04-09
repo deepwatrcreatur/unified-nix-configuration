@@ -35,7 +35,9 @@ fi
 ```
 
 ### 3. Graceful Fallback
-If `fnox` is unavailable or the secret lookup fails, the wrapper should attempt a file-based fallback (e.g., `~/.config/git/github-token`) before finally executing the raw command.
+If a repo-managed token file exists, wrappers should prefer that durable file
+path first. `fnox` remains the fallback lookup path when the managed file is
+absent or empty, before finally executing the raw command.
 
 ### 4. Minimal Dependencies
 Prefer `writeShellApplication` with specific `runtimeInputs` to ensure the wrapper is self-contained and does not rely on global system state.
