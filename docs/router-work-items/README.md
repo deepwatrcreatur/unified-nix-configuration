@@ -45,6 +45,6 @@ in parallel on separate worktrees.
 
 ## Ranking
 
-1. [`25-router-pxe-boot-architecture.md`](./25-router-pxe-boot-architecture.md) - `done`
-2. [`26-router-iventoy-evaluation.md`](./26-router-iventoy-evaluation.md) - `done`
+1. [`28-router-dashboard-review-hardening.md`](./28-router-dashboard-review-hardening.md) - `ready`
+2. [`29-router-cutover-validation-hardening.md`](./29-router-cutover-validation-hardening.md) - `ready`
 3. [`27-router-pxe-boot-module-plumbing.md`](./27-router-pxe-boot-module-plumbing.md) - `ready`
