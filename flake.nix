@@ -124,7 +124,7 @@
     };
 
     nix-router-optimized = {
-      url = "github:deepwatrcreatur/nix-router-optimized";
+      url = "github:deepwatrcreatur/nix-router-optimized/fix/router-technitium-dhcp-sync-hardening";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

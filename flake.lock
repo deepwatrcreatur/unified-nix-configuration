@@ -1181,15 +1181,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1775460652,
-        "narHash": "sha256-u66ruWETxm/GSRhGQG9SyQmKIN04b5UkI0pktWbBdQ8=",
+        "lastModified": 1775737941,
+        "narHash": "sha256-Qdib9b3KgYMhFq2hfJ+EFtttEzFUoJSq2KmcO5fEoJ0=",
         "owner": "deepwatrcreatur",
         "repo": "nix-router-optimized",
-        "rev": "e6bdc2aa0fd42caf0fda79ec342b4fd22fddfdf5",
+        "rev": "a8d8d666259fc2255edea7859db27278a86a94bf",
         "type": "github"
       },
       "original": {
         "owner": "deepwatrcreatur",
+        "ref": "fix/router-technitium-dhcp-sync-hardening",
         "repo": "nix-router-optimized",
         "type": "github"
       }
