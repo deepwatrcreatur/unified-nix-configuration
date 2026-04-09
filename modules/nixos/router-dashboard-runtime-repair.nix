@@ -21,6 +21,9 @@ in
     };
 
     systemd.services.router-dashboard.serviceConfig.ExecStart = lib.mkForce "${pkgs.python3}/bin/python3 ${routerDashboardApiWrapper}";
+    systemd.services.router-dashboard.serviceConfig.ReadOnlyPaths = [
+      "/run/router-dashboard"
+    ];
 
     systemd.tmpfiles.rules = [
       "d /run/router-dashboard 0750 root router-dashboard -"
