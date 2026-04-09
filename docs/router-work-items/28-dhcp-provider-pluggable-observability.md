@@ -1,6 +1,6 @@
 # DHCP Provider Pluggable Observability
 
-Status: `ready`
+Status: `in-progress`
 Suggested branch: `design/router-dhcp-provider-observability`
 Priority: `medium`
 
