@@ -18,7 +18,6 @@
               core/src/config/mod.rs \
               core/src/config/config_tests.rs \
               linux-sandbox/src/launcher.rs \
-              core/README.md \
               --replace-fail '"/usr/bin/bwrap"' '"${final.bubblewrap}/bin/bwrap"'
           '';
       });
