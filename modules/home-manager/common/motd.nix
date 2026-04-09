@@ -105,12 +105,14 @@ EOF
     fi
 
     if command -v nix >/dev/null 2>&1; then
-      nixver="$(nix --version 2>/dev/null || true)"
+      nixver="$(timeout 3s nix --version 2>/dev/null || true)"
       [ -n "$nixver" ] && echo "Nix: $nixver"
     fi
 
     if command -v determinate-nixd >/dev/null 2>&1; then
-      det="$(determinate-nixd status 2>/dev/null | head -n 3 | tr '\n' ' ' | sed 's/[[:space:]]\+/ /g' || true)"
+      # determinate-nixd status talks to a daemon socket; guard with a timeout
+      # so a slow/absent daemon does not stall the SSH login.
+      det="$(timeout 3s determinate-nixd status 2>/dev/null | head -n 3 | tr '\n' ' ' | sed 's/[[:space:]]\+/ /g' || true)"
       [ -n "$det" ] && echo "Determinate: $det"
     fi
 
