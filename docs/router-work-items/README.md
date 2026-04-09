@@ -47,4 +47,4 @@ in parallel on separate worktrees.
 
 1. [`25-router-pxe-boot-architecture.md`](./25-router-pxe-boot-architecture.md) - `done`
 2. [`26-router-iventoy-evaluation.md`](./26-router-iventoy-evaluation.md) - `done`
-3. [`27-router-pxe-boot-module-plumbing.md`](./27-router-pxe-boot-module-plumbing.md) - `ready`
+3. [`27-router-pxe-boot-module-plumbing.md`](./27-router-pxe-boot-module-plumbing.md) - `in-progress`

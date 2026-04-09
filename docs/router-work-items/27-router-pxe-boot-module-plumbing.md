@@ -1,6 +1,6 @@
 # Router PXE Boot Module Plumbing
 
-Status: `ready`
+Status: `in-progress`
 Priority: `medium`
 Branch: `feat/router-pxe-boot-config`
 
