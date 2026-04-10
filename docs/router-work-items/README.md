@@ -45,8 +45,6 @@ in parallel on separate worktrees.
 
 ## Ranking
 
-1. [`25-technitium-dhcp-sync-hardening.md`](./25-technitium-dhcp-sync-hardening.md) - `in-progress`
-2. [`26-router-dashboard-runtime-repair.md`](./26-router-dashboard-runtime-repair.md) - `done`
-3. [`27-router-post-cutover-validation.md`](./27-router-post-cutover-validation.md) - `done`
-4. [`28-dhcp-provider-pluggable-observability.md`](./28-dhcp-provider-pluggable-observability.md) - `in-progress`
-5. [`29-router-caddy-source-drift-repair.md`](./29-router-caddy-source-drift-repair.md) - `ready`
+1. [`25-router-pxe-boot-architecture.md`](./25-router-pxe-boot-architecture.md) - `done`
+2. [`26-router-iventoy-evaluation.md`](./26-router-iventoy-evaluation.md) - `done`
+3. [`27-router-pxe-boot-module-plumbing.md`](./27-router-pxe-boot-module-plumbing.md) - `ready`
