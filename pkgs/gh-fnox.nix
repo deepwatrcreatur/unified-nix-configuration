@@ -45,16 +45,16 @@ let
         if [ -n "''${GITHUB_TOKEN:-}" ] && github_token_is_sane "$GITHUB_TOKEN"; then
           export GH_TOKEN="$GITHUB_TOKEN"
         else
-          token="$(fnox get GITHUB_TOKEN 2>/dev/null || true)"
-          if github_token_is_sane "$token"; then
+          token="$(load_token_from_file_if_sane "$agenix_token_file" || true)"
+          if [ -n "$token" ]; then
             export GH_TOKEN="$token"
           else
-            token="$(load_token_from_file_if_sane "$agenix_token_file" || true)"
+            token="$(load_token_from_file_if_sane "$token_file" || true)"
             if [ -n "$token" ]; then
               export GH_TOKEN="$token"
             else
-              token="$(load_token_from_file_if_sane "$token_file" || true)"
-              if [ -n "$token" ]; then
+              token="$(fnox get GITHUB_TOKEN 2>/dev/null || true)"
+              if github_token_is_sane "$token"; then
                 export GH_TOKEN="$token"
               fi
             fi
