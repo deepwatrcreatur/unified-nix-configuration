@@ -19,23 +19,21 @@ let
       token_file=''${XDG_CONFIG_HOME:-"$HOME/.config"}/git/github-token
 
       if [ -z "''${GH_TOKEN:-}" ]; then
+        _token=""
         if [ -n "''${GITHUB_TOKEN:-}" ]; then
-          export GH_TOKEN="$GITHUB_TOKEN"
-        elif [ -s "$agenix_token_file" ]; then
-          token="$(tr -d '\n' < "$agenix_token_file")"
-          if [ -n "$token" ]; then
-            export GH_TOKEN="$token"
-          fi
-        elif [ -s "$token_file" ]; then
-          token="$(tr -d '\n' < "$token_file")"
-          if [ -n "$token" ]; then
-            export GH_TOKEN="$token"
-          fi
-        else
-          token="$(fnox get GITHUB_TOKEN 2>/dev/null || true)"
-          if [ -n "$token" ]; then
-            export GH_TOKEN="$token"
-          fi
+          _token="$(printf '%s' "''${GITHUB_TOKEN}" | tr -d '[:space:]')"
+        fi
+        if [ -z "$_token" ] && [ -f "$agenix_token_file" ]; then
+          _token="$(tr -d '[:space:]' < "$agenix_token_file")"
+        fi
+        if [ -z "$_token" ] && [ -f "$token_file" ]; then
+          _token="$(tr -d '[:space:]' < "$token_file")"
+        fi
+        if [ -z "$_token" ]; then
+          _token="$(fnox get GITHUB_TOKEN 2>/dev/null || true)"
+        fi
+        if [ -n "$_token" ]; then
+          export GH_TOKEN="$_token"
         fi
       fi
 
