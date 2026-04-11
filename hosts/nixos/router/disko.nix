@@ -77,5 +77,25 @@
         };
       };
     };
+
+    disk.pxe-images = {
+      type = "disk";
+      device = lib.mkDefault "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi2";
+      content = {
+        type = "gpt";
+        partitions = {
+          images = {
+            size = "100%";
+            content = {
+              type = "filesystem";
+              format = "ext4";
+              # Mounted from configuration.nix so the router can keep serving
+              # PXE assets even if the disk is temporarily absent.
+              # Partition label is disk-pxe-images-images (disko convention).
+            };
+          };
+        };
+      };
+    };
   };
 }
