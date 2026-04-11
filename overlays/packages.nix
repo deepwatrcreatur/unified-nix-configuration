@@ -52,4 +52,21 @@
       fnox = final.fnox;
     };
   })
+
+  # Wrapped Claude Code CLI with fnox-backed API key lookup
+  (final: prev: {
+    claude-code-fnox = final.callPackage ../pkgs/claude-code-fnox.nix {
+      fnox = final.fnox;
+    };
+  })
+
+  # Wrapped OpenCode CLI with fnox-backed Z_AI_API_KEY lookup.
+  # Uses pkgs.llm-agents.opencode (the repo-managed version) instead of the
+  # fnox-flake's own bundled opencode, which lags behind the overlay version.
+  (final: prev: {
+    opencode-zai = final.callPackage ../pkgs/opencode-zai.nix {
+      opencode = final.llm-agents.opencode;
+      fnox = final.fnox;
+    };
+  })
 ]
