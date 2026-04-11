@@ -39,8 +39,7 @@ let
       "impure-derivations"
       "ca-derivations"
       "pipe-operators"
-    ]
-    ++ lib.optionals (!isContainer) [ "cgroups" ];
+    ];
 in
 {
   imports = [
@@ -88,29 +87,20 @@ in
 
     # Substituters - exclude local cache on the cache server itself to avoid circular dependency
     substituters =
-      (if !isCacheServer then
+      if !isCacheServer then
         if enableAttic then
           atticCache.defaultSubstituters { includeNixCi = enableNixCi; }
         else
           # Fallback when Attic is disabled: keep using cache.nixos.org
-          [ atticCache.nixosCacheUrl ]
+          [ atticCache.nixosCacheUrl ] ++ atticCache.secondarySubstituters
       else
-        [ ])
-      ++ [
-        "https://cache.numtide.com" # llm-agents (claude-code, codex, rtk, etc.)
-        "https://cuda-maintainers.cachix.org"
-        "https://cache.garnix.io/"
-        "https://nix-community.cachix.org/"
-        "https://hyprland.cachix.org/"
-      ];
+        [ ];
 
     trusted-public-keys =
-      # When Attic is disabled, fall back to the full set of official keys so
-      # cache.nixos.org remains usable.
-      (if enableAttic then
+      if enableAttic then
         atticCache.defaultTrustedPublicKeys { includeNixCi = enableNixCi; }
       else
-        cacheTrust.official);
+        cacheTrust.official;
 
     # Access tokens - only on non-cache-server hosts
     access-tokens =
@@ -121,7 +111,9 @@ in
 
   # Container-specific settings
   nix.settings.sandbox = lib.mkIf isContainer false;
-  nix.settings.use-cgroups = lib.mkIf (!isContainer) true;
+  # Default to not using cgroups until all callers consistently enable the
+  # corresponding experimental feature. Hosts that need it can override.
+  nix.settings.use-cgroups = lib.mkIf (!isContainer) false;
   # Keep the daemon environment in sync with the final merged nix.settings value.
   # Some hosts (notably inference VMs) intentionally override experimental
   # features, and duplicating that override here causes conflicting definitions.
