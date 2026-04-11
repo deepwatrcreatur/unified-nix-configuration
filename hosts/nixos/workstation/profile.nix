@@ -53,8 +53,10 @@
   };
 
   programs.linuxbrew = {
-    enableSystemSetup = true;
-    owner = "deepwatrcreatur";
+    # The generated setup hook recursively chowns the entire Linuxbrew prefix
+    # on every activation, which causes workstation switches to time out.
+    # The prefix already exists with the correct ownership on this host.
+    enableSystemSetup = false;
   };
 
   programs.wezterm.extraConfig = lib.mkAfter ''
@@ -72,6 +74,9 @@
   boot.loader.systemd-boot.consoleMode = "auto";
 
   boot.kernelModules = [ "amdgpu" ];
+  # Disable GFX power gating — prevents the amdgpu SMU gfxoff hang that causes
+  # "GPU reset failed: device lost from bus" and a black screen requiring reboot.
+  boot.kernelParams = [ "amdgpu.gfxoff=0" ];
   boot.blacklistedKernelModules = [
     "virtio_gpu"
     "bochs_drm"
