@@ -50,3 +50,16 @@ This is now an operational tooling gap, not just a cleanup idea.
 
 This should build on the earlier wrapper-policy and token-health work instead
 of reopening those design questions.
+
+## Current implementation state
+
+- Active branch: `fix/tooling-gh-fnox-wrapper`
+- Worktree: `/tmp/unified-gh-fnox-wrapper`
+- PR: #97 (`fix(tooling): prefer managed token files in gh wrapper`)
+- CI: inventory/module/security checks passing; GitHub reports `mergeable_state = dirty` (needs rebase/refresh against `main`).
+
+## Next actions
+
+- Rebase `fix/tooling-gh-fnox-wrapper` onto `main` and resolve conflicts.
+- Re-run inventory/module checks locally if conflict resolution touches Nix modules.
+- If CI remains green and local checks pass, merge PR #97 and then flip this item to `done`.

@@ -1,6 +1,6 @@
 # 25 Agent Build Cache Fallback And Trust
 
-Status: `ready`
+Status: `in-progress`
 
 Suggested branch: `fix/tooling-agent-build-cache-fallback`
 
@@ -55,3 +55,16 @@ and fall back from substituters.
 This is the tooling-side counterpart to the router-side lease/cutover work.
 The router items fix why `attic-cache` moved; this item fixes how agents behave
 when that still happens.
+
+## Current implementation state
+
+- Active branch: `fix/tooling-agent-build-cache-fallback`
+- Worktree: `/tmp/unified-build-cache-fallback`
+- PR: #100 (`fix(tooling): align cache trust and fallback behavior`)
+- CI: inventory/module/security checks passing; GitHub reports `mergeable_state = dirty` (needs rebase/refresh against `main`).
+
+## Next actions
+
+- Rebase `fix/tooling-agent-build-cache-fallback` onto `main` and resolve conflicts.
+- Re-run inventory/module checks locally after conflict resolution.
+- If CI remains green and local checks pass, merge PR #100 and then flip this item to `done`.
