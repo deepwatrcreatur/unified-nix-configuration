@@ -60,6 +60,23 @@ in
     '';
   };
 
+  services.iventoy = {
+    enable = true;
+    isoDir = "/srv/pxe/images";
+    openFirewall = false;
+  };
+
+  services.router-firewall = {
+    trustedTcpPorts = [
+      16000
+      26000
+    ];
+    trustedUdpPorts = [
+      69
+      4011
+    ];
+  };
+
   # Stable NIC identity via systemd .link files.
   #
   # Physical passthrough NICs are pinned by MAC so that PCI slot renumbering

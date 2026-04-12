@@ -5,6 +5,7 @@
 let
   topology = config.router.topology;
   routerHost = topology.routerHost;
+  iventoy = config.services.iventoy;
 in
 {
   networking.hostName = "router";
@@ -35,8 +36,15 @@ in
       routerAddress = routerHost.ip;
       domainName = topology.domain;
       domainSearchList = [ topology.domain ];
+      # iVentoy External mode: clients fetch this virtual loader from the
+      # router, and iVentoy selects the real BIOS/UEFI loader after snooping
+      # the DHCP request.
+      serverAddress = routerHost.ip;
+      serverHostName = "router.${topology.domain}";
+      bootFileName = "iventoy_loader_${toString iventoy.httpPort}";
       useThisDnsServer = true;
       ntpServers = [ routerHost.ip ];
+      tftpServerAddresses = [ routerHost.ip ];
       # Many Wi-Fi and mobile clients now use locally administered/randomized
       # MACs; blocking them causes silent "no lease" failures.
       blockLocallyAdministeredMacAddresses = false;
