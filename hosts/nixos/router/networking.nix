@@ -35,8 +35,15 @@ in
       routerAddress = routerHost.ip;
       domainName = topology.domain;
       domainSearchList = [ topology.domain ];
+      # iVentoy External mode: clients fetch this virtual loader from the
+      # router, and iVentoy selects the real BIOS/UEFI loader after snooping
+      # the DHCP request. Keep this aligned with iVentoy's HTTP port.
+      serverAddress = routerHost.ip;
+      serverHostName = "router.${topology.domain}";
+      bootFileName = "iventoy_loader_16000";
       useThisDnsServer = true;
       ntpServers = [ routerHost.ip ];
+      tftpServerAddresses = [ routerHost.ip ];
       # Many Wi-Fi and mobile clients now use locally administered/randomized
       # MACs; blocking them causes silent "no lease" failures.
       blockLocallyAdministeredMacAddresses = false;

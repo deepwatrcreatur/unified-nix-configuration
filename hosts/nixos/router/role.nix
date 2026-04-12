@@ -23,6 +23,10 @@ let
   lanListenAddress = builtins.head (lib.splitString "/" lanIpv4Address);
   managementListenAddress = builtins.head (lib.splitString "/" managementIpv4Address);
   managementDevice = "ens18";
+  managementNetwork = topology.networks.management;
+  operatorStableSshKey = lib.strings.trim (
+    builtins.readFile ../../../ssh-keys/deepwatrcreatur-stable-identity.pub
+  );
 
   secrets = optSec.mkSecrets {
     cloudflare-api-key = {
@@ -47,18 +51,24 @@ let
   ) topology.hosts;
 in
 {
-  imports = [ ../../../modules/nixos/router/common.nix ];
+  imports = [
+    ../../../modules/nixos/router/common.nix
+    ../../../modules/nixos/services/iventoy.nix
+  ];
 
   # Recovery invariants: these assertions fail the build if the properties
   # that make the router usable in standby/dev mode are ever regressed.
   assertions = [
     {
       assertion =
-        getAttrByPath
-          [ "systemd" "network" "networks" "20-router-lan" "networkConfig" "ConfigureWithoutCarrier" ]
-          false
-          config
-        == true;
+        getAttrByPath [
+          "systemd"
+          "network"
+          "networks"
+          "20-router-lan"
+          "networkConfig"
+          "ConfigureWithoutCarrier"
+        ] false config == true;
       message = ''
         Router invariant violated: 20-router-lan must have ConfigureWithoutCarrier = true.
         Without this, the LAN static IP disappears when the data-plane cable is unplugged,
@@ -241,20 +251,21 @@ in
   };
 
   services.router-technitium = {
-    dhcpReservations = lib.mapAttrs (
-      name: host: {
-        scope = host.dhcpReservation.scope or "LAN";
-        macAddress = host.dhcpReservation.macAddress;
-        ipAddress = host.ip;
-        hostName = name;
-        comments = host.description or "";
-      }
-    ) reservableHosts;
+    dhcpReservations = lib.mapAttrs (name: host: {
+      scope = host.dhcpReservation.scope or "LAN";
+      macAddress = host.dhcpReservation.macAddress;
+      ipAddress = host.ip;
+      hostName = name;
+      comments = host.description or "";
+    }) reservableHosts;
   };
 
   services.router-firewall = {
     enable = true;
-    trustedTcpPorts = [ 80 443 ];
+    trustedTcpPorts = [
+      80
+      443
+    ];
     hairpinNat.enable = true;
     trustedUdpPorts = [ ];
     extraLanLocalRules = ''
@@ -270,12 +281,10 @@ in
 
   services.router-dashboard = {
     refreshInterval = lib.mkDefault 10;
-    interfaces = map
-      (iface: {
-        inherit (iface) device label;
-        role = if iface.role == "management" then "mgmt" else iface.role;
-      })
-      (lib.attrValues config.services.router-optimizations.interfaces);
+    interfaces = map (iface: {
+      inherit (iface) device label;
+      role = if iface.role == "management" then "mgmt" else iface.role;
+    }) (lib.attrValues config.services.router-optimizations.interfaces);
     services = [
       "systemd-networkd"
       "sshd"
@@ -443,12 +452,14 @@ in
 
   services.openssh = {
     enable = true;
-    settings.PermitRootLogin = "prohibit-password";
+    settings.PermitRootLogin = "no";
     extraConfig = ''
-      Match Address ${lanNetwork.cidr}
-        PermitRootLogin yes
+      Match Address ${lanNetwork.cidr},${managementNetwork.cidr}
+        PermitRootLogin prohibit-password
     '';
   };
+
+  users.users.root.openssh.authorizedKeys.keys = [ operatorStableSshKey ];
 
   services.fail2ban = {
     enable = true;

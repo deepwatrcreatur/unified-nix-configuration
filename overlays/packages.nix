@@ -8,6 +8,11 @@
     proxmenux = prev.callPackage ../pkgs/proxmenux.nix { };
   })
 
+  # iVentoy Free Edition (PXE ISO menu server)
+  (final: prev: {
+    iventoy-free = prev.callPackage ../pkgs/iventoy-free.nix { };
+  })
+
   # Factory.ai Droid CLI
   (final: prev: {
     factory-droid = prev.callPackage ../pkgs/factory-droid.nix { };
