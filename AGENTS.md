@@ -150,6 +150,8 @@ For testing changes across hosts (especially build failures):
 ### Agent Tooling
 These are installed across hosts (or intended to be):
 
+For detailed managed authentication paths (including `gemini-cli`), see `docs/tooling-managed-auth.md`.
+
 - `rg` (ripgrep): fast text search
 - `fd`: fast file search
 - `sg` (ast-grep): AST-aware search/replace

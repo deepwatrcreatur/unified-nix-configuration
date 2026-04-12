@@ -1,6 +1,6 @@
 # 27 Gemini CLI Managed Auth Path
 
-Status: `ready`
+Status: `done` (documented in [`docs/tooling-managed-auth.md`](../tooling-managed-auth.md))
 
 Suggested branch: `fix/tooling-gemini-cli-auth-path`
 
