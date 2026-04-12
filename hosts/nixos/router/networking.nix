@@ -5,6 +5,7 @@
 let
   topology = config.router.topology;
   routerHost = topology.routerHost;
+  iventoy = config.services.iventoy;
 in
 {
   networking.hostName = "router";
@@ -37,10 +38,10 @@ in
       domainSearchList = [ topology.domain ];
       # iVentoy External mode: clients fetch this virtual loader from the
       # router, and iVentoy selects the real BIOS/UEFI loader after snooping
-      # the DHCP request. Keep this aligned with iVentoy's HTTP port.
+      # the DHCP request.
       serverAddress = routerHost.ip;
       serverHostName = "router.${topology.domain}";
-      bootFileName = "iventoy_loader_16000";
+      bootFileName = "iventoy_loader_${toString iventoy.httpPort}";
       useThisDnsServer = true;
       ntpServers = [ routerHost.ip ];
       tftpServerAddresses = [ routerHost.ip ];

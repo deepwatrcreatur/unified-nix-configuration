@@ -84,32 +84,32 @@ in
       preStart = ''
         set -euo pipefail
 
-        install -d -m 0755 ${cfg.stateDir}
-        install -d -m 0755 ${cfg.stateDir}/data ${cfg.stateDir}/log/history ${cfg.isoDir}
+        install -d -m 0755 "${cfg.stateDir}"
+        install -d -m 0755 "${cfg.stateDir}/data" "${cfg.stateDir}/log/history"
 
-        rm -rf ${cfg.stateDir}/lib ${cfg.stateDir}/doc
-        cp -a ${cfg.package}/share/iventoy/lib ${cfg.stateDir}/lib
-        cp -a ${cfg.package}/share/iventoy/doc ${cfg.stateDir}/doc
-        cp -a ${cfg.package}/share/iventoy/iventoy.sh ${cfg.stateDir}/iventoy.sh
+        rm -rf "${cfg.stateDir}/lib" "${cfg.stateDir}/doc"
+        cp -a "${cfg.package}/share/iventoy/lib" "${cfg.stateDir}/lib"
+        cp -a "${cfg.package}/share/iventoy/doc" "${cfg.stateDir}/doc"
+        cp -a "${cfg.package}/share/iventoy/iventoy.sh" "${cfg.stateDir}/iventoy.sh"
 
-        if [ ! -e ${cfg.stateDir}/user ]; then
-          cp -a ${cfg.package}/share/iventoy/user ${cfg.stateDir}/user
+        if [ ! -e "${cfg.stateDir}/user" ]; then
+          cp -a "${cfg.package}/share/iventoy/user" "${cfg.stateDir}/user"
         fi
-        if [ ! -e ${cfg.stateDir}/data/iventoy.dat ]; then
-          cp -a ${cfg.package}/share/iventoy/data/iventoy.dat ${cfg.stateDir}/data/iventoy.dat
+        if [ ! -e "${cfg.stateDir}/data/iventoy.dat" ]; then
+          cp -a "${cfg.package}/share/iventoy/data/iventoy.dat" "${cfg.stateDir}/data/iventoy.dat"
         fi
-        if [ ! -e ${cfg.stateDir}/data/mac.db ]; then
-          cp -a ${cfg.package}/share/iventoy/data/mac.db ${cfg.stateDir}/data/mac.db
+        if [ ! -e "${cfg.stateDir}/data/mac.db" ]; then
+          cp -a "${cfg.package}/share/iventoy/data/mac.db" "${cfg.stateDir}/data/mac.db"
         fi
 
-        rm -rf ${cfg.stateDir}/iso
-        ln -s ${cfg.isoDir} ${cfg.stateDir}/iso
+        rm -rf "${cfg.stateDir}/iso"
+        ln -s "${cfg.isoDir}" "${cfg.stateDir}/iso"
       '';
 
       serviceConfig = {
         Type = "forking";
         WorkingDirectory = cfg.stateDir;
-        PIDFile = "/run/iventoy.pid";
+        PIDFile = "/var/run/iventoy.pid";
         ExecStart = "${pkgs.bash}/bin/bash ${cfg.stateDir}/iventoy.sh -R start";
         ExecStop = "${pkgs.bash}/bin/bash ${cfg.stateDir}/iventoy.sh stop";
         Restart = "on-failure";

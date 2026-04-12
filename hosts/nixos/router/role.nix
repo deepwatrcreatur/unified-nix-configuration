@@ -23,7 +23,6 @@ let
   lanListenAddress = builtins.head (lib.splitString "/" lanIpv4Address);
   managementListenAddress = builtins.head (lib.splitString "/" managementIpv4Address);
   managementDevice = "ens18";
-  managementNetwork = topology.networks.management;
   operatorStableSshKey = lib.strings.trim (
     builtins.readFile ../../../ssh-keys/deepwatrcreatur-stable-identity.pub
   );
@@ -45,6 +44,7 @@ let
 
   topology = config.router.topology;
   lanNetwork = topology.networks.lan;
+  managementNetwork = topology.networks.management;
   mkFqdn = label: "${label}.${topology.domain}";
   reservableHosts = lib.filterAttrs (
     _name: host: (host.dhcpReservation or null) != null && (host.ip or null) != null

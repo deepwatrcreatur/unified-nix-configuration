@@ -6,6 +6,7 @@
 }:
 let
   system = "x86_64-linux";
+  iventoyOverlay = import ../overlays/iventoy.nix;
   pkgs = import inputs.nixpkgs {
     inherit system;
     config = commonNixpkgsConfig;
@@ -15,9 +16,7 @@ in
 {
   nixosModules.iventoy = ../modules/nixos/services/iventoy.nix;
 
-  overlays.iventoy = final: prev: {
-    iventoy-free = prev.callPackage ../pkgs/iventoy-free.nix { };
-  };
+  overlays.iventoy = iventoyOverlay;
 
   packages.${system}.iventoy-free = pkgs.iventoy-free;
 }

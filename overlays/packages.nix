@@ -9,9 +9,7 @@
   })
 
   # iVentoy Free Edition (PXE ISO menu server)
-  (final: prev: {
-    iventoy-free = prev.callPackage ../pkgs/iventoy-free.nix { };
-  })
+  (import ./iventoy.nix)
 
   # Factory.ai Droid CLI
   (final: prev: {
