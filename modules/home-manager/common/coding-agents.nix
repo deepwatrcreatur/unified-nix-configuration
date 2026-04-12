@@ -11,7 +11,10 @@
   imports = [
     inputs.nix-rtk.homeManagerModules.default
     inputs.qmd.homeModules.default
+    ./agent-guards.nix
   ];
+
+  programs.agent-guards.enable = lib.mkDefault true;
 
   # Enable RTK hooks with Claude enabled by default
   programs.rtk-hooks = {
@@ -27,35 +30,31 @@
   };
 
   # Install coding agent packages from llm-agents overlay
-  home.packages =
-    (with pkgs.llm-agents; [
-      # Core agents
-      rtk
-      claude-code
-      opencode
-      codex
-      gemini-cli
-      amp
-      copilot-cli
-      cursor-agent
-      forge
-      goose-cli
-      kilocode-cli
-      pi
-      crush
-      agent-deck
-      workmux
+  home.packages = with pkgs.llm-agents; [
+    # Core agents
+    rtk
+    claude-code
+    opencode
+    codex
+    gemini-cli
+    amp
+    copilot-cli
+    cursor-agent
+    forge
+    goose-cli
+    kilocode-cli
+    pi
+    crush
+    agent-deck
+    workmux
 
-      # Usage trackers
-      ccusage
-      ccusage-amp
-      ccusage-codex
-      ccusage-opencode
+    # Usage trackers
+    ccusage
+    ccusage-amp
+    ccusage-codex
+    ccusage-opencode
 
-      # Utilities
-      ccstatusline
-    ])
-    ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-      pkgs.bubblewrap
-    ];
+    # Utilities
+    ccstatusline
+  ];
 }

@@ -70,6 +70,10 @@ in
             "${config.home.homeDirectory}/.local/share/agenix-user-secrets/factory-api-key"
             "/run/agenix/factory-api-key"
           ];
+          ANTHROPIC_API_KEY = [
+            "${config.home.homeDirectory}/.local/share/agenix-user-secrets/anthropic-api-key"
+            "/run/agenix/anthropic-api-key"
+          ];
         };
 
         # This repo provides its own gh/bw/droid/pbs wrappers that expose the
@@ -83,6 +87,9 @@ in
               "bw-fnox"
               "factory-droid-fnox"
               "proxmox-backup-client-fnox"
+              # repo-managed opencode-zai wraps pkgs.llm-agents.opencode instead
+              # of the fnox-flake's own pinned version, keeping the overlay version active
+              "opencode-zai"
             ]
         );
       };

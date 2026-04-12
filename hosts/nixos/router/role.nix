@@ -27,6 +27,8 @@ let
   secrets = optSec.mkSecrets {
     cloudflare-api-key = {
       file = ../../../secrets-agenix/cloudflare_ddns_API_token.age;
+      group = "router-dashboard";
+      mode = "0440";
     };
     technitium-api-key = {
       file = ../../../secrets-agenix/technitium-api-key.age;
@@ -268,6 +270,12 @@ in
 
   services.router-dashboard = {
     refreshInterval = lib.mkDefault 10;
+    interfaces = map
+      (iface: {
+        inherit (iface) device label;
+        role = if iface.role == "management" then "mgmt" else iface.role;
+      })
+      (lib.attrValues config.services.router-optimizations.interfaces);
     services = [
       "systemd-networkd"
       "sshd"

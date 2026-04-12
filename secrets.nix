@@ -118,6 +118,7 @@ in {
   "secrets-agenix/openrouter-api-key.age".publicKeys = userOnlySecrets;
   "secrets-agenix/z-ai-api-key.age".publicKeys = userOnlySecrets;
   "secrets-agenix/opencode-zen-api-key.age".publicKeys = userOnlySecrets;
+  "secrets-agenix/anthropic-api-key.age".publicKeys = userOnlySecrets;
   "secrets-agenix/atuin-key-b64.age".publicKeys = userOnlySecrets;
   "secrets-agenix/oauth-creds.age".publicKeys = userOnlySecrets;
   "secrets-agenix/bitwarden-data.age".publicKeys = userOnlySecrets;

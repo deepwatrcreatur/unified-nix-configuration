@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
 
 {
   # Declarative CUPS queue so it persists across nixos-rebuild/service restarts.
@@ -15,11 +15,14 @@
       hplip
       sane-airscan
     ];
-    # Since Avahi is disabled in the profile, we manually define the scanner IP
-    config.airscan = {
-      "HP PageWide Pro 477dn MFP" = "http://10.10.21.56:80/eSCL/";
-    };
   };
+
+  # Since Avahi is disabled in the workstation profile, define the scanner
+  # explicitly for sane-airscan instead of relying on automatic discovery.
+  environment.etc."sane.d/airscan.conf".text = ''
+    [devices]
+    "HP PageWide Pro 477dn MFP" = http://10.10.21.56:80/eSCL/, eSCL
+  '';
 
   environment.systemPackages = with pkgs; [
     simple-scan

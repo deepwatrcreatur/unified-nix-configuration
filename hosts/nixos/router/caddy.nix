@@ -155,6 +155,13 @@ in
           respond "Access restricted to home LAN and Tailnet" 403
         '';
       };
+
+      "http://${routerHost.ip}" = {
+        extraConfig = ''
+          root * /srv/pxe
+          file_server browse
+        '';
+      };
     };
   };
 

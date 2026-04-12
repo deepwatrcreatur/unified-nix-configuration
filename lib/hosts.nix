@@ -148,10 +148,40 @@
       description = "Proxmox node - ASRock Z170 ITX/AC";
     };
 
+    # Access Points
+    ap-ruqayya = {
+      ip = "10.10.11.20";
+      dhcpReservation = {
+        macAddress = "54:D7:E3:C7:51:80";
+        scope = "LAN";
+      };
+      description = "AP25 Ruqayya Bedroom";
+    };
+    ap-nosheen-living = {
+      ip = "10.10.11.21";
+      dhcpReservation = {
+        macAddress = "A8:5B:F7:C2:0A:42";
+        scope = "LAN";
+      };
+      description = "AP22 Nosheen Living Room";
+    };
+    ap-nosheen-bedroom = {
+      ip = "10.10.11.22";
+      dhcpReservation = {
+        macAddress = "FC:7F:F1:CC:E1:CA";
+        scope = "LAN";
+      };
+      description = "AP11 Nosheen Bedroom";
+    };
+
     # LXC Containers
     attic-cache = {
       ip = "10.10.11.39";
       sshUser = "root";
+      dhcpReservation = {
+        macAddress = "BC:24:11:CE:9D:D6";
+        scope = "LAN";
+      };
       aliases = [ "cache" "nix-cache" ];
       description = "Nix binary cache server";
     };
@@ -172,6 +202,10 @@
     homeserver = {
       ip = "10.10.11.69";
       sshUser = "deepwatrcreatur";
+      dhcpReservation = {
+        macAddress = "BC:24:11:A9:BB:ED";
+        scope = "LAN";
+      };
       aliases = [ "semaphore" ];
       description = "Home automation, Semaphore Ansible UI";
     };
