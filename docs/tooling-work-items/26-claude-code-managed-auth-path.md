@@ -1,6 +1,6 @@
 # 26 Claude Code Managed Auth Path
 
-Status: `ready`
+Status: `done`
 
 Suggested branch: `fix/tooling-claude-code-auth-path`
 
@@ -38,6 +38,18 @@ documented wrapper policy and the actual agent toolchain.
   or the repo contains a clear documented no-wrapper decision
 - shell aliases or package selection resolve to the intended command path
 - fallback/debug behavior remains obvious
+
+## Implementation (current)
+
+- Added a `claude-code-fnox` wrapper package that injects `ANTHROPIC_API_KEY`
+  from the repo-managed `fnox` secret store when not already set.
+- Wired `claude-code` to prefer the wrapper via `tool-aliases.nix` when
+  available, keeping the raw binary accessible for debugging.
+- Extended `fnox` seed sources so `ANTHROPIC_API_KEY` can be provisioned from
+  agenix user secrets or system `/run/agenix/anthropic-api-key` paths.
+- Wired the `anthropic-api-key` secret via `secrets.nix` and
+  `services.agenix-user-secrets` on `workstation` so fnox has a consistent
+  agenix-backed source.
 
 ## Notes
 
