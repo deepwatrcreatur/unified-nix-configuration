@@ -53,9 +53,8 @@ let
     # opencode-raw continues to call the unwrapped binary (see shell-aliases.nix).
     # fnox currently only ships an opencode wrapper; other agent CLIs stay raw.
     # opencode-zai is provided by fnox-flake via modules/home-manager/common/fnox.nix.
-    // (lib.optionalAttrs (config.programs.fnox.enable or false) {
-      opencode = "opencode-zai";
-    });
+    // (lib.optionalAttrs (config.programs.fnox.enable or false) { opencode = "opencode-zai"; })
+    // (lib.optionalAttrs (pkgs ? claude-code-fnox) { claude-code = "claude-code-fnox"; });
 in
 {
   options.custom.toolAliases = {

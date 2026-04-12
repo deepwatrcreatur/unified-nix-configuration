@@ -150,6 +150,8 @@ For testing changes across hosts (especially build failures):
 ### Agent Tooling
 These are installed across hosts (or intended to be):
 
+For detailed managed authentication paths (including `gemini-cli`), see `docs/tooling-managed-auth.md`.
+
 - `rg` (ripgrep): fast text search
 - `fd`: fast file search
 - `sg` (ast-grep): AST-aware search/replace
@@ -158,8 +160,17 @@ These are installed across hosts (or intended to be):
 - `nh`, `nom` (nix-output-monitor), `nvd`, `nix-tree`: Nix debugging/inspection
 - `opencode`, `claude-code`, `gemini-cli`, `droid`: agent CLIs (host-dependent)
 
-For detailed managed authentication paths (including `gemini-cli`), see
-`docs/tooling-managed-auth.md`.
+#### Claude Code authentication
+
+- Preferred command: `claude-code` (aliased to a `claude-code-fnox` wrapper when
+  available).
+- Auth is via `ANTHROPIC_API_KEY`, normally sourced by `fnox` from
+  `~/.local/share/agenix-user-secrets/anthropic-api-key` or
+  `/run/agenix/anthropic-api-key`.
+- Operators should provision that secret via agenix-user-secrets; agents should
+  not export long-lived Anthropic keys manually in shells.
+- For debugging against the raw CLI, bypass the alias with `command claude-code`
+  in a shell.
 
 **Recent additions**
 - Added `ast-grep` (`sg`) to the common tool set.

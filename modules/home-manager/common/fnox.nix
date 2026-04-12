@@ -70,12 +70,9 @@ in
             "${config.home.homeDirectory}/.local/share/agenix-user-secrets/factory-api-key"
             "/run/agenix/factory-api-key"
           ];
-          SEED_GEMINI_OAUTH = [
-            "${config.home.homeDirectory}/.local/share/agenix-user-secrets/oauth-creds"
-            "${config.home.homeDirectory}/.gemini/oauth_creds.json"
-          ];
-          SEED_CLAUDE_CONFIG = [
-            "${config.home.homeDirectory}/.claude/config.json"
+          ANTHROPIC_API_KEY = [
+            "${config.home.homeDirectory}/.local/share/agenix-user-secrets/anthropic-api-key"
+            "/run/agenix/anthropic-api-key"
           ];
         };
 
@@ -90,6 +87,9 @@ in
               "bw-fnox"
               "factory-droid-fnox"
               "proxmox-backup-client-fnox"
+              # repo-managed opencode-zai wraps pkgs.llm-agents.opencode instead
+              # of the fnox-flake's own pinned version, keeping the overlay version active
+              "opencode-zai"
             ]
         );
       };
