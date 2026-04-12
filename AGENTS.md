@@ -158,6 +158,9 @@ These are installed across hosts (or intended to be):
 - `nh`, `nom` (nix-output-monitor), `nvd`, `nix-tree`: Nix debugging/inspection
 - `opencode`, `claude-code`, `gemini-cli`, `droid`: agent CLIs (host-dependent)
 
+For detailed managed authentication paths (including `gemini-cli`), see
+`docs/tooling-managed-auth.md`.
+
 **Recent additions**
 - Added `ast-grep` (`sg`) to the common tool set.
 
