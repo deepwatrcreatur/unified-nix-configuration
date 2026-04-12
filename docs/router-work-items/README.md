@@ -50,3 +50,6 @@ in parallel on separate worktrees.
 3. [`27-router-post-cutover-validation.md`](./27-router-post-cutover-validation.md) - `done`
 4. [`28-dhcp-provider-pluggable-observability.md`](./28-dhcp-provider-pluggable-observability.md) - `done`
 5. [`29-router-caddy-source-drift-repair.md`](./29-router-caddy-source-drift-repair.md) - `done`
+6. [`28-router-dashboard-review-hardening.md`](./28-router-dashboard-review-hardening.md) - `ready`
+7. [`29-router-cutover-validation-hardening.md`](./29-router-cutover-validation-hardening.md) - `ready`
+8. [`27-router-pxe-boot-module-plumbing.md`](./27-router-pxe-boot-module-plumbing.md) - `ready`

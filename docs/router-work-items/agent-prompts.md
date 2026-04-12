@@ -447,103 +447,67 @@ Deliver:
 - branch commit(s)
 - concise summary of the chosen support boundary
 
-## Prompt 25: Technitium DHCP Sync Hardening
+## Prompt 25: Router PXE Boot Architecture
 
-Work on [`25-technitium-dhcp-sync-hardening.md`](./25-technitium-dhcp-sync-hardening.md).
+Work on [`25-router-pxe-boot-architecture.md`](./25-router-pxe-boot-architecture.md).
 
-Create a branch named `fix/router-technitium-dhcp-sync-hardening`.
+Create a branch named `docs/router-pxe-boot-architecture`.
 
 Task:
-- harden the `router-technitium` DHCP sync behavior in
-  `nix-router-optimized`
-- make convergence and failure semantics explicit for scopes and reservations
+- design the module and service boundary for PXE/netboot support driven from
+  Nix
+- decide what should live in `nix-router-optimized` versus this repo
+- leave a concrete recommendation for the first implementation PR
 
 Important constraints:
-- treat this as upstream-quality module work
-- keep dashboard and host-local router changes out of the branch
-- optimize for a PR and bot review, not an unreviewed direct merge
+- do not implement the full PXE stack in this task
+- keep the result grounded in the current router/DHCP model
+- make BIOS/UEFI expectations explicit rather than hand-waving them
 
 Deliver:
 - branch commit(s)
-- PR-ready summary of what convergence cases were handled
+- concise architecture note
+- explicit recommendation for the first implementation slice
 
-## Prompt 26: Router Dashboard Runtime Repair
+## Prompt 26: Router iVentoy Evaluation
 
-Work on [`26-router-dashboard-runtime-repair.md`](./26-router-dashboard-runtime-repair.md).
+Work on [`26-router-iventoy-evaluation.md`](./26-router-iventoy-evaluation.md).
 
-Create a branch named `fix/router-dashboard-runtime-repair`.
+Create a branch named `docs/router-iventoy-evaluation`.
 
 Task:
-- repair the current router-dashboard runtime regressions around interface
-  cards, fail2ban status, and Caddy token visibility
+- evaluate whether iVentoy is a good fit for the homelab PXE goal
+- compare it to a simpler native PXE/TFTP/HTTP path where relevant
+- recommend whether to pursue, defer, or reject it for this repo
 
 Important constraints:
-- keep the fix narrow and operational
-- split upstream-vs-host-local changes cleanly if both repos are touched
-- do not mix Technitium DHCP sync logic into this branch
+- keep this as an evaluation task, not a packaging sprint
+- optimize for this repo's operational model rather than generic feature lists
+- capture packaging and Nix integration unknowns clearly
 
 Deliver:
 - branch commit(s)
-- short live-router verification note
+- short decision note with risks and recommendation
 
-## Prompt 27: Router Post-Cutover Validation
+## Prompt 27: Router PXE Boot Module Plumbing
 
-Work on [`27-router-post-cutover-validation.md`](./27-router-post-cutover-validation.md).
+Work on [`27-router-pxe-boot-module-plumbing.md`](./27-router-pxe-boot-module-plumbing.md).
 
-Create a branch named `ops/router-post-cutover-validation`.
-
-Task:
-- define and, if useful, lightly automate the post-cutover checks that catch
-  DHCP-reservation-dependent failures such as `attic-cache` landing on the
-  wrong address
-
-Important constraints:
-- keep this lightweight and operator-facing
-- do not turn it into a full integration test harness
-- document blocking vs advisory checks clearly
-
-Deliver:
-- branch commit(s)
-- concise validation checklist and any helper command/script additions
-
-## Prompt 28: DHCP Provider Pluggable Observability
-
-Work on [`28-dhcp-provider-pluggable-observability.md`](./28-dhcp-provider-pluggable-observability.md).
-
-Create a branch named `design/router-dhcp-provider-observability`.
+Create a branch named `feat/router-pxe-boot-config`.
 
 Task:
-- design how router-dashboard and related diagnostics should expose DHCP leases
-  and status when DHCP may come from Technitium or Kea
+- implement the first approved PXE configuration surface after the architecture
+  and iVentoy evaluation work is done
+- keep the feature modular and disabled by default
 
 Important constraints:
-- keep this as architecture/design work
-- do not implement Kea in this task
-- avoid cementing Technitium-specific assumptions into the future boundary
-
-Deliver:
-- branch commit(s)
-- concise design note with follow-up implementation slices
-
-## Prompt 29: Router Caddy Source Drift Repair
-
-Work on [`29-router-caddy-source-drift-repair.md`](./29-router-caddy-source-drift-repair.md).
-
-Create a branch named `fix/router-caddy-source-drift`.
-
-Task:
-- repair the current router rebuild failure caused by the Caddy-with-plugins
-  fixed-output hash mismatch
-- keep the change narrow and explain the source of the drift
-
-Important constraints:
-- do not mix in unrelated reverse-proxy or router refactors
-- treat this as an immediate rebuild blocker
-- prefer a deterministic pinned fix over a speculative workaround
+- do not fold in unrelated DHCP redesign work
+- keep the first slice narrow and operator-comprehensible
 
 Validation target:
-- router build progresses past the current Caddy derivation failure
+- the PXE feature evaluates cleanly
+- docs show one concrete enablement path
 
 Deliver:
 - branch commit(s)
-- short note on what drifted and what was pinned or regenerated
+- short note describing what PXE path is supported first
