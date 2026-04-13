@@ -176,6 +176,9 @@ For detailed managed authentication paths (including `gemini-cli`), see `docs/to
 - Added `ast-grep` (`sg`) to the common tool set.
 - Added `cass-session-search` for CASS-style search across local agent
   sessions; see `docs/cass-session-search.md` for usage and privacy notes.
+- Added `cm-procedural-memory.md` as a lightweight cross-agent procedural
+  memory layer; see that doc for when and how to capture reusable
+  procedures.
 
 ### Git Workflow
 Before pushing changes that affect remote hosts:

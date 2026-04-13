@@ -1,6 +1,6 @@
 # 16 CM Procedural Memory Bootstrap
 
-Status: `ready`
+Status: `done`
 
 Suggested branch: `docs/tooling-cm-procedural-memory`
 
