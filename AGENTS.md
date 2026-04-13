@@ -179,6 +179,8 @@ For detailed managed authentication paths (including `gemini-cli`), see `docs/to
 - Added `cm-procedural-memory.md` as a lightweight cross-agent procedural
   memory layer; see that doc for when and how to capture reusable
   procedures.
+- Agent Mail is **not** currently adopted for this repo; see
+  `docs/agent-mail-workflow-fit.md` for the evaluation and decision.
 
 ### Git Workflow
 Before pushing changes that affect remote hosts:

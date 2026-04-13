@@ -1,6 +1,6 @@
 # 17 Agent Mail Workflow Fit
 
-Status: `ready`
+Status: `done`
 
 Suggested branch: `docs/tooling-agent-mail-fit`
 
@@ -43,6 +43,19 @@ operating model changes.
 - moving this repo to "all agents commit directly to main"
 - replacing the existing queue with Agent Mail
 - debating multi-agent swarms in the abstract without grounding it in this repo
+
+## Implementation (current)
+
+- `docs/agent-mail-workflow-fit.md` records a repo-specific evaluation
+  of Agent Mail against the existing `wt`/worktree and PR-first
+  workflow.
+- The decision is to **not adopt Agent Mail** for the current model,
+  with rationale for why the shared-branch assumptions conflict with the
+  repo's conventions.
+- Narrow features (reservations, inboxes, identity) are considered and
+  rejected as either redundant or low-value on top of existing queues,
+  worktrees, and docs. Future adoption would require an explicit
+  migration plan.
 
 ## Validation
 
