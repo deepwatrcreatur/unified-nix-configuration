@@ -27,7 +27,7 @@ wrappers, shell defaults, and related repo operations.
 ## Current Ranked Queue
 
 1. [`24-agent-instruction-entrypoint-contract.md`](./24-agent-instruction-entrypoint-contract.md) - `in-progress`
-2. [`25-gh-managed-auth-followup-hardening.md`](./25-gh-managed-auth-followup-hardening.md) - `ready`
+2. [`25-gh-managed-auth-followup-hardening.md`](./25-gh-managed-auth-followup-hardening.md) - `in-progress`
 3. [`24-gh-fnox-wrapper-completion.md`](./24-gh-fnox-wrapper-completion.md) - `in-progress`
 4. [`25-agent-build-cache-fallback-and-trust.md`](./25-agent-build-cache-fallback-and-trust.md) - `in-progress`
 5. [`14-dcg-pretooluse-guard.md`](./14-dcg-pretooluse-guard.md) - `ready`
