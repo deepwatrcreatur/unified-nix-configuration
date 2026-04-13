@@ -1,6 +1,6 @@
 # 14 DCG PreToolUse Guard
 
-Status: `in-progress`
+Status: `done`
 
 Suggested branch: `feat/tooling-dcg-guard`
 

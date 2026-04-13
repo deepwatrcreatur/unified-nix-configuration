@@ -30,7 +30,7 @@ wrappers, shell defaults, and related repo operations.
 2. [`25-gh-managed-auth-followup-hardening.md`](./25-gh-managed-auth-followup-hardening.md) - `done`
 3. [`24-gh-fnox-wrapper-completion.md`](./24-gh-fnox-wrapper-completion.md) - `in-progress`
 4. [`25-agent-build-cache-fallback-and-trust.md`](./25-agent-build-cache-fallback-and-trust.md) - `in-progress`
-5. [`14-dcg-pretooluse-guard.md`](./14-dcg-pretooluse-guard.md) - `ready`
+5. [`14-dcg-pretooluse-guard.md`](./14-dcg-pretooluse-guard.md) - `done`
 6. [`27-gemini-cli-managed-auth-path.md`](./27-gemini-cli-managed-auth-path.md) - `done`
 7. [`15-cass-session-search-integration.md`](./15-cass-session-search-integration.md) - `ready`
 8. [`16-cm-procedural-memory-bootstrap.md`](./16-cm-procedural-memory-bootstrap.md) - `ready`
