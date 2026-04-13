@@ -42,6 +42,8 @@ need for human-curated ranking in READMEs.
   docs checklist updated.
 - `.beads/issues.jsonl` is committed empty and `.beads/*.db*` are gitignored;
   operators can run `br init` and migrate queues once `br` is installed.
+- `scripts/beads-migrate-tooling.sh` migrates the current tooling queue's
+  `ready` and `in-progress` items into beads when `br` is available.
 - `START-HERE.md` and `agent-prompts.md` for both tooling and router now
   describe beads-aware workflows while preserving README-based fallbacks.
 

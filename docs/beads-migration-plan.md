@@ -163,6 +163,10 @@ For items already `done`, close them immediately after creating:
 br close <new-id> --reason "Completed prior to beads adoption"
 ```
 
+For this repo's tooling queue, the helper script
+`scripts/beads-migrate-tooling.sh` automates this migration pattern for all
+`ready` and `in-progress` items once `br` is installed and `br init` has run.
+
 ---
 
 ## Updating START-HERE.md

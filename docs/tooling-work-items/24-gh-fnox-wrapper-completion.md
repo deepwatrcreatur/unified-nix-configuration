@@ -1,6 +1,6 @@
 # 24 GH Fnox Wrapper Completion
 
-Status: `in-progress`
+Status: `done`
 
 Suggested branch: `fix/tooling-gh-fnox-wrapper`
 

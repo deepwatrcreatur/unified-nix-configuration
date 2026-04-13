@@ -26,18 +26,8 @@ wrappers, shell defaults, and related repo operations.
 
 ## Current Ranked Queue
 
-1. [`24-agent-instruction-entrypoint-contract.md`](./24-agent-instruction-entrypoint-contract.md) - `in-progress`
-2. [`25-gh-managed-auth-followup-hardening.md`](./25-gh-managed-auth-followup-hardening.md) - `done`
-3. [`24-gh-fnox-wrapper-completion.md`](./24-gh-fnox-wrapper-completion.md) - `in-progress`
-4. [`25-agent-build-cache-fallback-and-trust.md`](./25-agent-build-cache-fallback-and-trust.md) - `in-progress`
-5. [`14-dcg-pretooluse-guard.md`](./14-dcg-pretooluse-guard.md) - `done`
-6. [`27-gemini-cli-managed-auth-path.md`](./27-gemini-cli-managed-auth-path.md) - `done`
-7. [`15-cass-session-search-integration.md`](./15-cass-session-search-integration.md) - `done`
-8. [`16-cm-procedural-memory-bootstrap.md`](./16-cm-procedural-memory-bootstrap.md) - `done`
-9. [`17-agent-mail-workflow-fit.md`](./17-agent-mail-workflow-fit.md) - `done`
-10. [`18-beads-task-graph-integration.md`](./18-beads-task-graph-integration.md) - `done`
-11. [`19-repo-updater-sync-workflow.md`](./19-repo-updater-sync-workflow.md) - `ready`
-12. [`20-robot-triage-prioritization.md`](./20-robot-triage-prioritization.md) - `ready`
-13. [`21-fleet-integration-flake-design.md`](./21-fleet-integration-flake-design.md) - `ready`
-14. [`22-mem0-integration-fleet-memory.md`](./22-mem0-integration-fleet-memory.md) - `ready`
-15. [`23-cross-agent-memory-extraction-pipeline.md`](./23-cross-agent-memory-extraction-pipeline.md) - `ready`
+1. [`19-repo-updater-sync-workflow.md`](./19-repo-updater-sync-workflow.md) - `ready`
+2. [`20-robot-triage-prioritization.md`](./20-robot-triage-prioritization.md) - `ready`
+3. [`21-fleet-integration-flake-design.md`](./21-fleet-integration-flake-design.md) - `ready`
+4. [`22-mem0-integration-fleet-memory.md`](./22-mem0-integration-fleet-memory.md) - `ready`
+5. [`23-cross-agent-memory-extraction-pipeline.md`](./23-cross-agent-memory-extraction-pipeline.md) - `ready`
