@@ -4,6 +4,8 @@ set -euo pipefail
 
 ROUTER_IP="10.10.10.1"
 DOMAIN="deepwatercreature.com"
+SSH_OPTS="-o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new"
+BLOCKING_FAILED=0
 
 # Critical hosts from lib/hosts.nix that depend on reserved leases
 declare -A CRITICAL_HOSTS=(
@@ -37,20 +39,23 @@ fi
 
 # 3. Technitium Service Status
 echo -n "Checking Technitium DNS Server service... "
-TECH_STATUS=$(ssh "$ROUTER_IP" "systemctl is-active technitium-dns-server" || echo "unknown")
-if [ "$TECH_STATUS" == "active" ]; then
+# shellcheck disable=SC2086
+TECH_STATUS=$(ssh $SSH_OPTS "$ROUTER_IP" "systemctl is-active technitium-dns-server" 2>/dev/null || echo "unknown")
+if [ "$TECH_STATUS" = "active" ]; then
   echo "OK"
 else
   echo "FAILED: $TECH_STATUS"
+  BLOCKING_FAILED=1
 fi
 
 # 4. Technitium DHCP Scope Name
 echo -n "Checking DHCP scope 'LAN' presence... "
-# We check if LAN.scope exists
-if ssh "$ROUTER_IP" "/run/wrappers/bin/sudo ls /var/lib/technitium-dns-server/scopes/LAN.scope" >/dev/null 2>&1; then
+# shellcheck disable=SC2086
+if ssh $SSH_OPTS "$ROUTER_IP" "/run/wrappers/bin/sudo ls /var/lib/technitium-dns-server/scopes/LAN.scope" >/dev/null 2>&1; then
   echo "OK"
 else
   echo "FAILED (Check if scope is named 'Default' instead)"
+  BLOCKING_FAILED=1
 fi
 
 # 5. Critical Host Reachability (Reserved IPs)
@@ -62,11 +67,12 @@ for host in "${!CRITICAL_HOSTS[@]}"; do
     echo "OK"
   else
     # Try to find current IP if wrong
-    actual_ip=$(ssh "$ROUTER_IP" "/run/wrappers/bin/sudo grep -i \"leased IP address .* to .*$host\" /var/lib/technitium-dns-server/logs/\$(date +%Y-%m-%d).log | tail -n 1 | grep -oE 'leased IP address \[[0-9.]+' | grep -oE '[0-9.]+' | head -n 1" || echo "unknown")
+    # shellcheck disable=SC2086
+    actual_ip=$(ssh $SSH_OPTS "$ROUTER_IP" "/run/wrappers/bin/sudo grep -i \"leased IP address .* to .*$host\" /var/lib/technitium-dns-server/logs/\$(date +%Y-%m-%d).log | tail -n 1 | grep -oE 'leased IP address \[[0-9.]+' | grep -oE '[0-9.]+' | head -n 1" 2>/dev/null || echo "unknown")
     if [ -n "$actual_ip" ] && [ "$actual_ip" != "unknown" ]; then
-      echo "FAILED (Actually at $actual_ip)"
+      echo "FAILED (Advisory: Actually at $actual_ip)"
     else
-      echo "FAILED (Unreachable)"
+      echo "FAILED (Advisory: Unreachable)"
     fi
   fi
 done
@@ -81,3 +87,4 @@ else
 fi
 
 echo "=== Validation Complete ==="
+exit "$BLOCKING_FAILED"

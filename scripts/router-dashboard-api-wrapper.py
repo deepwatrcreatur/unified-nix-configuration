@@ -58,7 +58,7 @@ def handle_interface_stats(self):
 
             interfaces[key] = {
                 "device": name,
-                "state": self.read_file(iface_path / "operstate").strip().upper() or "UNKNOWN",
+                "state": (self.read_file(iface_path / "operstate") or "").strip().upper() or "UNKNOWN",
                 "ipv4": ipv4,
                 "ipv6": ipv6_list,
                 "rx_bytes": rx_bytes,
