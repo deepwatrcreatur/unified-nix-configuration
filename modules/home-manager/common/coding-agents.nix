@@ -12,9 +12,11 @@
     inputs.nix-rtk.homeManagerModules.default
     inputs.qmd.homeModules.default
     ./agent-guards.nix
+    ./cass-session-search.nix
   ];
 
   programs.agent-guards.enable = lib.mkDefault true;
+  programs.cass-session-search.enable = lib.mkDefault true;
 
   # Enable RTK hooks with Claude enabled by default
   programs.rtk-hooks = {
