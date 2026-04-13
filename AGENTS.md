@@ -181,6 +181,9 @@ For detailed managed authentication paths (including `gemini-cli`), see `docs/to
   procedures.
 - Agent Mail is **not** currently adopted for this repo; see
   `docs/agent-mail-workflow-fit.md` for the evaluation and decision.
+- Beads task-graph wiring is now partially in place; see
+  `docs/beads-migration-plan.md` and
+  `docs/tooling-work-items/18-beads-task-graph-integration.md` for details.
 
 ### Git Workflow
 Before pushing changes that affect remote hosts:

@@ -4,9 +4,9 @@ This document captures the design for replacing the hand-rolled markdown
 work-item queue in `docs/*/` with `beads_rust` (`br`), a Rust-based local-first
 task tracker built specifically for agentic workflows.
 
-**Status: Deferred.** Both the tooling and router work queues are currently
-empty. Migrate when the next queue grows to the point where managing status,
-priority, and blocked-by in markdown feels like the bottleneck — not before.
+**Status: In progress.** Initial `.beads/` wiring, ignore rules, and
+START-HERE/agent-prompts updates are in place; actual `br init` and queue
+migration remain pending on `br` installation or packaging.
 
 ---
 
@@ -163,6 +163,10 @@ For items already `done`, close them immediately after creating:
 br close <new-id> --reason "Completed prior to beads adoption"
 ```
 
+For this repo's tooling queue, the helper script
+`scripts/beads-migrate-tooling.sh` automates this migration pattern for all
+`ready` and `in-progress` items once `br` is installed and `br init` has run.
+
 ---
 
 ## Updating START-HERE.md
@@ -269,14 +273,14 @@ Migrate when **two or more** of these are true:
 
 ## Implementation checklist
 
-When the time comes:
+As of the initial wiring for this repo:
 
 - [ ] Install `br` to `~/.local/bin/` (or package as nix derivation)
 - [ ] `br init` at repo root; add SQLite files to `.gitignore`
-- [ ] Commit `.beads/issues.jsonl` (initially empty)
+- [x] Commit `.beads/issues.jsonl` (initially empty)
 - [ ] Migrate any existing markdown items or start fresh if queues are empty
-- [ ] Update `docs/tooling-work-items/START-HERE.md` to reference `br ready`
-- [ ] Update `docs/router-work-items/START-HERE.md` similarly
-- [ ] Update `agent-prompts.md` in each queue folder
+- [x] Update `docs/tooling-work-items/START-HERE.md` to reference `br ready` (with README fallback when `br` is absent)
+- [x] Update `docs/router-work-items/START-HERE.md` similarly
+- [x] Update `agent-prompts.md` in each queue folder
 - [ ] (Optional) Install `bv` and validate `--robot-triage` output
 - [ ] Update this document to `Status: Done`

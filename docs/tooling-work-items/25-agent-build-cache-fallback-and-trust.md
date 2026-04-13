@@ -1,6 +1,6 @@
 # 25 Agent Build Cache Fallback And Trust
 
-Status: `in-progress`
+Status: `done`
 
 Suggested branch: `fix/tooling-agent-build-cache-fallback`
 
