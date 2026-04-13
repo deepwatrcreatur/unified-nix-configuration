@@ -1,6 +1,6 @@
 # 24 Agent Instruction Entrypoint Contract
 
-Status: `in-progress`
+Status: `done`
 
 Suggested branch: `docs/tooling-agent-entrypoint-contract`
 
@@ -51,3 +51,13 @@ The best solution is a small root-level contract:
 - root `RTK.md` as the canonical entrypoint
 - optional root `AGENTS.md` that points to it for file-based discovery
 - repo-local `AGENTS.md` files remain the authoritative extension layer
+
+## Implementation (current)
+
+- `/home/deepwatrcreatur/flakes/RTK.md` exists as the workspace-level entrypoint
+  describing how to route agents to repo-local `AGENTS.md` files.
+- `/home/deepwatrcreatur/flakes/AGENTS.md` is a minimal entry that delegates
+  instructions to `@RTK.md` for file-based discovery.
+- `RTK.md` includes explicit entry paths for at least
+  `unified-nix-configuration` and `nix-router-optimized`, and reminds agents to
+  prefer repo-local guidance for detailed policy.
