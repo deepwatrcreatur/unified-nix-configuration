@@ -43,8 +43,10 @@ primary integration patterns:
 ### GitHub CLI (`gh`)
 
 - **Integration Pattern:** Managed Wrapper (`gh-fnox`).
-- **Secret Source:** `fnox get GITHUB_TOKEN`
-- **Fallback:** `~/.local/share/agenix-user-secrets/github-token`
+- **Secret Source:** Managed token files:
+  - `~/.local/share/agenix-user-secrets/github-token`
+  - `~/.config/git/github-token`
+- **Fallback:** `fnox get GITHUB_TOKEN` when managed files are absent or invalid.
 - **Management:** Automatically wired via the `gh-fnox` package in the
   coding-agent set.
 
