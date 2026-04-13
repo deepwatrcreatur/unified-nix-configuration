@@ -34,7 +34,7 @@ wrappers, shell defaults, and related repo operations.
 6. [`27-gemini-cli-managed-auth-path.md`](./27-gemini-cli-managed-auth-path.md) - `done`
 7. [`15-cass-session-search-integration.md`](./15-cass-session-search-integration.md) - `done`
 8. [`16-cm-procedural-memory-bootstrap.md`](./16-cm-procedural-memory-bootstrap.md) - `done`
-9. [`17-agent-mail-workflow-fit.md`](./17-agent-mail-workflow-fit.md) - `ready`
+9. [`17-agent-mail-workflow-fit.md`](./17-agent-mail-workflow-fit.md) - `done`
 10. [`18-beads-task-graph-integration.md`](./18-beads-task-graph-integration.md) - `ready`
 11. [`19-repo-updater-sync-workflow.md`](./19-repo-updater-sync-workflow.md) - `ready`
 12. [`20-robot-triage-prioritization.md`](./20-robot-triage-prioritization.md) - `ready`
