@@ -1,6 +1,6 @@
 # 25 GH Managed Auth Follow-Up Hardening
 
-Status: `in-progress`
+Status: `done`
 
 Suggested branch: `fix/tooling-gh-managed-auth-hardening`
 
