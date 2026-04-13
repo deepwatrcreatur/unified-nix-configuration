@@ -4,9 +4,11 @@ Use these prompts to dispatch other agents onto the tooling queue.
 
 ## Prompt 1
 
-Read [`docs/tooling-work-items/START-HERE.md`](./START-HERE.md) and take the
-highest-priority item still marked `Status: \`ready\``. Focus only on that one
-item, keep the work to one PR, and update the item status in your branch.
+Read [`docs/tooling-work-items/START-HERE.md`](./START-HERE.md). If `br` is
+available, run `br ready --labels tooling --json` and claim the
+highest-priority unblocked item. Otherwise, take the highest-priority item in
+`README.md` still marked `Status: \`ready\``. Focus only on that one item, keep
+the work to one PR, and update the item status in your branch.
 
 ## Prompt 24
 
