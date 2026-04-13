@@ -72,4 +72,9 @@
       fnox = final.fnox;
     };
   })
+
+  # repo_updater (ru) — parallelized multi-repo sync and review CLI
+  (final: prev: {
+    repo-updater = prev.callPackage ../pkgs/repo-updater.nix { };
+  })
 ]
