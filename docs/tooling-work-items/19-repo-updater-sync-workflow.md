@@ -1,6 +1,6 @@
 # 19 Repo Updater Sync Workflow
 
-Status: `in-progress`
+Status: `done`
 
 Suggested branch: `feat/tooling-repo-updater`
 
