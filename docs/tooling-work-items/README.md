@@ -26,6 +26,5 @@ wrappers, shell defaults, and related repo operations.
 
 ## Current Ranked Queue
 
-1. [`21-fleet-integration-flake-design.md`](./21-fleet-integration-flake-design.md) - `ready`
-2. [`22-mem0-integration-fleet-memory.md`](./22-mem0-integration-fleet-memory.md) - `ready`
-3. [`23-cross-agent-memory-extraction-pipeline.md`](./23-cross-agent-memory-extraction-pipeline.md) - `ready`
+1. [`22-mem0-integration-fleet-memory.md`](./22-mem0-integration-fleet-memory.md) - `ready`
+2. [`23-cross-agent-memory-extraction-pipeline.md`](./23-cross-agent-memory-extraction-pipeline.md) - `ready`

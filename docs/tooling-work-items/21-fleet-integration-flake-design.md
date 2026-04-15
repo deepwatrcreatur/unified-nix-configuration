@@ -1,6 +1,6 @@
 # 21 Fleet Integration Flake Design
 
-Status: `ready`
+Status: `done`
 
 Suggested branch: `feat/tooling-fleet-integration`
 
