@@ -1,6 +1,6 @@
 # 20 Robot Triage Prioritization
 
-Status: `ready`
+Status: `done`
 
 Suggested branch: `feat/tooling-robot-triage`
 

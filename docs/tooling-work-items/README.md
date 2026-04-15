@@ -26,7 +26,6 @@ wrappers, shell defaults, and related repo operations.
 
 ## Current Ranked Queue
 
-1. [`20-robot-triage-prioritization.md`](./20-robot-triage-prioritization.md) - `ready`
-2. [`21-fleet-integration-flake-design.md`](./21-fleet-integration-flake-design.md) - `ready`
-3. [`22-mem0-integration-fleet-memory.md`](./22-mem0-integration-fleet-memory.md) - `ready`
-4. [`23-cross-agent-memory-extraction-pipeline.md`](./23-cross-agent-memory-extraction-pipeline.md) - `ready`
+1. [`21-fleet-integration-flake-design.md`](./21-fleet-integration-flake-design.md) - `ready`
+2. [`22-mem0-integration-fleet-memory.md`](./22-mem0-integration-fleet-memory.md) - `ready`
+3. [`23-cross-agent-memory-extraction-pipeline.md`](./23-cross-agent-memory-extraction-pipeline.md) - `ready`
