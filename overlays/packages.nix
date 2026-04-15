@@ -82,4 +82,18 @@
   (final: prev: {
     beads-viewer = prev.callPackage ../pkgs/beads-viewer.nix { };
   })
+
+  # mem0ai — semantic long-term memory layer for AI agents
+  (final: prev: {
+    mem0ai = prev.callPackage ../pkgs/mem0ai.nix {
+      python3Packages = prev.python3Packages;
+    };
+    # Convenience: Python env with mem0 pre-loaded alongside key CLI tools
+    mem0-env = prev.python3.withPackages (
+      ps:
+      [
+        (prev.callPackage ../pkgs/mem0ai.nix { python3Packages = ps; })
+      ]
+    );
+  })
 ]
