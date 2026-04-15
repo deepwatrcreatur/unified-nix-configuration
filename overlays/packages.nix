@@ -77,4 +77,9 @@
   (final: prev: {
     repo-updater = prev.callPackage ../pkgs/repo-updater.nix { };
   })
+
+  # beads_viewer (bv) — terminal UI and robot-triage engine for the Beads store
+  (final: prev: {
+    beads-viewer = prev.callPackage ../pkgs/beads-viewer.nix { };
+  })
 ]

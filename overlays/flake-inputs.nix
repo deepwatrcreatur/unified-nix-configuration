@@ -54,6 +54,11 @@
     qmd = inputs.qmd.packages.${prev.stdenv.hostPlatform.system}.default;
   })
 
+  # beads_rust (br) — agent-first issue tracker; built via upstream crane/fenix flake
+  (final: prev: {
+    beads-rust = inputs.beads-rust.packages.${prev.stdenv.hostPlatform.system}.default;
+  })
+
   # llama-cpp-python: override inherited dotted CUDA architectures with the
   # integer form expected by modern CMake/CUDA.
   (final: prev: {
