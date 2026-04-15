@@ -1,6 +1,6 @@
 # 23 Cross-Agent Memory Extraction Pipeline
 
-Status: `ready`
+Status: `done`
 
 Suggested branch: `feat/tooling-memory-extraction`
 

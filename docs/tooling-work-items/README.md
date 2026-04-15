@@ -26,4 +26,4 @@ wrappers, shell defaults, and related repo operations.
 
 ## Current Ranked Queue
 
-1. [`23-cross-agent-memory-extraction-pipeline.md`](./23-cross-agent-memory-extraction-pipeline.md) - `ready`
+No active items.
