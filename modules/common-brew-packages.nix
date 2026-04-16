@@ -9,5 +9,6 @@
 
   taps = [
     "steveyegge/beads"
+    "xykong/tap"
   ];
 }
