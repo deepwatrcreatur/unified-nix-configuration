@@ -10,7 +10,8 @@
   # Inference VM specific configuration for deepwatrcreatur
   imports = [
     ../.. # Import default user config
-    ../../../../modules/home-manager/gpg-agent-ssh.nix
+    ../../../../modules/home-manager/git-ssh-signing.nix
+    ../../../../modules/home-manager/ssh-agent.nix
     ./just.nix
     ../../../../modules/home-manager/gpu-monitoring.nix
     # Temporarily disable to fix home-manager startup failure
