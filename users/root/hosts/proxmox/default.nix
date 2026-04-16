@@ -14,7 +14,7 @@ in
     ./nh.nix
     ./proxmox-shell-extra.nix
     ../../../../modules/home-manager/git.nix
-    ../../../../modules/home-manager/gpg-cli.nix
+    ../../../../modules/home-manager/git-ssh-signing.nix
     # Selectively import only essential modules to avoid activation issues
     ../../../../modules/home-manager/user-secrets.nix
     ../../../../modules/home-manager/agenix-user-secrets.nix
