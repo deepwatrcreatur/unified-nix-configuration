@@ -1,6 +1,6 @@
 # 26 Remove GPG Modules
 
-Status: `ready`
+Status: `in-progress`
 
 Suggested branch: `feat/tooling-remove-gpg-modules`
 
