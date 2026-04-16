@@ -22,8 +22,6 @@
     ../../../hosts/nixos/inference-vm/modules/packages.nix
     # Use common nix-settings instead of custom nix-config
     ../../common/nix-settings.nix
-    # Add GPG CLI support for git signing
-    ../../home-manager/gpg-cli.nix
   ];
 
   # Common DHCP settings for all inference VMs
