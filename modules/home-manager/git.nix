@@ -168,13 +168,6 @@ in
       # See docs/tooling-work-items/01-github-token-shell-export-removal.md
       # and pkgs/gh-fnox.nix for the wrapper/credential flow.
 
-      # GPG settings for automated commits (prevents password prompts in CI/agents)
-      export GPG_TTY=$(tty 2>/dev/null || echo "")
-      # Allow automated tools to bypass pinentry when in non-interactive mode
-      if [ -z "$TERM" ] || [ "$TERM" = "dumb" ]; then
-        export GPG_TERMINAL_PROMPT_DISABLE=1
-      fi
-
       # SSH environment: disable interactive TUI features over SSH
       if [ -n "$SSH_CONNECTION" ]; then
         export CI=true
@@ -187,13 +180,6 @@ in
       # GitHub token is intentionally not exported globally anymore.
       # See docs/tooling-work-items/01-github-token-shell-export-removal.md
       # and pkgs/gh-fnox.nix for the wrapper/credential flow.
-
-      # GPG settings for automated commits (prevents password prompts in CI/agents)
-      export GPG_TTY=$(tty 2>/dev/null || echo "")
-      # Allow automated tools to bypass pinentry when in non-interactive mode
-      if [ -z "$TERM" ] || [ "$TERM" = "dumb" ]; then
-        export GPG_TERMINAL_PROMPT_DISABLE=1
-      fi
 
       # SSH environment: disable interactive TUI features over SSH
       if [ -n "$SSH_CONNECTION" ]; then
@@ -208,13 +194,6 @@ in
       # See docs/tooling-work-items/01-github-token-shell-export-removal.md
       # and pkgs/gh-fnox.nix for the wrapper/credential flow.
 
-      # GPG settings for automated commits (prevents password prompts in CI/agents)
-      set -gx GPG_TTY (tty 2>/dev/null; or echo "")
-      # Allow automated tools to bypass pinentry when in non-interactive mode
-      if test -z "$TERM" -o "$TERM" = "dumb"
-        set -gx GPG_TERMINAL_PROMPT_DISABLE 1
-      end
-
       # SSH environment: disable interactive TUI features over SSH
       if test -n "$SSH_CONNECTION"
         set -gx CI true
@@ -227,13 +206,6 @@ in
       # GitHub token is intentionally not exported globally anymore.
       # See docs/tooling-work-items/01-github-token-shell-export-removal.md
       # and pkgs/gh-fnox.nix for the wrapper/credential flow.
-
-      # GPG settings for automated commits (prevents password prompts in CI/agents)
-      $env.GPG_TTY = (try { tty } catch { "" })
-      # Allow automated tools to bypass pinentry when in non-interactive mode
-      if ($env.TERM == "" or $env.TERM == "dumb") {
-        $env.GPG_TERMINAL_PROMPT_DISABLE = "1"
-      }
 
       # SSH environment: disable interactive TUI features over SSH
       if ($env.SSH_CONNECTION? != null) {
@@ -274,8 +246,10 @@ in
         "credential \"https://github.com\"".helper = "!gh auth git-credential";
         "credential \"https://gist.github.com\"".helper = "!gh auth git-credential";
 
+        gpg.format = "ssh";
         commit.gpgsign = true;
-        user.signingkey = "EF1502C27653693B";
+        tag.gpgsign = true;
+        user.signingkey = "~/.ssh/id_ed25519.pub";
 
         # Delta settings
         delta.navigate = true;
