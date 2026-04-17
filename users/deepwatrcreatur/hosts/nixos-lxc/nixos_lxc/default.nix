@@ -13,7 +13,8 @@
     ./nh.nix
     ./rbw.nix
     ../../../../../modules/home-manager/git.nix
-    ../../../../../modules/home-manager/gpg-agent-ssh.nix
+    ../../../../../modules/home-manager/git-ssh-signing.nix
+    ../../../../../modules/home-manager/ssh-agent.nix
     #../../../../../modules/home-manager/rclone.nix
   ];
 

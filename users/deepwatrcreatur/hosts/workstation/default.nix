@@ -14,7 +14,8 @@
     ../../../../modules/home-manager/agenix-user-secrets.nix
     ../../../../modules/home-manager/gnome-cosmic-style.nix
     ../../../../modules/home-manager/ghostty
-    ../../../../modules/home-manager/gpg-agent-cross-de.nix
+    ../../../../modules/home-manager/git-ssh-signing.nix
+    ../../../../modules/home-manager/ssh-agent.nix
     ../../../../modules/home-manager/zed.nix
     ../../../../modules/home-manager/common/dmux.nix
   ];
