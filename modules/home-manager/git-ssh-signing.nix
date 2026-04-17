@@ -7,7 +7,7 @@
 # GitHub: register the same key under Settings → SSH keys → Signing keys.
 { config, lib, ... }:
 let
-  email = config.programs.git.settings.user.email or "deepwatrcreatur@gmail.com";
+  email = config.programs.git.settings.user.email;
   allowedSigners = "${config.xdg.configHome}/git/allowed_signers";
 in
 {
@@ -16,7 +16,8 @@ in
     commit.gpgsign = true;
     tag.gpgsign = true;
     "user".signingkey = "~/.ssh/id_ed25519.pub";
-    "gpg.ssh".allowedSignersFile = allowedSigners;
+    # Nested form produces [gpg "ssh"] subsection (not literal [gpg.ssh])
+    gpg.ssh.allowedSignersFile = allowedSigners;
   };
 
   # Write allowed_signers at activation time from the live public key.
@@ -25,8 +26,10 @@ in
     _pub="$HOME/.ssh/id_ed25519.pub"
     _out="${allowedSigners}"
     if [ -f "$_pub" ]; then
-      mkdir -p "$(dirname "$_out")"
-      printf '%s namespaces="git" %s\n' "${email}" "$(cat "$_pub")" > "$_out"
+      $DRY_RUN_CMD mkdir -p "$(dirname "$_out")"
+      $DRY_RUN_CMD sh -c "printf '%s namespaces=\"git\" %s\n' '${email}' \"\$(cat '$_pub')\" > '$_out'"
+    else
+      $DRY_RUN_CMD rm -f "$_out"
     fi
   '';
 }

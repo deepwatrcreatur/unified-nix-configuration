@@ -246,10 +246,6 @@ in
         "credential \"https://github.com\"".helper = "!gh auth git-credential";
         "credential \"https://gist.github.com\"".helper = "!gh auth git-credential";
 
-        gpg.format = "ssh";
-        commit.gpgsign = true;
-        tag.gpgsign = true;
-        user.signingkey = "~/.ssh/id_ed25519.pub";
 
         # Delta settings
         delta.navigate = true;
