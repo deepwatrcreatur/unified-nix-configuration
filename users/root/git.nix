@@ -14,9 +14,8 @@
         email = lib.mkForce "deepwatrcreatur@gmail.com";
       };
       signing.signByDefault = lib.mkForce true;
-    };
-    signing = {
-      key = "0xEF1502C27653693B";
+      gpg.format = lib.mkForce "ssh";
+      "user".signingkey = lib.mkForce "~/.ssh/id_ed25519.pub";
     };
   };
 }

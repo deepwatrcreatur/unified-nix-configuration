@@ -26,4 +26,6 @@ wrappers, shell defaults, and related repo operations.
 
 ## Current Ranked Queue
 
-No active items.
+1. [24 SSH Commit Signing — Core Modules](./24-ssh-commit-signing-modules.md) — `in-progress`
+2. [25 SSH Commit Signing — Host Wiring](./25-ssh-signing-host-wiring.md) — `ready`, depends on 24
+3. [26 Remove GPG Modules](./26-remove-gpg-modules.md) — `ready`, depends on 25
