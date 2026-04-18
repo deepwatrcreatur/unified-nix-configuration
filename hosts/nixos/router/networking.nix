@@ -53,6 +53,12 @@ in
     };
   };
 
+  # NTP server — serves LAN clients (advertised via DHCP option 42 above).
+  services.router-ntp = {
+    enable = true;
+    lanSubnets = [ topology.networks.lan.cidr ];
+  };
+
   # NAT is handled by nftables (see nftables.nix)
   networking.nat.enable = false;
 }
