@@ -37,6 +37,11 @@ let
       file = ../../../secrets-agenix/technitium-api-key.age;
       mode = "0444";
     };
+    kea-ddns-tsig-key = {
+      file = ../../../secrets-agenix/kea-ddns-tsig-key.age;
+      mode = "0440";
+      group = "kea";
+    };
     tailscale-auth-key = {
       file = ../../../secrets-agenix/tailscale-auth-key.age;
     };
