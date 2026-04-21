@@ -41,8 +41,9 @@ in
       port = 4822;
     };
 
-    # Guacamole web client (Tomcat). The postgresql-password is injected at
-    # runtime by the pre-start script below so it never lands in the Nix store.
+    # Guacamole web client (Tomcat). The database credential is appended to
+    # guacamole.properties at runtime by the ExecStartPre script so it never
+    # lands in the Nix store as plaintext.
     services.guacamole-client = {
       enable = true;
       settings = {
@@ -52,8 +53,6 @@ in
         postgresql-port = 5432;
         postgresql-database = "guacamole_db";
         postgresql-username = "guacamole_user";
-        # Placeholder — overwritten at runtime by the ExecStartPre script.
-        postgresql-password = "";
         extension-priority = "oidc,postgresql";
       } // (lib.optionalAttrs cfg.oidc.enable {
         oidc-issuer = cfg.oidc.issuer;
@@ -64,15 +63,18 @@ in
       });
     };
 
-    # Patch the generated guacamole.properties with the runtime password before
-    # Tomcat starts. The sed command replaces the placeholder empty value.
+    # Append the database credential to guacamole.properties at start time.
+    # Running with '+' prefix so it executes as root before Tomcat drops privileges.
     systemd.services.guacamole-client.serviceConfig.ExecStartPre =
       let
-        script = pkgs.writeShellScript "guacamole-inject-password" ''
+        prop = "postgresql-password";
+        script = pkgs.writeShellScript "guacamole-inject-db-cred" ''
           set -euo pipefail
-          PASS=$(cat ${cfg.dbPasswordFile})
           PROPS=/etc/guacamole/guacamole.properties
-          sed -i "s|^postgresql-password:.*|postgresql-password: $PASS|" "$PROPS"
+          CRED=$(cat ${cfg.dbPasswordFile})
+          # Remove any existing line for this property, then append the live value.
+          grep -v "^${prop}:" "$PROPS" > "$PROPS.tmp" && mv "$PROPS.tmp" "$PROPS"
+          printf '%s: %s\n' "${prop}" "$CRED" >> "$PROPS"
         '';
       in
       [ "+${script}" ];
