@@ -54,7 +54,8 @@
     qmd = inputs.qmd.packages.${prev.stdenv.hostPlatform.system}.default;
   })
 
-  # beads_rust (br) — agent-first issue tracker; built via upstream crane/fenix flake
+  # beads_rust upstream package; the repo exposes it as `beads-rust` via a
+  # wrapper package to avoid colliding with the Homebrew viewer's `br` command.
   (final: prev: {
     beads-rust = inputs.beads-rust.packages.${prev.stdenv.hostPlatform.system}.default;
   })

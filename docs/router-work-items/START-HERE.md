@@ -15,8 +15,8 @@ Read first:
 - [`README.md`](./README.md)
 - [`agent-prompts.md`](./agent-prompts.md)
 
-If `br` is available and `.beads/issues.jsonl` exists, use
-`br ready --labels router --json` as the primary queue surface. Otherwise,
+If `beads-rust` is available and `.beads/issues.jsonl` exists, use
+`beads-rust ready --labels router --json` as the primary queue surface. Otherwise,
 fall back to the ordered list in [`README.md`](./README.md).
 
 ## How To Choose Work

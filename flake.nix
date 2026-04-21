@@ -169,8 +169,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # beads_rust (br) — agent-first issue tracker (SQLite + JSONL)
-    # Uses upstream flake to avoid re-implementing the crane+fenix nightly build.
+    # beads_rust upstream package; the repo wraps it as `beads-rust` to avoid
+    # colliding with the Homebrew viewer's `br` command.
     beads-rust = {
       url = "github:Dicklesworthstone/beads_rust";
       inputs.nixpkgs.follows = "nixpkgs";

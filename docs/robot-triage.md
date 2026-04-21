@@ -5,12 +5,13 @@ selection once the `.beads/` store is populated.
 
 ## Prerequisites
 
-1. **`br` installed** — the `beads_rust` CLI creates and manages the store.
+1. **`beads-rust` installed** — the repo-managed wrapper around the
+   `beads_rust` CLI creates and manages the store.
    Enabled on workstation via `programs.beads.enable = true`.
-2. **Store initialised** — run `br init` in the repo root once.
+2. **Store initialised** — run `beads-rust init` in the repo root once.
 3. **Items migrated** — run `scripts/beads-migrate-tooling.sh` to import
    the current markdown queue into beads.
-4. **`bv` installed** — the `beads_viewer` TUI; enabled alongside `br`.
+4. **`bv` installed** — the `beads_viewer` TUI; enabled alongside `beads-rust`.
 
 ## Quick Reference
 
@@ -57,25 +58,25 @@ scripts/beads-migrate-tooling.sh
 
 # 2. Ask bv what to do next
 NEXT=$(bv --robot-triage --labels tooling --json | jq -r '.[0].id')
-br start "$NEXT"
+beads-rust start "$NEXT"
 
 # 3. Do the work...
 
 # 4. Close the bead and let bv update its graph
-br finish "$NEXT"
+beads-rust finish "$NEXT"
 ```
 
 ## Graph-Aware Re-ranking
 
 Unlike the static README ordered list, `bv` re-ranks dynamically as tasks
-are completed or new dependency edges are added. After `br finish` closes a
+are completed or new dependency edges are added. After `beads-rust finish` closes a
 bead, the next `bv --robot-triage` call will reflect the freed-up blockers.
 
 To add dependency edges:
 
 ```bash
 # task B depends on (is blocked by) task A:
-br link A B --type blocks
+beads-rust link A B --type blocks
 ```
 
 ## Bootstrapping
@@ -84,7 +85,7 @@ If the `.beads/` store does not exist yet:
 
 ```bash
 cd ~/flakes/unified-nix-configuration
-br init
+beads-rust init
 scripts/beads-migrate-tooling.sh
 bv --robot-triage --labels tooling --json | jq '.[0:3]'
 ```
