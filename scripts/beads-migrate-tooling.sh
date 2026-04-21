@@ -5,8 +5,8 @@ set -euo pipefail
 #
 # Preconditions:
 # - Run from anywhere inside this git repo.
-# - `br` (beads_rust) must be installed and on PATH.
-# - `.beads/` has been initialised via `br init`.
+# - `beads-rust` must be installed and on PATH.
+# - `.beads/` has been initialised via `beads-rust init`.
 #
 # This script only ingests tooling work items that are still `ready` or
 # `in-progress`. Already-`done` items remain in markdown-only history.
@@ -14,8 +14,12 @@ set -euo pipefail
 repo_root="$(git rev-parse --show-toplevel)"
 cd "${repo_root}"
 
-if ! command -v br >/dev/null 2>&1; then
-  echo "error: br (beads_rust) not found on PATH; install it first" >&2
+beads_cmd="${BEADS_RUST_CMD:-beads-rust}"
+
+if ! command -v "${beads_cmd}" >/dev/null 2>&1; then
+  echo "error: ${beads_cmd} not found on PATH." >&2
+  echo "hint: this repo uses the repo-managed \`beads-rust\` wrapper to avoid colliding with the Homebrew viewer \`br\` command." >&2
+  echo "hint: if you intentionally installed the upstream CLI as raw \`br\`, rerun with BEADS_RUST_CMD=br." >&2
   exit 1
 fi
 
@@ -69,15 +73,15 @@ for rel in "${items[@]}"; do
     criteria="See ${file} for validation details."
   fi
 
-  echo "[br] creating bead for: ${title} (status=${status}, priority=${priority})" >&2
+  echo "[${beads_cmd}] creating bead for: ${title} (status=${status}, priority=${priority})" >&2
 
-  br create "${title}" \
+  "${beads_cmd}" create "${title}" \
     --type Task \
     --priority "${priority}" \
     --labels tooling \
     --description "${desc}" \
     --acceptance-criteria "${criteria}" || {
-      echo "error: br create failed for ${file}" >&2
+      echo "error: ${beads_cmd} create failed for ${file}" >&2
       exit 1
     }
 
@@ -85,10 +89,10 @@ for rel in "${items[@]}"; do
 done
 
 # Export the current SQLite state back to JSONL so it can be committed.
-if br sync --flush-only >/dev/null 2>&1; then
-  echo "br sync --flush-only completed; .beads/issues.jsonl updated" >&2
+if "${beads_cmd}" sync --flush-only >/dev/null 2>&1; then
+  echo "${beads_cmd} sync --flush-only completed; .beads/issues.jsonl updated" >&2
 else
-  echo "warning: br sync --flush-only failed; check beads_rust version" >&2
+  echo "warning: ${beads_cmd} sync --flush-only failed; check the beads_rust CLI version" >&2
 fi
 
 echo "tooling queue migration to beads_rust completed (subject to any warnings above)." >&2

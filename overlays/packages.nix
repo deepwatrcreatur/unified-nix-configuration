@@ -83,6 +83,19 @@
     beads-viewer = prev.callPackage ../pkgs/beads-viewer.nix { };
   })
 
+  # Repo-managed wrapper around the upstream beads_rust package.
+  # Expose the CLI as `beads-rust` so it does not collide with the Homebrew
+  # beads_viewer `br` command.
+  (final: prev: {
+    beads-rust-cli = prev.writeShellApplication {
+      name = "beads-rust";
+      runtimeInputs = [ final.beads-rust ];
+      text = ''
+        exec ${final.beads-rust}/bin/br "$@"
+      '';
+    };
+  })
+
   # mem0ai — semantic long-term memory layer for AI agents
   (final: prev: {
     mem0ai = prev.callPackage ../pkgs/mem0ai.nix {

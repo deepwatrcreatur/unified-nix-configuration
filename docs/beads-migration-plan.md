@@ -1,12 +1,14 @@
 # beads_rust Migration Plan
 
 This document captures the design for replacing the hand-rolled markdown
-work-item queue in `docs/*/` with `beads_rust` (`br`), a Rust-based local-first
-task tracker built specifically for agentic workflows.
+work-item queue in `docs/*/` with `beads_rust`, a Rust-based local-first task
+tracker built specifically for agentic workflows. In this repo, the
+repo-managed command is `beads-rust`, which wraps the upstream `br` binary to
+avoid colliding with the Homebrew `beads_viewer` `br` command.
 
-**Status: In progress.** Initial `.beads/` wiring, ignore rules, and
-START-HERE/agent-prompts updates are in place; actual `br init` and queue
-migration remain pending on `br` installation or packaging.
+**Status: In progress.** Initial `.beads/` wiring, ignore rules, repo-managed
+CLI packaging, and START-HERE/agent-prompts updates are in place; actual
+`beads-rust init` and queue migration remain pending on deployment.
 
 ---
 
@@ -17,12 +19,12 @@ that accumulate as queue size grows:
 
 | Pain point | Current system | beads_rust |
 |---|---|---|
-| Discovering next unblocked task | Agent reads README ranking + checks each file | `br ready --json` — one call |
-| Claiming a task atomically | Edit the markdown file in a branch | `br claim <id>` — atomic assign + status |
+| Discovering next unblocked task | Agent reads README ranking + checks each file | `beads-rust ready --json` — one call |
+| Claiming a task atomically | Edit the markdown file in a branch | `beads-rust claim <id>` — atomic assign + status |
 | Expressing dependencies | Informal "blocked-by" prose | First-class `dep add` with typed relationships |
 | Priority | Ordered list in README (manual reorder) | Numeric field; `bv --robot-triage` for graph-aware routing |
-| Status transitions | Text edit inside the file | `br update --status` or `br close` |
-| Searching history | `grep` across closed files | `br search <query>` (BM25 full-text) |
+| Status transitions | Text edit inside the file | `beads-rust update --status` or `beads-rust close` |
+| Searching history | `grep` across closed files | `beads-rust search <query>` (BM25 full-text) |
 | Multiple queues | Separate `tooling-work-items/` and `router-work-items/` | Single `.beads/` store; differentiated by labels or epics |
 
 The markdown system has one advantage beads doesn't: rich prose that explains
@@ -50,8 +52,8 @@ suffices.
 | `## Scope` | `acceptance_criteria` | Maps naturally |
 | `## Non-Goals` | `notes` | Append to notes |
 | `## Validation` | `acceptance_criteria` | Merge with Scope |
-| `## Implementation` (outcome) | `notes` (post-close) | Add as a comment after `br close` |
-| `blocked-by: item-X` (informal) | `br dep add X Y --type Blocks` | First-class dependency |
+| `## Implementation` (outcome) | `notes` (post-close) | Add as a comment after `beads-rust close` |
+| `blocked-by: item-X` (informal) | `beads-rust dep add X Y --type Blocks` | First-class dependency |
 | README ranked order | `priority` (0=Critical … 4=Backlog) | Numeric; `bv` handles graph-aware re-ranking |
 | Queue folder (`tooling-work-items/`) | label `tooling` on each bead | Single store, differentiated by label |
 | `router-work-items/` | label `router` | Same store, different label |
@@ -60,16 +62,15 @@ suffices.
 
 ## Installation
 
-beads_rust is not yet in nixpkgs. Install the binary directly:
+beads_rust is not yet in nixpkgs. This repo packages the upstream flake and
+wraps it as the `beads-rust` command.
 
 ```bash
-bash <(curl -fsSL "https://raw.githubusercontent.com/Dicklesworthstone/beads_rust/main/install.sh?$(date +%s)")
-# Binary lands in ~/.local/bin/br
-br --version
+beads-rust --version
 ```
 
-For reproducibility in this repo, add a nix derivation (see "Nix packaging"
-section below) rather than relying on the raw install script long-term.
+If you intentionally install the upstream raw binary as `br` outside Nix, you
+can still use the migration script by setting `BEADS_RUST_CMD=br`.
 
 ---
 
@@ -80,7 +81,7 @@ git-trackable; the SQLite database is derived and should be gitignored.
 
 ```bash
 cd ~/flakes/unified-nix-configuration
-br init
+beads-rust init
 ```
 
 Add to `.gitignore`:
@@ -90,7 +91,7 @@ Add to `.gitignore`:
 .beads/*.db-wal
 ```
 
-Track `issues.jsonl` in git. Each `br sync --flush-only` exports the SQLite
+Track `issues.jsonl` in git. Each `beads-rust sync --flush-only` exports the SQLite
 state back to JSONL for committing.
 
 ---
@@ -101,25 +102,25 @@ state back to JSONL for committing.
 
 ```bash
 # Human-readable
-br ready --labels tooling
+beads-rust ready --labels tooling
 
 # Machine-readable for agent scripts / START-HERE equivalent
-RUST_LOG=error br ready --labels tooling --json
+RUST_LOG=error beads-rust ready --labels tooling --json
 ```
 
 ### Claiming a task (atomic)
 
 ```bash
-RUST_LOG=error BR_ACTOR=claude-code br claim <id>
+RUST_LOG=error BR_ACTOR=claude-code beads-rust claim <id>
 # Sets assignee=claude-code, status=InProgress atomically
 ```
 
 ### Completing a task
 
 ```bash
-br close <id> --reason "PR #42 merged"
-br comments <id> --add "Outcome: <brief summary of what changed>"
-br sync --flush-only
+beads-rust close <id> --reason "PR #42 merged"
+beads-rust comments <id> --add "Outcome: <brief summary of what changed>"
+beads-rust sync --flush-only
 git add .beads/issues.jsonl
 git commit -m "beads: close <id> — <title>"
 ```
@@ -127,7 +128,7 @@ git commit -m "beads: close <id> — <title>"
 ### Adding a dependency
 
 ```bash
-br dep add <blocker-id> <blocked-id> --type Blocks
+beads-rust dep add <blocker-id> <blocked-id> --type Blocks
 ```
 
 ---
@@ -138,7 +139,7 @@ Both queues are currently empty. When the next queue is created, populate beads
 directly instead of writing markdown files:
 
 ```bash
-br create "Title" \
+beads-rust create "Title" \
   --type Task \
   --priority 2 \
   --labels tooling \
@@ -150,7 +151,7 @@ If items are already in markdown and a migration is needed, use this pattern:
 
 ```bash
 # For each file in docs/tooling-work-items/:
-br create "$(head -1 FILE.md | sed 's/# //')" \
+beads-rust create "$(head -1 FILE.md | sed 's/# //')" \
   --type Task \
   --priority 2 \
   --labels tooling \
@@ -160,12 +161,13 @@ br create "$(head -1 FILE.md | sed 's/# //')" \
 
 For items already `done`, close them immediately after creating:
 ```bash
-br close <new-id> --reason "Completed prior to beads adoption"
+beads-rust close <new-id> --reason "Completed prior to beads adoption"
 ```
 
 For this repo's tooling queue, the helper script
 `scripts/beads-migrate-tooling.sh` automates this migration pattern for all
-`ready` and `in-progress` items once `br` is installed and `br init` has run.
+`ready` and `in-progress` items once `beads-rust` is installed and
+`beads-rust init` has run.
 
 ---
 
@@ -177,22 +179,22 @@ Replace the current manual instructions with a beads-aware version:
 ## Finding work
 
 Run:
-  br ready --labels tooling --json
+  beads-rust ready --labels tooling --json
 
 Pick the highest-priority item (lowest priority number). Claim it:
-  BR_ACTOR=<your-name> br claim <id>
+  BR_ACTOR=<your-name> beads-rust claim <id>
 
 When done, close and sync:
-  br close <id> --reason "PR #<n> merged"
-  br sync --flush-only
+  beads-rust close <id> --reason "PR #<n> merged"
+  beads-rust sync --flush-only
   git add .beads/issues.jsonl && git commit -m "beads: close <id>"
 ```
 
 The `agent-prompts.md` dispatch prompt becomes:
 
 ```
-Run `br ready --labels tooling --json` to find the next unblocked item.
-Claim it with `BR_ACTOR=claude-code br claim <id>`, do the work in a
+Run `beads-rust ready --labels tooling --json` to find the next unblocked item.
+Claim it with `BR_ACTOR=claude-code beads-rust claim <id>`, do the work in a
 dedicated branch, and close the bead when the PR merges.
 ```
 
@@ -207,14 +209,15 @@ Agents query it for priority-ranked, dependency-aware task selection:
 bv --robot-triage --labels tooling
 ```
 
-Install separately (same install-script pattern as `br`). Only worth adding
+Install separately alongside `beads-rust`. Only worth adding
 once the queue regularly has 10+ items with non-trivial dependency graphs.
 
 ---
 
 ## Nix packaging
 
-Neither `br` nor `bv` are in nixpkgs yet. The simplest approach for this repo:
+Neither the repo-managed `beads-rust` wrapper nor `bv` are in nixpkgs yet. The
+simplest approach for this repo:
 
 ```nix
 # In an overlay or pkgs/beads-rust.nix
@@ -233,7 +236,7 @@ beads-rust = pkgs.rustPlatform.buildRustPackage {
 
 Add to `modules/home-manager/common/coding-agents.nix` once packaged:
 ```nix
-home.packages = [ pkgs.beads-rust ];
+home.packages = [ pkgs.beads-rust-cli ];
 ```
 
 ---
@@ -245,8 +248,8 @@ Even after migrating to beads, keep:
 - `docs/` — for long-form design docs, architecture notes, and planning
   documents like this one. These are not tasks; they don't belong in beads.
 - `docs/*/README.md` — brief human overview of each queue area; link to
-  `br list --labels <area>` output as the live queue.
-- `docs/*/START-HERE.md` — updated to reference `br ready` instead of the
+  `beads-rust list --labels <area>` output as the live queue.
+- `docs/*/START-HERE.md` — updated to reference `beads-rust ready` instead of the
   ranked list.
 
 The markdown work-item *files* (`01-foo.md`, `02-bar.md`) are the only thing
@@ -275,11 +278,11 @@ Migrate when **two or more** of these are true:
 
 As of the initial wiring for this repo:
 
-- [ ] Install `br` to `~/.local/bin/` (or package as nix derivation)
-- [ ] `br init` at repo root; add SQLite files to `.gitignore`
+- [ ] Deploy `beads-rust` via the repo-managed wrapper package
+- [ ] `beads-rust init` at repo root; add SQLite files to `.gitignore`
 - [x] Commit `.beads/issues.jsonl` (initially empty)
 - [ ] Migrate any existing markdown items or start fresh if queues are empty
-- [x] Update `docs/tooling-work-items/START-HERE.md` to reference `br ready` (with README fallback when `br` is absent)
+- [x] Update `docs/tooling-work-items/START-HERE.md` to reference `beads-rust ready` (with README fallback when the CLI is absent)
 - [x] Update `docs/router-work-items/START-HERE.md` similarly
 - [x] Update `agent-prompts.md` in each queue folder
 - [ ] (Optional) Install `bv` and validate `--robot-triage` output

@@ -38,7 +38,7 @@ This reduces the agent-tooling surface in `unified-nix-configuration` from
 | `fnox` | Credential proxy for all wrapped CLI tools |
 | `nix-rtk` | RTK token-saver + Claude Code hook integration |
 | `llm-agents` | Package set: claude-code, opencode, codex, etc. |
-| `beads-rust` | Task graph tracker (`br` CLI) |
+| `beads-rust` | Task graph tracker (`beads-rust` wrapper around upstream `br`) |
 | `worktrunk` | Git worktree manager for parallel agent branches |
 
 ### Experimental (newer, interface may evolve)

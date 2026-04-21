@@ -184,6 +184,8 @@ For detailed managed authentication paths (including `gemini-cli`), see `docs/to
 - Beads task-graph wiring is now partially in place; see
   `docs/beads-migration-plan.md` and
   `docs/tooling-work-items/18-beads-task-graph-integration.md` for details.
+  Use the repo-managed `beads-rust` command for the Rust CLI; `br` may refer to
+  the Homebrew viewer on some hosts.
 
 ### Git Workflow
 Before pushing changes that affect remote hosts:

@@ -1,12 +1,13 @@
 # modules/home-manager/common/beads.nix
-# Beads coordination stack: br (beads_rust) + bv (beads_viewer)
+# Beads coordination stack: beads-rust (repo-managed wrapper around upstream br)
+# + bv (beads_viewer)
 #
-# br  — CLI for creating, updating, and querying the .beads/ task store
+# beads-rust — CLI for creating, updating, and querying the .beads/ task store
 # bv  — TUI + robot-triage engine; reads PageRank/critical-path from store
 #
 # Usage after `home-manager switch`:
-#   br init             — initialise .beads/ in a repo
-#   br ready --json     — list unblocked tasks as JSON
+#   beads-rust init        — initialise .beads/ in a repo
+#   beads-rust ready --json — list unblocked tasks as JSON
 #   bv                  — open interactive terminal UI
 #   bv --robot-triage --labels tooling --json   — agent-friendly priority list
 {
@@ -21,12 +22,12 @@ let
 in
 {
   options.programs.beads = {
-    enable = lib.mkEnableOption "Beads coordination stack (br + bv)";
+    enable = lib.mkEnableOption "Beads coordination stack (beads-rust + bv)";
 
     enableBr = lib.mkOption {
       type = lib.types.bool;
       default = true;
-      description = "Install br (beads_rust) CLI.";
+      description = "Install the repo-managed beads-rust CLI wrapper.";
     };
 
     enableBv = lib.mkOption {
@@ -38,7 +39,7 @@ in
 
   config = lib.mkIf cfg.enable {
     home.packages =
-      lib.optional cfg.enableBr pkgs.beads-rust
+      lib.optional cfg.enableBr pkgs.beads-rust-cli
       ++ lib.optional cfg.enableBv pkgs.beads-viewer;
   };
 }
