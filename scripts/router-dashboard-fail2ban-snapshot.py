@@ -3,19 +3,39 @@ import grp
 import json
 import os
 import subprocess
+import sys
 import tempfile
 
-FAIL2BAN_CLIENT = os.environ["DASHBOARD_FAIL2BAN_CLIENT"]
-OUTPUT_PATH = os.environ["DASHBOARD_FAIL2BAN_STATUS_FILE"]
+
+def log_warning(message):
+    print(message, file=sys.stderr, flush=True)
+
+
+def get_required_env(name):
+    value = os.environ.get(name, "").strip()
+    if not value:
+        raise SystemExit(f"Missing required environment variable: {name}")
+    return value
+
+
+FAIL2BAN_CLIENT = get_required_env("DASHBOARD_FAIL2BAN_CLIENT")
+OUTPUT_PATH = get_required_env("DASHBOARD_FAIL2BAN_STATUS_FILE")
+OUTPUT_GROUP = os.environ.get("DASHBOARD_FAIL2BAN_STATUS_GROUP", "router-dashboard").strip() or "router-dashboard"
 
 
 def build_payload():
-    result = subprocess.run(
-        [FAIL2BAN_CLIENT, "status"],
-        capture_output=True,
-        text=True,
-        timeout=5,
-    )
+    try:
+        result = subprocess.run(
+            [FAIL2BAN_CLIENT, "status"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+    except (OSError, subprocess.SubprocessError) as exc:
+        return {
+            "available": False,
+            "message": f"Failed to execute fail2ban-client: {exc}",
+        }
 
     if result.returncode != 0:
         return {
@@ -35,13 +55,18 @@ def build_payload():
     all_banned_ips = []
 
     for jail in jails:
-        jail_result = subprocess.run(
-            [FAIL2BAN_CLIENT, "status", jail],
-            capture_output=True,
-            text=True,
-            timeout=5,
-        )
+        try:
+            jail_result = subprocess.run(
+                [FAIL2BAN_CLIENT, "status", jail],
+                capture_output=True,
+                text=True,
+                timeout=5,
+            )
+        except (OSError, subprocess.SubprocessError) as exc:
+            log_warning(f"Failed to query fail2ban jail {jail}: {exc}")
+            continue
         if jail_result.returncode != 0:
+            log_warning(f"fail2ban-client status {jail} failed: {jail_result.stderr.strip() or jail_result.stdout.strip()}")
             continue
 
         stats = {
@@ -90,7 +115,7 @@ def main():
         handle.write("\n")
         temp_path = handle.name
 
-    gid = grp.getgrnam("router-dashboard").gr_gid
+    gid = grp.getgrnam(OUTPUT_GROUP).gr_gid
     os.chown(temp_path, 0, gid)
     os.chmod(temp_path, 0o640)
     os.replace(temp_path, OUTPUT_PATH)
