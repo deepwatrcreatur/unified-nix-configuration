@@ -96,9 +96,13 @@ let
 
   podmanServiceSecrets = operatorUsers ++ machineRecipients "podman";
   paperlessOidcSecrets = operatorUsers ++ machineRecipients "podman" ++ machineRecipients "authentik-host";
+
+  allMachineRecipients = operatorUsers ++ builtins.concatLists (map machineRecipients atticClientHosts);
 in {
   # Service-scoped secrets
-  "secrets-agenix/cloudflare-api-key.age".publicKeys = routerServiceSecrets;
+  "secrets-agenix/user-password-root.age".publicKeys = allMachineRecipients;
+  "secrets-agenix/user-password-deepwatrcreatur.age".publicKeys = allMachineRecipients;
+
   "secrets-agenix/cloudflare_ddns_API_token.age".publicKeys = routerServiceSecrets;
   "secrets-agenix/technitium-api-key.age".publicKeys = routerServiceSecrets;
   "secrets-agenix/kea-ddns-tsig-key.age".publicKeys = routerServiceSecrets;
