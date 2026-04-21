@@ -5,6 +5,7 @@
 let
   topology = config.router.topology;
   routerHost = topology.routerHost;
+  lanDevice = config.services.router-networking.routedInterfaces.lan.device;
 in
 {
   networking.hostName = "router";
@@ -53,7 +54,7 @@ in
   # externalInterface is auto-derived from services.router-networking.wan.device.
   services.router-upnp = {
     enable = true;
-    internalIPs = [ "${routerHost.ip}/${toString topology.networks.lan.prefixLength}" ];
+    internalIPs = [ lanDevice ];
   };
 
   # NAT is handled by nftables (see nftables.nix)

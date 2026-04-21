@@ -187,13 +187,17 @@ in
     networking.nameservers = mkIf (cfg.networking.staticIP != null) cfg.networking.nameservers;
 
     # Root user
-    users.users.root.shell = mkIf cfg.users.root.enableFishShell pkgs.fish;
+    users.users.root = {
+      shell = mkIf cfg.users.root.enableFishShell pkgs.fish;
+      hashedPasswordFile = config.age.secrets.user-password-root.path;
+    };
 
     # Primary user
     users.users.${cfg.users.primaryUser} = {
       isNormalUser = true;
       extraGroups = cfg.users.extraGroups;
       shell = pkgs.fish;
+      hashedPasswordFile = config.age.secrets.user-password-deepwatrcreatur.path;
     };
 
     # Nixbuilder user for remote builds
@@ -223,6 +227,8 @@ in
       owner = "root";
       mode = "0400";
     };
+    age.secrets.user-password-root.file = ../../secrets-agenix/user-password-root.age;
+    age.secrets.user-password-deepwatrcreatur.file = ../../secrets-agenix/user-password-deepwatrcreatur.age;
 
     # Home-manager configuration with LXC fix
     systemd.services."home-manager-root".environment.NIX_REMOTE = mkIf cfg.homeManager.enable "daemon";

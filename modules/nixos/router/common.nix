@@ -58,4 +58,27 @@ in
       }
     ];
   };
+
+  # Enable mDNS reflection across VLANs (LAN, Management, and IoT).
+  # This allows discovery (AirPlay, Chromecast, etc.) to work across these segments.
+  config.services.router-mdns = {
+    enable = lib.mkDefault true;
+    allowInterfaces =
+      let
+        # Common management device across both routers
+        mgmt = "ens18";
+      in
+      if config.networking.hostName == "router-backup" then
+        [
+          "enp3s0" # LAN
+          mgmt # Management
+          "enp3s0.20" # IoT
+        ]
+      else
+        [
+          "enp6s16" # LAN
+          mgmt # Management
+          "enp6s16.20" # IoT
+        ];
+  };
 }
