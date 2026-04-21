@@ -20,6 +20,8 @@
     inputs.nix-router-optimized.nixosModules.router-mdns
     inputs.nix-router-optimized.nixosModules.router-upnp
     inputs.nix-router-optimized.nixosModules.router-bgp
+    inputs.nix-router-optimized.nixosModules.router-ha
+    inputs.nix-router-optimized.nixosModules.router-mwan
     ../../modules/nixos/common
     ../../modules/nixos/services/iperf3.nix
     ../../modules/nixos/keyboard-glitches.nix

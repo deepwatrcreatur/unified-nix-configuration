@@ -132,13 +132,50 @@ in
     };
   };
 
+  services.router-ha = {
+    enable = true;
+    role = if config.networking.hostName == "router" then "master" else "backup";
+    virtualIp = "10.10.10.1/16";
+    vrrpInterface = lanDevice;
+    keaSync.enable = true;
+    keaSync.peerAddress = if config.networking.hostName == "router" then "10.10.11.213" else "10.10.11.1"; # Using management IPs for control plane sync
+    wan = {
+      enable = true;
+      interface = wanDevice;
+      clonedMac = "02:76:c6:01:2a:b0";
+    };
+  };
+
+  services.router-kea = {
+    enable = true;
+    dhcp4 = {
+      subnet = lanNetwork.cidr;
+      gatewayAddress = "10.10.10.1"; # Use the VIP
+      dnsServers = [ "10.10.10.1" ];
+      poolRanges = [
+        {
+          start = "10.10.10.100";
+          end = "10.10.10.250";
+        }
+      ];
+      ha = {
+        enable = true;
+        thisServerName = config.networking.hostName;
+        role = if config.networking.hostName == "router" then "primary" else "secondary";
+        peerAddress = if config.networking.hostName == "router" then "10.10.11.213" else "10.10.11.1";
+        peerName = if config.networking.hostName == "router" then "router-backup" else "router";
+      };
+      reservations = [ ]; # TODO: Pull from central list
+    };
+  };
+
   services.router-networking = {
     enable = true;
     wan.device = wanDevice;
     routedInterfaces = {
       lan = {
         device = lanDevice;
-        ipv4Address = lanIpv4Address;
+        ipv4Address = if config.networking.hostName == "router" then "10.10.10.2/16" else "10.10.10.3/16";
         dns = [ "127.0.0.1" ];
         domains = [ topology.domain ];
         requiredForOnline = "routable";
@@ -151,11 +188,11 @@ in
       };
       management = {
         device = managementDevice;
-        ipv4Address = managementIpv4Address;
+        ipv4Address = if config.networking.hostName == "router-backup" then "10.255.254.1/24" else managementIpv4Address;
         prefixDelegationMode = "managed";
       };
       iot = {
-        device = "enp6s16.20";
+        device = "${lanDevice}.20";
         vlanId = 20;
         parentDevice = lanDevice;
         ipv4Address = "10.20.20.1/24";
@@ -165,7 +202,7 @@ in
         };
       };
       guest = {
-        device = "enp6s16.30";
+        device = "${lanDevice}.30";
         vlanId = 30;
         parentDevice = lanDevice;
         ipv4Address = "10.30.30.1/24";
@@ -237,12 +274,12 @@ in
         label = "LAN";
       };
       iot = {
-        device = "enp6s16.20";
+        device = "${lanDevice}.20";
         role = "lan";
         label = "IoT VLAN";
       };
       guest = {
-        device = "enp6s16.30";
+        device = "${lanDevice}.30";
         role = "lan";
         label = "Guest VLAN";
       };
@@ -264,12 +301,6 @@ in
       comments = host.description or "";
     }) reservableHosts;
   };
-
-  services.router-kea.dhcp4.reservations = lib.mapAttrsToList (name: host: {
-    hw-address = host.dhcpReservation.macAddress;
-    ip-address = host.ip;
-    hostname = name;
-  }) reservableHosts;
 
   services.router-firewall = {
     enable = true;
@@ -491,6 +522,7 @@ in
     isNormalUser = true;
     extraGroups = [ "wheel" ];
     shell = pkgs.fish;
+    openssh.authorizedKeys.keys = [ operatorStableSshKey ];
   };
 
   services.ssh-keys-manager.username = "deepwatrcreatur";
@@ -498,6 +530,9 @@ in
   programs.fish.enable = true;
 
   security.sudo.wheelNeedsPassword = false;
+
+  # Emergency recovery: Auto-login root on the serial console ONLY for the backup router.
+  services.getty.autologinUser = lib.mkIf (config.networking.hostName == "router-backup") "root";
 
   environment.systemPackages = with pkgs; [ tmux ];
 
