@@ -265,6 +265,12 @@ in
     }) reservableHosts;
   };
 
+  services.router-kea.dhcp4.reservations = lib.mapAttrsToList (name: host: {
+    hw-address = host.dhcpReservation.macAddress;
+    ip-address = host.ip;
+    hostname = name;
+  }) reservableHosts;
+
   services.router-firewall = {
     enable = true;
     trustedTcpPorts = [
@@ -296,6 +302,8 @@ in
       "nftables"
       "caddy"
       "technitium-dns-server"
+      "kea-dhcp4-server"
+      "kea-dhcp-ddns-server"
       "tailscaled"
       "fail2ban"
       "prometheus"
@@ -552,6 +560,74 @@ in
         RestartSec = "15s";
       };
       wantedBy = [ "multi-user.target" ];
+    };
+
+    # Configure Technitium to accept RFC2136 dynamic DNS updates from Kea D2.
+    # Registers the TSIG key and enables per-zone dynamic update permissions
+    # for both the forward zone and the reverse zone.
+    technitium-enable-rfc2136 = {
+      description = "Configure Technitium RFC2136 dynamic update support for Kea DDNS";
+      after = [
+        "technitium-dns-server.service"
+        "agenix.service"
+      ];
+      wants = [ "technitium-dns-server.service" ];
+      wantedBy = [ "multi-user.target" ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+      };
+      script =
+        let
+          apiKeyFile = secrets.path "technitium-api-key";
+          tsigKeyFile = secrets.path "kea-ddns-tsig-key";
+          fwdZone = topology.domain;
+          revZone = "10.10.in-addr.arpa";
+        in
+        ''
+          set -euo pipefail
+
+          for i in {1..30}; do
+            if ${pkgs.curl}/bin/curl -fsS http://127.0.0.1:5380/api/dns/status >/dev/null 2>&1; then
+              break
+            fi
+            echo "Waiting for Technitium DNS Server to start..."
+            ${pkgs.coreutils}/bin/sleep 2
+          done
+
+          TOKEN="$(${pkgs.coreutils}/bin/cat "${apiKeyFile}")"
+          SECRET="$(${pkgs.coreutils}/bin/tr -d '\n' < "${tsigKeyFile}")"
+
+          echo "Registering TSIG key kea-ddns in Technitium..."
+          ${pkgs.curl}/bin/curl -fsS -X POST \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            --data-urlencode "token=$TOKEN" \
+            --data-urlencode "tsigKeys=kea-ddns|$SECRET|hmac-sha256" \
+            "http://127.0.0.1:5380/api/settings/set" \
+            >/dev/null
+
+          echo "Enabling RFC2136 updates for forward zone ${fwdZone}..."
+          ${pkgs.curl}/bin/curl -fsS -X POST \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            --data-urlencode "token=$TOKEN" \
+            --data-urlencode "zone=${fwdZone}" \
+            --data-urlencode "update=AllowOnlySpecifiedNetworkAddresses" \
+            --data-urlencode "updateNetworkACL=127.0.0.1" \
+            "http://127.0.0.1:5380/api/zones/options/set" \
+            >/dev/null
+
+          echo "Enabling RFC2136 updates for reverse zone ${revZone}..."
+          ${pkgs.curl}/bin/curl -fsS -X POST \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            --data-urlencode "token=$TOKEN" \
+            --data-urlencode "zone=${revZone}" \
+            --data-urlencode "update=AllowOnlySpecifiedNetworkAddresses" \
+            --data-urlencode "updateNetworkACL=127.0.0.1" \
+            "http://127.0.0.1:5380/api/zones/options/set" \
+            >/dev/null
+
+          echo "Technitium RFC2136 configuration applied"
+        '';
     };
   };
 

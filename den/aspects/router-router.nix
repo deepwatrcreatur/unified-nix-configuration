@@ -7,6 +7,7 @@
     inputs.nix-router-optimized.nixosModules.router-firewall
     inputs.nix-router-optimized.nixosModules.router-dns-service
     inputs.nix-router-optimized.nixosModules.router-homelab
+    inputs.nix-router-optimized.nixosModules.router-kea
     inputs.nix-router-optimized.nixosModules.router-log-storage
     inputs.nix-router-optimized.nixosModules.router-optimizations
     inputs.nix-router-optimized.nixosModules.router-tailscale
