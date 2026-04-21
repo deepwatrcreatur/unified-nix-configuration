@@ -47,13 +47,18 @@ in
       "wheel"
     ];
     shell = pkgs.fish;
+    hashedPasswordFile = config.age.secrets.user-password-deepwatrcreatur.path;
     openssh.authorizedKeys.keys = [ deepwatrcreaturStableKey ];
   };
 
   users.users.root = {
     shell = pkgs.bashInteractive;
+    hashedPasswordFile = config.age.secrets.user-password-root.path;
     openssh.authorizedKeys.keys = [ rootStableKey ];
   };
+
+  age.secrets.user-password-root.file = ../../../secrets-agenix/user-password-root.age;
+  age.secrets.user-password-deepwatrcreatur.file = ../../../secrets-agenix/user-password-deepwatrcreatur.age;
 
   networking.useDHCP = lib.mkDefault true;
   networking.networkmanager.enable = true;
