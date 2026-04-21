@@ -2,7 +2,6 @@
   lib,
   stdenv,
   fetchurl,
-  patchelf,
 }:
 
 stdenv.mkDerivation rec {
@@ -14,16 +13,13 @@ stdenv.mkDerivation rec {
     hash = "sha256-B/8JyTDHmw5OSCTAm34qYhlJh3e2vih+9NusgG8ofa8=";
   };
 
-  nativeBuildInputs = [ patchelf ];
+  dontFixup = true;
 
   installPhase = ''
     runHook preInstall
 
     mkdir -p "$out/share/iventoy"
     cp -a . "$out/share/iventoy"
-
-    patchelf --set-interpreter "$(cat ${stdenv.cc}/nix-support/dynamic-linker)" \
-      "$out/share/iventoy/lib/iventoy"
 
     runHook postInstall
   '';

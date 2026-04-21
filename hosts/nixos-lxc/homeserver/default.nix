@@ -27,6 +27,7 @@ in
     ./modules/networking.nix
     ./modules/configuration.nix
     ./modules/homebridge.nix
+    ./modules/guacamole.nix
     ./modules/home-manager-users.nix
     ./modules/users.nix
     inputs.agenix.nixosModules.default

@@ -23,6 +23,8 @@ let
   lanListenAddress = builtins.head (lib.splitString "/" lanIpv4Address);
   managementListenAddress = builtins.head (lib.splitString "/" managementIpv4Address);
   managementDevice = "ens18";
+  iotDevice = "${lanDevice}.20";
+  guestDevice = "${lanDevice}.30";
   operatorStableSshKey = lib.strings.trim (
     builtins.readFile ../../../ssh-keys/deepwatrcreatur-stable-identity.pub
   );
@@ -318,6 +320,8 @@ in
 
   services.router-observability.enable = true;
 
+  services.router-upnp.internalIPs = lib.mkForce [ lanDevice ];
+
   services.router-homelab.sshTarget = sshTarget;
   services.router-homelab.listenAddress = "0.0.0.0";
 
@@ -504,7 +508,12 @@ in
     '';
   };
 
-  users.users.root.openssh.authorizedKeys.keys = [ operatorStableSshKey ];
+  users.mutableUsers = false;
+
+  users.users.root = {
+    hashedPasswordFile = config.age.secrets.user-password-root.path;
+    openssh.authorizedKeys.keys = [ operatorStableSshKey ];
+  };
 
   services.fail2ban = {
     enable = true;
@@ -521,6 +530,7 @@ in
   users.users.deepwatrcreatur = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
+    hashedPasswordFile = config.age.secrets.user-password-deepwatrcreatur.path;
     shell = pkgs.fish;
     openssh.authorizedKeys.keys = [ operatorStableSshKey ];
   };
@@ -536,7 +546,12 @@ in
 
   environment.systemPackages = with pkgs; [ tmux ];
 
-  age.secrets = secrets.definitions;
+  age.secrets =
+    secrets.definitions
+    // {
+      user-password-root.file = ../../../secrets-agenix/user-password-root.age;
+      user-password-deepwatrcreatur.file = ../../../secrets-agenix/user-password-deepwatrcreatur.age;
+    };
 
   services.router-log-storage.enable = lib.mkForce enableLogStorage;
 

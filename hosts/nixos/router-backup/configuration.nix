@@ -69,6 +69,20 @@ in
     openFirewall = false;
   };
 
+  # The restored router-backup Technitium state does not currently trust the
+  # shared API token, so keep the local sync jobs disabled until its token is
+  # intentionally re-provisioned.
+  services.router-technitium = {
+    dhcpReservations = lib.mkForce { };
+    ntpServers = lib.mkForce [ ];
+    forceBlockListUpdateOnActivation = lib.mkForce false;
+  };
+
+  # The backup router often boots with the LAN side disconnected. miniupnpd
+  # refuses to start when the internal interface is down, so keep UPnP disabled
+  # until this VM is intentionally promoted to the active router.
+  services.router-upnp.enable = lib.mkForce false;
+
   services.router-firewall = {
     trustedTcpPorts = [
       16000
