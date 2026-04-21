@@ -1,6 +1,6 @@
 # Router Dashboard Review Hardening
 
-Status: `in-progress`
+Status: `done`
 Priority: `high`
 Branch: `fix/router-dashboard-review-hardening`
 
@@ -52,3 +52,7 @@ related to the repaired runtime path.
 
 This item should verify each review comment against the current branch state
 and only implement the fixes that are still truly needed.
+
+## Outcome
+
+Merged in PR #125 on 2026-04-21.
