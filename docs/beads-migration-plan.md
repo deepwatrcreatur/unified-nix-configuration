@@ -102,10 +102,10 @@ state back to JSONL for committing.
 
 ```bash
 # Human-readable
-beads-rust ready --labels tooling
+beads-rust ready --label tooling
 
 # Machine-readable for agent scripts / START-HERE equivalent
-RUST_LOG=error beads-rust ready --labels tooling --json
+RUST_LOG=error beads-rust ready --label tooling --json
 ```
 
 ### Claiming a task (atomic)
@@ -179,7 +179,7 @@ Replace the current manual instructions with a beads-aware version:
 ## Finding work
 
 Run:
-  beads-rust ready --labels tooling --json
+  beads-rust ready --label tooling --json
 
 Pick the highest-priority item (lowest priority number). Claim it:
   BR_ACTOR=<your-name> beads-rust claim <id>
@@ -193,7 +193,7 @@ When done, close and sync:
 The `agent-prompts.md` dispatch prompt becomes:
 
 ```
-Run `beads-rust ready --labels tooling --json` to find the next unblocked item.
+Run `beads-rust ready --label tooling --json` to find the next unblocked item.
 Claim it with `BR_ACTOR=claude-code beads-rust claim <id>`, do the work in a
 dedicated branch, and close the bead when the PR merges.
 ```
@@ -248,7 +248,7 @@ Even after migrating to beads, keep:
 - `docs/` — for long-form design docs, architecture notes, and planning
   documents like this one. These are not tasks; they don't belong in beads.
 - `docs/*/README.md` — brief human overview of each queue area; link to
-  `beads-rust list --labels <area>` output as the live queue.
+  `beads-rust list --label <area>` output as the live queue.
 - `docs/*/START-HERE.md` — updated to reference `beads-rust ready` instead of the
   ranked list.
 

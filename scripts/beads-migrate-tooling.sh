@@ -30,9 +30,8 @@ if [[ ! -f "${queue_readme}" ]]; then
 fi
 
 # Extract the ordered list of work-item files from the Current Ranked Queue
-mapfile -t items < <(sed -n '/^## Current Ranked Queue/,/^$/p' "${queue_readme}" \
-  | grep ' - `' \
-  | sed 's/.*(\.\/(.*\.md)).*/\1/')
+mapfile -t items < <(awk '/^## Current Ranked Queue/{flag=1; next} /^## /{flag=0} flag' "${queue_readme}" \
+  | sed -nE 's|.*\(\./([^)]*\.md)\).*|\1|p')
 
 if [[ ${#items[@]} -eq 0 ]]; then
   echo "no tooling work items found in README; nothing to migrate" >&2
@@ -62,15 +61,23 @@ for rel in "${items[@]}"; do
     continue
   fi
 
-  # Pull a simple description and acceptance-criteria slice, if present.
+  # Pull a simple description and validation slice, if present.
   desc=$(sed -n '/^## Goal/,/^## /p' "${file}" | sed '1d;$d') || true
   if [[ -z "${desc}" ]]; then
     desc="See ${file} for full context."
   fi
 
   criteria=$(sed -n '/^## Validation/,/^## /p' "${file}" | sed '1d;$d') || true
-  if [[ -z "${criteria}" ]]; then
-    criteria="See ${file} for validation details."
+  if [[ -n "${criteria}" ]]; then
+    desc="${desc}
+
+Validation:
+${criteria}"
+  fi
+
+  br_status="open"
+  if [[ "${status}" == "in-progress" ]]; then
+    br_status="in_progress"
   fi
 
   echo "[${beads_cmd}] creating bead for: ${title} (status=${status}, priority=${priority})" >&2
@@ -80,7 +87,8 @@ for rel in "${items[@]}"; do
     --priority "${priority}" \
     --labels tooling \
     --description "${desc}" \
-    --acceptance-criteria "${criteria}" || {
+    --status "${br_status}" \
+    --external-ref "${file}" || {
       echo "error: ${beads_cmd} create failed for ${file}" >&2
       exit 1
     }

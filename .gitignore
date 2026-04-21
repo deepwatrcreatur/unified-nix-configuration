@@ -4,3 +4,7 @@
 .beads/*.db
 .beads/*.db-shm
 .beads/*.db-wal
+.beads/.gitignore
+.beads/.write.lock
+.beads/config.yaml
+.beads/metadata.json

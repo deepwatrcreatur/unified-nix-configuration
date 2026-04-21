@@ -17,7 +17,7 @@ Before using any prompt, read:
 - [`START-HERE.md`](./START-HERE.md)
 
 If `beads-rust` is available, prefer
-`beads-rust ready --labels router --json` to discover unblocked work;
+`beads-rust ready --label router --json` to discover unblocked work;
 otherwise, follow the README-ranked queue.
 
 Important:
