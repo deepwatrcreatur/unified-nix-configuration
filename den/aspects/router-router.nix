@@ -13,6 +13,13 @@
     inputs.nix-router-optimized.nixosModules.router-tailscale
     inputs.nix-router-optimized.nixosModules.router-observability
     inputs.nix-router-optimized.nixosModules.router-vpn
+    inputs.nix-router-optimized.nixosModules.router-ntp
+    inputs.nix-router-optimized.nixosModules.router-nat64
+    inputs.nix-router-optimized.nixosModules.router-dns64
+    inputs.nix-router-optimized.nixosModules.router-sqm
+    inputs.nix-router-optimized.nixosModules.router-mdns
+    inputs.nix-router-optimized.nixosModules.router-upnp
+    inputs.nix-router-optimized.nixosModules.router-bgp
     ../../modules/nixos/common
     ../../modules/nixos/services/iperf3.nix
     ../../modules/nixos/keyboard-glitches.nix

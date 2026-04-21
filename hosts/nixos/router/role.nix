@@ -304,6 +304,7 @@ in
       "technitium-dns-server"
       "kea-dhcp4-server"
       "kea-dhcp-ddns-server"
+      "miniupnpd"
       "tailscaled"
       "fail2ban"
       "prometheus"

@@ -49,6 +49,13 @@ in
     lanSubnets = [ topology.networks.lan.cidr ];
   };
 
+  # UPnP/NAT-PMP for game consoles and P2P clients.
+  # externalInterface is auto-derived from services.router-networking.wan.device.
+  services.router-upnp = {
+    enable = true;
+    internalIPs = [ "${routerHost.ip}/${toString topology.networks.lan.prefixLength}" ];
+  };
+
   # NAT is handled by nftables (see nftables.nix)
   networking.nat.enable = false;
 }
