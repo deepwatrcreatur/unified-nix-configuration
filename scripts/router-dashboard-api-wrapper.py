@@ -2,30 +2,100 @@
 import importlib.util
 import json
 import os
+import subprocess
+import sys
 
-UPSTREAM_SERVER = os.environ["DASHBOARD_UPSTREAM_SERVER"]
+
+def log_warning(message):
+    print(message, file=sys.stderr, flush=True)
+
+
+def get_required_env(name):
+    value = os.environ.get(name, "").strip()
+    if not value:
+        raise SystemExit(f"Missing required environment variable: {name}")
+    return value
+
+
+def load_optional_secret(path, env_name):
+    if not path:
+        return
+
+    if not os.path.exists(path):
+        log_warning(f"Optional secret file not found for {env_name}: {path}")
+        return
+
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            os.environ[env_name] = handle.read().strip()
+    except OSError as exc:
+        log_warning(f"Failed reading optional secret file for {env_name}: {exc}")
+
+
+def parse_interfaces_env():
+    raw = os.environ.get("DASHBOARD_INTERFACES", "[]")
+    try:
+        parsed = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        log_warning(f"Invalid DASHBOARD_INTERFACES JSON: {exc}")
+        return []
+
+    if not isinstance(parsed, list):
+        log_warning("DASHBOARD_INTERFACES must decode to a list; ignoring malformed value")
+        return []
+
+    return parsed
+
+
+def read_int_file(handler, path, context):
+    raw = handler.read_file(path)
+    if raw is None:
+        return 0
+
+    text = str(raw).strip()
+    if not text:
+        return 0
+
+    try:
+        return int(text)
+    except ValueError:
+        log_warning(f"Invalid integer in {path} for {context}: {text!r}")
+        return 0
+
+
+def read_interface_state(handler, path, interface_name):
+    raw = handler.read_file(path)
+    if raw is None:
+        return "UNKNOWN"
+
+    state = str(raw).strip().upper()
+    if not state:
+        log_warning(f"Missing operstate value for interface {interface_name}")
+        return "UNKNOWN"
+
+    return state
+
+
+UPSTREAM_SERVER = get_required_env("DASHBOARD_UPSTREAM_SERVER")
 FAIL2BAN_STATUS_FILE = os.environ.get("DASHBOARD_FAIL2BAN_STATUS_FILE", "")
 CLOUDFLARE_TOKEN_FILE = os.environ.get("DASHBOARD_CLOUDFLARE_TOKEN_FILE", "")
 
-if CLOUDFLARE_TOKEN_FILE and os.path.exists(CLOUDFLARE_TOKEN_FILE):
-    try:
-        with open(CLOUDFLARE_TOKEN_FILE, "r", encoding="utf-8") as handle:
-            os.environ["CLOUDFLARE_API_TOKEN"] = handle.read().strip()
-    except Exception:
-        pass
+if not os.path.exists(UPSTREAM_SERVER):
+    raise SystemExit(f"DASHBOARD_UPSTREAM_SERVER does not exist: {UPSTREAM_SERVER}")
 
+load_optional_secret(CLOUDFLARE_TOKEN_FILE, "CLOUDFLARE_API_TOKEN")
 spec = importlib.util.spec_from_file_location("router_dashboard_upstream", UPSTREAM_SERVER)
+if spec is None or spec.loader is None:
+    raise SystemExit(f"Unable to load dashboard upstream module from {UPSTREAM_SERVER}")
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
 
-try:
-    dashboard_interfaces = json.loads(os.environ.get("DASHBOARD_INTERFACES", "[]"))
-except json.JSONDecodeError:
-    dashboard_interfaces = []
+dashboard_interfaces = parse_interfaces_env()
 
 interface_role_map = {}
 for interface in dashboard_interfaces:
     if not isinstance(interface, dict):
+        log_warning(f"Ignoring malformed dashboard interface entry: {interface!r}")
         continue
     device = interface.get("device")
     role = interface.get("role") or device
@@ -41,35 +111,38 @@ def handle_interface_stats(self):
         net_path = module.Path("/sys/class/net")
 
         for iface_path in net_path.iterdir():
-            name = iface_path.name
-            if name.startswith(("lo", "docker", "veth", "br-", "virbr")):
-                continue
+            try:
+                name = iface_path.name
+                if name.startswith(("lo", "docker", "veth", "br-", "virbr")):
+                    continue
 
-            stats_path = iface_path / "statistics"
-            if not stats_path.exists():
-                continue
+                stats_path = iface_path / "statistics"
+                if not stats_path.exists():
+                    continue
 
-            rx_bytes = int(self.read_file(stats_path / "rx_bytes") or 0)
-            tx_bytes = int(self.read_file(stats_path / "tx_bytes") or 0)
-            rx_rate, tx_rate = self.calculate_rates(name, rx_bytes, tx_bytes)
-            ipv4 = self.get_ipv4(name)
-            ipv6_list = self.get_ipv6(name)
-            key = interface_role_map.get(name, name)
+                rx_bytes = read_int_file(self, stats_path / "rx_bytes", f"{name} rx_bytes")
+                tx_bytes = read_int_file(self, stats_path / "tx_bytes", f"{name} tx_bytes")
+                rx_rate, tx_rate = self.calculate_rates(name, rx_bytes, tx_bytes)
+                ipv4 = self.get_ipv4(name)
+                ipv6_list = self.get_ipv6(name)
+                key = interface_role_map.get(name, name)
 
-            interfaces[key] = {
-                "device": name,
-                "state": (self.read_file(iface_path / "operstate") or "").strip().upper() or "UNKNOWN",
-                "ipv4": ipv4,
-                "ipv6": ipv6_list,
-                "rx_bytes": rx_bytes,
-                "tx_bytes": tx_bytes,
-                "rx_rate": rx_rate,
-                "tx_rate": tx_rate,
-                "rx_packets": int(self.read_file(stats_path / "rx_packets") or 0),
-                "tx_packets": int(self.read_file(stats_path / "tx_packets") or 0),
-                "rx_errors": int(self.read_file(stats_path / "rx_errors") or 0),
-                "tx_errors": int(self.read_file(stats_path / "tx_errors") or 0),
-            }
+                interfaces[key] = {
+                    "device": name,
+                    "state": read_interface_state(self, iface_path / "operstate", name),
+                    "ipv4": ipv4,
+                    "ipv6": ipv6_list,
+                    "rx_bytes": rx_bytes,
+                    "tx_bytes": tx_bytes,
+                    "rx_rate": rx_rate,
+                    "tx_rate": tx_rate,
+                    "rx_packets": read_int_file(self, stats_path / "rx_packets", f"{name} rx_packets"),
+                    "tx_packets": read_int_file(self, stats_path / "tx_packets", f"{name} tx_packets"),
+                    "rx_errors": read_int_file(self, stats_path / "rx_errors", f"{name} rx_errors"),
+                    "tx_errors": read_int_file(self, stats_path / "tx_errors", f"{name} tx_errors"),
+                }
+            except Exception as exc:
+                log_warning(f"Failed to collect interface stats for {iface_path}: {exc}")
 
         self.send_json(interfaces)
     except Exception as exc:
@@ -128,8 +201,7 @@ def handle_firewall_stats(self):
             )
             offloaded_flows = ft_result.stdout.count("[OFFLOAD]")
         except Exception as exc:
-            print(f"Error running conntrack: {exc}")
-            pass
+            log_warning(f"Error running conntrack: {exc}")
 
         # Get packet counters from ALL configured interfaces
         packets_in = 0
@@ -147,8 +219,7 @@ def handle_firewall_stats(self):
                     if tx:
                         packets_out += int(tx)
         except Exception as exc:
-            print(f"Error getting packet counters: {exc}")
-            pass
+            log_warning(f"Error getting packet counters: {exc}")
 
         self.send_json(
             {
@@ -278,14 +349,13 @@ def handle_fail2ban_status(self):
                 self.send_json(payload)
                 return
             else:
-                print(f"Fail2ban snapshot file NOT FOUND at: {FAIL2BAN_STATUS_FILE}")
+                log_warning(f"Fail2ban snapshot file not found at: {FAIL2BAN_STATUS_FILE}")
         except FileNotFoundError:
-            pass
+            log_warning(f"Fail2ban snapshot file disappeared before read: {FAIL2BAN_STATUS_FILE}")
         except Exception as exc:
-            print(f"Error reading fail2ban snapshot: {exc}")
-            pass
+            log_warning(f"Error reading fail2ban snapshot: {exc}")
 
-    print("Falling back to original handle_fail2ban_status (sudo)")
+    log_warning("Falling back to original handle_fail2ban_status (sudo)")
     return original_handle_fail2ban_status(self)
 
 
