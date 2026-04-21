@@ -24,6 +24,9 @@
   programs.qmd.enable = true;
   programs.repo-updater.enable = true;
   programs.beads.enable = true;
+  # Upstream beads_rust currently fails Nix evaluation because its source does
+  # not expose Cargo.lock. Keep bv installed, but skip the Rust CLI wrapper.
+  programs.beads.enableBr = false;
 
   programs.rtk-hooks.integrations = {
     claude.enable = true;
