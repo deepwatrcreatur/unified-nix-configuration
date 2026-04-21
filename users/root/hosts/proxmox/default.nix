@@ -57,6 +57,7 @@ in
 
   # Allow root to manage Home Manager
   programs.home-manager.enable = true;
+  programs.coding-agents.enable = false;
 
   # Enable attic-client for binary cache access
   programs.attic-client.enable = true;
