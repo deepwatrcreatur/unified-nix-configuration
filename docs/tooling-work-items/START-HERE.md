@@ -16,7 +16,7 @@ Read first:
 - [`agent-prompts.md`](./agent-prompts.md)
 
 If `beads-rust` is available and `.beads/issues.jsonl` exists, use
-`beads-rust ready --labels tooling --json` as the primary queue surface. If `bv` is
+`beads-rust ready --label tooling --json` as the primary queue surface. If `bv` is
 also available, use `bv --robot-triage --labels tooling --json` for
 PageRank/critical-path ranked suggestions. Otherwise, fall back to the
 ordered list in [`README.md`](./README.md).

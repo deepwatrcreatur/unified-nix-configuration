@@ -54,10 +54,12 @@
     qmd = inputs.qmd.packages.${prev.stdenv.hostPlatform.system}.default;
   })
 
-  # beads_rust upstream package; the repo exposes it as `beads-rust` via a
-  # wrapper package to avoid colliding with the Homebrew viewer's `br` command.
+  # Keep the upstream beads_rust flake pinned for metadata and future source
+  # packaging work. The repo-managed runtime package is defined in
+  # overlays/packages.nix from release binaries instead of this upstream build,
+  # because the upstream flake is currently not reproducible in this repo.
   (final: prev: {
-    beads-rust = inputs.beads-rust.packages.${prev.stdenv.hostPlatform.system}.default;
+    beads-rust-upstream = inputs.beads-rust.packages.${prev.stdenv.hostPlatform.system}.default;
   })
 
   # llama-cpp-python: override inherited dotted CUDA architectures with the

@@ -83,7 +83,71 @@
     beads-viewer = prev.callPackage ../pkgs/beads-viewer.nix { };
   })
 
-  # Repo-managed wrapper around the upstream beads_rust package.
+  # Repo-managed beads_rust package from release binaries.
+  # The upstream flake package is currently not reproducible here, so use the
+  # published release tarballs instead and keep the user-facing wrapper command
+  # as `beads-rust` to avoid colliding with the Homebrew beads_viewer `br`
+  # command.
+  (final: prev: {
+    beads-rust =
+      let
+        version = "0.1.45";
+        target =
+          {
+            x86_64-linux = {
+              asset = "br-v${version}-linux_musl_amd64.tar.gz";
+              hash = "sha256-3r7Z2y8bPedyfB5OwduX3Rna5dMFhLIo0+VaHKcdmeE=";
+            };
+            aarch64-linux = {
+              asset = "br-v${version}-linux_arm64.tar.gz";
+              hash = "";
+            };
+            x86_64-darwin = {
+              asset = "br-v${version}-darwin_amd64.tar.gz";
+              hash = "";
+            };
+            aarch64-darwin = {
+              asset = "br-v${version}-darwin_arm64.tar.gz";
+              hash = "";
+            };
+          }
+          .${prev.stdenv.hostPlatform.system}
+          or (throw "Unsupported system for beads-rust: ${prev.stdenv.hostPlatform.system}");
+      in
+      prev.stdenvNoCC.mkDerivation {
+        pname = "beads-rust";
+        inherit version;
+
+        src = prev.fetchurl {
+          url = "https://github.com/Dicklesworthstone/beads_rust/releases/download/v${version}/${target.asset}";
+          inherit (target) hash;
+        };
+
+        dontUnpack = true;
+
+        installPhase = ''
+          runHook preInstall
+          mkdir -p $out/bin
+          tar -xzf "$src" -C $TMPDIR
+          install -m755 "$TMPDIR/br" "$out/bin/br"
+          runHook postInstall
+        '';
+
+        meta = with prev.lib; {
+          description = "Agent-first issue tracker (SQLite + JSONL)";
+          homepage = "https://github.com/Dicklesworthstone/beads_rust";
+          license = licenses.mit;
+          mainProgram = "br";
+          platforms = builtins.attrNames {
+            x86_64-linux = true;
+            aarch64-linux = true;
+            x86_64-darwin = true;
+            aarch64-darwin = true;
+          };
+        };
+      };
+  })
+
   # Expose the CLI as `beads-rust` so it does not collide with the Homebrew
   # beads_viewer `br` command.
   (final: prev: {
