@@ -24,6 +24,8 @@
   programs.qmd.enable = true;
   programs.repo-updater.enable = true;
   programs.beads.enable = true;
+  # Repo-managed beads-viewer currently fails to build on workstation, while the
+  # repo-managed beads-rust CLI now works via the release-binary package path.
   programs.beads.enableBv = false;
 
   programs.rtk-hooks.integrations = {

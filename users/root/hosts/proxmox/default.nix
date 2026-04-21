@@ -57,9 +57,16 @@ in
 
   # Allow root to manage Home Manager
   programs.home-manager.enable = true;
+  programs.coding-agents.enable = false;
 
   # Enable attic-client for binary cache access
   programs.attic-client.enable = true;
+
+  # nix-attic-infra's attic activation checks $DRY_RUN directly. Home Manager
+  # provides $DRY_RUN_CMD, but $DRY_RUN itself may be unset under `set -u`.
+  home.activation.ensureDryRunVariable = lib.hm.dag.entryBefore ["attic-config"] ''
+    export DRY_RUN="''${DRY_RUN:-}"
+  '';
 
   # Prefer system or future agenix-provided tokens while keeping the existing
   # root SOPS secrets path as a compatibility fallback on Debian/Proxmox hosts.
