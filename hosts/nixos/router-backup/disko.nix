@@ -58,5 +58,43 @@
         };
       };
     };
+
+    disk.logs = {
+      type = "disk";
+      device = lib.mkDefault "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi1";
+      content = {
+        type = "gpt";
+        partitions = {
+          logs = {
+            size = "100%";
+            content = {
+              type = "filesystem";
+              format = "ext4";
+              # No mountpoint here. router-log-storage mounts this by the
+              # disko-generated partition label: disk-logs-logs.
+            };
+          };
+        };
+      };
+    };
+
+    disk.pxe-images = {
+      type = "disk";
+      device = lib.mkDefault "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi2";
+      content = {
+        type = "gpt";
+        partitions = {
+          images = {
+            size = "100%";
+            content = {
+              type = "filesystem";
+              format = "ext4";
+              # Mounted from configuration.nix with nofail/automount so the
+              # router can boot even if this auxiliary disk is absent.
+            };
+          };
+        };
+      };
+    };
   };
 }
