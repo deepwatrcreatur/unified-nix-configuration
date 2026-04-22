@@ -157,6 +157,11 @@ let
     + nushellFunctions;
 in
 {
+  imports = [
+    ./git-ssh-signing.nix
+    ./ssh-agent.nix
+  ];
+
   options.programs.git.gui = {
     enable = lib.mkEnableOption "Enable GUI tools like meld for Git";
   };

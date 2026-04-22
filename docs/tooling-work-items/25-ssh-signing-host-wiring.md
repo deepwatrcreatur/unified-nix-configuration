@@ -2,7 +2,7 @@
 
 Status: `in-progress`
 
-Suggested branch: `feat/tooling-ssh-signing-hosts`
+Suggested branch: `feat/tooling-ssh-signing-host-wiring`
 
 ## Goal
 
