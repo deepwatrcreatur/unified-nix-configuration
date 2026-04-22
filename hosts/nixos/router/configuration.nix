@@ -30,6 +30,53 @@ in
     })
   ];
 
+  fileSystems."/srv/pxe" = {
+    device = "/dev/disk/by-partlabel/disk-pxe-images-images";
+    fsType = "ext4";
+    options = [
+      "noatime"
+      "nofail"
+      "x-systemd.automount"
+    ];
+  };
+
+  systemd.tmpfiles.rules = [
+    "d /srv/pxe 0755 root root -"
+  ];
+
+  systemd.services.setup-router-pxe-storage = {
+    description = "Prepare router PXE storage directories";
+    after = [ "srv-pxe.mount" ];
+    wants = [ "srv-pxe.mount" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+    script = ''
+      mkdir -p /srv/pxe/images
+      mkdir -p /srv/pxe/ipxe
+      chmod 0755 /srv/pxe /srv/pxe/images /srv/pxe/ipxe
+    '';
+  };
+
+  services.iventoy = {
+    enable = true;
+    isoDir = "/srv/pxe/images";
+    openFirewall = false;
+  };
+
+  services.router-firewall = {
+    trustedTcpPorts = [
+      16000
+      26000
+    ];
+    trustedUdpPorts = [
+      69
+      4011
+    ];
+  };
+
   # Stable NIC identity via systemd .link files.
   #
   # Physical passthrough NICs are pinned by MAC so that PCI slot renumbering

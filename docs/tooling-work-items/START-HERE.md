@@ -15,13 +15,42 @@ Read first:
 - [`README.md`](./README.md)
 - [`agent-prompts.md`](./agent-prompts.md)
 
-The authoritative work queue is the ordered list in [`README.md`](./README.md).
+If `br` is available and `.beads/issues.jsonl` exists, use
+`br ready --labels tooling --json` as the primary queue surface. If `bv` is
+also available, use `bv --robot-triage --labels tooling --json` for
+PageRank/critical-path ranked suggestions. Otherwise, fall back to the
+ordered list in [`README.md`](./README.md).
+
+## Robot Triage (bv)
+
+`bv --robot-triage` scores each open bead by:
+- **PageRank** — centrality in the dependency graph; high score = many tasks
+  depend on this one
+- **Critical-path pressure** — longest chain through this node; the item
+  whose removal shortens the critical path the most
+
+```bash
+# JSON array, highest priority first (top 5):
+bv --robot-triage --labels tooling --json | jq '.[0:5]'
+
+# Interactive TUI for visual graph exploration:
+bv
+```
+
+Scores are relative to the current graph state. A `pagerank_score` near 1.0
+is maximally central; `critical_path_rank` 1 = the single most blocking task.
+Use these as hints — human override via README ranking is always valid.
+
+See [`../../docs/robot-triage.md`](../../docs/robot-triage.md) for full
+interpretation guidance.
 
 ## How To Choose Work
 
 0. Refresh remote state first if multiple agents may be active (`git fetch origin`).
-1. Start with the ordered list in [`README.md`](./README.md).
-2. Find the first item whose header says `Status: ready`.
+1. **Preferred** (when `.beads/` is populated):
+   `bv --robot-triage --labels tooling --json | jq -r '.[0].title'`
+2. **Fallback**: the ordered list in [`README.md`](./README.md); find the
+   first item whose header says `Status: ready`.
 3. Before taking it, check whether the suggested branch/worktree already exists.
 4. If a branch/worktree exists but there is no sign of active ownership
    (recent commits, open PR, or file already marked `in-progress`), treat it as

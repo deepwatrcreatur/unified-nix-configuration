@@ -23,14 +23,24 @@ let
   lanListenAddress = builtins.head (lib.splitString "/" lanIpv4Address);
   managementListenAddress = builtins.head (lib.splitString "/" managementIpv4Address);
   managementDevice = "ens18";
+  operatorStableSshKey = lib.strings.trim (
+    builtins.readFile ../../../ssh-keys/deepwatrcreatur-stable-identity.pub
+  );
 
   secrets = optSec.mkSecrets {
     cloudflare-api-key = {
       file = ../../../secrets-agenix/cloudflare_ddns_API_token.age;
+      group = "router-dashboard";
+      mode = "0440";
     };
     technitium-api-key = {
       file = ../../../secrets-agenix/technitium-api-key.age;
       mode = "0444";
+    };
+    kea-ddns-tsig-key = {
+      file = ../../../secrets-agenix/kea-ddns-tsig-key.age;
+      mode = "0440";
+      group = "kea";
     };
     tailscale-auth-key = {
       file = ../../../secrets-agenix/tailscale-auth-key.age;
@@ -39,24 +49,31 @@ let
 
   topology = config.router.topology;
   lanNetwork = topology.networks.lan;
+  managementNetwork = topology.networks.management;
   mkFqdn = label: "${label}.${topology.domain}";
   reservableHosts = lib.filterAttrs (
     _name: host: (host.dhcpReservation or null) != null && (host.ip or null) != null
   ) topology.hosts;
 in
 {
-  imports = [ ../../../modules/nixos/router/common.nix ];
+  imports = [
+    ../../../modules/nixos/router/common.nix
+    ../../../modules/nixos/services/iventoy.nix
+  ];
 
   # Recovery invariants: these assertions fail the build if the properties
   # that make the router usable in standby/dev mode are ever regressed.
   assertions = [
     {
       assertion =
-        getAttrByPath
-          [ "systemd" "network" "networks" "20-router-lan" "networkConfig" "ConfigureWithoutCarrier" ]
-          false
-          config
-        == true;
+        getAttrByPath [
+          "systemd"
+          "network"
+          "networks"
+          "20-router-lan"
+          "networkConfig"
+          "ConfigureWithoutCarrier"
+        ] false config == true;
       message = ''
         Router invariant violated: 20-router-lan must have ConfigureWithoutCarrier = true.
         Without this, the LAN static IP disappears when the data-plane cable is unplugged,
@@ -239,20 +256,27 @@ in
   };
 
   services.router-technitium = {
-    dhcpReservations = lib.mapAttrs (
-      name: host: {
-        scope = host.dhcpReservation.scope or "LAN";
-        macAddress = host.dhcpReservation.macAddress;
-        ipAddress = host.ip;
-        hostName = name;
-        comments = host.description or "";
-      }
-    ) reservableHosts;
+    dhcpReservations = lib.mapAttrs (name: host: {
+      scope = host.dhcpReservation.scope or "LAN";
+      macAddress = host.dhcpReservation.macAddress;
+      ipAddress = host.ip;
+      hostName = name;
+      comments = host.description or "";
+    }) reservableHosts;
   };
+
+  services.router-kea.dhcp4.reservations = lib.mapAttrsToList (name: host: {
+    hw-address = host.dhcpReservation.macAddress;
+    ip-address = host.ip;
+    hostname = name;
+  }) reservableHosts;
 
   services.router-firewall = {
     enable = true;
-    trustedTcpPorts = [ 80 443 ];
+    trustedTcpPorts = [
+      80
+      443
+    ];
     hairpinNat.enable = true;
     trustedUdpPorts = [ ];
     extraLanLocalRules = ''
@@ -268,12 +292,19 @@ in
 
   services.router-dashboard = {
     refreshInterval = lib.mkDefault 10;
+    interfaces = map (iface: {
+      inherit (iface) device label;
+      role = if iface.role == "management" then "mgmt" else iface.role;
+    }) (lib.attrValues config.services.router-optimizations.interfaces);
     services = [
       "systemd-networkd"
       "sshd"
       "nftables"
       "caddy"
       "technitium-dns-server"
+      "kea-dhcp4-server"
+      "kea-dhcp-ddns-server"
+      "miniupnpd"
       "tailscaled"
       "fail2ban"
       "prometheus"
@@ -435,12 +466,14 @@ in
 
   services.openssh = {
     enable = true;
-    settings.PermitRootLogin = "prohibit-password";
+    settings.PermitRootLogin = "no";
     extraConfig = ''
-      Match Address ${lanNetwork.cidr}
-        PermitRootLogin yes
+      Match Address ${lanNetwork.cidr},${managementNetwork.cidr}
+        PermitRootLogin prohibit-password
     '';
   };
+
+  users.users.root.openssh.authorizedKeys.keys = [ operatorStableSshKey ];
 
   services.fail2ban = {
     enable = true;
@@ -528,6 +561,74 @@ in
         RestartSec = "15s";
       };
       wantedBy = [ "multi-user.target" ];
+    };
+
+    # Configure Technitium to accept RFC2136 dynamic DNS updates from Kea D2.
+    # Registers the TSIG key and enables per-zone dynamic update permissions
+    # for both the forward zone and the reverse zone.
+    technitium-enable-rfc2136 = {
+      description = "Configure Technitium RFC2136 dynamic update support for Kea DDNS";
+      after = [
+        "technitium-dns-server.service"
+        "agenix.service"
+      ];
+      wants = [ "technitium-dns-server.service" ];
+      wantedBy = [ "multi-user.target" ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+      };
+      script =
+        let
+          apiKeyFile = secrets.path "technitium-api-key";
+          tsigKeyFile = secrets.path "kea-ddns-tsig-key";
+          fwdZone = topology.domain;
+          revZone = "10.10.in-addr.arpa";
+        in
+        ''
+          set -euo pipefail
+
+          for i in {1..30}; do
+            if ${pkgs.curl}/bin/curl -fsS http://127.0.0.1:5380/api/dns/status >/dev/null 2>&1; then
+              break
+            fi
+            echo "Waiting for Technitium DNS Server to start..."
+            ${pkgs.coreutils}/bin/sleep 2
+          done
+
+          TOKEN="$(${pkgs.coreutils}/bin/cat "${apiKeyFile}")"
+          SECRET="$(${pkgs.coreutils}/bin/tr -d '\n' < "${tsigKeyFile}")"
+
+          echo "Registering TSIG key kea-ddns in Technitium..."
+          ${pkgs.curl}/bin/curl -fsS -X POST \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            --data-urlencode "token=$TOKEN" \
+            --data-urlencode "tsigKeys=kea-ddns|$SECRET|hmac-sha256" \
+            "http://127.0.0.1:5380/api/settings/set" \
+            >/dev/null
+
+          echo "Enabling RFC2136 updates for forward zone ${fwdZone}..."
+          ${pkgs.curl}/bin/curl -fsS -X POST \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            --data-urlencode "token=$TOKEN" \
+            --data-urlencode "zone=${fwdZone}" \
+            --data-urlencode "update=AllowOnlySpecifiedNetworkAddresses" \
+            --data-urlencode "updateNetworkACL=127.0.0.1" \
+            "http://127.0.0.1:5380/api/zones/options/set" \
+            >/dev/null
+
+          echo "Enabling RFC2136 updates for reverse zone ${revZone}..."
+          ${pkgs.curl}/bin/curl -fsS -X POST \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            --data-urlencode "token=$TOKEN" \
+            --data-urlencode "zone=${revZone}" \
+            --data-urlencode "update=AllowOnlySpecifiedNetworkAddresses" \
+            --data-urlencode "updateNetworkACL=127.0.0.1" \
+            "http://127.0.0.1:5380/api/zones/options/set" \
+            >/dev/null
+
+          echo "Technitium RFC2136 configuration applied"
+        '';
     };
   };
 

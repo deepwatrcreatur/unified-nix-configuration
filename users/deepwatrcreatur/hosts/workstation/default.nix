@@ -14,13 +14,16 @@
     ../../../../modules/home-manager/agenix-user-secrets.nix
     ../../../../modules/home-manager/gnome-cosmic-style.nix
     ../../../../modules/home-manager/ghostty
-    ../../../../modules/home-manager/gpg-agent-cross-de.nix
+    ../../../../modules/home-manager/git-ssh-signing.nix
+    ../../../../modules/home-manager/ssh-agent.nix
     ../../../../modules/home-manager/zed.nix
     ../../../../modules/home-manager/common/dmux.nix
   ];
 
   programs.dmux.enable = true;
   programs.qmd.enable = true;
+  programs.repo-updater.enable = true;
+  programs.beads.enable = true;
 
   programs.rtk-hooks.integrations = {
     claude.enable = true;
@@ -56,6 +59,10 @@
       atuin-key-b64 = {
         source = ../../../../secrets-agenix/atuin-key-b64.age;
         target = ".local/share/agenix-user-secrets/atuin-key-b64";
+      };
+      anthropic-api-key = {
+        source = ../../../../secrets-agenix/anthropic-api-key.age;
+        target = ".local/share/agenix-user-secrets/anthropic-api-key";
       };
       oauth-creds = {
         source = ../../../../secrets-agenix/oauth-creds.age;

@@ -150,6 +150,8 @@ For testing changes across hosts (especially build failures):
 ### Agent Tooling
 These are installed across hosts (or intended to be):
 
+For detailed managed authentication paths (including `gemini-cli`), see `docs/tooling-managed-auth.md`.
+
 - `rg` (ripgrep): fast text search
 - `fd`: fast file search
 - `sg` (ast-grep): AST-aware search/replace
@@ -158,8 +160,30 @@ These are installed across hosts (or intended to be):
 - `nh`, `nom` (nix-output-monitor), `nvd`, `nix-tree`: Nix debugging/inspection
 - `opencode`, `claude-code`, `gemini-cli`, `droid`: agent CLIs (host-dependent)
 
+#### Claude Code authentication
+
+- Preferred command: `claude-code` (aliased to a `claude-code-fnox` wrapper when
+  available).
+- Auth is via `ANTHROPIC_API_KEY`, normally sourced by `fnox` from
+  `~/.local/share/agenix-user-secrets/anthropic-api-key` or
+  `/run/agenix/anthropic-api-key`.
+- Operators should provision that secret via agenix-user-secrets; agents should
+  not export long-lived Anthropic keys manually in shells.
+- For debugging against the raw CLI, bypass the alias with `command claude-code`
+  in a shell.
+
 **Recent additions**
 - Added `ast-grep` (`sg`) to the common tool set.
+- Added `cass-session-search` for CASS-style search across local agent
+  sessions; see `docs/cass-session-search.md` for usage and privacy notes.
+- Added `cm-procedural-memory.md` as a lightweight cross-agent procedural
+  memory layer; see that doc for when and how to capture reusable
+  procedures.
+- Agent Mail is **not** currently adopted for this repo; see
+  `docs/agent-mail-workflow-fit.md` for the evaluation and decision.
+- Beads task-graph wiring is now partially in place; see
+  `docs/beads-migration-plan.md` and
+  `docs/tooling-work-items/18-beads-task-graph-integration.md` for details.
 
 ### Git Workflow
 Before pushing changes that affect remote hosts:

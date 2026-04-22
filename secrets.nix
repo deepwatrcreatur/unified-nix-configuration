@@ -101,6 +101,7 @@ in {
   "secrets-agenix/cloudflare-api-key.age".publicKeys = routerServiceSecrets;
   "secrets-agenix/cloudflare_ddns_API_token.age".publicKeys = routerServiceSecrets;
   "secrets-agenix/technitium-api-key.age".publicKeys = routerServiceSecrets;
+  "secrets-agenix/kea-ddns-tsig-key.age".publicKeys = routerServiceSecrets;
   "secrets-agenix/tailscale-auth-key.age".publicKeys = routerServiceSecrets;
   "secrets-agenix/authentik-env.age".publicKeys = authentikHostServiceSecrets;
   "secrets-agenix/attic-client-token.age".publicKeys = atticClientSecrets;
@@ -118,6 +119,7 @@ in {
   "secrets-agenix/openrouter-api-key.age".publicKeys = userOnlySecrets;
   "secrets-agenix/z-ai-api-key.age".publicKeys = userOnlySecrets;
   "secrets-agenix/opencode-zen-api-key.age".publicKeys = userOnlySecrets;
+  "secrets-agenix/anthropic-api-key.age".publicKeys = userOnlySecrets;
   "secrets-agenix/atuin-key-b64.age".publicKeys = userOnlySecrets;
   "secrets-agenix/oauth-creds.age".publicKeys = userOnlySecrets;
   "secrets-agenix/bitwarden-data.age".publicKeys = userOnlySecrets;

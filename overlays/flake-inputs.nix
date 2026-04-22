@@ -6,6 +6,24 @@
   # LLM/AI coding agents from numtide (claude-code, opencode, codex, rtk, etc.)
   inputs.llm-agents.overlays.default
 
+  # Patch Codex to use the Nix store bubblewrap path on Linux instead of the
+  # FHS-specific /usr/bin/bwrap probe used upstream.
+  (final: prev: {
+    llm-agents = prev.llm-agents // {
+      codex = prev.llm-agents.codex.overrideAttrs (old: {
+        postPatch =
+          (old.postPatch or "")
+          + ''
+            substituteInPlace \
+              core/src/config/mod.rs \
+              core/src/config/config_tests.rs \
+              linux-sandbox/src/launcher.rs \
+              --replace-fail '"/usr/bin/bwrap"' '"${final.bubblewrap}/bin/bwrap"'
+          '';
+      });
+    };
+  })
+
   # Worktrunk (git worktree management for parallel agents)
   (final: prev: {
     worktrunk = inputs.worktrunk.packages.${prev.stdenv.hostPlatform.system}.default;
@@ -34,6 +52,11 @@
   # qmd - local document search CLI from its upstream flake
   (final: prev: {
     qmd = inputs.qmd.packages.${prev.stdenv.hostPlatform.system}.default;
+  })
+
+  # beads_rust (br) — agent-first issue tracker; built via upstream crane/fenix flake
+  (final: prev: {
+    beads-rust = inputs.beads-rust.packages.${prev.stdenv.hostPlatform.system}.default;
   })
 
   # llama-cpp-python: override inherited dotted CUDA architectures with the

@@ -5,14 +5,16 @@
   config,
   lib,
   pkgs,
-  modulesPath,
   ...
 }:
 
 {
-  imports = [
-    (modulesPath + "/profiles/qemu-guest.nix")
-  ];
+  # This VM uses PCIe passthrough for its primary GPU, so the generic
+  # qemu-guest profile is too broad: it injects `virtio_gpu` into initrd and
+  # competes with the passed-through AMD card during early boot. Keep the
+  # explicit virtio storage/controller modules below and enable qemu-ga via
+  # `services.qemuGuest.enable` in the host profile instead.
+  imports = [ ];
 
   boot.initrd.availableKernelModules = [
     "uhci_hcd"

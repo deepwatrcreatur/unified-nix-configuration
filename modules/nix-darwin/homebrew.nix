@@ -52,6 +52,7 @@ in
       casks = [
         "applite"
         "coteditor"
+        "flux-markdown"
         "font-fira-code"
         "ghostty"
         "maccy"

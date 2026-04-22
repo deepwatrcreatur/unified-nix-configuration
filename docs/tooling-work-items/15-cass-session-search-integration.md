@@ -1,6 +1,6 @@
 # 15 CASS Session Search Integration
 
-Status: `ready`
+Status: `done`
 
 Suggested branch: `feat/tooling-cass-session-search`
 
@@ -40,6 +40,22 @@ many recurring tasks where prior debugging context matters:
 - inventing a new long-form documentation system
 - automatically turning every session into repo docs
 - solving procedural memory extraction in the same PR
+
+## Implementation (current)
+
+- `scripts/cass-session-search.sh` implements a small wrapper around
+  `ripgrep` that searches local agent session directories.
+- `modules/home-manager/common/cass-session-search.nix` packages this as
+  a `cass-session-search` binary and is imported by
+  `modules/home-manager/common/coding-agents.nix`, with
+  `programs.cass-session-search.enable` defaulting to `true`.
+- By default, the command searches these roots when they exist:
+  `$HOME/.copilot/session-state`, `$HOME/.claude/sessions`, and
+  `$HOME/.gemini/history`. Operators can override this via the
+  `CASS_SESSION_ROOTS` environment variable.
+- The behavior and privacy model are documented in
+  `docs/cass-session-search.md`, and `AGENTS.md` links to that doc for
+  agent-facing discovery.
 
 ## Validation
 

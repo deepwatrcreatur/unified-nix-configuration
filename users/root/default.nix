@@ -94,7 +94,7 @@ in
     ./git.nix # <--- Import git configuration
     ./env.nix
     ../../modules/home-manager/git.nix # Keep this import if it provides other common git modules
-    ../../modules/home-manager/gpg-cli.nix
+    ../../modules/home-manager/git-ssh-signing.nix
     ../../modules/home-manager
   ];
 

@@ -11,7 +11,8 @@
     ../../default.nix # Import main user config (includes SSH keys and common modules)
     ../../../../modules/home-manager/ghostty
     #../../../../modules/home-manager/zed.nix
-    ../../../../modules/home-manager/gpg-mac.nix
+    ../../../../modules/home-manager/git-ssh-signing.nix
+    ../../../../modules/home-manager/ssh-agent.nix
     ../../../../modules/home-manager/env-darwin.nix
 
     ./nh.nix

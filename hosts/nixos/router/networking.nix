@@ -26,23 +26,34 @@ in
     };
   };
 
-  services.router-technitium.scopes = {
-    LAN = {
-      legacyNames = [ "Default" ];
-      startingAddress = "10.10.10.100";
-      endingAddress = "10.10.10.250";
-      subnetMask = "255.255.0.0";
-      routerAddress = routerHost.ip;
-      domainName = topology.domain;
-      domainSearchList = [ topology.domain ];
-      useThisDnsServer = true;
-      ntpServers = [ routerHost.ip ];
-      # Many Wi-Fi and mobile clients now use locally administered/randomized
-      # MACs; blocking them causes silent "no lease" failures.
-      blockLocallyAdministeredMacAddresses = false;
-      ignoreClientIdentifierOption = true;
-      enabled = true;
+  services.router-kea = {
+    enable = true;
+    dhcp4 = {
+      subnet = topology.networks.lan.cidr;
+      gatewayAddress = routerHost.ip;
+      dnsServers = [ routerHost.ip ];
+      poolRanges = [ { start = "10.10.10.100"; end = "10.10.10.250"; } ];
     };
+    ddns = {
+      enable = true;
+      tsigKeyFile = config.age.secrets.kea-ddns-tsig-key.path;
+      tsigKeyName = "kea-ddns";
+      forwardZone = topology.domain;
+      reverseZone = "10.10.in-addr.arpa";
+    };
+  };
+
+  # NTP server — serves LAN clients (advertised via DHCP option 42 above).
+  services.router-ntp = {
+    enable = true;
+    lanSubnets = [ topology.networks.lan.cidr ];
+  };
+
+  # UPnP/NAT-PMP for game consoles and P2P clients.
+  # externalInterface is auto-derived from services.router-networking.wan.device.
+  services.router-upnp = {
+    enable = true;
+    internalIPs = [ "${routerHost.ip}/${toString topology.networks.lan.prefixLength}" ];
   };
 
   # NAT is handled by nftables (see nftables.nix)

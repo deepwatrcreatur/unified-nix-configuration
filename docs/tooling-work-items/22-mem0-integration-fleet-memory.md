@@ -1,6 +1,6 @@
 # 22 Mem0 Integration for Fleet Memory
 
-Status: `ready`
+Status: `done`
 
 Suggested branch: `feat/tooling-mem0-integration`
 
