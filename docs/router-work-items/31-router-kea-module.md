@@ -1,6 +1,6 @@
 # 31 router-kea Module
 
-Status: `ready`
+Status: `done`
 Suggested branch: `feat/router-kea-module`
 Priority: `high`
 

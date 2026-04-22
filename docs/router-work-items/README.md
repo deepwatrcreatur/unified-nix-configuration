@@ -51,6 +51,6 @@ in parallel on separate worktrees.
 4. [`34-router-miniupnpd-interface-repair.md`](./34-router-miniupnpd-interface-repair.md) - `done` (PR #132)
 5. [`29-router-cutover-validation-hardening.md`](./29-router-cutover-validation-hardening.md) - `done` (PR #135)
 6. [`27-router-pxe-boot-module-plumbing.md`](./27-router-pxe-boot-module-plumbing.md) - `in-progress`
-7. [`30-kea-tsig-key-provisioning.md`](./30-kea-tsig-key-provisioning.md) - `ready`
-8. [`31-router-kea-module.md`](./31-router-kea-module.md) - `ready`
-9. [`32-kea-dhcp-cutover.md`](./32-kea-dhcp-cutover.md) - `blocked` (needs 30 + 31)
+7. [`30-kea-tsig-key-provisioning.md`](./30-kea-tsig-key-provisioning.md) - `done`
+8. [`31-router-kea-module.md`](./31-router-kea-module.md) - `done`
+9. [`32-kea-dhcp-cutover.md`](./32-kea-dhcp-cutover.md) - `done`
