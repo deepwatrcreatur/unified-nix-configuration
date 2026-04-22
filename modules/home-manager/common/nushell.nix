@@ -9,7 +9,6 @@
   programs.nushell = {
     enable = true;
     environmentVariables = {
-      GNUPGHOME = "${config.home.homeDirectory}/.gnupg";
       SOPS_AGE_KEY_FILE = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
       NH_FLAKE = "${config.home.homeDirectory}/flakes/unified-nix-configuration";
       # Terminal compatibility settings
@@ -75,15 +74,6 @@
         cd $arg
         ls -l
       }
-
-      # SSH auth socket setup
-        if ($env.SSH_AUTH_SOCK? | is-empty) and ("${config.platform.homebrewPrefix}/bin/gpgconf" | path exists) {
-          $env.SSH_AUTH_SOCK = (^${config.platform.homebrewPrefix}/bin/gpgconf --list-dirs agent-ssh-socket | str trim)
-      } else if ($env.SSH_AUTH_SOCK? | is-empty) and ("/run/current-system/sw/bin/gpgconf" | path exists) {
-        $env.SSH_AUTH_SOCK = (^/run/current-system/sw/bin/gpgconf --list-dirs agent-ssh-socket | str trim)
-      }
-
-
 
       # Starship prompt integration
       $env.STARSHIP_SHELL = "nu"

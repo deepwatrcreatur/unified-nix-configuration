@@ -1,8 +1,8 @@
 # 25 SSH Commit Signing — Host Wiring
 
-Status: `in-progress`
+Status: `done`
 
-Suggested branch: `feat/tooling-ssh-signing-hosts`
+Suggested branch: `feat/tooling-ssh-signing-host-wiring`
 
 ## Goal
 

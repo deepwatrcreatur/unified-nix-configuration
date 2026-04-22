@@ -34,6 +34,15 @@ in
       gatewayAddress = routerHost.ip;
       dnsServers = [ routerHost.ip ];
       poolRanges = [ { start = "10.10.10.100"; end = "10.10.10.250"; } ];
+
+      # PXE boot advertisement (UEFI-first)
+      # To enable, point bootServerAddress at your TFTP/HTTP server (usually the router)
+      # and bootFilename at the network boot loader (e.g. ipxe.efi).
+      pxe = {
+        enable = false;
+        bootServerAddress = routerHost.ip;
+        bootFilename = "ipxe.efi";
+      };
     };
     ddns = {
       enable = true;
@@ -54,6 +63,7 @@ in
   # externalInterface is auto-derived from services.router-networking.wan.device.
   services.router-upnp = {
     enable = true;
+    externalInterface = config.services.router-networking.wan.device;
     internalIPs = [ lanDevice ];
   };
 

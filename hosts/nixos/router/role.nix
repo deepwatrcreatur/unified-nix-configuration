@@ -302,6 +302,12 @@ in
     }) reservableHosts;
   };
 
+  services.router-kea.dhcp4.reservations = lib.mapAttrsToList (name: host: {
+    hw-address = host.dhcpReservation.macAddress;
+    ip-address = host.ip;
+    hostname = name;
+  }) reservableHosts;
+
   services.router-firewall = {
     enable = true;
     trustedTcpPorts = [
