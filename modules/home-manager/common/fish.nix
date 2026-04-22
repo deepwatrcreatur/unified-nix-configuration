@@ -110,9 +110,6 @@
       # MOTD already provides the login banner; suppress fish's stock greeting.
       set -g fish_greeting
 
-      # Set GPG_TTY for all systems
-      set -gx GPG_TTY (tty)
-
       # Set NH_FLAKE for nh helper
       set -gx NH_FLAKE "${config.home.homeDirectory}/flakes/unified-nix-configuration"
       

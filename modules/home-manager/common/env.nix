@@ -8,7 +8,6 @@
   home.sessionVariables = {
     EDITOR = "hx";
     VISUAL = "hx";
-    GPG_TTY = "(tty)";
     # Include user terminfo directory for ghostty and other custom terminals
     # Paths: user terminfo, system terminfo, homebrew terminfo (macOS)
     TERMINFO_DIRS = "${config.home.homeDirectory}/.terminfo:/usr/share/terminfo:/opt/homebrew/share/terminfo";
