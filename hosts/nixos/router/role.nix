@@ -326,7 +326,7 @@ in
   networking.nftables.ruleset = lib.mkAfter ''
     table ip nat {
       chain dns-vip-snat {
-        type nat hook output priority srcnat; policy accept;
+        type nat hook output priority 100; policy accept;
         oifname "${lanDevice}" ip saddr ${staticLanIp} meta l4proto { tcp, udp } th sport 53 snat to ${topology.routerHost.ip}
       }
     }
