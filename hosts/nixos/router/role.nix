@@ -23,8 +23,6 @@ let
   lanListenAddress = builtins.head (lib.splitString "/" lanIpv4Address);
   managementListenAddress = builtins.head (lib.splitString "/" managementIpv4Address);
   managementDevice = "ens18";
-  iotDevice = "${lanDevice}.20";
-  guestDevice = "${lanDevice}.30";
   operatorStableSshKey = lib.strings.trim (
     builtins.readFile ../../../ssh-keys/deepwatrcreatur-stable-identity.pub
   );
@@ -140,9 +138,16 @@ in
     virtualIp = "10.10.10.1/16";
     vrrpInterface = lanDevice;
     keaSync.enable = true;
-    keaSync.peerAddress = if config.networking.hostName == "router" then "10.10.11.213" else "10.10.11.1"; # Using management IPs for control plane sync
+    keaSync.peerAddress =
+      if config.networking.hostName == "router" then
+        topology.backupHost.sshHostname
+      else
+        topology.routerHost.sshHostname;
     wan = {
-      enable = true;
+      # The primary router must not let a transient VRRP FAULT during
+      # nixos-rebuild switch take the live WAN interface down. Keep WAN
+      # promotion hooks available on router-backup for dev/failover testing.
+      enable = config.networking.hostName == "router-backup";
       interface = wanDevice;
       clonedMac = "02:76:c6:01:2a:b0";
     };
@@ -151,10 +156,11 @@ in
   services.router-kea = {
     enable = true;
     dhcp4 = {
+      interfaces = lib.mkForce [ lanDevice ];
       subnet = lanNetwork.cidr;
-      gatewayAddress = "10.10.10.1"; # Use the VIP
-      dnsServers = [ "10.10.10.1" ];
-      poolRanges = [
+      gatewayAddress = lib.mkForce "10.10.10.1";
+      dnsServers = lib.mkForce [ "10.10.10.1" ];
+      poolRanges = lib.mkForce [
         {
           start = "10.10.10.100";
           end = "10.10.10.250";
@@ -164,16 +170,29 @@ in
         enable = true;
         thisServerName = config.networking.hostName;
         role = if config.networking.hostName == "router" then "primary" else "secondary";
-        peerAddress = if config.networking.hostName == "router" then "10.10.11.213" else "10.10.11.1";
+        peerAddress =
+          if config.networking.hostName == "router" then
+            topology.backupHost.sshHostname
+          else
+            topology.routerHost.sshHostname;
         peerName = if config.networking.hostName == "router" then "router-backup" else "router";
       };
-      reservations = [ ]; # TODO: Pull from central list
+      reservations = lib.mkForce (
+        lib.mapAttrsToList (name: host: {
+          hw-address = host.dhcpReservation.macAddress;
+          ip-address = host.ip;
+          hostname = name;
+        }) reservableHosts
+      );
     };
   };
 
   services.router-networking = {
     enable = true;
-    wan.device = wanDevice;
+    wan = {
+      device = wanDevice;
+      macAddress = lib.mkIf (config.networking.hostName == "router") "02:76:c6:01:2a:b0";
+    };
     routedInterfaces = {
       lan = {
         device = lanDevice;
@@ -190,36 +209,9 @@ in
       };
       management = {
         device = managementDevice;
-        ipv4Address = if config.networking.hostName == "router-backup" then "10.255.254.1/24" else managementIpv4Address;
+        ipv4Address = managementIpv4Address;
+        role = "management";
         prefixDelegationMode = "managed";
-      };
-      iot = {
-        device = "${lanDevice}.20";
-        vlanId = 20;
-        parentDevice = lanDevice;
-        ipv4Address = "10.20.20.1/24";
-        policyRouting = {
-          enable = true;
-          table = 200; # All traffic via table 200 (VPN)
-        };
-      };
-      guest = {
-        device = "${lanDevice}.30";
-        vlanId = 30;
-        parentDevice = lanDevice;
-        ipv4Address = "10.30.30.1/24";
-        policyRouting = {
-          # Use default routing (WAN) by default
-          enable = false;
-          # But route traffic to 8.8.8.8 via table 300 (VPN)
-          rules = [
-            {
-              to = "8.8.8.8/32";
-              table = 300;
-              priority = 50;
-            }
-          ];
-        };
       };
     };
   };
@@ -275,16 +267,6 @@ in
         role = "lan";
         label = "LAN";
       };
-      iot = {
-        device = "${lanDevice}.20";
-        role = "lan";
-        label = "IoT VLAN";
-      };
-      guest = {
-        device = "${lanDevice}.30";
-        role = "lan";
-        label = "Guest VLAN";
-      };
       management = {
         device = managementDevice;
         role = "management";
@@ -295,6 +277,18 @@ in
   };
 
   services.router-technitium = {
+    scopes.LAN = {
+      enabled = false;
+      legacyNames = [ "Default" ];
+      startingAddress = "10.10.10.100";
+      endingAddress = "10.10.10.250";
+      subnetMask = "255.255.0.0";
+      routerAddress = "10.10.10.1";
+      domainName = topology.domain;
+      domainSearchList = [ topology.domain ];
+      useThisDnsServer = true;
+      ntpServers = [ "10.10.10.1" ];
+    };
     dhcpReservations = lib.mapAttrs (name: host: {
       scope = host.dhcpReservation.scope or "LAN";
       macAddress = host.dhcpReservation.macAddress;
@@ -460,6 +454,35 @@ in
   # router-role services to come up in a degraded-but-testable state.
   systemd.network.networks."20-router-lan".networkConfig.ConfigureWithoutCarrier = true;
 
+  # Keepalived enters FAULT if it starts before networkd has assigned the
+  # physical LAN address. In HA mode that can leave the VIP absent, which makes
+  # the LAN lose its default gateway during a rebuild.
+  systemd.services.keepalived = {
+    after = [
+      "systemd-networkd.service"
+      "network-online.target"
+    ];
+    wants = [ "network-online.target" ];
+    serviceConfig.ExecStartPre = [
+      (pkgs.writeShellScript "keepalived-wait-for-lan-ip" ''
+        set -eu
+        for _ in $(seq 1 30); do
+          if ${pkgs.iproute2}/bin/ip -4 addr show dev ${lanDevice} | ${pkgs.gnugrep}/bin/grep -q 'inet '; then
+            exit 0
+          fi
+          ${pkgs.coreutils}/bin/sleep 1
+        done
+        echo "Timed out waiting for IPv4 address on ${lanDevice}" >&2
+        exit 1
+      '')
+    ];
+  };
+
+  systemd.services.kea-dhcp4-server = {
+    after = [ "technitium-sync-dhcp-scopes.service" ];
+    wants = [ "technitium-sync-dhcp-scopes.service" ];
+  };
+
   # Do not block network-online.target on the data-plane LAN NIC.
   #
   # caddy and router-dashboard wait on network-online.target. With the default
@@ -475,7 +498,16 @@ in
   boot.loader.grub.enable = false;
   boot.loader.limine.enable = true;
   boot.loader.efi.canTouchEfiVariables = false;
-  boot.kernelParams = [ "console=ttyS0,115200" ];
+  boot.kernelParams = [
+    "console=ttyS0,115200"
+    "console=tty0"
+  ];
+
+  # Force serial getty to be active for recovery
+  systemd.services."serial-getty@ttyS0" = {
+    enable = true;
+    wantedBy = [ "multi-user.target" ];
+  };
 
   nix.settings.experimental-features = [
     "nix-command"
@@ -494,7 +526,6 @@ in
 
   # Proxmox recovery path: keep a serial console available even when SSH or the
   # graphical console path is broken.
-  systemd.services."serial-getty@ttyS0".enable = true;
   # Legacy utmp bookkeeping is not useful on this appliance-style VM and
   # causes switch-to-configuration to fail noisily on Proxmox.
   systemd.services.systemd-update-utmp.enable = false;
@@ -546,12 +577,10 @@ in
 
   environment.systemPackages = with pkgs; [ tmux ];
 
-  age.secrets =
-    secrets.definitions
-    // {
-      user-password-root.file = ../../../secrets-agenix/user-password-root.age;
-      user-password-deepwatrcreatur.file = ../../../secrets-agenix/user-password-deepwatrcreatur.age;
-    };
+  age.secrets = secrets.definitions // {
+    user-password-root.file = ../../../secrets-agenix/user-password-root.age;
+    user-password-deepwatrcreatur.file = ../../../secrets-agenix/user-password-deepwatrcreatur.age;
+  };
 
   services.router-log-storage.enable = lib.mkForce enableLogStorage;
 
@@ -680,50 +709,6 @@ in
           echo "Technitium RFC2136 configuration applied"
         '';
     };
-  };
-
-  # The upstream router-networking module currently emits both:
-  # - 08-router-parent-${lanDevice}.network
-  # - 20-router-lan.network
-  #
-  # Because systemd-networkd applies the first matching .network file, the
-  # parent VLAN file wins and the later LAN file never assigns the production
-  # LAN address. Keep the active parent file carrying the LAN L3 config until
-  # the upstream module is corrected.
-  systemd.network.networks."08-router-parent-${lanDevice}" = {
-    address = [ lanIpv4Address ];
-    routes = [
-      {
-        Destination = lanNetwork.cidr;
-        Scope = "link";
-      }
-    ];
-    networkConfig = {
-      VLAN = [
-        "${lanDevice}.20"
-        "${lanDevice}.30"
-      ];
-      ConfigureWithoutCarrier = true;
-      DHCPPrefixDelegation = true;
-      DHCPServer = false;
-      DNS = [ "127.0.0.1" ];
-      Domains = [ topology.domain ];
-      IPv6PrivacyExtensions = "no";
-      IPv6SendRA = true;
-    };
-    linkConfig.RequiredForOnline = lib.mkForce "routable";
-    ipv6SendRAConfig = {
-      EmitDNS = true;
-      Managed = false;
-      OtherInformation = false;
-    };
-    ipv6Prefixes = [
-      {
-        Prefix = "::/64";
-        PreferredLifetimeSec = 1800;
-        ValidLifetimeSec = 3600;
-      }
-    ];
   };
 
   # nix-router-optimized currently writes `global.loglevel` into the ulogd
