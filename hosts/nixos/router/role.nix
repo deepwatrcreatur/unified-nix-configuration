@@ -54,6 +54,9 @@ let
   reservableHosts = lib.filterAttrs (
     _name: host: (host.dhcpReservation or null) != null && (host.ip or null) != null
   ) topology.hosts;
+  # Static LAN IP assigned to this router node (distinct from the shared VIP).
+  # Used in the DNS VIP SNAT rule below to rewrite outbound reply source.
+  staticLanIp = if config.networking.hostName == "router" then "10.10.10.2" else "10.10.10.3";
 in
 {
   imports = [
@@ -311,6 +314,23 @@ in
     '';
     flowLogging.enable = true;
   };
+
+  # Fix: Technitium (bound to 0.0.0.0:53) sends UDP DNS replies from the
+  # static LAN IP (10.10.10.2 / 10.10.10.3) instead of the VIP (10.10.10.1)
+  # because the kernel's preferred source for the 10.10.0.0/16 route is the
+  # statically-assigned address, not the keepalived VIP.  Clients that queried
+  # 10.10.10.1 discard the reply because the source IP does not match.
+  # This SNAT rule rewrites outbound DNS responses on the LAN interface so
+  # they appear to originate from the VIP.  TCP is unaffected: the accepted
+  # socket already binds to the VIP as its local address.
+  networking.nftables.ruleset = lib.mkAfter ''
+    table ip nat {
+      chain dns-vip-snat {
+        type nat hook output priority srcnat; policy accept;
+        oifname "${lanDevice}" ip saddr ${staticLanIp} meta l4proto { tcp, udp } th sport 53 snat to ${topology.routerHost.ip}
+      }
+    }
+  '';
 
   services.router-observability.enable = true;
 
