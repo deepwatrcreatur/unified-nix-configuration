@@ -93,6 +93,7 @@ let
 
   githubTokenHosts = atticClientHosts;
   githubTokenSecrets = operatorUsers ++ builtins.concatLists (map machineRecipients githubTokenHosts);
+  userPasswordSecrets = operatorUsers ++ builtins.concatLists (map machineRecipients atticClientHosts);
 
   podmanServiceSecrets = operatorUsers ++ machineRecipients "podman";
   paperlessOidcSecrets = operatorUsers ++ machineRecipients "podman" ++ machineRecipients "authentik-host";
@@ -103,6 +104,7 @@ in {
   "secrets-agenix/user-password-root.age".publicKeys = allMachineRecipients;
   "secrets-agenix/user-password-deepwatrcreatur.age".publicKeys = allMachineRecipients;
 
+  "secrets-agenix/guacamole-db-password.age".publicKeys = homeserverServiceSecrets;
   "secrets-agenix/cloudflare_ddns_API_token.age".publicKeys = routerServiceSecrets;
   "secrets-agenix/technitium-api-key.age".publicKeys = routerServiceSecrets;
   "secrets-agenix/kea-ddns-tsig-key.age".publicKeys = routerServiceSecrets;

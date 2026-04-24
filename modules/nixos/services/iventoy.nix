@@ -109,9 +109,13 @@ in
       serviceConfig = {
         Type = "forking";
         WorkingDirectory = cfg.stateDir;
-        PIDFile = "/var/run/iventoy.pid";
-        ExecStart = "${pkgs.bash}/bin/bash ${cfg.stateDir}/iventoy.sh -R start";
-        ExecStop = "${pkgs.bash}/bin/bash ${cfg.stateDir}/iventoy.sh stop";
+        Environment = [
+          "IVENTOY_API_ALL=1"
+          "IVENTOY_AUTO_RUN=1"
+        ];
+        PIDFile = "/run/iventoy.pid";
+        ExecStart = "${pkgs.glibc}/lib/ld-linux-x86-64.so.2 --library-path ${cfg.stateDir}/lib/lin64 ${cfg.stateDir}/lib/iventoy";
+        ExecStop = "${pkgs.bash}/bin/bash -c 'kill -15 \"$(cat /run/iventoy.pid)\"'";
         Restart = "on-failure";
       };
     };
