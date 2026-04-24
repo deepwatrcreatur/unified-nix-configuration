@@ -80,4 +80,25 @@ in {
     # Generated host configurations
     inherit matchBlocks;
   };
+
+  # OpenSSH rejects the Home Manager symlink at ~/.ssh/config on this host.
+  # Keep using programs.ssh for rendering, then materialize a real 0600 file
+  # after HM writes the generation links.
+  home.file.".ssh/config".force = true;
+
+  home.activation.materializeSshConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    config_path="$HOME/.ssh/config"
+
+    if [ -L "$config_path" ]; then
+      source_path="$(${pkgs.coreutils}/bin/readlink -f "$config_path")"
+      tmp_path="$HOME/.ssh/config.hm-tmp"
+
+      $DRY_RUN_CMD ${pkgs.coreutils}/bin/cp "$source_path" "$tmp_path"
+      $DRY_RUN_CMD ${pkgs.coreutils}/bin/chmod 600 "$tmp_path"
+      $DRY_RUN_CMD ${pkgs.coreutils}/bin/mv "$tmp_path" "$config_path"
+      echo "Materialized ~/.ssh/config as a regular file for OpenSSH"
+    elif [ -f "$config_path" ]; then
+      $DRY_RUN_CMD ${pkgs.coreutils}/bin/chmod 600 "$config_path"
+    fi
+  '';
 }
