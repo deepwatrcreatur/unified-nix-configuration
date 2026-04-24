@@ -1,6 +1,6 @@
 # 24 SSH Commit Signing — Core Modules
 
-Status: `in-progress`
+Status: `done`
 
 Suggested branch: `feat/tooling-ssh-signing-modules`
 
