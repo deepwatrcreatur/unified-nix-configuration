@@ -1,6 +1,6 @@
 # 30 Kea DDNS TSIG Key Provisioning
 
-Status: `ready`
+Status: `done`
 Suggested branch: `feat/router-kea-tsig-key`
 Priority: `high`
 
