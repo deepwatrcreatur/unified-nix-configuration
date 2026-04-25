@@ -51,11 +51,8 @@ in
   };
 
   # UPnP/NAT-PMP for game consoles and P2P clients.
-  # externalInterface is auto-derived from services.router-networking.wan.device.
-  services.router-upnp = {
-    enable = true;
-    internalIPs = [ lanDevice ];
-  };
+  # externalInterface and internalIPs are auto-derived.
+  services.router-upnp.enable = true;
 
   # NAT is handled by nftables (see nftables.nix)
   networking.nat.enable = false;
