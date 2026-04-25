@@ -1,6 +1,6 @@
 # 32 Kea DHCP Cutover
 
-Status: `blocked`
+Status: `done`
 Suggested branch: `feat/router-kea-cutover`
 Priority: `high`
 

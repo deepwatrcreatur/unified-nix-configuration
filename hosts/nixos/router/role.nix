@@ -165,7 +165,19 @@ in
         peerAddress = if config.networking.hostName == "router" then "10.10.11.213" else "10.10.11.1";
         peerName = if config.networking.hostName == "router" then "router-backup" else "router";
       };
-      reservations = [ ]; # TODO: Pull from central list
+      reservations = lib.mapAttrsToList (name: host: {
+        hw-address = host.dhcpReservation.macAddress;
+        ip-address = host.ip;
+        hostname = name;
+      }) reservableHosts;
+    };
+
+    ddns = {
+      enable = true;
+      tsigKeyFile = config.age.secrets.kea-ddns-tsig-key.path;
+      tsigKeyName = "kea-ddns";
+      forwardZone = topology.domain;
+      reverseZone = "10.10.in-addr.arpa";
     };
   };
 
