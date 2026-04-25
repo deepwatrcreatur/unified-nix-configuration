@@ -1,6 +1,6 @@
 # Router miniupnpd Interface Repair
 
-Status: `ready`
+Status: `done`
 Priority: `high`
 Branch: `fix/router-miniupnpd-interface-repair`
 

@@ -51,8 +51,9 @@ in parallel on separate worktrees.
 4. [`28-dhcp-provider-pluggable-observability.md`](./28-dhcp-provider-pluggable-observability.md) - `done`
 5. [`29-router-caddy-source-drift-repair.md`](./29-router-caddy-source-drift-repair.md) - `done`
 6. [`28-router-dashboard-review-hardening.md`](./28-router-dashboard-review-hardening.md) - `done`
-7. [`33-router-iventoy-runtime-repair.md`](./33-router-iventoy-runtime-repair.md) - `ready`
-8. [`34-router-miniupnpd-interface-repair.md`](./34-router-miniupnpd-interface-repair.md) - `ready`
+14. [`33-router-iventoy-runtime-repair.md`](./33-router-iventoy-runtime-repair.md) - `done`
+15. [`34-router-miniupnpd-interface-repair.md`](./34-router-miniupnpd-interface-repair.md) - `done`
+
 9. [`29-router-cutover-validation-hardening.md`](./29-router-cutover-validation-hardening.md) - `ready`
 10. [`27-router-pxe-boot-module-plumbing.md`](./27-router-pxe-boot-module-plumbing.md) - `ready`
 11. [`30-kea-tsig-key-provisioning.md`](./30-kea-tsig-key-provisioning.md) - `ready`
