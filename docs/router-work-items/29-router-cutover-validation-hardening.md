@@ -1,6 +1,6 @@
 # Router Cutover Validation Hardening
 
-Status: `ready`
+Status: `done`
 Priority: `medium`
 Branch: `fix/router-cutover-validation-hardening`
 

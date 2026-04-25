@@ -2,7 +2,9 @@
 # scripts/validate-router-cutover.sh — Post-cutover validation for homelab router
 set -euo pipefail
 
-ROUTER_IP="10.10.10.1"
+# Default to management plane for diagnostics
+ROUTER_SSH_TARGET="192.168.100.100"
+ROUTER_LAN_IP="10.10.10.1"
 DOMAIN="deepwatercreature.com"
 SSH_OPTS="-o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new"
 BLOCKING_FAILED=0
@@ -20,16 +22,24 @@ declare -A CRITICAL_HOSTS=(
 
 echo "=== Router Post-Cutover Validation ==="
 
-# 1. Connectivity to Router
-echo -n "Checking router reachability ($ROUTER_IP)... "
-if ping -c 1 -W 2 "$ROUTER_IP" >/dev/null 2>&1; then
+# 1. Connectivity to Router Management Plane
+echo -n "Checking router management reachability ($ROUTER_SSH_TARGET)... "
+if ping -c 1 -W 2 "$ROUTER_SSH_TARGET" >/dev/null 2>&1; then
   echo "OK"
 else
   echo "FAILED"
   exit 1
 fi
 
-# 2. WAN Connectivity
+# 2. Connectivity to Router LAN IP
+echo -n "Checking router LAN reachability ($ROUTER_LAN_IP)... "
+if ping -c 1 -W 2 "$ROUTER_LAN_IP" >/dev/null 2>&1; then
+  echo "OK"
+else
+  echo "FAILED (Advisory - Check data-plane cable)"
+fi
+
+# 3. WAN Connectivity
 echo -n "Checking Internet connectivity (1.1.1.1)... "
 if ping -c 1 -W 2 1.1.1.1 >/dev/null 2>&1; then
   echo "OK"
@@ -37,28 +47,29 @@ else
   echo "FAILED (Advisory)"
 fi
 
-# 3. Technitium Service Status
-echo -n "Checking Technitium DNS Server service... "
+# 4. Kea DHCP Service Status
+echo -n "Checking Kea DHCP4 Server service... "
 # shellcheck disable=SC2086
-TECH_STATUS=$(ssh $SSH_OPTS "$ROUTER_IP" "systemctl is-active technitium-dns-server" 2>/dev/null || echo "unknown")
-if [ "$TECH_STATUS" = "active" ]; then
+KEA_STATUS=$(ssh $SSH_OPTS "$ROUTER_SSH_TARGET" "systemctl is-active kea-dhcp4-server" 2>/dev/null || echo "unknown")
+if [ "$KEA_STATUS" = "active" ]; then
   echo "OK"
 else
-  echo "FAILED: $TECH_STATUS"
+  echo "FAILED: $KEA_STATUS"
   BLOCKING_FAILED=1
 fi
 
-# 4. Technitium DHCP Scope Name
-echo -n "Checking DHCP scope 'LAN' presence... "
+# 5. Kea DDNS Service Status
+echo -n "Checking Kea DHCP-DDNS Server service... "
 # shellcheck disable=SC2086
-if ssh $SSH_OPTS "$ROUTER_IP" "/run/wrappers/bin/sudo ls /var/lib/technitium-dns-server/scopes/LAN.scope" >/dev/null 2>&1; then
+D2_STATUS=$(ssh $SSH_OPTS "$ROUTER_SSH_TARGET" "systemctl is-active kea-dhcp-ddns-server" 2>/dev/null || echo "unknown")
+if [ "$D2_STATUS" = "active" ]; then
   echo "OK"
 else
-  echo "FAILED (Check if scope is named 'Default' instead)"
+  echo "FAILED: $D2_STATUS"
   BLOCKING_FAILED=1
 fi
 
-# 5. Critical Host Reachability (Reserved IPs)
+# 6. Critical Host Reachability (Reserved IPs)
 echo "Checking critical host reachability (reserved IPs):"
 for host in "${!CRITICAL_HOSTS[@]}"; do
   expected_ip="${CRITICAL_HOSTS[$host]}"
@@ -66,9 +77,9 @@ for host in "${!CRITICAL_HOSTS[@]}"; do
   if ping -c 1 -W 1 "$expected_ip" >/dev/null 2>&1; then
     echo "OK"
   else
-    # Try to find current IP if wrong
+    # Try to find current lease in Kea
     # shellcheck disable=SC2086
-    actual_ip=$(ssh $SSH_OPTS "$ROUTER_IP" "/run/wrappers/bin/sudo grep -i \"leased IP address .* to .*$host\" /var/lib/technitium-dns-server/logs/\$(date +%Y-%m-%d).log | tail -n 1 | grep -oE 'leased IP address \[[0-9.]+' | grep -oE '[0-9.]+' | head -n 1" 2>/dev/null || echo "unknown")
+    actual_ip=$(ssh $SSH_OPTS "$ROUTER_SSH_TARGET" "/run/wrappers/bin/sudo grep -i \"$host\" /var/lib/kea/dhcp4.leases | tail -n 1 | cut -d',' -f1" 2>/dev/null || echo "unknown")
     if [ -n "$actual_ip" ] && [ "$actual_ip" != "unknown" ]; then
       echo "FAILED (Advisory: Actually at $actual_ip)"
     else
@@ -77,14 +88,17 @@ for host in "${!CRITICAL_HOSTS[@]}"; do
   fi
 done
 
-# 6. Dashboard Reachability (Management Plane)
-MGMT_IP="192.168.100.100"
-echo -n "Checking Dashboard on Management Plane ($MGMT_IP:8888)... "
-if curl -s -m 2 "http://$MGMT_IP:8888" >/dev/null 2>&1; then
+# 7. Dashboard Reachability (Management Plane)
+echo -n "Checking Dashboard on Management Plane ($ROUTER_SSH_TARGET:8888)... "
+if curl -s -m 2 "http://$ROUTER_SSH_TARGET:8888" >/dev/null 2>&1; then
   echo "OK"
 else
   echo "FAILED (Advisory)"
 fi
 
 echo "=== Validation Complete ==="
-exit "$BLOCKING_FAILED"
+if [ "$BLOCKING_FAILED" -ne 0 ]; then
+  echo "FAILURE: One or more blocking validation checks failed."
+  exit 1
+fi
+exit 0
