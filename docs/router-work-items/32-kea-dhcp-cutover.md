@@ -85,4 +85,6 @@ format:
 ## Dependencies
 
 - Item 30 (TSIG key secret) — must be merged first
-- Item 31 (router-kea module) — must be merged first
+- Item 31 (router-kea module) — done; no longer a blocker
+- Item 37 (HA pair deployment) — recommended first; cutover to Kea DHCP is lower
+  risk once the HA pair is in a verified stable state

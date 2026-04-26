@@ -1,6 +1,6 @@
 # 31 router-kea Module
 
-Status: `ready`
+Status: `done`
 Suggested branch: `feat/router-kea-module`
 Priority: `high`
 
@@ -76,3 +76,21 @@ options.services.router-kea = {
 ## Dependencies
 
 - Item 30 (TSIG key must exist to test end-to-end, but module can be written first)
+
+## Outcome Notes (2026-04-24)
+
+Module was implemented and substantially extended during the Kea/VRRP regression
+incident (2026-04-23). The delivered module at
+`nix-router-optimized/modules/router-kea.nix` covers everything in the original
+scope plus:
+
+- HA load-balancing mode with `libdhcp_ha.so` + `libdhcp_lease_cmds.so`
+- Explicit `localAddress` option (with warning against 127.0.0.1)
+- `outboundInterface` defaulting to `use-routing` when HA is enabled
+- Build-time assertion rejecting address-qualified interface names
+- PXE boot option advertisement
+- Backup carrier guard (`ExecCondition` + carrier-sync service) for the standby node
+- Runtime TSIG key injection via `ExecStartPre` (key never enters Nix store)
+
+See `docs/kea-vrrp-regression-postmortem.md` for the full incident record and
+guardrail rationale.

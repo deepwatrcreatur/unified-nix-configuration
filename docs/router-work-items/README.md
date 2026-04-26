@@ -45,16 +45,28 @@ in parallel on separate worktrees.
 
 ## Ranking
 
-1. [`25-technitium-dhcp-sync-hardening.md`](./25-technitium-dhcp-sync-hardening.md) - `done`
-2. [`26-router-dashboard-runtime-repair.md`](./26-router-dashboard-runtime-repair.md) - `done`
-3. [`27-router-post-cutover-validation.md`](./27-router-post-cutover-validation.md) - `done`
-4. [`28-dhcp-provider-pluggable-observability.md`](./28-dhcp-provider-pluggable-observability.md) - `done`
-5. [`29-router-caddy-source-drift-repair.md`](./29-router-caddy-source-drift-repair.md) - `done`
-6. [`28-router-dashboard-review-hardening.md`](./28-router-dashboard-review-hardening.md) - `done`
-7. [`33-router-iventoy-runtime-repair.md`](./33-router-iventoy-runtime-repair.md) - `ready`
-8. [`34-router-miniupnpd-interface-repair.md`](./34-router-miniupnpd-interface-repair.md) - `ready`
-9. [`29-router-cutover-validation-hardening.md`](./29-router-cutover-validation-hardening.md) - `ready`
-10. [`27-router-pxe-boot-module-plumbing.md`](./27-router-pxe-boot-module-plumbing.md) - `ready`
-11. [`30-kea-tsig-key-provisioning.md`](./30-kea-tsig-key-provisioning.md) - `ready`
-12. [`31-router-kea-module.md`](./31-router-kea-module.md) - `ready`
-13. [`32-kea-dhcp-cutover.md`](./32-kea-dhcp-cutover.md) - `blocked` (needs 30 + 31)
+Items marked `done` are kept briefly for outcome notes then archived.
+
+### Active Queue
+
+1. [`37-kea-ha-pair-deployment.md`](./37-kea-ha-pair-deployment.md) - `ready` ⚠️ closes open incident
+2. [`33-router-iventoy-runtime-repair.md`](./33-router-iventoy-runtime-repair.md) - `ready`
+3. [`34-router-miniupnpd-interface-repair.md`](./34-router-miniupnpd-interface-repair.md) - `ready`
+4. [`29-router-cutover-validation-hardening.md`](./29-router-cutover-validation-hardening.md) - `ready`
+5. [`27-router-pxe-boot-module-plumbing.md`](./27-router-pxe-boot-module-plumbing.md) - `ready`
+6. [`30-kea-tsig-key-provisioning.md`](./30-kea-tsig-key-provisioning.md) - `ready`
+7. [`32-kea-dhcp-cutover.md`](./32-kea-dhcp-cutover.md) - `blocked` (needs 30; also recommended after 37)
+8. [`35-kea-control-agent-stork-port.md`](./35-kea-control-agent-stork-port.md) - `ready`
+9. [`36-stork-ha-vrrp-design.md`](./36-stork-ha-vrrp-design.md) - `ready` (needs 35 first)
+10. [`39-conntrackd-firewall-state-sync.md`](./39-conntrackd-firewall-state-sync.md) - `ready` (design closed — see `docs/design/conntrackd-flowtable/DECISION.md`)
+11. [`38-nix-router-optimized-input-pinning.md`](./38-nix-router-optimized-input-pinning.md) - `ready` (recommended after 37)
+
+### Recently Done
+
+- [`31-router-kea-module.md`](./31-router-kea-module.md) - `done` (implemented + extended during 2026-04-23 incident)
+- [`29-router-caddy-source-drift-repair.md`](./29-router-caddy-source-drift-repair.md) - `done`
+- [`28-router-dashboard-review-hardening.md`](./28-router-dashboard-review-hardening.md) - `done`
+- [`28-dhcp-provider-pluggable-observability.md`](./28-dhcp-provider-pluggable-observability.md) - `done`
+- [`27-router-post-cutover-validation.md`](./27-router-post-cutover-validation.md) - `done`
+- [`26-router-dashboard-runtime-repair.md`](./26-router-dashboard-runtime-repair.md) - `done`
+- [`25-technitium-dhcp-sync-hardening.md`](./25-technitium-dhcp-sync-hardening.md) - `done`
