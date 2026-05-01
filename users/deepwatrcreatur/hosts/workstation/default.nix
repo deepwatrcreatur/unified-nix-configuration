@@ -59,6 +59,14 @@
         source = ../../../../secrets-agenix/opencode-zen-api-key.age;
         target = ".local/share/agenix-user-secrets/opencode-zen-api-key";
       };
+      openai-api-key = {
+        source = ../../../../secrets-agenix/openai-api-key.age;
+        target = ".local/share/agenix-user-secrets/openai-api-key";
+      };
+      gemini-api-key = {
+        source = ../../../../secrets-agenix/gemini-api-key.age;
+        target = ".local/share/agenix-user-secrets/gemini-api-key";
+      };
       atuin-key-b64 = {
         source = ../../../../secrets-agenix/atuin-key-b64.age;
         target = ".local/share/agenix-user-secrets/atuin-key-b64";
@@ -66,6 +74,10 @@
       anthropic-api-key = {
         source = ../../../../secrets-agenix/anthropic-api-key.age;
         target = ".local/share/agenix-user-secrets/anthropic-api-key";
+      };
+      deepseek-api-key = {
+        source = ../../../../secrets-agenix/deepseek-api-key.age;
+        target = ".local/share/agenix-user-secrets/deepseek-api-key";
       };
       oauth-creds = {
         source = ../../../../secrets-agenix/oauth-creds.age;

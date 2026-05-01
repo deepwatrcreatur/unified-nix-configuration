@@ -1,10 +1,6 @@
 # 02 Agent CLI Fnox Wrappers
 
-<<<<<<< HEAD
 Status: `done`
-=======
-Status: `done`
->>>>>>> feat/tooling-agent-cli-fnox-wrappers
 
 Suggested branch: `feat/tooling-agent-cli-fnox-wrappers`
 

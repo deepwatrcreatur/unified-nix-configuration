@@ -94,6 +94,9 @@ let
   githubTokenHosts = atticClientHosts;
   githubTokenSecrets = operatorUsers ++ builtins.concatLists (map machineRecipients githubTokenHosts);
 
+  roundtableHosts = [ "homeserver" "vaglio" ];
+  roundtableSecrets = operatorUsers ++ builtins.concatLists (map machineRecipients roundtableHosts);
+
   podmanServiceSecrets = operatorUsers ++ machineRecipients "podman";
   paperlessOidcSecrets = operatorUsers ++ machineRecipients "podman" ++ machineRecipients "authentik-host";
 
@@ -116,6 +119,7 @@ in {
   "secrets-agenix/paperless-authentik-oidc.age".publicKeys = paperlessOidcSecrets;
   "secrets-agenix/nightscout-api-secret.age".publicKeys = podmanServiceSecrets;
   "secrets-agenix/librelinkup-env.age".publicKeys = podmanServiceSecrets;
+  "secrets-agenix/roundtable-secret-key-base.age".publicKeys = roundtableSecrets;
 
   # Operator/user secrets decrypted directly in Home Manager with the stable user key
   "secrets-agenix/github-token.age".publicKeys = githubTokenSecrets;
@@ -123,7 +127,10 @@ in {
   "secrets-agenix/openrouter-api-key.age".publicKeys = userOnlySecrets;
   "secrets-agenix/z-ai-api-key.age".publicKeys = userOnlySecrets;
   "secrets-agenix/opencode-zen-api-key.age".publicKeys = userOnlySecrets;
+  "secrets-agenix/openai-api-key.age".publicKeys = userOnlySecrets;
+  "secrets-agenix/gemini-api-key.age".publicKeys = userOnlySecrets;
   "secrets-agenix/anthropic-api-key.age".publicKeys = userOnlySecrets;
+  "secrets-agenix/deepseek-api-key.age".publicKeys = userOnlySecrets;
   "secrets-agenix/atuin-key-b64.age".publicKeys = userOnlySecrets;
   "secrets-agenix/oauth-creds.age".publicKeys = userOnlySecrets;
   "secrets-agenix/bitwarden-data.age".publicKeys = userOnlySecrets;
