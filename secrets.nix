@@ -93,6 +93,8 @@ let
 
   githubTokenHosts = atticClientHosts;
   githubTokenSecrets = operatorUsers ++ builtins.concatLists (map machineRecipients githubTokenHosts);
+  roundtableHosts = [ "homeserver" ];
+  roundtableSecrets = operatorUsers ++ builtins.concatLists (map machineRecipients roundtableHosts);
 
   podmanServiceSecrets = operatorUsers ++ machineRecipients "podman";
   paperlessOidcSecrets = operatorUsers ++ machineRecipients "podman" ++ machineRecipients "authentik-host";
@@ -116,6 +118,7 @@ in {
   "secrets-agenix/paperless-authentik-oidc.age".publicKeys = paperlessOidcSecrets;
   "secrets-agenix/nightscout-api-secret.age".publicKeys = podmanServiceSecrets;
   "secrets-agenix/librelinkup-env.age".publicKeys = podmanServiceSecrets;
+  "secrets-agenix/roundtable-secret-key-base.age".publicKeys = roundtableSecrets;
 
   # Operator/user secrets decrypted directly in Home Manager with the stable user key
   "secrets-agenix/github-token.age".publicKeys = githubTokenSecrets;

@@ -83,6 +83,7 @@
         "paperless"
         "scrypted"
         "nightscout"
+        "roundtable"
       ];
       # Internal-only admin services (homelab/management only, not public).
       # These become CNAMEs in local DNS and are proxied by local Caddy.
@@ -98,6 +99,7 @@
         "paperless"
         "scrypted"
         "nightscout"
+        "roundtable"
       ];
       description = "Main router/firewall running NixOS";
     };

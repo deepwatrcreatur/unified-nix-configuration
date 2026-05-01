@@ -12,6 +12,7 @@
   homeserver-iperf3 = context: import ./homeserver-iperf3.nix context;
   homeserver-homebridge = context: import ./homeserver-homebridge.nix context;
   homeserver-semaphore = context: import ./homeserver-semaphore.nix context;
+  homeserver-roundtable = context: import ./homeserver-roundtable.nix context;
   attic-cache-core = context: import ./attic-cache-core.nix context;
   attic-cache-build-server = context: import ./attic-cache-build-server.nix context;
   attic-cache-home-manager = context: import ./attic-cache-home-manager.nix context;
