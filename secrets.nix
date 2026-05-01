@@ -93,6 +93,8 @@ let
 
   githubTokenHosts = atticClientHosts;
   githubTokenSecrets = operatorUsers ++ builtins.concatLists (map machineRecipients githubTokenHosts);
+  roundtableHosts = [ "homeserver" ];
+  roundtableSecrets = operatorUsers ++ builtins.concatLists (map machineRecipients roundtableHosts);
 
   roundtableHosts = [ "homeserver" "vaglio" ];
   roundtableSecrets = operatorUsers ++ builtins.concatLists (map machineRecipients roundtableHosts);

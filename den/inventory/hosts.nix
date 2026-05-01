@@ -55,6 +55,7 @@
       "homeserver-iperf3"
       "homeserver-homebridge"
       "homeserver-semaphore"
+      "homeserver-roundtable"
       "rustdesk-server"
     ];
   };

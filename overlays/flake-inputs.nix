@@ -54,6 +54,12 @@
     qmd = inputs.qmd.packages.${prev.stdenv.hostPlatform.system}.default;
   })
 
+  # roundtable - autonomous multi-agent design orchestrator
+  (final: prev: {
+    roundtable = inputs.agent-roundtable.packages.${prev.stdenv.hostPlatform.system}.default;
+    roundtable-web = inputs.agent-roundtable.packages.${prev.stdenv.hostPlatform.system}.roundtable-web;
+  })
+
   # Keep the upstream beads_rust flake pinned for metadata and future source
   # packaging work. The repo-managed runtime package is defined in
   # overlays/packages.nix from release binaries instead of this upstream build,

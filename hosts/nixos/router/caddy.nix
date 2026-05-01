@@ -7,6 +7,7 @@ let
   homeAssistantHost = topology.hosts.homeassistant;
   authentikHost = topology.hosts.authentik-host;
   podmanHost = topology.hosts.podman;
+  roundtableHost = topology.hosts.homeserver;
   ddnsLabels = routerHost.ddnsServices or [ ];
   ddnsDomainsLine = lib.concatStringsSep " " ([ topology.domain ] ++ ddnsLabels);
   mkFqdn = label: "${label}.${topology.domain}";
@@ -119,6 +120,13 @@ in
           }
         '';
       };
+
+      "${mkFqdn "roundtable"}" = {
+        extraConfig = ''
+          reverse_proxy ${roundtableHost.ip}:4000
+        '';
+      };
+
       "${mkFqdn "grafana"}" = {
         extraConfig = ''
           reverse_proxy 127.0.0.1:3001

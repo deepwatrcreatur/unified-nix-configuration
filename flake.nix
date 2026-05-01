@@ -169,6 +169,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    agent-roundtable = {
+      url = "path:../agent-roundtable/roundtable";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # beads_rust upstream package; the repo wraps it as `beads-rust` to avoid
     # colliding with the Homebrew viewer's `br` command.
     beads-rust = {
