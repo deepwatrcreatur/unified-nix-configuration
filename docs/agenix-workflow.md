@@ -10,7 +10,13 @@ Secrets in this repository are encrypted using `agenix` with age encryption. Eac
 
 - The host(s) that need the secret must have their public keys in `secrets.nix`
 - You must have access to one of the operator user keys (defined in `operatorUsers` in `secrets.nix`)
-- The `agenix` tool (available via `nix run github:ryantm/agenix`)
+- The repo-standard secret editing command: `agenix-edit`
+- Local encryption tools: `age` or `rage`
+
+> Repo policy: prefer `agenix-edit secrets-agenix/<name>.age` over invoking a
+> raw `agenix` binary directly. The wrapper is what this repo intentionally
+> exposes on operator machines, and it stays compatible with the `secrets.nix`
+> recipient model used here.
 
 ## Step-by-Step Process
 
@@ -54,15 +60,16 @@ echo 'PAPERLESS_DBPASS="your-secret-here"' > secrets-agenix/paperless-db-passwor
 
 ### 4. Encrypt the Secret
 
-Use agenix to encrypt the secret file based on the recipients in `secrets.nix`:
+Use the repo-standard wrapper to encrypt the secret file based on the
+recipients in `secrets.nix`:
 
 ```bash
 # Method 1: Using pipe (recommended for automation)
 cat secrets-agenix/paperless-db-password | \
-  EDITOR="tee" nix run github:ryantm/agenix -- -e secrets-agenix/paperless-db-password.age
+  EDITOR="tee" agenix-edit secrets-agenix/paperless-db-password.age
 
 # Method 2: Interactive editor (for manual editing)
-nix run github:ryantm/agenix -- -e secrets-agenix/paperless-db-password.age
+agenix-edit secrets-agenix/paperless-db-password.age
 # This opens your $EDITOR with a temporary decrypted version
 # Add your secret content, save, and exit
 ```
@@ -165,7 +172,7 @@ atticClientSecrets = operatorUsers ++ builtins.concatLists (map machineRecipient
 To edit an already-encrypted secret:
 
 ```bash
-nix run github:ryantm/agenix -- -e secrets-agenix/paperless-db-password.age
+agenix-edit secrets-agenix/paperless-db-password.age
 # Edit in $EDITOR, save, and exit
 ```
 
@@ -178,7 +185,7 @@ If you add/remove hosts from a recipient list, you must re-encrypt affected secr
 ```bash
 # Edit secrets.nix to update recipients
 # Then re-encrypt each affected secret
-nix run github:ryantm/agenix -- -e secrets-agenix/affected-secret.age
+agenix-edit secrets-agenix/affected-secret.age
 # Just open and save without changes to re-encrypt with new recipients
 ```
 

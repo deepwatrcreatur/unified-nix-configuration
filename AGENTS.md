@@ -172,6 +172,20 @@ For detailed managed authentication paths (including `gemini-cli`), see `docs/to
 - For debugging against the raw CLI, bypass the alias with `command claude-code`
   in a shell.
 
+#### Agenix secret editing
+
+- Preferred command: `agenix-edit secrets-agenix/<name>.age`
+- Do **not** assume the raw `agenix` command is installed for the
+  `deepwatrcreatur` user.
+- Do **not** add `agenix` to `home.packages` just to edit secrets unless the
+  repo is explicitly migrating workflows.
+- This repo intentionally standardizes on the system-provided `agenix-edit`
+  wrapper from `modules/common/secrets-management.nix`, which runs
+  `nix run github:ryantm/agenix -- -e ...` against the repo's `secrets.nix`
+  recipient model.
+- For secret creation/rotation, pair `agenix-edit` with the local `age`/`rage`
+  tools already installed via the same module.
+
 **Recent additions**
 - Added `ast-grep` (`sg`) to the common tool set.
 - Added `cass-session-search` for CASS-style search across local agent
