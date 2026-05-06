@@ -1,6 +1,6 @@
 # 40 — Kea State Ownership Hardening
 
-Status: `ready`
+Status: `in-progress`
 Suggested branch: `fix/kea-state-ownership-hardening`
 Priority: `high`
 
