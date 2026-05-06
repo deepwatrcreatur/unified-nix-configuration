@@ -47,14 +47,14 @@ in parallel on separate worktrees.
 
 1. [`35-ap-recovery-postmortem-gap.md`](./35-ap-recovery-postmortem-gap.md) - `ready`
 2. [`37-router-backup-dhcp-regression-lab.md`](./37-router-backup-dhcp-regression-lab.md) - `ready`
-3. [`38-router-dashboard-technitium-token-access.md`](./38-router-dashboard-technitium-token-access.md) - `ready`
-4. [`41-optional-encrypted-dns-for-clients.md`](./41-optional-encrypted-dns-for-clients.md) - `ready`
-5. [`42-apple-dns-privacy-compatibility.md`](./42-apple-dns-privacy-compatibility.md) - `ready`
-6. [`44-kea-stork-dashboard.md`](./44-kea-stork-dashboard.md) - `ready`
+3. [`41-optional-encrypted-dns-for-clients.md`](./41-optional-encrypted-dns-for-clients.md) - `ready`
+4. [`42-apple-dns-privacy-compatibility.md`](./42-apple-dns-privacy-compatibility.md) - `ready`
+5. [`44-kea-stork-dashboard.md`](./44-kea-stork-dashboard.md) - `ready`
 
 ## Recently Completed
 
 - [`36-router-backup-ha-disable-profile.md`](./36-router-backup-ha-disable-profile.md) - `done`
+- [`38-router-dashboard-technitium-token-access.md`](./38-router-dashboard-technitium-token-access.md) - `done`
 - [`39-router-dashboard-kea-dhcp-cutover.md`](./39-router-dashboard-kea-dhcp-cutover.md) - `done`
 - [`40-kea-state-ownership-hardening.md`](./40-kea-state-ownership-hardening.md) - `done`
 - [`43-optional-extra-routed-networks.md`](./43-optional-extra-routed-networks.md) - `done`

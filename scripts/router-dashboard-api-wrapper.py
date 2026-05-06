@@ -113,6 +113,7 @@ except json.JSONDecodeError as exc:
     KEA_DHCP_META = {}
 
 original_handle_fail2ban_status = module.RouterAPIHandler.handle_fail2ban_status
+original_handle_dns_stats = module.RouterAPIHandler.handle_dns_stats
 original_handle_dhcp_leases = module.RouterAPIHandler.handle_dhcp_leases
 
 
@@ -370,6 +371,66 @@ def handle_fail2ban_status(self):
     return original_handle_fail2ban_status(self)
 
 
+def handle_dns_stats(self):
+    systemctl = self.find_systemctl()
+    if systemctl:
+        try:
+            properties = self.get_unit_properties(
+                systemctl,
+                "technitium-dns-server",
+                ["LoadState", "ActiveState", "SubState"],
+            )
+            load_state = str(properties.get("LoadState", "unknown")).strip().lower()
+            active_state = str(properties.get("ActiveState", "unknown")).strip().lower()
+            sub_state = str(properties.get("SubState", "unknown")).strip().lower()
+
+            if load_state == "not-found":
+                self.send_json(
+                    {
+                        "available": False,
+                        "message": "Technitium DNS is not installed on this host",
+                    }
+                )
+                return
+
+            if active_state != "active":
+                self.send_json(
+                    {
+                        "available": False,
+                        "message": "Technitium DNS is not running on this host",
+                        "service": {
+                            "activeState": active_state,
+                            "subState": sub_state,
+                        },
+                    }
+                )
+                return
+        except Exception as exc:
+            log_warning(f"Unable to preflight Technitium DNS service state: {exc}")
+
+    token_path = os.environ.get("TECHNITIUM_API_KEY_FILE", "").strip()
+    if token_path:
+        if not os.path.exists(token_path):
+            self.send_json(
+                {
+                    "available": False,
+                    "message": f"Technitium API token file is missing: {token_path}",
+                }
+            )
+            return
+
+        if not os.access(token_path, os.R_OK):
+            self.send_json(
+                {
+                    "available": False,
+                    "message": f"Technitium API token file is unreadable: {token_path}",
+                }
+            )
+            return
+
+    return original_handle_dns_stats(self)
+
+
 def format_kea_expiry(expire_value):
     text = str(expire_value or "").strip()
     if not text:
@@ -491,6 +552,7 @@ module.RouterAPIHandler.handle_interface_stats = handle_interface_stats
 module.RouterAPIHandler.handle_firewall_stats = handle_firewall_stats
 module.RouterAPIHandler.handle_caddy_status = handle_caddy_status
 module.RouterAPIHandler.handle_fail2ban_status = handle_fail2ban_status
+module.RouterAPIHandler.handle_dns_stats = handle_dns_stats
 module.RouterAPIHandler.handle_dhcp_leases = handle_dhcp_leases
 
 if __name__ == "__main__":

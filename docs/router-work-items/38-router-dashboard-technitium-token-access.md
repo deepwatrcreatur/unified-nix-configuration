@@ -1,6 +1,6 @@
 # 38 — Router Dashboard Technitium Token Access
 
-Status: `ready`
+Status: `done`
 Suggested branch: `fix/router-dashboard-technitium-token-access`
 Priority: `high`
 
@@ -54,3 +54,12 @@ the dashboard's DNS behavior explicit and accurate across both host profiles.
   returns an explicit "not enabled on this host" style message
 - missing/unreadable token => API returns an actionable message, not a generic
   "offline"
+
+## Outcome
+
+- the router dashboard now preflights Technitium service state before calling
+  the upstream DNS handler
+- on `router-backup`, `/api/dns/stats` now returns an explicit host-profile
+  message instead of surfacing raw `Connection refused`
+- the live `router` path remains unchanged when Technitium is active and the
+  token path is valid
