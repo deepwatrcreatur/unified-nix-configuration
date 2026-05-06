@@ -62,3 +62,6 @@ in parallel on separate worktrees.
 14. [`35-ap-recovery-postmortem-gap.md`](./35-ap-recovery-postmortem-gap.md) - `ready`
 15. [`36-router-backup-ha-disable-profile.md`](./36-router-backup-ha-disable-profile.md) - `ready`
 16. [`37-router-backup-dhcp-regression-lab.md`](./37-router-backup-dhcp-regression-lab.md) - `ready`
+17. [`38-router-dashboard-technitium-token-access.md`](./38-router-dashboard-technitium-token-access.md) - `ready`
+18. [`39-router-dashboard-kea-dhcp-cutover.md`](./39-router-dashboard-kea-dhcp-cutover.md) - `ready`
+19. [`40-kea-state-ownership-hardening.md`](./40-kea-state-ownership-hardening.md) - `ready`
