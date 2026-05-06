@@ -8,7 +8,7 @@
 {
   networking = {
     dhcpcd.enable = false;
-    useDHCP = false;
+    useDHCP = lib.mkDefault false;
     useHostResolvConf = false;
   };
 

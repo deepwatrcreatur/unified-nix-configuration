@@ -7,7 +7,7 @@ let
   homeAssistantHost = topology.hosts.homeassistant;
   authentikHost = topology.hosts.authentik-host;
   podmanHost = topology.hosts.podman;
-  roundtableHost = topology.hosts.homeserver;
+  roundtableHost = topology.hosts.vaglio;
   ddnsLabels = routerHost.ddnsServices or [ ];
   ddnsDomainsLine = lib.concatStringsSep " " ([ topology.domain ] ++ ddnsLabels);
   mkFqdn = label: "${label}.${topology.domain}";
@@ -197,7 +197,7 @@ in
         chown caddy:caddy /run/caddy/caddy.env
         chmod 0400 /run/caddy/caddy.env
       ''}
-    '';
+    ';
     serviceConfig = {
       # The preStart script creates this file, so it must be optional at the
       # unit level or systemd will fail before preStart gets a chance to run.

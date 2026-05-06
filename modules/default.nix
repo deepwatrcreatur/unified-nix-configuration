@@ -5,7 +5,9 @@ let
   moduleLoading = import ../lib/flake/module-loading.nix { inherit lib; };
 in
 {
-  imports = moduleLoading.mkAutoImportFilesOnly {
-    dir = commonDir;
-  };
+  imports =
+    moduleLoading.mkAutoImportFilesOnly {
+      dir = commonDir;
+    }
+    ++ [ ./nixos ];
 }

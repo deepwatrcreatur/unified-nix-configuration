@@ -2,17 +2,19 @@
   config,
   inputs,
   lib,
+  options,
   pkgs,
   ...
 }:
 let
-  cfg = config.services.router-dashboard;
+  hasRouterDashboard = lib.hasAttrByPath [ "services" "router-dashboard" ] options;
+  cfg = if hasRouterDashboard then config.services.router-dashboard else { enable = false; };
   fail2banSnapshotFile = "/run/router-dashboard/fail2ban-status.json";
   routerDashboardApiWrapper = ../../scripts/router-dashboard-api-wrapper.py;
   fail2banSnapshotScript = ../../scripts/router-dashboard-fail2ban-snapshot.py;
 in
 {
-  config = lib.mkIf cfg.enable {
+  config = lib.mkIf (hasRouterDashboard && cfg.enable) {
     assertions = [
       {
         assertion = builtins.hasAttr "router-dashboard" config.users.groups;

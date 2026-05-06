@@ -33,9 +33,6 @@ in {
       }
     ];
 
-    # Tie into existing tesla-inference / Ollama module when selected.
-    imports = [];
-
     # Ollama wiring – assumes tesla-inference module is available on the system.
     tesla-inference = lib.mkIf (lib.elem "ollama" cfg.engine) {
       enable = true;

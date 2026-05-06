@@ -170,6 +170,24 @@
     ];
   };
 
+  vaglio = {
+    kind = "nixos";
+    name = "vaglio";
+    system = "x86_64-linux";
+    hostPath = ../hosts/vaglio;
+    mode = "aspect";
+    aspectsList = [
+      "nixos-base"
+      "lxc-core"
+      "attic-client"
+      "github-token-client"
+      "nix-daemon-user-ssh"
+      "home-manager-users"
+      "homeserver-networking"
+      "homeserver-roundtable"
+    ];
+  };
+
   rustdesk = {
     kind = "nixos";
     name = "rustdesk";

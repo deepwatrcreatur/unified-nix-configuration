@@ -11,6 +11,44 @@ in
     description = "Shared router inventory and network topology derived from lib/hosts.nix.";
   };
 
+  options.router.monitoring = lib.mkOption {
+    type = lib.types.submodule {
+      options = {
+        grafanaDomain = lib.mkOption {
+          type = lib.types.str;
+          description = "Public hostname for router Grafana.";
+        };
+
+        grafanaDataDir = lib.mkOption {
+          type = lib.types.str;
+          description = "Persistent storage path for router Grafana data.";
+        };
+
+        listenAddress = lib.mkOption {
+          type = lib.types.str;
+          description = "Address router monitoring services should bind to.";
+        };
+
+        prometheusStateDir = lib.mkOption {
+          type = lib.types.str;
+          description = "StateDirectory name for router Prometheus.";
+        };
+
+        prometheusBindMountPath = lib.mkOption {
+          type = lib.types.str;
+          description = "Persistent storage path for router Prometheus data.";
+        };
+
+        prometheusRetentionSize = lib.mkOption {
+          type = lib.types.str;
+          description = "Prometheus retention size for router monitoring.";
+        };
+      };
+    };
+    default = { };
+    description = "Shared monitoring settings for router-class hosts.";
+  };
+
   config.router.topology = {
     domain = hostsData.domain;
     hosts = hostsData.hosts;

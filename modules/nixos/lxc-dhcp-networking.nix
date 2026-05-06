@@ -1,10 +1,8 @@
-{
-  ...
-}:
+{ lib, ... }:
 
 {
-  networking.useNetworkd = true;
-  networking.useDHCP = true;
+  networking.useNetworkd = lib.mkForce true;
+  networking.useDHCP = lib.mkForce true;
   networking.useHostResolvConf = false;
 
   systemd.network = {

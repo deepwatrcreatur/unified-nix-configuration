@@ -1,15 +1,11 @@
-{ config, lib, pkgs, ... }:
-
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.services.roundtable;
-  envFilePath = "/run/${cfg.runtimeDir}/roundtable.env";
-  startScript = pkgs.writeShellScript "roundtable-web-start" ''
-    set -euo pipefail
-    set -a
-    . ${lib.escapeShellArg envFilePath}
-    set +a
-    exec ${cfg.package}/bin/roundtable-web
-  '';
 in
 {
   options.services.roundtable = {
@@ -18,25 +14,7 @@ in
     package = lib.mkOption {
       type = lib.types.package;
       default = pkgs.roundtable-web;
-      description = "The roundtable package wrapper to execute.";
-    };
-
-    workingDirectory = lib.mkOption {
-      type = lib.types.str;
-      description = "Checkout path containing the Roundtable mix project.";
-      example = "/home/deepwatrcreatur/flakes/agent-roundtable/roundtable";
-    };
-
-    user = lib.mkOption {
-      type = lib.types.str;
-      default = "deepwatrcreatur";
-      description = "User that runs the service.";
-    };
-
-    group = lib.mkOption {
-      type = lib.types.str;
-      default = "users";
-      description = "Primary group for the service user.";
+      description = "The roundtable package to use.";
     };
 
     port = lib.mkOption {
@@ -46,56 +24,55 @@ in
     };
 
     secretKeyBaseFile = lib.mkOption {
-      type = lib.types.str;
-      description = "Path to file containing the raw Phoenix SECRET_KEY_BASE.";
+      type = lib.types.path;
+      description = "Path to file containing SECRET_KEY_BASE.";
     };
 
     githubTokenFile = lib.mkOption {
-      type = lib.types.nullOr lib.types.str;
+      type = lib.types.path;
+      description = "Path to file containing GitHub PAT.";
+    };
+
+    anthropicApiKeyFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
       default = null;
-      description = "Path to file containing the raw GitHub PAT used as GH_TOKEN and GITHUB_SERVICE_PAT.";
+      description = "Optional path to file containing Anthropic API key.";
+    };
+
+    openaiApiKeyFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = "Optional path to file containing OpenAI API key.";
+    };
+
+    geminiApiKeyFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = "Optional path to file containing Gemini API key.";
+    };
+
+    deepseekApiKeyFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = "Optional path to file containing DeepSeek API key.";
     };
 
     phoenixHost = lib.mkOption {
       type = lib.types.str;
       default = "roundtable.deepwatercreature.com";
-      description = "Public hostname for the Phoenix endpoint.";
+      description = "The public hostname for the Phoenix application.";
     };
 
     oidcIssuerUrl = lib.mkOption {
       type = lib.types.str;
       default = "";
-      description = "OIDC issuer URL; empty disables OIDC.";
+      description = "Authentik OIDC issuer URL (empty = unauthenticated dev mode).";
     };
 
-    oidcClientIdFile = lib.mkOption {
-      type = lib.types.nullOr lib.types.str;
-      default = null;
-      description = "Optional path to a file containing the OIDC client ID.";
-    };
-
-    oidcClientSecretFile = lib.mkOption {
-      type = lib.types.nullOr lib.types.str;
-      default = null;
-      description = "Optional path to a file containing the OIDC client secret.";
-    };
-
-    discussionRepo = lib.mkOption {
-      type = lib.types.str;
-      default = "";
-      description = "Optional owner/repo slug shown in the dashboard.";
-    };
-
-    discussionBriefPath = lib.mkOption {
-      type = lib.types.str;
-      default = "BRIEF.md";
-      description = "Path to the brief file relative to the discussion repo checkout.";
-    };
-
-    runtimeDir = lib.mkOption {
+    stateDir = lib.mkOption {
       type = lib.types.str;
       default = "roundtable";
-      description = "Runtime directory used for generated environment files.";
+      description = "The name of the state directory under /var/lib.";
     };
   };
 
@@ -103,75 +80,58 @@ in
     systemd.services.roundtable = {
       description = "Roundtable discussion orchestrator";
       wantedBy = [ "multi-user.target" ];
-      after = [ "network-online.target" ];
-      wants = [ "network-online.target" ];
-
-      preStart =
-        let
-          maybeCat =
-            path:
-            if path == null then
-              ""
-            else
-              ''cat ${lib.escapeShellArg path}'';
-        in
-        ''
-          set -euo pipefail
-
-          install -d -m 0750 "$RUNTIME_DIRECTORY"
-          env_file="$RUNTIME_DIRECTORY/roundtable.env"
-
-          secret_key_base="$(tr -d '\n' < ${lib.escapeShellArg cfg.secretKeyBaseFile})"
-          test -n "$secret_key_base"
-
-          {
-            printf 'SECRET_KEY_BASE=%s\n' "$secret_key_base"
-            printf 'PORT=%s\n' ${lib.escapeShellArg (toString cfg.port)}
-            printf 'HOST=%s\n' ${lib.escapeShellArg cfg.phoenixHost}
-            printf 'PHX_HOST=%s\n' ${lib.escapeShellArg cfg.phoenixHost}
-            printf 'ROUNDTABLE_WEB=true\n'
-            printf 'MIX_ENV=prod\n'
-            printf 'ROUNDTABLE_REPO=%s\n' ${lib.escapeShellArg cfg.discussionRepo}
-            printf 'ROUNDTABLE_BRIEF=%s\n' ${lib.escapeShellArg cfg.discussionBriefPath}
-          } > "$env_file"
-
-          ${lib.optionalString (cfg.githubTokenFile != null) ''
-            github_token="$(tr -d '\n' < ${lib.escapeShellArg cfg.githubTokenFile})"
-            if [ -n "$github_token" ]; then
-              {
-                printf 'GH_TOKEN=%s\n' "$github_token"
-                printf 'GITHUB_SERVICE_PAT=%s\n' "$github_token"
-              } >> "$env_file"
-            fi
-          ''}
-
-          ${lib.optionalString (cfg.oidcIssuerUrl != "") ''
-            printf 'OIDC_ISSUER_URL=%s\n' ${lib.escapeShellArg cfg.oidcIssuerUrl} >> "$env_file"
-          ''}
-
-          ${lib.optionalString (cfg.oidcClientIdFile != null) ''
-            oidc_client_id="$(tr -d '\n' < ${lib.escapeShellArg cfg.oidcClientIdFile})"
-            if [ -n "$oidc_client_id" ]; then
-              printf 'OIDC_CLIENT_ID=%s\n' "$oidc_client_id" >> "$env_file"
-            fi
-          ''}
-
-          ${lib.optionalString (cfg.oidcClientSecretFile != null) ''
-            oidc_client_secret="$(tr -d '\n' < ${lib.escapeShellArg cfg.oidcClientSecretFile})"
-            if [ -n "$oidc_client_secret" ]; then
-              printf 'OIDC_CLIENT_SECRET=%s\n' "$oidc_client_secret" >> "$env_file"
-            fi
-          ''}
-        '';
+      after = [ "network.target" ];
+      path = with pkgs; [
+        dolt
+        git
+        gh
+      ];
 
       serviceConfig = {
-        ExecStart = startScript;
-        WorkingDirectory = cfg.workingDirectory;
-        RuntimeDirectory = cfg.runtimeDir;
-        User = cfg.user;
-        Group = cfg.group;
+        ExecStart =
+          let
+            startScript = pkgs.writeShellScript "roundtable-start" ''
+              export SECRET_KEY_BASE=$(cat $CREDENTIALS_DIRECTORY/secret_key_base)
+              export GH_TOKEN=$(cat $CREDENTIALS_DIRECTORY/github_token)
+              
+              if [ -f $CREDENTIALS_DIRECTORY/anthropic_api_key ]; then
+                export ANTHROPIC_API_KEY=$(cat $CREDENTIALS_DIRECTORY/anthropic_api_key)
+              fi
+              if [ -f $CREDENTIALS_DIRECTORY/openai_api_key ]; then
+                export OPENAI_API_KEY=$(cat $CREDENTIALS_DIRECTORY/openai_api_key)
+              fi
+              if [ -f $CREDENTIALS_DIRECTORY/gemini_api_key ]; then
+                export GEMINI_API_KEY=$(cat $CREDENTIALS_DIRECTORY/gemini_api_key)
+              fi
+              if [ -f $CREDENTIALS_DIRECTORY/deepseek_api_key ]; then
+                export DEEPSEEK_API_KEY=$(cat $CREDENTIALS_DIRECTORY/deepseek_api_key)
+              fi
+
+              exec ${cfg.package}/bin/roundtable-web
+            '';
+          in
+          "${startScript}";
+
+        LoadCredential =
+          [
+            "secret_key_base:${cfg.secretKeyBaseFile}"
+            "github_token:${cfg.githubTokenFile}"
+          ]
+          ++ lib.optional (cfg.anthropicApiKeyFile != null) "anthropic_api_key:${cfg.anthropicApiKeyFile}"
+          ++ lib.optional (cfg.openaiApiKeyFile != null) "openai_api_key:${cfg.openaiApiKeyFile}"
+          ++ lib.optional (cfg.geminiApiKeyFile != null) "gemini_api_key:${cfg.geminiApiKeyFile}"
+          ++ lib.optional (cfg.deepseekApiKeyFile != null) "deepseek_api_key:${cfg.deepseekApiKeyFile}";
+
+        Environment = [
+          "PORT=${toString cfg.port}"
+          "PHX_HOST=${cfg.phoenixHost}"
+          "OIDC_ISSUER_URL=${cfg.oidcIssuerUrl}"
+          "ROUNDTABLE_WEB=true"
+          "MIX_ENV=prod"
+        ];
+        DynamicUser = true;
+        StateDirectory = cfg.stateDir;
         Restart = "on-failure";
-        RestartSec = 5;
       };
     };
   };

@@ -8,9 +8,13 @@ let
     "attic-client.nix"
     "attic-observatory.nix"
     "attic-post-build-hook.nix"
+    "bootstrap"
     "common"
     "inference-vm"
     "inference-vm-nix-overrides.nix"
+    "lxc-common.nix"
+    "lxc-dhcp-networking.nix"
+    "lxc-nixos.nix"
     "sessions"
     "garuda-themed-gnome.nix"
     "garuda-themed-kde.nix"
@@ -22,6 +26,10 @@ in
     moduleLoading.mkAutoImportWithBlacklist {
       dir = currentDir;
       blacklist = excludeItems;
+      directoryPredicate = name: builtins.pathExists (currentDir + "/${name}/default.nix");
     }
-    ++ [ ./common ];
+    ++ [
+      ./common
+      ./services/roundtable.nix
+    ];
 }

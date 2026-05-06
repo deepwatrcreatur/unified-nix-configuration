@@ -15,6 +15,7 @@ let
     pve-strix = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAgSeJeuivBkeB92lG8Sup+fQl4AwfRWH3XlCJSMQ3j4";
     pve-tomahawk = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDjJqDjZBW8RisQsxPxSIY3GoJj4AM8wwqbqSbC6ygnY";
     rustdesk = "";
+    vaglio = "";
     workstation = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKFAzJUqDpasPy2B+vODDAZOdGJ/7DiZ1wWjbWkM1Bi8 root@workstation";
   };
 
@@ -129,10 +130,10 @@ in {
   "secrets-agenix/openrouter-api-key.age".publicKeys = userOnlySecrets;
   "secrets-agenix/z-ai-api-key.age".publicKeys = userOnlySecrets;
   "secrets-agenix/opencode-zen-api-key.age".publicKeys = userOnlySecrets;
-  "secrets-agenix/openai-api-key.age".publicKeys = userOnlySecrets;
-  "secrets-agenix/gemini-api-key.age".publicKeys = userOnlySecrets;
-  "secrets-agenix/anthropic-api-key.age".publicKeys = userOnlySecrets;
-  "secrets-agenix/deepseek-api-key.age".publicKeys = userOnlySecrets;
+  "secrets-agenix/openai-api-key.age".publicKeys = userOnlySecrets ++ roundtableSecrets;
+  "secrets-agenix/gemini-api-key.age".publicKeys = userOnlySecrets ++ roundtableSecrets;
+  "secrets-agenix/anthropic-api-key.age".publicKeys = userOnlySecrets ++ roundtableSecrets;
+  "secrets-agenix/deepseek-api-key.age".publicKeys = userOnlySecrets ++ roundtableSecrets;
   "secrets-agenix/atuin-key-b64.age".publicKeys = userOnlySecrets;
   "secrets-agenix/oauth-creds.age".publicKeys = userOnlySecrets;
   "secrets-agenix/bitwarden-data.age".publicKeys = userOnlySecrets;
