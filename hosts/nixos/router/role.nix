@@ -152,7 +152,10 @@ in
     keaSync.enable = isPrimaryRouter;
     keaSync.peerAddress = if isPrimaryRouter then "10.10.11.213" else "10.10.11.1"; # Using management IPs for control plane sync
     wan = {
-      enable = isPrimaryRouter;
+      # Keepalived-driven WAN link/MAC manipulation regressed the router's own
+      # internet recovery on newer generations. Keep the LAN VIP logic, but let
+      # systemd-networkd own WAN DHCP lifecycle directly on the primary router.
+      enable = false;
       interface = wanDevice;
       clonedMac = "02:76:c6:01:2a:b0";
     };
