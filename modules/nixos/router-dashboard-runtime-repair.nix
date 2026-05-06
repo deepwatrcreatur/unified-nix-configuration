@@ -9,9 +9,27 @@
 let
   hasRouterDashboard = lib.hasAttrByPath [ "services" "router-dashboard" ] options;
   cfg = if hasRouterDashboard then config.services.router-dashboard else { enable = false; };
+  keaEnabled = config.services.router-kea.enable or false;
+  keaPool = if keaEnabled && (config.services.router-kea.dhcp4.poolRanges or [ ]) != [ ]
+    then builtins.head config.services.router-kea.dhcp4.poolRanges
+    else { start = ""; end = ""; };
   fail2banSnapshotFile = "/run/router-dashboard/fail2ban-status.json";
+  keaLeaseSnapshotFile = "/run/router-dashboard/kea-dhcp4.leases";
   routerDashboardApiWrapper = ../../scripts/router-dashboard-api-wrapper.py;
   fail2banSnapshotScript = ../../scripts/router-dashboard-fail2ban-snapshot.py;
+  keaLeaseSnapshotScript = pkgs.writeShellScript "router-dashboard-kea-lease-snapshot" ''
+    set -euo pipefail
+
+    source_file="/var/lib/kea/dhcp4.leases"
+    target_file="${keaLeaseSnapshotFile}"
+
+    if [ ! -f "$source_file" ]; then
+      echo "Kea lease file not found at $source_file" >&2
+      exit 1
+    fi
+
+    install -D -m 0640 -o root -g router-dashboard "$source_file" "$target_file"
+  '';
 in
 {
   config = lib.mkIf (hasRouterDashboard && cfg.enable) {
@@ -30,6 +48,16 @@ in
       DASHBOARD_INTERFACES = builtins.toJSON cfg.interfaces;
       DASHBOARD_FAIL2BAN_STATUS_FILE = fail2banSnapshotFile;
       DASHBOARD_CLOUDFLARE_TOKEN_FILE = config.age.secrets.cloudflare-api-key.path;
+      DASHBOARD_DHCP_PROVIDER = if keaEnabled then "kea" else "technitium";
+      DASHBOARD_KEA_LEASE_FILE = if keaEnabled then keaLeaseSnapshotFile else "";
+      DASHBOARD_KEA_DHCP = if keaEnabled then builtins.toJSON {
+        scope = "LAN";
+        title = "Kea DHCP";
+        interfaces = config.services.router-kea.dhcp4.interfaces or [ ];
+        subnet = config.services.router-kea.dhcp4.subnet or "";
+        startAddress = keaPool.start;
+        endAddress = keaPool.end;
+      } else "{}";
     };
 
     systemd.services.router-dashboard.serviceConfig.ExecStart = lib.mkForce "${pkgs.python3}/bin/python3 ${routerDashboardApiWrapper}";
@@ -84,6 +112,45 @@ in
         OnBootSec = "30s";
         OnUnitActiveSec = "30s";
         Unit = "router-dashboard-fail2ban-snapshot.service";
+      };
+    };
+
+    systemd.services.router-dashboard-kea-lease-snapshot = lib.mkIf keaEnabled {
+      description = "Refresh router dashboard Kea lease snapshot";
+      after = [ "kea-dhcp4-server.service" ];
+      requires = [ "kea-dhcp4-server.service" ];
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = keaLeaseSnapshotScript;
+        User = "root";
+        Group = "root";
+        NoNewPrivileges = true;
+        PrivateDevices = true;
+        PrivateTmp = true;
+        ProtectHome = true;
+        ProtectSystem = "strict";
+        ReadWritePaths = [ "/run/router-dashboard" ];
+        ProtectClock = true;
+        ProtectHostname = true;
+        ProtectKernelLogs = true;
+        ProtectKernelModules = true;
+        ProtectKernelTunables = true;
+        LockPersonality = true;
+        MemoryDenyWriteExecute = true;
+        RestrictNamespaces = true;
+        RestrictSUIDSGID = true;
+        SystemCallArchitectures = "native";
+      };
+      wantedBy = [ "multi-user.target" ];
+    };
+
+    systemd.timers.router-dashboard-kea-lease-snapshot = lib.mkIf keaEnabled {
+      description = "Refresh router dashboard Kea lease snapshot periodically";
+      wantedBy = [ "timers.target" ];
+      timerConfig = {
+        OnBootSec = "30s";
+        OnUnitActiveSec = "30s";
+        Unit = "router-dashboard-kea-lease-snapshot.service";
       };
     };
   };

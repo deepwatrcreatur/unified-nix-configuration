@@ -4,6 +4,8 @@ import json
 import os
 import subprocess
 import sys
+import csv
+from datetime import datetime, timezone
 
 
 def log_warning(message):
@@ -79,6 +81,8 @@ def read_interface_state(handler, path, interface_name):
 UPSTREAM_SERVER = get_required_env("DASHBOARD_UPSTREAM_SERVER")
 FAIL2BAN_STATUS_FILE = os.environ.get("DASHBOARD_FAIL2BAN_STATUS_FILE", "")
 CLOUDFLARE_TOKEN_FILE = os.environ.get("DASHBOARD_CLOUDFLARE_TOKEN_FILE", "")
+DHCP_PROVIDER = os.environ.get("DASHBOARD_DHCP_PROVIDER", "technitium").strip().lower()
+KEA_LEASE_FILE = os.environ.get("DASHBOARD_KEA_LEASE_FILE", "").strip()
 
 if not os.path.exists(UPSTREAM_SERVER):
     raise SystemExit(f"DASHBOARD_UPSTREAM_SERVER does not exist: {UPSTREAM_SERVER}")
@@ -102,7 +106,14 @@ for interface in dashboard_interfaces:
     if device:
         interface_role_map[device] = role
 
+try:
+    KEA_DHCP_META = json.loads(os.environ.get("DASHBOARD_KEA_DHCP", "{}"))
+except json.JSONDecodeError as exc:
+    log_warning(f"Invalid DASHBOARD_KEA_DHCP JSON: {exc}")
+    KEA_DHCP_META = {}
+
 original_handle_fail2ban_status = module.RouterAPIHandler.handle_fail2ban_status
+original_handle_dhcp_leases = module.RouterAPIHandler.handle_dhcp_leases
 
 
 def handle_interface_stats(self):
@@ -359,10 +370,128 @@ def handle_fail2ban_status(self):
     return original_handle_fail2ban_status(self)
 
 
+def format_kea_expiry(expire_value):
+    text = str(expire_value or "").strip()
+    if not text:
+        return ""
+
+    try:
+        return datetime.fromtimestamp(int(text), timezone.utc).isoformat()
+    except (ValueError, OSError, OverflowError):
+        return text
+
+
+def load_kea_leases():
+    if not KEA_LEASE_FILE:
+        raise FileNotFoundError("Kea lease file path is not configured")
+    if not os.path.exists(KEA_LEASE_FILE):
+        raise FileNotFoundError(f"Kea lease file not found: {KEA_LEASE_FILE}")
+
+    leases_by_address = {}
+    with open(KEA_LEASE_FILE, "r", encoding="utf-8", newline="") as handle:
+        reader = csv.DictReader(handle)
+        for row in reader:
+            if not row:
+                continue
+
+            address = str(row.get("address", "")).strip()
+            if not address or address == "address":
+                continue
+
+            state = str(row.get("state", "")).strip()
+            if state not in {"0", ""}:
+                continue
+
+            current_expire = str(row.get("expire", "")).strip()
+            lease = {
+                "scope": str(KEA_DHCP_META.get("scope", "LAN")),
+                "interface": ", ".join(KEA_DHCP_META.get("interfaces", [])) or "kea",
+                "address": address,
+                "hostname": str(row.get("hostname", "")).strip(),
+                "hardwareAddress": str(row.get("hwaddr", "")).strip(),
+                "leaseExpires": format_kea_expiry(row.get("expire", "")),
+                "type": "dynamic",
+                "_expire_raw": current_expire,
+            }
+
+            existing = leases_by_address.get(address)
+            if existing is None:
+                leases_by_address[address] = lease
+                continue
+
+            existing_expire = existing.get("_expire_raw", "")
+            if current_expire and current_expire >= existing_expire:
+                leases_by_address[address] = lease
+
+    leases = []
+    for lease in leases_by_address.values():
+        lease.pop("_expire_raw", None)
+        leases.append(lease)
+
+    leases.sort(key=lambda lease: lease.get("address", ""))
+    return leases
+
+
+def handle_dhcp_leases(self):
+    if DHCP_PROVIDER != "kea":
+        return original_handle_dhcp_leases(self)
+
+    try:
+        all_leases = load_kea_leases()
+        scope_name = str(KEA_DHCP_META.get("scope", "LAN"))
+        title = str(KEA_DHCP_META.get("title", "Kea DHCP"))
+        start_address = str(KEA_DHCP_META.get("startAddress", ""))
+        end_address = str(KEA_DHCP_META.get("endAddress", ""))
+
+        scope_stats = [
+            {
+                "name": scope_name,
+                "interface": title,
+                "enabled": True,
+                "startAddress": start_address,
+                "endAddress": end_address,
+                "leaseCount": len(all_leases),
+            }
+        ]
+
+        sections = [
+            {
+                "id": scope_name,
+                "title": title,
+                "scope": scope_name,
+                "interface": title,
+                "enabled": True,
+                "startAddress": start_address,
+                "endAddress": end_address,
+                "leaseCount": len(all_leases),
+                "leases": all_leases[:50],
+            }
+        ]
+
+        self.send_json(
+            {
+                "available": True,
+                "scopes": scope_stats,
+                "leases": all_leases[:100],
+                "sections": sections,
+                "totalLeases": len(all_leases),
+                "displayedLeases": min(len(all_leases), 100),
+            }
+        )
+    except Exception as exc:
+        self.send_json(
+            {
+                "available": False,
+                "message": f"Kea lease view unavailable: {exc}",
+            }
+        )
+
+
 module.RouterAPIHandler.handle_interface_stats = handle_interface_stats
 module.RouterAPIHandler.handle_firewall_stats = handle_firewall_stats
 module.RouterAPIHandler.handle_caddy_status = handle_caddy_status
 module.RouterAPIHandler.handle_fail2ban_status = handle_fail2ban_status
+module.RouterAPIHandler.handle_dhcp_leases = handle_dhcp_leases
 
 if __name__ == "__main__":
     module.run_server()
