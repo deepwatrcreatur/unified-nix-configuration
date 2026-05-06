@@ -26,6 +26,14 @@ let
   operatorStableSshKey = lib.strings.trim (
     builtins.readFile ../../../ssh-keys/deepwatrcreatur-stable-identity.pub
   );
+  ensureKeaLeaseState = pkgs.writeShellScript "router-kea-ensure-state" ''
+    set -euo pipefail
+
+    install -d -m 0750 -o kea -g kea /var/lib/private/kea
+    touch /var/lib/private/kea/dhcp4.leases /var/lib/private/kea/dhcp4.leases.2
+    chown kea:kea /var/lib/private/kea/dhcp4.leases /var/lib/private/kea/dhcp4.leases.2
+    chmod 0640 /var/lib/private/kea/dhcp4.leases /var/lib/private/kea/dhcp4.leases.2
+  '';
 
   secrets = optSec.mkSecrets {
     cloudflare-api-key = {
@@ -180,6 +188,10 @@ in
       reverseZone = "10.10.in-addr.arpa";
     };
   };
+
+  systemd.services.kea-dhcp4-server.serviceConfig.ExecStartPre = lib.mkBefore [
+    "+${ensureKeaLeaseState}"
+  ];
 
   services.router-networking = {
     enable = true;
