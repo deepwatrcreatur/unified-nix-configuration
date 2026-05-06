@@ -64,6 +64,7 @@ let
   reservableHosts = lib.filterAttrs (
     _name: host: (host.dhcpReservation or null) != null && (host.ip or null) != null
   ) topology.hosts;
+  poolRangeKeys = map (pool: "${pool.start}-${pool.end}") config.services.router-kea.dhcp4.poolRanges;
 in
 {
   imports = [
@@ -88,6 +89,14 @@ in
         Router invariant violated: 20-router-lan must have ConfigureWithoutCarrier = true.
         Without this, the LAN static IP disappears when the data-plane cable is unplugged,
         causing monitoring (Prometheus, Grafana, Netdata) to cascade into failure on standby/dev boxes.
+      '';
+    }
+    {
+      assertion = lib.length poolRangeKeys == lib.length (lib.unique poolRangeKeys);
+      message = ''
+        Router invariant violated: services.router-kea.dhcp4.poolRanges contains duplicate ranges.
+        This usually means more than one module is defining the same LAN DHCP pool, which causes
+        Kea to fail at startup with an overlapping-pool parser error.
       '';
     }
     {
@@ -179,7 +188,11 @@ in
         }
       ];
       ha = {
-        enable = isPrimaryRouter;
+        # DHCP HA is currently the remaining client-path regression: the
+        # primary boots into WAITING with local DHCP disabled until the backup
+        # peer times out. Disable Kea HA entirely until router-backup is a
+        # trustworthy peer again.
+        enable = false;
         thisServerName = config.networking.hostName;
         role = if isPrimaryRouter then "primary" else "secondary";
         peerAddress = if isPrimaryRouter then "10.10.11.213" else "10.10.11.1";
@@ -199,6 +212,15 @@ in
       forwardZone = topology.domain;
       reverseZone = "10.10.in-addr.arpa";
     };
+  };
+
+  services.router-upnp = {
+    enable = true;
+    internalIPs = [
+      lanDevice
+      "${lanDevice}.20"
+      "${lanDevice}.30"
+    ];
   };
 
   systemd.services.kea-dhcp4-server.serviceConfig.ExecStartPre = lib.mkBefore [

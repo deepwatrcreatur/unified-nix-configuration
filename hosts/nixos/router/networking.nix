@@ -26,32 +26,11 @@ in
     };
   };
 
-  services.router-kea = {
-    enable = true;
-    dhcp4 = {
-      subnet = topology.networks.lan.cidr;
-      gatewayAddress = routerHost.ip;
-      dnsServers = [ routerHost.ip ];
-      poolRanges = [ { start = "10.10.10.100"; end = "10.10.10.250"; } ];
-    };
-    ddns = {
-      enable = true;
-      tsigKeyFile = config.age.secrets.kea-ddns-tsig-key.path;
-      tsigKeyName = "kea-ddns";
-      forwardZone = topology.domain;
-      reverseZone = "10.10.in-addr.arpa";
-    };
-  };
-
   # NTP server — serves LAN clients (advertised via DHCP option 42 above).
   services.router-ntp = {
     enable = true;
     lanSubnets = [ topology.networks.lan.cidr ];
   };
-
-  # UPnP/NAT-PMP for game consoles and P2P clients.
-  # externalInterface and internalIPs are auto-derived.
-  services.router-upnp.enable = true;
 
   # NAT is handled by nftables (see nftables.nix)
   networking.nat.enable = false;
