@@ -63,6 +63,10 @@ Preserve these unless the work item explicitly says otherwise:
 - distinct management identities
 - standby/dev use with production NICs unplugged must remain supported
 - management plane must remain the recovery path
+- until the current outage/regression is resolved, any disruptive validation or
+  rebuild testing must be done on `router-backup`, not the live `router`
+- if a task needs a live deployment check, prefer `nixos-rebuild test` or
+  equivalent on `router-backup` first and treat `router` as human-gated
 
 ## Current High-Value Order
 
