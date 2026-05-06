@@ -22,6 +22,8 @@ in
       sshTarget = "ssh router";
       wanDevice = "enp6s17";
       lanDevice = "enp6s16";
+      enableIotNetwork = true;
+      enableGuestNetwork = true;
       inherit lanIpv4Address managementIpv4Address;
       grafanaDomain = mkFqdn "grafana";
       grafanaDataDir = "/var/log/router/grafana";

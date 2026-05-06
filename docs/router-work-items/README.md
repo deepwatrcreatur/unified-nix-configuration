@@ -65,3 +65,6 @@ in parallel on separate worktrees.
 17. [`38-router-dashboard-technitium-token-access.md`](./38-router-dashboard-technitium-token-access.md) - `ready`
 18. [`39-router-dashboard-kea-dhcp-cutover.md`](./39-router-dashboard-kea-dhcp-cutover.md) - `ready`
 19. [`40-kea-state-ownership-hardening.md`](./40-kea-state-ownership-hardening.md) - `ready`
+20. [`41-optional-encrypted-dns-for-clients.md`](./41-optional-encrypted-dns-for-clients.md) - `ready`
+21. [`42-apple-dns-privacy-compatibility.md`](./42-apple-dns-privacy-compatibility.md) - `ready`
+22. [`43-optional-extra-routed-networks.md`](./43-optional-extra-routed-networks.md) - `ready`

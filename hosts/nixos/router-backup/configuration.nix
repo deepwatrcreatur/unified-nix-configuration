@@ -20,6 +20,8 @@ in
       sshTarget = "ssh router-backup";
       wanDevice = "enp2s0";
       lanDevice = "enp3s0";
+      enableIotNetwork = false;
+      enableGuestNetwork = false;
       lanIpv4Address = "${routerHost.ip}/${toString lanNetwork.prefixLength}";
       managementIpv4Address = "${backupHost.sshHostname}/${toString managementNetwork.prefixLength}";
       grafanaDomain = mkFqdn "grafana";

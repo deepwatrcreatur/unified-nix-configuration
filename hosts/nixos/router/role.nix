@@ -8,6 +8,8 @@
   grafanaDataDir,
   prometheusStateDir,
   prometheusBindMountPath,
+  enableIotNetwork ? false,
+  enableGuestNetwork ? false,
   enableLogStorage ? true,
   inputs,
 }:
@@ -58,6 +60,45 @@ let
   topology = config.router.topology;
   lanNetwork = topology.networks.lan;
   managementNetwork = topology.networks.management;
+  optionalDhcpInterfaces =
+    lib.optionals enableIotNetwork [ "${lanDevice}.20" ]
+    ++ lib.optionals enableGuestNetwork [ "${lanDevice}.30" ];
+  optionalUpnpInterfaces =
+    lib.optionals enableIotNetwork [ "${lanDevice}.20" ]
+    ++ lib.optionals enableGuestNetwork [ "${lanDevice}.30" ];
+  optionalRoutedInterfaces =
+    lib.optionalAttrs enableIotNetwork {
+      iot = {
+        device = "${lanDevice}.20";
+        vlanId = 20;
+        parentDevice = lanDevice;
+        ipv4Address = "10.20.20.1/24";
+        policyRouting = {
+          enable = true;
+          table = 200; # All traffic via table 200 (VPN)
+        };
+      };
+    }
+    // lib.optionalAttrs enableGuestNetwork {
+      guest = {
+        device = "${lanDevice}.30";
+        vlanId = 30;
+        parentDevice = lanDevice;
+        ipv4Address = "10.30.30.1/24";
+        policyRouting = {
+          # Use default routing (WAN) by default
+          enable = false;
+          # But route traffic to 8.8.8.8 via table 300 (VPN)
+          rules = [
+            {
+              to = "8.8.8.8/32";
+              table = 300;
+              priority = 50;
+            }
+          ];
+        };
+      };
+    };
   mkFqdn = label: "${label}.${topology.domain}";
   isPrimaryRouter = config.networking.hostName == "router";
   isBackupRouter = config.networking.hostName == "router-backup";
@@ -175,9 +216,7 @@ in
     dhcp4 = {
       interfaces = [
         lanDevice
-        "${lanDevice}.20"
-        "${lanDevice}.30"
-      ];
+      ] ++ optionalDhcpInterfaces;
       subnet = lanNetwork.cidr;
       gatewayAddress = "10.10.10.1"; # Use the VIP
       dnsServers = [ "10.10.10.1" ];
@@ -216,11 +255,7 @@ in
 
   services.router-upnp = {
     enable = true;
-    internalIPs = [
-      lanDevice
-      "${lanDevice}.20"
-      "${lanDevice}.30"
-    ];
+    internalIPs = [ lanDevice ] ++ optionalUpnpInterfaces;
   };
 
   systemd.services.kea-dhcp4-server.serviceConfig.ExecStartPre = lib.mkBefore [
@@ -249,35 +284,7 @@ in
         ipv4Address = managementIpv4Address;
         prefixDelegationMode = "managed";
       };
-      iot = {
-        device = "${lanDevice}.20";
-        vlanId = 20;
-        parentDevice = lanDevice;
-        ipv4Address = "10.20.20.1/24";
-        policyRouting = {
-          enable = true;
-          table = 200; # All traffic via table 200 (VPN)
-        };
-      };
-      guest = {
-        device = "${lanDevice}.30";
-        vlanId = 30;
-        parentDevice = lanDevice;
-        ipv4Address = "10.30.30.1/24";
-        policyRouting = {
-          # Use default routing (WAN) by default
-          enable = false;
-          # But route traffic to 8.8.8.8 via table 300 (VPN)
-          rules = [
-            {
-              to = "8.8.8.8/32";
-              table = 300;
-              priority = 50;
-            }
-          ];
-        };
-      };
-    };
+    } // optionalRoutedInterfaces;
   };
 
   services.router-vpn = {
