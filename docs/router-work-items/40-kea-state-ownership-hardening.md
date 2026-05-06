@@ -1,6 +1,6 @@
 # 40 — Kea State Ownership Hardening
 
-Status: `ready`
+Status: `done`
 Suggested branch: `fix/kea-state-ownership-hardening`
 Priority: `high`
 
@@ -43,3 +43,13 @@ DHCP outage.
 - after boot or restart, `kea-dhcp4-server` starts without manual `chown`
 - lease files are created or reopened with the expected owner/mode
 - the configuration remains compatible with the existing HA design work
+
+## Outcome
+
+- `kea-dhcp4-server` now has a root `ExecStartPre` that:
+  - ensures `/var/lib/private/kea` exists with `kea:kea`
+  - creates `dhcp4.leases` and `dhcp4.leases.2` if missing
+  - enforces stable ownership and mode before Kea starts
+- validated with a successful `router-backup` system build and deployment
+- the 2026-05-05 manual recovery step is now encoded declaratively so rollback
+  or rebuild no longer depends on an operator remembering the `chown`

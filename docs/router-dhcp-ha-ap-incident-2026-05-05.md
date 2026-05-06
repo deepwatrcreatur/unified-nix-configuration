@@ -66,9 +66,9 @@ This means the two down APs were not blocked at "Kea is refusing leases" once
 DHCP was repaired. They remained absent lower in the stack, around power, link,
 or AP rejoin behavior.
 
-## Dashboard Mismatch Found
+## Dashboard Findings
 
-The router dashboard currently misrepresents the state:
+During the incident, the router dashboard misrepresented the state:
 
 - service status API reports:
   - `technitium-dns-server` active
@@ -76,14 +76,23 @@ The router dashboard currently misrepresents the state:
   - `kea-dhcp-ddns-server` active
 - but the DNS and DHCP widgets still show `OFFLINE`
 
-Why:
+What was true at that point:
 
 - the DHCP widget still depends on Technitium's DHCP API even though DHCP is
   now served by Kea
-- the DNS and DHCP widgets both require the Technitium API token
-- `router-dashboard` runs as `router-dashboard`
-- `TECHNITIUM_API_KEY_FILE=/var/lib/technitium-dns-server/nix-router-api-token`
-  exists but is `0400 root:root`, so the dashboard likely cannot read it
+- the DNS widget depended on local Technitium API reachability and token
+  wiring
+
+Follow-up implementation changed that picture:
+
+- the DHCP widget is now Kea-backed and no longer depends on Technitium's DHCP
+  API
+- on the recovered live `router`, `/api/dhcp/leases` now returns real
+  Kea-backed lease data
+- on the recovered live `router`, `/api/dns/stats` also returns healthy
+  Technitium DNS stats again
+- the remaining DNS-widget follow-up is to make failure modes explicit on hosts
+  such as `router-backup` where Technitium is intentionally absent
 
 ## Emergency Fix Applied
 
@@ -99,7 +108,7 @@ That was enough to restore local DHCP serving on the primary router.
 
 ## Operational Conclusion
 
-Three separate follow-ups are required:
+Three follow-up tracks were identified:
 
 1. harden Kea state-directory / lease-file ownership so rollback or rebuild
    does not leave DHCP dead on boot
@@ -107,6 +116,14 @@ Three separate follow-ups are required:
    when the daemons are healthy
 3. keep disruptive validation and future reproduction work on `router-backup`,
    not the family-facing `router`
+
+Status after the initial recovery branch:
+
+- (1) is implemented
+- the DHCP half of (2) is implemented
+- the DNS half of (2) is narrowed to clearer Technitium availability/token
+  behavior
+- (3) is now written directly into the router work queue
 
 ## Related Work Items
 

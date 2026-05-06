@@ -1,6 +1,6 @@
 # 39 — Router Dashboard Kea DHCP Cutover
 
-Status: `ready`
+Status: `done`
 Suggested branch: `feat/router-dashboard-kea-dhcp-cutover`
 Priority: `high`
 
@@ -46,3 +46,17 @@ assumes Technitium is the provider.
 - with Kea active, `/api/dhcp/leases` returns `available: true`
 - the DHCP widget shows real lease counts from Kea-backed data
 - removing Technitium DHCP assumptions no longer breaks the widget
+
+## Outcome
+
+- the dashboard now treats DHCP provider selection explicitly, using Kea when
+  Kea is the active backend
+- a root-owned lease snapshot is written into `/run/router-dashboard` so the
+  dashboard never needs direct access to `/var/lib/kea`
+- the API wrapper now parses Kea lease data, deduplicates append-style rows,
+  and preserves a normalized lease/widget shape for the frontend
+- validated on both:
+  - `router-backup`, where the API returns an empty but healthy Kea-backed
+    lease view
+  - the live `router`, where `/api/dhcp/leases` now returns real Kea-backed
+    lease data instead of stale Technitium DHCP results

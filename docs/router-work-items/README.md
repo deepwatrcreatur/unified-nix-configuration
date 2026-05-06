@@ -43,29 +43,18 @@ in parallel on separate worktrees.
 4. For autonomous agent selection, use the rules in
    [`START-HERE.md`](./START-HERE.md).
 
-## Ranking
+## Active Ranking
 
-1. [`25-technitium-dhcp-sync-hardening.md`](./25-technitium-dhcp-sync-hardening.md) - `done`
-2. [`26-router-dashboard-runtime-repair.md`](./26-router-dashboard-runtime-repair.md) - `done`
-3. [`27-router-post-cutover-validation.md`](./27-router-post-cutover-validation.md) - `done`
-4. [`28-dhcp-provider-pluggable-observability.md`](./28-dhcp-provider-pluggable-observability.md) - `done`
-5. [`29-router-caddy-source-drift-repair.md`](./29-router-caddy-source-drift-repair.md) - `done`
-6. [`28-router-dashboard-review-hardening.md`](./28-router-dashboard-review-hardening.md) - `done`
-7. [`33-router-iventoy-runtime-repair.md`](./33-router-iventoy-runtime-repair.md) - `done`
-8. [`34-router-miniupnpd-interface-repair.md`](./34-router-miniupnpd-interface-repair.md) - `done`
+1. [`35-ap-recovery-postmortem-gap.md`](./35-ap-recovery-postmortem-gap.md) - `ready`
+2. [`37-router-backup-dhcp-regression-lab.md`](./37-router-backup-dhcp-regression-lab.md) - `ready`
+3. [`38-router-dashboard-technitium-token-access.md`](./38-router-dashboard-technitium-token-access.md) - `ready`
+4. [`41-optional-encrypted-dns-for-clients.md`](./41-optional-encrypted-dns-for-clients.md) - `ready`
+5. [`42-apple-dns-privacy-compatibility.md`](./42-apple-dns-privacy-compatibility.md) - `ready`
+6. [`44-kea-stork-dashboard.md`](./44-kea-stork-dashboard.md) - `ready`
 
-9. [`29-router-cutover-validation-hardening.md`](./29-router-cutover-validation-hardening.md) - `done`
-10. [`27-router-pxe-boot-module-plumbing.md`](./27-router-pxe-boot-module-plumbing.md) - `done`
-11. [`30-kea-tsig-key-provisioning.md`](./30-kea-tsig-key-provisioning.md) - `done`
-12. [`31-router-kea-module.md`](./31-router-kea-module.md) - `done`
-13. [`32-kea-dhcp-cutover.md`](./32-kea-dhcp-cutover.md) - `done`
-14. [`35-ap-recovery-postmortem-gap.md`](./35-ap-recovery-postmortem-gap.md) - `ready`
-15. [`36-router-backup-ha-disable-profile.md`](./36-router-backup-ha-disable-profile.md) - `ready`
-16. [`37-router-backup-dhcp-regression-lab.md`](./37-router-backup-dhcp-regression-lab.md) - `ready`
-17. [`38-router-dashboard-technitium-token-access.md`](./38-router-dashboard-technitium-token-access.md) - `ready`
-18. [`39-router-dashboard-kea-dhcp-cutover.md`](./39-router-dashboard-kea-dhcp-cutover.md) - `ready`
-19. [`40-kea-state-ownership-hardening.md`](./40-kea-state-ownership-hardening.md) - `ready`
-20. [`41-optional-encrypted-dns-for-clients.md`](./41-optional-encrypted-dns-for-clients.md) - `ready`
-21. [`42-apple-dns-privacy-compatibility.md`](./42-apple-dns-privacy-compatibility.md) - `ready`
-22. [`43-optional-extra-routed-networks.md`](./43-optional-extra-routed-networks.md) - `ready`
-23. [`44-kea-stork-dashboard.md`](./44-kea-stork-dashboard.md) - `ready`
+## Recently Completed
+
+- [`36-router-backup-ha-disable-profile.md`](./36-router-backup-ha-disable-profile.md) - `done`
+- [`39-router-dashboard-kea-dhcp-cutover.md`](./39-router-dashboard-kea-dhcp-cutover.md) - `done`
+- [`40-kea-state-ownership-hardening.md`](./40-kea-state-ownership-hardening.md) - `done`
+- [`43-optional-extra-routed-networks.md`](./43-optional-extra-routed-networks.md) - `done`

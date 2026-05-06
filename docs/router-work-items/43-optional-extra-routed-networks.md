@@ -1,6 +1,6 @@
 # 43 — Optional Extra Routed Networks
 
-Status: `ready`
+Status: `done`
 Suggested branch: `feat/router-optional-extra-networks`
 Priority: `medium`
 
@@ -47,3 +47,12 @@ rather than a host-specific assumption.
 - host opt-in => additional VLAN-backed routed networks render correctly
 - Kea and UPnP bindings track the enabled networks only
 
+## Outcome
+
+- the shared router role now exposes `enableIotNetwork` and
+  `enableGuestNetwork` feature flags instead of assuming those networks for
+  every host
+- `router` opts into the existing `iot` and `guest` behavior explicitly, so
+  the recovered family network behavior did not change
+- `router-backup` leaves those networks disabled by default, making the lab
+  target simpler and safer while preserving the feature for flake users
