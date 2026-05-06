@@ -161,6 +161,11 @@ in
   services.router-kea = {
     enable = true;
     dhcp4 = {
+      interfaces = [
+        lanDevice
+        "${lanDevice}.20"
+        "${lanDevice}.30"
+      ];
       subnet = lanNetwork.cidr;
       gatewayAddress = "10.10.10.1"; # Use the VIP
       dnsServers = [ "10.10.10.1" ];
