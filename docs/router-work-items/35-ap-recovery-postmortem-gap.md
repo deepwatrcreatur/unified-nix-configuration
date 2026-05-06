@@ -31,6 +31,11 @@ is still broken," and the recovery path is different from lease repair.
 - document switch / PoE limitations explicitly
 - link the post-mortem from router cutover and AP-related docs
 
+## Current Artifact
+
+- incident report now exists at:
+  [`../router-dhcp-ha-ap-incident-2026-05-05.md`](../router-dhcp-ha-ap-incident-2026-05-05.md)
+
 ## Constraints
 
 - keep this operational, not architectural
