@@ -36,6 +36,7 @@ let
     "podman"
     "router"
     "router-backup"
+    "vaglio"
     "workstation"
   ];
 
@@ -79,6 +80,7 @@ let
     "pve-strix"
     "pve-tomahawk"
     "pve-z170"
+    "vaglio"
     "workstation"
     # TODO: Add hackintosh and macminim4 once their host keys are in the hosts list
   ];
@@ -93,7 +95,7 @@ let
 
   githubTokenHosts = atticClientHosts;
   githubTokenSecrets = operatorUsers ++ builtins.concatLists (map machineRecipients githubTokenHosts);
-  roundtableHosts = [ "homeserver" ];
+  roundtableHosts = [ "vaglio" ];
   roundtableSecrets = operatorUsers ++ builtins.concatLists (map machineRecipients roundtableHosts);
 
   podmanServiceSecrets = operatorUsers ++ machineRecipients "podman";

@@ -228,6 +228,16 @@
       description = "Dedicated Authentik identity host";
     };
 
+    vaglio = {
+      ip = "10.10.11.71";
+      sshUser = "deepwatrcreatur";
+      dhcpReservation = {
+        macAddress = "BC:24:11:A4:02:7A";
+        scope = "LAN";
+      };
+      description = "Dedicated Vaglio / roundtable LXC";
+    };
+
     homeassistant = {
       ip = "10.10.11.18";
       aliases = [ "ha" ];

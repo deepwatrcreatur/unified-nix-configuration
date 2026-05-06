@@ -7,7 +7,7 @@ let
   homeAssistantHost = topology.hosts.homeassistant;
   authentikHost = topology.hosts.authentik-host;
   podmanHost = topology.hosts.podman;
-  roundtableHost = topology.hosts.homeserver;
+  roundtableHost = topology.hosts.vaglio;
   ddnsLabels = routerHost.ddnsServices or [ ];
   ddnsDomainsLine = lib.concatStringsSep " " ([ topology.domain ] ++ ddnsLabels);
   mkFqdn = label: "${label}.${topology.domain}";

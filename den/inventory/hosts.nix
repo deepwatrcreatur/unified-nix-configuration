@@ -55,8 +55,25 @@
       "homeserver-iperf3"
       "homeserver-homebridge"
       "homeserver-semaphore"
-      "homeserver-roundtable"
       "rustdesk-server"
+    ];
+  };
+
+  vaglio = {
+    kind = "nixos";
+    name = "vaglio";
+    system = "x86_64-linux";
+    hostPath = ../hosts/vaglio;
+    mode = "aspect";
+    aspectsList = [
+      "nixos-base"
+      "lxc-core"
+      "lxc-dhcp-networking"
+      "attic-client"
+      "github-token-client"
+      "nix-daemon-user-ssh"
+      "home-manager-users"
+      "vaglio-roundtable"
     ];
   };
 
