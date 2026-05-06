@@ -6,8 +6,8 @@ Priority: `medium`
 
 ## Goal
 
-Add a clean, optional encrypted-DNS path for LAN clients so flake users can
-offer modern DNS privacy without making it mandatory for every router
+Add a clean, optional encrypted-DNS feature set for LAN clients so flake users
+can offer modern DNS privacy without making it mandatory for every router
 deployment.
 
 ## Why This Matters
@@ -18,7 +18,11 @@ expose a first-class encrypted resolver surface for clients.
 That is acceptable for a working homelab router, but it is a missing product
 feature for a reusable router flake:
 
-- some users want DoT and/or DoH for local clients
+- some users want the common encrypted schemes:
+  - DoT
+  - DoH
+  - possibly DoQ
+  - possibly DNSCrypt
 - some mobile/Apple devices react differently when encrypted DNS is absent or
   blocked
 - we should support privacy-forward configurations without forcing them on
@@ -27,12 +31,18 @@ feature for a reusable router flake:
 ## Tasks
 
 - design an option surface for encrypted DNS client access
+- decide which schemes are v1 and which are optional follow-ons:
+  - DoT should be considered baseline
+  - DoH should be considered baseline
+  - DoQ and DNSCrypt should be evaluated as optional extras
 - decide whether the primary backend should be:
   - Technitium capabilities already present in the stack
   - a separate TLS front-end/reverse proxy
   - or a provider-specific backend module
 - expose the feature as opt-in, not default-on
 - document expected ports, certificates, and LAN-client discovery model
+- decide whether to support discovery/advertisement mechanisms such as DDR
+  instead of requiring every client to be configured manually
 - ensure the feature composes with the existing plain-DNS service instead of
   replacing it abruptly
 
@@ -45,6 +55,7 @@ feature for a reusable router flake:
 ## Validation
 
 - disabled by default => existing router behavior unchanged
-- enabled => clients can successfully query the encrypted resolver
+- enabled => clients can successfully query the configured encrypted resolver
+- enabled with multiple schemes => flake users can choose the subset they want
 - router still serves plain DNS for clients that do not opt in
 

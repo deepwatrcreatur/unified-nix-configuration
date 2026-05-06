@@ -68,3 +68,4 @@ in parallel on separate worktrees.
 20. [`41-optional-encrypted-dns-for-clients.md`](./41-optional-encrypted-dns-for-clients.md) - `ready`
 21. [`42-apple-dns-privacy-compatibility.md`](./42-apple-dns-privacy-compatibility.md) - `ready`
 22. [`43-optional-extra-routed-networks.md`](./43-optional-extra-routed-networks.md) - `ready`
+23. [`44-kea-stork-dashboard.md`](./44-kea-stork-dashboard.md) - `ready`
