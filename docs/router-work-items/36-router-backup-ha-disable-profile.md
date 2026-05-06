@@ -1,6 +1,6 @@
 # 36 — Router-Backup HA Disable Profile
 
-Status: `in-progress`
+Status: `done`
 Suggested branch: `feat/router-backup-ha-disable-profile`
 Priority: `high`
 
@@ -46,3 +46,14 @@ test without reintroducing HA-induced instability on the live router.
 - if deployed, `router-backup` stays reachable on the management plane
 - after deployment, `router-backup` no longer advertises or depends on live HA
   peer participation for DHCP serving experiments
+
+## Outcome
+
+- `router-backup` now keeps `192.168.100.99/24` as its management address
+  without a manual console-side `ip addr add`
+- `keepalived` is no longer present on `router-backup`
+- `kea-dhcp4-server` starts cleanly again with a pre-start ownership fix for
+  the lease files
+- the backup host no longer imports the primary router's
+  `hosts/nixos/router/networking.nix`, which was duplicating DHCP/DNS policy on
+  the lab node

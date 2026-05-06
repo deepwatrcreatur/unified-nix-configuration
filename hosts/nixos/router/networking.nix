@@ -5,7 +5,6 @@
 let
   topology = config.router.topology;
   routerHost = topology.routerHost;
-  lanDevice = config.services.router-networking.routedInterfaces.lan.device;
 in
 {
   networking.hostName = "router";

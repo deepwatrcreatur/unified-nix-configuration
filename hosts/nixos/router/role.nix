@@ -26,6 +26,14 @@ let
   operatorStableSshKey = lib.strings.trim (
     builtins.readFile ../../../ssh-keys/deepwatrcreatur-stable-identity.pub
   );
+  ensureKeaLeaseState = pkgs.writeShellScript "router-kea-ensure-state" ''
+    set -euo pipefail
+
+    install -d -m 0750 -o kea -g kea /var/lib/private/kea
+    touch /var/lib/private/kea/dhcp4.leases /var/lib/private/kea/dhcp4.leases.2
+    chown kea:kea /var/lib/private/kea/dhcp4.leases /var/lib/private/kea/dhcp4.leases.2
+    chmod 0640 /var/lib/private/kea/dhcp4.leases /var/lib/private/kea/dhcp4.leases.2
+  '';
 
   secrets = optSec.mkSecrets {
     cloudflare-api-key = {
@@ -51,6 +59,8 @@ let
   lanNetwork = topology.networks.lan;
   managementNetwork = topology.networks.management;
   mkFqdn = label: "${label}.${topology.domain}";
+  isPrimaryRouter = config.networking.hostName == "router";
+  isBackupRouter = config.networking.hostName == "router-backup";
   reservableHosts = lib.filterAttrs (
     _name: host: (host.dhcpReservation or null) != null && (host.ip or null) != null
   ) topology.hosts;
@@ -133,14 +143,16 @@ in
   };
 
   services.router-ha = {
-    enable = true;
-    role = if config.networking.hostName == "router" then "master" else "backup";
+    # Keep the family-facing router as the sole HA participant while the
+    # backup node is used as a development and recovery target.
+    enable = isPrimaryRouter;
+    role = if isPrimaryRouter then "master" else "backup";
     virtualIp = "10.10.10.1/16";
     vrrpInterface = lanDevice;
-    keaSync.enable = true;
-    keaSync.peerAddress = if config.networking.hostName == "router" then "10.10.11.213" else "10.10.11.1"; # Using management IPs for control plane sync
+    keaSync.enable = isPrimaryRouter;
+    keaSync.peerAddress = if isPrimaryRouter then "10.10.11.213" else "10.10.11.1"; # Using management IPs for control plane sync
     wan = {
-      enable = true;
+      enable = isPrimaryRouter;
       interface = wanDevice;
       clonedMac = "02:76:c6:01:2a:b0";
     };
@@ -159,11 +171,11 @@ in
         }
       ];
       ha = {
-        enable = true;
+        enable = isPrimaryRouter;
         thisServerName = config.networking.hostName;
-        role = if config.networking.hostName == "router" then "primary" else "secondary";
-        peerAddress = if config.networking.hostName == "router" then "10.10.11.213" else "10.10.11.1";
-        peerName = if config.networking.hostName == "router" then "router-backup" else "router";
+        role = if isPrimaryRouter then "primary" else "secondary";
+        peerAddress = if isPrimaryRouter then "10.10.11.213" else "10.10.11.1";
+        peerName = if isPrimaryRouter then "router-backup" else "router";
       };
       reservations = lib.mapAttrsToList (name: host: {
         hw-address = host.dhcpReservation.macAddress;
@@ -180,6 +192,10 @@ in
       reverseZone = "10.10.in-addr.arpa";
     };
   };
+
+  systemd.services.kea-dhcp4-server.serviceConfig.ExecStartPre = lib.mkBefore [
+    "+${ensureKeaLeaseState}"
+  ];
 
   services.router-networking = {
     enable = true;
@@ -200,7 +216,7 @@ in
       };
       management = {
         device = managementDevice;
-        ipv4Address = if config.networking.hostName == "router-backup" then "10.255.254.1/24" else managementIpv4Address;
+        ipv4Address = managementIpv4Address;
         prefixDelegationMode = "managed";
       };
       iot = {
@@ -544,7 +560,7 @@ in
   security.sudo.wheelNeedsPassword = false;
 
   # Emergency recovery: Auto-login root on the serial console ONLY for the backup router.
-  services.getty.autologinUser = lib.mkIf (config.networking.hostName == "router-backup") "root";
+  services.getty.autologinUser = lib.mkIf isBackupRouter "root";
 
   environment.systemPackages = with pkgs; [ tmux ];
 
