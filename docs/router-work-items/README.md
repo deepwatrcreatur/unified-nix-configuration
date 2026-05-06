@@ -59,3 +59,6 @@ in parallel on separate worktrees.
 11. [`30-kea-tsig-key-provisioning.md`](./30-kea-tsig-key-provisioning.md) - `done`
 12. [`31-router-kea-module.md`](./31-router-kea-module.md) - `done`
 13. [`32-kea-dhcp-cutover.md`](./32-kea-dhcp-cutover.md) - `done`
+14. [`35-ap-recovery-postmortem-gap.md`](./35-ap-recovery-postmortem-gap.md) - `ready`
+15. [`36-router-backup-ha-disable-profile.md`](./36-router-backup-ha-disable-profile.md) - `ready`
+16. [`37-router-backup-dhcp-regression-lab.md`](./37-router-backup-dhcp-regression-lab.md) - `ready`
