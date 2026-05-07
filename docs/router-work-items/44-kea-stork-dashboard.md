@@ -22,6 +22,16 @@ still indirect:
 Stork is the obvious missing companion if we want the flake to serve users who
 run Kea seriously.
 
+## Investigation Notes
+
+- current `nixpkgs` does include a package named `stork`, but it is the
+  unrelated static-site search tool from `jameslittle230/stork`
+- there is no obvious ISC Stork / Kea Stork package or NixOS module under the
+  expected attribute names
+
+So this item should currently assume packaging or an external service wrapper
+will be required rather than a trivial module enable.
+
 ## Tasks
 
 - evaluate whether Stork is available in nixpkgs or needs packaging/wrapping
@@ -50,4 +60,3 @@ run Kea seriously.
 - disabled by default => existing router behavior unchanged
 - enabled => Kea/Stork services start cleanly and expose a usable web UI
 - DHCP lease/state visibility is available without hand-parsing journals
-
