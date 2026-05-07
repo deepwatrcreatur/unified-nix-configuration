@@ -21,6 +21,18 @@ We should capture the difference explicitly:
 - `Private Wi-Fi Address` warning: client preference / SSID policy issue
 - encrypted DNS blocked/unavailable warning: possible router feature gap
 
+## Investigation Notes
+
+- the concrete iPad warning seen during this incident was about
+  `Private Wi-Fi Address`
+- that warning does not imply a router DNS failure and should not trigger
+  router-side incident response by itself
+- the current recovered router behavior is still:
+  - plain DNS on `10.10.10.1:53`
+  - no first-class client encrypted-DNS listener yet
+- so future Apple privacy warnings about encrypted DNS would map to item `41`,
+  not to DHCP, routing, or AP recovery work
+
 ## Tasks
 
 - document common Apple Wi-Fi privacy warnings relevant to router operators
@@ -44,4 +56,3 @@ We should capture the difference explicitly:
   - safe to ignore
   - an AP/Wi-Fi issue
   - or a router DNS feature gap
-
