@@ -66,17 +66,20 @@ in
   };
 
   services.iventoy = {
-    enable = true;
+    # Keep the backup lab box aligned with the primary router: iVentoy is not
+    # part of the current stable recovery path and should stay disabled until
+    # its runtime integration is fixed properly.
+    enable = false;
     isoDir = "/srv/pxe/images";
     openFirewall = false;
   };
 
   services.router-firewall = {
-    trustedTcpPorts = [
+    trustedTcpPorts = lib.optionals config.services.iventoy.enable [
       16000
       26000
     ];
-    trustedUdpPorts = [
+    trustedUdpPorts = lib.optionals config.services.iventoy.enable [
       69
       4011
     ];

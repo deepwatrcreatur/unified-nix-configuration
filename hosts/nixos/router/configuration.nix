@@ -63,17 +63,20 @@ in
   };
 
   services.iventoy = {
-    enable = true;
+    # iVentoy remains a deferred PXE layer. Keep it out of the recovery path
+    # until the runtime integration is reliable enough to stop poisoning
+    # router rebuilds.
+    enable = false;
     isoDir = "/srv/pxe/images";
     openFirewall = false;
   };
 
   services.router-firewall = {
-    trustedTcpPorts = [
+    trustedTcpPorts = lib.optionals config.services.iventoy.enable [
       16000
       26000
     ];
-    trustedUdpPorts = [
+    trustedUdpPorts = lib.optionals config.services.iventoy.enable [
       69
       4011
     ];
