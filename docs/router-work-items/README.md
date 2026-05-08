@@ -48,7 +48,7 @@ in parallel on separate worktrees.
 1. [`35-ap-recovery-postmortem-gap.md`](./35-ap-recovery-postmortem-gap.md) - `ready`
 2. [`37-router-backup-dhcp-regression-lab.md`](./37-router-backup-dhcp-regression-lab.md) - `ready`
 3. [`41-optional-encrypted-dns-for-clients.md`](./41-optional-encrypted-dns-for-clients.md) - `in-progress`
-4. [`45-homelab-doh-enable.md`](./45-homelab-doh-enable.md) - `ready`
+4. [`45-homelab-doh-enable.md`](./45-homelab-doh-enable.md) - `in-progress`
 5. [`42-apple-dns-privacy-compatibility.md`](./42-apple-dns-privacy-compatibility.md) - `ready`
 6. [`44-kea-stork-dashboard.md`](./44-kea-stork-dashboard.md) - `ready`
 

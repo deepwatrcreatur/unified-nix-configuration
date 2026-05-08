@@ -1,6 +1,6 @@
 # 45 — Homelab DoH Enablement
 
-Status: `ready`
+Status: `in-progress`
 Suggested branch: `feat/router-homelab-doh`
 Priority: `medium`
 
@@ -23,16 +23,35 @@ Why:
 Keep **DoT optional** as a secondary endpoint if it falls out naturally from the
 certificate/port plan.
 
+Current direction:
+
+- preferred homelab hostname: `dns.<domain>`
+- preferred HTTPS owner: **Caddy stays on `:443`**
+- preferred client protocol: **DoH**
+- optional later addition: DoT on `:853`
+
 ## Current Blocker
 
-The live router already uses Caddy on `:443`, while native Technitium DoH also
-wants HTTPS/TLS listener ownership.
+The live router already uses Caddy on `:443`, and Caddy already manages ACME
+certificates for multiple `*.deepwatercreature.com` hosts.
+
+Observed evidence:
+
+- Caddy currently owns `:443` on the live router
+- Technitium currently serves only plain DNS on `10.10.10.1:53`
+- Caddy storage already contains issued certificates for existing subdomains
+- upstream encrypted-DNS option work is now in progress in
+  `nix-router-optimized#38`
 
 So this item must choose one concrete homelab path:
 
 1. give Technitium direct ownership of the DoH HTTPS listener, or
 2. keep Caddy on `:443` and introduce a clean DoH front-end / reverse-proxy
    pattern that still uses Technitium as the resolver backend
+
+Current recommendation: choose **(2)** unless a later proof shows native
+Technitium DoH can sit cleanly behind the existing Caddy setup without awkward
+port or certificate duplication.
 
 This is separate from item `41`, which is the reusable upstream feature work.
 
