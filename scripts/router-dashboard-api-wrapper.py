@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 import importlib.util
+import csv
 import json
 import os
 import subprocess
 import sys
-import csv
+import ipaddress
 from datetime import datetime, timezone
 
 
@@ -83,6 +84,7 @@ FAIL2BAN_STATUS_FILE = os.environ.get("DASHBOARD_FAIL2BAN_STATUS_FILE", "")
 CLOUDFLARE_TOKEN_FILE = os.environ.get("DASHBOARD_CLOUDFLARE_TOKEN_FILE", "")
 DHCP_PROVIDER = os.environ.get("DASHBOARD_DHCP_PROVIDER", "technitium").strip().lower()
 KEA_LEASE_FILE = os.environ.get("DASHBOARD_KEA_LEASE_FILE", "").strip()
+KEA_LEASES_FILE = os.environ.get("DASHBOARD_KEA_LEASES_FILE", "")
 
 if not os.path.exists(UPSTREAM_SERVER):
     raise SystemExit(f"DASHBOARD_UPSTREAM_SERVER does not exist: {UPSTREAM_SERVER}")
@@ -117,10 +119,33 @@ original_handle_dns_stats = module.RouterAPIHandler.handle_dns_stats
 original_handle_dhcp_leases = module.RouterAPIHandler.handle_dhcp_leases
 
 
+def prefer_interface_alias(candidate, current):
+    if current == candidate:
+        return False
+    candidate_is_vlan = "." in candidate
+    current_is_vlan = "." in current
+    if candidate_is_vlan != current_is_vlan:
+        return not candidate_is_vlan
+    return candidate < current
+
+
+def ip_sort_key(value):
+    try:
+        return (0, ipaddress.ip_address(value))
+    except ValueError:
+        return (1, value)
+
+
 def handle_interface_stats(self):
     try:
         interfaces = {}
         net_path = module.Path("/sys/class/net")
+        role_candidates = {}
+
+        for device, role in interface_role_map.items():
+            current = role_candidates.get(role)
+            if current is None or prefer_interface_alias(device, current):
+                role_candidates[role] = device
 
         for iface_path in net_path.iterdir():
             try:
@@ -137,9 +162,7 @@ def handle_interface_stats(self):
                 rx_rate, tx_rate = self.calculate_rates(name, rx_bytes, tx_bytes)
                 ipv4 = self.get_ipv4(name)
                 ipv6_list = self.get_ipv6(name)
-                key = interface_role_map.get(name, name)
-
-                interfaces[key] = {
+                stats = {
                     "device": name,
                     "state": read_interface_state(self, iface_path / "operstate", name),
                     "ipv4": ipv4,
@@ -153,12 +176,60 @@ def handle_interface_stats(self):
                     "rx_errors": read_int_file(self, stats_path / "rx_errors", f"{name} rx_errors"),
                     "tx_errors": read_int_file(self, stats_path / "tx_errors", f"{name} tx_errors"),
                 }
+                interfaces[name] = stats
             except Exception as exc:
                 log_warning(f"Failed to collect interface stats for {iface_path}: {exc}")
+
+        for role, device in role_candidates.items():
+            if device in interfaces:
+                interfaces[role] = interfaces[device]
 
         self.send_json(interfaces)
     except Exception as exc:
         self.send_error_json(500, str(exc))
+
+
+def handle_dhcp_leases(self):
+    if KEA_LEASES_FILE:
+        try:
+            if os.path.exists(KEA_LEASES_FILE):
+                leases = read_kea_leases_from_snapshot(KEA_LEASES_FILE)
+                section = {
+                    "id": "kea",
+                    "title": "Kea",
+                    "scope": "kea",
+                    "interface": "",
+                    "enabled": True,
+                    "startAddress": "",
+                    "endAddress": "",
+                    "leaseCount": len(leases),
+                    "leases": leases[:100],
+                }
+                self.send_json(
+                    {
+                        "available": True,
+                        "scopes": [
+                            {
+                                "name": "kea",
+                                "interface": "",
+                                "enabled": True,
+                                "startAddress": "",
+                                "endAddress": "",
+                                "leaseCount": len(leases),
+                            }
+                        ],
+                        "leases": leases[:100],
+                        "sections": [section],
+                        "totalLeases": len(leases),
+                        "displayedLeases": min(len(leases), 100),
+                    }
+                )
+                return
+            log_warning(f"Kea lease snapshot file not found at: {KEA_LEASES_FILE}")
+        except Exception as exc:
+            log_warning(f"Error reading Kea lease snapshot: {exc}")
+
+    return original_handle_dhcp_leases(self)
 
 
 def handle_firewall_stats(self):
@@ -443,34 +514,35 @@ def format_kea_expiry(expire_value):
 
 
 def load_kea_leases():
-    if not KEA_LEASE_FILE:
+    lease_file = KEA_LEASE_FILE or KEA_LEASES_FILE
+    if not lease_file:
         raise FileNotFoundError("Kea lease file path is not configured")
-    if not os.path.exists(KEA_LEASE_FILE):
-        raise FileNotFoundError(f"Kea lease file not found: {KEA_LEASE_FILE}")
+    if not os.path.exists(lease_file):
+        raise FileNotFoundError(f"Kea lease file not found: {lease_file}")
 
     leases_by_address = {}
-    with open(KEA_LEASE_FILE, "r", encoding="utf-8", newline="") as handle:
-        reader = csv.DictReader(handle)
+    with open(lease_file, "r", encoding="utf-8") as handle:
+        reader = csv.reader(line for line in handle if line and not line.startswith("#"))
         for row in reader:
-            if not row:
+            if len(row) < 10:
                 continue
 
-            address = str(row.get("address", "")).strip()
-            if not address or address == "address":
+            address = row[0].strip()
+            if not address:
                 continue
 
-            state = str(row.get("state", "")).strip()
+            state = row[9].strip()
             if state not in {"0", ""}:
                 continue
 
-            current_expire = str(row.get("expire", "")).strip()
+            current_expire = row[4].strip()
             lease = {
                 "scope": str(KEA_DHCP_META.get("scope", "LAN")),
                 "interface": ", ".join(KEA_DHCP_META.get("interfaces", [])) or "kea",
                 "address": address,
-                "hostname": str(row.get("hostname", "")).strip(),
-                "hardwareAddress": str(row.get("hwaddr", "")).strip(),
-                "leaseExpires": format_kea_expiry(row.get("expire", "")),
+                "hostname": row[8].strip(),
+                "hardwareAddress": row[1].strip(),
+                "leaseExpires": format_kea_expiry(current_expire),
                 "type": "dynamic",
                 "_expire_raw": current_expire,
             }
@@ -489,12 +561,12 @@ def load_kea_leases():
         lease.pop("_expire_raw", None)
         leases.append(lease)
 
-    leases.sort(key=lambda lease: lease.get("address", ""))
+    leases.sort(key=lambda lease: ip_sort_key(lease.get("address", "")))
     return leases
 
 
 def handle_dhcp_leases(self):
-    if DHCP_PROVIDER != "kea":
+    if DHCP_PROVIDER != "kea" and not KEA_LEASES_FILE:
         return original_handle_dhcp_leases(self)
 
     try:
@@ -549,11 +621,12 @@ def handle_dhcp_leases(self):
 
 
 module.RouterAPIHandler.handle_interface_stats = handle_interface_stats
+module.RouterAPIHandler.handle_interface_stats = handle_interface_stats
+module.RouterAPIHandler.handle_dhcp_leases = handle_dhcp_leases
 module.RouterAPIHandler.handle_firewall_stats = handle_firewall_stats
 module.RouterAPIHandler.handle_caddy_status = handle_caddy_status
 module.RouterAPIHandler.handle_fail2ban_status = handle_fail2ban_status
 module.RouterAPIHandler.handle_dns_stats = handle_dns_stats
-module.RouterAPIHandler.handle_dhcp_leases = handle_dhcp_leases
 
 if __name__ == "__main__":
     module.run_server()

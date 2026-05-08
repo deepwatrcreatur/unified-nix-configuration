@@ -47,6 +47,7 @@ in
       DASHBOARD_UPSTREAM_SERVER = "${inputs.nix-router-optimized.outPath}/modules/router-dashboard/api/server.py";
       DASHBOARD_INTERFACES = builtins.toJSON cfg.interfaces;
       DASHBOARD_FAIL2BAN_STATUS_FILE = fail2banSnapshotFile;
+      DASHBOARD_KEA_LEASES_FILE = keaLeaseSnapshotFile;
       DASHBOARD_CLOUDFLARE_TOKEN_FILE = config.age.secrets.cloudflare-api-key.path;
       DASHBOARD_DHCP_PROVIDER = if keaEnabled then "kea" else "technitium";
       DASHBOARD_KEA_LEASE_FILE = if keaEnabled then keaLeaseSnapshotFile else "";
@@ -124,6 +125,7 @@ in
         ExecStart = keaLeaseSnapshotScript;
         User = "root";
         Group = "root";
+        UMask = "0027";
         NoNewPrivileges = true;
         PrivateDevices = true;
         PrivateTmp = true;
