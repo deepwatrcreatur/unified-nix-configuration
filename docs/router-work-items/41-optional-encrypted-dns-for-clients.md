@@ -1,6 +1,6 @@
 # 41 — Optional Encrypted DNS for Clients
 
-Status: `ready`
+Status: `in-progress`
 Suggested branch: `feat/router-encrypted-dns`
 Priority: `medium`
 
@@ -9,6 +9,10 @@ Priority: `medium`
 Add a clean, optional encrypted-DNS feature set for LAN clients so flake users
 can offer modern DNS privacy without making it mandatory for every router
 deployment.
+
+Current ownership:
+- upstream feature branch: `nix-router-optimized:feat/router-encrypted-dns`
+- current implementation PR: `nix-router-optimized#38`
 
 ## Why This Matters
 
@@ -48,12 +52,19 @@ feature for a reusable router flake:
 Recommended starting architecture:
 
 - baseline v1 protocols:
-  - DoT
   - DoH
+  - DoT
 - optional later protocol:
   - DoQ
 - deferred:
   - DNSCrypt
+
+Current recommendation:
+
+- homelab default: DoH
+- optional secondary compatibility endpoint: DoT
+- not recommended for the first rollout: DoQ
+- deferred: DNSCrypt
 
 The main deployment constraint is port ownership:
 

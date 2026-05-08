@@ -1,0 +1,62 @@
+# 45 — Homelab DoH Enablement
+
+Status: `ready`
+Suggested branch: `feat/router-homelab-doh`
+Priority: `medium`
+
+## Goal
+
+Turn on the best encrypted-DNS mode for the actual homelab router after the
+upstream option surface is merged.
+
+## Current Recommendation
+
+Use **DoH as the primary encrypted DNS mode** for the homelab.
+
+Why:
+
+- broadest support across browsers, Apple devices, and managed clients
+- easiest client story when paired with a dedicated resolver hostname such as
+  `dns.<domain>`
+- better long-term fit for a household network than a DoT-only rollout
+
+Keep **DoT optional** as a secondary endpoint if it falls out naturally from the
+certificate/port plan.
+
+## Current Blocker
+
+The live router already uses Caddy on `:443`, while native Technitium DoH also
+wants HTTPS/TLS listener ownership.
+
+So this item must choose one concrete homelab path:
+
+1. give Technitium direct ownership of the DoH HTTPS listener, or
+2. keep Caddy on `:443` and introduce a clean DoH front-end / reverse-proxy
+   pattern that still uses Technitium as the resolver backend
+
+This is separate from item `41`, which is the reusable upstream feature work.
+
+## Tasks
+
+- choose the homelab hostname:
+  - recommended: `dns.<domain>`
+- decide whether homelab DoH should be:
+  - Technitium-native on the public HTTPS port
+  - or fronted by Caddy with a clean upstream target
+- decide certificate sourcing:
+  - reuse existing ACME automation
+  - or provision a dedicated PKCS#12/PFX bundle for Technitium
+- if DoT is also enabled:
+  - decide whether `:853` should be exposed on the LAN only or more broadly
+- validate the chosen approach on `router-backup` first
+- document client configuration for:
+  - Apple devices
+  - browsers
+  - generic OS resolvers
+
+## Validation
+
+- homelab clients can resolve over DoH successfully
+- plain DNS on `:53` still works for legacy clients
+- enabling DoH does not break the existing router HTTPS/admin paths
+- client configuration is documented in-repo, not only in chat history
