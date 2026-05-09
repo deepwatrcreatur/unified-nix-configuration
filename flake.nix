@@ -170,7 +170,7 @@
     };
 
     agent-roundtable = {
-      url = "path:../agent-roundtable/roundtable";
+      url = "path:../agent-roundtable";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
