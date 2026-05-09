@@ -31,14 +31,19 @@
         ]
       },
       "locked": {
-        "lastModified": 1777651417,
-        "narHash": "sha256-knzAu5f9SUZEibNM7hQq/DaZfmbHssX0IOrX44chml8=",
-        "path": "/home/deepwatrcreatur/flakes/agent-roundtable/roundtable",
-        "type": "path"
+        "dir": "roundtable",
+        "lastModified": 1778269266,
+        "narHash": "sha256-vkV8IrIeurLt85oHPc5CKcrocvRU6wlB+BXHTvZ4ezA=",
+        "owner": "deepwatrcreatur",
+        "repo": "agent-roundtable",
+        "rev": "ae93bd7208f7ce9e5f78337045ae463de71d8413",
+        "type": "github"
       },
       "original": {
-        "path": "/home/deepwatrcreatur/flakes/agent-roundtable/roundtable",
-        "type": "path"
+        "dir": "roundtable",
+        "owner": "deepwatrcreatur",
+        "repo": "agent-roundtable",
+        "type": "github"
       }
     },
     "agents-status-tray": {
