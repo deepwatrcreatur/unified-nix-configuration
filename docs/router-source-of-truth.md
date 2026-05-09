@@ -61,7 +61,7 @@ den/inventory/hosts.nix          ← entry point
             │    └─ users/deepwatrcreatur/hosts/router-backup/default.nix
             └─ extraImports  (legacy host-local files)
                  ├─ hosts/nixos/router-backup/hardware-configuration.nix
-                 ├─ hosts/nixos/router/networking.nix  (shared; hostName override applied below)
+                 ├─ hosts/nixos/router/service-capability.nix
                  ├─ hosts/nixos/router/caddy.nix  (shared; wrapper inlined into den leaf)
                  └─ hosts/nixos/router-backup/configuration.nix
                       ├─ inputs.disko.nixosModules.disko
@@ -77,14 +77,15 @@ den/inventory/hosts.nix          ← entry point
 |---------|-------------|-------|
 | Hardware config (router) | `hosts/nixos/router/hardware-configuration.nix` | Generated; never edit manually |
 | Hardware config (backup) | `hosts/nixos/router-backup/hardware-configuration.nix` | Generated; never edit manually |
-| Hostname | `hosts/nixos/router/networking.nix` | Sets `hostName = "router"`; backup wrapper overrides to `"router-backup"` |
-| DNS service (Technitium) | `hosts/nixos/router/networking.nix` | Config applies to both hosts via shared import |
-| NAT policy | `hosts/nixos/router/networking.nix` | `networking.nat.enable = false`; nftables handles NAT in role.nix |
+| Hostname | `hosts/nixos/router/networking.nix` and `den/hosts/router-backup/default.nix` | Primary hostname lives in `router/networking.nix`; backup hostname is forced in its den leaf |
+| Shared DNS/NTP capability | `hosts/nixos/router/service-capability.nix` | Shared router service capability imported by both hosts |
+| NAT policy | `hosts/nixos/router/service-capability.nix` | `networking.nat.enable = false`; nftables handles NAT in role.nix |
 | Disk layout (router) | `hosts/nixos/router/disko.nix` | Hardware-adjacent; keep separate |
 | Disk layout (backup) | `hosts/nixos/router-backup/disko.nix` | Imported by `configuration.nix`; hardware-adjacent, keep separate |
-| Caddy / ingress | `hosts/nixos/router/caddy.nix` | Both hosts share this file directly |
+| Caddy / ingress | `hosts/nixos/router/caddy.nix` | Both hosts share this file directly; public DDNS ownership is gated by `router.failover.activeOwner` |
 | Router role (networking, firewall, DNS, observability, VPN) | `den/aspects/router-router.nix` + upstream `nix-router-optimized` modules | The den aspect selects which upstream modules to import |
 | Host-specific role args (WAN/LAN devices, IPs, Grafana paths) | `hosts/nixos/router/configuration.nix` and `hosts/nixos/router-backup/configuration.nix` | Each calls `role.nix` as a function with per-host arguments |
+| Active public identity ownership | `modules/nixos/router/common.nix` via `router.failover.activeOwner` | Defaults to `true` on `router`, `false` on `router-backup`; used to gate single-owner identity such as public DDNS updates |
 | NIC stable names | `hosts/nixos/router/configuration.nix` (MAC-based) and `hosts/nixos/router-backup/configuration.nix` (PCI path-based) | Separate rules because the two machines use different matching strategies |
 | DNS zone data (static hosts, aliases) | `hosts/nixos/router/dns-zone.nix` | Inline-imported by `configuration.nix`; edit here to manage DNS records |
 | ulogd flow logging | `hosts/nixos/router/role.nix` (via nix-router-optimized) | Uses LOGEMU plugin (base `pkgs.ulogd`); JSON plugin requires overlay — not active by default |
@@ -94,9 +95,10 @@ den/inventory/hosts.nix          ← entry point
 
 ## Where to land fixes
 
-- **DNS / hostname changes**: `hosts/nixos/router/networking.nix`. Topology-derived
-  values (domain name, IP ranges) live in `config.router.topology`; see
-  `docs/network-source-of-truth.md` for that layer.
+- **DNS / NTP shared capability**: `hosts/nixos/router/service-capability.nix`.
+- **Primary hostname / domain defaults**: `hosts/nixos/router/networking.nix`.
+- **Active public identity ownership**: `modules/nixos/router/common.nix` via
+  `router.failover.activeOwner`.
 - **Firewall / NAT / observability / VPN**: tune options provided by
   `nix-router-optimized` modules; the entry point is `den/aspects/router-router.nix`.
 - **Caddy virtualHosts, ACME, DDNS**: `hosts/nixos/router/caddy.nix`.

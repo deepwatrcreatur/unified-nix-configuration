@@ -19,6 +19,21 @@ let
   cfSecret = optSec.mkSecret "cloudflare-api-key" {
     file = ../../../secrets-agenix/cloudflare_ddns_API_token.age;
   };
+  activeOwner = config.router.failover.activeOwner;
+  dynamicDnsConfig = lib.optionalString activeOwner ''
+    dynamic_dns {
+      provider cloudflare {$CLOUDFLARE_API_TOKEN}
+      domains {
+        # `home-assistant` is intentionally excluded here. We publish it as a
+        # Cloudflare CNAME to another DDNS-managed hostname so Caddy's DDNS
+        # updater does not fight Cloudflare over the same record name.
+        ${ddnsDomainsLine}
+      }
+      check_interval 5m
+      versions ipv4 ipv6
+      ttl 1h
+    }
+  '';
 in
 {
   services.caddy = {
@@ -37,18 +52,7 @@ in
     globalConfig = ''
       # ACME/Let's Encrypt configuration
       email deepwatrcreatur@gmail.com
-      dynamic_dns {
-        provider cloudflare {$CLOUDFLARE_API_TOKEN}
-        domains {
-          # `home-assistant` is intentionally excluded here. We publish it as a
-          # Cloudflare CNAME to another DDNS-managed hostname so Caddy's DDNS
-          # updater does not fight Cloudflare over the same record name.
-          ${ddnsDomainsLine}
-        }
-        check_interval 5m
-        versions ipv4 ipv6
-        ttl 1h
-      }
+      ${dynamicDnsConfig}
 
       # Use staging for testing, comment out for production
       # acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
@@ -184,15 +188,16 @@ in
     wants = [ "network-online.target" ];
     preStart = ''
       install -d -m 0750 -o caddy -g caddy /run/caddy
-      ${lib.optionalString cfSecret.exists ''
+      ${lib.optionalString (activeOwner && cfSecret.exists) ''
         token="$(tr -d '\n' < ${config.age.secrets.cloudflare-api-key.path})"
         test -n "$token"
         printf 'CLOUDFLARE_API_TOKEN=%s\n' "$token" > /run/caddy/caddy.env
         chown caddy:caddy /run/caddy/caddy.env
         chmod 0400 /run/caddy/caddy.env
       ''}
-      ${lib.optionalString (!cfSecret.exists) ''
-        # No Cloudflare secret available - create empty env file
+      ${lib.optionalString (!activeOwner || !cfSecret.exists) ''
+        # In standby mode or without the Cloudflare secret, keep an empty env
+        # file so Caddy can still start without public DDNS ownership.
         touch /run/caddy/caddy.env
         chown caddy:caddy /run/caddy/caddy.env
         chmod 0400 /run/caddy/caddy.env

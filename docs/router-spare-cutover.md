@@ -29,6 +29,16 @@ To promote `router-backup` after a failure or bad rebuild:
 4. Move the LAN cable to `router-backup`.
 5. Verify clients can reach `10.10.10.1`, resolve DNS, and reach the internet.
 
+### Current config note
+
+- `router.failover.activeOwner` is the consumer-tree switch for single-owner
+  public identity. It currently defaults to `true` on `router` and `false` on
+  `router-backup`.
+- Today that switch gates Caddy's public DDNS ownership so both nodes can keep
+  service capability while only the active owner updates public DNS identity.
+- More failover-sensitive ownership should move behind this boundary as the HA
+  refactor continues.
+
 ## Technitium
 
 - Technitium clustering can help keep DNS/admin configuration aligned between
