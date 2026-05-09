@@ -198,7 +198,7 @@ in
       ${lib.optionalString (!activeOwner || !cfSecret.exists) ''
         # In standby mode or without the Cloudflare secret, keep an empty env
         # file so Caddy can still start without public DDNS ownership.
-        touch /run/caddy/caddy.env
+        : > /run/caddy/caddy.env
         chown caddy:caddy /run/caddy/caddy.env
         chmod 0400 /run/caddy/caddy.env
       ''}

@@ -31,7 +31,4 @@ in
     };
   };
 
-  # UPnP/NAT-PMP for game consoles and P2P clients.
-  # externalInterface and internalIPs are auto-derived.
-  services.router-upnp.enable = true;
 }

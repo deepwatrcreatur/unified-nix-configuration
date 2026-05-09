@@ -30,6 +30,10 @@ in
     lanSubnets = [ topology.networks.lan.cidr ];
   };
 
+  # UPnP/NAT-PMP should remain available on whichever router currently owns
+  # the LAN path so failover does not silently drop port mapping support.
+  services.router-upnp.enable = true;
+
   # NAT is handled by nftables (see role.nix).
   networking.nat.enable = false;
 }
