@@ -18,8 +18,8 @@ in
     (import ../router/role.nix {
       inherit inputs;
       sshTarget = "ssh router-backup";
-      wanDevice = "enp2s0";
-      lanDevice = "enp3s0";
+      wanDevice = "ens27";
+      lanDevice = "ens19";
       lanIpv4Address = "${routerHost.ip}/${toString lanNetwork.prefixLength}";
       managementIpv4Address = "${backupHost.sshHostname}/${toString managementNetwork.prefixLength}";
       grafanaDomain = mkFqdn "grafana";
@@ -80,20 +80,13 @@ in
     ];
   };
 
-  # Pin the physical passthrough NICs to stable names via MAC matching.
-  # Mapping confirmed from VM inspection:
-  #   enp3s0 (LAN) -> 6c:b3:11:1b:97:38
-  #   enp2s0 (WAN) -> 6c:b3:11:1b:97:39
-  systemd.network.links = {
-    "10-router-backup-lan-stable" = {
-      matchConfig.MACAddress = "6c:b3:11:1b:97:38";
-      linkConfig.Name = "enp3s0";
-    };
-    "10-router-backup-wan-stable" = {
-      matchConfig.Path = "pci-0000:03:00.1";
-      linkConfig.Name = "enp2s0";
-    };
-  };
+  # Current Proxmox wiring:
+  #   ens18 -> management virtio
+  #   ens19 -> LAN virtio
+  #   ens27 -> WAN passthrough
+  #
+  # Keep the host leaf aligned to the actual slot names instead of carrying
+  # old passthrough-era renames for NICs that no longer exist.
 
   home-manager.extraSpecialArgs.hostName = lib.mkForce "router-backup";
 

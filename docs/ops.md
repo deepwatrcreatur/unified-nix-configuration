@@ -148,7 +148,7 @@ even with all production cables unplugged.
 2. Plug them into the backup router.
    Current interface names differ by host:
    - `router`: WAN `enp6s17`, LAN `enp6s16`
-   - `router-backup`: WAN `enp2s0`, LAN `enp3s0`
+   - `router-backup`: WAN `ens27`, LAN `ens19`
 3. Both routers share the same production LAN identity (`10.10.10.1`), so no
    DNS or DHCP reconfiguration is needed on clients.
 4. Use the management IP to reach the new active router after cutover.

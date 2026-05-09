@@ -11,44 +11,6 @@ in
     description = "Shared router inventory and network topology derived from lib/hosts.nix.";
   };
 
-  options.router.monitoring = lib.mkOption {
-    type = lib.types.submodule {
-      options = {
-        grafanaDomain = lib.mkOption {
-          type = lib.types.str;
-          description = "Public hostname for router Grafana.";
-        };
-
-        grafanaDataDir = lib.mkOption {
-          type = lib.types.str;
-          description = "Persistent storage path for router Grafana data.";
-        };
-
-        listenAddress = lib.mkOption {
-          type = lib.types.str;
-          description = "Address router monitoring services should bind to.";
-        };
-
-        prometheusStateDir = lib.mkOption {
-          type = lib.types.str;
-          description = "StateDirectory name for router Prometheus.";
-        };
-
-        prometheusBindMountPath = lib.mkOption {
-          type = lib.types.str;
-          description = "Persistent storage path for router Prometheus data.";
-        };
-
-        prometheusRetentionSize = lib.mkOption {
-          type = lib.types.str;
-          description = "Prometheus retention size for router monitoring.";
-        };
-      };
-    };
-    default = { };
-    description = "Shared monitoring settings for router-class hosts.";
-  };
-
   config.router.topology = {
     domain = hostsData.domain;
     hosts = hostsData.hosts;
@@ -103,20 +65,15 @@ in
     enable = lib.mkDefault true;
     allowInterfaces =
       let
-        # Common management device across both routers
         mgmt = "ens18";
+        lanDevice = config.services.router-networking.routedInterfaces.lan.device;
       in
-      if config.networking.hostName == "router-backup" then
-        [
-          "enp3s0" # LAN
-          mgmt # Management
-          "enp3s0.20" # IoT
-        ]
-      else
-        [
-          "enp6s16" # LAN
-          mgmt # Management
-          "enp6s16.20" # IoT
-        ];
+      [
+        lanDevice
+        mgmt
+      ]
+      ++ lib.optionals (config.services.router-networking.routedInterfaces ? iot) [
+        "${lanDevice}.20"
+      ];
   };
 }

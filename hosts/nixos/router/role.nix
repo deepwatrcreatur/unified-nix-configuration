@@ -8,6 +8,7 @@
   grafanaDataDir,
   prometheusStateDir,
   prometheusBindMountPath,
+  enableExtraRoutedNetworks ? false,
   enableLogStorage ? true,
   inputs,
 }:
@@ -184,54 +185,57 @@ in
   services.router-networking = {
     enable = true;
     wan.device = wanDevice;
-    routedInterfaces = {
-      lan = {
-        device = lanDevice;
-        ipv4Address = if config.networking.hostName == "router" then "10.10.10.2/16" else "10.10.10.3/16";
-        dns = [ "127.0.0.1" ];
-        domains = [ topology.domain ];
-        requiredForOnline = "routable";
-        extraRoutes = [
-          {
-            destination = lanNetwork.cidr;
-            scope = "link";
-          }
-        ];
-      };
-      management = {
-        device = managementDevice;
-        ipv4Address = if config.networking.hostName == "router-backup" then "10.255.254.1/24" else managementIpv4Address;
-        prefixDelegationMode = "managed";
-      };
-      iot = {
-        device = "${lanDevice}.20";
-        vlanId = 20;
-        parentDevice = lanDevice;
-        ipv4Address = "10.20.20.1/24";
-        policyRouting = {
-          enable = true;
-          table = 200; # All traffic via table 200 (VPN)
-        };
-      };
-      guest = {
-        device = "${lanDevice}.30";
-        vlanId = 30;
-        parentDevice = lanDevice;
-        ipv4Address = "10.30.30.1/24";
-        policyRouting = {
-          # Use default routing (WAN) by default
-          enable = false;
-          # But route traffic to 8.8.8.8 via table 300 (VPN)
-          rules = [
+    routedInterfaces =
+      {
+        lan = {
+          device = lanDevice;
+          ipv4Address = if config.networking.hostName == "router" then "10.10.10.2/16" else "10.10.10.3/16";
+          dns = [ "127.0.0.1" ];
+          domains = [ topology.domain ];
+          requiredForOnline = "routable";
+          extraRoutes = [
             {
-              to = "8.8.8.8/32";
-              table = 300;
-              priority = 50;
+              destination = lanNetwork.cidr;
+              scope = "link";
             }
           ];
         };
+        management = {
+          device = managementDevice;
+          ipv4Address = managementIpv4Address;
+          prefixDelegationMode = "managed";
+        };
+      }
+      // lib.optionalAttrs enableExtraRoutedNetworks {
+        iot = {
+          device = "${lanDevice}.20";
+          vlanId = 20;
+          parentDevice = lanDevice;
+          ipv4Address = "10.20.20.1/24";
+          policyRouting = {
+            enable = true;
+            table = 200; # All traffic via table 200 (VPN)
+          };
+        };
+        guest = {
+          device = "${lanDevice}.30";
+          vlanId = 30;
+          parentDevice = lanDevice;
+          ipv4Address = "10.30.30.1/24";
+          policyRouting = {
+            # Use default routing (WAN) by default
+            enable = false;
+            # But route traffic to 8.8.8.8 via table 300 (VPN)
+            rules = [
+              {
+                to = "8.8.8.8/32";
+                table = 300;
+                priority = 50;
+              }
+            ];
+          };
+        };
       };
-    };
   };
 
   services.router-vpn = {
