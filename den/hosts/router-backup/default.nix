@@ -11,10 +11,10 @@ let
       # hardware-configuration.nix — generated hardware config. Always keep separate.
       ../../../hosts/nixos/router-backup/hardware-configuration.nix
 
-      # router/networking.nix — shared DNS/NAT config; imported directly now that
-      # the thin hosts/nixos/router-backup/networking.nix wrapper has been inlined
-      # here. The hostname override below replaces that wrapper.
-      ../../../hosts/nixos/router/networking.nix
+      # service-capability.nix — shared router-service capability used by both
+      # router nodes. This keeps DNS/NTP/NAT wiring common without importing the
+      # primary hostname policy from router/networking.nix.
+      ../../../hosts/nixos/router/service-capability.nix
 
       # router/caddy.nix — full Caddy config shared with router; imported directly
       # now that the single-line hosts/nixos/router-backup/caddy.nix wrapper has been
@@ -32,6 +32,5 @@ in
 # now-deleted hosts/nixos/router-backup/networking.nix wrapper.
 {
   inherit (base) imports;
-  # router/networking.nix sets hostName = "router"; override for this host.
   networking.hostName = lib.mkForce "router-backup";
 }

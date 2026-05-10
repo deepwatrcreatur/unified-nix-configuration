@@ -11,6 +11,15 @@ in
     description = "Shared router inventory and network topology derived from lib/hosts.nix.";
   };
 
+  options.router.failover.activeOwner = lib.mkOption {
+    type = lib.types.bool;
+    description = ''
+      Whether this node should currently own the production router identity.
+      Shared service capability can exist on both routers, but only the active
+      owner should advertise or update single-owner identity such as public DDNS.
+    '';
+  };
+
   config.router.topology = {
     domain = hostsData.domain;
     hosts = hostsData.hosts;
@@ -18,6 +27,8 @@ in
     backupHost = backupHost;
     networks = hostsData.networks;
   };
+
+  config.router.failover.activeOwner = lib.mkDefault (config.networking.hostName == "router");
 
   # Shared defaults for router and router-backup.
   config.services.router-homelab = {
