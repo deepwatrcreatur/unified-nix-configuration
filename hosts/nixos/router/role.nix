@@ -736,8 +736,9 @@ in
             -H "Content-Type: application/x-www-form-urlencoded" \
             --data-urlencode "token=$TOKEN" \
             --data-urlencode "zone=${fwdZone}" \
-            --data-urlencode "update=AllowOnlySpecifiedNetworkAddresses" \
+            --data-urlencode "update=UseSpecifiedNetworkACL" \
             --data-urlencode "updateNetworkACL=127.0.0.1" \
+            --data-urlencode "updateSecurityPolicies=kea-ddns|*.${fwdZone}|A,AAAA,DHCID" \
             "http://127.0.0.1:5380/api/zones/options/set" \
             >/dev/null
 
@@ -746,8 +747,9 @@ in
             -H "Content-Type: application/x-www-form-urlencoded" \
             --data-urlencode "token=$TOKEN" \
             --data-urlencode "zone=${revZone}" \
-            --data-urlencode "update=AllowOnlySpecifiedNetworkAddresses" \
+            --data-urlencode "update=UseSpecifiedNetworkACL" \
             --data-urlencode "updateNetworkACL=127.0.0.1" \
+            --data-urlencode "updateSecurityPolicies=kea-ddns|*.${revZone}|PTR,DHCID" \
             "http://127.0.0.1:5380/api/zones/options/set" \
             >/dev/null
 
