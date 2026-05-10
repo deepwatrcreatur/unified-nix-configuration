@@ -26,6 +26,16 @@ wrappers, shell defaults, and related repo operations.
 
 ## Current Ranked Queue
 
+1. [34 Vaglio Proxmox LXC Bring-Up](./34-vaglio-proxmox-lxc-bring-up.md) — `ready`
+2. [35 Agent-Roundtable Standalone Service Fix](./35-agent-roundtable-standalone-service-fix.md) — `ready`
+3. [30 Vaglio Roundtable Reactivation](./30-vaglio-roundtable-reactivation.md) — `ready`
+4. [31 Forgejo-Shell Demo Surface On Vaglio](./31-forgejo-shell-vaglio-demo-surface.md) — `ready`
+5. [32 Public Repo Stress Analysis Demo](./32-public-repo-stress-analysis-demo.md) — `ready`
+6. [33 JJ-Backed Forgejo Spike](./33-jj-backed-forgejo-spike.md) — `ready`
+7. [29 Shared Agent Guide Source of Truth](./29-shared-agent-guide-source-of-truth.md) — `in-progress`
+
+## Recently Completed
+
 1. [24 SSH Commit Signing — Core Modules](./24-ssh-commit-signing-modules.md) — `done`
 2. [25 SSH Commit Signing — Host Wiring](./25-ssh-signing-host-wiring.md) — `done`
 3. [26 Remove GPG Modules](./26-remove-gpg-modules.md) — `done`
