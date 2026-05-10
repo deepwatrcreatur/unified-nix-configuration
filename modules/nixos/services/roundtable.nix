@@ -6,6 +6,7 @@
 }:
 let
   cfg = config.services.roundtable;
+  stateHome = "/var/lib/${cfg.stateDir}";
 in
 {
   options.services.roundtable = {
@@ -24,13 +25,15 @@ in
     };
 
     secretKeyBaseFile = lib.mkOption {
-      type = lib.types.path;
-      description = "Path to file containing SECRET_KEY_BASE.";
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = "Optional path to file containing SECRET_KEY_BASE.";
     };
 
     githubTokenFile = lib.mkOption {
-      type = lib.types.path;
-      description = "Path to file containing GitHub PAT.";
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = "Optional path to file containing GitHub PAT.";
     };
 
     anthropicApiKeyFile = lib.mkOption {
@@ -82,41 +85,83 @@ in
       wantedBy = [ "multi-user.target" ];
       after = [ "network.target" ];
       path = with pkgs; [
+        bash
+        coreutils
+        curl
         dolt
+        elixir
+        beam.packages.erlang.erlang
         git
         gh
+        jujutsu
+        openssl
       ];
 
       serviceConfig = {
         ExecStart =
           let
             startScript = pkgs.writeShellScript "roundtable-start" ''
-              export SECRET_KEY_BASE=$(cat $CREDENTIALS_DIRECTORY/secret_key_base)
-              export GH_TOKEN=$(cat $CREDENTIALS_DIRECTORY/github_token)
-              
-              if [ -f $CREDENTIALS_DIRECTORY/anthropic_api_key ]; then
-                export ANTHROPIC_API_KEY=$(cat $CREDENTIALS_DIRECTORY/anthropic_api_key)
-              fi
-              if [ -f $CREDENTIALS_DIRECTORY/openai_api_key ]; then
-                export OPENAI_API_KEY=$(cat $CREDENTIALS_DIRECTORY/openai_api_key)
-              fi
-              if [ -f $CREDENTIALS_DIRECTORY/gemini_api_key ]; then
-                export GEMINI_API_KEY=$(cat $CREDENTIALS_DIRECTORY/gemini_api_key)
-              fi
-              if [ -f $CREDENTIALS_DIRECTORY/deepseek_api_key ]; then
-                export DEEPSEEK_API_KEY=$(cat $CREDENTIALS_DIRECTORY/deepseek_api_key)
+              set -eu
+
+              state_home="${stateHome}"
+              mix_home="$state_home/mix"
+              deps_path="$state_home/deps"
+              build_root="$state_home/build"
+              source_dir="$(${pkgs.gnused}/bin/sed -n 's|^cd ||p' ${cfg.package}/bin/roundtable-web)"
+
+              mkdir -p ${stateHome}
+              mkdir -p "$mix_home" "$deps_path" "$build_root"
+
+              if [ -f "$CREDENTIALS_DIRECTORY/secret_key_base" ]; then
+                export SECRET_KEY_BASE="$(cat "$CREDENTIALS_DIRECTORY/secret_key_base")"
+              elif [ -f "${stateHome}/secret_key_base" ]; then
+                export SECRET_KEY_BASE="$(cat "${stateHome}/secret_key_base")"
+              else
+                ${pkgs.openssl}/bin/openssl rand -hex 32 > "${stateHome}/secret_key_base"
+                chmod 600 "${stateHome}/secret_key_base"
+                export SECRET_KEY_BASE="$(cat "${stateHome}/secret_key_base")"
               fi
 
-              exec ${cfg.package}/bin/roundtable-web
+              if [ -f "$CREDENTIALS_DIRECTORY/github_token" ]; then
+                export GH_TOKEN="$(cat "$CREDENTIALS_DIRECTORY/github_token")"
+              fi
+              
+              if [ -f "$CREDENTIALS_DIRECTORY/anthropic_api_key" ]; then
+                export ANTHROPIC_API_KEY="$(cat "$CREDENTIALS_DIRECTORY/anthropic_api_key")"
+              fi
+              if [ -f "$CREDENTIALS_DIRECTORY/openai_api_key" ]; then
+                export OPENAI_API_KEY="$(cat "$CREDENTIALS_DIRECTORY/openai_api_key")"
+              fi
+              if [ -f "$CREDENTIALS_DIRECTORY/gemini_api_key" ]; then
+                export GEMINI_API_KEY="$(cat "$CREDENTIALS_DIRECTORY/gemini_api_key")"
+              fi
+              if [ -f "$CREDENTIALS_DIRECTORY/deepseek_api_key" ]; then
+                export DEEPSEEK_API_KEY="$(cat "$CREDENTIALS_DIRECTORY/deepseek_api_key")"
+              fi
+
+              export HOME="$state_home"
+              export XDG_STATE_HOME="$state_home"
+              export MIX_HOME="$mix_home"
+              export HEX_HOME="$mix_home/hex"
+              export MIX_ARCHIVES="$mix_home/archives"
+              export MIX_DEPS_PATH="$deps_path"
+              export MIX_BUILD_ROOT="$build_root"
+
+              cd "$source_dir"
+
+              mix local.hex --force >/dev/null 2>&1 || true
+              mix local.rebar --force >/dev/null 2>&1 || true
+              mix deps.get >/dev/null
+              mix compile --force >/dev/null
+
+              exec mix run --no-halt
             '';
           in
           "${startScript}";
 
         LoadCredential =
-          [
-            "secret_key_base:${cfg.secretKeyBaseFile}"
-            "github_token:${cfg.githubTokenFile}"
-          ]
+          lib.optional (cfg.secretKeyBaseFile != null) "secret_key_base:${cfg.secretKeyBaseFile}"
+          ++ lib.optional (cfg.githubTokenFile != null) "github_token:${cfg.githubTokenFile}"
           ++ lib.optional (cfg.anthropicApiKeyFile != null) "anthropic_api_key:${cfg.anthropicApiKeyFile}"
           ++ lib.optional (cfg.openaiApiKeyFile != null) "openai_api_key:${cfg.openaiApiKeyFile}"
           ++ lib.optional (cfg.geminiApiKeyFile != null) "gemini_api_key:${cfg.geminiApiKeyFile}"
