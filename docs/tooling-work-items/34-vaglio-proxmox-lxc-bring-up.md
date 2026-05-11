@@ -1,6 +1,6 @@
 # 34 Vaglio Proxmox LXC Bring-Up
 
-Status: `ready`
+Status: `done`
 Suggested branch: `feat/vaglio-proxmox-lxc-bring-up`
 Priority: `high`
 

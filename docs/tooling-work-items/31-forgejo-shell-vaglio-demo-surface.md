@@ -12,7 +12,7 @@ Expose a working `forgejo-shell` demo surface at
 ## Why
 
 - The user was told to expect a visible Forgejo-shell surface soon, but the
-  repo currently has no Forgejo or Forgejo-shell deployment wiring.
+  route is not yet deployed on the active Vaglio host.
 - A concrete route and service boundary are needed before higher-level demo
   analysis work can be shown to other people.
 - This should be a visible, inspectable deployment step, not just internal
@@ -48,3 +48,11 @@ Expose a working `forgejo-shell` demo surface at
 Keep this item narrowly about getting a visible service path up. If deep app
 design questions appear, leave those to follow-up items instead of ballooning
 this PR.
+
+Dependency note:
+
+- PR #143 restores the repo-side prerequisites and the upstream app revision
+  that contains `/forgejo-shell`, but it does not by itself deploy a working
+  surface on the live host.
+- Treat item 30 and item 35 as prerequisites for actually making the demo path
+  visible and stable.
