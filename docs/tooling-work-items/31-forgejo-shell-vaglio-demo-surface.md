@@ -11,8 +11,8 @@ Expose a working `forgejo-shell` demo surface at
 
 ## Why
 
-- The user was told to expect a visible Forgejo-shell surface soon, but the
-  route is not yet deployed on the active Vaglio host.
+- The user was told to expect a visible Forgejo-shell surface soon, and this
+  item tracks making that surface real on the active Vaglio host.
 - A concrete route and service boundary are needed before higher-level demo
   analysis work can be shown to other people.
 - This should be a visible, inspectable deployment step, not just internal
@@ -43,6 +43,17 @@ Expose a working `forgejo-shell` demo surface at
 - a human can tell from the repo where the service starts, how it is routed,
   and what runtime secrets or packages it needs
 
+## Outcome
+
+Completed on May 13, 2026.
+
+- `https://roundtable.deepwatercreature.com/forgejo-shell` now returns
+  `HTTP/2 200` publicly through the router Caddy proxy.
+- The live route is backed by the Roundtable app on `vaglio`, including the
+  `ForgejoShellLive` route in the upstream `agent-roundtable` repo.
+- The public surface is live even though the inventory-backed Roundtable
+  reattachment in this repo remains a separate follow-up.
+
 ## Notes
 
 Keep this item narrowly about getting a visible service path up. If deep app
@@ -58,3 +69,7 @@ Dependency note:
   `http://127.0.0.1:4000/forgejo-shell` returns `200`.
 - Follow-up demo work should build on this working route rather than treating
   the surface itself as still blocked.
+- Item 35 provided the standalone-service hardening needed to keep the live
+  Vaglio deployment stable.
+- Item 30 remains the follow-up for restoring the inventory-backed Roundtable
+  host path in this repo.
