@@ -37,6 +37,7 @@ let
     "podman"
     "router"
     "router-backup"
+    "vaglio"
     "workstation"
   ];
 
@@ -75,6 +76,7 @@ let
     "podman"
     "router"
     "router-backup"
+    "vaglio"
     "pve-lattitude"
     "pve-rog"
     "pve-strix"
@@ -94,9 +96,6 @@ let
 
   githubTokenHosts = atticClientHosts;
   githubTokenSecrets = operatorUsers ++ builtins.concatLists (map machineRecipients githubTokenHosts);
-  roundtableHosts = [ "homeserver" ];
-  roundtableSecrets = operatorUsers ++ builtins.concatLists (map machineRecipients roundtableHosts);
-
   roundtableHosts = [ "homeserver" "vaglio" ];
   roundtableSecrets = operatorUsers ++ builtins.concatLists (map machineRecipients roundtableHosts);
 
