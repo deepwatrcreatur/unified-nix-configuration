@@ -26,15 +26,18 @@ wrappers, shell defaults, and related repo operations.
 
 ## Current Ranked Queue
 
-1. [30 Vaglio Roundtable Reactivation](./30-vaglio-roundtable-reactivation.md) — `in-progress`
-2. [35 Agent-Roundtable Standalone Service Fix](./35-agent-roundtable-standalone-service-fix.md) — `ready`
-3. [31 Forgejo-Shell Demo Surface On Vaglio](./31-forgejo-shell-vaglio-demo-surface.md) — `ready`
-4. [32 Public Repo Stress Analysis Demo](./32-public-repo-stress-analysis-demo.md) — `ready`
-5. [33 JJ-Backed Forgejo Spike](./33-jj-backed-forgejo-spike.md) — `ready`
+1. [30 Vaglio Roundtable Reactivation](./30-vaglio-roundtable-reactivation.md) — `ready`
+2. [31 Forgejo-Shell Demo Surface On Vaglio](./31-forgejo-shell-vaglio-demo-surface.md) — `ready`
+3. [32 Public Repo Stress Analysis Demo](./32-public-repo-stress-analysis-demo.md) — `ready`
+4. [33 JJ-Backed Forgejo Spike](./33-jj-backed-forgejo-spike.md) — `ready`
+5. [29 Shared Agent Guide Source of Truth](./29-shared-agent-guide-source-of-truth.md) — `in-progress`
 
 ## Recently Completed
 
-1. [34 Vaglio Proxmox LXC Bring-Up](./34-vaglio-proxmox-lxc-bring-up.md) — `done`
-2. [24 SSH Commit Signing — Core Modules](./24-ssh-commit-signing-modules.md) — `done`
-3. [25 SSH Commit Signing — Host Wiring](./25-ssh-signing-host-wiring.md) — `done`
-4. [26 Remove GPG Modules](./26-remove-gpg-modules.md) — `done`
+1. [35 Agent-Roundtable Standalone Service Fix](./35-agent-roundtable-standalone-service-fix.md) — `done`
+2. [34 Vaglio Proxmox LXC Bring-Up](./34-vaglio-proxmox-lxc-bring-up.md) — `done`
+3. [36 Shared Nix Skill Bootstrap](./36-shared-nix-skill-bootstrap.md) — `done`
+4. [37 Unified Local Ops Skills Bootstrap](./37-unified-local-ops-skills-bootstrap.md) — `done`
+5. [24 SSH Commit Signing — Core Modules](./24-ssh-commit-signing-modules.md) — `done`
+6. [25 SSH Commit Signing — Host Wiring](./25-ssh-signing-host-wiring.md) — `done`
+7. [26 Remove GPG Modules](./26-remove-gpg-modules.md) — `done`

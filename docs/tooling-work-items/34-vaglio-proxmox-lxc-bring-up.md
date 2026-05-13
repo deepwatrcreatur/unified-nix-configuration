@@ -147,7 +147,7 @@ This item exists because the repo currently has a host definition without a
 corresponding live Proxmox guest. Fixing that mismatch is the cleanest next
 move and requires little design discussion.
 
-Execution notes from May 10, 2026:
+Execution notes from May 10-13, 2026:
 
 - `vaglio` was created on `pve-tomahawk` as CT `104`
 - the guest obtained the expected DHCP address `10.10.11.71`
@@ -158,10 +158,11 @@ Execution notes from May 10, 2026:
   - the generated start script assumes `CREDENTIALS_DIRECTORY` exists under `set -u`
   - the packaged `roundtable-web` path runs Mix from a read-only `/nix/store`
     source tree and fails during Hex dependency setup with `{:error, :erofs}`
-- a runtime-only systemd override on `vaglio` now points `roundtable.service`
-  at the writable checkout in `/root/flakes/agent-roundtable/roundtable`
-- with that runtime override, `roundtable.service` is active and `HEAD /`
-  returns `200 OK` on port `4000`
-- that override lives under `/run/systemd/system/roundtable.service.d/` and is
-  therefore not persistent across reboot; the proper fix belongs in the
-  `agent-roundtable` repo
+- the standalone `agent-roundtable` service bugs were fixed upstream:
+  - optional `CREDENTIALS_DIRECTORY` handling under `set -u`
+  - writable runtime project copy instead of Mix writes into `/nix/store`
+  - public `PHX_HOST` alignment for `roundtable.deepwatercreature.com`
+- `roundtable.service` is now active on `vaglio` without any runtime override
+- `HEAD /` returns `200 OK` on port `4000`
+- `https://roundtable.deepwatercreature.com` returns `HTTP/2 200` through the
+  router Caddy proxy
