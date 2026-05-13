@@ -184,6 +184,7 @@
       "nix-daemon-user-ssh"
       "home-manager-users"
       "homeserver-networking"
+      "vaglio-legacy-dhcp-transition"
       "homeserver-roundtable"
     ];
   };

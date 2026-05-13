@@ -64,5 +64,9 @@ Current progress as of May 10, 2026:
 - With that branch checked out, both of these evals succeed:
   - `nix eval .#nixosConfigurations.vaglio.config.services.roundtable.enable`
   - `nix eval .#nixosConfigurations.homeserver.config.services.roundtable.enable`
-- The remaining work is merge and deployment onto a clean Vaglio branch, not
-  rediscovery of the missing prerequisites.
+- PR #143 later merged those repo-side prerequisites.
+- PR #147 later fixed the `agent-roundtable` flake input on `main`, and
+  `agent-roundtable` PR #85 fixed the standalone runtime issues upstream.
+- The remaining blocker is now item 36:
+  `vaglio` still hangs during live `26.05` -> repo `25.11` activation, even
+  after preserving the legacy DHCP stack for the landing attempt.

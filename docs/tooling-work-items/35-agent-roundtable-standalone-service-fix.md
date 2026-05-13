@@ -1,6 +1,6 @@
 # 35 Agent-Roundtable Standalone Service Fix
 
-Status: `ready`
+Status: `done`
 Suggested branch: `fix/agent-roundtable-standalone-service`
 Priority: `high`
 
@@ -48,9 +48,12 @@ systemd overrides.
 
 ## Notes
 
-On May 10, 2026, `vaglio` was made live with a runtime-only override that:
-- cleared the `CREDENTIALS_DIRECTORY` assumption
-- replaced `ExecStart` with a writable-checkout Mix launch
+Completed on May 13, 2026 via `agent-roundtable` PR #85.
 
-That proved the host and app can run, but the proper fix belongs upstream in
-`/home/deepwatrcreatur/flakes/agent-roundtable`.
+That upstream fix:
+- made the start path tolerate a missing `CREDENTIALS_DIRECTORY`
+- moved the Mix runtime into writable XDG state instead of the read-only store
+
+The standalone service bug is no longer the blocker for `vaglio`. The
+remaining blocker is landing the host cleanly onto the repo's current `25.11`
+baseline without hanging during activation.
