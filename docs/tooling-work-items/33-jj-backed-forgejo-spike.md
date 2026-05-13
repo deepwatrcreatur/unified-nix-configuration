@@ -23,7 +23,7 @@ Forgejo-shell-based analysis environment.
 ## Scope
 
 1. Audit the minimal integration points between Forgejo semantics and JJ
-   semantics that matter for this repo’s intended demo.
+   semantics that matter for this repo's intended demo.
 2. Identify whether a true Forgejo fork is required for the first demo.
 3. Produce a recommendation with one implementation path that is small enough
    for a follow-up PR-sized item.
