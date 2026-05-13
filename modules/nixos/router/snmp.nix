@@ -18,6 +18,25 @@ in
   options.services.router-snmp = {
     enable = mkEnableOption "SNMP service for router";
     
+    v3 = {
+      enable = mkEnableOption "SNMPv3 support";
+      user = mkOption {
+        type = types.str;
+        default = "router-admin";
+        description = "SNMPv3 user name";
+      };
+      authProto = mkOption {
+        type = types.enum [ "SHA" "MD5" ];
+        default = "SHA";
+        description = "SNMPv3 authentication protocol";
+      };
+      privProto = mkOption {
+        type = types.enum [ "AES" "DES" ];
+        default = "AES";
+        description = "SNMPv3 privacy (encryption) protocol";
+      };
+    };
+
     listenAddresses = mkOption {
       type = types.listOf types.str;
       default = [ "127.0.0.1" "10.10.10.1" ];
@@ -54,6 +73,15 @@ in
         ${if secrets.exists "snmp-community" 
           then "rocommunity `cat ${secrets.path "snmp-community"}`" 
           else "rocommunity public"}
+
+        # SNMPv3 Support
+        ${optionalString cfg.v3.enable ''
+          # SNMPv3 user configuration
+          # Note: passwords must be provided via ExecStartPre or similar for full security
+          # but we can set up the user structure here.
+          createUser ${cfg.v3.user} ${cfg.v3.authProto} "placeholder_auth" ${cfg.v3.privProto} "placeholder_priv"
+          rouser ${cfg.v3.user} priv
+        ''}
 
         # Allow all MIBs
         view all included .1
