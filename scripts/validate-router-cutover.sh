@@ -15,9 +15,10 @@ declare -A CRITICAL_HOSTS=(
   ["authentik-host"]="10.10.11.70"
   ["inference1"]="10.10.11.131"
   ["homeserver"]="10.10.11.69"
-  ["ap-ruqayya"]="10.10.11.20"
-  ["ap-nosheen-living"]="10.10.11.21"
-  ["ap-nosheen-bedroom"]="10.10.11.22"
+  ["sw-main"]="10.10.18.10"
+  ["ap-ruqayya"]="10.10.18.20"
+  ["ap-nosheen-living"]="10.10.18.21"
+  ["ap-nosheen-bedroom"]="10.10.18.22"
 )
 
 echo "=== Router Post-Cutover Validation ==="

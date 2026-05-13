@@ -21,6 +21,8 @@
 let
   optSec = import ../../../lib/optional-secrets.nix { inherit lib; };
   getAttrByPath = lib.attrsets.attrByPath;
+  isBackupRouter = config.networking.hostName == "router-backup";
+  activeOwner = config.router.failover.activeOwner;
   lanListenAddress = builtins.head (lib.splitString "/" lanIpv4Address);
   managementListenAddress = builtins.head (lib.splitString "/" managementIpv4Address);
   managementDevice = "ens18";
@@ -59,6 +61,7 @@ in
 {
   imports = [
     ../../../modules/nixos/router/common.nix
+    ../../../modules/nixos/router/snmp.nix
     ../../../modules/nixos/services/iventoy.nix
   ];
 
@@ -141,7 +144,9 @@ in
     keaSync.enable = true;
     keaSync.peerAddress = if config.networking.hostName == "router" then "10.10.11.213" else "10.10.11.1"; # Using management IPs for control plane sync
     wan = {
-      enable = true;
+      # Keepalived-driven WAN takeover regressed the live router path. Keep the
+      # LAN VIP, but let systemd-networkd own WAN DHCP lifecycle directly.
+      enable = false;
       interface = wanDevice;
       clonedMac = "02:76:c6:01:2a:b0";
     };
@@ -150,17 +155,18 @@ in
   services.router-kea = {
     enable = true;
     dhcp4 = {
+      interfaces = [ lanDevice ];
       subnet = lanNetwork.cidr;
       gatewayAddress = "10.10.10.1"; # Use the VIP
       dnsServers = [ "10.10.10.1" ];
       poolRanges = [
         {
-          start = "10.10.10.100";
-          end = "10.10.10.250";
+          start = "10.10.200.0";
+          end = "10.10.222.0";
         }
       ];
       ha = {
-        enable = true;
+        enable = false;
         thisServerName = config.networking.hostName;
         role = if config.networking.hostName == "router" then "primary" else "secondary";
         peerAddress = if config.networking.hostName == "router" then "10.10.11.213" else "10.10.11.1";
@@ -182,9 +188,20 @@ in
     };
   };
 
+  services.router-upnp = {
+    # UPnP/NAT-PMP should not be advertised from the standby router until it is
+    # explicitly promoted to own production router identity.
+    enable = activeOwner;
+    internalIPs = [ lanDevice ];
+  };
+
   services.router-networking = {
     enable = true;
     wan.device = wanDevice;
+    # Standby routers should keep the WAN NIC electrically absent or unmanaged
+    # until explicit promotion. Otherwise reattaching the passthrough NIC would
+    # let networkd immediately DHCP the upstream link.
+    wan.manageWithNetworkd = activeOwner;
     routedInterfaces =
       {
         lan = {
@@ -276,7 +293,7 @@ in
 
   services.router-optimizations = {
     enable = true;
-    package = inputs.nix-router-optimized.packages.${pkgs.system}.router-diag;
+    package = inputs.nix-router-optimized.packages.${pkgs.stdenv.hostPlatform.system}.router-diag;
     interfaces = {
       wan = {
         device = wanDevice;
@@ -309,6 +326,24 @@ in
   };
 
   services.router-technitium = {
+    scopes = {
+      LAN = {
+        legacyNames = [ "Default" ];
+        # Kea is the authoritative DHCP server; keep Technitium's scope as
+        # synchronized metadata and reservations, but do not let Technitium
+        # bind DHCP port 67 itself.
+        enabled = false;
+        startingAddress = "10.10.200.0";
+        endingAddress = "10.10.222.0";
+        subnetMask = "255.255.0.0";
+        domainName = topology.domain;
+        domainSearchList = [ topology.domain ];
+        dnsUpdates = true;
+        routerAddress = "10.10.10.1";
+        useThisDnsServer = true;
+        ntpServers = [ "10.10.10.1" ];
+      };
+    };
     dhcpReservations = lib.mapAttrs (name: host: {
       scope = host.dhcpReservation.scope or "LAN";
       macAddress = host.dhcpReservation.macAddress;
@@ -334,6 +369,8 @@ in
 
   services.router-observability.enable = true;
 
+  services.router-snmp.enable = true;
+
   services.router-homelab.sshTarget = sshTarget;
   services.router-homelab.listenAddress = "0.0.0.0";
 
@@ -343,28 +380,34 @@ in
       inherit (iface) device label;
       role = if iface.role == "management" then "mgmt" else iface.role;
     }) (lib.attrValues config.services.router-optimizations.interfaces);
-    services = [
-      "systemd-networkd"
-      "sshd"
-      "nftables"
-      "caddy"
-      "technitium-dns-server"
-      "kea-dhcp4-server"
-      "kea-dhcp-ddns-server"
-      "miniupnpd"
-      "tailscaled"
-      "fail2ban"
-      "prometheus"
-      "grafana"
-      "netdata"
-      "router-dashboard"
-      "health-mgmt-ip"
-      "health-lan-ip"
-      "health-wan-carrier"
-      "health-wan-ip"
-      "ulogd"
-      "vector"
-    ];
+    services =
+      [
+        "systemd-networkd"
+        "sshd"
+        "nftables"
+        "caddy"
+        "technitium-dns-server"
+        "kea-dhcp4-server"
+        "kea-dhcp-ddns-server"
+        "snmpd"
+      ]
+      ++ lib.optionals config.services.router-upnp.enable [
+        "miniupnpd"
+      ]
+      ++ [
+        "tailscaled"
+        "fail2ban"
+        "prometheus"
+        "grafana"
+        "netdata"
+        "router-dashboard"
+        "health-mgmt-ip"
+        "health-lan-ip"
+        "health-wan-carrier"
+        "health-wan-ip"
+        "ulogd"
+        "vector"
+      ];
     links = lib.mkForce [
       {
         label = "Dashboard";
@@ -498,6 +541,36 @@ in
 
   services.qemuGuest.enable = true;
   services.fstrim.enable = true;
+  systemd.services.kea-dhcp4-server = lib.mkIf isBackupRouter {
+    # Keep management-only standby honest: if the backup LAN is unplugged, Kea
+    # should be stopped rather than lingering with no open sockets.
+    serviceConfig.ExecCondition =
+      "${pkgs.bash}/bin/bash -euc 'test \"$(cat /sys/class/net/${lanDevice}/carrier 2>/dev/null || echo 0)\" = 1'";
+  };
+  systemd.services.router-backup-kea-carrier-sync = lib.mkIf isBackupRouter {
+    description = "Start or stop Kea on router-backup based on LAN carrier";
+    after = [ "systemd-networkd.service" ];
+    wants = [ "systemd-networkd.service" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig.Type = "oneshot";
+    script = ''
+      set -euo pipefail
+      carrier="$(${pkgs.coreutils}/bin/cat /sys/class/net/${lanDevice}/carrier 2>/dev/null || echo 0)"
+      if [ "$carrier" = 1 ]; then
+        ${pkgs.systemd}/bin/systemctl start kea-dhcp4-server.service
+      else
+        ${pkgs.systemd}/bin/systemctl stop kea-dhcp4-server.service
+      fi
+    '';
+  };
+  systemd.paths.router-backup-kea-carrier-sync = lib.mkIf isBackupRouter {
+    description = "Watch LAN carrier on router-backup and resync Kea state";
+    wantedBy = [ "multi-user.target" ];
+    pathConfig = {
+      PathChanged = "/sys/class/net/${lanDevice}/carrier";
+      Unit = "router-backup-kea-carrier-sync.service";
+    };
+  };
   # NixOS's qemuGuest module only wires qemu-ga to a udev-triggered virtio-port
   # event. On Proxmox VMs that can leave the agent installed but never started,
   # so Proxmox reports the guest agent as missing after boot. Start it
