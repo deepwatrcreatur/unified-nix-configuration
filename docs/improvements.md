@@ -37,7 +37,7 @@ The `inventory-consistency` check now surfaces these as a non-fatal notice.
 
 - Run `nix build .#checks.x86_64-linux.inventory-consistency` after every
   structural change.
-- Commit without GPG signing: `git commit --no-gpg-sign`.
+- Commit with the normal SSH-signing flow: `git commit -m "..."`
 - Keep changes build-tested.  Prefer narrow commits by concern.
 - Do not modify staged `authentik-host` files unless continuing that thread.
 - Do not rekey secrets casually — recipients must be correct before rekeying.
