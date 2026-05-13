@@ -57,3 +57,12 @@ Latest findings from the live transition attempt on May 13, 2026:
   `dbus-broker`, `roundtable`, `nscd`, and name lookup targets are stopped.
 - So the immediate network-drop problem is mitigated, but the core blocker is
   still the live `26.05` -> repo `25.11` activation transition itself.
+- The live guest's `systemd-logind` is also unhealthy before the switch:
+  SSH sessions log `pam_systemd` / `CreateSession` failures and
+  `systemd-logind` reports `Failed to start session scope ... Transport endpoint
+  is not connected`.
+- Restarting `systemd-logind` over the Proxmox control path does clear and
+  rehydrate its session state, but a fresh `switch-to-configuration test`
+  still hangs in the same place afterward.
+- That makes `logind` corruption a strong symptom worth tracking, but not a
+  complete explanation by itself.
