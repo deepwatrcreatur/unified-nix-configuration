@@ -59,9 +59,13 @@ in
   config = mkIf cfg.enable {
     age.secrets = secrets.definitions;
 
-    services.snmpd = {
-      enable = true;
-      extraConfig = ''
+    systemd.services.snmpd = {
+      description = "Simple Network Management Protocol (SNMP) daemon";
+      after = [ "network.target" ];
+      wantedBy = [ "multi-user.target" ];
+      preStart = ''
+        umask 077
+        cat > /run/snmpd/snmpd.conf <<'EOF'
         # Listen on specified addresses
         ${concatMapStringsSep "\n" (addr: "agentAddress udp:${addr}:161") cfg.listenAddresses}
 
@@ -69,16 +73,9 @@ in
         sysLocation ${cfg.location}
         sysContact ${cfg.contact}
 
-        # Read-only community from secret (if exists) or default to 'public'
-        ${if secrets.exists "snmp-community" 
-          then "rocommunity `cat ${secrets.path "snmp-community"}`" 
-          else "rocommunity public"}
-
-        # SNMPv3 Support
         ${optionalString cfg.v3.enable ''
-          # SNMPv3 user configuration
-          # Note: passwords must be provided via ExecStartPre or similar for full security
-          # but we can set up the user structure here.
+          # SNMPv3 user configuration.
+          # Password material must be provisioned separately before enabling.
           createUser ${cfg.v3.user} ${cfg.v3.authProto} "placeholder_auth" ${cfg.v3.privProto} "placeholder_priv"
           rouser ${cfg.v3.user} priv
         ''}
@@ -86,7 +83,19 @@ in
         # Allow all MIBs
         view all included .1
         access notConfigGroup "" any noauth exact all none none
+        EOF
+
+        if [ -r "${secrets.path "snmp-community"}" ]; then
+          printf 'rocommunity %s\n' "$(cat "${secrets.path "snmp-community"}")" >> /run/snmpd/snmpd.conf
+        else
+          echo 'rocommunity public' >> /run/snmpd/snmpd.conf
+        fi
       '';
+      serviceConfig = {
+        RuntimeDirectory = "snmpd";
+        ExecStart = "${lib.getExe' pkgs.net-snmp "snmpd"} -f -Lo -c /run/snmpd/snmpd.conf";
+        Restart = "on-failure";
+      };
     };
 
     # Open firewall port
