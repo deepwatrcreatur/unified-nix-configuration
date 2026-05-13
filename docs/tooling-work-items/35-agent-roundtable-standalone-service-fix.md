@@ -1,6 +1,6 @@
 # 35 Agent-Roundtable Standalone Service Fix
 
-Status: `ready`
+Status: `done`
 Suggested branch: `fix/agent-roundtable-standalone-service`
 Priority: `high`
 
@@ -46,11 +46,28 @@ systemd overrides.
 - `systemctl status roundtable` is `active (running)`
 - `curl -I http://127.0.0.1:4000` returns `200 OK`
 
+## Outcome
+
+Completed on May 13, 2026.
+
+- `agent-roundtable` now treats `CREDENTIALS_DIRECTORY` as optional in the
+  service startup path.
+- The standalone wrapper now copies the Roundtable project into writable
+  runtime state before running Mix, so Hex/deps/build writes stay out of
+  `/nix/store`.
+- The `vaglio` standalone profile now sets
+  `PHX_HOST=roundtable.deepwatercreature.com`, which fixes public LiveView
+  websocket origin handling.
+- `roundtable.service` is active on `vaglio` without a runtime-only override,
+  and the public route is live through the router.
+- The remaining Proxmox LXC `sys-kernel-debug.mount` switch noise is separate
+  from the Roundtable service result.
+
 ## Notes
 
 On May 10, 2026, `vaglio` was made live with a runtime-only override that:
 - cleared the `CREDENTIALS_DIRECTORY` assumption
 - replaced `ExecStart` with a writable-checkout Mix launch
 
-That proved the host and app can run, but the proper fix belongs upstream in
+That proved the host and app can run, and the upstream fix now lives in
 `/home/deepwatrcreatur/flakes/agent-roundtable`.

@@ -7,7 +7,7 @@ Priority: `high`
 ## Goal
 
 Build a working demo that imports a small set of large public repositories and
-computes branch/history stress views using the project’s information-theoretic
+computes branch/history stress views using the project's information-theoretic
 and active-inference framing.
 
 ## Why

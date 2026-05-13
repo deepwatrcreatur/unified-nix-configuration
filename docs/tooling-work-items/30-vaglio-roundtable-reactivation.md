@@ -55,7 +55,7 @@ Restore the Roundtable service as an active host feature on `vaglio`, so the
 This item exists because deployment reality needs to be restored before the
 demo-oriented Forgejo-shell work can be made credible.
 
-Current progress as of May 10, 2026:
+Current progress as of May 13, 2026:
 
 - PR #143 (`fix/vaglio-forgejo-shell`) restores the missing
   `roundtable-secret-key-base.age`, adds
@@ -64,5 +64,7 @@ Current progress as of May 10, 2026:
 - With that branch checked out, both of these evals succeed:
   - `nix eval .#nixosConfigurations.vaglio.config.services.roundtable.enable`
   - `nix eval .#nixosConfigurations.homeserver.config.services.roundtable.enable`
-- The remaining work is merge and deployment onto a clean Vaglio branch, not
-  rediscovery of the missing prerequisites.
+- The live `vaglio` host now serves Roundtable and the public
+  `/forgejo-shell` route from the standalone `agent-roundtable` deployment.
+- The remaining work in this repo is to finish the inventory-backed
+  reattachment path cleanly, not to rediscover the live host prerequisites.
