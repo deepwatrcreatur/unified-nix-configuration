@@ -15,6 +15,7 @@ with mode `0400` and owner `root:root`.
 | podman | `agenix machine identity - podman` | `/var/lib/agenix/machine-identity` | `ssh-keys/agenix-machine-identities/podman.pub` | `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHCr6V3GOWCDJUKxnVAj+AZTUgGG7Vd51j/AQiMJ7SX1 agenix-machine-identity podman` |
 | router | `agenix machine identity - router` | `/var/lib/agenix/machine-identity` | `ssh-keys/agenix-machine-identities/router.pub` | `pending` |
 | rustdesk | `agenix machine identity - rustdesk` | `/var/lib/agenix/machine-identity` | `ssh-keys/agenix-machine-identities/rustdesk.pub` | `pending` |
+| vaglio | `agenix machine identity - vaglio` | `/var/lib/agenix/machine-identity` | `ssh-keys/agenix-machine-identities/vaglio.pub` | `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHzz2fYw8dj674kcbczx1of4Ohot1rS6SkjGaENb7eMw root@vaglio` |
 | workstation | `agenix machine identity - workstation` | `/var/lib/agenix/machine-identity` | `ssh-keys/agenix-machine-identities/workstation.pub` | `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC22EvqG/w5v3w4TRwz4KajVwU5b19VXQJKbLKSQVlTy agenix-machine-identity workstation` |
 
 Suggested generation command per machine:

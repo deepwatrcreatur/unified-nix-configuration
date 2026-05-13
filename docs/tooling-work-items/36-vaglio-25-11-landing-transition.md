@@ -66,3 +66,24 @@ Latest findings from the live transition attempt on May 13, 2026:
   still hangs in the same place afterward.
 - That makes `logind` corruption a strong symptom worth tracking, but not a
   complete explanation by itself.
+
+Latest findings from the corrected machine-identity attempt on May 13, 2026:
+
+- The committed `ssh-keys/agenix-machine-identities/vaglio.pub` was wrong and
+  did not match the live host's key.
+- Rekeying the affected `vaglio` secrets against the live machine identity
+  removes the previous `agenix` decryption failure for:
+  `roundtable-secret-key-base`, `openai-api-key`, `gemini-api-key`,
+  `anthropic-api-key`, `deepseek-api-key`, `github-token`, `nix-ci-netrc`,
+  `attic-client-token`, and `root-ssh-key`.
+- After that correction, the activation no longer fails in `agenix`; it
+  progresses to the later stop/handoff phase and still wedges there.
+- The remaining failure now looks narrower:
+  after stopping `dbus-broker`, `network-setup`, `resolvconf`, and
+  `roundtable`, the host falls into an old live-system handoff path and a
+  transient `nixos-rebuild-switch-to-configuration` unit exits with status
+  `11`.
+- Two legacy bootstrap password secrets
+  (`user-password-root.age` and `user-password-deepwatrcreatur.age`) still
+  cannot be rekeyed from the currently available workstation identities, but
+  they were not part of the observed live Vaglio decrypt failure.
