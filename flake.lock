@@ -31,16 +31,14 @@
         ]
       },
       "locked": {
-        "dir": "roundtable",
-        "lastModified": 1778668364,
-        "narHash": "sha256-dsu3EwjsTlf9MvuvixN8c/+xpMUdT524/iytf7hP4AQ=",
+        "lastModified": 1778686902,
+        "narHash": "sha256-w9KKP+0llMsZyEQqVI/OPXoZv+9LQlejvHYF6mUhiHQ=",
         "owner": "deepwatrcreatur",
         "repo": "agent-roundtable",
-        "rev": "4b4742bb5cc631757fdd43da1c5bd0cb106f5fb8",
+        "rev": "f62f417fecb7edb61990c6687df7f4c2b68f09d5",
         "type": "github"
       },
       "original": {
-        "dir": "roundtable",
         "owner": "deepwatrcreatur",
         "repo": "agent-roundtable",
         "type": "github"
