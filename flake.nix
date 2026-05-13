@@ -170,7 +170,7 @@
     };
 
     agent-roundtable = {
-      url = "github:deepwatrcreatur/agent-roundtable?dir=roundtable";
+      url = "github:deepwatrcreatur/agent-roundtable";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
