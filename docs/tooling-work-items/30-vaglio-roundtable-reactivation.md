@@ -1,6 +1,6 @@
 # 30 Vaglio Roundtable Reactivation
 
-Status: `in-progress`
+Status: `done`
 Suggested branch: `feat/vaglio-roundtable-reactivation`
 Priority: `high`
 
@@ -64,5 +64,8 @@ Current progress as of May 10, 2026:
 - With that branch checked out, both of these evals succeed:
   - `nix eval .#nixosConfigurations.vaglio.config.services.roundtable.enable`
   - `nix eval .#nixosConfigurations.homeserver.config.services.roundtable.enable`
-- The remaining work is merge and deployment onto a clean Vaglio branch, not
-  rediscovery of the missing prerequisites.
+- Item 36 is now complete as well: `vaglio` landed successfully onto the repo
+  `25.11` baseline without losing reachability.
+- `roundtable.service` is active on the live host again, and
+  `roundtable.deepwatercreature.com` is backed by an active repo-managed host
+  path.

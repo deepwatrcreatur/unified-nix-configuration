@@ -178,8 +178,13 @@
     mode = "aspect";
     aspectsList = [
       "nixos-base"
-      "vm-core"
+      "lxc-core"
+      "attic-client"
       "github-token-client"
+      "nix-daemon-user-ssh"
+      "home-manager-users"
+      "homeserver-networking"
+      "vaglio-legacy-dhcp-transition"
       "homeserver-roundtable"
     ];
   };
