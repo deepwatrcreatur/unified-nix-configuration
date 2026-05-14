@@ -69,21 +69,33 @@ Latest findings from the live transition attempt on May 13, 2026:
 
 Latest findings from the corrected machine-identity attempt on May 13, 2026:
 
-- The committed `ssh-keys/agenix-machine-identities/vaglio.pub` was wrong and
-  did not match the live host's key.
-- Rekeying the affected `vaglio` secrets against the live machine identity
-  removes the previous `agenix` decryption failure for:
-  `roundtable-secret-key-base`, `openai-api-key`, `gemini-api-key`,
-  `anthropic-api-key`, `deepseek-api-key`, `github-token`, `nix-ci-netrc`,
-  `attic-client-token`, and `root-ssh-key`.
-- After that correction, the activation no longer fails in `agenix`; it
-  progresses to the later stop/handoff phase and still wedges there.
+- The dedicated agenix key at `/var/lib/agenix/machine-identity` is the real
+  live recipient on `vaglio`, and it matches the original committed
+  `ssh-keys/agenix-machine-identities/vaglio.pub`.
+- A temporary rekey to the SSH host key was wrong and had to be reverted.
+- After rekeying the affected `vaglio` secrets back to the real machine
+  identity, activation again decrypts the expected Roundtable/cache/API
+  secrets successfully.
 - The remaining failure now looks narrower:
-  after stopping `dbus-broker`, `network-setup`, `resolvconf`, and
-  `roundtable`, the host falls into an old live-system handoff path and a
-  transient `nixos-rebuild-switch-to-configuration` unit exits with status
-  `11`.
+  `switch-to-configuration-ng` still wants to stop `dbus-broker.service` during
+  the landing transition, and the host wedges after that D-Bus teardown.
 - Two legacy bootstrap password secrets
   (`user-password-root.age` and `user-password-deepwatrcreatur.age`) still
   cannot be rekeyed from the currently available workstation identities, but
   they were not part of the observed live Vaglio decrypt failure.
+
+Latest findings from the landing-only stop mitigation attempt on May 14, 2026:
+
+- A Vaglio-only transition aspect now forces `restartIfChanged = false` /
+  `stopIfChanged = false` for the fragile landing-path services:
+  `roundtable`, `nscd`, `network-setup`, `resolvconf`, and selected D-Bus
+  aliases / oneshots.
+- `dry-activate` is the safest inspection path here. With those overrides in
+  place, the planned stop set shrank to:
+  `dbus-broker.service`, `logrotate-checkconf.service`,
+  `systemd-tmpfiles-resetup.service`.
+- The remaining live blocker is therefore even narrower than before:
+  prevent `dbus-broker.service` from entering the stop set during the 26.05 ->
+  25.11 landing handoff, or treat this as a `switch-to-configuration-ng`
+  unit-handling bug if the service continues to be selected despite
+  `X-StopIfChanged=false`.

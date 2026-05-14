@@ -17,6 +17,40 @@
     persistent = lib.mkForce true;
   };
 
+  # The 26.05 -> 25.11 landing path currently wedges if switch-to-configuration
+  # tries to stop the live D-Bus / networking / roundtable stack and then wait
+  # for completion over the same bus connection. Keep these units in place for
+  # the landing deploy, then remove these overrides once Vaglio is on the
+  # stable 25.11 baseline and can be migrated cleanly.
+  systemd.services.dbus-broker = {
+    reloadIfChanged = lib.mkForce true;
+    restartIfChanged = lib.mkForce false;
+    stopIfChanged = lib.mkForce false;
+  };
+  systemd.services.dbus = {
+    reloadIfChanged = lib.mkForce true;
+    restartIfChanged = lib.mkForce false;
+    stopIfChanged = lib.mkForce false;
+  };
+  systemd.services.logrotate-checkconf = {
+    restartIfChanged = lib.mkForce false;
+    stopIfChanged = lib.mkForce false;
+  };
+  systemd.services.network-setup.stopIfChanged = lib.mkForce false;
+  systemd.services.resolvconf.stopIfChanged = lib.mkForce false;
+  systemd.services.nscd = {
+    restartIfChanged = lib.mkForce false;
+    stopIfChanged = lib.mkForce false;
+  };
+  systemd.services.roundtable = {
+    restartIfChanged = lib.mkForce false;
+    stopIfChanged = lib.mkForce false;
+  };
+  systemd.services.systemd-tmpfiles-resetup = {
+    restartIfChanged = lib.mkForce false;
+    stopIfChanged = lib.mkForce false;
+  };
+
   systemd.network.enable = lib.mkForce false;
   services.resolved.enable = lib.mkForce false;
 }
