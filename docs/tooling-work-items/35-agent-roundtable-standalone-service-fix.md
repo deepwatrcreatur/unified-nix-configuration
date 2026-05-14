@@ -1,6 +1,6 @@
 # 35 Agent-Roundtable Standalone Service Fix
 
-Status: `ready`
+Status: `done`
 Suggested branch: `fix/agent-roundtable-standalone-service`
 Priority: `high`
 
@@ -54,3 +54,14 @@ On May 10, 2026, `vaglio` was made live with a runtime-only override that:
 
 That proved the host and app can run, but the proper fix belongs upstream in
 `/home/deepwatrcreatur/flakes/agent-roundtable`.
+
+Validation notes from May 13, 2026:
+
+- The standalone service was rebuilt on `vaglio` from the local
+  `agent-roundtable` checkout.
+- `roundtable.service` is `active (running)` without
+  `/run/systemd/system/roundtable.service.d/local-dev-override.conf`.
+- `curl -I http://127.0.0.1:4000` returns `HTTP/1.1 200 OK`.
+- `nixos-rebuild switch --flake .#vaglio` reported an unrelated LXC mount
+  failure for `sys-kernel-debug.mount`, but the Roundtable service validation
+  itself succeeded.
