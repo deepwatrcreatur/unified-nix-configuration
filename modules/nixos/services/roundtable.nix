@@ -83,7 +83,8 @@ in
     systemd.services.roundtable = {
       description = "Roundtable discussion orchestrator";
       wantedBy = [ "multi-user.target" ];
-      after = [ "network.target" ];
+      after = [ "network-online.target" ];
+      wants = [ "network-online.target" ];
       path = with pkgs; [
         bash
         coreutils
@@ -103,17 +104,11 @@ in
             startScript = pkgs.writeShellScript "roundtable-start" ''
               set -eu
 
-              state_home="${stateHome}"
-              mix_home="$state_home/mix"
-              deps_path="$state_home/deps"
-              build_root="$state_home/build"
-              source_dir="$(${pkgs.gnused}/bin/sed -n 's|^cd ||p' ${cfg.package}/bin/roundtable-web)"
+              mkdir -p "${stateHome}/state"
+              credential_dir="''${CREDENTIALS_DIRECTORY:-}"
 
-              mkdir -p ${stateHome}
-              mkdir -p "$mix_home" "$deps_path" "$build_root"
-
-              if [ -f "$CREDENTIALS_DIRECTORY/secret_key_base" ]; then
-                export SECRET_KEY_BASE="$(cat "$CREDENTIALS_DIRECTORY/secret_key_base")"
+              if [ -n "$credential_dir" ] && [ -f "$credential_dir/secret_key_base" ]; then
+                export SECRET_KEY_BASE="$(cat "$credential_dir/secret_key_base")"
               elif [ -f "${stateHome}/secret_key_base" ]; then
                 export SECRET_KEY_BASE="$(cat "${stateHome}/secret_key_base")"
               else
@@ -122,39 +117,24 @@ in
                 export SECRET_KEY_BASE="$(cat "${stateHome}/secret_key_base")"
               fi
 
-              if [ -f "$CREDENTIALS_DIRECTORY/github_token" ]; then
-                export GH_TOKEN="$(cat "$CREDENTIALS_DIRECTORY/github_token")"
-              fi
-              
-              if [ -f "$CREDENTIALS_DIRECTORY/anthropic_api_key" ]; then
-                export ANTHROPIC_API_KEY="$(cat "$CREDENTIALS_DIRECTORY/anthropic_api_key")"
-              fi
-              if [ -f "$CREDENTIALS_DIRECTORY/openai_api_key" ]; then
-                export OPENAI_API_KEY="$(cat "$CREDENTIALS_DIRECTORY/openai_api_key")"
-              fi
-              if [ -f "$CREDENTIALS_DIRECTORY/gemini_api_key" ]; then
-                export GEMINI_API_KEY="$(cat "$CREDENTIALS_DIRECTORY/gemini_api_key")"
-              fi
-              if [ -f "$CREDENTIALS_DIRECTORY/deepseek_api_key" ]; then
-                export DEEPSEEK_API_KEY="$(cat "$CREDENTIALS_DIRECTORY/deepseek_api_key")"
+              if [ -n "$credential_dir" ] && [ -f "$credential_dir/github_token" ]; then
+                export GH_TOKEN="$(cat "$credential_dir/github_token")"
               fi
 
-              export HOME="$state_home"
-              export XDG_STATE_HOME="$state_home"
-              export MIX_HOME="$mix_home"
-              export HEX_HOME="$mix_home/hex"
-              export MIX_ARCHIVES="$mix_home/archives"
-              export MIX_DEPS_PATH="$deps_path"
-              export MIX_BUILD_ROOT="$build_root"
+              if [ -n "$credential_dir" ] && [ -f "$credential_dir/anthropic_api_key" ]; then
+                export ANTHROPIC_API_KEY="$(cat "$credential_dir/anthropic_api_key")"
+              fi
+              if [ -n "$credential_dir" ] && [ -f "$credential_dir/openai_api_key" ]; then
+                export OPENAI_API_KEY="$(cat "$credential_dir/openai_api_key")"
+              fi
+              if [ -n "$credential_dir" ] && [ -f "$credential_dir/gemini_api_key" ]; then
+                export GEMINI_API_KEY="$(cat "$credential_dir/gemini_api_key")"
+              fi
+              if [ -n "$credential_dir" ] && [ -f "$credential_dir/deepseek_api_key" ]; then
+                export DEEPSEEK_API_KEY="$(cat "$credential_dir/deepseek_api_key")"
+              fi
 
-              cd "$source_dir"
-
-              mix local.hex --force >/dev/null 2>&1 || true
-              mix local.rebar --force >/dev/null 2>&1 || true
-              mix deps.get >/dev/null
-              mix compile --force >/dev/null
-
-              exec mix run --no-halt
+              exec ${cfg.package}/bin/roundtable-web
             '';
           in
           "${startScript}";
@@ -170,13 +150,20 @@ in
         Environment = [
           "PORT=${toString cfg.port}"
           "PHX_HOST=${cfg.phoenixHost}"
+          "HOST=${cfg.phoenixHost}"
+          "HOME=${stateHome}"
+          "XDG_STATE_HOME=${stateHome}"
+          "ROUNDTABLE_STATE_DIR=${stateHome}/state"
+          "ROUNDTABLE_BRIEF=docs/design/BRIEF.md"
           "OIDC_ISSUER_URL=${cfg.oidcIssuerUrl}"
           "ROUNDTABLE_WEB=true"
           "MIX_ENV=prod"
         ];
         DynamicUser = true;
         StateDirectory = cfg.stateDir;
+        WorkingDirectory = stateHome;
         Restart = "on-failure";
+        RestartSec = "5s";
       };
     };
   };
