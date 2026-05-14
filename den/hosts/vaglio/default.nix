@@ -8,4 +8,7 @@ let
 in
 denLib.mkInventoryHostModule {
   name = "vaglio";
+  extraImports = [
+    ../../../hosts/nixos/vaglio/default.nix
+  ];
 }

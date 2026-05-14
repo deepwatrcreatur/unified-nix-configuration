@@ -2,6 +2,7 @@
 {
   nixos-base = context: import ./nixos-base.nix context;
   lxc-core = context: import ./lxc-core.nix context;
+  vm-core = context: import ./vm-core.nix context;
   lxc-dhcp-networking = context: import ./lxc-dhcp-networking.nix context;
   authentik-native = context: import ./authentik-native.nix context;
   authentik-paperless-oidc = context: import ./authentik-paperless-oidc.nix context;

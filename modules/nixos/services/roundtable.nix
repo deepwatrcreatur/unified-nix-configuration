@@ -6,6 +6,7 @@
 }:
 let
   cfg = config.services.roundtable;
+  stateHome = "/var/lib/${cfg.stateDir}";
 in
 {
   options.services.roundtable = {
@@ -24,13 +25,15 @@ in
     };
 
     secretKeyBaseFile = lib.mkOption {
-      type = lib.types.path;
-      description = "Path to file containing SECRET_KEY_BASE.";
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = "Optional path to file containing SECRET_KEY_BASE.";
     };
 
     githubTokenFile = lib.mkOption {
-      type = lib.types.path;
-      description = "Path to file containing GitHub PAT.";
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = "Optional path to file containing GitHub PAT.";
     };
 
     anthropicApiKeyFile = lib.mkOption {
@@ -80,31 +83,55 @@ in
     systemd.services.roundtable = {
       description = "Roundtable discussion orchestrator";
       wantedBy = [ "multi-user.target" ];
-      after = [ "network.target" ];
+      after = [ "network-online.target" ];
+      wants = [ "network-online.target" ];
       path = with pkgs; [
+        bash
+        coreutils
+        curl
         dolt
+        elixir
+        beam.packages.erlang.erlang
         git
         gh
+        jujutsu
+        openssl
       ];
 
       serviceConfig = {
         ExecStart =
           let
             startScript = pkgs.writeShellScript "roundtable-start" ''
-              export SECRET_KEY_BASE=$(cat $CREDENTIALS_DIRECTORY/secret_key_base)
-              export GH_TOKEN=$(cat $CREDENTIALS_DIRECTORY/github_token)
-              
-              if [ -f $CREDENTIALS_DIRECTORY/anthropic_api_key ]; then
-                export ANTHROPIC_API_KEY=$(cat $CREDENTIALS_DIRECTORY/anthropic_api_key)
+              set -eu
+
+              mkdir -p "${stateHome}/state"
+              credential_dir="''${CREDENTIALS_DIRECTORY:-}"
+
+              if [ -n "$credential_dir" ] && [ -f "$credential_dir/secret_key_base" ]; then
+                export SECRET_KEY_BASE="$(cat "$credential_dir/secret_key_base")"
+              elif [ -f "${stateHome}/secret_key_base" ]; then
+                export SECRET_KEY_BASE="$(cat "${stateHome}/secret_key_base")"
+              else
+                ${pkgs.openssl}/bin/openssl rand -hex 32 > "${stateHome}/secret_key_base"
+                chmod 600 "${stateHome}/secret_key_base"
+                export SECRET_KEY_BASE="$(cat "${stateHome}/secret_key_base")"
               fi
-              if [ -f $CREDENTIALS_DIRECTORY/openai_api_key ]; then
-                export OPENAI_API_KEY=$(cat $CREDENTIALS_DIRECTORY/openai_api_key)
+
+              if [ -n "$credential_dir" ] && [ -f "$credential_dir/github_token" ]; then
+                export GH_TOKEN="$(cat "$credential_dir/github_token")"
               fi
-              if [ -f $CREDENTIALS_DIRECTORY/gemini_api_key ]; then
-                export GEMINI_API_KEY=$(cat $CREDENTIALS_DIRECTORY/gemini_api_key)
+
+              if [ -n "$credential_dir" ] && [ -f "$credential_dir/anthropic_api_key" ]; then
+                export ANTHROPIC_API_KEY="$(cat "$credential_dir/anthropic_api_key")"
               fi
-              if [ -f $CREDENTIALS_DIRECTORY/deepseek_api_key ]; then
-                export DEEPSEEK_API_KEY=$(cat $CREDENTIALS_DIRECTORY/deepseek_api_key)
+              if [ -n "$credential_dir" ] && [ -f "$credential_dir/openai_api_key" ]; then
+                export OPENAI_API_KEY="$(cat "$credential_dir/openai_api_key")"
+              fi
+              if [ -n "$credential_dir" ] && [ -f "$credential_dir/gemini_api_key" ]; then
+                export GEMINI_API_KEY="$(cat "$credential_dir/gemini_api_key")"
+              fi
+              if [ -n "$credential_dir" ] && [ -f "$credential_dir/deepseek_api_key" ]; then
+                export DEEPSEEK_API_KEY="$(cat "$credential_dir/deepseek_api_key")"
               fi
 
               exec ${cfg.package}/bin/roundtable-web
@@ -113,10 +140,8 @@ in
           "${startScript}";
 
         LoadCredential =
-          [
-            "secret_key_base:${cfg.secretKeyBaseFile}"
-            "github_token:${cfg.githubTokenFile}"
-          ]
+          lib.optional (cfg.secretKeyBaseFile != null) "secret_key_base:${cfg.secretKeyBaseFile}"
+          ++ lib.optional (cfg.githubTokenFile != null) "github_token:${cfg.githubTokenFile}"
           ++ lib.optional (cfg.anthropicApiKeyFile != null) "anthropic_api_key:${cfg.anthropicApiKeyFile}"
           ++ lib.optional (cfg.openaiApiKeyFile != null) "openai_api_key:${cfg.openaiApiKeyFile}"
           ++ lib.optional (cfg.geminiApiKeyFile != null) "gemini_api_key:${cfg.geminiApiKeyFile}"
@@ -125,13 +150,20 @@ in
         Environment = [
           "PORT=${toString cfg.port}"
           "PHX_HOST=${cfg.phoenixHost}"
+          "HOST=${cfg.phoenixHost}"
+          "HOME=${stateHome}"
+          "XDG_STATE_HOME=${stateHome}"
+          "ROUNDTABLE_STATE_DIR=${stateHome}/state"
+          "ROUNDTABLE_BRIEF=docs/design/BRIEF.md"
           "OIDC_ISSUER_URL=${cfg.oidcIssuerUrl}"
           "ROUNDTABLE_WEB=true"
           "MIX_ENV=prod"
         ];
         DynamicUser = true;
         StateDirectory = cfg.stateDir;
+        WorkingDirectory = stateHome;
         Restart = "on-failure";
+        RestartSec = "5s";
       };
     };
   };
