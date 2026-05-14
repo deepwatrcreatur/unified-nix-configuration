@@ -1,6 +1,6 @@
 # 31 Forgejo-Shell Demo Surface On Vaglio
 
-Status: `ready`
+Status: `done`
 Suggested branch: `feat/forgejo-shell-vaglio-surface`
 Priority: `high`
 
@@ -51,8 +51,10 @@ this PR.
 
 Dependency note:
 
-- PR #143 restores the repo-side prerequisites and the upstream app revision
-  that contains `/forgejo-shell`, but it does not by itself deploy a working
-  surface on the live host.
-- Treat item 30 and item 35 as prerequisites for actually making the demo path
-  visible and stable.
+- PR #143 restored the repo-side prerequisites and the upstream app revision
+  that contains `/forgejo-shell`.
+- Agent-roundtable PR #85 fixed the standalone runtime issues upstream.
+- The live `vaglio` host is now landed on the repo `25.11` baseline, and
+  `http://127.0.0.1:4000/forgejo-shell` returns `200`.
+- Follow-up demo work should build on this working route rather than treating
+  the surface itself as still blocked.
