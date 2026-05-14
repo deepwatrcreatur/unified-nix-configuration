@@ -17,6 +17,11 @@
     persistent = lib.mkForce true;
   };
 
+  # Keep the live broker-backed system bus implementation for the landing
+  # deploy so switch-to-configuration does not also need to swap D-Bus
+  # implementations mid-upgrade.
+  services.dbus.implementation = lib.mkForce "broker";
+
   # The 26.05 -> 25.11 landing path currently wedges if switch-to-configuration
   # tries to stop the live D-Bus / networking / roundtable stack and then wait
   # for completion over the same bus connection. Keep these units in place for

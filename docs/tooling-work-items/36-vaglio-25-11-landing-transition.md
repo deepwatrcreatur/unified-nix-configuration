@@ -1,6 +1,6 @@
 # 36 Vaglio 25.11 Landing Transition
 
-Status: `in-progress`
+Status: `done`
 Suggested branch: `fix/vaglio-switch-hang`
 Priority: `high`
 
@@ -99,3 +99,25 @@ Latest findings from the landing-only stop mitigation attempt on May 14, 2026:
   25.11 landing handoff, or treat this as a `switch-to-configuration-ng`
   unit-handling bug if the service continues to be selected despite
   `X-StopIfChanged=false`.
+
+Landing result from May 14, 2026:
+
+- The missing piece was not just `stopIfChanged`; the target `25.11` closure
+  was also silently downgrading `services.dbus.implementation` from
+  `dbus-broker` to classic `dbus`.
+- For the landing path, forcing `services.dbus.implementation = "broker"` on
+  `vaglio` removed `dbus-broker.service` from the `dry-activate` stop set.
+- A live `switch-to-configuration test` then completed without dropping IPv4 or
+  breaking Roundtable.
+- A persistent `nixos-rebuild switch` from the same landing closure completed
+  the actual release transition; `vaglio` is now running
+  `/nix/store/x4xarb45cgf9h8b3y4qz6cw2mpd653nx-nixos-system-vaglio-lxc-25.11.20260318.fea3b36`
+  as `/run/current-system`.
+- Post-switch health checks succeeded:
+  `eth0` stayed on `10.10.11.71/16`, `dbus-broker`, `dhcpcd`,
+  `network-setup`, and `roundtable` remained active, and
+  `http://127.0.0.1:4000/forgejo-shell` returned `200`.
+- The host is still `degraded`, but only because of unrelated follow-on units:
+  `ensure-printers.service` cannot reach `10.10.21.56:631`, and
+  `snapper-cleanup.service` fails because the LXC filesystem is not a Btrfs
+  subvolume.
