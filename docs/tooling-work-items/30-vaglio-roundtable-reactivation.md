@@ -1,6 +1,6 @@
 # 30 Vaglio Roundtable Reactivation
 
-Status: `in-progress`
+Status: `done`
 Suggested branch: `feat/vaglio-roundtable-reactivation`
 Priority: `high`
 
@@ -67,6 +67,8 @@ Current progress as of May 10, 2026:
 - PR #143 later merged those repo-side prerequisites.
 - PR #147 later fixed the `agent-roundtable` flake input on `main`, and
   `agent-roundtable` PR #85 fixed the standalone runtime issues upstream.
-- The remaining blocker is now item 36:
-  `vaglio` still hangs during live `26.05` -> repo `25.11` activation, even
-  after preserving the legacy DHCP stack for the landing attempt.
+- Item 36 is now complete as well: `vaglio` landed successfully onto the repo
+  `25.11` baseline without losing reachability.
+- `roundtable.service` is active on the live host again, and
+  `roundtable.deepwatercreature.com` is backed by an active repo-managed host
+  path.
