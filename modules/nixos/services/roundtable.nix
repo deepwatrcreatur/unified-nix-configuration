@@ -80,6 +80,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    networking.firewall.allowedTCPPorts = [ cfg.port ];
+
     systemd.services.roundtable = {
       description = "Roundtable discussion orchestrator";
       wantedBy = [ "multi-user.target" ];
