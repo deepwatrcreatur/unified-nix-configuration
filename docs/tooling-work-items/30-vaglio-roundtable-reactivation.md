@@ -3,6 +3,8 @@
 Status: `done`
 Suggested branch: `feat/vaglio-roundtable-reactivation`
 Priority: `high`
+Deployment target: `vaglio`
+Deployment coordination: `exclusive single-writer host lock while live deploy work is active`
 
 ## Goal
 
@@ -73,3 +75,10 @@ Current progress as of May 13, 2026:
   `/forgejo-shell` route from the standalone `agent-roundtable` deployment.
 - The remaining work in this repo is to finish the inventory-backed
   reattachment path cleanly, not to rediscover the live host prerequisites.
+
+Operational note from May 14, 2026:
+
+- `vaglio` should be treated as a single-writer deployment target.
+- Parallel agent rebuilds or service restarts on the same CT can cause
+  avoidable runtime contention and make `roundtable.deepwatercreature.com`
+  appear flaky even when the code changes are individually valid.
