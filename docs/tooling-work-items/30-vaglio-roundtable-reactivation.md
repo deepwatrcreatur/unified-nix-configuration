@@ -3,6 +3,8 @@
 Status: `in-progress`
 Suggested branch: `feat/vaglio-roundtable-reactivation`
 Priority: `high`
+Deployment target: `vaglio`
+Deployment coordination: `exclusive single-writer host lock while live deploy work is active`
 
 ## Goal
 
@@ -66,3 +68,10 @@ Current progress as of May 10, 2026:
   - `nix eval .#nixosConfigurations.homeserver.config.services.roundtable.enable`
 - The remaining work is merge and deployment onto a clean Vaglio branch, not
   rediscovery of the missing prerequisites.
+
+Operational note from May 14, 2026:
+
+- `vaglio` should be treated as a single-writer deployment target.
+- Parallel agent rebuilds or service restarts on the same CT can cause
+  avoidable runtime contention and make `roundtable.deepwatercreature.com`
+  appear flaky even when the code changes are individually valid.
