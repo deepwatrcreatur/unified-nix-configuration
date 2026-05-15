@@ -6,7 +6,7 @@
 }:
 let
   cfg = config.services.roundtable;
-  stateHome = "/var/lib/${cfg.stateDir}";
+  stateHome = "/var/lib/private/${cfg.stateDir}";
 in
 {
   options.services.roundtable = {
