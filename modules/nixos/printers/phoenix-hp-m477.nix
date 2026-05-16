@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   # Declarative CUPS queue so it persists across nixos-rebuild/service restarts.
@@ -7,6 +7,10 @@
   # NixOS manages printers via `hardware.printers.ensurePrinters`.
 
   services.printing.enable = lib.mkDefault true;
+  systemd.services."ensure-printers".serviceConfig = lib.mkIf config.services.printing.enable {
+    # Printer reachability should not block system activation.
+    ContinueOnError = true;
+  };
 
   # Ensure scanning support for this MFP
   hardware.sane = {
@@ -21,7 +25,7 @@
   # explicitly for sane-airscan instead of relying on automatic discovery.
   environment.etc."sane.d/airscan.conf".text = ''
     [devices]
-    "HP PageWide Pro 477dn MFP" = http://10.10.21.56:80/eSCL/, eSCL
+    "HP PageWide Pro 477dn MFP" = http://10.10.11.56:80/eSCL/, eSCL
   '';
 
   environment.systemPackages = with pkgs; [
@@ -38,8 +42,8 @@
 
         # Prefer a stable URI over dnssd:// so we don't depend on browsing state.
         # If you get a "Host is down" error from `ensure-printers.service`,
-        # check that the printer is online and reachable from this host, e.g., `ping 10.10.21.56`.
-        deviceUri = "ipp://10.10.21.56/ipp/print";
+        # check that the printer is online and reachable from this host, e.g., `ping 10.10.11.56`.
+        deviceUri = "ipp://10.10.11.56/ipp/print";
 
         # Driverless printing for IPP Everywhere/AirPrint devices.
         # `lpinfo -m | rg -n 'everywhere'` should show the exact available model.

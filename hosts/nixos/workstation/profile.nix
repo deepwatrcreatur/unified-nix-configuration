@@ -118,10 +118,6 @@
     openFirewall = lib.mkForce false;
   };
 
-  systemd.services."ensure-printers".serviceConfig = lib.mkIf config.services.printing.enable {
-    ContinueOnError = true;
-  };
-
   services.logind.settings.Login.HandleLidSwitch = "ignore";
   security.sudo.wheelNeedsPassword = false;
 
