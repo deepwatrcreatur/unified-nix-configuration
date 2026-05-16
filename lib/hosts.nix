@@ -245,6 +245,17 @@
       description = "Home Assistant VM";
     };
 
+    phoenix-hp-m477 = {
+      ip = "10.10.11.56";
+      includeSsh = false;
+      includeDns = false;
+      dhcpReservation = {
+        macAddress = "10:62:e5:26:58:c2";
+        scope = "LAN";
+      };
+      description = "HP PageWide Pro 477dn MFP printer/scanner";
+    };
+
     podman = {
       ip = "10.10.11.84";
       sshUser = "deepwatrcreatur";
