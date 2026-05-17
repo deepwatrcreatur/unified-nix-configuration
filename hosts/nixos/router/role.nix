@@ -59,14 +59,6 @@ let
   topology = config.router.topology;
   lanNetwork = topology.networks.lan;
   managementNetwork = topology.networks.management;
-  optionalDhcpInterfaces = lib.optionals enableExtraRoutedNetworks [
-    "${lanDevice}.20"
-    "${lanDevice}.30"
-  ];
-  optionalUpnpInterfaces = lib.optionals enableExtraRoutedNetworks [
-    "${lanDevice}.20"
-    "${lanDevice}.30"
-  ];
   mkFqdn = label: "${label}.${topology.domain}";
   isPrimaryRouter = config.networking.hostName == "router";
   reservableHosts = lib.filterAttrs (
@@ -181,9 +173,7 @@ in
   services.router-kea = {
     enable = true;
     dhcp4 = {
-      interfaces = [
-        lanDevice
-      ] ++ optionalDhcpInterfaces;
+      interfaces = [ lanDevice ];
       subnet = lanNetwork.cidr;
       gatewayAddress = "10.10.10.1"; # Use the VIP
       dnsServers = [ "10.10.10.1" ];
@@ -222,7 +212,7 @@ in
 
   services.router-upnp = {
     enable = true;
-    internalIPs = [ lanDevice ] ++ optionalUpnpInterfaces;
+    internalIPs = [ lanDevice ];
   };
 
   systemd.services.kea-dhcp4-server.serviceConfig.ExecStartPre = lib.mkBefore [
