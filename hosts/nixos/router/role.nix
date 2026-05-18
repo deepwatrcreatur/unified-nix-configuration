@@ -27,6 +27,14 @@ let
   operatorStableSshKey = lib.strings.trim (
     builtins.readFile ../../../ssh-keys/deepwatrcreatur-stable-identity.pub
   );
+  ensureKeaLeaseState = pkgs.writeShellScript "router-kea-ensure-state" ''
+    set -euo pipefail
+
+    install -d -m 0750 -o kea -g kea /var/lib/private/kea
+    touch /var/lib/private/kea/dhcp4.leases /var/lib/private/kea/dhcp4.leases.2
+    chown kea:kea /var/lib/private/kea/dhcp4.leases /var/lib/private/kea/dhcp4.leases.2
+    chmod 0640 /var/lib/private/kea/dhcp4.leases /var/lib/private/kea/dhcp4.leases.2
+  '';
 
   secrets = optSec.mkSecrets {
     cloudflare-api-key = {
@@ -52,9 +60,11 @@ let
   lanNetwork = topology.networks.lan;
   managementNetwork = topology.networks.management;
   mkFqdn = label: "${label}.${topology.domain}";
+  isPrimaryRouter = config.networking.hostName == "router";
   reservableHosts = lib.filterAttrs (
     _name: host: (host.dhcpReservation or null) != null && (host.ip or null) != null
   ) topology.hosts;
+  poolRangeKeys = map (pool: "${pool.start}-${pool.end}") config.services.router-kea.dhcp4.poolRanges;
 in
 {
   imports = [
@@ -79,6 +89,14 @@ in
         Router invariant violated: 20-router-lan must have ConfigureWithoutCarrier = true.
         Without this, the LAN static IP disappears when the data-plane cable is unplugged,
         causing monitoring (Prometheus, Grafana, Netdata) to cascade into failure on standby/dev boxes.
+      '';
+    }
+    {
+      assertion = lib.length poolRangeKeys == lib.length (lib.unique poolRangeKeys);
+      message = ''
+        Router invariant violated: services.router-kea.dhcp4.poolRanges contains duplicate ranges.
+        This usually means more than one module is defining the same LAN DHCP pool, which causes
+        Kea to fail at startup with an overlapping-pool parser error.
       '';
     }
     {
@@ -134,14 +152,19 @@ in
   };
 
   services.router-ha = {
-    enable = true;
-    role = if config.networking.hostName == "router" then "master" else "backup";
+    # Keep the family-facing router as the sole HA participant while the
+    # backup node is used as a development and recovery target.
+    enable = isPrimaryRouter;
+    role = if isPrimaryRouter then "master" else "backup";
     virtualIp = "10.10.10.1/16";
     vrrpInterface = lanDevice;
-    keaSync.enable = true;
-    keaSync.peerAddress = if config.networking.hostName == "router" then "10.10.11.213" else "10.10.11.1"; # Using management IPs for control plane sync
+    keaSync.enable = isPrimaryRouter;
+    keaSync.peerAddress = if isPrimaryRouter then "10.10.11.213" else "10.10.11.1"; # Using management IPs for control plane sync
     wan = {
-      enable = true;
+      # Keepalived-driven WAN link/MAC manipulation regressed the router's own
+      # internet recovery on newer generations. Keep the LAN VIP logic, but let
+      # systemd-networkd own WAN DHCP lifecycle directly on the primary router.
+      enable = false;
       interface = wanDevice;
       clonedMac = "02:76:c6:01:2a:b0";
     };
@@ -150,21 +173,26 @@ in
   services.router-kea = {
     enable = true;
     dhcp4 = {
+      interfaces = [ lanDevice ];
       subnet = lanNetwork.cidr;
       gatewayAddress = "10.10.10.1"; # Use the VIP
       dnsServers = [ "10.10.10.1" ];
       poolRanges = [
         {
-          start = "10.10.10.100";
-          end = "10.10.10.250";
+          # Keep dynamic leases away from the low/static part of the /16 and
+          # avoid .0/.255 boundaries in each /24-sized slice.
+          start = "10.10.200.1";
+          end = "10.10.222.254";
         }
       ];
       ha = {
-        enable = true;
+        # DHCP HA is still a client-path regression: the primary can come up in
+        # WAITING with local DHCP disabled until the backup peer times out.
+        enable = false;
         thisServerName = config.networking.hostName;
-        role = if config.networking.hostName == "router" then "primary" else "secondary";
-        peerAddress = if config.networking.hostName == "router" then "10.10.11.213" else "10.10.11.1";
-        peerName = if config.networking.hostName == "router" then "router-backup" else "router";
+        role = if isPrimaryRouter then "primary" else "secondary";
+        peerAddress = if isPrimaryRouter then "10.10.11.213" else "10.10.11.1";
+        peerName = if isPrimaryRouter then "router-backup" else "router";
       };
       reservations = lib.mapAttrsToList (name: host: {
         hw-address = host.dhcpReservation.macAddress;
@@ -181,6 +209,15 @@ in
       reverseZone = "10.10.in-addr.arpa";
     };
   };
+
+  services.router-upnp = {
+    enable = true;
+    internalIPs = [ lanDevice ];
+  };
+
+  systemd.services.kea-dhcp4-server.serviceConfig.ExecStartPre = lib.mkBefore [
+    "+${ensureKeaLeaseState}"
+  ];
 
   services.router-networking = {
     enable = true;
