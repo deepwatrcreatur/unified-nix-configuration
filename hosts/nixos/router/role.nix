@@ -376,9 +376,8 @@ in
     enable = true;
     listenAddresses = [
       "127.0.0.1"
-      "10.10.10.1"
       managementListenAddress
-    ];
+    ] ++ lib.optionals isPrimaryRouter [ "10.10.10.1" ];
   };
 
   services.router-homelab.sshTarget = sshTarget;

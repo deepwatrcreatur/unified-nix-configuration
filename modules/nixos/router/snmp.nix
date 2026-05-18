@@ -51,7 +51,11 @@ in
 
     systemd.services.snmpd = {
       description = "Simple Network Management Protocol (SNMP) daemon";
-      after = [ "network.target" ];
+      after = [
+        "network.target"
+        "agenix.service"
+      ];
+      wants = [ "agenix.service" ];
       wantedBy = [ "multi-user.target" ];
       preStart = ''
         set -euo pipefail
