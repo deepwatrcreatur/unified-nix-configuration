@@ -71,6 +71,7 @@
         "firewall"
         "router-management"
       ];
+      sshAliases = [ ];
       # Public service subdomains fronted by Caddy on this host.
       # DNS CNAMEs for these point at router, but the actual service runs elsewhere.
       publicIngressServices = [
@@ -156,9 +157,20 @@
       description = "Proxmox node - ASRock Z170 ITX/AC";
     };
 
-    # Access Points
+    # Networking Equipment
+    sw-main = {
+      ip = "10.10.18.10";
+      includeSsh = false;
+      dhcpReservation = {
+        macAddress = "1c:2a:a3:1e:c3:51";
+        scope = "LAN";
+      };
+      description = "Core Switch";
+    };
+
     ap-ruqayya = {
-      ip = "10.10.11.20";
+      ip = "10.10.18.20";
+      includeSsh = false;
       dhcpReservation = {
         macAddress = "54:D7:E3:C7:51:80";
         scope = "LAN";
@@ -166,7 +178,8 @@
       description = "AP25 Ruqayya Bedroom";
     };
     ap-nosheen-living = {
-      ip = "10.10.11.21";
+      ip = "10.10.18.21";
+      includeSsh = false;
       dhcpReservation = {
         macAddress = "A8:5B:F7:C2:0A:42";
         scope = "LAN";
@@ -174,7 +187,8 @@
       description = "AP22 Nosheen Living Room";
     };
     ap-nosheen-bedroom = {
-      ip = "10.10.11.22";
+      ip = "10.10.18.22";
+      includeSsh = false;
       dhcpReservation = {
         macAddress = "FC:7F:F1:CC:E1:CA";
         scope = "LAN";

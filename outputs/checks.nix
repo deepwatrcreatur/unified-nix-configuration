@@ -66,6 +66,7 @@ let
     "apt-cache"
     "homeassistant"
     "infisical"
+    "sw-main"
   ];
 
   missingDenInventoryHosts =
