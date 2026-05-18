@@ -110,6 +110,7 @@ in {
 
   "secrets-agenix/cloudflare_ddns_API_token.age".publicKeys = routerServiceSecrets;
   "secrets-agenix/technitium-api-key.age".publicKeys = routerServiceSecrets;
+  "secrets-agenix/snmp-community.age".publicKeys = routerServiceSecrets;
   "secrets-agenix/kea-ddns-tsig-key.age".publicKeys = routerServiceSecrets;
   "secrets-agenix/tailscale-auth-key.age".publicKeys = routerServiceSecrets;
   "secrets-agenix/authentik-env.age".publicKeys = authentikHostServiceSecrets;

@@ -69,6 +69,7 @@ in
 {
   imports = [
     ../../../modules/nixos/router/common.nix
+    ../../../modules/nixos/router/snmp.nix
     ../../../modules/nixos/services/iventoy.nix
   ];
 
@@ -371,6 +372,15 @@ in
 
   services.router-observability.enable = true;
 
+  services.router-snmp = {
+    enable = true;
+    listenAddresses = [
+      "127.0.0.1"
+      "10.10.10.1"
+      managementListenAddress
+    ];
+  };
+
   services.router-homelab.sshTarget = sshTarget;
   services.router-homelab.listenAddress = "0.0.0.0";
 
@@ -388,6 +398,7 @@ in
       "technitium-dns-server"
       "kea-dhcp4-server"
       "kea-dhcp-ddns-server"
+      "snmpd"
       "miniupnpd"
       "tailscaled"
       "fail2ban"
