@@ -20,7 +20,7 @@ in
       sshTarget = "ssh router-backup";
       wanDevice = "ens27";
       lanDevice = "ens19";
-      lanIpv4Address = "${routerHost.ip}/${toString lanNetwork.prefixLength}";
+      lanIpv4Address = "${backupHost.ip}/${toString lanNetwork.prefixLength}";
       managementIpv4Address = "${backupHost.sshHostname}/${toString managementNetwork.prefixLength}";
       grafanaDomain = mkFqdn "grafana";
       grafanaDataDir = "/var/log/router-backup/grafana";

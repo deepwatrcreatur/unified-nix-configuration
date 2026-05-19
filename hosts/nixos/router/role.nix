@@ -62,6 +62,8 @@ let
   managementNetwork = topology.networks.management;
   mkFqdn = label: "${label}.${topology.domain}";
   isPrimaryRouter = config.networking.hostName == "router";
+  # Static LAN IP assigned to this router node, distinct from the shared VIP.
+  staticLanIp = builtins.head (lib.splitString "/" lanIpv4Address);
   reservableHosts = lib.filterAttrs (
     _name: host: (host.dhcpReservation or null) != null && (host.ip or null) != null
   ) topology.hosts;
@@ -614,6 +616,18 @@ in
   age.secrets = secrets.definitions;
 
   services.router-log-storage.enable = lib.mkForce enableLogStorage;
+
+  # UDP replies sourced from the node-local LAN address confuse clients that
+  # sent their DNS query to the shared VIP. Rewrite only DNS replies headed
+  # back onto the LAN so they appear to originate from the VIP.
+  networking.nftables.ruleset = lib.mkAfter ''
+    table ip nat {
+      chain dns-vip-snat {
+        type nat hook postrouting priority 100; policy accept;
+        oifname "${lanDevice}" ip saddr ${staticLanIp} udp sport 53 snat to ${topology.routerHost.ip}
+      }
+    }
+  '';
 
   # Explicit Health Model Services
   # These services exit with failure if the health invariant is violated,
