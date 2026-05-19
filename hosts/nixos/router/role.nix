@@ -57,6 +57,7 @@ let
   };
 
   topology = config.router.topology;
+  iventoy = config.services.iventoy;
   lanNetwork = topology.networks.lan;
   managementNetwork = topology.networks.management;
   mkFqdn = label: "${label}.${topology.domain}";
@@ -194,6 +195,14 @@ in
         role = if isPrimaryRouter then "primary" else "secondary";
         peerAddress = if isPrimaryRouter then "10.10.11.213" else "10.10.11.1";
         peerName = if isPrimaryRouter then "router-backup" else "router";
+      };
+      pxe = {
+        enable = true;
+        bootServerAddress = topology.routerHost.ip;
+        bootServerName = mkFqdn "router";
+        # iVentoy external mode expects this loader name and serves the real
+        # BIOS/UEFI path after inspecting the DHCP request.
+        bootFilename = "iventoy_loader_${toString iventoy.httpPort}";
       };
       reservations = lib.mapAttrsToList (name: host: {
         hw-address = host.dhcpReservation.macAddress;
