@@ -212,7 +212,10 @@ in
   };
 
   services.router-upnp = {
+    # Bind miniupnpd to explicit interface names so the generated config does
+    # not fall back to invalid address-based guesses.
     enable = true;
+    externalInterface = wanDevice;
     internalIPs = [ lanDevice ];
   };
 
