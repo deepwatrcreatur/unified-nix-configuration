@@ -6,11 +6,10 @@
 }:
 let
   topology = config.router.topology;
-  routerHost = topology.routerHost;
-  backupHost = topology.backupHost;
   domain = topology.domain;
   lanNetwork = topology.networks.lan;
   managementNetwork = topology.networks.management;
+  standbyLanIp = "10.10.10.3";
   mkFqdn = label: "${label}.${domain}";
 in
 {
@@ -20,8 +19,10 @@ in
       sshTarget = "ssh router-backup";
       wanDevice = "ens27";
       lanDevice = "ens19";
-      lanIpv4Address = "${backupHost.ip}/${toString lanNetwork.prefixLength}";
-      managementIpv4Address = "${backupHost.sshHostname}/${toString managementNetwork.prefixLength}";
+      # Keep the standby LAN identity local to this host definition. Inventory
+      # intentionally does not advertise a production IP for router-backup.
+      lanIpv4Address = "${standbyLanIp}/${toString lanNetwork.prefixLength}";
+      managementIpv4Address = "${topology.backupHost.sshHostname}/${toString managementNetwork.prefixLength}";
       grafanaDomain = mkFqdn "grafana";
       grafanaDataDir = "/var/log/router-backup/grafana";
       prometheusStateDir = "router-backup-prometheus";
@@ -32,6 +33,16 @@ in
   ];
 
   services.router-log-storage.mountPoint = lib.mkForce "/var/log/router-backup";
+
+  host.networking.enableTailscale = lib.mkForce false;
+  services.router-tailscale.enable = lib.mkForce false;
+
+  systemd.network.wait-online.enable = lib.mkForce false;
+
+  systemd.services = {
+    health-wan-carrier.enable = lib.mkForce false;
+    health-wan-ip.enable = lib.mkForce false;
+  };
 
   fileSystems."/srv/pxe" = {
     device = "/dev/disk/by-partlabel/disk-pxe-images-images";
@@ -64,9 +75,21 @@ in
   };
 
   services.iventoy = {
-    enable = true;
+    # Keep the PXE config in tree, but do not run iVentoy on the standby VM
+    # while it is intentionally cabled only on the management interface.
+    enable = lib.mkForce false;
     isoDir = "/srv/pxe/images";
     openFirewall = false;
+  };
+
+  # Keep DNS available on standby, but do not run DHCP/NTP mutation jobs
+  # against the local Technitium instance while this node is in disconnected
+  # standby or development mode.
+  services.router-technitium = {
+    scopes = lib.mkForce { };
+    dhcpReservations = lib.mkForce { };
+    ntpServers = lib.mkForce [ ];
+    forceBlockListUpdateOnActivation = lib.mkForce false;
   };
 
   services.router-firewall = {
