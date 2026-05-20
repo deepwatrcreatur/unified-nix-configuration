@@ -20,6 +20,9 @@ If `beads-rust` is available, prefer
 `beads-rust ready --label router --json` to discover unblocked work;
 otherwise, follow the README-ranked queue.
 
+If the queue has no `ready` item, stop and report exhaustion instead of
+reopening a `done` task from this folder.
+
 Important:
 
 - task-file status is authoritative

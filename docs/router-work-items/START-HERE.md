@@ -23,17 +23,19 @@ fall back to the ordered list in [`README.md`](./README.md).
 
 0. Refresh remote state first if multiple agents may be active (`git fetch origin`).
 1. Start with the ordered list in [`README.md`](./README.md).
-2. Find the first item whose header says `Status: ready`.
-3. Before taking it, check whether the suggested branch/worktree already
+2. If the active ranking is empty, stop and report that the router queue is
+   exhausted rather than reviving a `done` item.
+3. Find the first item whose header says `Status: ready`.
+4. Before taking it, check whether the suggested branch/worktree already
    appears to exist.
-4. If the suggested branch/worktree exists, do not treat that alone as active
+5. If the suggested branch/worktree exists, do not treat that alone as active
    ownership. Check for evidence such as:
    - a recent commit on the branch
    - an open PR tied to the task
    - the task file already marked `in-progress`
-5. If the branch/worktree exists but there is no clear evidence of active
+6. If the branch/worktree exists but there is no clear evidence of active
    ownership, treat it as stale and continue with the task.
-6. Once you take an item:
+7. Once you take an item:
    - create/switch to the suggested branch
    - update that work-item file header from `ready` to `in-progress`
    - commit and push that claim promptly if the queue is shared through git
@@ -74,6 +76,7 @@ second ranked list in this file; `README.md` is the authoritative queue.
 If you want the shortest path:
 
 - pick the next available item from the ordered list
+- if there is no available item, stop and report queue exhaustion
 - use the matching prompt from [`agent-prompts.md`](./agent-prompts.md)
 - update the selected file to `Status: in-progress`
 - implement and validate
