@@ -10,6 +10,7 @@ let
   hasRouterDashboard = lib.hasAttrByPath [ "services" "router-dashboard" ] options;
   cfg = if hasRouterDashboard then config.services.router-dashboard else { enable = false; };
   fail2banSnapshotFile = "/run/router-dashboard/fail2ban-status.json";
+  keaLeaseSnapshotFile = "/run/router-dashboard/kea-dhcp4.leases";
   routerDashboardApiWrapper = ../../scripts/router-dashboard-api-wrapper.py;
   fail2banSnapshotScript = ../../scripts/router-dashboard-fail2ban-snapshot.py;
 in
@@ -29,6 +30,7 @@ in
       DASHBOARD_UPSTREAM_SERVER = "${inputs.nix-router-optimized.outPath}/modules/router-dashboard/api/server.py";
       DASHBOARD_INTERFACES = builtins.toJSON cfg.interfaces;
       DASHBOARD_FAIL2BAN_STATUS_FILE = fail2banSnapshotFile;
+      DASHBOARD_KEA_LEASES_FILE = keaLeaseSnapshotFile;
       DASHBOARD_CLOUDFLARE_TOKEN_FILE = config.age.secrets.cloudflare-api-key.path;
     };
 
@@ -84,6 +86,62 @@ in
         OnBootSec = "30s";
         OnUnitActiveSec = "30s";
         Unit = "router-dashboard-fail2ban-snapshot.service";
+      };
+    };
+
+    systemd.services.router-dashboard-kea-lease-snapshot = lib.mkIf config.services.kea.dhcp4.enable {
+      description = "Refresh router dashboard Kea lease snapshot";
+      after = [ "kea-dhcp4-server.service" ];
+      wants = [ "kea-dhcp4-server.service" ];
+      serviceConfig = {
+        Type = "oneshot";
+        User = "root";
+        Group = "root";
+        UMask = "0027";
+        NoNewPrivileges = true;
+        PrivateDevices = true;
+        PrivateTmp = true;
+        ProtectHome = true;
+        ProtectSystem = "strict";
+        ReadWritePaths = [ "/run/router-dashboard" ];
+        ProtectClock = true;
+        ProtectHostname = true;
+        ProtectKernelLogs = true;
+        ProtectKernelModules = true;
+        ProtectKernelTunables = true;
+        LockPersonality = true;
+        MemoryDenyWriteExecute = true;
+        RestrictNamespaces = true;
+        RestrictSUIDSGID = true;
+        SystemCallArchitectures = "native";
+      };
+      script = ''
+        set -euo pipefail
+        src=""
+        for candidate in /var/lib/private/kea/dhcp4.leases /var/lib/kea/dhcp4.leases; do
+          if [ -f "$candidate" ]; then
+            src="$candidate"
+            break
+          fi
+        done
+
+        if [ -z "$src" ]; then
+          echo "No Kea lease file found" >&2
+          exit 1
+        fi
+
+        install -m 0640 -o root -g router-dashboard "$src" "${keaLeaseSnapshotFile}"
+      '';
+      wantedBy = [ "multi-user.target" ];
+    };
+
+    systemd.timers.router-dashboard-kea-lease-snapshot = lib.mkIf config.services.kea.dhcp4.enable {
+      description = "Refresh router dashboard Kea lease snapshot periodically";
+      wantedBy = [ "timers.target" ];
+      timerConfig = {
+        OnBootSec = "30s";
+        OnUnitActiveSec = "30s";
+        Unit = "router-dashboard-kea-lease-snapshot.service";
       };
     };
   };
