@@ -1,15 +1,21 @@
 {
   config,
+  lib,
   ...
 }:
 let
   topology = config.router.topology;
   routerHost = topology.routerHost;
+  haVirtualIpAddress = builtins.head (lib.splitString "/" config.services.router-ha.virtualIp);
 in
 {
   services.router-dns-service = {
     enable = true;
     provider = "technitium";
+    serviceListenAddresses = [
+      "127.0.0.1"
+      haVirtualIpAddress
+    ];
     searchDomains = [ topology.domain ];
     # Advertise the router's chrony instance to LAN clients via DHCP option 42.
     # This remains the shared production identity; only the active owner should
