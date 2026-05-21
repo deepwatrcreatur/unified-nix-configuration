@@ -207,13 +207,16 @@ Before pushing changes that affect remote hosts:
 2. **Pull remote changes first** with `git pull` to avoid conflicts
 3. **Test locally** (rebuild/switch) before committing when possible
 4. **Split commits into logical parts**: keep commits narrowly scoped (e.g., "secrets refactor" separate from "GNOME tweaks")
-5. **Commit WITHOUT GPG signing** (agents cannot reliably handle pinentry prompts):
+5. **Commit with the normal SSH-signing flow**:
+   ```bash
+   git commit -m "feat: ..."
+   ```
+   If SSH signing is temporarily broken in a specific checkout, treat that as a
+   local config or agent issue first. Only fall back to:
    ```bash
    git commit --no-gpg-sign -m "feat: ..."
    ```
-   If you need to disable signing for multiple commits in this repo:
-   ```bash
-   git config commit.gpgsign false
-   ```
+   when you have confirmed the signing path itself is unavailable and the work
+   should not be blocked on fixing it first.
 5. **Then push** with `git push`
 ```

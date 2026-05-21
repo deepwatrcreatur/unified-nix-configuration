@@ -57,5 +57,5 @@ If you find a committed file with sensitive data, remove it with:
 
 ```bash
 git rm docs/memory/<file>
-git commit --no-gpg-sign -m "security: remove sensitive memory archive file"
+git commit -m "security: remove sensitive memory archive file"
 ```

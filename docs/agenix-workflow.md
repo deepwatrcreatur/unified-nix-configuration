@@ -132,8 +132,8 @@ git add secrets-agenix/paperless-db-password.age
 git add secrets.nix
 git add hosts/nixos-lxc/podman/default.nix  # Or wherever you configured usage
 
-# Commit (without GPG signing for agents)
-git commit --no-gpg-sign -m "feat: add paperless database password secret"
+# Commit
+git commit -m "feat: add paperless database password secret"
 
 # Push to remote
 git push
