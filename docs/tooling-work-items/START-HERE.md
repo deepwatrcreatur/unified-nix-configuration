@@ -58,6 +58,8 @@ interpretation guidance.
 5. Mark the item `in-progress` in your branch as part of the same PR.
 6. If the item touches a live host, treat that host as an exclusive deployment
    target and avoid parallel rebuild/restart work from other agent sessions.
+7. Do not read that host lock as a repo-wide freeze: parallel branch work is
+   still fine when it stays off the same live deployment target.
 
 ## Invariants
 
