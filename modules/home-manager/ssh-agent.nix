@@ -21,7 +21,7 @@
   programs.ssh = {
     # Prefer the expected GitHub signing/transport key explicitly so agents can
     # discover it from config even before the agent has loaded any identities.
-    matchBlocks = lib.mkIf pkgs.stdenv.isLinux {
+    matchBlocks = {
       "github.com" = {
         identitiesOnly = true;
         identityFile = "~/.ssh/id_ed25519";
