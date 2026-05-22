@@ -25,7 +25,9 @@
       "github.com" = {
         identitiesOnly = true;
         identityFile = "~/.ssh/id_ed25519";
-        addKeysToAgent = "yes";
+        extraOptions = {
+          AddKeysToAgent = "yes";
+        };
       };
     };
 

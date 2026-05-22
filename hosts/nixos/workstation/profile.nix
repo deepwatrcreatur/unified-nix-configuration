@@ -118,9 +118,10 @@
     openFirewall = lib.mkForce false;
   };
 
-  systemd.services."ensure-printers".serviceConfig = lib.mkIf config.services.printing.enable {
-    ContinueOnError = true;
-  };
+  # Desktop rebuilds should not fail because a non-essential networkd
+  # interface never reaches "online". Workstation networking is otherwise
+  # healthy enough for local use and higher-level services.
+  systemd.network.wait-online.enable = false;
 
   services.logind.settings.Login.HandleLidSwitch = "ignore";
   security.sudo.wheelNeedsPassword = false;

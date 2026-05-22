@@ -1,10 +1,18 @@
-{ lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   # Declarative CUPS queue so it persists across nixos-rebuild/service restarts.
   # HP PageWide Pro 477dn MFP (2658C2)
   #
   # NixOS manages printers via `hardware.printers.ensurePrinters`.
+  # For driverless IPP printers, `lpadmin` may still exit 1 when the device is
+  # offline or temporarily on a different address. Treat that specific status as
+  # non-fatal so host rebuilds remain resilient while the queue declaration
+  # stays in place.
+
+  systemd.services.ensure-printers.serviceConfig = lib.mkIf config.services.printing.enable {
+    SuccessExitStatus = [ 0 1 ];
+  };
 
   services.printing.enable = lib.mkDefault true;
 
@@ -36,9 +44,10 @@
         description = "HP PageWide Pro 477dn MFP (2658C2)";
         location = "Network";
 
-        # Prefer a stable URI over dnssd:// so we don't depend on browsing state.
-        # If you get a "Host is down" error from `ensure-printers.service`,
-        # check that the printer is online and reachable from this host, e.g., `ping 10.10.21.56`.
+        # Prefer a stable URI over dnssd:// so we don't depend on browsing
+        # state. If the printer is offline or temporarily on a different
+        # address, ensure-printers may log an lpadmin failure, but rebuilds
+        # should still succeed.
         deviceUri = "ipp://10.10.21.56/ipp/print";
 
         # Driverless printing for IPP Everywhere/AirPrint devices.

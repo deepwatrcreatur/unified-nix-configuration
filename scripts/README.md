@@ -2,6 +2,33 @@
 
 This directory contains reusable scripts for managing the unified-nix-configuration infrastructure.
 
+## git-ssh-doctor.sh
+
+**Purpose**: Read-only diagnostics for Git SSH signing, SSH agent state, and
+GitHub SSH transport.
+
+**Checks**:
+- `gpg.format`, `commit.gpgsign`, `tag.gpgsign`, `user.signingkey`
+- `gpg.ssh.allowedSignersFile` presence
+- `SSH_AUTH_SOCK` presence and socket state
+- `ssh-add -l` loaded-identity state
+- effective `ssh -G github.com` identity settings
+- optional live GitHub SSH probe
+- optional `git log --show-signature` inspection
+
+**Usage**:
+```bash
+./scripts/git-ssh-doctor.sh
+./scripts/git-ssh-doctor.sh --no-github-probe
+./scripts/git-ssh-doctor.sh --no-git-log
+```
+
+**How to read it**:
+- `FAIL signing-config`: Git is not configured for SSH signing correctly.
+- `WARN ssh-add`: the SSH agent is reachable but has no identities loaded.
+- `FAIL github-probe` with `PASS signing-config`: signing config exists, but
+  GitHub SSH auth/transport is failing separately.
+
 ## setup-hdd-logging.sh
 
 **Purpose**: Configure fault-tolerant logging to spinning disk (HDD) for any Linux host.
