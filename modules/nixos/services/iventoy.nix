@@ -7,6 +7,12 @@
 let
   cfg = config.services.iventoy;
   defaultPackage = pkgs.callPackage ../../../pkgs/iventoy-free.nix { };
+  runtimeLibraryPath = lib.makeLibraryPath [
+    pkgs.glib
+    pkgs.libevent
+    pkgs.wimlib
+    pkgs.hivex
+  ];
 in
 {
   options.services.iventoy = {
@@ -114,7 +120,7 @@ in
           "IVENTOY_AUTO_RUN=1"
           "IVENTOY_NO_DAEMON_MODE=1"
         ];
-        ExecStart = "${pkgs.glibc}/lib/ld-linux-x86-64.so.2 --library-path ${cfg.stateDir}/lib/lin64 ${cfg.stateDir}/lib/iventoy";
+        ExecStart = "${pkgs.glibc}/lib/ld-linux-x86-64.so.2 --library-path ${cfg.stateDir}/lib/lin64:${runtimeLibraryPath} ${cfg.stateDir}/lib/iventoy";
         Restart = "on-failure";
         RestartSec = "10s";
       };
