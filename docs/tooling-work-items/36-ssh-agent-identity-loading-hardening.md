@@ -1,6 +1,6 @@
 # 36 SSH Agent Identity Loading Hardening
 
-Status: `in-progress`
+Status: `done`
 
 Suggested branch: `feat/tooling-ssh-agent-identity-hardening`
 
