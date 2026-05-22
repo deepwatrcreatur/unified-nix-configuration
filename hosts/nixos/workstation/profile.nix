@@ -112,6 +112,18 @@
   services.speechd.enable = false;
 
   services.openssh.enable = true;
+  programs.ssh = {
+    # OpenSSH 10.2 on this host rejects the default NixOS-generated
+    # `Include /nix/store/.../20-systemd-ssh-proxy.conf` path because it
+    # traverses the writable /nix/store mount. Keep systemd's SSH proxy
+    # features, but inline the shipped snippet into /etc/ssh/ssh_config
+    # instead of using an external include.
+    systemd-ssh-proxy.enable = false;
+    extraConfig = ''
+      # See systemd-ssh-proxy(1)
+      ${builtins.readFile "${config.systemd.package}/lib/systemd/ssh_config.d/20-systemd-ssh-proxy.conf"}
+    '';
+  };
   services.avahi = {
     enable = lib.mkForce false;
     nssmdns4 = lib.mkForce false;
