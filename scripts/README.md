@@ -29,6 +29,35 @@ GitHub SSH transport.
 - `FAIL github-probe` with `PASS signing-config`: signing config exists, but
   GitHub SSH auth/transport is failing separately.
 
+## ssh-bash.sh
+
+**Purpose**: Force remote commands through Bash even when the account's default
+shell is `fish` or another non-POSIX shell.
+
+**Why it exists**:
+- agents and automation frequently rely on `bash -lc`, heredocs, and POSIX
+  quoting
+- remote login shells like `fish` can parse SSH commands before Bash ever runs
+- this wrapper enters `/run/current-system/sw/bin/bash` on NixOS hosts and
+  falls back to `/bin/bash` or `bash` elsewhere
+
+**Usage**:
+```bash
+ssh-bash router
+ssh-bash -o BatchMode=yes -o ConnectTimeout=5 router -- systemctl status kea-dhcp4-server
+ssh-bash router -- "journalctl -u kea-dhcp-ddns-server --since '10 min ago' | tail -n 40"
+cat ./script.sh | ssh-bash router
+```
+
+**Behavior**:
+- interactive stdin: opens a remote login Bash shell
+- piped stdin with no command: runs the piped script via remote Bash
+- command arguments after `--`: runs them through remote `bash -lc`
+
+**Installed command**:
+- Home Manager installs `ssh-bash`
+- shell alias `sshb` points to `ssh-bash`
+
 ## setup-hdd-logging.sh
 
 **Purpose**: Configure fault-tolerant logging to spinning disk (HDD) for any Linux host.
