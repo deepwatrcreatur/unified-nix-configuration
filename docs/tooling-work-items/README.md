@@ -17,6 +17,9 @@ wrappers, shell defaults, and related repo operations.
 - Treat live hosts as single-writer resources; if an item deploys to a host
   such as `vaglio`, only one agent should perform rebuilds/restarts there at a
   time.
+- Parallel branch work is still encouraged when it does not touch the same live
+  deployment target. For example, DBus work or other repo changes can proceed
+  concurrently while `vaglio` deploy actions remain single-writer.
 - Mark the file as `in-progress` in its header once an agent starts it.
 - When work is fully merged, either delete the file or keep it briefly as
   `done` if it records useful outcome notes for follow-up agents.
@@ -29,8 +32,9 @@ wrappers, shell defaults, and related repo operations.
 
 ## Current Ranked Queue
 
-1. [32 Public Repo Stress Analysis Demo](./32-public-repo-stress-analysis-demo.md) — `ready`
-2. [33 JJ-Backed Forgejo Spike](./33-jj-backed-forgejo-spike.md) — `ready`
+1. [37 Git SSH Signing Doctor and Troubleshooting Notes](./37-git-ssh-signing-doctor-and-docs.md) — `ready`
+2. [32 Public Repo Stress Analysis Demo](./32-public-repo-stress-analysis-demo.md) — `ready`
+3. [33 JJ-Backed Forgejo Spike](./33-jj-backed-forgejo-spike.md) — `ready`
 
 ## Recently Completed
 
