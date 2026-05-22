@@ -2,19 +2,38 @@
 #
 # Standalone SSH auth agent — no gpg-agent dependency.
 #
-# Linux:  starts ssh-agent as a systemd user service (home-manager).
+# Linux:  starts ssh-agent as a systemd user service (home-manager) and keeps
+#         the socket/key selection explicit for agent CLIs.
 # Darwin: macOS Keychain handles the SSH agent natively; we just set
 #         AddKeysToAgent + UseKeychain in ssh config so keys are loaded
 #         on first use without a passphrase prompt every session.
-{ config, lib, pkgs, ... }:
+{ lib, pkgs, ... }:
 {
-  # Linux: systemd user SSH agent
+  # Linux: systemd user SSH agent.
   services.ssh-agent.enable = lib.mkIf pkgs.stdenv.isLinux true;
 
-  # Darwin: delegate to macOS Keychain agent
-  programs.ssh.extraConfig = lib.mkIf pkgs.stdenv.isDarwin ''
-    Host *
-      AddKeysToAgent yes
-      UseKeychain yes
-  '';
+  # Give shells and agent CLIs a stable socket path instead of relying on
+  # per-session discovery.
+  home.sessionVariables = lib.mkIf pkgs.stdenv.isLinux {
+    SSH_AUTH_SOCK = "$XDG_RUNTIME_DIR/ssh-agent";
+  };
+
+  programs.ssh = {
+    # Prefer the expected GitHub signing/transport key explicitly so agents can
+    # discover it from config even before the agent has loaded any identities.
+    matchBlocks = {
+      "github.com" = {
+        identitiesOnly = true;
+        identityFile = "~/.ssh/id_ed25519";
+        addKeysToAgent = "yes";
+      };
+    };
+
+    # Darwin: delegate to macOS Keychain agent.
+    extraConfig = lib.mkIf pkgs.stdenv.isDarwin ''
+      Host *
+        AddKeysToAgent yes
+        UseKeychain yes
+    '';
+  };
 }
