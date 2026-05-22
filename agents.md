@@ -46,8 +46,10 @@ Replace `<hostname>` with the name of the host you want to configure (e.g., `hom
 ```
 ## Agent Instructions
 ### Shell Environment
-- **Default shell is Fish**: Use Fish shell syntax for all commands to ensure compatibility with coding agents
-- **Avoid Nushell**: While Nushell is configured, Fish is set as default to prevent agent compatibility issues
+- **Default interactive shell is Fish**: Treat Fish as the human-facing default on most hosts, but do not assume it is the safest automation surface.
+- **Prefer Bash for automation snippets**: When generating local one-shot scripts, heredocs, or `-lc` command strings, prefer `bash` syntax rather than Fish syntax.
+- **Prefer `ssh-bash` for remote commands**: Most hosts default to Fish remotely too, so agent-driven SSH commands should use `ssh-bash <host> -- ...` (or pipe stdin into `ssh-bash <host>`) when the command relies on POSIX/Bash behavior.
+- **Avoid Nushell for agent automation**: Nushell remains a useful interactive shell, but it is an even less compatible target for generic agent-generated shell snippets.
 ### Multi-Host Configuration Awareness
 - **Always check hostname first**: Start by running `hostname` to identify which host you're working on
 - **Host-specific commands**: Use appropriate commands based on the host type:
