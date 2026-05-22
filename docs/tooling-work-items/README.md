@@ -14,6 +14,9 @@ wrappers, shell defaults, and related repo operations.
 
 - Treat each file in this folder as one PR-sized work stream.
 - Prefer one agent per file/branch.
+- Treat live hosts as single-writer resources; if an item deploys to a host
+  such as `vaglio`, only one agent should perform rebuilds/restarts there at a
+  time.
 - Mark the file as `in-progress` in its header once an agent starts it.
 - When work is fully merged, either delete the file or keep it briefly as
   `done` if it records useful outcome notes for follow-up agents.

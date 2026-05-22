@@ -56,6 +56,8 @@ interpretation guidance.
    (recent commits, open PR, or file already marked `in-progress`), treat it as
    stale and proceed.
 5. Mark the item `in-progress` in your branch as part of the same PR.
+6. If the item touches a live host, treat that host as an exclusive deployment
+   target and avoid parallel rebuild/restart work from other agent sessions.
 
 ## Invariants
 
