@@ -103,9 +103,10 @@ in
   services.router.dnsZones =
     let
       dnsConfig = import ./dns-zone.nix;
+      # Keep declarative reverse-zone generation aligned with Kea DDNS, which
+      # currently publishes into the LAN-wide /16 reverse zone.
       defaultNetworks = [
-        "10.10.10.0/24"
-        "10.10.11.0/24"
+        topology.networks.lan.cidr
       ];
       mkZone = zone: {
         nameserverIP = zone.nameserverIP or routerHost.ip;
