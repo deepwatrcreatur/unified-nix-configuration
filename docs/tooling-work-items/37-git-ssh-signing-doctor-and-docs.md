@@ -58,4 +58,5 @@ A single quick doctor flow would reduce repeated confusion.
 
 ## Dependencies
 
-- None, though it pairs well with item 36
+- None, though it pairs well with
+  [36 SSH Agent Identity Loading Hardening](./36-ssh-agent-identity-loading-hardening.md)
