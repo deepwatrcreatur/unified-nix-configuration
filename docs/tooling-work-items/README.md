@@ -34,8 +34,8 @@ wrappers, shell defaults, and related repo operations.
 
 ## Recently Completed
 
-1. [31 Forgejo-Shell Demo Surface On Vaglio](./31-forgejo-shell-vaglio-demo-surface.md) — `done`
-2. [30 Vaglio Roundtable Reactivation](./30-vaglio-roundtable-reactivation.md) — `done`
-3. [36 Vaglio 25.11 Landing Transition](./36-vaglio-25-11-landing-transition.md) — `done`
-4. [35 Agent-Roundtable Standalone Service Fix](./35-agent-roundtable-standalone-service-fix.md) — `done`
-5. [34 Vaglio Proxmox LXC Bring-Up](./34-vaglio-proxmox-lxc-bring-up.md) — `done`
+1. [36 SSH Agent Identity Loading Hardening](./36-ssh-agent-identity-loading-hardening.md) — `done`
+2. [31 Forgejo-Shell Demo Surface On Vaglio](./31-forgejo-shell-vaglio-demo-surface.md) — `done`
+3. [30 Vaglio Roundtable Reactivation](./30-vaglio-roundtable-reactivation.md) — `done`
+4. [36 Vaglio 25.11 Landing Transition](./36-vaglio-25-11-landing-transition.md) — `done`
+5. [35 Agent-Roundtable Standalone Service Fix](./35-agent-roundtable-standalone-service-fix.md) — `done`
