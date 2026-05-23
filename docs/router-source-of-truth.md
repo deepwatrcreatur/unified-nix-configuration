@@ -85,7 +85,7 @@ den/inventory/hosts.nix          ← entry point
 | Caddy / ingress | `hosts/nixos/router/caddy.nix` | Both hosts share this file directly; public DDNS ownership is gated by `router.failover.activeOwner` |
 | Router role (networking, firewall, DNS, observability, VPN) | `den/aspects/router-router.nix` + upstream `nix-router-optimized` modules | The den aspect selects which upstream modules to import |
 | Host-specific role args (WAN/LAN devices, IPs, Grafana paths) | `hosts/nixos/router/configuration.nix` and `hosts/nixos/router-backup/configuration.nix` | Each calls `role.nix` as a function with per-host arguments |
-| Active public identity ownership | `modules/nixos/router/common.nix` via `router.failover.activeOwner` | Defaults to `true` on `router`, `false` on `router-backup`; used to gate single-owner identity such as public DDNS updates |
+| Active single-owner identity | `modules/nixos/router/common.nix` via `router.failover.activeOwner` | Defaults to `true` on `router`, `false` on `router-backup`; currently gates public DDNS ownership, `kea-dhcp4-server` / `kea-dhcp-ddns-server` startup, `services.router-upnp.enable`, and `services.router-ntp.enable`, while LAN DNS remains a shared Technitium capability |
 | NIC stable names | `hosts/nixos/router/configuration.nix` (MAC-based) and `hosts/nixos/router-backup/configuration.nix` (PCI path-based) | Separate rules because the two machines use different matching strategies |
 | DNS zone data (static hosts, aliases) | `hosts/nixos/router/dns-zone.nix` | Inline-imported by `configuration.nix`; edit here to manage DNS records |
 | ulogd flow logging | `hosts/nixos/router/role.nix` (via nix-router-optimized) | Uses LOGEMU plugin (base `pkgs.ulogd`); JSON plugin requires overlay — not active by default |
@@ -97,8 +97,10 @@ den/inventory/hosts.nix          ← entry point
 
 - **DNS / NTP shared capability**: `hosts/nixos/router/service-capability.nix`.
 - **Primary hostname / domain defaults**: `hosts/nixos/router/networking.nix`.
-- **Active public identity ownership**: `modules/nixos/router/common.nix` via
+- **Active single-owner identity**: `modules/nixos/router/common.nix` via
   `router.failover.activeOwner`.
+- **Shared LAN DNS / Technitium clustering boundary**:
+  `hosts/nixos/router/service-capability.nix`.
 - **Firewall / NAT / observability / VPN**: tune options provided by
   `nix-router-optimized` modules; the entry point is `den/aspects/router-router.nix`.
 - **Caddy virtualHosts, ACME, DDNS**: `hosts/nixos/router/caddy.nix`.
@@ -110,6 +112,26 @@ den/inventory/hosts.nix          ← entry point
   `den/inventory/hosts.nix`.
 - **Hardware**: regenerate `hardware-configuration.nix` on the target machine with
   `nixos-generate-config`; never edit the generated file.
+
+---
+
+## Current `activeOwner` Consumers
+
+`router.failover.activeOwner` currently has a narrow, explicit consumer-side
+meaning:
+
+- in `hosts/nixos/router/caddy.nix`, it gates public Cloudflare DDNS ownership
+- in `hosts/nixos/router/role.nix`, it gates `kea-dhcp4-server.service` startup
+- in `hosts/nixos/router/role.nix`, it gates `kea-dhcp-ddns-server.service`
+  startup
+- in `hosts/nixos/router/role.nix`, it gates `services.router-upnp.enable`
+- in `hosts/nixos/router/role.nix`, it gates `services.router-ntp.enable`
+
+`services.router-dns-service` is intentionally **not** an `activeOwner`
+consumer today. The consumer tree treats LAN-facing DNS service as a shared
+Technitium capability on both routers, with clustering used to keep DNS/admin
+state aligned, while DHCP failover and public DDNS ownership remain separate
+boundaries.
 
 ---
 
