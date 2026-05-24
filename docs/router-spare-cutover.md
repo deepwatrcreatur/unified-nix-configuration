@@ -38,12 +38,9 @@ To promote `router-backup` after a failure or bad rebuild:
   - Caddy's public DDNS ownership
   - `kea-dhcp4-server.service`
   - `kea-dhcp-ddns-server.service`
-  - `services.router-upnp.enable`
-  - `services.router-ntp.enable`
 - `services.router-dns-service` is intentionally **not** behind this gate.
   LAN-facing DNS remains a shared Technitium capability on both routers, while
-  DHCP failover, public DDNS ownership, and other single-owner surfaces stay
-  separate.
+  DHCP failover and public DDNS ownership stay separate.
 
 ## Technitium
 

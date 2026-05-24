@@ -85,7 +85,7 @@ den/inventory/hosts.nix          ← entry point
 | Caddy / ingress | `hosts/nixos/router/caddy.nix` | Both hosts share this file directly; public DDNS ownership is gated by `router.failover.activeOwner` |
 | Router role (networking, firewall, DNS, observability, VPN) | `den/aspects/router-router.nix` + upstream `nix-router-optimized` modules | The den aspect selects which upstream modules to import |
 | Host-specific role args (WAN/LAN devices, IPs, Grafana paths) | `hosts/nixos/router/configuration.nix` and `hosts/nixos/router-backup/configuration.nix` | Each calls `role.nix` as a function with per-host arguments |
-| Active single-owner identity | `modules/nixos/router/common.nix` via `router.failover.activeOwner` | Defaults to `true` on `router`, `false` on `router-backup`; currently gates public DDNS ownership, `kea-dhcp4-server` / `kea-dhcp-ddns-server` startup, `services.router-upnp.enable`, and `services.router-ntp.enable`, while LAN DNS remains a shared Technitium capability |
+| Active single-owner identity | `modules/nixos/router/common.nix` via `router.failover.activeOwner` | Defaults to `true` on `router`, `false` on `router-backup`; currently gates public DDNS ownership and `kea-dhcp4-server` / `kea-dhcp-ddns-server` startup, while LAN DNS remains a shared Technitium capability |
 | NIC stable names | `hosts/nixos/router/configuration.nix` (MAC-based) and `hosts/nixos/router-backup/configuration.nix` (PCI path-based) | Separate rules because the two machines use different matching strategies |
 | DNS zone data (static hosts, aliases) | `hosts/nixos/router/dns-zone.nix` | Inline-imported by `configuration.nix`; edit here to manage DNS records |
 | ulogd flow logging | `hosts/nixos/router/role.nix` (via nix-router-optimized) | Uses LOGEMU plugin (base `pkgs.ulogd`); JSON plugin requires overlay — not active by default |
@@ -124,8 +124,9 @@ meaning:
 - in `hosts/nixos/router/role.nix`, it gates `kea-dhcp4-server.service` startup
 - in `hosts/nixos/router/role.nix`, it gates `kea-dhcp-ddns-server.service`
   startup
-- in `hosts/nixos/router/role.nix`, it gates `services.router-upnp.enable`
-- in `hosts/nixos/router/role.nix`, it gates `services.router-ntp.enable`
+- it does not currently gate LAN-facing Technitium DNS service
+- future consumer-side ownership narrowing for NTP or UPnP should be treated as
+  separate follow-up work, not assumed from shared capability declarations
 
 `services.router-dns-service` is intentionally **not** an `activeOwner`
 consumer today. The consumer tree treats LAN-facing DNS service as a shared
