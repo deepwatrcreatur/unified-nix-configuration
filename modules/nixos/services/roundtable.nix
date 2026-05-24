@@ -13,7 +13,7 @@ in
 
     package = lib.mkOption {
       type = lib.types.package;
-      default = pkgs.roundtable-web;
+      default = pkgs.roundtable;
       description = "The roundtable package to use.";
     };
 
@@ -116,7 +116,7 @@ in
                 export EXA_API_KEY=$(cat $CREDENTIALS_DIRECTORY/exa_api_key)
               fi
 
-              exec ${cfg.package}/bin/roundtable-web
+              exec ${cfg.package}/bin/roundtable
             '';
           in
           "${startScript}";

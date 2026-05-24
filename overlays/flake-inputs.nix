@@ -57,7 +57,9 @@
   # roundtable - autonomous multi-agent design orchestrator
   (final: prev: {
     roundtable = inputs.agent-roundtable.packages.${prev.stdenv.hostPlatform.system}.default;
-    roundtable-web = inputs.agent-roundtable.packages.${prev.stdenv.hostPlatform.system}.roundtable-web;
+    roundtable-web =
+      inputs.agent-roundtable.packages.${prev.stdenv.hostPlatform.system}.roundtable-web
+      or inputs.agent-roundtable.packages.${prev.stdenv.hostPlatform.system}.default;
   })
 
   # Keep the upstream beads_rust flake pinned for metadata and future source
