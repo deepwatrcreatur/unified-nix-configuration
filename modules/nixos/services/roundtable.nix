@@ -57,6 +57,12 @@ in
       description = "Optional path to file containing DeepSeek API key.";
     };
 
+    exaApiKeyFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = "Optional path to file containing Exa API key.";
+    };
+
     phoenixHost = lib.mkOption {
       type = lib.types.str;
       default = "roundtable.deepwatercreature.com";
@@ -106,6 +112,9 @@ in
               if [ -f $CREDENTIALS_DIRECTORY/deepseek_api_key ]; then
                 export DEEPSEEK_API_KEY=$(cat $CREDENTIALS_DIRECTORY/deepseek_api_key)
               fi
+              if [ -f $CREDENTIALS_DIRECTORY/exa_api_key ]; then
+                export EXA_API_KEY=$(cat $CREDENTIALS_DIRECTORY/exa_api_key)
+              fi
 
               exec ${cfg.package}/bin/roundtable-web
             '';
@@ -120,7 +129,8 @@ in
           ++ lib.optional (cfg.anthropicApiKeyFile != null) "anthropic_api_key:${cfg.anthropicApiKeyFile}"
           ++ lib.optional (cfg.openaiApiKeyFile != null) "openai_api_key:${cfg.openaiApiKeyFile}"
           ++ lib.optional (cfg.geminiApiKeyFile != null) "gemini_api_key:${cfg.geminiApiKeyFile}"
-          ++ lib.optional (cfg.deepseekApiKeyFile != null) "deepseek_api_key:${cfg.deepseekApiKeyFile}";
+          ++ lib.optional (cfg.deepseekApiKeyFile != null) "deepseek_api_key:${cfg.deepseekApiKeyFile}"
+          ++ lib.optional (cfg.exaApiKeyFile != null) "exa_api_key:${cfg.exaApiKeyFile}";
 
         Environment = [
           "PORT=${toString cfg.port}"

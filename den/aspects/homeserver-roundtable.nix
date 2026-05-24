@@ -31,6 +31,10 @@ if builtins.pathExists secretKeyBaseFile then
       file = ../../secrets-agenix/deepseek-api-key.age;
     };
 
+    age.secrets."exa-api-key" = {
+      file = ../../secrets-agenix/exa-api-key.age;
+    };
+
     services.roundtable = {
       enable = true;
       secretKeyBaseFile = config.age.secrets."roundtable-secret-key-base".path;
@@ -40,6 +44,7 @@ if builtins.pathExists secretKeyBaseFile then
       openaiApiKeyFile = config.age.secrets."openai-api-key".path;
       geminiApiKeyFile = config.age.secrets."gemini-api-key".path;
       deepseekApiKeyFile = config.age.secrets."deepseek-api-key".path;
+      exaApiKeyFile = config.age.secrets."exa-api-key".path;
       oidcIssuerUrl = "https://authentik.deepwatercreature.com/application/o/roundtable/";
       phoenixHost = "roundtable.deepwatercreature.com";
     };
