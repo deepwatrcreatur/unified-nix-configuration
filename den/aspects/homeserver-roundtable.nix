@@ -2,6 +2,7 @@
 { config, pkgs, lib, ... }:
 let
   secretKeyBaseFile = ../../secrets-agenix/roundtable-secret-key-base.age;
+  exaApiKeyFile = ../../secrets-agenix/exa-api-key.age;
 in
 if builtins.pathExists secretKeyBaseFile then
   {
@@ -31,8 +32,8 @@ if builtins.pathExists secretKeyBaseFile then
       file = ../../secrets-agenix/deepseek-api-key.age;
     };
 
-    age.secrets."exa-api-key" = {
-      file = ../../secrets-agenix/exa-api-key.age;
+    age.secrets."exa-api-key" = lib.mkIf (builtins.pathExists exaApiKeyFile) {
+      file = exaApiKeyFile;
     };
 
     services.roundtable = {
@@ -44,7 +45,8 @@ if builtins.pathExists secretKeyBaseFile then
       openaiApiKeyFile = config.age.secrets."openai-api-key".path;
       geminiApiKeyFile = config.age.secrets."gemini-api-key".path;
       deepseekApiKeyFile = config.age.secrets."deepseek-api-key".path;
-      exaApiKeyFile = config.age.secrets."exa-api-key".path;
+      exaApiKeyFile =
+        lib.mkIf (builtins.pathExists exaApiKeyFile) config.age.secrets."exa-api-key".path;
       oidcIssuerUrl = "https://authentik.deepwatercreature.com/application/o/roundtable/";
       phoenixHost = "roundtable.deepwatercreature.com";
     };

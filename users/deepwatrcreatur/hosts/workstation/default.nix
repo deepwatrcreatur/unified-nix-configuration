@@ -5,6 +5,9 @@
   inputs,
   ...
 }:
+let
+  exaApiKeyFile = ../../../../secrets-agenix/exa-api-key.age;
+in
 {
   imports = [
     ../../default.nix
@@ -79,10 +82,6 @@
         source = ../../../../secrets-agenix/deepseek-api-key.age;
         target = ".local/share/agenix-user-secrets/deepseek-api-key";
       };
-      exa-api-key = {
-        source = ../../../../secrets-agenix/exa-api-key.age;
-        target = ".local/share/agenix-user-secrets/exa-api-key";
-      };
       oauth-creds = {
         source = ../../../../secrets-agenix/oauth-creds.age;
         target = ".local/share/agenix-user-secrets/oauth-creds";
@@ -100,6 +99,11 @@
       proxmox-api-token = {
         source = ../../../../secrets-agenix/proxmox-api-token.age;
         target = ".local/share/agenix-user-secrets/proxmox-api-token";
+      };
+    } // lib.optionalAttrs (builtins.pathExists exaApiKeyFile) {
+      exa-api-key = {
+        source = exaApiKeyFile;
+        target = ".local/share/agenix-user-secrets/exa-api-key";
       };
     };
   };
