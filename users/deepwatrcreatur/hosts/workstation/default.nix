@@ -79,6 +79,10 @@
         source = ../../../../secrets-agenix/deepseek-api-key.age;
         target = ".local/share/agenix-user-secrets/deepseek-api-key";
       };
+      exa-api-key = {
+        source = ../../../../secrets-agenix/exa-api-key.age;
+        target = ".local/share/agenix-user-secrets/exa-api-key";
+      };
       oauth-creds = {
         source = ../../../../secrets-agenix/oauth-creds.age;
         target = ".local/share/agenix-user-secrets/oauth-creds";

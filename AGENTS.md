@@ -172,6 +172,23 @@ For detailed managed authentication paths (including `gemini-cli`), see `docs/to
 - For debugging against the raw CLI, bypass the alias with `command claude-code`
   in a shell.
 
+#### Exa web search
+
+- Preferred secret path: `~/.local/share/agenix-user-secrets/exa-api-key` on
+  operator workstations, with `/run/agenix/exa-api-key` as the host-service
+  fallback.
+- Preferred environment variable: `EXA_API_KEY`.
+- When an agent needs live web research, prefer Exa over ad hoc search engines
+  while the monthly request budget remains comfortable.
+- Use Exa conservatively:
+  - default to `/search` with `type: "auto"` and `contents.highlights: true`
+  - escalate to `deep` or `deep-reasoning` only for genuinely synthesis-heavy
+    questions
+  - avoid spending requests on trivial URL fetches when a known page can be read
+    directly
+- If Exa behavior appears stale or surprising, check the canonical API guide:
+  `https://docs.exa.ai/reference/search-api-guide-for-coding-agents`
+
 #### Agenix secret editing
 
 - Preferred command: `agenix-edit secrets-agenix/<name>.age`

@@ -66,6 +66,10 @@ let
       "${config.home.homeDirectory}/.local/share/agenix-user-secrets/deepseek-api-key"
       "/run/agenix/deepseek-api-key"
     ];
+    EXA_API_KEY = [
+      "${config.home.homeDirectory}/.local/share/agenix-user-secrets/exa-api-key"
+      "/run/agenix/exa-api-key"
+    ];
   };
 in
 {
