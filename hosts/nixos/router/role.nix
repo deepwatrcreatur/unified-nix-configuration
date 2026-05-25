@@ -738,7 +738,7 @@ in
             --data-urlencode "zone=${fwdZone}" \
             --data-urlencode "update=UseSpecifiedNetworkACL" \
             --data-urlencode "updateNetworkACL=127.0.0.1" \
-            --data-urlencode "updateSecurityPolicies=kea-ddns|*.${fwdZone}|A,AAAA,DHCID" \
+            --data-urlencode "updateSecurityPolicies=kea-ddns|*|A,AAAA,DHCID" \
             "http://127.0.0.1:5380/api/zones/options/set" \
             >/dev/null
 
@@ -749,7 +749,7 @@ in
             --data-urlencode "zone=${revZone}" \
             --data-urlencode "update=UseSpecifiedNetworkACL" \
             --data-urlencode "updateNetworkACL=127.0.0.1" \
-            --data-urlencode "updateSecurityPolicies=kea-ddns|*.${revZone}|PTR,DHCID" \
+            --data-urlencode "updateSecurityPolicies=kea-ddns|*|PTR,DHCID" \
             "http://127.0.0.1:5380/api/zones/options/set" \
             >/dev/null
 
