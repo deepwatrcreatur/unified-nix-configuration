@@ -1,6 +1,6 @@
 # 32 Public Repo Stress Analysis Demo
 
-Status: `ready`
+Status: `done`
 Suggested branch: `feat/public-repo-stress-analysis-demo`
 Priority: `high`
 
@@ -47,3 +47,28 @@ and active-inference framing.
 
 Prefer a narrow but honest first demo over a broad pseudo-platform. A small
 number of compelling repo examples is enough for the initial pass.
+
+## Outcome
+
+- The implementation already landed in the repo-managed `agent-roundtable`
+  input that this flake consumes via [`flake.nix`](../../flake.nix).
+- The current `/forgejo-shell` surface in
+  `agent-roundtable/roundtable/lib/roundtable_web/live/forgejo_shell_live.ex`
+  exposes curated public demos and links to snapshot reports.
+- The import and snapshot pipeline exists in
+  `agent-roundtable/roundtable/lib/roundtable/public_repo_demo.ex`:
+  it resolves public refs with `git ls-remote`, samples shallow history, and
+  emits JSON snapshots under `reports/public-repo-demos/`.
+- Shareable report generation exists in
+  `agent-roundtable/roundtable/lib/roundtable/public_repo_sna_reports.ex`,
+  which renders markdown artifacts consumed alongside `/forgejo-shell/reports`.
+- The current checked-in demo corpus already covers:
+  - `NixOS/nixpkgs`
+  - `kubernetes/kubernetes`
+  - `forgejo/forgejo`
+- The adjacent repo also records the upstream completion path in
+  `agent-roundtable/docs/work-items/68-public-repo-investor-demo.md` and
+  `agent-roundtable/docs/work-items/72-forgejo-shell-public-demo-polish.md`.
+
+This queue item was stale in `unified-nix-configuration`; the work should be
+treated as complete here rather than duplicated in a second pipeline.

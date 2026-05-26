@@ -1,6 +1,6 @@
 # 37 Git SSH Signing Doctor and Troubleshooting Notes
 
-Status: `ready`
+Status: `done`
 
 Suggested branch: `feat/tooling-git-ssh-doctor`
 
@@ -60,3 +60,23 @@ A single quick doctor flow would reduce repeated confusion.
 
 - None, though it pairs well with
   [36 SSH Agent Identity Loading Hardening](./36-ssh-agent-identity-loading-hardening.md)
+
+## Outcome
+
+- Added a read-only repo-local doctor script at
+  [`scripts/git-ssh-doctor.sh`](../../scripts/git-ssh-doctor.sh).
+- Added usage and interpretation notes at
+  [`docs/git-ssh-doctor.md`](../git-ssh-doctor.md).
+- Updated [`scripts/README.md`](../../scripts/README.md) so the doctor is
+  discoverable from the existing script index.
+- Updated [`AGENTS.md`](../../AGENTS.md) and [`agents.md`](../../agents.md) so
+  the repo no longer implies that SSH signing failures, empty `ssh-agent`
+  state, and GitHub transport problems are the same class of issue.
+- Validated on `workstation` against the live environment:
+  - Git SSH signing config is present
+  - `allowed_signers` exists
+  - `ssh-agent` has the expected ED25519 identity loaded
+  - `ssh -T -o BatchMode=yes git@github.com` succeeds
+  - the remaining warning on `HEAD` is about an older GPG-signed merge commit
+    whose public verification key is not available locally, which is distinct
+    from SSH signing or GitHub transport failure

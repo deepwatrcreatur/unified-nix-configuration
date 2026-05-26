@@ -32,14 +32,16 @@ wrappers, shell defaults, and related repo operations.
 
 ## Current Ranked Queue
 
-1. [37 Git SSH Signing Doctor and Troubleshooting Notes](./37-git-ssh-signing-doctor-and-docs.md) — `ready`
-2. [32 Public Repo Stress Analysis Demo](./32-public-repo-stress-analysis-demo.md) — `ready`
-3. [33 JJ-Backed Forgejo Spike](./33-jj-backed-forgejo-spike.md) — `ready`
+There are currently no `ready` or `in-progress` tooling work items in this
+folder.
 
 ## Recently Completed
 
-1. [36 SSH Agent Identity Loading Hardening](./36-ssh-agent-identity-loading-hardening.md) — `done`
-2. [31 Forgejo-Shell Demo Surface On Vaglio](./31-forgejo-shell-vaglio-demo-surface.md) — `done`
-3. [30 Vaglio Roundtable Reactivation](./30-vaglio-roundtable-reactivation.md) — `done`
-4. [36 Vaglio 25.11 Landing Transition](./36-vaglio-25-11-landing-transition.md) — `done`
-5. [35 Agent-Roundtable Standalone Service Fix](./35-agent-roundtable-standalone-service-fix.md) — `done`
+1. [37 Git SSH Signing Doctor and Troubleshooting Notes](./37-git-ssh-signing-doctor-and-docs.md) — `done`
+2. [36 SSH Agent Identity Loading Hardening](./36-ssh-agent-identity-loading-hardening.md) — `done`
+3. [33 JJ-Backed Forgejo Spike](./33-jj-backed-forgejo-spike.md) — `done`
+4. [32 Public Repo Stress Analysis Demo](./32-public-repo-stress-analysis-demo.md) — `done`
+5. [31 Forgejo-Shell Demo Surface On Vaglio](./31-forgejo-shell-vaglio-demo-surface.md) — `done`
+6. [30 Vaglio Roundtable Reactivation](./30-vaglio-roundtable-reactivation.md) — `done`
+7. [36 Vaglio 25.11 Landing Transition](./36-vaglio-25-11-landing-transition.md) — `done`
+8. [35 Agent-Roundtable Standalone Service Fix](./35-agent-roundtable-standalone-service-fix.md) — `done`

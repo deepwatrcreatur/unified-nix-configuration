@@ -218,5 +218,11 @@ Before pushing changes that affect remote hosts:
    ```
    when you have confirmed the signing path itself is unavailable and the work
    should not be blocked on fixing it first.
+   For diagnosis, run:
+   ```bash
+   ./scripts/git-ssh-doctor.sh
+   ```
+   Do not assume GitHub SSH transport failure, empty `ssh-agent`, and SSH
+   signing misconfiguration are the same problem.
 5. **Then push** with `git push`
 ```

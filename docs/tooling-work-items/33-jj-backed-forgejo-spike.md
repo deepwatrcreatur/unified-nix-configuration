@@ -1,6 +1,6 @@
 # 33 JJ-Backed Forgejo Spike
 
-Status: `ready`
+Status: `done`
 Suggested branch: `spike/jj-backed-forgejo`
 Priority: `medium`
 
@@ -45,3 +45,29 @@ Forgejo-shell-based analysis environment.
 
 This item should reduce architecture uncertainty, not multiply it. Prefer one
 strong recommendation over a catalog of possibilities.
+
+## Outcome
+
+- The core spike outcome already landed in the repo-managed `agent-roundtable`
+  input that this flake consumes.
+- The architectural recommendation is already recorded in
+  `agent-roundtable/docs/design/rounds/round-58-git-compatibility-on-jj-native-hosting.md`:
+  - keep a Git-compatible network edge
+  - keep `jj` as the canonical internal model
+  - use an explicit semantic translation layer rather than a sidecar bridge or
+    a true dual-native model
+- The bounded implementation path also already landed:
+  - `agent-roundtable/docs/work-items/66-forgejo-code-server-shell.md`
+  - `agent-roundtable/docs/work-items/67-git-jj-translation-gateway.md`
+- The current shell model in
+  `agent-roundtable/roundtable/lib/roundtable/forgejo_shell.ex` explicitly
+  avoids a Forgejo fork and instead treats Forgejo as the Git-facing edge while
+  routing semantics through `Roundtable.Translation.GitToJj`.
+- That means the first viable recommendation is already answered:
+  - do **not** start with a true Forgejo fork
+  - do **not** reduce the product to a sidecar mirror
+  - use a Forgejo/Git-compatible edge with a `jj`-native core and explicit
+    translation boundary
+
+This queue item was stale in `unified-nix-configuration`; the spike should be
+treated as complete here rather than repeated in a second repo.
