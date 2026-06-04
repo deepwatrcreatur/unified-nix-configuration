@@ -148,11 +148,14 @@ def read_kea_leases_from_snapshot(path):
 
             address = row[0].strip()
             hardware_address = row[1].strip()
-            lease_expires = format_kea_expiry(row[4])
+            raw_expiry = row[4].strip()
             hostname = row[8].strip()
             state = row[9].strip()
 
-            if not address:
+            if not address or address == "address" or state == "state":
+                continue
+
+            if state != "0":
                 continue
 
             entry = {
@@ -161,13 +164,13 @@ def read_kea_leases_from_snapshot(path):
                 "address": address,
                 "hostname": hostname,
                 "hardwareAddress": hardware_address,
-                "leaseExpires": lease_expires,
-                "type": "active" if state == "0" else state,
+                "leaseExpires": format_kea_expiry(raw_expiry),
+                "type": "active",
                 "_state": state,
             }
 
             current = leases_by_ip.get(address)
-            if current is None or (current.get("_state") != "0" and state == "0"):
+            if current is None:
                 leases_by_ip[address] = entry
 
     leases = sorted(leases_by_ip.values(), key=lambda entry: ip_sort_key(entry["address"]))
