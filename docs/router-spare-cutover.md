@@ -38,9 +38,14 @@ To promote `router-backup` after a failure or bad rebuild:
   - Caddy's public DDNS ownership
   - `kea-dhcp4-server.service`
   - `kea-dhcp-ddns-server.service`
-- `services.router-dns-service` is intentionally **not** behind this gate.
-  LAN-facing DNS remains a shared Technitium capability on both routers, while
-  DHCP failover and public DDNS ownership stay separate.
+  - `services.router-upnp.enable`
+  - `services.router-ntp.enable`
+  so both nodes can keep shared capability while only the active owner answers
+  LAN DHCP, advertises UPnP/NAT-PMP mappings, serves the advertised LAN NTP
+  identity, or updates public DNS identity.
+- More failover-sensitive ownership should move behind this same boundary as
+  the HA refactor continues. That next step is now tracked explicitly in
+  work item `75-consumer-active-owner-service-boundary-and-expansion`.
 
 ## Technitium
 
@@ -58,23 +63,18 @@ Use Technitium clustering only for DNS/admin-state sync between `router` and
 - make `router` the primary Technitium node
 - join `router-backup` as a secondary node
 - keep both nodes reachable over the management network
-- keep LAN DNS service available on both nodes as a clustered shared
-  capability
 - do not treat clustering as DHCP failover
 
 ### What Clustering Helps With
 
 - DNS zones and records managed in Technitium
 - admin/application configuration inside Technitium
-- keeping the LAN-facing DNS service surface aligned across both routers
 - reducing drift between the primary and spare router
 
 ### What It Does Not Solve
 
 - DHCP scope replication
 - DHCP lease-state failover
-- automatic promotion of DNS, DHCP, and public identity as one inseparable HA
-  unit
 - default-gateway failover
 - WAN ownership
 

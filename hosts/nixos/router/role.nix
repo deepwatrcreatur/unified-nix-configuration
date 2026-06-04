@@ -27,13 +27,33 @@ let
   operatorStableSshKey = lib.strings.trim (
     builtins.readFile ../../../ssh-keys/deepwatrcreatur-stable-identity.pub
   );
+  keaDhcp4LeaseHeader =
+    "address,hwaddr,client_id,valid_lifetime,expire,subnet_id,fqdn_fwd,fqdn_rev,hostname,state,user_context,pool_id";
   ensureKeaLeaseState = pkgs.writeShellScript "router-kea-ensure-state" ''
     set -euo pipefail
 
     install -d -m 0750 -o kea -g kea /var/lib/private/kea
-    touch /var/lib/private/kea/dhcp4.leases /var/lib/private/kea/dhcp4.leases.2
-    chown kea:kea /var/lib/private/kea/dhcp4.leases /var/lib/private/kea/dhcp4.leases.2
-    chmod 0640 /var/lib/private/kea/dhcp4.leases /var/lib/private/kea/dhcp4.leases.2
+
+    expected_header='${keaDhcp4LeaseHeader}'
+
+    for lease_file in /var/lib/private/kea/dhcp4.leases /var/lib/private/kea/dhcp4.leases.2; do
+      if [ ! -e "$lease_file" ]; then
+        : > "$lease_file"
+      fi
+
+      if [ -s "$lease_file" ]; then
+        header="$(head -n 1 "$lease_file" || true)"
+        if [ "$header" != "$expected_header" ]; then
+          backup="$lease_file.incompatible.$(date +%s)"
+          cp -a "$lease_file" "$backup"
+          : > "$lease_file"
+          echo "router-kea-ensure-state: reset incompatible lease file header in $lease_file (backup: $backup)" >&2
+        fi
+      fi
+
+      chown kea:kea "$lease_file"
+      chmod 0640 "$lease_file"
+    done
   '';
 
   secrets = optSec.mkSecrets {
@@ -62,6 +82,7 @@ let
   managementNetwork = topology.networks.management;
   mkFqdn = label: "${label}.${topology.domain}";
   isPrimaryRouter = config.networking.hostName == "router";
+  activeOwner = config.router.failover.activeOwner;
   # Static LAN IP assigned to this router node, distinct from the shared VIP.
   staticLanIp = builtins.head (lib.splitString "/" lanIpv4Address);
   reservableHosts = lib.filterAttrs (
@@ -175,6 +196,8 @@ in
   };
 
   services.router-kea = {
+    # Keep Kea defined on both nodes so the unit, user/group, and secret wiring
+    # remain coherent, but gate actual DHCP ownership at service start.
     enable = true;
     dhcp4 = {
       interfaces = [ lanDevice ];
@@ -224,14 +247,25 @@ in
 
   services.router-upnp = {
     # Bind miniupnpd to explicit interface names so the generated config does
-    # not fall back to invalid address-based guesses.
-    enable = true;
+    # not fall back to invalid address-based guesses. Only the active owner
+    # should advertise LAN-side UPnP/NAT-PMP mappings.
+    enable = activeOwner;
     externalInterface = wanDevice;
     internalIPs = [ lanDevice ];
   };
 
+  # The shared router profile advertises one LAN-facing NTP identity via DHCP
+  # option 42, so only the active owner should actually serve that identity.
+  services.router-ntp.enable = activeOwner;
+
   systemd.services.kea-dhcp4-server.serviceConfig.ExecStartPre = lib.mkBefore [
     "+${ensureKeaLeaseState}"
+  ];
+  systemd.services.kea-dhcp4-server.serviceConfig.ExecCondition = lib.mkBefore [
+    "${pkgs.runtimeShell} -c '${if activeOwner then "exit 0" else "exit 1"}'"
+  ];
+  systemd.services.kea-dhcp-ddns-server.serviceConfig.ExecCondition = lib.mkBefore [
+    "${pkgs.runtimeShell} -c '${if activeOwner then "exit 0" else "exit 1"}'"
   ];
 
   services.router-networking = {
@@ -329,34 +363,37 @@ in
   services.router-optimizations = {
     enable = true;
     package = inputs.nix-router-optimized.packages.${pkgs.system}.router-diag;
-    interfaces = {
-      wan = {
-        device = wanDevice;
-        role = "wan";
-        label = "WAN";
-        bandwidth = "1Gbit";
+    interfaces =
+      {
+        wan = {
+          device = wanDevice;
+          role = "wan";
+          label = "WAN";
+          bandwidth = "1Gbit";
+        };
+        lan = {
+          device = lanDevice;
+          role = "lan";
+          label = "LAN";
+        };
+        management = {
+          device = managementDevice;
+          role = "management";
+          label = "Management";
+        };
+      }
+      // lib.optionalAttrs enableExtraRoutedNetworks {
+        iot = {
+          device = "${lanDevice}.20";
+          role = "lan";
+          label = "IoT VLAN";
+        };
+        guest = {
+          device = "${lanDevice}.30";
+          role = "lan";
+          label = "Guest VLAN";
+        };
       };
-      lan = {
-        device = lanDevice;
-        role = "lan";
-        label = "LAN";
-      };
-      iot = {
-        device = "${lanDevice}.20";
-        role = "lan";
-        label = "IoT VLAN";
-      };
-      guest = {
-        device = "${lanDevice}.30";
-        role = "lan";
-        label = "Guest VLAN";
-      };
-      management = {
-        device = managementDevice;
-        role = "management";
-        label = "Management";
-      };
-    };
     conntrack-max = 262144;
   };
 
@@ -736,9 +773,8 @@ in
             -H "Content-Type: application/x-www-form-urlencoded" \
             --data-urlencode "token=$TOKEN" \
             --data-urlencode "zone=${fwdZone}" \
-            --data-urlencode "update=UseSpecifiedNetworkACL" \
+            --data-urlencode "update=AllowOnlySpecifiedNetworkAddresses" \
             --data-urlencode "updateNetworkACL=127.0.0.1" \
-            --data-urlencode "updateSecurityPolicies=kea-ddns|*|A,AAAA,DHCID" \
             "http://127.0.0.1:5380/api/zones/options/set" \
             >/dev/null
 
@@ -747,9 +783,8 @@ in
             -H "Content-Type: application/x-www-form-urlencoded" \
             --data-urlencode "token=$TOKEN" \
             --data-urlencode "zone=${revZone}" \
-            --data-urlencode "update=UseSpecifiedNetworkACL" \
+            --data-urlencode "update=AllowOnlySpecifiedNetworkAddresses" \
             --data-urlencode "updateNetworkACL=127.0.0.1" \
-            --data-urlencode "updateSecurityPolicies=kea-ddns|*|PTR,DHCID" \
             "http://127.0.0.1:5380/api/zones/options/set" \
             >/dev/null
 

@@ -17,10 +17,6 @@ in
       haVirtualIpAddress
     ];
     searchDomains = [ topology.domain ];
-    # LAN-facing DNS remains a shared clustered capability on both routers.
-    # Do not casually move this behind router.failover.activeOwner: public DDNS
-    # and DHCP ownership are narrower single-owner surfaces than the
-    # Technitium-backed LAN resolver/admin state.
     # Advertise the router's chrony instance to LAN clients via DHCP option 42.
     # This remains the shared production identity; only the active owner should
     # actually present that identity on the production LAN.
@@ -36,15 +32,17 @@ in
   };
 
   services.router-ntp = {
-    # Shared capability belongs here even if consumer-side ownership becomes
-    # narrower later.
-    enable = true;
+    # Shared capability belongs here, but the consumer-side role owns the final
+    # single-owner gate via router.failover.activeOwner.
+    enable = lib.mkDefault true;
     lanSubnets = [ topology.networks.lan.cidr ];
   };
 
-  # UPnP/NAT-PMP stays declared here as shared capability wiring even if a
-  # narrower failover ownership adapter is introduced later.
-  services.router-upnp.enable = true;
+  # UPnP/NAT-PMP should remain available on whichever router currently owns
+  # the LAN path so failover does not silently drop port mapping support.
+  # Shared capability belongs here, but the consumer-side role owns the final
+  # single-owner gate via router.failover.activeOwner.
+  services.router-upnp.enable = lib.mkDefault true;
 
   # NAT is handled by nftables (see role.nix).
   networking.nat.enable = false;

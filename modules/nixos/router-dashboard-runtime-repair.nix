@@ -117,20 +117,40 @@ in
       };
       script = ''
         set -euo pipefail
-        src=""
-        for candidate in /var/lib/private/kea/dhcp4.leases /var/lib/kea/dhcp4.leases; do
-          if [ -f "$candidate" ]; then
-            src="$candidate"
-            break
+        tmp="$(mktemp /run/router-dashboard/kea-dhcp4.leases.XXXXXX)"
+        trap 'rm -f "$tmp"' EXIT
+
+        header=""
+        found_source=0
+
+        for candidate in \
+          /var/lib/private/kea/dhcp4.leases.2 \
+          /var/lib/private/kea/dhcp4.leases \
+          /var/lib/kea/dhcp4.leases.2 \
+          /var/lib/kea/dhcp4.leases
+        do
+          if [ ! -f "$candidate" ]; then
+            continue
           fi
+
+          found_source=1
+
+          if [ -z "$header" ]; then
+            header="$(head -n 1 "$candidate" || true)"
+            if [ -n "$header" ]; then
+              printf '%s\n' "$header" > "$tmp"
+            fi
+          fi
+
+          tail -n +2 "$candidate" | sed '/^$/d;/^#/d' >> "$tmp"
         done
 
-        if [ -z "$src" ]; then
+        if [ "$found_source" -eq 0 ] || [ -z "$header" ]; then
           echo "No Kea lease file found" >&2
           exit 1
         fi
 
-        install -m 0640 -o root -g router-dashboard "$src" "${keaLeaseSnapshotFile}"
+        install -m 0640 -o root -g router-dashboard "$tmp" "${keaLeaseSnapshotFile}"
       '';
       wantedBy = [ "multi-user.target" ];
     };
