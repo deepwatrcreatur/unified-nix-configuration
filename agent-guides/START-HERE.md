@@ -14,6 +14,11 @@ Read these in order:
 
 After that, choose the task-specific path below.
 
+If you are not yet sure which repo's queue owns the task, use the cross-repo
+directory first:
+
+- [`docs/work-queue-directory.md`](../docs/work-queue-directory.md)
+
 ## If You Are Taking Queue Work
 
 Use the queue-specific start doc that matches the task area:

@@ -95,6 +95,7 @@ Worktree quickstart:
 Fresh agent onboarding starts here:
 
 - [`agent-guides/START-HERE.md`](./agent-guides/START-HERE.md)
+- [`docs/work-queue-directory.md`](./docs/work-queue-directory.md)
 
 If you are assigning or running agents against this repo and the task comes from
 the ranked queues, continue with:
