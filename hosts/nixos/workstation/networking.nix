@@ -4,6 +4,7 @@
   networking = {
     hostName = "workstation";
     networkmanager.enable = true;
+    search = [ "deepwatercreature.com" ];
 
     # Firewall configuration
     firewall = {
