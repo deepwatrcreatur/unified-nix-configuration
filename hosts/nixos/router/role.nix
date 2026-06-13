@@ -820,15 +820,15 @@ in
       DNS = [ "127.0.0.1" ];
       Domains = [ topology.domain ];
       IPv6PrivacyExtensions = "no";
-      IPv6SendRA = true;
+      IPv6SendRA = activeOwner;
     };
     linkConfig.RequiredForOnline = lib.mkForce "routable";
-    ipv6SendRAConfig = {
+    ipv6SendRAConfig = lib.mkIf activeOwner {
       EmitDNS = true;
       Managed = false;
       OtherInformation = false;
     };
-    ipv6Prefixes = [
+    ipv6Prefixes = lib.mkIf activeOwner [
       {
         Prefix = "::/64";
         PreferredLifetimeSec = 1800;
