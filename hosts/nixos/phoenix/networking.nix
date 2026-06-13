@@ -17,5 +17,10 @@
     networkmanager.dns = "systemd-resolved";
   };
 
+  # This host is NetworkManager-managed, so the shared systemd-networkd module
+  # should not gate activation on networkd wait-online here.
+  systemd.network.enable = lib.mkForce false;
+  systemd.network.wait-online.enable = lib.mkForce false;
+
   services.tailscale.enable = true;
 }
