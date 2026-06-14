@@ -123,14 +123,13 @@ in
   };
   programs.nushell = {
     environmentVariables = {
-      NH_FLAKE = unifiedMainWorktree;
-      MOTD_FLAKE_REPO = unifiedMainWorktree;
+      NH_FLAKE = lib.mkForce unifiedMainWorktree;
+      MOTD_FLAKE_REPO = lib.mkForce unifiedMainWorktree;
     };
     shellAliases.cdflake = "cd ${unifiedMainWorktree}";
   };
 
   home.packages = with pkgs; [
-    bitwarden-desktop
     ffmpeg
     gitkraken
     deskflow
