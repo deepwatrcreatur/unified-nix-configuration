@@ -228,6 +228,7 @@
     mode = "aspect";
     aspectsList = [
       "nixos-base"
+      "home-manager-users"
       "workstation-desktop"
     ];
   };

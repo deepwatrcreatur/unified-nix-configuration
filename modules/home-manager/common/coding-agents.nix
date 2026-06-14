@@ -40,33 +40,33 @@ in
       package = lib.mkDefault pkgs.qmd;
     };
 
-    # Install coding agent packages from llm-agents overlay
-    home.packages = with pkgs.llm-agents; [
-      # Core agents
-      rtk
-      claude-code
-      opencode
-      codex
-      gemini-cli
-      amp
-      copilot-cli
-      cursor-agent
-      forge
-      goose-cli
-      kilocode-cli
-      pi
-      crush
-      agent-deck
-      workmux
+    # Install coding agent packages from llm-agents overlay.
+    home.packages =
+      with pkgs.llm-agents;
+      [
+        # Core agents
+        rtk
+        claude-code
+        opencode
+        codex
+        gemini-cli
+        amp
+        copilot-cli
+        cursor-agent
+        forge
+        goose-cli
+        kilocode-cli
+        pi
+        crush
+        agent-deck
+        workmux
 
-      # Usage trackers
-      ccusage
-      ccusage-amp
-      ccusage-codex
-      ccusage-opencode
-
-      # Utilities
-      ccstatusline
-    ];
+        # Utilities
+        ccstatusline
+      ]
+      ++ lib.optionals (pkgs.llm-agents ? ccusage) [ ccusage ]
+      ++ lib.optionals (pkgs.llm-agents ? ccusage-amp) [ ccusage-amp ]
+      ++ lib.optionals (pkgs.llm-agents ? ccusage-codex) [ ccusage-codex ]
+      ++ lib.optionals (pkgs.llm-agents ? ccusage-opencode) [ ccusage-opencode ];
   };
 }
