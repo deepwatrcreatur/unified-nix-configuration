@@ -5,6 +5,9 @@
   inputs,
   ...
 }:
+let
+  unifiedMainWorktree = "/home/deepwatrcreatur/flakes-worktrees/unified-nix-configuration/main";
+in
 {
   imports = [
     ../../default.nix
@@ -101,6 +104,28 @@
   };
 
   programs.distrobox.fedora.enable = true;
+
+  home.sessionVariables = {
+    NH_FLAKE = lib.mkForce unifiedMainWorktree;
+    MOTD_FLAKE_REPO = lib.mkForce unifiedMainWorktree;
+  };
+
+  programs.bash.shellAliases.cdflake = "cd ${unifiedMainWorktree}";
+  programs.zsh.shellAliases.cdflake = "cd ${unifiedMainWorktree}";
+  programs.fish = {
+    shellAliases.cdflake = "cd ${unifiedMainWorktree}";
+    interactiveShellInit = lib.mkAfter ''
+      set -gx NH_FLAKE "${unifiedMainWorktree}"
+      set -gx MOTD_FLAKE_REPO "${unifiedMainWorktree}"
+    '';
+  };
+  programs.nushell = {
+    environmentVariables = {
+      NH_FLAKE = unifiedMainWorktree;
+      MOTD_FLAKE_REPO = unifiedMainWorktree;
+    };
+    shellAliases.cdflake = "cd ${unifiedMainWorktree}";
+  };
 
   home.packages = with pkgs; [
     bitwarden-desktop
