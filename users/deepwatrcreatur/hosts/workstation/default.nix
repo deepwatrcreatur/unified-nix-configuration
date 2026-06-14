@@ -105,6 +105,8 @@ in
 
   programs.distrobox.fedora.enable = true;
 
+  my.just.flakeDir = unifiedMainWorktree;
+
   home.sessionVariables = {
     NH_FLAKE = lib.mkForce unifiedMainWorktree;
     MOTD_FLAKE_REPO = lib.mkForce unifiedMainWorktree;
