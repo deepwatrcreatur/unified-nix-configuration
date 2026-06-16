@@ -46,7 +46,7 @@
       auto-format = true;
       language-servers = [ "typescript-language-server" ];
       formatter = {
-        command = "${pkgs.nodePackages.prettier}/bin/prettier";
+        command = "${pkgs.prettier}/bin/prettier";
         args = [
           "--parser"
           "javascript"
@@ -58,7 +58,7 @@
       auto-format = true;
       language-servers = [ "typescript-language-server" ];
       formatter = {
-        command = "${pkgs.nodePackages.prettier}/bin/prettier";
+        command = "${pkgs.prettier}/bin/prettier";
         args = [
           "--parser"
           "typescript"

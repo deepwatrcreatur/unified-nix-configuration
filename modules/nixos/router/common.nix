@@ -45,6 +45,13 @@ in
     prometheusRetentionSize = lib.mkDefault "40GB";
   };
 
+  # NixOS 26.05 removed Grafana's built-in default secret key. Keep the
+  # previous value file-backed so existing router Grafana state remains readable
+  # until a deliberate rotation is planned.
+  config.environment.etc."grafana/secret_key".text = "SW2YcwTIb9zpOOhoPsMm";
+  config.services.grafana.settings.security.secret_key =
+    lib.mkDefault "$__file{/etc/grafana/secret_key}";
+
   # Logs disk is on scsi1 (spinning disk), formatted by disko as disk-logs-logs.
   # router-log-storage handles the mount; disko only formats the partition.
   config.services.router-log-storage = {

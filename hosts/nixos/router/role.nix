@@ -66,6 +66,10 @@ let
       file = ../../../secrets-agenix/technitium-api-key.age;
       mode = "0444";
     };
+    technitium-admin-password = {
+      file = ../../../secrets-agenix/technitium-admin-password.age;
+      mode = "0400";
+    };
     kea-ddns-tsig-key = {
       file = ../../../secrets-agenix/kea-ddns-tsig-key.age;
       mode = "0440";
@@ -398,6 +402,7 @@ in
   };
 
   services.router-technitium = {
+    bootstrapPasswordSecretName = "technitium-admin-password";
     dhcpReservations = lib.mapAttrs (name: host: {
       scope = host.dhcpReservation.scope or "LAN";
       macAddress = host.dhcpReservation.macAddress;
@@ -564,6 +569,11 @@ in
   };
 
   services.netdata.config.global."bind to" = "0.0.0.0";
+
+  # Router hosts already render /etc/resolv.conf declaratively from NixOS
+  # networking settings, so the legacy resolvconf manager must stay disabled on
+  # 26.05 to avoid conflicting ownership of that path.
+  networking.resolvconf.enable = lib.mkForce false;
 
   # Keep the production LAN address present even when the data-plane cable is
   # intentionally unplugged on a standby/dev router. That allows dashboard and

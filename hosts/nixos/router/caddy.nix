@@ -44,7 +44,7 @@ in
         "github.com/caddy-dns/cloudflare@v0.2.3"
         "github.com/mholt/caddy-dynamicdns@v0.0.0-20251231002810-1af4f8876598"
       ];
-      hash = "sha256-cx7C7x9PG0RQh5ZaXIi2pDIiC2d3kdgBPE4SMApCY5o=";
+      hash = "sha256-iHlgpFqJjAld419OH4CRbwXlAmRafjBJYoJM+vm64vs=";
     };
     environmentFile = "/run/caddy/caddy.env";
 
