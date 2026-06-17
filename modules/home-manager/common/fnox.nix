@@ -71,9 +71,15 @@ in
 {
   imports = lib.optionals (inputs ? fnox) [ inputs.fnox.homeManagerModules.default ];
 
-  config = lib.optionalAttrs (inputs ? fnox) {
+  config = lib.mkIf (inputs ? fnox) (lib.mkMerge [
+    {
       programs.fnox = {
-        enable = true;
+        enable = lib.mkDefault pkgs.stdenv.isLinux;
+      };
+    }
+
+    (lib.mkIf config.programs.fnox.enable {
+      programs.fnox = {
         recipients = [
           "age17mn5lnlh2mgttp950wc7a2nl9kphewa4jj8e0uhlv3svx68a54vqyngcyr"
           "age1awqed0la6x3rr39et8fjruw42mf8v2sqct78mcjzx5d226gcx9nqrjdmjz"
@@ -175,5 +181,6 @@ in
           done
         '') seedSecretSources)}
       '';
-    };
+    })
+  ]);
 }
