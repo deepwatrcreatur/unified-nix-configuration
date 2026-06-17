@@ -37,7 +37,7 @@ let
 
   # Generate ssh-config content for ssh-keys-manager to parse
   sshConfigContent = builtins.concatStringsSep "\n" (map hostEntry sshHostEntries);
-  sshConfigFile = pkgs.writeText "ssh-config-generated" sshConfigContent;
+  sshConfigFile = builtins.toFile "ssh-config-generated" sshConfigContent;
 
 in {
   imports = [
