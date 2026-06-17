@@ -1,10 +1,11 @@
 # modules/home-manager/common/dmux.nix
-{ config, lib, pkgs, inputs, ... }:
+{ config, lib, pkgs, ... }:
 
 with lib;
 
 let
   cfg = config.programs.dmux;
+  dmuxPackage = pkgs.callPackage ../../../pkgs/dmux.nix { };
 in
 {
   options.programs.dmux = {
@@ -12,6 +13,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages = [ inputs.dmux-flake.packages.${pkgs.stdenv.hostPlatform.system}.default ];
+    home.packages = [ dmuxPackage ];
   };
 }
