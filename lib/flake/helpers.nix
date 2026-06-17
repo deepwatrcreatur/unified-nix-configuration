@@ -91,7 +91,6 @@ let
         modules =
           commonSystemModules
           ++ [
-            (repoRoot + "/modules")
             hostPath
             inputs.home-manager.darwinModules.home-manager
             (
