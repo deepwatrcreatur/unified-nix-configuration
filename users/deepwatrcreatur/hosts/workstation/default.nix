@@ -138,8 +138,8 @@ in
     obsidian-export
     rustdesk
     virt-viewer
-    xorg.xhost # X11 host access control for DeskFlow
-    wasistlos # WhatsApp desktop client (was previously whatsapp-for-linux)
+    xhost # X11 host access control for DeskFlow
+    karere # WhatsApp desktop client replacement for removed wasistlos
   ];
 
   programs.firefox = {
@@ -198,7 +198,7 @@ in
     };
     Service = {
       Type = "oneshot";
-      ExecStart = "${pkgs.xorg.xhost}/bin/xhost +local:";
+      ExecStart = "${pkgs.xhost}/bin/xhost +local:";
       RemainAfterExit = true;
     };
     Install = {
