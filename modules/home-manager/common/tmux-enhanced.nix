@@ -237,7 +237,6 @@ in
 
     # Install dependencies for plugins
     home.packages = with pkgs; [
-      ncurses  # Better terminfo support
       fzf      # Required by sessionx, fzf-tmux-url, tmux-fzf
       bat      # Required by sessionx for preview
       zoxide   # Optional but recommended for sessionx
