@@ -21,6 +21,10 @@
     fish  # Ensure fish is available in nix store for tmux
   ];
 
+  nixpkgs.config.permittedInsecurePackages = [
+    "electron-39.8.10"
+  ];
+
   programs.fish.enable = true;
 
   services.tailscale.enable = true;
