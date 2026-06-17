@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, options, ... }:
 let
   cfg = config.myModules.inferenceNode;
   modelsCfg = config.myModules.inferenceModels;
@@ -25,25 +25,25 @@ in {
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    assertions = [
-      {
-        assertion = modelsCfg.enable;
-        message = "myModules.inferenceModels.enable must be true when myModules.inferenceNode.enable is true.";
-      }
-    ];
+  config = lib.mkMerge [
+    (lib.mkIf cfg.enable {
+      assertions = [
+        {
+          assertion = modelsCfg.enable;
+          message = "myModules.inferenceModels.enable must be true when myModules.inferenceNode.enable is true.";
+        }
+      ];
+    })
 
-    # Ollama wiring – assumes tesla-inference module is available on the system.
-    tesla-inference = lib.mkIf (lib.elem "ollama" cfg.engine) {
-      enable = true;
-      ollama = {
+    (lib.optionalAttrs (options ? tesla-inference) {
+      # Ollama wiring – only emit this subtree when the tesla-inference module is available.
+      tesla-inference = lib.mkIf (cfg.enable && (lib.elem "ollama" cfg.engine)) {
         enable = true;
-        modelsPath = cfg.modelsPath;
+        ollama = {
+          enable = true;
+          modelsPath = cfg.modelsPath;
+        };
       };
-    };
-
-    # Placeholders for future vLLM and llama.cpp modules.
-    # We only reserve options here so hosts can already declare intent.
-    # Actual service modules can be added later.
-  };
+    })
+  ];
 }
