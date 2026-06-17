@@ -21,7 +21,6 @@
         ../../../../users/root
         ../../../../users/root/hosts/attic-cache
         ../../../../modules/home-manager/git.nix
-        ../../../../modules/home-manager/gpg-cli.nix
       ];
 
       home.username = "root";
