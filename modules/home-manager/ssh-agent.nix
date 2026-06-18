@@ -21,11 +21,11 @@
   programs.ssh = {
     # Prefer the expected GitHub signing/transport key explicitly so agents can
     # discover it from config even before the agent has loaded any identities.
-    matchBlocks = {
+    settings = {
       "github.com" = {
-        identitiesOnly = true;
-        identityFile = "~/.ssh/id_ed25519";
-        addKeysToAgent = "yes";
+        IdentitiesOnly = true;
+        IdentityFile = "~/.ssh/id_ed25519";
+        AddKeysToAgent = "yes";
       };
     };
 

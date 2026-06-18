@@ -43,19 +43,20 @@ let
     ) sshHosts
   );
 
-  # Generate matchBlocks from hosts
-  matchBlocks = lib.mapAttrs (name: host: {
-    hostname = host.sshHostname or host.hostname or host.ip;
-    user = host.sshUser or "deepwatrcreatur";
-  }) expandedSshHosts // {
-    # Wildcard match block for default settings
-    "*" = {
-      userKnownHostsFile = "~/.ssh/known_hosts_dynamic ~/.ssh/known_hosts_managed";
-      controlMaster = "auto";
-      controlPersist = "15m";
-      controlPath = "~/.ssh/master-%r@%n:%p";
+  # Generate SSH host blocks from hosts using upstream OpenSSH directive names.
+  sshSettings =
+    lib.mapAttrs (name: host: {
+      HostName = host.sshHostname or host.hostname or host.ip;
+      User = host.sshUser or "deepwatrcreatur";
+    }) expandedSshHosts
+    // {
+      "*" = {
+        UserKnownHostsFile = "~/.ssh/known_hosts_dynamic ~/.ssh/known_hosts_managed";
+        ControlMaster = "auto";
+        ControlPersist = "15m";
+        ControlPath = "~/.ssh/master-%r@%n:%p";
+      };
     };
-  };
 
 in {
   programs.ssh = {
@@ -77,8 +78,7 @@ in {
       ConnectTimeout 20
     '';
 
-    # Generated host configurations
-    inherit matchBlocks;
+    settings = sshSettings;
   };
 
   # OpenSSH rejects the Home Manager symlink at ~/.ssh/config on this host.
