@@ -8,14 +8,18 @@
 
   # Worktrunk (git worktree management for parallel agents)
   (final: prev: {
-    worktrunk = inputs.worktrunk.packages.${prev.stdenv.hostPlatform.system}.default;
+    worktrunk = final.callPackage ../pkgs/worktrunk.nix { };
   })
 
   # Lightpanda headless browser for AI agents
-  inputs.nix-lightpanda.overlays.default
+  (final: prev: {
+    lightpanda = inputs.nix-lightpanda.packages.${prev.stdenv.hostPlatform.system}.lightpanda;
+  })
 
   # markit - universal document-to-markdown converter CLI
-  inputs.nix-markit.overlays.default
+  (final: prev: {
+    markit = inputs.nix-markit.packages.${prev.stdenv.hostPlatform.system}.markit;
+  })
 
   # Tesla inference overlays for GPU optimization
   inputs.tesla-inference-flake.overlays.ollama-official-binaries # Use official binaries to avoid cuda_compat build error
