@@ -366,7 +366,7 @@ in
 
   services.router-optimizations = {
     enable = true;
-    package = inputs.nix-router-optimized.packages.${pkgs.system}.router-diag;
+    package = inputs.nix-router-optimized.packages.${pkgs.stdenv.hostPlatform.system}.router-diag;
     interfaces =
       {
         wan = {
