@@ -108,6 +108,7 @@ in
     programs.yazi = {
       enable = true;
       inherit (cfg) package;
+      shellWrapperName = "yy";
       enableBashIntegration = cfg.enableShellIntegration;
       enableZshIntegration = cfg.enableShellIntegration;
       enableFishIntegration = cfg.enableShellIntegration;
