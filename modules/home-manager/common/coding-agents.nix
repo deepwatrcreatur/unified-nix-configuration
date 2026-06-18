@@ -53,7 +53,7 @@ in
         amp
         copilot-cli
         cursor-agent
-        forge
+        forgecode
         goose-cli
         kilocode-cli
         pi
