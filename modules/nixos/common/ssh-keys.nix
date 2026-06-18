@@ -47,7 +47,7 @@ in {
 
   services.ssh-keys-manager = {
     enable = true;
-    username = lib.mkDefault config.host.primaryUser;
+    username = lib.mkDefault (lib.attrByPath [ "host" "primaryUser" ] null config);
     keysDirectory = ../../../ssh-keys;
     enableDynamicKeys = true;
 
