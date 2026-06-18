@@ -144,7 +144,10 @@ in
 
   programs.firefox = {
     enable = true;
+    configPath = ".mozilla/firefox";
   };
+
+  gtk.gtk4.theme = config.gtk.theme;
 
   programs.google-chrome = {
     enable = true;
