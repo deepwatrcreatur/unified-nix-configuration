@@ -26,12 +26,6 @@ in
   config = lib.mkIf cfg.enable {
     home.packages = [ guardPackage ];
 
-    warnings = lib.optional config.programs.rtk-hooks.integrations.codex.enable ''
-      programs.agent-guards does not yet install a Codex pre-tool hook because the
-      current repo-managed Codex configuration surface does not expose an equivalent
-      native hook entrypoint. Claude Code and Gemini CLI are guarded directly.
-    '';
-
     home.activation.agentGuards = lib.hm.dag.entryAfter [ "rtkHooks" ] ''
       ensure_parent_dir() {
         local path="$1"
