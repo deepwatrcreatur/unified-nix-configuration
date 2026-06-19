@@ -197,6 +197,13 @@
         targetSystem = "x86_64-linux";
         hostName = "";
         userPath = ./modules/home-manager/non-nixos.nix;
+        modules = [
+          {
+            home.username = "hm-opts";
+            home.homeDirectory = "/tmp/hm-opts";
+            home.stateVersion = "26.05";
+          }
+        ];
       };
     };
 }
