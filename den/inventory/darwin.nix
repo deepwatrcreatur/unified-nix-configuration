@@ -22,6 +22,7 @@
     system = "x86_64-darwin";
     hostPath = ../../hosts/hackintosh;
     username = "deepwatrcreatur";
+    archived = true;
     # Intentionally legacy: no darwin aspects exist yet. Also likely inactive —
     # hackintosh is not in lib/hosts.nix and has no recent maintenance.
     mode = "legacy";

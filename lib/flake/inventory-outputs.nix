@@ -3,10 +3,12 @@
   nixpkgsLib,
 }:
 let
-  stripInventoryMetadata = item: builtins.removeAttrs item [ "kind" "mode" "aspectsList" ];
+  stripInventoryMetadata = item: builtins.removeAttrs item [ "kind" "mode" "aspectsList" "archived" ];
   mapInventory =
     inventory: transform: builder:
-    nixpkgsLib.mapAttrsToList (_: item: builder (stripInventoryMetadata (transform item))) inventory;
+    nixpkgsLib.mapAttrsToList (_: item: builder (stripInventoryMetadata (transform item))) (
+      nixpkgsLib.filterAttrs (_: item: !(item.archived or false)) inventory
+    );
 in
 {
   mkInventoryOutputs =
