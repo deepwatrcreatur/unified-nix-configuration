@@ -68,6 +68,9 @@ in
     options = "--delete-older-than 3d"; # Keep recent builds
   };
 
+  # This host uses explicit nix.gc policy instead of nh's convenience cleaner.
+  programs.nh.clean.enable = lib.mkForce false;
+
   # Binary cache serving with nix-serve (legacy)
   services.nix-serve = {
     enable = true;
