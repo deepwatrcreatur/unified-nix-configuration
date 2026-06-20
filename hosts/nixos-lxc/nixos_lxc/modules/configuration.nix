@@ -29,7 +29,10 @@
     settings.PasswordAuthentication = true;
   };
 
-  users.users.root.password = "temp123";
+  users.users.root = {
+    password = "temp123";
+    initialHashedPassword = lib.mkForce null;
+  };
 
   systemd.mounts = [
     {
