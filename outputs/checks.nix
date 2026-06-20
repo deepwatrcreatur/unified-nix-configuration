@@ -369,7 +369,6 @@ let
       '';
 in
 {
-  inherit missingInventoryHosts;
   checks.x86_64-linux.inventory-consistency = checkBody;
   checks.x86_64-linux.module-loading-eval = pkgs.writeText "module-loading-eval.txt" (
     if moduleLoadingEval == [ ] then "module-loading-eval=ok\n" else builtins.throw "module-loading-eval failed"

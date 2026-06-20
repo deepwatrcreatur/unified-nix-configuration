@@ -193,7 +193,7 @@
     in
     (flakeLib.loadOutputs ./outputs)
     // {
-      hm-opts = flakeLib.helpers.mkHomeConfig {
+      homeConfigurations.hm-opts = flakeLib.helpers.mkHomeConfig {
         targetSystem = "x86_64-linux";
         hostName = "";
         userPath = ./modules/home-manager/non-nixos.nix;
