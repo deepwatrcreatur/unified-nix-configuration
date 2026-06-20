@@ -20,4 +20,5 @@
 
   # Hardware configuration for standard VM
   nixpkgs.hostPlatform = "x86_64-linux";
+  boot.zfs.forceImportRoot = false;
 }
