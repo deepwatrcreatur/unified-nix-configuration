@@ -32,8 +32,8 @@ wrappers, shell defaults, and related repo operations.
 
 ## Current Ranked Queue
 
-There are currently no `ready` or `in-progress` tooling work items in this
-folder.
+1. [38 Herdr Packaging And Workstation Landing](./38-herdr-packaging-and-workstation-landing.md) — `ready`
+2. [39 Herdr State Layout And Btrfs Subvolume Follow-Up](./39-herdr-state-layout-and-btrfs-subvolume-followup.md) — `ready`
 
 ## Recently Completed
 
