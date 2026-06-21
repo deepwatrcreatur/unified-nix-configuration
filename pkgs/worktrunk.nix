@@ -41,10 +41,17 @@ stdenvNoCC.mkDerivation {
 
     mkdir -p "$out/bin"
     tar -xJf "$src" -C "$TMPDIR"
-    install -m755 "$TMPDIR/wt" "$out/bin/wt"
+    extracted_dir="$(find "$TMPDIR" -maxdepth 1 -mindepth 1 -type d -name 'worktrunk-*' | head -n 1)"
 
-    if [ -f "$TMPDIR/git-wt" ]; then
-      install -m755 "$TMPDIR/git-wt" "$out/bin/git-wt"
+    if [ -z "$extracted_dir" ]; then
+      echo "worktrunk: failed to find extracted release directory in $TMPDIR" >&2
+      exit 1
+    fi
+
+    install -m755 "$extracted_dir/wt" "$out/bin/wt"
+
+    if [ -f "$extracted_dir/git-wt" ]; then
+      install -m755 "$extracted_dir/git-wt" "$out/bin/git-wt"
     fi
 
     runHook postInstall
