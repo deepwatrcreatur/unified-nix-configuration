@@ -281,6 +281,10 @@
     workstation = {
       ip = "10.10.11.73";
       sshUser = "deepwatrcreatur";
+      dhcpReservation = {
+        macAddress = "BC:24:11:15:B2:BB";
+        scope = "LAN";
+      };
       description = "Primary workstation";
     };
 
