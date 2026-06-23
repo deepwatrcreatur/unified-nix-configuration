@@ -16,6 +16,8 @@ subvolumes and the repo's linked-worktree workflow.
   intended post-`dmux` direction.
 - `dmux` already enforces a first-slice worktree guard, but the repo does not
   yet document or codify the matching storage model for the next tool.
+- Upstream `herdr` packaging now has a clearer starting point via its published
+  flake, so this item can focus on state layout instead of package discovery.
 - Separating this from packaging keeps the first `herdr` PR small and lets a
   second agent work in parallel.
 
@@ -53,6 +55,6 @@ subvolumes and the repo's linked-worktree workflow.
 
 ## Notes
 
-- This item should usually start after work item 38 has identified the actual
-  `herdr` package shape.
+- This item should usually start after work item 38 has landed the upstream
+  flake-based `herdr` integration or at least confirmed its package shape.
 - Prefer documenting the operating model before adding clever automation.
