@@ -138,6 +138,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # herdr - terminal-native agent multiplexer, pinned to an upstream release tag.
+    herdr.url = "github:ogulcancelik/herdr/v0.6.2";
+
     agents-status-tray-home-manager = {
       url = "github:deepwatrcreatur/agents-status-tray-home-manager";
       inputs.nixpkgs.follows = "nixpkgs";

@@ -40,6 +40,11 @@
     qmd = inputs.qmd.packages.${prev.stdenv.hostPlatform.system}.default;
   })
 
+  # herdr - terminal-native agent multiplexer from its upstream flake.
+  (final: prev: {
+    herdr = inputs.herdr.packages.${prev.stdenv.hostPlatform.system}.default;
+  })
+
   # roundtable - autonomous multi-agent design orchestrator
   (final: prev: {
     roundtable = inputs.agent-roundtable.packages.${prev.stdenv.hostPlatform.system}.default;

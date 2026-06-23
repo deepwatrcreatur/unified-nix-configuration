@@ -24,6 +24,7 @@ in
   ];
 
   programs.dmux.enable = true;
+  programs.herdr.enable = true;
   programs.qmd.enable = true;
   programs.repo-updater.enable = true;
   programs.beads.enable = true;
