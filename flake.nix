@@ -112,6 +112,11 @@
       inputs.flake-utils.follows = "flake-utils";
     };
 
+    jj-starship = {
+      url = "github:dmmulroy/jj-starship/v0.7.1";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nix-attic-infra = {
       url = "github:deepwatrcreatur/nix-attic-infra/main";
       inputs.nixpkgs.follows = "nixpkgs";

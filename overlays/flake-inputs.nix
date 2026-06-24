@@ -40,6 +40,11 @@
     qmd = inputs.qmd.packages.${prev.stdenv.hostPlatform.system}.default;
   })
 
+  # jj-starship - Starship prompt renderer for Git and Jujutsu repositories.
+  (final: prev: {
+    jj-starship = inputs.jj-starship.packages.${prev.stdenv.hostPlatform.system}.default;
+  })
+
   # herdr - terminal-native agent multiplexer from its upstream flake.
   (final: prev: {
     herdr = inputs.herdr.packages.${prev.stdenv.hostPlatform.system}.default;

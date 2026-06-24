@@ -20,7 +20,7 @@
       # - Line 2: input character
       #
       # Keep it "colored text on dark background" (no solid background blocks).
-      format = "$os$hostname$directory$username$nix$env_var$rust$nodejs$python$golang$git_branch$git_status$fill$cmd_duration$status\n$character";
+      format = "$os$hostname$directory$username$nix$env_var$rust$nodejs$python$golang$\${custom.jj}$git_branch$git_status$fill$cmd_duration$status\n$character";
 
       # Palettes
       palette = "gruvbox_dark";
