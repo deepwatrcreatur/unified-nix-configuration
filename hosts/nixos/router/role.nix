@@ -428,6 +428,11 @@ in
 
   services.router-observability.enable = true;
 
+  services.router-network-security = {
+    enable = true;
+    suricata.enable = true;
+  };
+
   services.router-snmp = {
     enable = true;
     listenAddresses = [
@@ -467,6 +472,7 @@ in
       "health-wan-ip"
       "ulogd"
       "vector"
+      "suricata"
     ];
     links = lib.mkForce [
       {
