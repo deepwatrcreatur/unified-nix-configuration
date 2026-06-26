@@ -430,7 +430,10 @@ in
 
   services.router-network-security = {
     enable = true;
-    suricata.enable = true;
+    suricata = {
+      enable = true;
+      evebox.enable = true;
+    };
   };
 
   services.router-snmp = {
@@ -473,6 +476,7 @@ in
       "ulogd"
       "vector"
       "suricata"
+      "router-evebox"
     ];
     links = lib.mkForce [
       {
@@ -484,6 +488,11 @@ in
         label = "Grafana";
         url = "https://${mkFqdn "grafana"}";
         icon = "📈";
+      }
+      {
+        label = "EveBox";
+        url = "https://${mkFqdn "evebox"}";
+        icon = "🔎";
       }
       {
         label = "DNS Admin Mgmt";
