@@ -12,6 +12,7 @@
     inputs.nix-router-optimized.nixosModules.router-optimizations
     inputs.nix-router-optimized.nixosModules.router-tailscale
     inputs.nix-router-optimized.nixosModules.router-observability
+    inputs.nix-router-optimized.nixosModules.router-network-security
     inputs.nix-router-optimized.nixosModules.router-vpn
     inputs.nix-router-optimized.nixosModules.router-ntp
     inputs.nix-router-optimized.nixosModules.router-nat64

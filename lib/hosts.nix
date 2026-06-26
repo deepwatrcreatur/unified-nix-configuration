@@ -92,6 +92,7 @@
         technitium = 5380;
         netdata = 19999;
         prometheus = 9090;
+        evebox = 5636;
       };
       ddnsServices = [
         "@"

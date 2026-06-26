@@ -82,7 +82,7 @@ in
 
       "${mkFqdn "homelab"}" = {
         extraConfig = ''
-          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10
+          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48
           handle @trusted {
             reverse_proxy 127.0.0.1:8888
           }
@@ -140,7 +140,7 @@ in
       # Internal-only admin services
       "${mkFqdn "technitium"}" = {
         extraConfig = ''
-          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10
+          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48
           handle @trusted {
             reverse_proxy 127.0.0.1:5380
           }
@@ -150,7 +150,7 @@ in
 
       "${mkFqdn "netdata"}" = {
         extraConfig = ''
-          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10
+          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48
           handle @trusted {
             reverse_proxy 127.0.0.1:19999
           }
@@ -160,9 +160,19 @@ in
 
       "${mkFqdn "prometheus"}" = {
         extraConfig = ''
-          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10
+          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48
           handle @trusted {
             reverse_proxy 127.0.0.1:9090
+          }
+          respond "Access restricted to home LAN and Tailnet" 403
+        '';
+      };
+
+      "${mkFqdn "evebox"}" = {
+        extraConfig = ''
+          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48
+          handle @trusted {
+            reverse_proxy 127.0.0.1:5636
           }
           respond "Access restricted to home LAN and Tailnet" 403
         '';

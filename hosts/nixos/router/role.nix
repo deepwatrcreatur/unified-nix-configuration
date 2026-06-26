@@ -428,6 +428,14 @@ in
 
   services.router-observability.enable = true;
 
+  services.router-network-security = {
+    enable = true;
+    suricata = {
+      enable = true;
+      evebox.enable = true;
+    };
+  };
+
   services.router-snmp = {
     enable = true;
     listenAddresses = [
@@ -467,6 +475,8 @@ in
       "health-wan-ip"
       "ulogd"
       "vector"
+      "suricata"
+      "router-evebox"
     ];
     links = lib.mkForce [
       {
@@ -478,6 +488,11 @@ in
         label = "Grafana";
         url = "https://${mkFqdn "grafana"}";
         icon = "📈";
+      }
+      {
+        label = "EveBox";
+        url = "https://${mkFqdn "evebox"}";
+        icon = "🔎";
       }
       {
         label = "DNS Admin Mgmt";
