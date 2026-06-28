@@ -181,21 +181,30 @@ in
   };
 
   services.router-ha = {
-    # Keep the family-facing router as the sole HA participant while the
-    # backup node is used as a development and recovery target.
-    enable = isPrimaryRouter;
+    # Both router nodes participate in VRRP so LAN VIP and WAN ownership can
+    # move together during failover.
+    enable = true;
     role = if isPrimaryRouter then "master" else "backup";
     virtualIp = "10.10.10.1/16";
     vrrpInterface = lanDevice;
+    singleActiveUnits = [ "inadyn.service" ];
     keaSync.enable = isPrimaryRouter;
     keaSync.peerAddress = if isPrimaryRouter then "10.10.11.213" else "10.10.11.1"; # Using management IPs for control plane sync
     wan = {
-      # Keepalived-driven WAN link/MAC manipulation regressed the router's own
-      # internet recovery on newer generations. Keep the LAN VIP logic, but let
-      # systemd-networkd own WAN DHCP lifecycle directly on the primary router.
-      enable = false;
+      # Public ingress failover requires WAN ownership to follow VRRP
+      # promotion, not just the LAN VIP.
+      enable = true;
       interface = wanDevice;
       clonedMac = "02:76:c6:01:2a:b0";
+    };
+  };
+
+  services.router-ddns = {
+    enable = true;
+    cloudflare = {
+      zoneName = topology.domain;
+      labels = topology.routerHost.ddnsServices;
+      apiTokenFile = config.age.secrets.cloudflare-api-key.path;
     };
   };
 
@@ -265,6 +274,13 @@ in
   systemd.services.kea-dhcp4-server.serviceConfig.ExecStartPre = lib.mkBefore [
     "+${ensureKeaLeaseState}"
   ];
+  systemd.services.inadyn = {
+    after = [ "router-ha-initial-role-state.service" ];
+    requires = [ "router-ha-initial-role-state.service" ];
+    serviceConfig.ExecCondition = lib.mkBefore [
+      "${pkgs.runtimeShell} -c '[ \"$(cat /run/router-ha/role 2>/dev/null || true)\" = master ]'"
+    ];
+  };
   systemd.services.kea-dhcp4-server.serviceConfig.ExecCondition = lib.mkBefore [
     "${pkgs.runtimeShell} -c '${if activeOwner then "exit 0" else "exit 1"}'"
   ];

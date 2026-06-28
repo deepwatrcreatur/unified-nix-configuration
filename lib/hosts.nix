@@ -44,7 +44,7 @@
   #             router/Caddy, not the router machine itself). Kept separate
   #             from aliases so inventory checks can detect collisions between
   #             service names and machine hostnames.
-  #   ddnsServices: public DNS labels that Caddy's dynamic_dns plugin should
+  #   ddnsServices: public DNS labels that the router DDNS owner should
   #                 publish for this host at Cloudflare. This is only for
   #                 internet-facing ingress names, not general internal host
   #                 registration, which comes from Technitium/DHCP.

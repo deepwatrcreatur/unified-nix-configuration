@@ -8,8 +8,6 @@ let
   authentikHost = topology.hosts.authentik-host;
   podmanHost = topology.hosts.podman;
   roundtableHost = topology.hosts.vaglio;
-  ddnsLabels = routerHost.ddnsServices or [ ];
-  ddnsDomainsLine = lib.concatStringsSep " " ([ topology.domain ] ++ ddnsLabels);
   mkFqdn = label: "${label}.${topology.domain}";
 
   # Optional secrets library for graceful degradation
@@ -19,21 +17,6 @@ let
   cfSecret = optSec.mkSecret "cloudflare-api-key" {
     file = ../../../secrets-agenix/cloudflare_ddns_API_token.age;
   };
-  activeOwner = config.router.failover.activeOwner;
-  dynamicDnsConfig = lib.optionalString activeOwner ''
-    dynamic_dns {
-      provider cloudflare {$CLOUDFLARE_API_TOKEN}
-      domains {
-        # `home-assistant` is intentionally excluded here. We publish it as a
-        # Cloudflare CNAME to another DDNS-managed hostname so Caddy's DDNS
-        # updater does not fight Cloudflare over the same record name.
-        ${ddnsDomainsLine}
-      }
-      check_interval 5m
-      versions ipv4 ipv6
-      ttl 1h
-    }
-  '';
 in
 {
   services.caddy = {
@@ -42,9 +25,8 @@ in
     package = pkgs.caddy.withPlugins {
       plugins = [
         "github.com/caddy-dns/cloudflare@v0.2.3"
-        "github.com/mholt/caddy-dynamicdns@v0.0.0-20251231002810-1af4f8876598"
       ];
-      hash = "sha256-iHlgpFqJjAld419OH4CRbwXlAmRafjBJYoJM+vm64vs=";
+      hash = "sha256-LEpsjwy0CYx04cg42CfG6/sFv86kHmhezUG6yGedYcA=";
     };
     environmentFile = "/run/caddy/caddy.env";
 
@@ -52,7 +34,7 @@ in
     globalConfig = ''
       # ACME/Let's Encrypt configuration
       email deepwatrcreatur@gmail.com
-      ${dynamicDnsConfig}
+      acme_dns cloudflare {$CLOUDFLARE_API_TOKEN}
 
       # Use staging for testing, comment out for production
       # acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
@@ -198,16 +180,16 @@ in
     wants = [ "network-online.target" ];
     preStart = ''
       install -d -m 0750 -o caddy -g caddy /run/caddy
-      ${lib.optionalString (activeOwner && cfSecret.exists) ''
+      ${lib.optionalString cfSecret.exists ''
         token="$(tr -d '\n' < ${config.age.secrets.cloudflare-api-key.path})"
         test -n "$token"
         printf 'CLOUDFLARE_API_TOKEN=%s\n' "$token" > /run/caddy/caddy.env
         chown caddy:caddy /run/caddy/caddy.env
         chmod 0400 /run/caddy/caddy.env
       ''}
-      ${lib.optionalString (!activeOwner || !cfSecret.exists) ''
-        # In standby mode or without the Cloudflare secret, keep an empty env
-        # file so Caddy can still start without public DDNS ownership.
+      ${lib.optionalString (!cfSecret.exists) ''
+        # Without the Cloudflare secret, keep an empty env file so Caddy can
+        # still start on local-only or lab setups.
         : > /run/caddy/caddy.env
         chown caddy:caddy /run/caddy/caddy.env
         chmod 0400 /run/caddy/caddy.env

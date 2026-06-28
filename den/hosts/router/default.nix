@@ -18,7 +18,7 @@ den.mkInventoryHostModule {
     # for inlining once router/configuration.nix is fully migrated.
     ../../../hosts/nixos/router/networking.nix
 
-    # caddy.nix — full Caddy configuration with virtualHosts, DDNS, ACME.
+    # caddy.nix — full Caddy configuration with virtualHosts and ACME.
     # Large and host-specific; should remain a separate file.
     ../../../hosts/nixos/router/caddy.nix
 
