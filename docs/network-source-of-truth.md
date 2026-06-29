@@ -62,7 +62,7 @@ If `router` and `router-backup` are both kept online on the management network,
 Technitium clustering can be used to keep DNS/admin configuration aligned
 between them. In the current consumer boundary, that also means LAN-facing DNS
 service is intentionally treated as a shared capability on both routers rather
-than another `router-ha` single-active service surface.
+than another `router.failover.activeOwner` surface.
 
 This does not currently extend to DHCP scopes or lease state, so the standby
 router still needs its DHCP scope checked separately in the web UI.
