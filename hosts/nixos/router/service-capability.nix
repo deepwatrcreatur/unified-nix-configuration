@@ -33,7 +33,7 @@ in
 
   services.router-ntp = {
     # Shared capability belongs here, but the consumer-side role owns the final
-    # single-owner gate via router-ha runtime ownership.
+    # single-owner gate via router.failover.activeOwner.
     enable = lib.mkDefault true;
     lanSubnets = [ topology.networks.lan.cidr ];
   };
@@ -41,7 +41,7 @@ in
   # UPnP/NAT-PMP should remain available on whichever router currently owns
   # the LAN path so failover does not silently drop port mapping support.
   # Shared capability belongs here, but the consumer-side role owns the final
-  # single-owner gate via router-ha runtime ownership.
+  # single-owner gate via router.failover.activeOwner.
   services.router-upnp.enable = lib.mkDefault true;
 
   # NAT is handled by nftables (see role.nix).

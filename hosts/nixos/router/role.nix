@@ -86,34 +86,7 @@ let
   managementNetwork = topology.networks.management;
   mkFqdn = label: "${label}.${topology.domain}";
   isPrimaryRouter = config.networking.hostName == "router";
-  routerHaRoleFile = "/run/router-ha/role";
-  masterExecCondition =
-    "${pkgs.runtimeShell} -c '[ \"$(cat ${routerHaRoleFile} 2>/dev/null || true)\" = master ]'";
-  singleActiveLanUnits = [
-    "inadyn.service"
-    "kea-dhcp4-server.service"
-    "kea-dhcp-ddns-server.service"
-    "miniupnpd.service"
-    "router-ipv6-ra-owner.service"
-  ];
-  ipv6RaOwnerDropInDir = "/run/systemd/network/08-router-parent-${lanDevice}.network.d";
-  ipv6RaOwnerDropIn = "${ipv6RaOwnerDropInDir}/90-router-ha-ra.conf";
-  enableIpv6RaOwner = pkgs.writeShellScript "router-ipv6-ra-owner-enable" ''
-    set -euo pipefail
-    install -d -m 0755 ${lib.escapeShellArg ipv6RaOwnerDropInDir}
-    cat > ${lib.escapeShellArg ipv6RaOwnerDropIn} <<'EOF'
-    [Network]
-    IPv6SendRA=true
-    EOF
-    ${pkgs.systemd}/bin/networkctl reload
-    ${pkgs.systemd}/bin/networkctl reconfigure ${lib.escapeShellArg lanDevice}
-  '';
-  disableIpv6RaOwner = pkgs.writeShellScript "router-ipv6-ra-owner-disable" ''
-    set -euo pipefail
-    rm -f ${lib.escapeShellArg ipv6RaOwnerDropIn}
-    ${pkgs.systemd}/bin/networkctl reload
-    ${pkgs.systemd}/bin/networkctl reconfigure ${lib.escapeShellArg lanDevice}
-  '';
+  activeOwner = config.router.failover.activeOwner;
   # Static LAN IP assigned to this router node, distinct from the shared VIP.
   staticLanIp = builtins.head (lib.splitString "/" lanIpv4Address);
   reservableHosts = lib.filterAttrs (
@@ -214,7 +187,7 @@ in
     role = if isPrimaryRouter then "master" else "backup";
     virtualIp = "10.10.10.1/16";
     vrrpInterface = lanDevice;
-    singleActiveUnits = singleActiveLanUnits;
+    singleActiveUnits = [ "inadyn.service" ];
     keaSync.enable = isPrimaryRouter;
     keaSync.peerAddress = if isPrimaryRouter then "10.10.11.213" else "10.10.11.1"; # Using management IPs for control plane sync
     wan = {
@@ -289,15 +262,14 @@ in
     # Bind miniupnpd to explicit interface names so the generated config does
     # not fall back to invalid address-based guesses. Only the active owner
     # should advertise LAN-side UPnP/NAT-PMP mappings.
-    enable = true;
+    enable = activeOwner;
     externalInterface = wanDevice;
     internalIPs = [ lanDevice ];
   };
 
-  # Keep chronyd running on both nodes so the standby stays time-synchronised
-  # for TLS, DNSSEC, and clean promotion. DHCP option 42 still advertises the
-  # shared router identity to LAN clients.
-  services.router-ntp.enable = true;
+  # The shared router profile advertises one LAN-facing NTP identity via DHCP
+  # option 42, so only the active owner should actually serve that identity.
+  services.router-ntp.enable = activeOwner;
 
   systemd.services.kea-dhcp4-server.serviceConfig.ExecStartPre = lib.mkBefore [
     "+${ensureKeaLeaseState}"
@@ -306,39 +278,15 @@ in
     after = [ "router-ha-initial-role-state.service" ];
     requires = [ "router-ha-initial-role-state.service" ];
     serviceConfig.ExecCondition = lib.mkBefore [
-      masterExecCondition
+      "${pkgs.runtimeShell} -c '[ \"$(cat /run/router-ha/role 2>/dev/null || true)\" = master ]'"
     ];
-  };
-  systemd.services.miniupnpd = {
-    after = [ "router-ha-initial-role-state.service" ];
-    requires = [ "router-ha-initial-role-state.service" ];
-    serviceConfig.ExecCondition = lib.mkBefore [
-      masterExecCondition
-    ];
-  };
-  systemd.services.router-ipv6-ra-owner = {
-    description = "Apply IPv6 RA ownership to the active router";
-    after = [ "router-ha-initial-role-state.service" ];
-    requires = [ "router-ha-initial-role-state.service" ];
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      ExecCondition = [ masterExecCondition ];
-      ExecStart = [ "+${enableIpv6RaOwner}" ];
-      ExecStop = [ "+${disableIpv6RaOwner}" ];
-    };
   };
   systemd.services.kea-dhcp4-server.serviceConfig.ExecCondition = lib.mkBefore [
-    masterExecCondition
+    "${pkgs.runtimeShell} -c '${if activeOwner then "exit 0" else "exit 1"}'"
   ];
   systemd.services.kea-dhcp-ddns-server.serviceConfig.ExecCondition = lib.mkBefore [
-    masterExecCondition
+    "${pkgs.runtimeShell} -c '${if activeOwner then "exit 0" else "exit 1"}'"
   ];
-  systemd.services.kea-dhcp4-server.after = [ "router-ha-initial-role-state.service" ];
-  systemd.services.kea-dhcp4-server.requires = [ "router-ha-initial-role-state.service" ];
-  systemd.services.kea-dhcp-ddns-server.after = [ "router-ha-initial-role-state.service" ];
-  systemd.services.kea-dhcp-ddns-server.requires = [ "router-ha-initial-role-state.service" ];
 
   services.router-networking = {
     enable = true;
@@ -913,15 +861,15 @@ in
       DNS = [ "127.0.0.1" ];
       Domains = [ topology.domain ];
       IPv6PrivacyExtensions = "no";
-      IPv6SendRA = false;
+      IPv6SendRA = activeOwner;
     };
     linkConfig.RequiredForOnline = lib.mkForce "routable";
-    ipv6SendRAConfig = {
+    ipv6SendRAConfig = lib.mkIf activeOwner {
       EmitDNS = true;
       Managed = false;
       OtherInformation = false;
     };
-    ipv6Prefixes = [
+    ipv6Prefixes = lib.mkIf activeOwner [
       {
         Prefix = "::/64";
         PreferredLifetimeSec = 1800;
