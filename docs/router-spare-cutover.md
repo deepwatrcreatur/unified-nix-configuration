@@ -31,21 +31,20 @@ To promote `router-backup` after a failure or bad rebuild:
 
 ### Current config note
 
-- `router.failover.activeOwner` is the consumer-tree switch for single-owner
-  public identity. It currently defaults to `true` on `router` and `false` on
-  `router-backup`.
-- Today that switch gates:
-  - Caddy's public DDNS ownership
+- Single-owner services now follow the HA runtime role written to
+  `/run/router-ha/role`, not the old static `router.failover.activeOwner`
+  default.
+- Today the promoted router owns:
+  - public DDNS updates via `inadyn.service`
   - `kea-dhcp4-server.service`
   - `kea-dhcp-ddns-server.service`
-  - `services.router-upnp.enable`
-  - `services.router-ntp.enable`
-  so both nodes can keep shared capability while only the active owner answers
-  LAN DHCP, advertises UPnP/NAT-PMP mappings, serves the advertised LAN NTP
-  identity, or updates public DNS identity.
-- More failover-sensitive ownership should move behind this same boundary as
-  the HA refactor continues. That next step is now tracked explicitly in
-  work item `75-consumer-active-owner-service-boundary-and-expansion`.
+  - `miniupnpd.service`
+  - IPv6 router advertisements via `router-ipv6-ra-owner.service`
+- That means both nodes can keep shared capability in the closure while only
+  the promoted router answers LAN DHCP, advertises UPnP/NAT-PMP mappings,
+  emits IPv6 RAs, or updates public DNS.
+- `chronyd.service` stays running on both nodes so the standby keeps time even
+  before promotion.
 
 ## Technitium
 
