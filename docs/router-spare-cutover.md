@@ -38,12 +38,13 @@ To promote `router-backup` after a failure or bad rebuild:
   - public DDNS updates via `inadyn.service`
   - `kea-dhcp4-server.service`
   - `kea-dhcp-ddns-server.service`
-  - `chronyd.service`
   - `miniupnpd.service`
   - IPv6 router advertisements via `router-ipv6-ra-owner.service`
 - That means both nodes can keep shared capability in the closure while only
   the promoted router answers LAN DHCP, advertises UPnP/NAT-PMP mappings,
-  serves the shared LAN NTP identity, emits IPv6 RAs, or updates public DNS.
+  emits IPv6 RAs, or updates public DNS.
+- `chronyd.service` stays running on both nodes so the standby keeps time even
+  before promotion.
 
 ## Technitium
 

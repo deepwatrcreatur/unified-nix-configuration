@@ -120,12 +120,14 @@ Today the promoted node owns these services through
 - public DDNS updates via `inadyn.service`
 - LAN DHCP via `kea-dhcp4-server.service`
 - DHCP-DDNS updates via `kea-dhcp-ddns-server.service`
-- LAN NTP via `chronyd.service`
 - LAN UPnP/NAT-PMP via `miniupnpd.service`
 - IPv6 router advertisements via `router-ipv6-ra-owner.service`
 
 `router.failover.activeOwner` remains only as a compatibility shim in
 `modules/nixos/router/common.nix`; it is no longer the live service gate.
+
+`chronyd.service` stays running on both nodes so the standby router keeps time
+for TLS, DNSSEC, and clean promotion.
 - **Hardware**: regenerate `hardware-configuration.nix` on the target machine with
   `nixos-generate-config`; never edit the generated file.
 

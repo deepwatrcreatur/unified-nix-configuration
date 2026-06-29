@@ -93,7 +93,6 @@ let
     "inadyn.service"
     "kea-dhcp4-server.service"
     "kea-dhcp-ddns-server.service"
-    "chronyd.service"
     "miniupnpd.service"
     "router-ipv6-ra-owner.service"
   ];
@@ -106,12 +105,14 @@ let
     [Network]
     IPv6SendRA=true
     EOF
-    ${pkgs.systemd}/bin/systemctl restart systemd-networkd.service
+    ${pkgs.systemd}/bin/networkctl reload
+    ${pkgs.systemd}/bin/networkctl reconfigure ${lib.escapeShellArg lanDevice}
   '';
   disableIpv6RaOwner = pkgs.writeShellScript "router-ipv6-ra-owner-disable" ''
     set -euo pipefail
     rm -f ${lib.escapeShellArg ipv6RaOwnerDropIn}
-    ${pkgs.systemd}/bin/systemctl restart systemd-networkd.service
+    ${pkgs.systemd}/bin/networkctl reload
+    ${pkgs.systemd}/bin/networkctl reconfigure ${lib.escapeShellArg lanDevice}
   '';
   # Static LAN IP assigned to this router node, distinct from the shared VIP.
   staticLanIp = builtins.head (lib.splitString "/" lanIpv4Address);
@@ -293,21 +294,15 @@ in
     internalIPs = [ lanDevice ];
   };
 
-  # The shared router profile advertises one LAN-facing NTP identity via DHCP
-  # option 42, so only the active owner should actually serve that identity.
+  # Keep chronyd running on both nodes so the standby stays time-synchronised
+  # for TLS, DNSSEC, and clean promotion. DHCP option 42 still advertises the
+  # shared router identity to LAN clients.
   services.router-ntp.enable = true;
 
   systemd.services.kea-dhcp4-server.serviceConfig.ExecStartPre = lib.mkBefore [
     "+${ensureKeaLeaseState}"
   ];
   systemd.services.inadyn = {
-    after = [ "router-ha-initial-role-state.service" ];
-    requires = [ "router-ha-initial-role-state.service" ];
-    serviceConfig.ExecCondition = lib.mkBefore [
-      masterExecCondition
-    ];
-  };
-  systemd.services.chronyd = {
     after = [ "router-ha-initial-role-state.service" ];
     requires = [ "router-ha-initial-role-state.service" ];
     serviceConfig.ExecCondition = lib.mkBefore [
