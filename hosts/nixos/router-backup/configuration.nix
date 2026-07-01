@@ -103,6 +103,8 @@ in
     ];
   };
 
+  services.router-network-security.interfaces = lib.mkForce [ "ens19" ];
+
   # Current Proxmox wiring:
   #   ens18 -> management virtio
   #   ens19 -> LAN virtio

@@ -446,6 +446,10 @@ in
 
   services.router-network-security = {
     enable = true;
+    interfaces = [
+      lanDevice
+      wanDevice
+    ];
     suricata = {
       enable = true;
       evebox.enable = true;
