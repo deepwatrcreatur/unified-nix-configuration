@@ -91,8 +91,6 @@ in
 
     systemd.services.router-dashboard-kea-lease-snapshot = lib.mkIf config.services.kea.dhcp4.enable {
       description = "Refresh router dashboard Kea lease snapshot";
-      after = [ "kea-dhcp4-server.service" ];
-      wants = [ "kea-dhcp4-server.service" ];
       serviceConfig = {
         Type = "oneshot";
         User = "root";
