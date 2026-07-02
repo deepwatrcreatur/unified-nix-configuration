@@ -82,10 +82,10 @@ den/inventory/hosts.nix          ← entry point
 | NAT policy | `hosts/nixos/router/service-capability.nix` | `networking.nat.enable = false`; nftables handles NAT in role.nix |
 | Disk layout (router) | `hosts/nixos/router/disko.nix` | Hardware-adjacent; keep separate |
 | Disk layout (backup) | `hosts/nixos/router-backup/disko.nix` | Imported by `configuration.nix`; hardware-adjacent, keep separate |
-| Caddy / ingress | `hosts/nixos/router/caddy.nix` | Both hosts share this file directly; public DDNS ownership is gated by `router.failover.activeOwner` |
+| Caddy / ingress | `hosts/nixos/router/caddy.nix` | Both hosts share this file directly; public ingress works with VRRP/WAN ownership and DDNS execution now follows HA-owned `inadyn` units rather than a static `activeOwner` toggle |
 | Router role (networking, firewall, DNS, observability, VPN) | `den/aspects/router-router.nix` + upstream `nix-router-optimized` modules | The den aspect selects which upstream modules to import |
 | Host-specific role args (WAN/LAN devices, IPs, Grafana paths) | `hosts/nixos/router/configuration.nix` and `hosts/nixos/router-backup/configuration.nix` | Each calls `role.nix` as a function with per-host arguments |
-| Active single-owner identity | `modules/nixos/router/common.nix` via `router.failover.activeOwner` | Defaults to `true` on `router`, `false` on `router-backup`; currently gates public DDNS ownership, `kea-dhcp4-server` / `kea-dhcp-ddns-server` startup, `services.router-upnp.enable`, and `services.router-ntp.enable` in the consumer tree |
+| Active single-owner identity | `modules/nixos/router/common.nix` via `router.failover.activeOwner` | Defaults to `true` on `router`, `false` on `router-backup`; still gates `kea-dhcp4-server` / `kea-dhcp-ddns-server` startup and `services.router-upnp.enable`, but no longer owns DDNS timer/service execution or router NTP policy |
 | NIC stable names | `hosts/nixos/router/configuration.nix` (MAC-based) and `hosts/nixos/router-backup/configuration.nix` (PCI path-based) | Separate rules because the two machines use different matching strategies |
 | DNS zone data (static hosts, aliases) | `hosts/nixos/router/dns-zone.nix` | Inline-imported by `configuration.nix`; edit here to manage DNS records |
 | ulogd flow logging | `hosts/nixos/router/role.nix` (via nix-router-optimized) | Uses LOGEMU plugin (base `pkgs.ulogd`); JSON plugin requires overlay — not active by default |
@@ -109,17 +109,34 @@ den/inventory/hosts.nix          ← entry point
   it in both `router` and `router-backup` `aspectsList` entries in
   `den/inventory/hosts.nix`.
 
+## Current Consumer Failover Shape
+
+The currently validated consumer failover split is:
+
+- **VRRP / Keepalived owned**
+  - LAN VIP and WAN ownership through `services.router-ha`
+  - DDNS execution through `services.router-ha.singleActiveUnits = [ "inadyn.service" "inadyn.timer" ]`
+- **Shared on both nodes**
+  - `services.router-ntp.enable = true` so Chrony stays available on the backup
+  - Suricata and EveBox, which remain useful on standby without claiming
+    single-owner semantics
+- **Still single-active / consumer-gated**
+  - `kea-dhcp4-server`
+  - `kea-dhcp-ddns-server`
+  - `services.router-upnp.enable`
+
+This is the working reference shape today. It is intentionally narrower than
+"every important service follows VRRP automatically."
+
 ## Current `activeOwner` Consumers
 
 `router.failover.activeOwner` currently has a narrow, explicit consumer-side
 meaning:
 
-- in `hosts/nixos/router/caddy.nix`, it gates public Cloudflare DDNS ownership
 - in `hosts/nixos/router/role.nix`, it gates `kea-dhcp4-server.service` startup
 - in `hosts/nixos/router/role.nix`, it gates `kea-dhcp-ddns-server.service`
   startup
 - in `hosts/nixos/router/role.nix`, it gates `services.router-upnp.enable`
-- in `hosts/nixos/router/role.nix`, it gates `services.router-ntp.enable`
 
 That is the current supported single-owner boundary in this tree. Other
 router-facing services may still be present on both nodes, but they should not
