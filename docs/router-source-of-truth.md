@@ -115,7 +115,9 @@ The currently validated consumer failover split is:
 
 - **VRRP / Keepalived owned**
   - LAN VIP and WAN ownership through `services.router-ha`
-  - DDNS execution through `services.router-ha.singleActiveUnits = [ "inadyn.service" "inadyn.timer" ]`
+  - DDNS execution through `services.router-ha.singleActiveUnits`, always
+    including `inadyn.service` and including any matching inadyn timer unit
+    only if the evaluated system actually exposes it under that name
 - **Shared on both nodes**
   - `services.router-ntp.enable = true` so Chrony stays available on the backup
   - Suricata and EveBox, which remain useful on standby without claiming
