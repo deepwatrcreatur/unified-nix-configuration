@@ -46,8 +46,10 @@ To recover with `router-backup` after a failure or bad rebuild:
   so only the configured active owner answers LAN DHCP or advertises
   UPnP/NAT-PMP mappings.
 - DDNS execution no longer hangs off `activeOwner` directly. The current
-  consumer tree hands `inadyn.service` and `inadyn.timer` to
-  `services.router-ha.singleActiveUnits`, so DDNS follows VRRP promotion.
+  consumer tree hands `inadyn.service` to
+  `services.router-ha.singleActiveUnits`, and adds any corresponding inadyn
+  timer unit only when the evaluated system exposes that unit name, so DDNS
+  follows VRRP promotion without assuming a timer name that may not exist.
 - `services.router-ntp.enable = true` on both nodes. Chrony is intentionally
   shared rather than single-owner in the current deployment.
 - This means the current failover split is:
