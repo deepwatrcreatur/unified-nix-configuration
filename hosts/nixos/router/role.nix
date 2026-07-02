@@ -270,9 +270,10 @@ in
     internalIPs = [ lanDevice ];
   };
 
-  # The shared router profile advertises one LAN-facing NTP identity via DHCP
-  # option 42, so only the active owner should actually serve that identity.
-  services.router-ntp.enable = activeOwner;
+  # Keep Chrony available on both router nodes. Upstream explicitly leaves NTP
+  # ownership as consumer policy, and this deployment wants standby time sync
+  # continuity rather than a single-owner Chrony model.
+  services.router-ntp.enable = true;
 
   systemd.services.kea-dhcp4-server.serviceConfig.ExecStartPre = lib.mkBefore [
     "+${ensureKeaLeaseState}"
