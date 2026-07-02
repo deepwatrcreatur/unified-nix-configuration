@@ -1,7 +1,7 @@
 # Router Spare Cutover
 
-`router` and `router-backup` are separate management nodes, but they share the
-same production router identity.
+`router` and `router-backup` are separate management nodes that now participate
+in a shared VRRP-based router identity.
 
 ## Management
 
@@ -12,22 +12,27 @@ same production router identity.
 
 ## Production Identity
 
-- both router hosts are configured with the same production LAN address:
-  `10.10.10.1/16`
-- this is safe only because only one machine should be physically connected to
-  the production WAN/LAN ports at a time
-- do not leave both machines cabled to the production LAN while both claim
-  `10.10.10.1`
+- the shared LAN VIP is `10.10.10.1/16`
+- `router` and `router-backup` each also keep their own stable node address on
+  the LAN
+- VRRP/Keepalived decides which node currently owns the VIP and WAN-side active
+  role
+- both nodes can stay cabled to the production LAN when the HA pair is healthy;
+  the safety rule is that only one node should own the active role at a time
 
 ## Promotion
 
-To promote `router-backup` after a failure or bad rebuild:
+To recover with `router-backup` after a failure or bad rebuild:
 
-1. Confirm `router` is out of service.
-2. Power down or isolate `router` from the production WAN/LAN NICs.
-3. Move the WAN cable to `router-backup`.
-4. Move the LAN cable to `router-backup`.
-5. Verify clients can reach `10.10.10.1`, resolve DNS, and reach the internet.
+1. Confirm `router` is out of service or should no longer be the active node.
+2. Verify `router-backup` still has management reachability.
+3. Confirm VRRP/WAN ownership, not just service state:
+   - `/run/router-ha/role`
+   - `systemctl status keepalived`
+4. Verify the production identity is present on the promoted node:
+   - the LAN VIP answers
+   - WAN ownership and public ingress behave as expected
+5. Verify client-facing services that are supposed to move or remain shared.
 
 ### Current config note
 
@@ -35,17 +40,20 @@ To promote `router-backup` after a failure or bad rebuild:
   public identity. It currently defaults to `true` on `router` and `false` on
   `router-backup`.
 - Today that switch gates:
-  - Caddy's public DDNS ownership
   - `kea-dhcp4-server.service`
   - `kea-dhcp-ddns-server.service`
   - `services.router-upnp.enable`
-  - `services.router-ntp.enable`
-  so both nodes can keep shared capability while only the active owner answers
-  LAN DHCP, advertises UPnP/NAT-PMP mappings, serves the advertised LAN NTP
-  identity, or updates public DNS identity.
-- More failover-sensitive ownership should move behind this same boundary as
-  the HA refactor continues. That next step is now tracked explicitly in
-  work item `75-consumer-active-owner-service-boundary-and-expansion`.
+  so only the configured active owner answers LAN DHCP or advertises
+  UPnP/NAT-PMP mappings.
+- DDNS execution no longer hangs off `activeOwner` directly. The current
+  consumer tree hands `inadyn.service` and `inadyn.timer` to
+  `services.router-ha.singleActiveUnits`, so DDNS follows VRRP promotion.
+- `services.router-ntp.enable = true` on both nodes. Chrony is intentionally
+  shared rather than single-owner in the current deployment.
+- This means the current failover split is:
+  - VRRP/WAN/DDNS: promotion-aware
+  - Chrony and some observability: shared on both nodes
+  - DHCP and UPnP: still explicit single-owner policy in the consumer config
 
 ## Technitium
 
@@ -75,8 +83,8 @@ Use Technitium clustering only for DNS/admin-state sync between `router` and
 
 - DHCP scope replication
 - DHCP lease-state failover
-- default-gateway failover
-- WAN ownership
+- automatic DHCP ownership transfer
+- WAN ownership beyond what VRRP/Keepalived is already configured to do
 
 ### Standby Checklist
 
@@ -92,5 +100,6 @@ After enabling clustering, still verify the standby router manually:
 When a router is used as a spare or dev box:
 
 - the management IP on the virtio interface stays reachable even with WAN/LAN unplugged
-- the production LAN IP (`10.10.10.1/16`) remains configured without carrier so dashboard and monitoring can start in a degraded state
+- the shared production identity is the VRRP VIP plus per-node LAN addresses,
+  not two identical static host addresses
 - LAN/WAN-dependent checks are expected to show degraded or failed until cables are reattached
