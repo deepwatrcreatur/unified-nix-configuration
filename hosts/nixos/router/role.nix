@@ -187,7 +187,10 @@ in
     role = if isPrimaryRouter then "master" else "backup";
     virtualIp = "10.10.10.1/16";
     vrrpInterface = lanDevice;
-    singleActiveUnits = [ "inadyn.service" ];
+    singleActiveUnits = [
+      "inadyn.service"
+      "inadyn.timer"
+    ];
     keaSync.enable = isPrimaryRouter;
     keaSync.peerAddress = if isPrimaryRouter then "10.10.11.213" else "10.10.11.1"; # Using management IPs for control plane sync
     wan = {
@@ -277,10 +280,12 @@ in
   systemd.services.inadyn = {
     after = [ "router-ha-initial-role-state.service" ];
     requires = [ "router-ha-initial-role-state.service" ];
+    wantedBy = lib.mkForce [ ];
     serviceConfig.ExecCondition = lib.mkBefore [
       "${pkgs.runtimeShell} -c '[ \"$(cat /run/router-ha/role 2>/dev/null || true)\" = master ]'"
     ];
   };
+  systemd.timers.inadyn.wantedBy = lib.mkForce [ ];
   systemd.services.kea-dhcp4-server.serviceConfig.ExecCondition = lib.mkBefore [
     "${pkgs.runtimeShell} -c '${if activeOwner then "exit 0" else "exit 1"}'"
   ];
