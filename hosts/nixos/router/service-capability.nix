@@ -32,16 +32,17 @@ in
   };
 
   services.router-ntp = {
-    # Shared capability belongs here, but the consumer-side role owns the final
-    # single-owner gate via router.failover.activeOwner.
+    # Shared capability belongs here. The consumer-side role currently keeps
+    # Chrony available on both nodes rather than placing it behind runtime HA
+    # ownership.
     enable = lib.mkDefault true;
     lanSubnets = [ topology.networks.lan.cidr ];
   };
 
   # UPnP/NAT-PMP should remain available on whichever router currently owns
   # the LAN path so failover does not silently drop port mapping support.
-  # Shared capability belongs here, but the consumer-side role owns the final
-  # single-owner gate via router.failover.activeOwner.
+  # Shared capability belongs here; the consumer-side role now hands the live
+  # miniupnpd unit to router-ha runtime ownership.
   services.router-upnp.enable = lib.mkDefault true;
 
   # NAT is handled by nftables (see role.nix).

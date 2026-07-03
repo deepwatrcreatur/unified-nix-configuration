@@ -36,26 +36,25 @@ To recover with `router-backup` after a failure or bad rebuild:
 
 ### Current config note
 
-- `router.failover.activeOwner` is the consumer-tree switch for single-owner
-  public identity. It currently defaults to `true` on `router` and `false` on
-  `router-backup`.
-- Today that switch gates:
-  - `kea-dhcp4-server.service`
-  - `kea-dhcp-ddns-server.service`
-  - `services.router-upnp.enable`
-  so only the configured active owner answers LAN DHCP or advertises
-  UPnP/NAT-PMP mappings.
+- `router.failover.activeOwner` is now only a legacy static hint for the
+  preferred node, not the live service-promotion switch.
 - DDNS execution no longer hangs off `activeOwner` directly. The current
   consumer tree hands `inadyn.service` to
   `services.router-ha.singleActiveUnits`, and adds any corresponding inadyn
   timer unit only when the evaluated system exposes that unit name, so DDNS
   follows VRRP promotion without assuming a timer name that may not exist.
+- The same runtime HA boundary now owns:
+  - `kea-dhcp4-server.service`
+  - `kea-dhcp-ddns-server.service`
+  - `miniupnpd.service`
+  - `router-ipv6-ra-owner.service`
+  so the promoted node answers LAN DHCP, advertises UPnP/NAT-PMP mappings, and
+  emits IPv6 RAs without needing a separate static owner flag.
 - `services.router-ntp.enable = true` on both nodes. Chrony is intentionally
   shared rather than single-owner in the current deployment.
 - This means the current failover split is:
-  - VRRP/WAN/DDNS: promotion-aware
+  - VRRP/WAN/DDNS/DHCP/UPnP/IPv6 RA: promotion-aware
   - Chrony and some observability: shared on both nodes
-  - DHCP and UPnP: still explicit single-owner policy in the consumer config
 
 ## Technitium
 

@@ -14,9 +14,9 @@ in
   options.router.failover.activeOwner = lib.mkOption {
     type = lib.types.bool;
     description = ''
-      Whether this node should currently own the production router identity.
-      Shared service capability can exist on both routers, but only the active
-      owner should advertise or update single-owner identity such as public DDNS.
+      Legacy static hint for which node is expected to be the preferred router.
+      Runtime failover behavior should follow `services.router-ha` ownership
+      instead of assuming this flag controls live service promotion.
     '';
   };
 
