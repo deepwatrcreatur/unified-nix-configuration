@@ -40,9 +40,8 @@ To recover with `router-backup` after a failure or bad rebuild:
   preferred node, not the live service-promotion switch.
 - DDNS execution no longer hangs off `activeOwner` directly. The current
   consumer tree hands `inadyn.service` to
-  `services.router-ha.singleActiveUnits`, and adds any corresponding inadyn
-  timer unit only when the evaluated system exposes that unit name, so DDNS
-  follows VRRP promotion without assuming a timer name that may not exist.
+  `services.router-ha.singleActiveUnits`, so DDNS follows VRRP promotion via
+  the active node without depending on a separate systemd timer unit.
 - The same runtime HA boundary now owns:
   - `kea-dhcp4-server.service`
   - `kea-dhcp-ddns-server.service`

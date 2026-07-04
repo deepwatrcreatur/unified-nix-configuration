@@ -115,9 +115,8 @@ The currently validated consumer failover split is:
 
 - **VRRP / Keepalived owned**
   - LAN VIP and WAN ownership through `services.router-ha`
-  - DDNS execution through `services.router-ha.singleActiveUnits`, always
-    including `inadyn.service` and including any matching inadyn timer unit
-    only if the evaluated system actually exposes it under that name
+  - DDNS execution through `services.router-ha.singleActiveUnits`, currently
+    using `inadyn.service` in this consumer tree
   - DHCP, UPnP, and IPv6 RA runtime ownership through the same
     `singleActiveUnits` boundary
 - **Shared on both nodes**

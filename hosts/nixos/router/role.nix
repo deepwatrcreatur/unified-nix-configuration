@@ -96,8 +96,7 @@ let
       "kea-dhcp-ddns-server.service"
       "miniupnpd.service"
       "router-ipv6-ra-owner.service"
-    ]
-    ++ lib.optional (config.systemd.timers ? inadyn) "inadyn.timer";
+    ];
   ipv6RaOwnerDropInDir = "/run/systemd/network/08-router-parent-${lanDevice}.network.d";
   ipv6RaOwnerDropIn = "${ipv6RaOwnerDropInDir}/90-router-ha-ra.conf";
   enableIpv6RaOwner = pkgs.writeShellScript "router-ipv6-ra-owner-enable" ''
@@ -312,7 +311,6 @@ in
       masterExecCondition
     ];
   };
-  systemd.timers.inadyn.wantedBy = lib.mkForce [ ];
   systemd.services.miniupnpd = {
     after = [ "router-ha-initial-role-state.service" ];
     requires = [ "router-ha-initial-role-state.service" ];
