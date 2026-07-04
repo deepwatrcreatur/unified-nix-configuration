@@ -85,7 +85,7 @@ den/inventory/hosts.nix          ← entry point
 | Caddy / ingress | `hosts/nixos/router/caddy.nix` | Both hosts share this file directly; public ingress works with VRRP/WAN ownership and DDNS execution now follows HA-owned `inadyn` units rather than a static `activeOwner` toggle |
 | Router role (networking, firewall, DNS, observability, VPN) | `den/aspects/router-router.nix` + upstream `nix-router-optimized` modules | The den aspect selects which upstream modules to import |
 | Host-specific role args (WAN/LAN devices, IPs, Grafana paths) | `hosts/nixos/router/configuration.nix` and `hosts/nixos/router-backup/configuration.nix` | Each calls `role.nix` as a function with per-host arguments |
-| Active single-owner identity | `modules/nixos/router/common.nix` via `router.failover.activeOwner` | Defaults to `true` on `router`, `false` on `router-backup`; still gates `kea-dhcp4-server` / `kea-dhcp-ddns-server` startup and `services.router-upnp.enable`, but no longer owns DDNS timer/service execution or router NTP policy |
+| Runtime single-owner LAN services | `hosts/nixos/router/role.nix` via `services.router-ha.singleActiveUnits` and `/run/router-ha/role` | The promoted node owns DDNS, DHCP, UPnP, and IPv6 RA runtime units; Chrony remains shared |
 | NIC stable names | `hosts/nixos/router/configuration.nix` (MAC-based) and `hosts/nixos/router-backup/configuration.nix` (PCI path-based) | Separate rules because the two machines use different matching strategies |
 | DNS zone data (static hosts, aliases) | `hosts/nixos/router/dns-zone.nix` | Inline-imported by `configuration.nix`; edit here to manage DNS records |
 | ulogd flow logging | `hosts/nixos/router/role.nix` (via nix-router-optimized) | Uses LOGEMU plugin (base `pkgs.ulogd`); JSON plugin requires overlay — not active by default |
@@ -97,8 +97,8 @@ den/inventory/hosts.nix          ← entry point
 
 - **DNS / NTP shared capability**: `hosts/nixos/router/service-capability.nix`.
 - **Primary hostname / domain defaults**: `hosts/nixos/router/networking.nix`.
-- **Active single-owner identity / DHCP ownership**: `modules/nixos/router/common.nix` via
-  `router.failover.activeOwner`.
+- **Runtime single-owner LAN services**: `hosts/nixos/router/role.nix` via
+  `services.router-ha.singleActiveUnits` and `/run/router-ha/role`.
 - **Firewall / NAT / observability / VPN**: tune options provided by
   `nix-router-optimized` modules; the entry point is `den/aspects/router-router.nix`.
 - **Caddy virtualHosts, ACME, DDNS**: `hosts/nixos/router/caddy.nix`.
@@ -115,34 +115,28 @@ The currently validated consumer failover split is:
 
 - **VRRP / Keepalived owned**
   - LAN VIP and WAN ownership through `services.router-ha`
-  - DDNS execution through `services.router-ha.singleActiveUnits`, always
-    including `inadyn.service` and including any matching inadyn timer unit
-    only if the evaluated system actually exposes it under that name
+  - DDNS execution through `services.router-ha.singleActiveUnits`, currently
+    using `inadyn.service` in this consumer tree
+  - DHCP, UPnP, and IPv6 RA runtime ownership through the same
+    `singleActiveUnits` boundary
 - **Shared on both nodes**
   - `services.router-ntp.enable = true` so Chrony stays available on the backup
   - Suricata and EveBox, which remain useful on standby without claiming
     single-owner semantics
-- **Still single-active / consumer-gated**
-  - `kea-dhcp4-server`
-  - `kea-dhcp-ddns-server`
-  - `services.router-upnp.enable`
 
-This is the working reference shape today. It is intentionally narrower than
-"every important service follows VRRP automatically."
+This is the working reference shape today. It is still narrower than
+"every important service follows VRRP automatically" because Chrony and other
+shared observability services remain intentionally outside the single-owner
+boundary.
 
 ## Current `activeOwner` Consumers
 
-`router.failover.activeOwner` currently has a narrow, explicit consumer-side
-meaning:
+`router.failover.activeOwner` is now a legacy static hint, not the live
+ownership switch for DDNS, DHCP, UPnP, or IPv6 RA. Those services follow the
+runtime HA role file and `services.router-ha.singleActiveUnits` instead.
 
-- in `hosts/nixos/router/role.nix`, it gates `kea-dhcp4-server.service` startup
-- in `hosts/nixos/router/role.nix`, it gates `kea-dhcp-ddns-server.service`
-  startup
-- in `hosts/nixos/router/role.nix`, it gates `services.router-upnp.enable`
-
-That is the current supported single-owner boundary in this tree. Other
-router-facing services may still be present on both nodes, but they should not
-be described as `activeOwner`-governed unless they are wired explicitly.
+If future consumer code still uses `activeOwner`, that should be treated as an
+explicit compatibility choice rather than the default HA mechanism.
 
 The next consumer-side HA follow-up is tracked as
 `nix-router-optimized/docs/work-items/75-consumer-active-owner-service-boundary-and-expansion.md`.
