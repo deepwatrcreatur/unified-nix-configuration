@@ -488,6 +488,7 @@ in
       443
     ];
     hairpinNat.enable = true;
+    flowtable.sipFriendly.enable = true;
     trustedUdpPorts = [ ];
     extraLanLocalRules = ''
       tcp dport 5201 accept comment "iperf3 from LAN"
