@@ -82,10 +82,11 @@ den/inventory/hosts.nix          ← entry point
 | NAT policy | `hosts/nixos/router/service-capability.nix` | `networking.nat.enable = false`; nftables handles NAT in role.nix |
 | Disk layout (router) | `hosts/nixos/router/disko.nix` | Hardware-adjacent; keep separate |
 | Disk layout (backup) | `hosts/nixos/router-backup/disko.nix` | Imported by `configuration.nix`; hardware-adjacent, keep separate |
-| Caddy / ingress | `hosts/nixos/router/caddy.nix` | Both hosts share this file directly; public ingress works with VRRP/WAN ownership and DDNS execution now follows HA-owned `inadyn` units rather than a static `activeOwner` toggle |
+| Caddy / ingress | `hosts/nixos/router/caddy.nix` | Both hosts share this file directly. Public ingress is currently primary-only because `router-backup` has no attached WAN NIC, even though DDNS execution follows HA-owned `inadyn` units rather than a static `activeOwner` toggle |
 | Router role (networking, firewall, DNS, observability, VPN) | `den/aspects/router-router.nix` + upstream `nix-router-optimized` modules | The den aspect selects which upstream modules to import |
 | Host-specific role args (WAN/LAN devices, IPs, Grafana paths) | `hosts/nixos/router/configuration.nix` and `hosts/nixos/router-backup/configuration.nix` | Each calls `role.nix` as a function with per-host arguments |
 | Runtime single-owner LAN services | `hosts/nixos/router/role.nix` via `services.router-ha.singleActiveUnits` and `/run/router-ha/role` | The promoted node owns DDNS, DHCP, UPnP, and IPv6 RA runtime units; Chrony remains shared |
+| WAN failover participation | `hosts/nixos/router/configuration.nix` and `hosts/nixos/router-backup/configuration.nix` via `enableWanHa` | `router` keeps WAN HA enabled; `router-backup` currently disables it because there is no real standby WAN interface attached |
 | NIC stable names | `hosts/nixos/router/configuration.nix` (MAC-based) and `hosts/nixos/router-backup/configuration.nix` (PCI path-based) | Separate rules because the two machines use different matching strategies |
 | DNS zone data (static hosts, aliases) | `hosts/nixos/router/dns-zone.nix` | Inline-imported by `configuration.nix`; edit here to manage DNS records |
 | ulogd flow logging | `hosts/nixos/router/role.nix` (via nix-router-optimized) | Uses LOGEMU plugin (base `pkgs.ulogd`); JSON plugin requires overlay — not active by default |
@@ -114,11 +115,14 @@ den/inventory/hosts.nix          ← entry point
 The currently validated consumer failover split is:
 
 - **VRRP / Keepalived owned**
-  - LAN VIP and WAN ownership through `services.router-ha`
+  - LAN VIP ownership through `services.router-ha`
   - DDNS execution through `services.router-ha.singleActiveUnits`, currently
     using `inadyn.service` in this consumer tree
   - DHCP, UPnP, and IPv6 RA runtime ownership through the same
     `singleActiveUnits` boundary
+- **Primary-only today**
+  - public WAN ownership and public ingress, because `router-backup` does not
+    currently have a real WAN NIC and therefore sets `enableWanHa = false`
 - **Shared on both nodes**
   - `services.router-ntp.enable = true` so Chrony stays available on the backup
   - Suricata and EveBox, which remain useful on standby without claiming
@@ -127,7 +131,17 @@ The currently validated consumer failover split is:
 This is the working reference shape today. It is still narrower than
 "every important service follows VRRP automatically" because Chrony and other
 shared observability services remain intentionally outside the single-owner
-boundary.
+boundary, and WAN/public-ingress failover is deferred until the backup regains
+real WAN hardware.
+
+## Current HA Stage
+
+The safest current interpretation of this pair is:
+
+1. `router-backup` is a meaningful LAN-side standby and test target.
+2. `router-backup` is not yet a full public-ingress substitute for `router`.
+3. WAN/public-ingress failover should be re-enabled only after the backup has a
+   real WAN NIC again and that path is validated separately.
 
 ## Current `activeOwner` Consumers
 

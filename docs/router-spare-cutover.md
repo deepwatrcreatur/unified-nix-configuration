@@ -15,10 +15,11 @@ in a shared VRRP-based router identity.
 - the shared LAN VIP is `10.10.10.1/16`
 - `router` and `router-backup` each also keep their own stable node address on
   the LAN
-- VRRP/Keepalived decides which node currently owns the VIP and WAN-side active
-  role
+- VRRP/Keepalived decides which node currently owns the LAN VIP
 - both nodes can stay cabled to the production LAN when the HA pair is healthy;
   the safety rule is that only one node should own the active role at a time
+- public WAN/public-ingress failover is currently primary-only because
+  `router-backup` does not have a real WAN NIC attached
 
 ## Promotion
 
@@ -26,12 +27,13 @@ To recover with `router-backup` after a failure or bad rebuild:
 
 1. Confirm `router` is out of service or should no longer be the active node.
 2. Verify `router-backup` still has management reachability.
-3. Confirm VRRP/WAN ownership, not just service state:
+3. Confirm VRRP role, not just service state:
    - `/run/router-ha/role`
    - `systemctl status keepalived`
 4. Verify the production identity is present on the promoted node:
    - the LAN VIP answers
-   - WAN ownership and public ingress behave as expected
+   - if the backup node has no WAN NIC, expect LAN recovery only rather than
+     public-ingress failover
 5. Verify client-facing services that are supposed to move or remain shared.
 
 ### Current config note
@@ -51,8 +53,12 @@ To recover with `router-backup` after a failure or bad rebuild:
   emits IPv6 RAs without needing a separate static owner flag.
 - `services.router-ntp.enable = true` on both nodes. Chrony is intentionally
   shared rather than single-owner in the current deployment.
+- `router-backup` currently has no attached WAN device, so `enableWanHa = false`
+  there. That keeps LAN-side standby behavior available without letting
+  Keepalived or HA hooks manipulate a nonexistent `ens27`.
 - This means the current failover split is:
-  - VRRP/WAN/DDNS/DHCP/UPnP/IPv6 RA: promotion-aware
+  - LAN VIP/DDNS/DHCP/UPnP/IPv6 RA: promotion-aware
+  - public WAN/public ingress: primary-only until the backup regains a real WAN NIC
   - Chrony and some observability: shared on both nodes
 
 ## Technitium
