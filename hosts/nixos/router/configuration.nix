@@ -21,6 +21,7 @@ in
       inherit inputs;
       sshTarget = "ssh router";
       wanDevice = "enp6s17";
+      enableWanHa = true;
       lanDevice = "enp6s16";
       inherit lanIpv4Address managementIpv4Address;
       grafanaDomain = mkFqdn "grafana";

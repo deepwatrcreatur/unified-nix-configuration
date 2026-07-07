@@ -10,6 +10,7 @@
   prometheusBindMountPath,
   enableExtraRoutedNetworks ? false,
   enableLogStorage ? true,
+  enableWanHa ? true,
   inputs,
 }:
 {
@@ -55,6 +56,24 @@ let
       chmod 0640 "$lease_file"
     done
   '';
+  waitForKeaLanReady = pkgs.writeShellScript "router-kea-wait-for-lan-ready" ''
+    set -euo pipefail
+
+    iface=${lib.escapeShellArg lanDevice}
+    expected_ipv4=${lib.escapeShellArg staticLanIp}
+    SECONDS=0
+
+    while [ "$SECONDS" -lt 30 ]; do
+      if ${pkgs.iproute2}/bin/ip -o link show dev "$iface" 2>/dev/null | ${pkgs.gnugrep}/bin/grep -q "LOWER_UP" \
+        && ${pkgs.iproute2}/bin/ip -o -4 addr show dev "$iface" 2>/dev/null | ${pkgs.gnugrep}/bin/grep -q " $expected_ipv4/"; then
+        exit 0
+      fi
+      ${pkgs.coreutils}/bin/sleep 1
+    done
+
+    echo "router-kea: LAN interface $iface was not carrier-up with IPv4 $expected_ipv4 within 30 seconds" >&2
+    exit 1
+  '';
 
   secrets = optSec.mkSecrets {
     cloudflare-api-key = {
@@ -96,7 +115,8 @@ let
       "kea-dhcp-ddns-server.service"
       "miniupnpd.service"
       "router-ipv6-ra-owner.service"
-    ];
+    ]
+    ++ lib.optional (config.services.router-ddns.enable or false) "inadyn.timer";
   ipv6RaOwnerDropInDir = "/run/systemd/network/08-router-parent-${lanDevice}.network.d";
   ipv6RaOwnerDropIn = "${ipv6RaOwnerDropInDir}/90-router-ha-ra.conf";
   enableIpv6RaOwner = pkgs.writeShellScript "router-ipv6-ra-owner-enable" ''
@@ -221,7 +241,7 @@ in
     wan = {
       # Public ingress failover requires WAN ownership to follow VRRP
       # promotion, not just the LAN VIP.
-      enable = true;
+      enable = enableWanHa;
       interface = wanDevice;
       clonedMac = "02:76:c6:01:2a:b0";
     };
@@ -302,7 +322,10 @@ in
 
   systemd.services.kea-dhcp4-server.serviceConfig.ExecStartPre = lib.mkBefore [
     "+${ensureKeaLeaseState}"
+    "+${waitForKeaLanReady}"
   ];
+  systemd.services.kea-dhcp4-server.wantedBy = lib.mkForce [ ];
+  systemd.services.kea-dhcp-ddns-server.wantedBy = lib.mkForce [ ];
   systemd.services.inadyn = {
     after = [ "router-ha-initial-role-state.service" ];
     requires = [ "router-ha-initial-role-state.service" ];
@@ -311,9 +334,11 @@ in
       masterExecCondition
     ];
   };
+  systemd.timers.inadyn.wantedBy = lib.mkForce [ ];
   systemd.services.miniupnpd = {
     after = [ "router-ha-initial-role-state.service" ];
     requires = [ "router-ha-initial-role-state.service" ];
+    wantedBy = lib.mkForce [ ];
     serviceConfig.ExecCondition = lib.mkBefore [
       masterExecCondition
     ];

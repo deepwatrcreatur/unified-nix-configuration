@@ -18,6 +18,7 @@ in
       inherit inputs;
       sshTarget = "ssh router-backup";
       wanDevice = "ens27";
+      enableWanHa = false;
       lanDevice = "ens19";
       # Keep the standby LAN identity local to this host definition. Inventory
       # intentionally does not advertise a production IP for router-backup.
@@ -108,10 +109,9 @@ in
   # Current Proxmox wiring:
   #   ens18 -> management virtio
   #   ens19 -> LAN virtio
-  #   ens27 -> WAN passthrough
   #
-  # Keep the host leaf aligned to the actual slot names instead of carrying
-  # old passthrough-era renames for NICs that no longer exist.
+  # There is currently no standby WAN device on this VM, so public-ingress
+  # failover stays disabled here until a real WAN NIC is attached again.
 
   home-manager.extraSpecialArgs.hostName = lib.mkForce "router-backup";
 
