@@ -61,9 +61,9 @@ let
 
     iface=${lib.escapeShellArg lanDevice}
     expected_ipv4=${lib.escapeShellArg staticLanIp}
-    deadline=$(( $(date +%s) + 30 ))
+    SECONDS=0
 
-    while [ "$(date +%s)" -lt "$deadline" ]; do
+    while [ "$SECONDS" -lt 30 ]; do
       if ${pkgs.iproute2}/bin/ip -o link show dev "$iface" 2>/dev/null | ${pkgs.gnugrep}/bin/grep -q "LOWER_UP" \
         && ${pkgs.iproute2}/bin/ip -o -4 addr show dev "$iface" 2>/dev/null | ${pkgs.gnugrep}/bin/grep -q " $expected_ipv4/"; then
         exit 0
@@ -116,7 +116,7 @@ let
       "miniupnpd.service"
       "router-ipv6-ra-owner.service"
     ]
-    ++ lib.optional (config.systemd.timers ? inadyn) "inadyn.timer";
+    ++ lib.optional (config.services.router-ddns.enable or false) "inadyn.timer";
   ipv6RaOwnerDropInDir = "/run/systemd/network/08-router-parent-${lanDevice}.network.d";
   ipv6RaOwnerDropIn = "${ipv6RaOwnerDropInDir}/90-router-ha-ra.conf";
   enableIpv6RaOwner = pkgs.writeShellScript "router-ipv6-ra-owner-enable" ''
