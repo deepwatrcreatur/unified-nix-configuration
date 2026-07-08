@@ -23,8 +23,9 @@ let
     set -euo pipefail
 
     for _ in {1..45}; do
-      if ${pkgs.curl}/bin/curl -fsS http://127.0.0.1:5380/api/dns/status >/dev/null 2>&1 \
-        && ${pkgs.glibc.bin}/bin/getent ahostsv4 api.cloudflare.com >/dev/null 2>&1; then
+      if ${pkgs.curl}/bin/curl --max-time 2 -fsS http://127.0.0.1:5380/api/dns/status >/dev/null 2>&1 \
+        && ${pkgs.coreutils}/bin/timeout 2s \
+          ${pkgs.glibc.bin}/bin/getent ahostsv4 api.cloudflare.com >/dev/null 2>&1; then
         exit 0
       fi
       ${pkgs.coreutils}/bin/sleep 1
