@@ -22,7 +22,7 @@ let
   waitForPrimaryDnsWarmup = pkgs.writeShellScript "router-caddy-wait-for-primary-dns-warmup" ''
     set -euo pipefail
 
-    for _ in $(seq 1 45); do
+    for _ in {1..45}; do
       if ${pkgs.curl}/bin/curl -fsS http://127.0.0.1:5380/api/dns/status >/dev/null 2>&1 \
         && ${pkgs.glibc.bin}/bin/getent ahostsv4 api.cloudflare.com >/dev/null 2>&1; then
         exit 0
