@@ -21,7 +21,10 @@ in
       inherit inputs;
       sshTarget = "ssh router";
       wanDevice = "enp6s17";
-      enableWanHa = true;
+      # Keep WAN locally managed until router-backup regains a real WAN NIC.
+      # The current router-ha WAN hooks restart systemd-networkd on promotion,
+      # which is too disruptive on the live primary.
+      enableWanHa = false;
       lanDevice = "enp6s16";
       inherit lanIpv4Address managementIpv4Address;
       grafanaDomain = mkFqdn "grafana";
