@@ -38,7 +38,9 @@ in
   host.networking.enableTailscale = lib.mkForce false;
   services.router-tailscale.enable = lib.mkForce false;
 
-  systemd.network.wait-online.enable = lib.mkForce false;
+  # Keep wait-online enabled on the standby so the shared router role's
+  # RequiredForOnline settings actually gate management-plane readiness.
+  systemd.network.wait-online.enable = lib.mkForce true;
 
   systemd.services = {
     health-wan-carrier.enable = lib.mkForce false;

@@ -108,6 +108,7 @@ let
   routerHaRoleFile = "/run/router-ha/role";
   masterExecCondition =
     "${pkgs.runtimeShell} -c '[ \"$(cat ${routerHaRoleFile} 2>/dev/null || true)\" = master ]'";
+  wanRequiredForOnline = if enableWanHa then "routable" else "no";
   singleActiveLanUnits =
     [
       "inadyn.service"
@@ -368,7 +369,10 @@ in
 
   services.router-networking = {
     enable = true;
-    wan.device = wanDevice;
+    wan = {
+      device = wanDevice;
+      requiredForOnline = wanRequiredForOnline;
+    };
     routedInterfaces =
       {
         lan = {
@@ -376,7 +380,7 @@ in
           ipv4Address = if config.networking.hostName == "router" then "10.10.10.2/16" else "10.10.10.3/16";
           dns = [ "127.0.0.1" ];
           domains = [ topology.domain ];
-          requiredForOnline = "routable";
+          requiredForOnline = "no";
           extraRoutes = [
             {
               destination = lanNetwork.cidr;
@@ -387,6 +391,7 @@ in
         management = {
           device = managementDevice;
           ipv4Address = managementIpv4Address;
+          requiredForOnline = "carrier";
           prefixDelegationMode = "managed";
         };
       }
@@ -693,18 +698,12 @@ in
   # intentionally unplugged on a standby/dev router. That allows dashboard and
   # router-role services to come up in a degraded-but-testable state.
   systemd.network.networks."20-router-lan".networkConfig.ConfigureWithoutCarrier = true;
+  systemd.network.networks."20-router-lan".linkConfig.RequiredForOnline = lib.mkForce "no";
 
-  # Do not block network-online.target on the data-plane LAN NIC.
-  #
-  # caddy and router-dashboard wait on network-online.target. With the default
-  # anyInterface = false, systemd-networkd-wait-online waits for ALL required
-  # interfaces — including LAN (RequiredForOnline = routable). Without carrier,
-  # LAN cannot reach "routable", so caddy/dashboard appear stuck in activating
-  # even though the management plane is fully usable.
-  #
-  # anyInterface = true: exit as soon as any one managed interface (management
-  # always has carrier) reaches its required state.
-  systemd.network.wait-online.anyInterface = true;
+  # Make network-online.target wait for the interfaces that matter on each
+  # node. The primary should wait for WAN before WAN-dependent services start,
+  # while the WAN-less backup should only wait for the management plane.
+  systemd.network.wait-online.anyInterface = lib.mkForce false;
 
   boot.loader.grub.enable = false;
   boot.loader.limine.enable = true;
@@ -946,7 +945,7 @@ in
       IPv6PrivacyExtensions = "no";
       IPv6SendRA = false;
     };
-    linkConfig.RequiredForOnline = lib.mkForce "routable";
+    linkConfig.RequiredForOnline = lib.mkForce "no";
     ipv6SendRAConfig = {
       EmitDNS = true;
       Managed = false;

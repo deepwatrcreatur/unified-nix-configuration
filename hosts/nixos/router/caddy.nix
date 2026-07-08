@@ -4,6 +4,7 @@ let
   topology = config.router.topology;
   routerHost = topology.routerHost;
   lanNetwork = topology.networks.lan;
+  isPrimaryRouter = config.networking.hostName == "router";
   homeAssistantHost = topology.hosts.homeassistant;
   authentikHost = topology.hosts.authentik-host;
   podmanHost = topology.hosts.podman;
@@ -17,6 +18,21 @@ let
   cfSecret = optSec.mkSecret "cloudflare-api-key" {
     file = ../../../secrets-agenix/cloudflare_ddns_API_token.age;
   };
+
+  waitForPrimaryDnsWarmup = pkgs.writeShellScript "router-caddy-wait-for-primary-dns-warmup" ''
+    set -euo pipefail
+
+    for _ in {1..45}; do
+      if ${pkgs.curl}/bin/curl --max-time 2 -fsS http://127.0.0.1:5380/api/dns/status >/dev/null 2>&1 \
+        && ${pkgs.coreutils}/bin/timeout 2s \
+          ${pkgs.glibc.bin}/bin/getent ahostsv4 api.cloudflare.com >/dev/null 2>&1; then
+        exit 0
+      fi
+      ${pkgs.coreutils}/bin/sleep 1
+    done
+
+    echo "router-caddy: upstream DNS was not ready after 45 seconds; continuing startup" >&2
+  '';
 in
 {
   services.caddy = {
@@ -176,8 +192,14 @@ in
 
   # Ensure Caddy can access the services and prepare its dynamic DNS token
   systemd.services.caddy = {
-    after = [ "network-online.target" ];
-    wants = [ "network-online.target" ];
+    after = [
+      "network-online.target"
+      "technitium-dns-server.service"
+    ];
+    wants = [
+      "network-online.target"
+      "technitium-dns-server.service"
+    ];
     preStart = ''
       install -d -m 0750 -o caddy -g caddy /run/caddy
       ${lib.optionalString cfSecret.exists ''
@@ -193,6 +215,9 @@ in
         : > /run/caddy/caddy.env
         chown caddy:caddy /run/caddy/caddy.env
         chmod 0400 /run/caddy/caddy.env
+      ''}
+      ${lib.optionalString isPrimaryRouter ''
+        ${waitForPrimaryDnsWarmup}
       ''}
     '';
     serviceConfig = {
