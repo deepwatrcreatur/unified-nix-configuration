@@ -21,6 +21,11 @@ in
       inherit inputs;
       sshTarget = "ssh router";
       wanDevice = "enp6s17";
+      # Active HA is disabled for now. The primary should boot as a plain
+      # router until the spare path is revalidated with real standby WAN
+      # hardware and a simpler promotion story.
+      enableHa = false;
+      ownLanServices = true;
       # Keep WAN locally managed until router-backup regains a real WAN NIC.
       # The current router-ha WAN hooks restart systemd-networkd on promotion,
       # which is too disruptive on the live primary.
