@@ -4,6 +4,10 @@
 production shape is intentionally non-HA: `router` is the only active router,
 and `router-backup` is a cold/manual spare.
 
+High availability is intentionally deferred for now. Treat the active HA design
+as future work to revisit only after more pressing router needs are settled and
+the backup has real standby WAN hardware again.
+
 ## Management
 
 - `router` SSHes to the dedicated management interface at `192.168.100.100`
@@ -32,6 +36,18 @@ To recover with `router-backup` after a failure or bad rebuild:
    expecting clients to recover.
 5. Expect LAN recovery only; WAN/public-ingress failover is intentionally out
    of scope in the current stage.
+
+## Deferred HA TODO
+
+When you eventually return to HA work, keep this order:
+
+1. preserve the current single-active-router production model until the new HA
+   slice is fully validated
+2. test any new HA ownership or VRRP logic on `router-backup` first
+3. prefer reboot-based primary validation over live `nixos-rebuild switch`
+   cutovers
+4. do not re-enable WAN/public failover until `router-backup` has a real WAN
+   path again
 
 ### Current config note
 

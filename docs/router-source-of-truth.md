@@ -98,8 +98,8 @@ den/inventory/hosts.nix          ← entry point
 
 - **DNS / NTP shared capability**: `hosts/nixos/router/service-capability.nix`.
 - **Primary hostname / domain defaults**: `hosts/nixos/router/networking.nix`.
-- **Runtime single-owner LAN services**: `hosts/nixos/router/role.nix` via
-  `services.router-ha.singleActiveUnits` and `/run/router-ha/role`.
+- **Runtime LAN service ownership**: `hosts/nixos/router/role.nix` via
+  `enableHa` and `ownLanServices`.
 - **Firewall / NAT / observability / VPN**: tune options provided by
   `nix-router-optimized` modules; the entry point is `den/aspects/router-router.nix`.
 - **Caddy virtualHosts, ACME, DDNS**: `hosts/nixos/router/caddy.nix`.
@@ -143,6 +143,18 @@ The safest current interpretation of this pair is:
    failover peer.
 3. WAN/public-ingress failover should be re-enabled only after the backup has a
    real WAN NIC again and the whole promotion path is revalidated separately.
+
+## Deferred Follow-Up
+
+High availability is now an intentional future follow-up, not an active
+deployment goal. Before revisiting it, the next implementation should assume:
+
+1. the current supported production shape is `router` as the only active
+   router plus `router-backup` as a cold/manual spare
+2. any future HA retry must be validated on the backup first, then staged for
+   reboot-based primary testing instead of live `switch` cutovers
+3. WAN/public-ingress failover should remain out of scope until the backup has
+   real standby WAN hardware again
 
 ## Current `activeOwner` Consumers
 

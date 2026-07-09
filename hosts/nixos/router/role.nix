@@ -92,11 +92,14 @@ let
       file = ../../../secrets-agenix/technitium-admin-password.age;
       mode = "0400";
     };
-    kea-ddns-tsig-key = {
-      file = ../../../secrets-agenix/kea-ddns-tsig-key.age;
-      mode = "0440";
-      group = "kea";
-    };
+    kea-ddns-tsig-key =
+      {
+        file = ../../../secrets-agenix/kea-ddns-tsig-key.age;
+        mode = "0440";
+      }
+      // lib.optionalAttrs ownLanServices {
+        group = "kea";
+      };
     tailscale-auth-key = {
       file = ../../../secrets-agenix/tailscale-auth-key.age;
     };
