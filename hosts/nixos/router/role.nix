@@ -253,7 +253,7 @@ in
         };
       };
 
-  services.router-dns-service.serviceListenAddresses = lib.mkIf (!enableHa) (
+  services.router-dns-service.serviceListenAddresses = lib.mkIf (!enableHa && ownLanServices) (
     lib.mkForce [
       "127.0.0.1"
       lanListenAddress

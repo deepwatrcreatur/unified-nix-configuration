@@ -6,7 +6,11 @@
 let
   topology = config.router.topology;
   routerHost = topology.routerHost;
-  haVirtualIpAddress = builtins.head (lib.splitString "/" config.services.router-ha.virtualIp);
+  productionRouterAddress =
+    if config.services.router-ha.enable then
+      builtins.head (lib.splitString "/" config.services.router-ha.virtualIp)
+    else
+      routerHost.ip;
 in
 {
   services.router-dns-service = {
@@ -14,7 +18,7 @@ in
     provider = "technitium";
     serviceListenAddresses = [
       "127.0.0.1"
-      haVirtualIpAddress
+      productionRouterAddress
     ];
     searchDomains = [ topology.domain ];
     # Advertise the router's chrony instance to LAN clients via DHCP option 42.
