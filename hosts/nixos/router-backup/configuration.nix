@@ -19,6 +19,7 @@ in
       sshTarget = "ssh router-backup";
       wanDevice = "ens27";
       enableWanHa = false;
+      requireWanOnline = false;
       lanDevice = "ens19";
       # Keep the standby LAN identity local to this host definition. Inventory
       # intentionally does not advertise a production IP for router-backup.

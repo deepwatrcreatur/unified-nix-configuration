@@ -11,6 +11,7 @@
   enableExtraRoutedNetworks ? false,
   enableLogStorage ? true,
   enableWanHa ? true,
+  requireWanOnline ? enableWanHa,
   inputs,
 }:
 {
@@ -108,7 +109,7 @@ let
   routerHaRoleFile = "/run/router-ha/role";
   masterExecCondition =
     "${pkgs.runtimeShell} -c '[ \"$(cat ${routerHaRoleFile} 2>/dev/null || true)\" = master ]'";
-  wanRequiredForOnline = if enableWanHa then "routable" else "no";
+  wanRequiredForOnline = if requireWanOnline then "routable" else "no";
   singleActiveLanUnits =
     [
       "inadyn.service"

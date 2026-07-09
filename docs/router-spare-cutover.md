@@ -18,8 +18,9 @@ in a shared VRRP-based router identity.
 - VRRP/Keepalived decides which node currently owns the LAN VIP
 - both nodes can stay cabled to the production LAN when the HA pair is healthy;
   the safety rule is that only one node should own the active role at a time
-- public WAN/public-ingress failover is currently primary-only because
-  `router-backup` does not have a real WAN NIC attached
+- public WAN/public-ingress failover is currently disabled in HA config. WAN
+  stays locally managed on `router` until `router-backup` has a real WAN NIC
+  and the failover path is validated separately
 
 ## Promotion
 
@@ -32,8 +33,8 @@ To recover with `router-backup` after a failure or bad rebuild:
    - `systemctl status keepalived`
 4. Verify the production identity is present on the promoted node:
    - the LAN VIP answers
-   - if the backup node has no WAN NIC, expect LAN recovery only rather than
-     public-ingress failover
+   - expect LAN recovery only; WAN/public-ingress failover is intentionally out
+     of scope in the current stage
 5. Verify client-facing services that are supposed to move or remain shared.
 
 ### Current config note
@@ -53,12 +54,13 @@ To recover with `router-backup` after a failure or bad rebuild:
   emits IPv6 RAs without needing a separate static owner flag.
 - `services.router-ntp.enable = true` on both nodes. Chrony is intentionally
   shared rather than single-owner in the current deployment.
-- `router-backup` currently has no attached WAN device, so `enableWanHa = false`
-  there. That keeps LAN-side standby behavior available without letting
-  Keepalived or HA hooks manipulate a nonexistent `ens27`.
+- WAN HA is currently disabled on both nodes. `router-backup` has no attached
+  standby WAN device, and the current router-ha WAN hooks are too disruptive on
+  the primary because they restart `systemd-networkd` during promotion.
 - This means the current failover split is:
   - LAN VIP/DDNS/DHCP/UPnP/IPv6 RA: promotion-aware
-  - public WAN/public ingress: primary-only until the backup regains a real WAN NIC
+  - public WAN/public ingress: primary-owned but not HA-promoted until the
+    backup regains a real WAN NIC
   - Chrony and some observability: shared on both nodes
 
 ## Technitium
@@ -90,7 +92,7 @@ Use Technitium clustering only for DNS/admin-state sync between `router` and
 - DHCP scope replication
 - DHCP lease-state failover
 - automatic DHCP ownership transfer
-- WAN ownership beyond what VRRP/Keepalived is already configured to do
+- WAN ownership beyond the current primary-local boundary
 
 ### Standby Checklist
 
