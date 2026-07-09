@@ -10,6 +10,8 @@
   prometheusBindMountPath,
   enableExtraRoutedNetworks ? false,
   enableLogStorage ? true,
+  enableHa ? true,
+  ownLanServices ? true,
   enableWanHa ? true,
   requireWanOnline ? enableWanHa,
   inputs,
@@ -230,27 +232,38 @@ in
     };
   };
 
-  services.router-ha = {
-    # Both router nodes participate in VRRP so LAN VIP and WAN ownership can
-    # move together during failover.
-    enable = true;
-    role = if isPrimaryRouter then "master" else "backup";
-    virtualIp = "10.10.10.1/16";
-    vrrpInterface = lanDevice;
-    singleActiveUnits = singleActiveLanUnits;
-    keaSync.enable = isPrimaryRouter;
-    keaSync.peerAddress = if isPrimaryRouter then "10.10.11.213" else "10.10.11.1"; # Using management IPs for control plane sync
-    wan = {
-      # Public ingress failover requires WAN ownership to follow VRRP
-      # promotion, not just the LAN VIP.
-      enable = enableWanHa;
-      interface = wanDevice;
-      clonedMac = "02:76:c6:01:2a:b0";
-    };
-  };
+  services.router-ha =
+    lib.mkIf enableHa
+      {
+        # Both router nodes participate in VRRP so LAN VIP and WAN ownership can
+        # move together during failover.
+        enable = true;
+        role = if isPrimaryRouter then "master" else "backup";
+        virtualIp = "10.10.10.1/16";
+        vrrpInterface = lanDevice;
+        singleActiveUnits = singleActiveLanUnits;
+        keaSync.enable = isPrimaryRouter;
+        keaSync.peerAddress = if isPrimaryRouter then "10.10.11.213" else "10.10.11.1"; # Using management IPs for control plane sync
+        wan = {
+          # Public ingress failover requires WAN ownership to follow VRRP
+          # promotion, not just the LAN VIP.
+          enable = enableWanHa;
+          interface = wanDevice;
+          clonedMac = "02:76:c6:01:2a:b0";
+        };
+      };
+
+  services.router-dns-service.serviceListenAddresses = lib.mkIf (!enableHa) (
+    lib.mkForce [
+      "127.0.0.1"
+      lanListenAddress
+    ]
+  );
 
   services.router-ddns = {
-    enable = true;
+    enable = lib.mkForce ownLanServices;
+  }
+  // lib.optionalAttrs ownLanServices {
     cloudflare = {
       zoneName = topology.domain;
       labels = topology.routerHost.ddnsServices;
@@ -259,13 +272,16 @@ in
   };
 
   services.router-kea = {
-    # Keep Kea defined on both nodes so the unit, user/group, and secret wiring
-    # remain coherent, but gate actual DHCP ownership at service start.
-    enable = true;
+    # In non-HA mode, the primary router owns DHCP directly. The backup keeps
+    # Kea disabled so it remains a cold/manual spare instead of racing the
+    # production router during boot or recovery.
+    enable = lib.mkForce ownLanServices;
+  }
+  // lib.optionalAttrs ownLanServices {
     dhcp4 = {
       interfaces = [ lanDevice ];
       subnet = lanNetwork.cidr;
-      gatewayAddress = "10.10.10.1"; # Use the VIP
+      gatewayAddress = "10.10.10.1";
       dnsServers = [ "10.10.10.1" ];
       poolRanges = [
         {
@@ -309,10 +325,9 @@ in
   };
 
   services.router-upnp = {
-    # Bind miniupnpd to explicit interface names so the generated config does
-    # not fall back to invalid address-based guesses. router-ha owns the
-    # active runtime instance so only the promoted node advertises mappings.
-    enable = true;
+    # In HA mode the promoted node owns miniupnpd at runtime. In the current
+    # simplified consumer mode, only the primary router exposes UPnP/NAT-PMP.
+    enable = lib.mkForce ownLanServices;
     externalInterface = wanDevice;
     internalIPs = [ lanDevice ];
   };
@@ -322,13 +337,31 @@ in
   # continuity rather than a single-owner Chrony model.
   services.router-ntp.enable = true;
 
-  systemd.services.kea-dhcp4-server.serviceConfig.ExecStartPre = lib.mkBefore [
-    "+${ensureKeaLeaseState}"
-    "+${waitForKeaLanReady}"
+  systemd.services.kea-dhcp4-server = lib.mkMerge [
+    (lib.mkIf ownLanServices {
+      serviceConfig.ExecStartPre = lib.mkBefore [
+        "+${ensureKeaLeaseState}"
+        "+${waitForKeaLanReady}"
+      ];
+    })
+    (lib.mkIf enableHa {
+      wantedBy = lib.mkForce [ ];
+      serviceConfig.ExecCondition = lib.mkBefore [
+        masterExecCondition
+      ];
+      after = [ "router-ha-initial-role-state.service" ];
+      requires = [ "router-ha-initial-role-state.service" ];
+    })
   ];
-  systemd.services.kea-dhcp4-server.wantedBy = lib.mkForce [ ];
-  systemd.services.kea-dhcp-ddns-server.wantedBy = lib.mkForce [ ];
-  systemd.services.inadyn = {
+  systemd.services.kea-dhcp-ddns-server = lib.mkIf enableHa {
+    wantedBy = lib.mkForce [ ];
+    serviceConfig.ExecCondition = lib.mkBefore [
+      masterExecCondition
+    ];
+    after = [ "router-ha-initial-role-state.service" ];
+    requires = [ "router-ha-initial-role-state.service" ];
+  };
+  systemd.services.inadyn = lib.mkIf enableHa {
     after = [ "router-ha-initial-role-state.service" ];
     requires = [ "router-ha-initial-role-state.service" ];
     wantedBy = lib.mkForce [ ];
@@ -336,8 +369,8 @@ in
       masterExecCondition
     ];
   };
-  systemd.timers.inadyn.wantedBy = lib.mkForce [ ];
-  systemd.services.miniupnpd = {
+  systemd.timers.inadyn.wantedBy = lib.mkIf enableHa (lib.mkForce [ ]);
+  systemd.services.miniupnpd = lib.mkIf enableHa {
     after = [ "router-ha-initial-role-state.service" ];
     requires = [ "router-ha-initial-role-state.service" ];
     wantedBy = lib.mkForce [ ];
@@ -345,7 +378,7 @@ in
       masterExecCondition
     ];
   };
-  systemd.services.router-ipv6-ra-owner = {
+  systemd.services.router-ipv6-ra-owner = lib.mkIf enableHa {
     description = "Apply IPv6 RA ownership to the active router";
     after = [ "router-ha-initial-role-state.service" ];
     requires = [ "router-ha-initial-role-state.service" ];
@@ -357,16 +390,6 @@ in
       ExecStop = [ "+${disableIpv6RaOwner}" ];
     };
   };
-  systemd.services.kea-dhcp4-server.serviceConfig.ExecCondition = lib.mkBefore [
-    masterExecCondition
-  ];
-  systemd.services.kea-dhcp-ddns-server.serviceConfig.ExecCondition = lib.mkBefore [
-    masterExecCondition
-  ];
-  systemd.services.kea-dhcp4-server.after = [ "router-ha-initial-role-state.service" ];
-  systemd.services.kea-dhcp4-server.requires = [ "router-ha-initial-role-state.service" ];
-  systemd.services.kea-dhcp-ddns-server.after = [ "router-ha-initial-role-state.service" ];
-  systemd.services.kea-dhcp-ddns-server.requires = [ "router-ha-initial-role-state.service" ];
 
   services.router-networking = {
     enable = true;
@@ -546,7 +569,7 @@ in
     listenAddresses = [
       "127.0.0.1"
       managementListenAddress
-    ] ++ lib.optionals isPrimaryRouter [ "10.10.10.1" ];
+    ] ++ lib.optionals ownLanServices [ "10.10.10.1" ];
   };
 
   services.router-homelab.sshTarget = sshTarget;
@@ -944,7 +967,7 @@ in
       DNS = [ "127.0.0.1" ];
       Domains = [ topology.domain ];
       IPv6PrivacyExtensions = "no";
-      IPv6SendRA = false;
+      IPv6SendRA = !enableHa && ownLanServices;
     };
     linkConfig.RequiredForOnline = lib.mkForce "no";
     ipv6SendRAConfig = {

@@ -17,6 +17,8 @@ in
     (import ../router/role.nix {
       inherit inputs;
       sshTarget = "ssh router-backup";
+      enableHa = false;
+      ownLanServices = false;
       wanDevice = "ens27";
       enableWanHa = false;
       requireWanOnline = false;
