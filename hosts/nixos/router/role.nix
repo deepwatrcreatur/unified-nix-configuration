@@ -12,6 +12,7 @@
   enableLogStorage ? true,
   enableHa ? true,
   ownLanServices ? true,
+  enableNetworkSecurity ? ownLanServices,
   enableWanHa ? true,
   requireWanOnline ? enableWanHa,
   inputs,
@@ -404,7 +405,13 @@ in
       {
         lan = {
           device = lanDevice;
-          ipv4Address = if config.networking.hostName == "router" then "10.10.10.2/16" else "10.10.10.3/16";
+          ipv4Address =
+            if !enableHa then
+              lanIpv4Address
+            else if config.networking.hostName == "router" then
+              "10.10.10.2/16"
+            else
+              "10.10.10.3/16";
           dns = [ "127.0.0.1" ];
           domains = [ topology.domain ];
           requiredForOnline = "no";
@@ -556,14 +563,11 @@ in
   services.router-observability.enable = true;
 
   services.router-network-security = {
-    enable = true;
-    interfaces = [
-      lanDevice
-      wanDevice
-    ];
+    enable = enableNetworkSecurity;
+    interfaces = [ lanDevice ];
     suricata = {
-      enable = true;
-      evebox.enable = true;
+      enable = enableNetworkSecurity;
+      evebox.enable = enableNetworkSecurity;
     };
   };
 
@@ -606,95 +610,102 @@ in
       "health-wan-ip"
       "ulogd"
       "vector"
+    ] ++ lib.optionals enableNetworkSecurity [
       "suricata"
       "router-evebox"
     ];
-    links = lib.mkForce [
-      {
-        label = "Dashboard";
-        url = "https://${mkFqdn "dashboard"}";
-        icon = "🧭";
-      }
-      {
-        label = "Grafana";
-        url = "https://${mkFqdn "grafana"}";
-        icon = "📈";
-      }
-      {
-        label = "EveBox";
-        url = "https://${mkFqdn "evebox"}";
-        icon = "🔎";
-      }
-      {
-        label = "DNS Admin Mgmt";
-        url = "http://${managementListenAddress}:5380/";
-        icon = "🌍";
-      }
-      {
-        label = "Prometheus Mgmt";
-        url = "http://${managementListenAddress}:9090/";
-        icon = "🎯";
-      }
-      {
-        label = "Netdata Mgmt";
-        url = "http://${managementListenAddress}:19999/";
-        icon = "📊";
-      }
-      {
-        label = "Dashboard Mgmt";
-        url = "http://${managementListenAddress}:8888/";
-        icon = "🧭";
-      }
-      {
-        label = "DNS Admin LAN";
-        url = "http://${lanListenAddress}:5380/";
-        icon = "🌍";
-      }
-      {
-        label = "Prometheus LAN";
-        url = "http://${lanListenAddress}:9090/";
-        icon = "🎯";
-      }
-      {
-        label = "Netdata LAN";
-        url = "http://${lanListenAddress}:19999/";
-        icon = "📊";
-      }
-      {
-        label = "Router SSH";
-        kind = "copy";
-        copyText = "ssh router";
-        icon = "🖥️";
-      }
-      {
-        label = "Backup SSH";
-        kind = "copy";
-        copyText = "ssh router-backup";
-        icon = "🛟";
-      }
-      {
-        label = "Router Mgmt";
-        kind = "copy";
-        copyText = topology.routerHost.sshHostname;
-        icon = "🔧";
-      }
-      {
-        label = "Backup Mgmt";
-        kind = "copy";
-        copyText = topology.backupHost.sshHostname;
-        icon = "🧰";
-      }
-      {
-        label = "Tech Logs";
-        url = "/logs/technitium.html";
-        icon = "📜";
-      }
-      {
-        label = "Fail2ban";
-        url = "/status/fail2ban.html";
-        icon = "🛡️";
-      }
-    ];
+    links = lib.mkForce (
+      [
+        {
+          label = "Dashboard";
+          url = "https://${mkFqdn "dashboard"}";
+          icon = "🧭";
+        }
+        {
+          label = "Grafana";
+          url = "https://${mkFqdn "grafana"}";
+          icon = "📈";
+        }
+      ]
+      ++ lib.optionals enableNetworkSecurity [
+        {
+          label = "EveBox";
+          url = "https://${mkFqdn "evebox"}";
+          icon = "🔎";
+        }
+      ]
+      ++ [
+        {
+          label = "DNS Admin Mgmt";
+          url = "http://${managementListenAddress}:5380/";
+          icon = "🌍";
+        }
+        {
+          label = "Prometheus Mgmt";
+          url = "http://${managementListenAddress}:9090/";
+          icon = "🎯";
+        }
+        {
+          label = "Netdata Mgmt";
+          url = "http://${managementListenAddress}:19999/";
+          icon = "📊";
+        }
+        {
+          label = "Dashboard Mgmt";
+          url = "http://${managementListenAddress}:8888/";
+          icon = "🧭";
+        }
+        {
+          label = "DNS Admin LAN";
+          url = "http://${lanListenAddress}:5380/";
+          icon = "🌍";
+        }
+        {
+          label = "Prometheus LAN";
+          url = "http://${lanListenAddress}:9090/";
+          icon = "🎯";
+        }
+        {
+          label = "Netdata LAN";
+          url = "http://${lanListenAddress}:19999/";
+          icon = "📊";
+        }
+        {
+          label = "Router SSH";
+          kind = "copy";
+          copyText = "ssh router";
+          icon = "🖥️";
+        }
+        {
+          label = "Backup SSH";
+          kind = "copy";
+          copyText = "ssh router-backup";
+          icon = "🛟";
+        }
+        {
+          label = "Router Mgmt";
+          kind = "copy";
+          copyText = topology.routerHost.sshHostname;
+          icon = "🔧";
+        }
+        {
+          label = "Backup Mgmt";
+          kind = "copy";
+          copyText = topology.backupHost.sshHostname;
+          icon = "🧰";
+        }
+        {
+          label = "Tech Logs";
+          url = "/logs/technitium.html";
+          icon = "📜";
+        }
+        {
+          label = "Fail2ban";
+          url = "/status/fail2ban.html";
+          icon = "🛡️";
+        }
+      ]
+    );
   };
 
   services.router-tailscale = {
