@@ -148,6 +148,9 @@ The safest current interpretation of this pair is:
 3. WAN/public-ingress failover should be re-enabled only after the backup has a
    real WAN NIC again and the whole promotion path is revalidated separately.
 
+For the current primary-router post-reboot checks, use
+[`router-reboot-validation.md`](./router-reboot-validation.md).
+
 ## Deferred Follow-Up
 
 High availability is now an intentional future follow-up, not an active
