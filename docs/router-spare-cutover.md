@@ -64,6 +64,9 @@ When you eventually return to HA work, keep this order:
   later HA redesign reintroduces them safely.
 - `services.router-ntp.enable = true` on both nodes. Chrony is intentionally
   shared rather than single-owner in the current deployment.
+- `services.router-network-security` is currently disabled on both nodes in the
+  simplified production shape. Suricata/EveBox were removed from the active
+  boot path while primary reboot stability was being restored.
 - WAN HA is currently disabled on both nodes. `router-backup` has no attached
   standby WAN device, and the current router-ha WAN hooks are too disruptive on
   the primary because they restart `systemd-networkd` during promotion.
