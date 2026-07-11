@@ -26,6 +26,7 @@ in
       # hardware and a simpler promotion story.
       enableHa = false;
       ownLanServices = true;
+      enableNetworkSecurity = false;
       # Keep WAN locally managed until router-backup regains a real WAN NIC.
       # The current router-ha WAN hooks restart systemd-networkd on promotion,
       # which is too disruptive on the live primary.

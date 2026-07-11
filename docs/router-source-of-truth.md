@@ -127,8 +127,12 @@ The currently validated consumer shape is intentionally simpler than active HA:
     race the production router during boot or recovery
 - **Shared on both nodes**
   - `services.router-ntp.enable = true` so Chrony stays available on the backup
-  - Suricata and EveBox, which remain useful on standby without claiming
-    single-owner semantics
+- **Temporarily disabled in the current simplified mode**
+  - `services.router-network-security`
+  - Suricata / EveBox
+  - These are intentionally out of the active boot path while the primary
+    reboot path is being stabilized. Reintroduce them later as a separate,
+    reboot-tested slice rather than bundling them with router ownership work.
 
 This is the working reference shape today. VRRP/Keepalived is no longer part of
 the live production path, because the current HA hooks are still too disruptive
