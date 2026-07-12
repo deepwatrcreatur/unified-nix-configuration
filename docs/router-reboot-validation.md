@@ -122,6 +122,24 @@ If a client fails to get an address, inspect live Kea activity on `router`:
 journalctl -u kea-dhcp4-server --since "10 minutes ago" --no-pager -n 80
 ```
 
+If a specific device keeps failing while other clients are fine, look for a
+repeating `DHCP4_INIT_REBOOT` pattern for that device's MAC address:
+
+```bash
+journalctl -u kea-dhcp4-server --since "10 minutes ago" --no-pager \
+  | rg 'DHCP4_INIT_REBOOT|DHCP4_PACKET_RECEIVED|<mac-address>'
+```
+
+Interpretation:
+
+- repeated `INIT-REBOOT` for an old or wrong address usually means the client
+  is stuck on stale DHCP state
+- if the reservation in this repo and `/etc/kea/dhcp4-server.conf` is correct,
+  treat that as a client-side recovery problem first, not a reason to restart
+  the router again
+- typical recovery is to renew/release the client lease, or power-cycle the
+  affected device if it does not expose DHCP controls
+
 ## What Counts As Failure
 
 Treat the reboot as failed if any of these are true:
