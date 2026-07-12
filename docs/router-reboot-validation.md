@@ -43,7 +43,7 @@ For a successful boot, those should match.
 Then check the core services:
 
 ```bash
-systemctl is-active systemd-networkd caddy technitium-dns-server kea-dhcp4-server
+systemctl is-active systemd-networkd caddy technitium-dns-server kea-dhcp4-server kea-dhcp-ddns-server
 systemctl is-active keepalived suricata router-evebox
 systemctl --failed
 ```
@@ -54,6 +54,7 @@ Expected state in the current simplified mode:
 - `caddy`: `active`
 - `technitium-dns-server`: `active`
 - `kea-dhcp4-server`: `active`
+- `kea-dhcp-ddns-server`: `active`
 - `keepalived`: `inactive`
 - `suricata`: `inactive`
 - `router-evebox`: `inactive`
@@ -73,7 +74,7 @@ Expected state:
 Confirm DNS and DHCP listeners are actually bound:
 
 ```bash
-ss -ulpn | grep -E '(:53 |:67 )'
+sudo ss -ulpn | grep -E '(:53 |:67 )'
 ```
 
 Expected state:
@@ -100,9 +101,13 @@ Interpretation:
 
 From a client on the LAN, verify:
 
-- it can get or renew a DHCP lease
+- it can release and renew a DHCP lease, or obtain one as a fresh client
 - it can resolve names
 - it can reach the Internet
+
+Do not rely on a client that simply kept its pre-reboot lease.
+First force a lease renew or use a device that is freshly joining the LAN.
+Then run the reachability checks.
 
 Useful examples:
 
@@ -122,11 +127,14 @@ journalctl -u kea-dhcp4-server --since "10 minutes ago" --no-pager -n 80
 Treat the reboot as failed if any of these are true:
 
 - `/run/current-system` did not move to the intended closure
+- `systemd-networkd`, `caddy`, `technitium-dns-server`, `kea-dhcp4-server`, or
+  `kea-dhcp-ddns-server` is not `active`
 - `kea-dhcp4-server` is `active` but no `:67` listener exists
 - `technitium-dns-server` is up but name resolution fails
 - `enp6s16` does not own `10.10.10.1/16`
 - the default route is missing
 - LAN clients cannot renew or obtain working leases
+- `systemctl --failed` reports unexpected failed units in the client path
 
 ## Recovery
 
@@ -141,7 +149,7 @@ Example emergency DHCP recovery on the primary:
 
 ```bash
 sudo systemctl restart kea-dhcp4-server
-ss -ulpn | grep ':67 '
+sudo ss -ulpn | grep ':67 '
 ```
 
 That is a recovery action, not acceptance of the bad generation.
