@@ -8,6 +8,9 @@ High availability is intentionally deferred for now. Treat the active HA design
 as future work to revisit only after more pressing router needs are settled and
 the backup has real standby WAN hardware again.
 
+For the active primary's post-reboot acceptance checks, use
+[`router-reboot-validation.md`](./router-reboot-validation.md).
+
 ## Management
 
 - `router` SSHes to the dedicated management interface at `192.168.100.100`
