@@ -127,7 +127,8 @@ repeating `DHCP4_INIT_REBOOT` pattern for that device's MAC address:
 
 ```bash
 journalctl -u kea-dhcp4-server --since "10 minutes ago" --no-pager \
-  | rg 'DHCP4_INIT_REBOOT|DHCP4_PACKET_RECEIVED|<mac-address>'
+  | rg -i 'DHCP4_INIT_REBOOT' \
+  | rg -i -- '<actual-mac-address>'
 ```
 
 Interpretation:
