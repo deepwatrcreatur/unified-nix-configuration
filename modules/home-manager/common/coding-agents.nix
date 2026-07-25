@@ -65,6 +65,7 @@ in
         ccstatusline
       ]
       ++ lib.optionals (pkgs.llm-agents ? ccusage) [ ccusage ]
+      ++ lib.optionals (pkgs.llm-agents ? antigravity-cli) [ antigravity-cli ]
       ++ lib.optionals (pkgs.llm-agents ? ccusage-amp) [ ccusage-amp ]
       ++ lib.optionals (pkgs.llm-agents ? ccusage-codex) [ ccusage-codex ]
       ++ lib.optionals (pkgs.llm-agents ? ccusage-opencode) [ ccusage-opencode ];

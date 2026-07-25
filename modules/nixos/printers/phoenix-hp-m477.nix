@@ -9,7 +9,7 @@
   services.printing.enable = lib.mkDefault true;
   systemd.services."ensure-printers".serviceConfig = lib.mkIf config.services.printing.enable {
     # Printer reachability should not block system activation.
-    ContinueOnError = true;
+    SuccessExitStatus = [ 1 ];
   };
 
   # Ensure scanning support for this MFP

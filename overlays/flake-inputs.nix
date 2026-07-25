@@ -4,7 +4,10 @@
 
 [
   # LLM/AI coding agents from numtide (claude-code, opencode, codex, rtk, etc.)
-  inputs.llm-agents.overlays.default
+  (
+    inputs.llm-agents.overlays.shared-nixpkgs
+      or inputs.llm-agents.overlays.default
+  )
 
   # Worktrunk (git worktree management for parallel agents)
   (final: prev: {

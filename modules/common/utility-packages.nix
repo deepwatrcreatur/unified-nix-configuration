@@ -34,6 +34,7 @@
       curl
       wget
       rsync
+      mosh
       nmap
       openssl
     ]
