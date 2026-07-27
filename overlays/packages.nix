@@ -3,6 +3,11 @@
 { nixpkgsLib }:
 
 [
+  # lazyrsync — Safe terminal user interface for rsync
+  (final: prev: {
+    lazyrsync = prev.callPackage ../pkgs/lazyrsync.nix { };
+  })
+
   # ProxMenux (Proxmox VE interactive menu)
   (final: prev: {
     proxmenux = prev.callPackage ../pkgs/proxmenux.nix { };
