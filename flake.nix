@@ -189,6 +189,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-lazyrsync = {
+      url = "github:deepwatrcreatur/nix-lazyrsync";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =

@@ -59,6 +59,11 @@
     roundtable-web = inputs.agent-roundtable.packages.${prev.stdenv.hostPlatform.system}.roundtable-web;
   })
 
+  # lazyrsync - safe TUI for rsync
+  (final: prev: {
+    lazyrsync = inputs.nix-lazyrsync.packages.${prev.stdenv.hostPlatform.system}.default;
+  })
+
   # Keep the upstream beads_rust flake pinned for metadata and future source
   # packaging work. The repo-managed runtime package is defined in
   # overlays/packages.nix from release binaries instead of this upstream build,
