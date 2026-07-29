@@ -1210,6 +1210,26 @@
         "type": "github"
       }
     },
+    "nix-cmux-tui": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1785327700,
+        "narHash": "sha256-m9KL6JvCfKvAO9q6GkWenWHG1YG1SGMgUiOWdKlDhWM=",
+        "owner": "deepwatrcreatur",
+        "repo": "nix-cmux-tui",
+        "rev": "6e785c41610858eeba6b870f5abde837037e2bd2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "deepwatrcreatur",
+        "repo": "nix-cmux-tui",
+        "type": "github"
+      }
+    },
     "nix-darwin": {
       "inputs": {
         "nixpkgs": [
@@ -1854,6 +1874,7 @@
         "mac-app-util": "mac-app-util",
         "nix-attic-infra": "nix-attic-infra",
         "nix-authentik": "nix-authentik",
+        "nix-cmux-tui": "nix-cmux-tui",
         "nix-darwin": "nix-darwin",
         "nix-gnome-cosmic-ui": "nix-gnome-cosmic-ui",
         "nix-homebrew": "nix-homebrew",
