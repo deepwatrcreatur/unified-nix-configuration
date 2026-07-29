@@ -5,9 +5,12 @@
     "steveyegge/beads/bd" # beads tool
   ];
 
-  casks = [ ];
+  casks = [
+    "cmux"
+  ];
 
   taps = [
+    "manaflow-ai/cmux"
     "steveyegge/beads"
     "xykong/tap"
   ];
