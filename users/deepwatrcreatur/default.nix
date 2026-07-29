@@ -100,6 +100,7 @@ in
     ../../modules/home-manager/bitwarden-cli.nix
     ../../modules/home-manager/rclone-scripts.nix
     ../../modules/home-manager
+    ../../modules/home-manager/common/cmux-tui.nix
   ];
 
   programs.bitwarden-cli = {
@@ -288,7 +289,7 @@ in
     secretsPath = ./secrets;
   };
 
-  home.username = "deepwatrcreatur";
+  programs.cmux-tui.enable = true;
 
   home.packages = with pkgs; [
     go

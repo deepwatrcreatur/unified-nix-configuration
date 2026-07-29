@@ -3,6 +3,11 @@
 { nixpkgsLib }:
 
 [
+  # lazyrsync — Safe terminal user interface for rsync
+  (final: prev: {
+    lazyrsync = prev.callPackage ../pkgs/lazyrsync.nix { };
+  })
+
   # ProxMenux (Proxmox VE interactive menu)
   (final: prev: {
     proxmenux = prev.callPackage ../pkgs/proxmenux.nix { };
@@ -19,6 +24,11 @@
   # T3Code (AI code editor)
   (final: prev: {
     t3code = prev.callPackage ../pkgs/t3code.nix { };
+  })
+
+  # cmux-tui (AI coding agent terminal multiplexer TUI)
+  (final: prev: {
+    cmux-tui = prev.callPackage ../pkgs/cmux-tui.nix { };
   })
 
   # Wrapped GitHub CLI using fnox-backed token lookup

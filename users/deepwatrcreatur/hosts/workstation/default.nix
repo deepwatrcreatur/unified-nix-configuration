@@ -23,6 +23,7 @@ in
     ../../../../modules/home-manager/common/dmux.nix
   ];
 
+  programs.cmux-tui.enable = true;
   programs.dmux.enable = true;
   programs.herdr.enable = true;
   programs.jj.enable = true;
