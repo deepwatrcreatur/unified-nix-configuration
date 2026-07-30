@@ -13,6 +13,7 @@
     inputs.nix-attic-infra.nixosModules.attic-client
     inputs.nixbit.nixosModules.nixbit
     inputs.agenix.nixosModules.default
+    inputs.nixos-cosmic.nixosModules.default
     ../../../modules/nixos/snap.nix
     ../../../modules/nixos/sessions/cosmic.nix
     ../../../modules/nixos/hp-print-scan.nix
@@ -212,6 +213,12 @@
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"
+  ];
+  nix.settings.substituters = [
+    "https://cosmic.cachix.org"
+  ];
+  nix.settings.trusted-public-keys = [
+    "cosmic.cachix.org-1:Dya9IyXD4xdBehWjrkPv6rtxpmvZVa05WchD4wTOsp8="
   ];
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.permittedInsecurePackages = [

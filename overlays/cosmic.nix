@@ -1,30 +1,22 @@
 # overlays/cosmic.nix
-# COSMIC desktop packages from nixpkgs-unstable
+# COSMIC desktop packages from nixos-cosmic
 { inputs, commonNixpkgsConfig }:
 
 [
-  # Prefer COSMIC packages from nixpkgs-unstable (Dec 11 fixes)
+  inputs.nixos-cosmic.overlays.default
   (final: prev: {
-    inherit
-      (import inputs.nixpkgs-unstable {
-        system = prev.stdenv.hostPlatform.system;
-        config = commonNixpkgsConfig;
-      })
-      xdg-desktop-portal-cosmic
-      cosmic-greeter
-      cosmic-panel
-      cosmic-applets
-      cosmic-icons
-      cosmic-settings
-      cosmic-term
-      cosmic-store
-      cosmic-files
-      cosmic-randr
-      cosmic-edit
-      cosmic-screenshot
-      cosmic-bg
-      cosmic-comp
-      cosmic-session
-      ;
+    cosmic-greeter = prev.cosmic-greeter.overrideAttrs (old: {
+      src = old.src.overrideAttrs (_: {
+        outputHash = "sha256-ERytoauws6FDJNXItflOE2MwjxwariiO8RXU1x1chkE=";
+      });
+    });
+    cosmic-edit = prev.cosmic-edit.overrideAttrs (old: {
+      src = old.src.overrideAttrs (_: {
+        outputHash = "sha256-GN1Zts+v3ARcrkN+ZkMUSGNOAlIhXSYWRtWAyqUfUrY=";
+      });
+    });
+    cosmic-comp = prev.cosmic-comp.overrideAttrs (old: {
+      buildInputs = (old.buildInputs or [ ]) ++ [ prev.libdisplay-info ];
+    });
   })
 ]
