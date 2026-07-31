@@ -16,7 +16,7 @@
       });
     });
     cosmic-comp = prev.cosmic-comp.overrideAttrs (old: {
-      nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ prev.pkg-config prev.libdisplay-info.dev ];
+      nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ prev.pkg-config ];
       buildInputs = (old.buildInputs or [ ]) ++ [ prev.libdisplay-info ];
     });
   })
