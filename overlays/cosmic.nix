@@ -17,7 +17,7 @@
     });
     cosmic-comp = prev.cosmic-comp.overrideAttrs (old: {
       nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ prev.pkg-config ];
-      buildInputs = (old.buildInputs or [ ]) ++ [ prev.libdisplay-info_0_2 ];
+      buildInputs = (builtins.filter (x: (x.pname or "") != "libdisplay-info") (old.buildInputs or [ ])) ++ [ prev.libdisplay-info_0_2 ];
     });
   })
 ]
