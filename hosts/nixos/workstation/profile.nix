@@ -225,6 +225,7 @@
     "ventoy-1.1.12"
   ];
 
+  home-manager.backupFileExtension = "backup";
   services.resolved.enable = true;
   system.stateVersion = "25.05";
 }
