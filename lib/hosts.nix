@@ -275,6 +275,10 @@
       ip = "10.10.11.84";
       sshUser = "deepwatrcreatur";
       aliases = [ "plex" ];
+      dhcpReservation = {
+        macAddress = "BC:24:11:51:F9:5B";
+        scope = "LAN";
+      };
       description = "Podman container host (Plex)";
     };
 
