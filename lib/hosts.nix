@@ -306,7 +306,7 @@
       ip = "10.10.11.85";
       sshUser = "root";
       dhcpReservation = {
-        macAddress = "BC:24:11:53:5C:52";
+        macAddress = "BC:24:11:18:16:BD";
         scope = "LAN";
       };
       description = "Dedicated Scrypted LXC container on pve-rog";
