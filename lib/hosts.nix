@@ -312,6 +312,16 @@
       description = "Dedicated Scrypted LXC container on pve-rog";
     };
 
+    synology-dsm = {
+      ip = "10.10.11.88";
+      sshUser = "root";
+      dhcpReservation = {
+        macAddress = "BC:24:11:53:D5:D0";
+        scope = "LAN";
+      };
+      description = "Synology DSM virtual machine on pve-rog";
+    };
+
     # Workstations
     workstation = {
       ip = "10.10.11.73";
