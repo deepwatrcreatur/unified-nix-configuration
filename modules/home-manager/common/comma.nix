@@ -8,10 +8,10 @@ in
     inputs.nix-index-database.homeModules.nix-index
   ];
 
+  # Enable nix-index shell integration and search database
   programs.nix-index.enable = true;
+
+  # Enable comma with pre-indexed database from nix-index-database
+  programs.nix-index-database.comma.enable = lib.mkIf hasNixIndexDatabase true;
 }
-// lib.optionalAttrs hasNixIndexDatabase {
-  # This replaces the need for programs.comma.enable = true;
-  # as it configures both nix-index and comma together.
-  programs.nix-index-database.comma.enable = true;
-}
+
