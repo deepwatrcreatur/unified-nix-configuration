@@ -302,6 +302,16 @@
       description = "Podman container host (Plex)";
     };
 
+    scrypted-lxc = {
+      ip = "10.10.11.85";
+      sshUser = "root";
+      dhcpReservation = {
+        macAddress = "BC:24:11:53:5C:52";
+        scope = "LAN";
+      };
+      description = "Dedicated Scrypted LXC container on pve-rog";
+    };
+
     # Workstations
     workstation = {
       ip = "10.10.11.73";
