@@ -271,9 +271,8 @@
       description = "HP PageWide Pro 477dn MFP printer/scanner";
     };
 
-    entrance-camera-418 = {
+    418 = {
       ip = "10.10.10.59";
-      aliases = [ "418" ];
       includeSsh = false;
       dhcpReservation = {
         macAddress = "ec:71:db:c6:f4:f3";
@@ -282,9 +281,8 @@
       description = "418 entrance doorbell camera";
     };
 
-    entrance-camera-420 = {
+    420 = {
       ip = "10.10.10.60";
-      aliases = [ "420" ];
       includeSsh = false;
       dhcpReservation = {
         macAddress = "ec:71:db:04:df:fd";
