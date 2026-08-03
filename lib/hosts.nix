@@ -271,7 +271,7 @@
       description = "HP PageWide Pro 477dn MFP printer/scanner";
     };
 
-    418 = {
+    "418" = {
       ip = "10.10.10.59";
       includeSsh = false;
       dhcpReservation = {
@@ -281,7 +281,7 @@
       description = "418 entrance doorbell camera";
     };
 
-    420 = {
+    "420" = {
       ip = "10.10.10.60";
       includeSsh = false;
       dhcpReservation = {
