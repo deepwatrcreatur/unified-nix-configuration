@@ -9,6 +9,7 @@ let
   authentikHost = topology.hosts.authentik-host;
   podmanHost = topology.hosts.podman;
   roundtableHost = topology.hosts.vaglio;
+  scryptedHost = topology.hosts.scrypted-lxc;
   mkFqdn = label: "${label}.${topology.domain}";
 
   # Optional secrets library for graceful degradation
@@ -115,7 +116,7 @@ in
 
       "${mkFqdn "scrypted"}" = {
         extraConfig = ''
-          reverse_proxy https://${podmanHost.ip}:10443 {
+          reverse_proxy https://${scryptedHost.ip}:10443 {
             transport http {
               tls_insecure_skip_verify
             }
