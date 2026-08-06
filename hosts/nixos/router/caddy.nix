@@ -120,6 +120,10 @@ in
             transport http {
               tls_insecure_skip_verify
             }
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
           }
         '';
       };
