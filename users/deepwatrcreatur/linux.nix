@@ -15,7 +15,7 @@
   home.packages = with pkgs; [
     lsd
     fish
-    # ...other packages you want...
+    t3code
   ];
 
   # Copy .terminfo files into place
