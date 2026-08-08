@@ -21,7 +21,10 @@ in
     ../../../../modules/home-manager/ssh-agent.nix
     ../../../../modules/home-manager/zed.nix
     ../../../../modules/home-manager/common/dmux.nix
+    ../../../../modules/home/t3code.nix
   ];
+
+  programs.t3code.enable = true;
 
   programs.cmux-tui.enable = true;
   programs.dmux.enable = true;
@@ -143,7 +146,6 @@ in
     virt-viewer
     xhost # X11 host access control for DeskFlow
     karere # WhatsApp desktop client replacement for removed wasistlos
-    t3code # Agentic AI Coding GUI Harness by Theo Browne (@t3dotgg)
   ];
 
   programs.firefox = {
