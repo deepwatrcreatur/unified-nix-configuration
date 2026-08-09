@@ -21,7 +21,6 @@ in
     ../../../../modules/home-manager/ssh-agent.nix
     ../../../../modules/home-manager/zed.nix
     ../../../../modules/home-manager/common/dmux.nix
-    ../../../../modules/home/t3code.nix
   ];
 
   programs.t3code.enable = true;
