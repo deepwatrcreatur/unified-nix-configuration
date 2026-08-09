@@ -26,6 +26,7 @@
     dust
     dysk
     fastfetch
+    spinnyfetch
     file
     flow-control
     gdu

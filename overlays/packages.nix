@@ -22,6 +22,11 @@
     t3code = prev.callPackage ../pkgs/t3code.nix { };
   })
 
+  # spinnyfetch (system-info fetcher with spinning 3D logo by canavan-a)
+  (final: prev: {
+    spinnyfetch = prev.callPackage ../pkgs/spinnyfetch.nix { };
+  })
+
   # cmux-tui (AI coding agent terminal multiplexer TUI)
   (final: prev: {
     cmux-tui = prev.callPackage ../pkgs/cmux-tui.nix { };
