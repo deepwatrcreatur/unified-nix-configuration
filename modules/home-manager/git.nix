@@ -244,8 +244,8 @@ in
         init.defaultBranch = "main";
         core.editor = "hx";
         core.fsmonitor = true;
-        core.pager = "delta";
-        interactive.diffFilter = "delta --color-only";
+        core.pager = lib.mkDefault "delta";
+        interactive.diffFilter = lib.mkDefault "delta --color-only";
 
         # GitHub credential helpers
         "credential \"https://github.com\"".helper = "!gh auth git-credential";
