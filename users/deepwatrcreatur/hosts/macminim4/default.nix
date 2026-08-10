@@ -20,7 +20,10 @@
     ./karabiner.nix
     ../../xbar.nix
     ../../rbw.nix
+    ../../../../modules/home-manager/hunk.nix
   ];
+
+  programs.hunk-custom.enable = true;
 
   programs.qmd.enable = true;
 

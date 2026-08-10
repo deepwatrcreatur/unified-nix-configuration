@@ -203,6 +203,11 @@
       url = "github:deepwatrcreatur/nix-lazyrsync";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    hunk = {
+      url = "github:modem-dev/hunk";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =

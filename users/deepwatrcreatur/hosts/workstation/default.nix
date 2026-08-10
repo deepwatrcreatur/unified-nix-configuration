@@ -21,7 +21,10 @@ in
     ../../../../modules/home-manager/ssh-agent.nix
     ../../../../modules/home-manager/zed.nix
     ../../../../modules/home-manager/common/dmux.nix
+    ../../../../modules/home-manager/hunk.nix
   ];
+
+  programs.hunk-custom.enable = true;
 
   programs.t3code.enable = true;
 
