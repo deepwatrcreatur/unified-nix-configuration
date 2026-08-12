@@ -52,6 +52,8 @@ in
       "key": "║  {icon}  Fetched   ║{$3}║{$2}",
       "format": "{year}-{month-pretty}-{day-pretty} {hour-pretty}:{minute-pretty}:{second-pretty} {timezone-name}"
     },
+
+    // Hardware Section
     {
       "type": "custom",
       "key": "║{#cyan}┌──────────────┬{$1}┐{#keys}║\u001b[50D",
@@ -80,6 +82,8 @@ in
       "key": "║{#cyan}└──────────────┴{$1}┘{#keys}║",
       "format": ""
     },
+
+    // Desktop / Display Section
     {
       "type": "custom",
       "key": "║{#green}┌──────────────┬{$1}┐{#keys}║\u001b[49D",
@@ -103,6 +107,8 @@ in
       "key": "║{#green}└──────────────┴{$1}┘{#keys}║",
       "format": ""
     },
+
+    // Terminal Section
     {
       "type": "custom",
       "key": "║{#yellow}┌──────────────┬{$1}┐{#keys}║\u001b[50D",
@@ -125,6 +131,8 @@ in
       "key": "║{#yellow}└──────────────┴{$1}┘{#keys}║",
       "format": ""
     },
+
+    // Development Toolchain Section
     {
       "type": "custom",
       "key": "║{#red}┌──────────────┬{$1}┐{#keys}║\u001b[51D",
@@ -132,21 +140,21 @@ in
     },
     {
       "type": "command",
-      "keyIcon": "",
+      "keyIcon": "",
       "key": "║{#red}│ {icon}  Rust      │{$4}│{#keys}║{$2}",
       "text": "rustc --version 2>/dev/null",
       "format": "rustc {~6,13}"
     },
     {
       "type": "command",
-      "keyIcon": "",
+      "keyIcon": "󰎙",
       "key": "║{#red}│ {icon}  NodeJS    │{$4}│{#keys}║{$2}",
       "text": "node --version 2>/dev/null",
       "format": "node {~1}"
     },
     {
       "type": "command",
-      "keyIcon": "",
+      "keyIcon": "",
       "key": "║{#red}│ {icon}  Go        │{$4}│{#keys}║{$2}",
       "text": "go version 2>/dev/null | cut -d' ' -f3",
       "format": "go {~2}"
@@ -157,7 +165,7 @@ in
     },
     {
       "type": "command",
-      "keyIcon": "",
+      "keyIcon": "󰊢",
       "key": "║{#red}│ {icon}  Git       │{$4}│{#keys}║{$2}",
       "text": "git version 2>/dev/null",
       "format": "git {~12}"
@@ -167,6 +175,8 @@ in
       "key": "║{#red}└──────────────┴{$1}┘{#keys}║",
       "format": ""
     },
+
+    // Uptime & OS Age Section
     {
       "type": "custom",
       "key": "║{#magenta}┌──────────────┬{$1}┐{#keys}║\u001b[49D",
@@ -181,8 +191,8 @@ in
         "!system": "macOS"
       },
       "type": "disk",
-      "keyIcon": "",
-      "key": "║{#magenta}│ {icon}   OS Age    │{$4}│{#keys}║{$2}",
+      "keyIcon": "󰣆",
+      "key": "║{#magenta}│ {icon}  OS Age    │{$4}│{#keys}║{$2}",
       "folders": "/",
       "format": "{create-time:10} [{days} days]"
     },
@@ -191,7 +201,7 @@ in
         "system": "macOS"
       },
       "type": "disk",
-      "keyIcon": "",
+      "keyIcon": "󰣆",
       "key": "║{#magenta}│ {icon}  OS Age    │{$4}│{#keys}║{$2}",
       "folders": "/System/Volumes/VM",
       "format": "{create-time:10} [{days} days]"
