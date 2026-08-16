@@ -6,4 +6,6 @@ multi-seat agent rounds and are specific to `unified-nix-configuration`.
 - [01: Should any hosts start using Hickory DNS?](./01-should-any-hosts-start-using-hickory-dns.md)
 - [02: Is there a strong case to convert any host from Btrfs to bcachefs?](./02-is-there-a-strong-case-for-btrfs-to-bcachefs-conversion.md)
 - [03: Should we transition from agenix to SecretSpec?](./03-should-we-transition-from-agenix-to-secretspec.md)
+- [04: Should we migrate the repo to Clan Nix organization?](./04-should-we-migrate-the-repo-to-clan-nix-organization.md)
+
 
