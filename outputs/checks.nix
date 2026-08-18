@@ -60,6 +60,7 @@ let
       (names libHosts);
 
   allowedInfraOnlyHosts = [
+    "atiyas-airport-extreme"
     "ap-nosheen-bedroom"
     "ap-nosheen-living"
     "ap-ruqayya"

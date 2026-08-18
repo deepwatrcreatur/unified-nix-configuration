@@ -197,6 +197,16 @@
       description = "AP11 Nosheen Bedroom";
     };
 
+    atiyas-airport-extreme = {
+      ip = "10.10.18.23";
+      includeSsh = false;
+      dhcpReservation = {
+        macAddress = "f8:1e:df:f7:54:8c";
+        scope = "LAN";
+      };
+      description = "AirPort Express/Extreme switch";
+    };
+
     # LXC Containers
     attic-cache = {
       ip = "10.10.11.39";
@@ -254,10 +264,10 @@
     };
 
     homeassistant = {
-      ip = "10.10.11.18";
+      ip = "10.10.11.84";
       aliases = [ "ha" ];
       includeSsh = false;
-      description = "Home Assistant VM";
+      description = "Home Assistant (Podman container on podman host)";
     };
 
     phoenix-hp-m477 = {
