@@ -54,11 +54,21 @@ let
           : > "$lease_file"
           echo "router-kea-ensure-state: reset incompatible lease file header in $lease_file (backup: $backup)" >&2
         fi
+
+        if ${pkgs.gnugrep}/bin/grep -q ',1,' "$lease_file" 2>/dev/null; then
+          temp_clean="$lease_file.clean.$(date +%s)"
+          ${pkgs.gnugrep}/bin/grep -v ',1,' "$lease_file" > "$temp_clean" || true
+          cat "$temp_clean" > "$lease_file"
+          rm -f "$temp_clean"
+          echo "router-kea-ensure-state: purged declined leases from $lease_file" >&2
+        fi
       fi
 
       chown kea:kea "$lease_file"
       chmod 0640 "$lease_file"
     done
+
+    find /var/lib/private/kea -name "dhcp4.leases.incompatible.*" -mtime +1 -delete 2>/dev/null || true
   '';
   waitForKeaLanReady = pkgs.writeShellScript "router-kea-wait-for-lan-ready" ''
     set -euo pipefail
@@ -334,6 +344,16 @@ in
     enable = lib.mkForce ownLanServices;
     externalInterface = wanDevice;
     internalIPs = [ lanDevice ];
+  };
+
+  services.kea.dhcp4.settings = lib.mkIf ownLanServices {
+    expired-leases-processing = {
+      reclaim-timer-wait-time = 10;
+      flush-reclaimed-timer-wait-time = 25;
+      hold-reclaimed-time = 3600;
+      max-reclaim-leases = 100;
+      max-reclaim-time = 250;
+    };
   };
 
   # Keep Chrony available on both router nodes. Upstream explicitly leaves NTP
