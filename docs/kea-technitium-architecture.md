@@ -77,13 +77,25 @@ If an IP address is marked as `DECLINED` (e.g. due to client ARP probe conflicts
    Runs via systemd `ExecStartPre` before `kea-dhcp4-server` initializes. Automatically inspects `dhcp4.leases` and `dhcp4.leases.2`, strips out any `DECLINED` lines (`state = 1`), and cleans up stale `.incompatible.*` backups older than 24 hours.
 
 2. **Automatic Expired Lease Processing (`expired-leases-processing`)**:
-   Configured in `services.kea.dhcp4.settings` to periodically reclaim and flush expired leases every 10–25 seconds:
+   Configured in `services.kea.dhcp4.settings` to periodically reclaim and flush expired leases every 10–25 seconds.
+
+3. **Pool Exhaustion Protections & Hardware Matching**:
+   To prevent rogue or malfunctioning devices from exhausting the dynamic IP pool:
+   - **`match-client-id = false` & `host-reservation-identifiers = [ "hw-address" ]`**: Forces Kea to track devices strictly by physical MAC address (`hw-address`), ignoring variable Option 61 Client-IDs. A single physical MAC address can only hold 1 active lease at a time.
+   - **4-Hour Lease Lifetime (`valid-lifetime = 14400`)**: Reduced from 24 hours so abandoned/ghost leases are recycled in 4 hours. Active clients renew seamlessly every 1 hour (`renew-timer = 3600`).
+   - **5-Minute Reclaimed Hold Window (`hold-reclaimed-time = 300`)**: Reduced from 1 hour so reclaimed leases re-enter the free pool within 5 minutes of expiration.
+
    ```nix
    services.kea.dhcp4.settings = {
+     valid-lifetime = 14400; # 4 hours
+     renew-timer = 3600;     # 1 hour
+     rebind-timer = 7200;    # 2 hours
+     match-client-id = false;
+     host-reservation-identifiers = [ "hw-address" ];
      expired-leases-processing = {
        reclaim-timer-wait-time = 10;
        flush-reclaimed-timer-wait-time = 25;
-       hold-reclaimed-time = 3600;
+       hold-reclaimed-time = 300; # 5 minutes
        max-reclaim-leases = 100;
        max-reclaim-time = 250;
      };
