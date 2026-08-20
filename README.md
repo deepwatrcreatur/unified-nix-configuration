@@ -33,6 +33,19 @@ Regular outputs are generated from inventory instead of one wrapper file per hos
 
 `outputs/nixos-lxc.nix` remains a special-case output file for the bootstrap LXC variants.
 
+## Router, DHCP & DNS Architecture
+
+This repository provisions a high-performance, self-healing network stack on the production router:
+
+- **Declarative Kea DHCP & Dynamic DNS**: Manages dynamic IP pools and static reservations declaratively from `lib/hosts.nix`. Kea D2 (`kea-dhcp-ddns`) automatically registers all DHCP leases in Technitium DNS via standard RFC 2136 updates, providing instant hostname resolution across the LAN (`<hostname>.deepwatercreature.com`).
+- **Resilient Lease Protection**: Includes automated pre-start lease file sanitization (`router-kea-ensure-state`), strict physical MAC address tracking (`match-client-id: false`), 4-hour lease recycling, and 5-minute hold reclamation to prevent IP pool exhaustion or `DECLINED` lease locks.
+- **Authoritative DNS**: Technitium DNS serves local zone queries and provides a web dashboard for zone management.
+
+For deeper architectural details and operational runbooks, see:
+- [`docs/kea-technitium-architecture.md`](./docs/kea-technitium-architecture.md): Deep-dive architectural guide, DDNS integration, and lease resilience design.
+- [`docs/network-source-of-truth.md`](./docs/network-source-of-truth.md): Network ownership boundaries.
+- [`docs/router-reboot-validation.md`](./docs/router-reboot-validation.md): Reboot verification and diagnostic runbook.
+
 ## Commands
 
 Common local operations:

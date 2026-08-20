@@ -3,13 +3,13 @@
 This repo uses several different systems for network-facing behavior. They do
 not all own the same thing.
 
-## Internal Hostnames
+## Internal Hostnames & Dynamic DNS
 
-Technitium is the source of truth for internal DNS behavior on the LAN.
+Technitium DNS is the authoritative DNS server for internal LAN resolution (`deepwatercreature.com`).
 
-- DHCP clients register there
-- DHCP reservations are synced there from this repo
-- internal host lookups should be thought of as Technitium/DHCP state
+- Kea DHCP4 manages dynamic pools and static reservations declaratively from [`lib/hosts.nix`](../lib/hosts.nix).
+- Kea D2 (`kea-dhcp-ddns`) automatically registers all dynamic DHCP leases in Technitium DNS via standard RFC 2136 DDNS updates.
+- Internal host lookups resolve dynamically assigned client IPs (`<hostname>.deepwatercreature.com`) and static host reservations.
 
 For normal homelab machine discovery, prefer Technitium-hosted names over
 public DNS assumptions.
@@ -49,14 +49,12 @@ Tailscale is a separate access mechanism.
 - do not treat public Cloudflare/Caddy ingress as the default way to reach
   internal machines
 
-## DHCP Scope
+## DHCP Scope & Declarative Control
 
-The base Technitium DHCP scope and dynamic pool are intentionally UI-managed
-for bootstrap safety right now.
+Kea DHCP4 is declaratively managed via NixOS on `router`.
 
-- the router should still be able to hand out working leases on a fresh bring-up
-- the repo currently manages reservations and related options, not the base
-  dynamic range
+- Dynamic IP ranges (`10.10.200.1`–`10.10.222.254`) and static reservations are defined in [`lib/hosts.nix`](../lib/hosts.nix) and built via Flake.
+- Automated pre-start sanitization (`router-kea-ensure-state`) and background lease reclamation protect the memory database against stale `DECLINED` locks and pool exhaustion.
 
 If `router` and `router-backup` are both kept online on the management network,
 Technitium clustering can be used to keep DNS/admin configuration aligned
