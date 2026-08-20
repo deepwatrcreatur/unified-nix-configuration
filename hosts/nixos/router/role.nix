@@ -347,10 +347,15 @@ in
   };
 
   services.kea.dhcp4.settings = lib.mkIf ownLanServices {
+    valid-lifetime = lib.mkForce 14400; # 4 hours (down from 24h) to recycle abandoned leases quickly
+    renew-timer = lib.mkForce 3600; # 1 hour renewal for active clients
+    rebind-timer = lib.mkForce 7200; # 2 hour rebind
+    match-client-id = lib.mkForce false; # Match strictly by physical MAC address, preventing client-id churn pool bloat
+    host-reservation-identifiers = lib.mkForce [ "hw-address" ];
     expired-leases-processing = {
       reclaim-timer-wait-time = 10;
       flush-reclaimed-timer-wait-time = 25;
-      hold-reclaimed-time = 3600;
+      hold-reclaimed-time = 300; # 5 minutes (down from 1 hour) before reclaimed leases re-enter free pool
       max-reclaim-leases = 100;
       max-reclaim-time = 250;
     };
