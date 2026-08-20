@@ -55,9 +55,9 @@ let
           echo "router-kea-ensure-state: reset incompatible lease file header in $lease_file (backup: $backup)" >&2
         fi
 
-        if ${pkgs.gnugrep}/bin/grep -q ',1,' "$lease_file" 2>/dev/null; then
+        if ${pkgs.gawk}/bin/gawk -F, '$10 == "1" { exit 0 } END { exit 1 }' "$lease_file" 2>/dev/null; then
           temp_clean="$lease_file.clean.$(date +%s)"
-          ${pkgs.gnugrep}/bin/grep -v ',1,' "$lease_file" > "$temp_clean" || true
+          ${pkgs.gawk}/bin/gawk -F, 'NR==1 || $10 != "1"' "$lease_file" > "$temp_clean" || true
           cat "$temp_clean" > "$lease_file"
           rm -f "$temp_clean"
           echo "router-kea-ensure-state: purged declined leases from $lease_file" >&2
@@ -350,6 +350,7 @@ in
     valid-lifetime = lib.mkForce 14400; # 4 hours (down from 24h) to recycle abandoned leases quickly
     renew-timer = lib.mkForce 3600; # 1 hour renewal for active clients
     rebind-timer = lib.mkForce 7200; # 2 hour rebind
+    decline-probation-period = lib.mkForce 300; # 5 minutes runtime probation for DECLINED leases (down from 24h)
     match-client-id = lib.mkForce false; # Match strictly by physical MAC address, preventing client-id churn pool bloat
     host-reservation-identifiers = lib.mkForce [ "hw-address" ];
     expired-leases-processing = {

@@ -45,8 +45,7 @@ in parallel on separate worktrees.
 
 ## Active Ranking
 
-There are currently no `ready` or `in-progress` router work items in this
-folder.
+1. [`33-kea-lease-utilization-monitoring-and-alerts.md`](./33-kea-lease-utilization-monitoring-and-alerts.md) (`Status: ready`)
 
 If new router work appears:
 
