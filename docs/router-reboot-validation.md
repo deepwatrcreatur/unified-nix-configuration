@@ -122,6 +122,12 @@ If a client fails to get an address, inspect live Kea activity on `router`:
 journalctl -u kea-dhcp4-server --since "10 minutes ago" --no-pager -n 80
 ```
 
+To check for address conflict locks, allocation retries, or NAK storms:
+
+```bash
+journalctl -u kea-dhcp4-server --since "10 minutes ago" --no-pager | grep -E 'ALLOC_FAIL|ADDRESS_CONFLICT|DHCPNAK'
+```
+
 If a specific device keeps failing while other clients are fine, look for a
 repeating `DHCP4_INIT_REBOOT` pattern for that device's MAC address:
 
@@ -133,6 +139,7 @@ journalctl -u kea-dhcp4-server --since "10 minutes ago" --no-pager \
 
 Interpretation:
 
+- `ALLOC_ENGINE_V4_DISCOVER_ADDRESS_CONFLICT` indicates a declined lease state in the memory database. `router-kea-ensure-state` runs on startup to purge declined leases.
 - repeated `INIT-REBOOT` for an old or wrong address usually means the client
   is stuck on stale DHCP state
 - if the reservation in this repo and `/etc/kea/dhcp4-server.conf` is correct,

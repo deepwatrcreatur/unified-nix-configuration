@@ -61,6 +61,39 @@ It is critical to distinguish between these two:
 
 Kea HA addresses the first. VRRP or manual cutover (as currently documented in `docs/ops.md`) addresses the second.
 
+## Kea Memfile Lease Resilience & Declined State Recovery
+
+When using Kea's `memfile` database, lease state is persisted across service restarts in `/var/lib/private/kea/dhcp4.leases` and Kea's Lease File Cleanup (LFC) backup files (`dhcp4.leases.2`).
+
+### Failure Mode: Stale `DECLINED` Lease Locks
+If an IP address is marked as `DECLINED` (e.g. due to client ARP probe conflicts or legacy AP lease loops) and persists in Kea's LFC backup files:
+1. Kea re-imports the `DECLINED` leases on startup.
+2. Subsequent requests for those IPs trigger `ALLOC_ENGINE_V4_DISCOVER_ADDRESS_CONFLICT`.
+3. Kea executes 5,800+ allocation retries per packet and issues `DHCPNAK` packets, causing client reconnect loops.
+
+### Declarative Protections in NixOS Configuration
+
+1. **Pre-Start Lease Sanitization (`router-kea-ensure-state`)**:
+   Runs via systemd `ExecStartPre` before `kea-dhcp4-server` initializes. Automatically inspects `dhcp4.leases` and `dhcp4.leases.2`, strips out any `DECLINED` lines (`state = 1`), and cleans up stale `.incompatible.*` backups older than 24 hours.
+
+2. **Automatic Expired Lease Processing (`expired-leases-processing`)**:
+   Configured in `services.kea.dhcp4.settings` to periodically reclaim and flush expired leases every 10–25 seconds:
+   ```nix
+   services.kea.dhcp4.settings = {
+     expired-leases-processing = {
+       reclaim-timer-wait-time = 10;
+       flush-reclaimed-timer-wait-time = 25;
+       hold-reclaimed-time = 3600;
+       max-reclaim-leases = 100;
+       max-reclaim-time = 250;
+     };
+   };
+   ```
+
+### Optionality & Governance
+- **Default Policy**: Enabled by default (`ownLanServices = true`) on the production router to prevent DHCP lockouts out-of-the-box.
+- **Overridability**: Exposed declaratively via `services.kea.dhcp4.settings` so non-production nodes or custom test fixtures can adjust timer windows (or disable pre-start purging for forensic analysis) if required.
+
 ## Future Direction
 
 Once Kea is stable, we can explore:
