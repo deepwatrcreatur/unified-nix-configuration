@@ -749,6 +749,7 @@ in
     listenAddress = lib.mkForce "0.0.0.0";
     prometheusStateDir = prometheusStateDir;
     prometheusBindMountPath = prometheusBindMountPath;
+    alerting.enable = true;
   };
 
   services.netdata.config.global."bind to" = "0.0.0.0";
