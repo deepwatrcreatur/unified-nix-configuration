@@ -142,7 +142,8 @@ in
 
           if [[ -n "$token" ]]; then
               # Remove any existing access-tokens line and append new one
-              grep -v "^access-tokens = github.com=" "$nix_conf" > "$nix_conf.tmp" 2>/dev/null || cp "$nix_conf" "$nix_conf.tmp"
+              mkdir -p "$HOME/.config/nix"
+              grep -v "^access-tokens = github.com=" "$nix_conf" > "$nix_conf.tmp" 2>/dev/null || cp "$nix_conf" "$nix_conf.tmp" 2>/dev/null || true
               echo "access-tokens = github.com=$token" >> "$nix_conf.tmp"
               mv "$nix_conf.tmp" "$nix_conf"
               echo "Configured GitHub access token in $nix_conf"
@@ -160,14 +161,18 @@ in
           tmp_managed="$(mktemp)"
 
           mkdir -p "$(dirname "$netrc_file")"
-          touch "$netrc_file"
-          chmod 600 "$netrc_file"
+          touch "$netrc_file" 2>/dev/null || true
+          if [ -O "$netrc_file" ]; then
+            chmod 600 "$netrc_file" 2>/dev/null || true
+          fi
 
-          ${pkgs.gawk}/bin/awk -v begin="$managed_begin" -v end="$managed_end" '
-            $0 == begin { skip = 1; next }
-            $0 == end { skip = 0; next }
-            !skip { print }
-          ' "$netrc_file" > "$tmp_existing"
+          if [ -r "$netrc_file" ]; then
+            ${pkgs.gawk}/bin/awk -v begin="$managed_begin" -v end="$managed_end" '
+              $0 == begin { skip = 1; next }
+              $0 == end { skip = 0; next }
+              !skip { print }
+            ' "$netrc_file" > "$tmp_existing"
+          fi
 
           {
             echo "$managed_begin"
@@ -208,12 +213,18 @@ in
             echo "$managed_end"
           } > "$tmp_managed"
 
-          cat "$tmp_existing" > "$netrc_file"
-          if [[ -s "$netrc_file" ]]; then
-            printf '\n' >> "$netrc_file"
+          if [ -w "$netrc_file" ] || [ ! -e "$netrc_file" ]; then
+            cat "$tmp_existing" > "$netrc_file" 2>/dev/null || true
+            if [[ -s "$netrc_file" ]]; then
+              printf '\n' >> "$netrc_file" 2>/dev/null || true
+            fi
+            cat "$tmp_managed" >> "$netrc_file" 2>/dev/null || true
+            if [ -O "$netrc_file" ]; then
+              chmod 600 "$netrc_file" 2>/dev/null || true
+            fi
+          else
+            echo "Warning: Cannot write to $netrc_file (permission denied); skipping netrc update" >&2
           fi
-          cat "$tmp_managed" >> "$netrc_file"
-          chmod 600 "$netrc_file"
 
           rm -f "$tmp_existing" "$tmp_managed"
         '';

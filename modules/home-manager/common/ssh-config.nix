@@ -87,6 +87,7 @@ in {
   home.file.".ssh/config".force = true;
 
   home.activation.materializeSshConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    mkdir -p "$HOME/.ssh"
     config_path="$HOME/.ssh/config"
 
     if [ -L "$config_path" ]; then
