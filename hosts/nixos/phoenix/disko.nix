@@ -7,7 +7,7 @@
   disko.devices = {
     disk.main = {
       type = "disk";
-      device = lib.mkDefault "/dev/disk/by-id/nvme-AGAMMIXS70B-2T-CS_2N422LCG2EUC";
+      device = lib.mkDefault "/dev/disk/by-id/nvme-TEAM_TM8FPK002T_TPBF2401080020300197";
       content = {
         type = "gpt";
         partitions = {
