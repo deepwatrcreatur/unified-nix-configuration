@@ -344,8 +344,12 @@
     };
 
     phoenix = {
-      ip = "10.10.11.72";
+      ip = "10.10.11.92";
       sshUser = "deepwatrcreatur";
+      dhcpReservation = {
+        macAddress = "D8:5E:D3:0A:1B:DB";
+        scope = "LAN";
+      };
       description = "Phoenix workstation";
     };
 
