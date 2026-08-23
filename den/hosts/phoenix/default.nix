@@ -18,8 +18,14 @@ den.mkInventoryHostModule {
     {
       boot.loader = {
         systemd-boot.enable = lib.mkForce false;
-        limine.enable = lib.mkForce true;
-        efi.canTouchEfiVariables = true;
+        limine = {
+          enable = lib.mkForce true;
+          efiInstallAsRemovable = true;
+          biosSupport = true;
+          biosDevice = "/dev/disk/by-id/nvme-TEAM_TM8FPK002T_TPBF2401080020300197";
+          partitionIndex = 3;
+        };
+        efi.canTouchEfiVariables = lib.mkForce false;
       };
     }
   ];
