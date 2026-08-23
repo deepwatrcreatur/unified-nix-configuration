@@ -207,8 +207,6 @@
 
   myModules.keyboardGlitches.enable = true;
 
-  nix.distributedBuilds = lib.mkForce false;
-  nix.buildMachines = lib.mkForce [ ];
   nix.settings.fallback = true;
   nix.settings.experimental-features = [
     "nix-command"

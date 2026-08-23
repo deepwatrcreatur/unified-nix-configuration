@@ -14,5 +14,13 @@ den.mkInventoryHostModule {
     ../../../hosts/nixos/phoenix/disko.nix
     ../../../hosts/nixos/phoenix/hardware-configuration.nix
     ../../../hosts/nixos/phoenix/networking.nix
+
+    {
+      boot.loader = {
+        systemd-boot.enable = lib.mkForce false;
+        limine.enable = lib.mkForce true;
+        efi.canTouchEfiVariables = true;
+      };
+    }
   ];
 }
