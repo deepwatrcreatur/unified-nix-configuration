@@ -10,6 +10,8 @@ den.mkInventoryHostModule {
     ../../../users/deepwatrcreatur/hosts/workstation
   ];
   extraImports = [
+    inputs.disko.nixosModules.disko
+    ../../../hosts/nixos/phoenix/disko.nix
     ../../../hosts/nixos/phoenix/hardware-configuration.nix
     ../../../hosts/nixos/phoenix/networking.nix
   ];
