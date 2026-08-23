@@ -103,6 +103,9 @@
         if test -d /run/current-system/sw/bin
           fish_add_path --prepend --move /run/current-system/sw/bin
         end
+        if test -d /run/wrappers/bin
+          fish_add_path --prepend --move /run/wrappers/bin
+        end
       end
     '';
 
