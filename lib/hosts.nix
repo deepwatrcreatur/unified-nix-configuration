@@ -347,7 +347,7 @@
       ip = "10.10.11.92";
       sshUser = "deepwatrcreatur";
       dhcpReservation = {
-        macAddress = "D8:5E:D3:0A:1B:DC";
+        macAddress = "24:8A:07:8D:66:86";
         scope = "LAN";
       };
       description = "Phoenix workstation";
