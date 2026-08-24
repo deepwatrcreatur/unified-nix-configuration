@@ -140,6 +140,8 @@
       "networkmanager"
       "wheel"
       "lp"
+      "video"
+      "render"
     ];
     shell = pkgs.fish;
   };
