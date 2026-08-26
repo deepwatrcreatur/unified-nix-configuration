@@ -588,6 +588,11 @@ in
 
   services.router-observability.enable = true;
 
+  services.router-pangolin = {
+    enable = true;
+    openFirewall = true;
+  };
+
   services.router-network-security = {
     enable = enableNetworkSecurity;
     interfaces = [ lanDevice ];
