@@ -60,6 +60,8 @@ let
       (names libHosts);
 
   allowedInfraOnlyHosts = [
+    "418"
+    "420"
     "atiyas-airport-extreme"
     "ap-nosheen-bedroom"
     "ap-nosheen-living"
@@ -67,7 +69,9 @@ let
     "apt-cache"
     "homeassistant"
     "infisical"
+    "scrypted-lxc"
     "sw-main"
+    "synology-dsm"
   ];
 
   missingDenInventoryHosts =
@@ -108,9 +112,16 @@ let
         inventoryHomes
     );
 
+  duplicateIpExemptHosts = [
+    "homeassistant" # Container co-located on podman host (10.10.11.84)
+  ];
+
+  checkHostNamesForIps =
+    builtins.filter (name: !(builtins.elem name duplicateIpExemptHosts)) (names libHosts);
+
   ips =
     builtins.filter (ip: ip != null)
-      (map (name: libHosts.${name}.ip or null) (names libHosts));
+      (map (name: libHosts.${name}.ip or null) checkHostNamesForIps);
 
   uniqueIps = builtins.attrNames (builtins.listToAttrs (map (ip: { name = ip; value = true; }) ips));
 
