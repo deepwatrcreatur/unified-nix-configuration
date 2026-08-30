@@ -12,6 +12,7 @@
     ../../../modules/common/utility-packages.nix
     inputs.nix-attic-infra.nixosModules.attic-client
     inputs.nixbit.nixosModules.nixbit
+    inputs.openlogi.nixosModules.default
     inputs.agenix.nixosModules.default
     inputs.nixos-cosmic.nixosModules.default
     ../../../modules/nixos/snap.nix
@@ -201,6 +202,8 @@
     repository = "https://github.com/deepwatrcreatur/unified-nix-configuration.git";
     forceAutostart = true;
   };
+
+  programs.openlogi.enable = true;
 
   myModules.snap = {
     enable = true;

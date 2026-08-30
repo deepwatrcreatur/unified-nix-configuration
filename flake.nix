@@ -208,6 +208,11 @@
       url = "github:modem-dev/hunk";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    openlogi = {
+      url = "github:AprilNEA/OpenLogi";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
