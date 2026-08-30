@@ -14,6 +14,7 @@
     ./fstrim.nix
     ./git-ssh.nix
     ./zram.nix  # Zram compressed swap for desktops
+    ./earlyoom.nix  # Early OOM prevention against compositor/system lockup
     ./nix-ci-netrc.nix  # nix-ci.com cache authentication
     ../determinate-netrc-dir.nix  # Create /nix/var/determinate for user netrc files
     ../root-ssh-identity.nix  # Stable root SSH identity
