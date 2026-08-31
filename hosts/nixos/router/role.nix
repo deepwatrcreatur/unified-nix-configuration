@@ -90,6 +90,12 @@ let
   '';
 
   secrets = optSec.mkSecrets {
+    user-password-deepwatrcreatur = {
+      file = ../../../secrets-agenix/user-password-deepwatrcreatur.age;
+    };
+    user-password-root = {
+      file = ../../../secrets-agenix/user-password-root.age;
+    };
     cloudflare-api-key = {
       file = ../../../secrets-agenix/cloudflare_ddns_API_token.age;
       group = "router-dashboard";
@@ -835,9 +841,6 @@ in
     shell = pkgs.fish;
     openssh.authorizedKeys.keys = [ operatorStableSshKey ];
   };
-
-  age.secrets.user-password-deepwatrcreatur.file = ../../../secrets-agenix/user-password-deepwatrcreatur.age;
-  age.secrets.user-password-root.file = ../../../secrets-agenix/user-password-root.age;
 
   services.ssh-keys-manager.username = "deepwatrcreatur";
 
