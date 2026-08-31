@@ -54,12 +54,16 @@
   };
 
   programs.linuxbrew = {
-    # The generated setup hook recursively chowns the entire Linuxbrew prefix
-    # on every activation, which causes workstation switches to time out.
-    # The prefix already exists with the correct ownership on this host.
-    enableSystemSetup = false;
+    enableSystemSetup = true;
     owner = "deepwatrcreatur";
   };
+
+  swapDevices = [
+    {
+      device = "/var/swapfile";
+      size = 32 * 1024; # 32GB swapfile
+    }
+  ];
 
   programs.wezterm.extraConfig = lib.mkAfter ''
     config.default_prog = { '/etc/profiles/per-user/deepwatrcreatur/bin/zellij', '-l', 'welcome' }

@@ -5,6 +5,7 @@ let
     "homeserver"
     "router"
     "workstation"
+    "phoenix"
   ];
 
   # Non-NixOS hosts that can use remote building (Proxmox, Ubuntu)

@@ -99,6 +99,7 @@ in
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/bitwarden-cli.nix
     ../../modules/home-manager/rclone-scripts.nix
+    ../../modules/home-manager/linuxbrew.nix
     ../../modules/home-manager
     ../../modules/home-manager/common/cmux-tui.nix
     ../../modules/home-manager/fastfetch.nix

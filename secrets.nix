@@ -140,7 +140,7 @@ in {
   "secrets-agenix/atuin-key-b64.age".publicKeys = userOnlySecrets;
   "secrets-agenix/oauth-creds.age".publicKeys = userOnlySecrets;
   "secrets-agenix/bitwarden-data.age".publicKeys = userOnlySecrets;
-  "secrets-agenix/rclone-conf.age".publicKeys = userOnlySecrets ++ machineRecipients "homeserver" ++ machineRecipients "podman";
+  "secrets-agenix/rclone-conf.age".publicKeys = userOnlySecrets ++ machineRecipients "homeserver" ++ machineRecipients "podman" ++ machineRecipients "phoenix" ++ machineRecipients "workstation";
   "secrets-agenix/guacamole-db-password.age".publicKeys = homeserverServiceSecrets;
   "secrets-agenix/proxmox-api-token.age".publicKeys = userOnlySecrets;
 
