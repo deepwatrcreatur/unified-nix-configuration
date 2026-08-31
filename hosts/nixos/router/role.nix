@@ -811,7 +811,10 @@ in
     '';
   };
 
-  users.users.root.openssh.authorizedKeys.keys = [ operatorStableSshKey ];
+  users.users.root = {
+    hashedPasswordFile = config.age.secrets.user-password-root.path;
+    openssh.authorizedKeys.keys = [ operatorStableSshKey ];
+  };
 
   services.fail2ban = {
     enable = true;
@@ -827,10 +830,14 @@ in
 
   users.users.deepwatrcreatur = {
     isNormalUser = true;
+    hashedPasswordFile = config.age.secrets.user-password-deepwatrcreatur.path;
     extraGroups = [ "wheel" ];
     shell = pkgs.fish;
     openssh.authorizedKeys.keys = [ operatorStableSshKey ];
   };
+
+  age.secrets.user-password-deepwatrcreatur.file = ../../../secrets-agenix/user-password-deepwatrcreatur.age;
+  age.secrets.user-password-root.file = ../../../secrets-agenix/user-password-root.age;
 
   services.ssh-keys-manager.username = "deepwatrcreatur";
 

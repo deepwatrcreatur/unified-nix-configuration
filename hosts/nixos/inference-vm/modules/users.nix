@@ -16,6 +16,7 @@ in
     isNormalUser = true;
     description = "Anwer Khan";
     home = "/home/deepwatrcreatur";
+    hashedPasswordFile = config.age.secrets.user-password-deepwatrcreatur.path;
     extraGroups = [
       "networkmanager"
       "wheel"
@@ -30,10 +31,14 @@ in
 
   users.users.root = {
     shell = pkgs.nushell;
+    hashedPasswordFile = config.age.secrets.user-password-root.path;
     openssh.authorizedKeys.keys = [
       rootStableKey
     ];
   };
+
+  age.secrets.user-password-deepwatrcreatur.file = ../../../../secrets-agenix/user-password-deepwatrcreatur.age;
+  age.secrets.user-password-root.file = ../../../../secrets-agenix/user-password-root.age;
 
   # Enable automatic login
   services.displayManager.autoLogin.enable = true;
