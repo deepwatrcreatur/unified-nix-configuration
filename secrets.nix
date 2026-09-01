@@ -66,6 +66,22 @@ let
   remoteBuilderClientSecrets =
     operatorUsers ++ builtins.concatLists (map machineRecipients remoteBuilder.supportedHosts);
 
+  # All hosts that should have access to cloud storage via rclone
+  rcloneClientHosts = [
+    "homeserver"
+    "phoenix"
+    "podman"
+    "workstation"
+    "pve-rog"
+    "pve-strix"
+    "pve-tomahawk"
+    "pve-lattitude"
+    "pve-z170"
+  ];
+
+  rcloneSecrets =
+    operatorUsers ++ builtins.concatLists (map machineRecipients rcloneClientHosts);
+
   # All hosts that build from this repo should be able to use the attic cache
   atticClientHosts = [
     "authentik-host"
@@ -140,7 +156,7 @@ in {
   "secrets-agenix/atuin-key-b64.age".publicKeys = userOnlySecrets;
   "secrets-agenix/oauth-creds.age".publicKeys = userOnlySecrets;
   "secrets-agenix/bitwarden-data.age".publicKeys = userOnlySecrets;
-  "secrets-agenix/rclone-conf.age".publicKeys = userOnlySecrets ++ machineRecipients "homeserver" ++ machineRecipients "podman" ++ machineRecipients "phoenix" ++ machineRecipients "workstation";
+  "secrets-agenix/rclone-conf.age".publicKeys = rcloneSecrets;
   "secrets-agenix/guacamole-db-password.age".publicKeys = homeserverServiceSecrets;
   "secrets-agenix/proxmox-api-token.age".publicKeys = userOnlySecrets;
 

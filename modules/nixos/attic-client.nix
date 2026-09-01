@@ -98,7 +98,11 @@ in
           token = "$token"
           EOF
 
-                    export XDG_CONFIG_HOME="$temp_dir"
+                    # Fast pre-check: verify server is reachable before attempting push
+                    if ! ${pkgs.curl}/bin/curl -s -m 2 "${cfg.server}" >/dev/null 2>&1; then
+                      echo "Attic: Server ${cfg.server} unreachable, skipping push" >&2
+                      exit 0
+                    fi
 
                     # Wrap everything in a try-catch to never fail the build
                     {

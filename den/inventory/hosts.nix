@@ -216,6 +216,7 @@
       "nixos-base"
       "home-manager-users"
       "workstation-desktop"
+      "rclone-client"
     ];
   };
 
