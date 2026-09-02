@@ -14,7 +14,6 @@ in rec {
   secondarySubstituters = [
     "https://cache.numtide.com"
     "https://cuda-maintainers.cachix.org"
-    "https://cache.garnix.io/"
     "https://nix-community.cachix.org/"
     "https://hyprland.cachix.org/"
   ];

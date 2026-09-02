@@ -98,7 +98,7 @@ in
 
     trusted-public-keys =
       # Keep the trusted key set aligned with the substituters we enable by
-      # default. Otherwise Nix still queries public caches like garnix and
+      # default. Otherwise Nix still queries public caches like numtide and
       # nix-community but then ignores their results as untrusted noise.
       if enableAttic then
         atticCache.defaultTrustedPublicKeys { includeNixCi = enableNixCi; }

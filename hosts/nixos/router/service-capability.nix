@@ -16,6 +16,7 @@ in
   services.router-dns-service = {
     enable = true;
     provider = "technitium";
+    dnssec.enableValidation = true;
     serviceListenAddresses = [
       "127.0.0.1"
       productionRouterAddress
