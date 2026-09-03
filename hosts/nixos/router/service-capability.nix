@@ -53,10 +53,11 @@ in
   # NAT is handled by nftables (see role.nix).
   networking.nat.enable = false;
 
-  # Outbound Cloudflare WARP WAN acceleration for all router/LAN traffic
+  # Outbound Cloudflare WARP WAN acceleration (disabled by default to prevent
+  # household CAPTCHAs, banking blocks, streaming issues, and DNS conflicts with Technitium).
   services.router-cloudflare-warp = {
-    enable = true;
+    enable = false;
     mode = "warp";
-    routingMode = "all-traffic";
+    routingMode = "selective-lan-ips";
   };
 }
