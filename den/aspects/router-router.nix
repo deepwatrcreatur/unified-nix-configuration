@@ -13,6 +13,7 @@
     inputs.nix-router-optimized.nixosModules.router-optimizations
     inputs.nix-router-optimized.nixosModules.router-tailscale
     inputs.nix-router-optimized.nixosModules.router-cloudflare-tunnel
+    inputs.nix-router-optimized.nixosModules.router-cloudflare-warp
     inputs.nix-router-optimized.nixosModules.router-netbird
     inputs.nix-router-optimized.nixosModules.router-pangolin
     inputs.nix-router-optimized.nixosModules.router-twingate

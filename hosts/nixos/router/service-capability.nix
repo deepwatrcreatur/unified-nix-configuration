@@ -52,4 +52,11 @@ in
 
   # NAT is handled by nftables (see role.nix).
   networking.nat.enable = false;
+
+  # Outbound Cloudflare WARP WAN acceleration for all router/LAN traffic
+  services.router-cloudflare-warp = {
+    enable = true;
+    mode = "warp";
+    routingMode = "all-traffic";
+  };
 }
