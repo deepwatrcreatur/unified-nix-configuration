@@ -48,6 +48,12 @@
     jj-starship = inputs.jj-starship.packages.${prev.stdenv.hostPlatform.system}.default;
   })
 
+  # DeepSeek Harness CLI (dsh)
+  (final: prev: {
+    deepseek-harness = inputs.nix-deepseek-harness.packages.${prev.stdenv.hostPlatform.system}.default;
+    dsh = inputs.nix-deepseek-harness.packages.${prev.stdenv.hostPlatform.system}.default;
+  })
+
   # herdr - terminal-native agent multiplexer from its upstream flake.
   (final: prev: {
     herdr = inputs.herdr.packages.${prev.stdenv.hostPlatform.system}.default;

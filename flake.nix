@@ -98,6 +98,11 @@
       inputs.flake-utils.follows = "flake-utils";
     };
 
+    nix-deepseek-harness = {
+      url = "git+file:///home/deepwatrcreatur/flakes/nix-deepseek-harness";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     zellij-vivid-rounded = {
       url = "github:deepwatrcreatur/nix-zellij-vivid-rounded";
       inputs.nixpkgs.follows = "nixpkgs";

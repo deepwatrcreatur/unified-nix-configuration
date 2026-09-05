@@ -60,6 +60,7 @@ in
         crush
         agent-deck
         workmux
+        pkgs.deepseek-harness
 
         # Utilities
         ccstatusline
