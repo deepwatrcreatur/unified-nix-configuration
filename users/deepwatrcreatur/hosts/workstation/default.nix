@@ -144,6 +144,7 @@ in
     megacmd
     obsidian
     obsidian-export
+    omasnap
     rustdesk
     virt-viewer
     xhost # X11 host access control for DeskFlow

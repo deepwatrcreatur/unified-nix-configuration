@@ -180,6 +180,7 @@
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
     xdg-desktop-portal-gtk
     satty
+    omasnap
     gthumb
     ventoy-full
     yt-dlp

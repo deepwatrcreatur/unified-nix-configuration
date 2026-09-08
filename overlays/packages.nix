@@ -184,4 +184,10 @@
       ]
     );
   })
+
+  # omasnap — native Wayland screenshot & annotation tool by Tobi Lütke
+  (final: prev: {
+    omasnap = prev.callPackage ../pkgs/omasnap.nix { };
+  })
 ]
+
