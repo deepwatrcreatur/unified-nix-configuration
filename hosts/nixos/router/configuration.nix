@@ -31,9 +31,8 @@ in
       # The current router-ha WAN hooks restart systemd-networkd on promotion,
       # which is too disruptive on the live primary.
       enableWanHa = false;
-      # Even with WAN HA disabled, the primary should still wait for the WAN to
-      # be routable before WAN-dependent services start during boot.
-      requireWanOnline = true;
+      # Allow initial boot to succeed immediately even when WAN cable is disconnected
+      requireWanOnline = false;
       lanDevice = "enp6s16";
       inherit lanIpv4Address managementIpv4Address;
       grafanaDomain = mkFqdn "grafana";
@@ -96,10 +95,10 @@ in
   # (e.g. after adding/removing a Proxmox device) does not silently break
   # interface-name assumptions in role.nix.
   #
-  # Mapping confirmed from live router VM inspection:
-  #   enp6s16  LAN   igc   pci-0000:06:10.0   MAC 02:76:c6:01:2a:af
-  #   enp6s17  WAN   igc   pci-0000:06:11.0   MAC 02:76:c6:01:2a:b0
-  #   ens18    mgmt  virtio (Proxmox virtio slot; virtio slot naming already stable)
+  # Mapping confirmed from baremetal host inspection:
+  #   enp6s16  LAN   igc    PCI 03:00.0   MAC 02:76:c6:01:2a:af
+  #   enp6s17  WAN   igc    PCI 04:00.0   MAC 02:76:c6:01:2a:b0
+  #   ens18    mgmt  e1000e PCI 00:1f.6   MAC d0:50:99:8c:5f:9b
   systemd.network.links = {
     "10-router-lan-stable" = {
       matchConfig.MACAddress = "02:76:c6:01:2a:af";
@@ -108,6 +107,10 @@ in
     "10-router-wan-stable" = {
       matchConfig.MACAddress = "02:76:c6:01:2a:b0";
       linkConfig.Name = "enp6s17";
+    };
+    "10-router-mgmt-stable" = {
+      matchConfig.MACAddress = "d0:50:99:8c:5f:9b";
+      linkConfig.Name = "ens18";
     };
   };
 

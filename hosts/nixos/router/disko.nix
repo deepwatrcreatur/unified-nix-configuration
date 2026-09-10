@@ -6,7 +6,7 @@
   disko.devices = {
     disk.main = {
       type = "disk";
-      device = lib.mkDefault "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi0";
+      device = lib.mkDefault "/dev/disk/by-id/nvme-WDS500G3X0C-00SJG0_21107G804181";
       content = {
         type = "gpt";
         partitions = {
@@ -59,39 +59,31 @@
       };
     };
 
-    disk.logs = {
+    disk.spinning = {
       type = "disk";
-      device = lib.mkDefault "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi1";
+      device = lib.mkDefault "/dev/disk/by-id/ata-ST9500325AS_S2W1JKQY";
       content = {
         type = "gpt";
         partitions = {
           logs = {
-            size = "100%";
+            label = "disk-logs-logs";
+            size = "200G";
             content = {
               type = "filesystem";
               format = "ext4";
               # No mountpoint — router-log-storage service handles the mount.
-              # Partition label is disk-logs-logs (disko convention).
+              # Partition label is disk-logs-logs.
             };
           };
-        };
-      };
-    };
 
-    disk.pxe-images = {
-      type = "disk";
-      device = lib.mkDefault "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi2";
-      content = {
-        type = "gpt";
-        partitions = {
           images = {
+            label = "disk-pxe-images-images";
             size = "100%";
             content = {
               type = "filesystem";
               format = "ext4";
-              # Mounted from configuration.nix so the router can keep serving
-              # PXE assets even if the disk is temporarily absent.
-              # Partition label is disk-pxe-images-images (disko convention).
+              # Mounted from configuration.nix (/srv/pxe).
+              # Partition label is disk-pxe-images-images.
             };
           };
         };
