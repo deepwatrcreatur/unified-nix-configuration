@@ -32,6 +32,13 @@ let
   operatorStableSshKey = lib.strings.trim (
     builtins.readFile ../../../ssh-keys/deepwatrcreatur-stable-identity.pub
   );
+  operatorPhoenixSshKey = lib.strings.trim (
+    builtins.readFile ../../../ssh-keys/deepwatrcreatur-phoenix-identity.pub
+  );
+  operatorKeys = [
+    operatorStableSshKey
+    operatorPhoenixSshKey
+  ];
   keaDhcp4LeaseHeader =
     "address,hwaddr,client_id,valid_lifetime,expire,subnet_id,fqdn_fwd,fqdn_rev,hostname,state,user_context,pool_id";
   ensureKeaLeaseState = pkgs.writeShellScript "router-kea-ensure-state" ''
@@ -819,7 +826,7 @@ in
 
   users.users.root = {
     hashedPasswordFile = config.age.secrets.user-password-root.path;
-    openssh.authorizedKeys.keys = [ operatorStableSshKey ];
+    openssh.authorizedKeys.keys = operatorKeys;
   };
 
   services.fail2ban = {
@@ -839,7 +846,7 @@ in
     hashedPasswordFile = config.age.secrets.user-password-deepwatrcreatur.path;
     extraGroups = [ "wheel" ];
     shell = pkgs.fish;
-    openssh.authorizedKeys.keys = [ operatorStableSshKey ];
+    openssh.authorizedKeys.keys = operatorKeys;
   };
 
   services.ssh-keys-manager.username = "deepwatrcreatur";

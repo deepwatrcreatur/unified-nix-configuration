@@ -42,9 +42,12 @@ let
     "workstation"
   ];
 
-  # Single stable operator identity - same key deployed to all hosts
+  phoenixDeepwatrcreaturKey = readPublicKey ./ssh-keys/deepwatrcreatur-phoenix-identity.pub;
+
+  # Operator identities - keys authorized for admin secret management
   operatorUsers = [
     users.deepwatrcreatur
+    phoenixDeepwatrcreaturKey
   ];
 
   machineRecipients = hostName: let

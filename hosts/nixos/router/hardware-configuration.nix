@@ -14,7 +14,12 @@
   ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
-  boot.extraModulePackages = [ ];
+  boot.kernelParams = [
+    # Disable Energy Efficient Ethernet on Intel I225/I226-V (prevents link flapping & packet drops)
+    "igc.eee_enable=0"
+    # Disable PCIe port power management to keep 2.5GbE NICs awake and responsive
+    "pcie_port_pm=off"
+  ];
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
