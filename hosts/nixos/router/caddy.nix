@@ -88,7 +88,19 @@ in
       # Router dashboard
       "${mkFqdn "dashboard"}" = {
         extraConfig = ''
-          reverse_proxy 127.0.0.1:8888
+          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48
+          handle @trusted {
+            reverse_proxy 127.0.0.1:8888
+          }
+
+          respond "Access restricted to home LAN and Tailnet" 403
+        '';
+      };
+
+      # Pangolin zero-trust management portal
+      "${mkFqdn "pangolin"}" = {
+        extraConfig = ''
+          reverse_proxy 127.0.0.1:3002
         '';
       };
 

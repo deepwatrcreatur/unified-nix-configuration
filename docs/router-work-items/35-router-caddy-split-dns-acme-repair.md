@@ -1,6 +1,6 @@
 # Router Caddy Split-DNS ACME Propagation Repair
 
-Status: `in-progress`
+Status: `done`
 Priority: `high`
 Branch: `fix/router-caddy-split-dns-acme-repair`
 
@@ -71,3 +71,11 @@ read: connection refused
   valid redirect over TLS without alert 592.
 - No `read: connection refused` or `could not get certificate from issuer` in
   `journalctl -u caddy`.
+
+## Resolution & Live Verification
+
+- Merged PR #193 (`fix(router): configure public resolvers for Caddy ACME DNS challenge under split-horizon DNS`).
+- Deployed Generation 2 to baremetal router (`10.10.10.1`).
+- Cleared stale lock files in `/var/lib/caddy/.local/share/caddy/locks/`.
+- Restarted `caddy.service`. Caddy successfully obtained Let's Encrypt certificates via Cloudflare DNS-01 validation.
+- Verified live with `curl -Iv https://scrypted.deepwatercreature.com`: TLS 1.3 handshake succeeded with valid Let's Encrypt certificate, returning `HTTP/2 302` redirect to `./endpoint/@scrypted/core/public/`.

@@ -45,11 +45,11 @@ in parallel on separate worktrees.
 
 ## Active Ranking
 
-1. [`35-router-caddy-split-dns-acme-repair.md`](./35-router-caddy-split-dns-acme-repair.md) (`Status: ready`)
-2. [`36-router-pangolin-service-hardening-and-permissions-repair.md`](./36-router-pangolin-service-hardening-and-permissions-repair.md) (`Status: ready`)
-3. [`37-router-media-pc-intel-graphics.md`](./37-router-media-pc-intel-graphics.md) (`Status: ready`)
-4. [`38-router-declarative-zones-and-vm-isolation-tests.md`](./38-router-declarative-zones-and-vm-isolation-tests.md) (`Status: ready`)
-5. [`33-kea-lease-utilization-monitoring-and-alerts.md`](./33-kea-lease-utilization-monitoring-and-alerts.md) (`Status: ready`)
+1. [`36-router-pangolin-service-hardening-and-permissions-repair.md`](./36-router-pangolin-service-hardening-and-permissions-repair.md) (`Status: in-progress`)
+2. [`37-router-media-pc-intel-graphics.md`](./37-router-media-pc-intel-graphics.md) (`Status: ready`)
+3. [`38-router-declarative-zones-and-vm-isolation-tests.md`](./38-router-declarative-zones-and-vm-isolation-tests.md) (`Status: ready`)
+4. [`33-kea-lease-utilization-monitoring-and-alerts.md`](./33-kea-lease-utilization-monitoring-and-alerts.md) (`Status: ready`)
+5. [`35-router-caddy-split-dns-acme-repair.md`](./35-router-caddy-split-dns-acme-repair.md) (`Status: done`)
 
 If new router work appears:
 
