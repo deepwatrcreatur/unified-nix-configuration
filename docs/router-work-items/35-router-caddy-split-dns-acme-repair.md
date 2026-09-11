@@ -1,6 +1,6 @@
 # Router Caddy Split-DNS ACME Propagation Repair
 
-Status: `ready`
+Status: `in-progress`
 Priority: `high`
 Branch: `fix/router-caddy-split-dns-acme-repair`
 
