@@ -308,9 +308,9 @@ in
       type = lib.types.lines;
       default =
         if platform == "darwin" then
-          "nh darwin switch -H ${config.my.just.flakeTarget} -f ${config.my.just.flakeDir}"
+          "nh darwin switch -H ${config.my.just.flakeTarget} ${config.my.just.flakeDir}"
         else if platform == "nixos" then
-          "PATH=\"/run/wrappers/bin:/run/current-system/sw/bin:$PATH\" nh os switch -H ${config.my.just.flakeTarget} -f ${config.my.just.flakeDir}"
+          "PATH=\"/run/wrappers/bin:/run/current-system/sw/bin:$PATH\" nh os switch -H ${config.my.just.flakeTarget} ${config.my.just.flakeDir}"
         else
           "nh home switch ${config.my.just.flakeDir}#${config.my.just.flakeTarget}";
       description = "Command body used for the nh-update recipe.";
