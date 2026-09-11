@@ -605,6 +605,54 @@ in
   services.router-pangolin = {
     enable = true;
     openFirewall = true;
+    settings = {
+      server = {
+        # Default internal_port 3001 conflicts with Grafana (http_port = 3001)
+        internal_port = 3005;
+      };
+    };
+  };
+
+  systemd.services.pangolin = {
+    serviceConfig = {
+      # Loosen SocketBindDeny so Node process can bind listening TCP ports on localhost
+      SocketBindDeny = lib.mkForce [
+        "ipv4:udp"
+        "ipv6:udp"
+      ];
+    };
+    preStart = lib.mkBefore ''
+      # Ensure secret file exists
+      mkdir -p /etc/pangolin
+      if [ ! -f /etc/pangolin/pangolin.env ]; then
+        echo "SERVER_SECRET=$(${pkgs.openssl}/bin/openssl rand -hex 32)" > /etc/pangolin/pangolin.env
+        chmod 600 /etc/pangolin/pangolin.env
+        chown pangolin:fossorial /etc/pangolin/pangolin.env 2>/dev/null || true
+      fi
+
+      # Fix read-only permissions on .next directory from Nix store cp -rd and ensure skip setup marker
+      if [ -d /var/lib/pangolin/.next ]; then
+        chmod -R u+rwX /var/lib/pangolin/.next 2>/dev/null || true
+        touch /var/lib/pangolin/.next/.nix_skip_setup 2>/dev/null || true
+      fi
+
+      # Ensure database JSON references in server/db are linked from dist
+      mkdir -p /var/lib/pangolin/server/db
+      for json in ${config.services.pangolin.package}/share/pangolin/dist/*.json; do
+        if [ -f "$json" ]; then
+          ln -sf "$json" /var/lib/pangolin/server/db/$(basename "$json")
+        fi
+      done
+      chown -R pangolin:fossorial /var/lib/pangolin/server 2>/dev/null || true
+    '';
+  };
+
+  systemd.services.router-hardware-offload = {
+    postStart = ''
+      ${pkgs.ethtool}/bin/ethtool -K ${wanDevice} rx-udp-gro-forwarding on rx-gro-list off 2>/dev/null || true
+      ${pkgs.ethtool}/bin/ethtool -K ${lanDevice} rx-udp-gro-forwarding on rx-gro-list off 2>/dev/null || true
+      ${pkgs.ethtool}/bin/ethtool -K ${managementDevice} rx-udp-gro-forwarding on rx-gro-list off 2>/dev/null || true
+    '';
   };
 
   services.router-network-security = {
