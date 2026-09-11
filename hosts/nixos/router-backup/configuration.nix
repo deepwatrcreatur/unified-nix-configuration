@@ -23,6 +23,7 @@ in
       enableWanHa = false;
       requireWanOnline = false;
       lanDevice = "ens19";
+      wanBandwidth = "1Gbit";
       # Keep the standby LAN identity local to this host definition. Inventory
       # intentionally does not advertise a production IP for router-backup.
       lanIpv4Address = "${standbyLanIp}/${toString lanNetwork.prefixLength}";
