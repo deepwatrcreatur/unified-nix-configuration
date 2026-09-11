@@ -518,3 +518,80 @@ Validation target:
 Deliver:
 - branch commit(s)
 - short note describing what PXE path is supported first
+
+## Prompt 35: Router Caddy Split-DNS ACME Propagation Repair
+
+Work on [`35-router-caddy-split-dns-acme-repair.md`](./35-router-caddy-split-dns-acme-repair.md).
+
+Create a branch named `fix/router-caddy-split-dns-acme-repair`.
+
+Task:
+- fix Caddy ACME DNS-01 challenge propagation checks failing against internal Technitium split-DNS
+- configure public DNS resolvers (1.1.1.1, 8.8.8.8) or bypass propagation timeouts in Caddy
+- clean stale locks in `/var/lib/caddy/.local/share/caddy/locks/`
+- verify HTTPS reverse proxy to `scrypted.deepwatercreature.com` (`10.10.11.85:10443`)
+
+Validation target:
+- `curl -Iv https://scrypted.deepwatercreature.com` completes TLS handshake cleanly
+- `journalctl -u caddy` shows successful certificate acquisition without connection refused errors
+
+Deliver:
+- branch commit(s)
+- brief summary of Caddy TLS configuration changes and certificate verification
+
+## Prompt 36: Router Pangolin Service Hardening & Permissions Repair
+
+Work on [`36-router-pangolin-service-hardening-and-permissions-repair.md`](./36-router-pangolin-service-hardening-and-permissions-repair.md).
+
+Create a branch named `fix/router-pangolin-service-hardening`.
+
+Task:
+- fix `pangolin.service` crash-restart loop on router
+- remove or adjust `SocketBindDeny=ipv4:tcp` so Pangolin can bind internal/external TCP ports
+- fix write permissions on `/var/lib/pangolin/.next` directory
+
+Validation target:
+- `systemctl status pangolin.service` enters `active (running)` state
+- `ss -tlpn | grep -E '3000|3001|3002|3003'` shows listening ports
+
+Deliver:
+- branch commit(s)
+- verified service status output
+
+## Prompt 37: Router Media PC Intel Graphics & Display Enablement
+
+Work on [`37-router-media-pc-intel-graphics.md`](./37-router-media-pc-intel-graphics.md).
+
+Create a branch named `feat/router-media-pc-intel-graphics`.
+
+Task:
+- enable Intel i915 integrated graphics driver and VA-API acceleration on router host
+- ensure `services.router-optimizations.headless.enable` in `nix-router-optimized` remains opt-in (defaults to false)
+- configure `hardware.graphics` with `intel-media-driver` and `vaapiIntel`
+
+Validation target:
+- `nix build .#nixosConfigurations.router.config.system.build.toplevel`
+- `/dev/dri/renderD128` exists on baremetal router and VA-API hardware acceleration is functional
+
+Deliver:
+- branch commit(s)
+- summary of media PC driver wiring
+
+## Prompt 38: Router Declarative Zones DSL & VM Isolation Test Suite
+
+Work on [`38-router-declarative-zones-and-vm-isolation-tests.md`](./38-router-declarative-zones-and-vm-isolation-tests.md).
+
+Create a branch named `feat/router-declarative-zones-and-tests`.
+
+Task:
+- implement high-level declarative zone routing DSL (`router.zones`, `interZoneRoutes`)
+- add automated NixOS VM network isolation test suite verifying inter-zone boundaries
+
+Validation target:
+- `nix build .#checks.x86_64-linux.router-network-isolation` passes
+- declarative zone definitions compile cleanly into nftables chains
+
+Deliver:
+- branch commit(s)
+- test execution results
+
