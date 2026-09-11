@@ -15,6 +15,7 @@
   enableNetworkSecurity ? ownLanServices,
   enableWanHa ? true,
   requireWanOnline ? enableWanHa,
+  wanBandwidth ? "1Gbit",
   inputs,
 }:
 {
@@ -545,7 +546,7 @@ in
           device = wanDevice;
           role = "wan";
           label = "WAN";
-          bandwidth = "1Gbit";
+          bandwidth = wanBandwidth;
         };
         lan = {
           device = lanDevice;

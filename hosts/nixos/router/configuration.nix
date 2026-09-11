@@ -34,6 +34,7 @@ in
       # Allow initial boot to succeed immediately even when WAN cable is disconnected
       requireWanOnline = false;
       lanDevice = "enp6s16";
+      wanBandwidth = "2.5Gbit";
       inherit lanIpv4Address managementIpv4Address;
       grafanaDomain = mkFqdn "grafana";
       grafanaDataDir = "/var/log/router/grafana";
