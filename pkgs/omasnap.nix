@@ -62,6 +62,13 @@ stdenv.mkDerivation (finalAttrs: {
     tesseract
   ];
 
+  postInstall = ''
+    if [ -f $out/share/applications/omasnap.desktop ]; then
+      substituteInPlace $out/share/applications/omasnap.desktop \
+        --replace-fail "NoDisplay=true" "NoDisplay=false"
+    fi
+  '';
+
   doCheck = true;
   checkPhase = ''
     runHook preCheck
