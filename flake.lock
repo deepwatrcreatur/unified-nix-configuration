@@ -1392,15 +1392,15 @@
       "locked": {
         "lastModified": 1788690659,
         "narHash": "sha256-fBXOHpHhtfjoaWGCilAPJEflhZaJ6rl4BXFuq+mbJ44=",
-        "ref": "refs/heads/main",
+        "owner": "deepwatrcreatur",
+        "repo": "nix-deepseek-harness",
         "rev": "7b26009d865ee7ebefa14f958f2fb0693ff9fc96",
-        "revCount": 3,
-        "type": "git",
-        "url": "file:///home/deepwatrcreatur/flakes/nix-deepseek-harness"
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "file:///home/deepwatrcreatur/flakes/nix-deepseek-harness"
+        "owner": "deepwatrcreatur",
+        "repo": "nix-deepseek-harness",
+        "type": "github"
       }
     },
     "nix-github-actions": {

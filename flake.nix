@@ -99,7 +99,7 @@
     };
 
     nix-deepseek-harness = {
-      url = "git+file:///home/deepwatrcreatur/flakes/nix-deepseek-harness";
+      url = "github:deepwatrcreatur/nix-deepseek-harness";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
