@@ -590,6 +590,8 @@ in
     trustedTcpPorts = [
       80
       443
+      3000 # Pangolin API
+      3002 # Pangolin Next.js WebUI
     ];
     hairpinNat.enable = true;
     flowtable.sipFriendly.enable = true;
