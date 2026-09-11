@@ -57,7 +57,20 @@ in
       # acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
     '';
 
-    virtualHosts = {
+    virtualHosts = lib.mapAttrs (name: vhost:
+      if lib.hasPrefix "http://" name then
+        vhost
+      else
+        vhost // {
+          extraConfig = ''
+            tls {
+              dns cloudflare {$CLOUDFLARE_API_TOKEN}
+              resolvers 1.1.1.1 8.8.8.8
+            }
+            ${vhost.extraConfig or ""}
+          '';
+        }
+    ) {
       # Main domain - redirect to www or dashboard
       "${topology.domain}" = {
         extraConfig = ''
