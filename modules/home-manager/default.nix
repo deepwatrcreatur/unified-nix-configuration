@@ -42,7 +42,9 @@ in
     }
 
     rotate_backup "$HOME/.ssh/config.bak"
+    rotate_backup "$HOME/.ssh/config.hm-backup"
     rotate_backup "$HOME/.config/fnox/config.toml.bak"
+    rotate_backup "$HOME/.config/fnox/config.toml.hm-backup"
   '';
 
   # Hybrid known_hosts: Use activation script to create mutable file
