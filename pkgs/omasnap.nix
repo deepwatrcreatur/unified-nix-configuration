@@ -8,8 +8,10 @@
   grim,
   hyprland,
   kdePackages,
+  makeWrapper,
   ninja,
   pkg-config,
+  slurp,
   tesseract,
   wayland,
   wayland-protocols,
@@ -42,6 +44,7 @@ stdenv.mkDerivation (finalAttrs: {
   nativeBuildInputs = [
     cmake
     kdePackages.wrapQtAppsHook
+    makeWrapper
     ninja
     pkg-config
     wayland
@@ -67,6 +70,38 @@ stdenv.mkDerivation (finalAttrs: {
       substituteInPlace $out/share/applications/omasnap.desktop \
         --replace-fail "NoDisplay=true" "NoDisplay=false"
     fi
+
+    mv $out/bin/omasnap $out/bin/.omasnap-binary
+
+    cat <<'EOF' > $out/bin/omasnap
+#!/usr/bin/env bash
+set -e
+
+# If arguments are passed, or if hyprctl is active, run the main binary directly.
+if [ $# -gt 0 ] || ${hyprland}/bin/hyprctl monitors -j >/dev/null 2>&1; then
+  exec @out@/bin/.omasnap-binary "$@"
+fi
+
+# Fallback for non-Hyprland Wayland sessions (GNOME, COSMIC, Sway, etc.)
+tmp_file="$(mktemp --suffix=.png /tmp/omasnap-XXXXXX)"
+
+if ${slurp}/bin/slurp -b "#00000080" -c "#ffffff" > "$tmp_file.region" 2>/dev/null; then
+  region="$(cat "$tmp_file.region")"
+  rm -f "$tmp_file.region"
+  if [ -n "$region" ]; then
+    ${grim}/bin/grim -g "$region" "$tmp_file" && exec @out@/bin/.omasnap-binary --file "$tmp_file"
+    exit 0
+  fi
+fi
+
+# Fullscreen fallback if region selection was skipped or cancelled
+if ${grim}/bin/grim "$tmp_file" 2>/dev/null; then
+  exec @out@/bin/.omasnap-binary --file "$tmp_file"
+fi
+EOF
+
+    substituteInPlace $out/bin/omasnap --replace-fail "@out@" "$out"
+    chmod +x $out/bin/omasnap
   '';
 
   doCheck = true;
@@ -83,6 +118,7 @@ stdenv.mkDerivation (finalAttrs: {
     (lib.makeBinPath [
       grim
       hyprland
+      slurp
       tesseract
       wl-clipboard
       xdg-utils
@@ -90,7 +126,7 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   meta = {
-    description = "Native Wayland screenshot and annotation editor for Omarchy and Hyprland";
+    description = "Native Wayland screenshot and annotation editor for Hyprland, GNOME, and COSMIC";
     homepage = "https://github.com/tobi/omasnap";
     license = lib.licenses.mit;
     mainProgram = "omasnap";
