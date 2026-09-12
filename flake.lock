@@ -1150,11 +1150,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773093840,
-        "narHash": "sha256-u/96NoAyN8BSRuM3ZimGf7vyYgXa3pLx4MYWjokuoH4=",
+        "lastModified": 1785531816,
+        "narHash": "sha256-vkMnV0JIyw+g/NmcfoajlGaAO+9a0ezia+FZohQJrik=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "bb014746edb2a98d975abde4dd40fa240de4cf86",
+        "rev": "bf9ce9fec78f95f374e8dd3b503863a3ec128ebe",
         "type": "github"
       },
       "original": {
@@ -1536,16 +1536,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1773967287,
-        "narHash": "sha256-2yw1s7S4FxRFnqtKf0q/7Pp4ufqh5xb5cJ6JGIDUtmQ=",
+        "lastModified": 1789209043,
+        "narHash": "sha256-qpKzirl50XXMLXXYjdQkvRSsDNjgqd8UREl3IWgVOcQ=",
         "owner": "deepwatrcreatur",
         "repo": "nix-linuxbrew",
-        "rev": "6545282cff9b310d2a50dde2324c182aa2e2842c",
+        "rev": "f5314607be0a67511c18b7b5b3a6cf0ddb2416e4",
         "type": "github"
       },
       "original": {
         "owner": "deepwatrcreatur",
-        "ref": "v1.1.0",
+        "ref": "main",
         "repo": "nix-linuxbrew",
         "type": "github"
       }

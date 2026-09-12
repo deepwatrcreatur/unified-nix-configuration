@@ -77,7 +77,7 @@
     };
 
     nix-linuxbrew = {
-      url = "github:deepwatrcreatur/nix-linuxbrew/v1.1.0";
+      url = "github:deepwatrcreatur/nix-linuxbrew/main";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
