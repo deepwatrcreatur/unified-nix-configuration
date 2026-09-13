@@ -11,6 +11,7 @@
     ./remote-builder-key.nix
     ./agenix-machine-identity.nix
     ./agenix.nix
+    ./user-passwords.nix
     ./fstrim.nix
     ./git-ssh.nix
     ./zram.nix  # Zram compressed swap for desktops
