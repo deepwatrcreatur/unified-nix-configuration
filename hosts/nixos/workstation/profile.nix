@@ -58,12 +58,6 @@
     owner = "deepwatrcreatur";
   };
 
-  swapDevices = [
-    {
-      device = "/var/swapfile";
-      size = 32 * 1024; # 32GB swapfile
-    }
-  ];
 
   programs.wezterm.extraConfig = lib.mkAfter ''
     config.default_prog = { '/etc/profiles/per-user/deepwatrcreatur/bin/zellij', '-l', 'welcome' }
@@ -211,6 +205,12 @@
   };
 
   programs.openlogi.enable = true;
+  systemd.user.services.openlogi-agent.environment.LD_LIBRARY_PATH = lib.makeLibraryPath [
+    pkgs.wayland
+    pkgs.libxkbcommon
+    pkgs.vulkan-loader
+    pkgs.libGL
+  ];
 
   myModules.snap = {
     enable = true;
