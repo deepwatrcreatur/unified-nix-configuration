@@ -140,7 +140,6 @@
 
   users.users.deepwatrcreatur = {
     isNormalUser = true;
-    hashedPasswordFile = config.age.secrets.user-password-deepwatrcreatur.path;
     extraGroups = [
       "networkmanager"
       "wheel"
@@ -150,8 +149,6 @@
     ];
     shell = pkgs.fish;
   };
-
-  age.secrets.user-password-deepwatrcreatur.file = ../../../secrets-agenix/user-password-deepwatrcreatur.age;
 
   services.ssh-keys-manager.username = "deepwatrcreatur";
 
