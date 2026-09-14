@@ -37,22 +37,14 @@ let
       --cmd ${lib.escapeShellArg (toString cosmicSessionCommand)}
   '';
 
-  # Prefer a graphical greeter, but never get stuck:
-  # if `cage + gtkgreet` fails (or hangs), fall back to `tuigreet`.
+  # Clean terminal-mode greeter that works reliably on VT console without
+  # the solid grey unstyled canvas or failure modes of cage + gtkgreet.
   greeterCommand = pkgs.writeShellScript "greetd-greeter" ''
     set -eu
-
-    GTK_CMD=${lib.escapeShellArg (toString cosmicSessionCommand)}
-
-    # If the graphical greeter can't start, fall back quickly.
-    if ${pkgs.cage}/bin/cage -s -- \
-      ${pkgs.gtkgreet}/bin/gtkgreet -c "$GTK_CMD"; then
-      exit 0
-    fi
-
     exec ${pkgs.tuigreet}/bin/tuigreet \
       --time \
       --remember \
+      --remember-user \
       --cmd ${lib.escapeShellArg (toString cosmicSessionCommand)}
   '';
 in
@@ -140,12 +132,8 @@ in
     glib
     gsettings-desktop-schemas
 
-    # Greeters.
-    # - `cage + gtkgreet` provides a graphical greeter
-    # - `tuigreet` is the always-works fallback
-    cage
+    # Greeter fallback
     tuigreet
-    gtkgreet
 
     # COSMIC sessions started from greetd benefit from a known dbus-run-session.
     dbus

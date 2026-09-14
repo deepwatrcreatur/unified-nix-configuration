@@ -13,7 +13,6 @@
     # Avoid killing core desktop/compositor/system processes.
     # Prefer terminating known heavy memory consumers (browsers, VMs, background daemons).
     extraArgs = [
-      "-g"
       "--avoid"
       "^(cosmic-comp|cosmic-session|greetd|systemd|wireplumber|pipewire|dbus-broker|dbus-daemon|sshd|Xwayland)$"
       "--prefer"
