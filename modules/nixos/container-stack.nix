@@ -287,12 +287,24 @@ in
   };
 
   config = mkIf (cfg != {}) (mkMerge [
-    # Create networks
+    # Create networks and ensure containers depend on custom network creation
     {
       systemd.services = mkMerge (
-        mapAttrsToList (stackName: stackCfg:
+        (mapAttrsToList (stackName: stackCfg:
           mkIf stackCfg.enable (mkNetworkService stackCfg.network)
-        ) cfg
+        ) cfg)
+        ++
+        (flatten (mapAttrsToList (stackName: stackCfg:
+          if stackCfg.enable && !(builtins.elem stackCfg.network builtinNetworks) then
+            mapAttrsToList (containerName: _: {
+              "podman-${containerName}" = {
+                after = [ "podman-network-${stackCfg.network}.service" ];
+                requires = [ "podman-network-${stackCfg.network}.service" ];
+              };
+            }) stackCfg.containers
+          else
+            [ ]
+        ) cfg))
       );
     }
 

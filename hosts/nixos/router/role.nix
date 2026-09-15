@@ -721,6 +721,16 @@ in
           url = "https://${mkFqdn "grafana"}";
           icon = "📈";
         }
+        {
+          label = "NetAlertX";
+          url = "https://${mkFqdn "netalertx"}";
+          icon = "🚨";
+        }
+        {
+          label = "Graylog";
+          url = "https://${mkFqdn "graylog"}";
+          icon = "🪵";
+        }
       ]
       ++ lib.optionals enableNetworkSecurity [
         {

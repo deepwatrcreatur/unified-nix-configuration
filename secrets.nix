@@ -144,6 +144,7 @@ in {
   "secrets-agenix/paperless-authentik-oidc.age".publicKeys = paperlessOidcSecrets;
   "secrets-agenix/nightscout-api-secret.age".publicKeys = podmanServiceSecrets;
   "secrets-agenix/librelinkup-env.age".publicKeys = podmanServiceSecrets;
+  "secrets-agenix/graylog-env.age".publicKeys = podmanServiceSecrets;
   "secrets-agenix/roundtable-secret-key-base.age".publicKeys = roundtableSecrets;
 
   # Operator/user secrets decrypted directly in Home Manager with the stable user key
