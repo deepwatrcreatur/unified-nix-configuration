@@ -831,8 +831,23 @@ in
   # Keep the production LAN address present even when the data-plane cable is
   # intentionally unplugged on a standby/dev router. That allows dashboard and
   # router-role services to come up in a degraded-but-testable state.
-  systemd.network.networks."20-router-lan".networkConfig.ConfigureWithoutCarrier = true;
-  systemd.network.networks."20-router-lan".linkConfig.RequiredForOnline = lib.mkForce "no";
+  # In non-HA mode, a standby router without active LAN ownership must never
+  # broadcast IPv6 Router Advertisements, which would poison client default routes.
+  systemd.network.networks."20-router-lan" = lib.mkMerge [
+    {
+      networkConfig.ConfigureWithoutCarrier = true;
+      linkConfig.RequiredForOnline = lib.mkForce "no";
+    }
+    (lib.mkIf (!ownLanServices && !enableHa) {
+      networkConfig.IPv6SendRA = lib.mkForce false;
+      networkConfig.DHCPPrefixDelegation = lib.mkForce false;
+    })
+  ];
+
+  # Management interface is for internal host administration and must not
+  # broadcast IPv6 Router Advertisements or delegate prefixes onto the network.
+  systemd.network.networks."20-router-management".networkConfig.IPv6SendRA = lib.mkForce false;
+  systemd.network.networks."20-router-management".networkConfig.DHCPPrefixDelegation = lib.mkForce false;
 
   # Make network-online.target wait for the interfaces that matter on each
   # node. The primary should wait for WAN before WAN-dependent services start,

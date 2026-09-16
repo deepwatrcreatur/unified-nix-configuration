@@ -46,6 +46,14 @@ in
   # RequiredForOnline settings actually gate management-plane readiness.
   systemd.network.wait-online.enable = lib.mkForce true;
 
+  # Standby router has no WAN uplink; explicitly suppress IPv6 Router Advertisements
+  # and DHCPv6 Prefix Delegation so it does not poison downstream LAN default routes
+  # or cause ECMP blackholing.
+  systemd.network.networks."20-router-lan".networkConfig.IPv6SendRA = lib.mkForce false;
+  systemd.network.networks."20-router-lan".networkConfig.DHCPPrefixDelegation = lib.mkForce false;
+  systemd.network.networks."20-router-management".networkConfig.IPv6SendRA = lib.mkForce false;
+  systemd.network.networks."20-router-management".networkConfig.DHCPPrefixDelegation = lib.mkForce false;
+
   systemd.services = {
     health-wan-carrier.enable = lib.mkForce false;
     health-wan-ip.enable = lib.mkForce false;
