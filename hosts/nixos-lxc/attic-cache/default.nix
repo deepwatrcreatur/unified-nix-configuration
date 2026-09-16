@@ -9,7 +9,7 @@ in
 {
   host.services.iperf3 = {
     enable = true;
-    bindProbeAddress = hostsData.hosts.attic-cache.ip;
+    bindProbeAddress = hostsData.hosts.emerald.ip or hostsData.hosts.attic-cache.ip;
   };
 
   imports = [
