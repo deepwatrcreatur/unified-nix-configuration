@@ -14,6 +14,12 @@
       default = true;
       description = "Enable nix-ci.com cache when credentials are available.";
     };
+
+    isCacheServer = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Whether this host runs the local Attic binary cache server (avoids circular substitution).";
+    };
   };
 
   config = lib.mkIf config.myModules.caches.enable {

@@ -29,6 +29,7 @@ use them as:
 |---|---|---|---|
 | `unified-nix-configuration` | router follow-up in this repo | [`docs/router-work-items/START-HERE.md`](./router-work-items/START-HERE.md) | [`docs/router-work-items/README.md`](./router-work-items/README.md) |
 | `unified-nix-configuration` | repo-tooling follow-up in this repo | [`docs/tooling-work-items/START-HERE.md`](./tooling-work-items/START-HERE.md) | [`docs/tooling-work-items/README.md`](./tooling-work-items/README.md) |
+| `unified-nix-configuration` | host naming & dendritic role migration | [`docs/host-migration-work-items/START-HERE.md`](./host-migration-work-items/START-HERE.md) | [`docs/host-migration-work-items/README.md`](./host-migration-work-items/README.md) |
 | `nix-router-optimized` | router-flake implementation backlog | [`../nix-router-optimized/docs/work-items/START-HERE.md`](../../nix-router-optimized/docs/work-items/START-HERE.md) | [`../nix-router-optimized/docs/work-items/README.md`](../../nix-router-optimized/docs/work-items/README.md) |
 | `nix-attic-infra` | attic / CI / cache infra backlog | [`../nix-attic-infra/docs/work-items/README.md`](../../nix-attic-infra/docs/work-items/README.md) | [`../nix-attic-infra/docs/work-items/README.md`](../../nix-attic-infra/docs/work-items/README.md) |
 | `agent-roundtable` | Vaglio / control-plane / design implementation backlog | [`../agent-roundtable/docs/work-items/README.md`](../../agent-roundtable/docs/work-items/README.md) | [`../agent-roundtable/docs/work-items/README.md`](../../agent-roundtable/docs/work-items/README.md) |

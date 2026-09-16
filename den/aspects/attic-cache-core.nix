@@ -15,6 +15,8 @@ in
     ../../modules/nixos/attic-observatory.nix
   ];
 
+  myModules.caches.isCacheServer = true;
+
   host.services.iperf3 = {
     enable = true;
     bindProbeAddress = hostsData.hosts.attic-cache.ip;

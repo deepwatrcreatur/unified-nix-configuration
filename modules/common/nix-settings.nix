@@ -23,8 +23,12 @@ let
   # boot.isContainer is set by virtualisation/lxc-container.nix and similar
   isContainer = config.boot.isContainer or false;
 
-  # Detect if this is the attic-cache server itself (avoid circular dependency)
-  isCacheServer = config.networking.hostName or "" == "attic-cache";
+  # Detect if this is the attic-cache server itself (avoid circular dependency).
+  # Uses the explicit option set by den/aspects/attic-cache-core.nix, falling back
+  # to the legacy hostName for backward compatibility during migration.
+  isCacheServer =
+    (config.myModules.caches.isCacheServer or false)
+    || (config.networking.hostName or "" == "attic-cache");
   hasNixCiNetrc = builtins.pathExists nixCiNetrcFile;
 
   enableCaches = config.myModules.caches.enable or true;
