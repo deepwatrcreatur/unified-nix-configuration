@@ -18,10 +18,16 @@ let
     "pve-z170"
   ];
 
+  # Hosts that act as the binary cache and build server (must not use remote building)
+  cacheHosts = [
+    "attic-cache"
+    "emerald"
+  ];
+
   supportedHosts = nixosHosts ++ nonNixosHosts;
 in
 {
-  inherit supportedHosts nixosHosts nonNixosHosts;
+  inherit supportedHosts nixosHosts nonNixosHosts cacheHosts;
 
   keyPath =
     if pkgs != null && pkgs.stdenv.isDarwin then
@@ -29,6 +35,6 @@ in
     else
       "/root/.ssh/nix-remote";
 
-  canUse = hostName: hostName != "attic-cache" && builtins.elem hostName supportedHosts;
+  canUse = hostName: !(builtins.elem hostName cacheHosts) && builtins.elem hostName supportedHosts;
   canUseNixOS = hostName: builtins.elem hostName nixosHosts;
 }
