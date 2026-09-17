@@ -139,6 +139,28 @@ in
         '';
       };
 
+      "${mkFqdn "netalertx"}" = {
+        extraConfig = ''
+          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48
+          handle @trusted {
+            reverse_proxy ${podmanHost.ip}:20211
+          }
+
+          respond "Access restricted to home LAN and Tailnet" 403
+        '';
+      };
+
+      "${mkFqdn "graylog"}" = {
+        extraConfig = ''
+          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48
+          handle @trusted {
+            reverse_proxy ${podmanHost.ip}:9000
+          }
+
+          respond "Access restricted to home LAN and Tailnet" 403
+        '';
+      };
+
       "${mkFqdn "scrypted"}" = {
         extraConfig = ''
           reverse_proxy https://${scryptedHost.ip}:10443 {

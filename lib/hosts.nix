@@ -86,6 +86,8 @@
         "nightscout"
         "roundtable"
         "pangolin"
+        "netalertx"
+        "graylog"
       ];
       # Internal-only admin services (homelab/management only, not public).
       # These become CNAMEs in local DNS and are proxied by local Caddy.
