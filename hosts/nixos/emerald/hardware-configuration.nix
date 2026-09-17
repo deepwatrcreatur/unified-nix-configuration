@@ -22,8 +22,10 @@
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
+  boot.initrd.supportedFilesystems = [ "btrfs" ];
   boot.supportedFilesystems = [ "btrfs" "zfs" "xfs" ];
   boot.zfs.forceImportRoot = false;
+  boot.zfs.forceImportAll = false;
 
   networking.hostId = "49d7f964";
 
