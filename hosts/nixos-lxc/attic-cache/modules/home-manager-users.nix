@@ -19,7 +19,7 @@
     users.root = {
       imports = [
         ../../../../users/root
-        ../../../../users/root/hosts/attic-cache
+        ../../../../users/root/hosts/emerald
         ../../../../modules/home-manager/git.nix
       ];
 
@@ -53,7 +53,7 @@
 
     users.deepwatrcreatur = {
       imports = [
-        ../../../../users/deepwatrcreatur/hosts/attic-cache
+        ../../../../users/deepwatrcreatur/hosts/emerald
       ];
 
       home.username = "deepwatrcreatur";

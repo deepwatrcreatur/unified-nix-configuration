@@ -14,8 +14,8 @@
 
   systemd.network = {
     enable = true;
-    networks."50-eth0" = {
-      matchConfig.Name = "eth0";
+    networks."50-ethernet" = {
+      matchConfig.Name = "en* eth*";
       networkConfig = {
         DHCP = "yes";
         IPv6AcceptRA = true;

@@ -13,7 +13,6 @@ let
   nonNixosHosts = [
     "pve-rog"
     "pve-strix"
-    "pve-tomahawk"
     "pve-lattitude"
     "pve-z170"
   ];

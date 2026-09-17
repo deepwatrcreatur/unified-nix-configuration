@@ -9,11 +9,11 @@ let
 
   hosts = {
     attic-cache = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBMzmqOZ301fwZJVQI5KZ9+npuFs+3EvwKet4peLZeLv";
+    emerald = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBMzmqOZ301fwZJVQI5KZ9+npuFs+3EvwKet4peLZeLv";
     homeserver = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOo9lHhuHiT1rAF3RcFwSMYYtQvoheU4IxVsCRBKlPFI root@nixoslxc";
     pve-lattitude = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOz/qnrymEHn6b057GKCOMCfB9fK28HkWmZ6MnXblVO2";
     pve-rog = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFkWE8kICYI4rPsw/SWfEjOcBrKRk0DywrYSOFZkdlDX agenix-machine-identity pve-rog";
     pve-strix = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAgSeJeuivBkeB92lG8Sup+fQl4AwfRWH3XlCJSMQ3j4";
-    pve-tomahawk = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDjJqDjZBW8RisQsxPxSIY3GoJj4AM8wwqbqSbC6ygnY";
     rustdesk = "";
     vaglio = "";
     workstation = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKFAzJUqDpasPy2B+vODDAZOdGJ/7DiZ1wWjbWkM1Bi8 root@workstation";
@@ -29,7 +29,7 @@ let
   # All NixOS hosts that should receive the root SSH key
   rootSshKeyHosts = [
     "authentik-host"
-    "attic-cache"
+    "emerald"
     "homeserver"
     "inference1"
     "inference2"
@@ -64,7 +64,7 @@ let
   homeserverServiceSecrets = operatorUsers ++ machineRecipients "homeserver";
   authentikHostServiceSecrets = operatorUsers ++ machineRecipients "authentik-host";
 
-  atticServiceSecrets = operatorUsers ++ machineRecipients "attic-cache";
+  atticServiceSecrets = operatorUsers ++ machineRecipients "emerald" ++ machineRecipients "attic-cache";
 
   remoteBuilderClientSecrets =
     operatorUsers ++ builtins.concatLists (map machineRecipients remoteBuilder.supportedHosts);
@@ -77,7 +77,6 @@ let
     "workstation"
     "pve-rog"
     "pve-strix"
-    "pve-tomahawk"
     "pve-lattitude"
     "pve-z170"
   ];
@@ -88,7 +87,7 @@ let
   # All hosts that build from this repo should be able to use the attic cache
   atticClientHosts = [
     "authentik-host"
-    "attic-cache"
+    "emerald"
     "homeserver"
     "inference1"
     "inference2"
@@ -101,7 +100,6 @@ let
     "pve-lattitude"
     "pve-rog"
     "pve-strix"
-    "pve-tomahawk"
     "pve-z170"
     "workstation"
     # TODO: Add hackintosh and macminim4 once their host keys are in the hosts list

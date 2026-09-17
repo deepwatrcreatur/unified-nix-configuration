@@ -23,11 +23,11 @@
     ];
   };
 
-  attic-cache = {
+  emerald = {
     kind = "nixos";
-    name = "attic-cache";
+    name = "emerald";
     system = "x86_64-linux";
-    hostPath = ../hosts/attic-cache;
+    hostPath = ../hosts/emerald;
     mode = "aspect";
     aspectsList = [
       "nixos-base"

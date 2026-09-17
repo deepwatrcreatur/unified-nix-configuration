@@ -7,11 +7,15 @@
 
 let
   deepwatrcreaturStableKey = lib.strings.trim (builtins.readFile ../../../../ssh-keys/deepwatrcreatur-stable-identity.pub);
+  deepwatrcreaturPhoenixKey = lib.strings.trim (builtins.readFile ../../../../ssh-keys/deepwatrcreatur-phoenix-identity.pub);
+  deepwatrcreaturWorkstationKey = lib.strings.trim (builtins.readFile (../../../../ssh-keys + "/deepwatrcreatur@workstation-ed25519.pub"));
 in
 {
   users.users.root.shell = pkgs.fish;
   users.users.root.openssh.authorizedKeys.keys = [
     deepwatrcreaturStableKey
+    deepwatrcreaturPhoenixKey
+    deepwatrcreaturWorkstationKey
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEbX1mL3oZyEz1KhjEWww+k4RTXXeOJSqXWqu5N44ZAg root@router" # Legacy remote build key
   ];
 
@@ -24,6 +28,8 @@ in
     shell = pkgs.fish;
     openssh.authorizedKeys.keys = [
       deepwatrcreaturStableKey
+      deepwatrcreaturPhoenixKey
+      deepwatrcreaturWorkstationKey
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEbX1mL3oZyEz1KhjEWww+k4RTXXeOJSqXWqu5N44ZAg root@router" # Legacy remote build key
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBZML6mOtZHRUmxNkIcv32q3kbBXMiOsQXyFzrWcUL4P nix-remote-builder" # For nix remote builder
     ];

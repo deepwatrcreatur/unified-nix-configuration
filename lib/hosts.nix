@@ -147,11 +147,6 @@
       description = "Proxmox node - Strix";
     };
 
-    pve-tomahawk = {
-      ip = "10.10.11.55";
-      sshUser = "root";
-      description = "Proxmox node - Tomahawk";
-    };
 
     pve-z170 = {
       ip = "10.10.11.59";
@@ -208,17 +203,24 @@
       description = "AirPort Express/Extreme switch";
     };
 
-    # LXC Containers
-    attic-cache = {
-      ip = "10.10.11.39";
+    # Dedicated Infrastructure Servers (Baremetal)
+    emerald = {
+      ip = "10.10.11.55";
       sshUser = "root";
       dhcpReservation = {
-        macAddress = "BC:24:11:CE:9D:D6";
+        macAddress = "34:5a:60:01:5e:f8"; # onboard RTL8126 5GbE (enp9s0); Intel SFP+ enp1s0f0 is 90:e2:ba:7f:e0:3c
         scope = "LAN";
       };
-      aliases = [ "cache" "nix-cache" ];
-      description = "Nix binary cache server";
+      aliases = [
+        "tomahawk"
+        "attic-cache"
+        "cache"
+        "nix-cache"
+      ];
+      description = "Nix binary cache server on baremetal (MSI Tomahawk)";
     };
+
+    # LXC Containers
 
     apt-cache = {
       ip = "10.10.11.42";
