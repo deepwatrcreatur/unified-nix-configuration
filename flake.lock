@@ -1536,11 +1536,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1789209043,
-        "narHash": "sha256-qpKzirl50XXMLXXYjdQkvRSsDNjgqd8UREl3IWgVOcQ=",
+        "lastModified": 1789816133,
+        "narHash": "sha256-R1/T4fzC0eVPrpFxTlsgTFY3coKNaqaaq5v5TSHDD9A=",
         "owner": "deepwatrcreatur",
         "repo": "nix-linuxbrew",
-        "rev": "f5314607be0a67511c18b7b5b3a6cf0ddb2416e4",
+        "rev": "9df0591ed76fed4d0cc9ed20fc311a7ef72aea1f",
         "type": "github"
       },
       "original": {
