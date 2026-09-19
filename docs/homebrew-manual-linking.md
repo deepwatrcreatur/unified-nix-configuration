@@ -15,7 +15,7 @@ To fix this, you need to manually create a symlink from the `current` directory 
 2.  **Run the following command:**
 
     ```bash
-    sudo ln -s /home/linuxbrew/.linuxbrew/Homebrew/Library/Homebrew/vendor/portable-ruby/3.4.5 /home/linuxbrew/.linuxbrew/Homebrew/Library/Homebrew/vendor/portable-ruby/current
+    sudo ln -s /home/linuxbrew/.linuxbrew/Homebrew/Library/Homebrew/vendor/portable-ruby/4.0.6_2 /home/linuxbrew/.linuxbrew/Homebrew/Library/Homebrew/vendor/portable-ruby/current
     ```
 
 3.  **Activate your NixOS configuration again.**

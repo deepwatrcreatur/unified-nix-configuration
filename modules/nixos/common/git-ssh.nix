@@ -8,5 +8,7 @@
   environment.etc."gitconfig".text = ''
     [url "ssh://git@github.com/"]
       insteadOf = https://github.com/
+    [url "https://github.com/Homebrew/"]
+      insteadOf = https://github.com/Homebrew/
   '';
 }
