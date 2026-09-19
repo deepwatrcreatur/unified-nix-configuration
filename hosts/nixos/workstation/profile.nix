@@ -56,6 +56,12 @@
   programs.linuxbrew = {
     enableSystemSetup = true;
     owner = "deepwatrcreatur";
+    compatSymlinks = lib.mkAfter [
+      [ "${pkgs.coreutils}/bin/tr" "/bin/tr" ]
+      [ "${pkgs.coreutils}/bin/wc" "/bin/wc" ]
+      [ "${pkgs.curl}/bin/curl" "/bin/curl" ]
+      [ "${pkgs.git}/bin/git" "/bin/git" ]
+    ];
   };
 
 
