@@ -58,9 +58,13 @@
     owner = "deepwatrcreatur";
     compatSymlinks = lib.mkAfter [
       [ "${pkgs.coreutils}/bin/tr" "/bin/tr" ]
+      [ "${pkgs.coreutils}/bin/tr" "/usr/bin/tr" ]
       [ "${pkgs.coreutils}/bin/wc" "/bin/wc" ]
+      [ "${pkgs.coreutils}/bin/wc" "/usr/bin/wc" ]
       [ "${pkgs.curl}/bin/curl" "/bin/curl" ]
+      [ "${pkgs.curl}/bin/curl" "/usr/bin/curl" ]
       [ "${pkgs.git}/bin/git" "/bin/git" ]
+      [ "${pkgs.git}/bin/git" "/usr/bin/git" ]
     ];
   };
 
