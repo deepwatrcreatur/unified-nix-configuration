@@ -1,6 +1,6 @@
 # Work Item 40: Upstream nix-router-optimized Fixes and Downstream Cleanup
 
-**Status:** in-progress  
+**Status:** done  
 **Priority:** high  
 **Created:** 2026-09-19  
 

@@ -33,7 +33,6 @@
     ../../modules/nixos/services/iperf3.nix
     ../../modules/nixos/keyboard-glitches.nix
     ../../modules/nixos/snap.nix
-    ../../modules/nixos/router-dashboard-runtime-repair.nix
     ../../modules/activation-scripts
   ];
 }

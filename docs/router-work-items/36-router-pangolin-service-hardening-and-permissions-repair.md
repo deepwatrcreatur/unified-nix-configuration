@@ -1,6 +1,6 @@
 # Router Pangolin Service Hardening & Permissions Repair
 
-Status: `in-progress`
+Status: `done`
 Priority: `high`
 Branch: `fix/router-pangolin-service-hardening`
 

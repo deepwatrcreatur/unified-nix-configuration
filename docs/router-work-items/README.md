@@ -45,12 +45,9 @@ in parallel on separate worktrees.
 
 ## Active Ranking
 
-1. [`40-upstream-nix-router-optimized-fixes-and-downstream-cleanup.md`](./40-upstream-nix-router-optimized-fixes-and-downstream-cleanup.md) (`Status: in-progress`)
-2. [`36-router-pangolin-service-hardening-and-permissions-repair.md`](./36-router-pangolin-service-hardening-and-permissions-repair.md) (`Status: in-progress`)
-3. [`37-router-media-pc-intel-graphics.md`](./37-router-media-pc-intel-graphics.md) (`Status: ready`)
-4. [`38-router-declarative-zones-and-vm-isolation-tests.md`](./38-router-declarative-zones-and-vm-isolation-tests.md) (`Status: ready`)
-5. [`33-kea-lease-utilization-monitoring-and-alerts.md`](./33-kea-lease-utilization-monitoring-and-alerts.md) (`Status: ready`)
-6. [`35-router-caddy-split-dns-acme-repair.md`](./35-router-caddy-split-dns-acme-repair.md) (`Status: done`)
+1. [`37-router-media-pc-intel-graphics.md`](./37-router-media-pc-intel-graphics.md) (`Status: ready`)
+2. [`38-router-declarative-zones-and-vm-isolation-tests.md`](./38-router-declarative-zones-and-vm-isolation-tests.md) (`Status: ready`)
+3. [`33-kea-lease-utilization-monitoring-and-alerts.md`](./33-kea-lease-utilization-monitoring-and-alerts.md) (`Status: ready`)
 
 If new router work appears:
 
@@ -61,6 +58,9 @@ If new router work appears:
 
 ## Recently Completed
 
+- [`40-upstream-nix-router-optimized-fixes-and-downstream-cleanup.md`](./40-upstream-nix-router-optimized-fixes-and-downstream-cleanup.md)
+- [`36-router-pangolin-service-hardening-and-permissions-repair.md`](./36-router-pangolin-service-hardening-and-permissions-repair.md)
+- [`35-router-caddy-split-dns-acme-repair.md`](./35-router-caddy-split-dns-acme-repair.md)
 - [`25-technitium-dhcp-sync-hardening.md`](./25-technitium-dhcp-sync-hardening.md)
 - [`26-router-dashboard-runtime-repair.md`](./26-router-dashboard-runtime-repair.md)
 - [`27-router-post-cutover-validation.md`](./27-router-post-cutover-validation.md)

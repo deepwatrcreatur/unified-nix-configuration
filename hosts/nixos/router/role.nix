@@ -40,62 +40,6 @@ let
     operatorStableSshKey
     operatorPhoenixSshKey
   ];
-  keaDhcp4LeaseHeader =
-    "address,hwaddr,client_id,valid_lifetime,expire,subnet_id,fqdn_fwd,fqdn_rev,hostname,state,user_context,pool_id";
-  ensureKeaLeaseState = pkgs.writeShellScript "router-kea-ensure-state" ''
-    set -euo pipefail
-
-    install -d -m 0750 -o kea -g kea /var/lib/private/kea
-
-    expected_header='${keaDhcp4LeaseHeader}'
-
-    for lease_file in /var/lib/private/kea/dhcp4.leases /var/lib/private/kea/dhcp4.leases.2; do
-      if [ ! -e "$lease_file" ]; then
-        : > "$lease_file"
-      fi
-
-      if [ -s "$lease_file" ]; then
-        header="$(head -n 1 "$lease_file" || true)"
-        if [ "$header" != "$expected_header" ]; then
-          backup="$lease_file.incompatible.$(date +%s)"
-          cp -a "$lease_file" "$backup"
-          : > "$lease_file"
-          echo "router-kea-ensure-state: reset incompatible lease file header in $lease_file (backup: $backup)" >&2
-        fi
-
-        if ${pkgs.gawk}/bin/gawk -F, '$10 == "1" { exit 0 } END { exit 1 }' "$lease_file" 2>/dev/null; then
-          temp_clean="$lease_file.clean.$(date +%s)"
-          ${pkgs.gawk}/bin/gawk -F, 'NR==1 || $10 != "1"' "$lease_file" > "$temp_clean" || true
-          cat "$temp_clean" > "$lease_file"
-          rm -f "$temp_clean"
-          echo "router-kea-ensure-state: purged declined leases from $lease_file" >&2
-        fi
-      fi
-
-      chown kea:kea "$lease_file"
-      chmod 0640 "$lease_file"
-    done
-
-    find /var/lib/private/kea -name "dhcp4.leases.incompatible.*" -mtime +1 -delete 2>/dev/null || true
-  '';
-  waitForKeaLanReady = pkgs.writeShellScript "router-kea-wait-for-lan-ready" ''
-    set -euo pipefail
-
-    iface=${lib.escapeShellArg lanDevice}
-    expected_ipv4=${lib.escapeShellArg staticLanIp}
-    SECONDS=0
-
-    while [ "$SECONDS" -lt 30 ]; do
-      if ${pkgs.iproute2}/bin/ip -o link show dev "$iface" 2>/dev/null | ${pkgs.gnugrep}/bin/grep -q "LOWER_UP" \
-        && ${pkgs.iproute2}/bin/ip -o -4 addr show dev "$iface" 2>/dev/null | ${pkgs.gnugrep}/bin/grep -q " $expected_ipv4/"; then
-        exit 0
-      fi
-      ${pkgs.coreutils}/bin/sleep 1
-    done
-
-    echo "router-kea: LAN interface $iface was not carrier-up with IPv4 $expected_ipv4 within 30 seconds" >&2
-    exit 1
-  '';
 
   secrets = optSec.mkSecrets {
     user-password-deepwatrcreatur = {
@@ -311,6 +255,7 @@ in
       subnet = lanNetwork.cidr;
       gatewayAddress = "10.10.10.1";
       dnsServers = [ "10.10.10.1" ];
+      defaultLeaseTimeSec = 14400; # 4 hours to recycle abandoned leases quickly
       poolRanges = [
         {
           # Keep dynamic leases away from the low/static part of the /16 and
@@ -360,43 +305,19 @@ in
     internalIPs = [ lanDevice ];
   };
 
-  services.kea.dhcp4.settings = lib.mkIf ownLanServices {
-    valid-lifetime = lib.mkForce 14400; # 4 hours (down from 24h) to recycle abandoned leases quickly
-    renew-timer = lib.mkForce 3600; # 1 hour renewal for active clients
-    rebind-timer = lib.mkForce 7200; # 2 hour rebind
-    decline-probation-period = lib.mkForce 300; # 5 minutes runtime probation for DECLINED leases (down from 24h)
-    match-client-id = lib.mkForce false; # Match strictly by physical MAC address, preventing client-id churn pool bloat
-    host-reservation-identifiers = lib.mkForce [ "hw-address" ];
-    expired-leases-processing = {
-      reclaim-timer-wait-time = 10;
-      flush-reclaimed-timer-wait-time = 25;
-      hold-reclaimed-time = 300; # 5 minutes (down from 1 hour) before reclaimed leases re-enter free pool
-      max-reclaim-leases = 100;
-      max-reclaim-time = 250;
-    };
-  };
-
   # Keep Chrony available on both router nodes. Upstream explicitly leaves NTP
   # ownership as consumer policy, and this deployment wants standby time sync
   # continuity rather than a single-owner Chrony model.
   services.router-ntp.enable = true;
 
-  systemd.services.kea-dhcp4-server = lib.mkMerge [
-    (lib.mkIf ownLanServices {
-      serviceConfig.ExecStartPre = lib.mkBefore [
-        "+${ensureKeaLeaseState}"
-        "+${waitForKeaLanReady}"
-      ];
-    })
-    (lib.mkIf enableHa {
-      wantedBy = lib.mkForce [ ];
-      serviceConfig.ExecCondition = lib.mkBefore [
-        masterExecCondition
-      ];
-      after = [ "router-ha-initial-role-state.service" ];
-      requires = [ "router-ha-initial-role-state.service" ];
-    })
-  ];
+  systemd.services.kea-dhcp4-server = lib.mkIf enableHa {
+    wantedBy = lib.mkForce [ ];
+    serviceConfig.ExecCondition = lib.mkBefore [
+      masterExecCondition
+    ];
+    after = [ "router-ha-initial-role-state.service" ];
+    requires = [ "router-ha-initial-role-state.service" ];
+  };
   systemd.services.kea-dhcp-ddns-server = lib.mkIf enableHa {
     wantedBy = lib.mkForce [ ];
     serviceConfig.ExecCondition = lib.mkBefore [
@@ -607,54 +528,6 @@ in
   services.router-pangolin = {
     enable = true;
     openFirewall = true;
-    settings = {
-      server = {
-        # Default internal_port 3001 conflicts with Grafana (http_port = 3001)
-        internal_port = 3005;
-      };
-    };
-  };
-
-  systemd.services.pangolin = {
-    serviceConfig = {
-      # Loosen SocketBindDeny so Node process can bind listening TCP ports on localhost
-      SocketBindDeny = lib.mkForce [
-        "ipv4:udp"
-        "ipv6:udp"
-      ];
-    };
-    preStart = lib.mkBefore ''
-      # Ensure secret file exists
-      mkdir -p /etc/pangolin
-      if [ ! -f /etc/pangolin/pangolin.env ]; then
-        echo "SERVER_SECRET=$(${pkgs.openssl}/bin/openssl rand -hex 32)" > /etc/pangolin/pangolin.env
-        chmod 600 /etc/pangolin/pangolin.env
-        chown pangolin:fossorial /etc/pangolin/pangolin.env 2>/dev/null || true
-      fi
-
-      # Fix read-only permissions on .next directory from Nix store cp -rd and ensure skip setup marker
-      if [ -d /var/lib/pangolin/.next ]; then
-        chmod -R u+rwX /var/lib/pangolin/.next 2>/dev/null || true
-        touch /var/lib/pangolin/.next/.nix_skip_setup 2>/dev/null || true
-      fi
-
-      # Ensure database JSON references in server/db are linked from dist
-      mkdir -p /var/lib/pangolin/server/db
-      for json in ${config.services.pangolin.package}/share/pangolin/dist/*.json; do
-        if [ -f "$json" ]; then
-          ln -sf "$json" /var/lib/pangolin/server/db/$(basename "$json")
-        fi
-      done
-      chown -R pangolin:fossorial /var/lib/pangolin/server 2>/dev/null || true
-    '';
-  };
-
-  systemd.services.router-hardware-offload = {
-    postStart = ''
-      ${pkgs.ethtool}/bin/ethtool -K ${wanDevice} rx-udp-gro-forwarding on rx-gro-list off 2>/dev/null || true
-      ${pkgs.ethtool}/bin/ethtool -K ${lanDevice} rx-udp-gro-forwarding on rx-gro-list off 2>/dev/null || true
-      ${pkgs.ethtool}/bin/ethtool -K ${managementDevice} rx-udp-gro-forwarding on rx-gro-list off 2>/dev/null || true
-    '';
   };
 
   services.router-network-security = {
@@ -1123,31 +996,7 @@ in
     ];
   };
 
-  # nix-router-optimized currently writes `global.loglevel` into the ulogd
-  # config file, but ulogd 2.0.9 rejects that key. Keep the service-level
-  # logLevel, but override the generated config to omit the invalid entry.
-  # Also align plugins with what is actually shipped in pkgs.ulogd.
-  services.ulogd.settings = lib.mkForce {
-    global = {
-      logfile = "/var/log/ulogd/ulogd.log";
-      plugin = [
-        "${pkgs.ulogd}/lib/ulogd/ulogd_inppkt_NFLOG.so"
-        "${pkgs.ulogd}/lib/ulogd/ulogd_raw2packet_BASE.so"
-        "${pkgs.ulogd}/lib/ulogd/ulogd_filter_IFINDEX.so"
-        "${pkgs.ulogd}/lib/ulogd/ulogd_filter_IP2STR.so"
-        "${pkgs.ulogd}/lib/ulogd/ulogd_filter_PRINTPKT.so"
-        "${pkgs.ulogd}/lib/ulogd/ulogd_output_LOGEMU.so"
-      ];
-      stack = "log1:NFLOG,base1:BASE,ifi1:IFINDEX,ip2str1:IP2STR,print1:PRINTPKT,emu1:LOGEMU";
-    };
-    log1 = {
-      group = 1;
-    };
-    emu1 = {
-      file = "/var/log/ulogd/flow.log";
-      sync = 1;
-    };
-  };
+
 
   nixpkgs.hostPlatform = "x86_64-linux";
   system.stateVersion = "25.05";
