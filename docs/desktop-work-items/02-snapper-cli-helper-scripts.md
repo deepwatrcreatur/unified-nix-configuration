@@ -1,6 +1,6 @@
 # 02 Snapper CLI Interactive Helper Scripts
 
-Status: `ready`
+Status: `done`
 Suggested branch: `feat/snapper-helper-scripts`
 Priority: `medium`
 
