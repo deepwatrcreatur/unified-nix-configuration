@@ -105,6 +105,19 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
+
+    extraConfig.pipewire."92-low-latency" = {
+      "context.properties" = {
+        "default.clock.rate" = 48000;
+        "default.clock.quantum" = 1024;
+      };
+    };
+
+    extraConfig.pipewire-pulse."99-no-flat-volume" = {
+      "pulse.properties" = {
+        "pulse.flat-volume" = false;
+      };
+    };
   };
 
   services.orca.enable = false;
@@ -174,6 +187,7 @@
     omasnap
     gthumb
     ventoy-full
+    wiremix
     yt-dlp
     vivaldi
   ];
