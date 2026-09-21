@@ -8,5 +8,6 @@
 {
   imports = [
     ../../profiles/nixos/workstation.nix
+    ../../modules/nixos/specializations/safe-mode.nix
   ];
 }

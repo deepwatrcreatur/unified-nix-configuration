@@ -1,6 +1,6 @@
 # 01 Safe-Mode Recovery Specialization Aspect
 
-Status: `ready`
+Status: `done`
 Suggested branch: `feat/aspect-safe-mode`
 Priority: `high`
 

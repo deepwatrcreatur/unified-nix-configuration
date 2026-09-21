@@ -216,6 +216,7 @@
       "nixos-base"
       "home-manager-users"
       "workstation-desktop"
+      "safe-mode"
       "rclone-client"
     ];
   };
@@ -231,6 +232,7 @@
       "nixos-base"
       "home-manager-users"
       "workstation-desktop"
+      "safe-mode"
       "rclone-client"
     ];
   };
