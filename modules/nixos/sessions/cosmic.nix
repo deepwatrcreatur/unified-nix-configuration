@@ -53,6 +53,16 @@ in
 
   # Enable COSMIC desktop environment with native Wayland support
   services.desktopManager.cosmic.enable = true;
+  services.desktopManager.cosmic.showExcludedPkgsWarning = false;
+
+  environment.cosmic.excludePackages = with pkgs; [
+    cosmic-term
+    cosmic-store
+    cosmic-applibrary
+    cosmic-edit
+    cosmic-files
+    cosmic-player
+  ];
 
   # COSMIC is a native Wayland session. Prefer keeping X11 off, but do not use
   # mkForce so specialisations (e.g. GNOME fallback) can override cleanly.
