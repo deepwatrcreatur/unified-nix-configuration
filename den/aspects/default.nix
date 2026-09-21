@@ -29,4 +29,5 @@
   inference1-ollama = context: import ./inference1-ollama.nix context;
   router-router = context: import ./router-router.nix context;
   bootstrap-base = context: import ./bootstrap-base.nix context;
+  secure-travel = context: import ./secure-travel.nix context;
 }
