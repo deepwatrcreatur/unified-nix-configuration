@@ -18,6 +18,7 @@ This directory tracks modular enhancements to desktop profiles, audio, Btrfs sna
 8. [08 Ephemeral Guest Specialization Aspect](./08-ephemeral-guest-specialization-aspect.md) — `ready`
 9. [09 Compute-Performance Specialization Aspect](./09-compute-performance-specialization-aspect.md) — `ready`
 10. [10 Dendritic User Profiles Decoupling](./10-dendritic-user-profiles-decoupling.md) — `ready`
+11. [11 Emerald Niri + Noctalia Workstation Stack](./11-emerald-niri-noctalia-workstation-stack.md) — `ready`
 
 ## Recently Completed
 
