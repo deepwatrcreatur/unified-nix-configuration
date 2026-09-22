@@ -1,0 +1,348 @@
+# den/aspects/desktop-noctalia.nix
+# Noctalia v5 desktop shell aspect — full glass rice with wallpaper-driven Material 3 colors.
+# Inspired by and aligned with niii-san/nixos-config.
+{
+  primaryUser ? "deepwatrcreatur",
+  ...
+}:
+{
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
+let
+  noctaliaPkg = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default;
+in
+{
+  environment.systemPackages = [
+    noctaliaPkg
+    pkgs.cava
+    pkgs.brightnessctl
+    pkgs.networkmanagerapplet
+    pkgs.cliphist
+  ];
+
+  home-manager.sharedModules = [
+    inputs.noctalia.homeModules.default
+    (
+      { config, lib, pkgs, ... }:
+      {
+        programs.noctalia = {
+          enable = true;
+          package = noctaliaPkg;
+
+          settings = {
+            # ✦ SHELL — glass, shadows, silky animations
+            shell = {
+              font_family = "JetBrainsMono Nerd Font";
+              ui_scale = 1.0;
+              corner_radius_scale = 1.2;
+              avatar_path = "~/.face";
+              telemetry_enabled = false;
+              clipboard_enabled = true;
+              clipboard_auto_paste = "off";
+              time_format = "{:%I:%M %p}";
+              date_format = "%A, %d %B";
+
+              animation = {
+                enabled = true;
+                speed = 1.0;
+              };
+
+              shadow = {
+                direction = "down";
+                alpha = 0.65;
+              };
+
+              panel = {
+                transparency_mode = "glass";
+                borders = true;
+                shadow = true;
+                launcher_placement = "floating";
+                launcher_position = "center";
+                clipboard_placement = "floating";
+                clipboard_position = "center";
+                control_center_placement = "floating";
+                session_placement = "floating";
+                session_position = "center";
+                floating_offset = 10;
+                open_near_click_control_center = true;
+              };
+
+              launcher = {
+                app_grid = true;
+                categories = true;
+                show_icons = true;
+                sort_by_usage = true;
+                session_search = true;
+              };
+
+              screen_corners = {
+                enabled = true;
+                size = 24;
+              };
+
+              screenshot = {
+                save_to_file = true;
+                copy_to_clipboard = true;
+                freeze_screen = true;
+                directory = "~/Pictures/Screenshots";
+              };
+            };
+
+            # ✦ THEME — colors extracted live from wallpaper (Material 3 Tonal Spot)
+            theme = {
+              mode = "dark";
+              source = "wallpaper";
+              wallpaper_scheme = "m3-tonal-spot";
+              templates = {
+                builtin_ids = [
+                  "cava"
+                  "gtk3"
+                  "gtk4"
+                  "kcolorscheme"
+                  "qt"
+                  "niri"
+                  "foot"
+                  "btop"
+                  "starship"
+                ];
+              };
+            };
+
+            # ✦ WALLPAPER — animated transitions
+            wallpaper = {
+              enabled = true;
+              directory = "~/Pictures/Wallpapers";
+              fill_mode = "crop";
+              transition = [
+                "fade"
+                "disc"
+                "stripes"
+                "wipe"
+                "zoom"
+                "honeycomb"
+              ];
+              transition_duration = 1500;
+              edge_smoothness = 0.3;
+              transition_on_startup = true;
+            };
+
+            weather = {
+              enabled = true;
+              unit = "celsius";
+              effects = true;
+            };
+
+            nightlight = {
+              enabled = true;
+              force = false;
+              temperature_day = 4300;
+              temperature_night = 3800;
+            };
+
+            # ✦ NOTIFICATIONS & OSD — frosted glass toasts and vertical slider
+            notification = {
+              enable_daemon = true;
+              layer = "overlay";
+              background_opacity = 0.9;
+              offset_x = 16;
+              offset_y = 12;
+            };
+
+            osd = {
+              orientation = "vertical";
+              position_vertical = "center_right";
+              position = "top_right";
+              background_opacity = 0.9;
+              offset_x = 16;
+              offset_y = 12;
+            };
+
+            audio = {
+              enable_overdrive = false;
+            };
+
+            brightness = {
+              enable_ddcutil = false;
+            };
+
+            # ✦ LOCK SCREEN — blurred live desktop snapshot
+            lockscreen = {
+              enabled = true;
+              blurred_desktop = true;
+              blur_intensity = 0.8;
+              tint_intensity = 0.4;
+            };
+
+            control_center = {
+              shortcuts = [
+                { type = "wifi"; }
+                { type = "bluetooth"; }
+                { type = "caffeine"; }
+                { type = "power_profile"; }
+                { type = "nightlight"; }
+                { type = "wallpaper"; }
+              ];
+            };
+
+            # ✦ BAR — floating glass strip with widget groups
+            bar = {
+              main = {
+                position = "top";
+                thickness = 32;
+                background_opacity = 0.6;
+                margin_edge = 0;
+                margin_ends = 0;
+                padding = 10;
+                widget_spacing = 10;
+                radius = 10;
+                shadow = true;
+                auto_hide = false;
+                reserve_space = true;
+                font_weight = 600;
+
+                start = [
+                  "control-center"
+                  "gap"
+                  "clock"
+                  "gap"
+                  "weather"
+                  "gap"
+                  "gap"
+                  "active_window"
+                ];
+                center = [ "workspaces" ];
+                end = [
+                  "media"
+                  "media_viz"
+                  "gap"
+                  "cpu"
+                  "ram"
+                  "gap"
+                  "network"
+                  "bluetooth"
+                  "volume"
+                  "microphone"
+                  "brightness"
+                  "gap"
+                  "gap"
+                  "tray"
+                  "clipboard"
+                  "notifications"
+                  "gap"
+                  "battery"
+                  "caffeine"
+                  "session"
+                ];
+              };
+            };
+
+            # ✦ WIDGETS
+            widget = {
+              clock = {
+                format = "{:%H:%M:%S}  󰃭 {:%a %d %b}";
+                tooltip_format = "{:%A, %d %B %Y — %I:%M:%S %p}";
+                color = "primary";
+              };
+
+              weather = {
+                show_condition = true;
+                show_temperature = true;
+                color = "tertiary";
+              };
+
+              gap = {
+                type = "spacer";
+                length = 16;
+              };
+
+              media = {
+                min_length = 80;
+                max_length = 150;
+                art_size = 24;
+                title_scroll = "always";
+                hide_when_no_media = true;
+              };
+
+              media_viz = {
+                type = "audio_visualizer";
+                width = 60;
+                bands = 20;
+                mirrored = true;
+                centered = true;
+                show_when_idle = false;
+                color_1 = "primary";
+                color_2 = "tertiary";
+              };
+
+              active_window = {
+                display = "icon_and_text";
+                max_length = 300;
+                title_scroll = "on_hover";
+                color = "secondary";
+              };
+
+              workspaces = {
+                display = "name";
+                max_label_chars = 10;
+                labels_only_when_occupied = true;
+                focused_color = "primary";
+                occupied_color = "tertiary";
+                empty_color = "outline";
+                pill_scale = 1.2;
+                active_pill_size = 2.4;
+                hide_when_empty = true;
+              };
+
+              tray = {
+                drawer = true;
+              };
+
+              cpu = {
+                type = "sysmon";
+                stat = "cpu_usage";
+                display = "gauge";
+                show_label = false;
+                highlight_color = "error";
+              };
+
+              ram = {
+                type = "sysmon";
+                stat = "ram_pct";
+                display = "gauge";
+                show_label = false;
+                highlight_color = "error";
+              };
+
+              network = {
+                show_label = true;
+              };
+
+              microphone = {
+                type = "volume";
+                device = "input";
+                mute_color = "error";
+              };
+
+              battery = {
+                display_mode = "graphic";
+                show_label = true;
+                warning_color = "error";
+              };
+
+              notifications = {
+                hide_when_no_unread = false;
+              };
+
+              session = {
+                icon_color = "error";
+              };
+            };
+          };
+        };
+      }
+    )
+  ];
+}

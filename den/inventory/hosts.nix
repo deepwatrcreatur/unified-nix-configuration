@@ -28,12 +28,16 @@
     name = "emerald";
     system = "x86_64-linux";
     hostPath = ../hosts/emerald;
+    isDesktop = true;
     mode = "aspect";
     aspectsList = [
       "nixos-base"
       "attic-cache-core"
       "attic-cache-build-server"
       "attic-cache-home-manager"
+      "home-manager-users"
+      "workstation-niri"
+      "desktop-noctalia"
     ];
   };
 

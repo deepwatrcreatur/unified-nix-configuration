@@ -29,4 +29,6 @@
   inference1-ollama = context: import ./inference1-ollama.nix context;
   router-router = context: import ./router-router.nix context;
   bootstrap-base = context: import ./bootstrap-base.nix context;
+  workstation-niri = context: import ./workstation-niri.nix context;
+  desktop-noctalia = context: import ./desktop-noctalia.nix context;
 }

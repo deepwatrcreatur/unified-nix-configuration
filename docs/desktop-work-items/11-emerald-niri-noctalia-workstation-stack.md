@@ -1,6 +1,6 @@
 # 11 Emerald Niri + Noctalia Workstation Stack
 
-Status: `ready`
+Status: `done`
 Suggested branch: `feat/aspect-niri-noctalia`
 Priority: `medium`
 
