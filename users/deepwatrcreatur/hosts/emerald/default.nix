@@ -22,8 +22,20 @@
   home.homeDirectory = "/home/deepwatrcreatur"; # Home directory for the root user
 
   # Add packages
-  home.packages = [
+  home.packages = with pkgs; [
+    omasnap
+    flameshot
+    vivaldi
   ];
+
+  programs.firefox = {
+    enable = true;
+    configPath = ".mozilla/firefox";
+  };
+
+  programs.google-chrome = {
+    enable = true;
+  };
 
   # Configure programs
   programs.bash.enable = true;

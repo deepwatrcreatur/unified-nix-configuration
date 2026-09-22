@@ -145,6 +145,7 @@ in
     obsidian
     obsidian-export
     omasnap
+    flameshot
     rustdesk
     virt-viewer
     xhost # X11 host access control for DeskFlow
