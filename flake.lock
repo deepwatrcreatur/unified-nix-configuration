@@ -1628,6 +1628,52 @@
         "type": "github"
       }
     },
+    "nix-omarchy-iphone-mirror": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1790114235,
+        "narHash": "sha256-yQ5w86exekM10unKa+HB/Vt7DC5kzyNXVxLUGCqw/Ng=",
+        "owner": "deepwatrcreatur",
+        "repo": "nix-omarchy-iphone-mirror",
+        "rev": "ad204ee3739e76715685922117aa5c151b0f8c50",
+        "type": "github"
+      },
+      "original": {
+        "owner": "deepwatrcreatur",
+        "repo": "nix-omarchy-iphone-mirror",
+        "type": "github"
+      }
+    },
+    "nix-omarchy-screen-mirroring": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1790114139,
+        "narHash": "sha256-domA84BldW3RgbBgKGc9khb94kWpZLoXVBKDtQp0JEw=",
+        "owner": "deepwatrcreatur",
+        "repo": "nix-omarchy-screen-mirroring",
+        "rev": "f7f91701ebd382fb3e05d84598b8e09f8996bde7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "deepwatrcreatur",
+        "repo": "nix-omarchy-screen-mirroring",
+        "type": "github"
+      }
+    },
     "nix-router-optimized": {
       "inputs": {
         "nixpkgs": [
@@ -2228,6 +2274,8 @@
         "nix-lightpanda": "nix-lightpanda",
         "nix-linuxbrew": "nix-linuxbrew",
         "nix-markit": "nix-markit",
+        "nix-omarchy-iphone-mirror": "nix-omarchy-iphone-mirror",
+        "nix-omarchy-screen-mirroring": "nix-omarchy-screen-mirroring",
         "nix-router-optimized": "nix-router-optimized",
         "nix-rtk": "nix-rtk",
         "nix-semaphore": "nix-semaphore",

@@ -11,9 +11,16 @@ den.mkInventoryHostModule {
   ];
   extraImports = [
     inputs.disko.nixosModules.disko
+    inputs.nix-omarchy-screen-mirroring.nixosModules.default
+    inputs.nix-omarchy-iphone-mirror.nixosModules.default
     ../../../hosts/nixos/phoenix/disko.nix
     ../../../hosts/nixos/phoenix/hardware-configuration.nix
     ../../../hosts/nixos/phoenix/networking.nix
+
+    {
+      services.omarchy-screen-mirroring.enable = true;
+      services.omarchy-iphone-mirror.enable = true;
+    }
 
     {
       boot.loader = {

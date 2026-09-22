@@ -226,6 +226,18 @@
       url = "github:noctalia-dev/noctalia";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nix-omarchy-screen-mirroring = {
+      url = "github:deepwatrcreatur/nix-omarchy-screen-mirroring";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+    };
+
+    nix-omarchy-iphone-mirror = {
+      url = "github:deepwatrcreatur/nix-omarchy-iphone-mirror";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+    };
   };
 
   outputs =
