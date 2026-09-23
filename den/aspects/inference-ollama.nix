@@ -33,6 +33,14 @@ _context:
   # Disable power management for Tesla P40 stability
   hardware.nvidia.powerManagement.enable = lib.mkDefault false;
 
+  # Ensure static ollama user and group exist so systemd-tmpfiles rules in tesla-inference succeed
+  users.users.ollama = {
+    isSystemUser = true;
+    group = "ollama";
+    home = "/var/lib/ollama";
+  };
+  users.groups.ollama = { };
+
   # Ensure overcommit memory allows large LLM model mappings without aborting
   boot.kernel.sysctl."vm.overcommit_memory" = 1;
 }
