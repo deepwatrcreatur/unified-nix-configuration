@@ -9,14 +9,15 @@
   systemd.network = {
     enable = true;
     networks = {
-      # 5GbE Realtek onboard interface (enp9s0, MAC 34:5a:60:01:5e:f8)
+      # 5GbE Realtek onboard interface (MAC 34:5a:60:01:5e:f8)
       # Primary physical network interface on MSI Tomahawk.
+      # Obtains 10.10.11.55 via DHCP reservation on router.
       "10-realtek-5g" = {
         matchConfig = {
           MACAddress = "34:5a:60:01:5e:f8";
         };
         networkConfig = {
-          DHCP = "ipv6";
+          DHCP = "yes";
           IPv6AcceptRA = true;
           MulticastDNS = true;
           DNS = [
@@ -26,30 +27,13 @@
           ];
           Domains = [ "deepwatercreature.com" ];
         };
-        address = [
-          "10.10.11.55/16"
-        ];
-        routes = [
-          {
-            Gateway = "10.10.10.1";
-            GatewayOnLink = true;
-            Metric = 100;
-          }
-        ];
+        dhcpV4Config = {
+          RouteMetric = 100;
+          UseDNS = true;
+          UseRoutes = true;
+        };
         linkConfig = {
           RequiredForOnline = lib.mkForce "routable";
-        };
-      };
-
-      # Deprioritize/disable secondary physical ethernet interfaces (e.g. 10Gb card before replacement with GPU)
-      # to prevent ARP flux and conflicting DHCP leases on 10.10.0.0/16
-      "50-ethernet" = {
-        networkConfig = {
-          DHCP = lib.mkForce "no";
-          IPv6AcceptRA = lib.mkForce false;
-        };
-        linkConfig = {
-          RequiredForOnline = lib.mkForce "no";
         };
       };
     };
