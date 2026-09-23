@@ -25,6 +25,9 @@ den.mkInventoryHostModule {
         firefox
         vivaldi
       ];
+      # Prevent AMD Raphael iGPU ring timeouts (gfx_0.1.0 timeout) during GPU power state transitions
+      boot.kernelParams = [ "amdgpu.gfxoff=0" ];
+
       boot.loader.systemd-boot.enable = lib.mkDefault true;
       boot.loader.efi.canTouchEfiVariables = lib.mkDefault true;
       programs.linuxbrew = {
