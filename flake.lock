@@ -1638,11 +1638,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1790114235,
-        "narHash": "sha256-yQ5w86exekM10unKa+HB/Vt7DC5kzyNXVxLUGCqw/Ng=",
+        "lastModified": 1790123567,
+        "narHash": "sha256-0ukiNclKevVssK1SwiiaGNAVq9qLK+Pw21drxvrQz1A=",
         "owner": "deepwatrcreatur",
         "repo": "nix-omarchy-iphone-mirror",
-        "rev": "ad204ee3739e76715685922117aa5c151b0f8c50",
+        "rev": "d0a99cfe9eae468ae1e574ac05b9b5d9b8187a98",
         "type": "github"
       },
       "original": {
