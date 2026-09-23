@@ -31,7 +31,6 @@ let
     builtins.filter
       (name:
         !(builtins.elem name [
-          "inference-fresh"
           "proxmox-root"
         ]))
       inventoryHostNames;

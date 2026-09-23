@@ -38,6 +38,7 @@
       "home-manager-users"
       "workstation-niri"
       "desktop-noctalia"
+      "inference"
     ];
   };
 
@@ -104,54 +105,6 @@
     aspectsList = [
       "nixos-base"
       "bootstrap-base"
-    ];
-  };
-
-  inference1 = {
-    kind = "nixos";
-    name = "inference1";
-    system = "x86_64-linux";
-    hostPath = ../hosts/inference1;
-    mode = "aspect";
-    aspectsList = [
-      "inference-vm-base"
-      "inference-vm-nvidia"
-      "inference1-ollama"
-    ];
-  };
-
-  inference2 = {
-    kind = "nixos";
-    name = "inference2";
-    system = "x86_64-linux";
-    hostPath = ../hosts/inference2;
-    mode = "aspect";
-    aspectsList = [
-      "inference-vm-base"
-      "inference-vm-nvidia"
-    ];
-  };
-
-  inference3 = {
-    kind = "nixos";
-    name = "inference3";
-    system = "x86_64-linux";
-    hostPath = ../hosts/inference3;
-    mode = "aspect";
-    aspectsList = [
-      "inference-vm-base"
-      "inference-vm-nvidia"
-    ];
-  };
-
-  inference-fresh = {
-    kind = "nixos";
-    name = "inference-fresh";
-    system = "x86_64-linux";
-    hostPath = ../hosts/inference-fresh;
-    mode = "aspect";
-    aspectsList = [
-      "inference-vm-base"
     ];
   };
 

@@ -358,29 +358,6 @@
       description = "Phoenix workstation";
     };
 
-    # Inference Servers
-    inference1 = {
-      ip = "10.10.11.131";
-      sshUser = "deepwatrcreatur";
-      dhcpReservation = {
-        macAddress = "BC:24:11:E4:45:B0";
-        scope = "LAN";
-      };
-      description = "GPU inference VM 1";
-    };
-
-    inference2 = {
-      ip = "10.10.11.132";
-      sshUser = "deepwatrcreatur";
-      description = "GPU inference VM 2";
-    };
-
-    inference3 = {
-      ip = "10.10.11.133";
-      sshUser = "deepwatrcreatur";
-      description = "GPU inference VM 3";
-    };
-
     # External/special hosts
     infisical = {
       ip = null;  # Uses DNS name

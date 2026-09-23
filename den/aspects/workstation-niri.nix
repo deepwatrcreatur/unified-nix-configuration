@@ -65,7 +65,7 @@ in
         user = primaryUser;
       };
       default_session = {
-        command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --remember-user --cmd ${pkgs.niri}/bin/niri-session";
+        command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --remember-session --cmd ${pkgs.niri}/bin/niri-session";
         user = "greeter";
       };
     };

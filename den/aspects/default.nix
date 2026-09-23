@@ -24,9 +24,8 @@
   podman-containers = context: import ./podman-containers.nix context;
   podman-lxc-suppressions = context: import ./podman-lxc-suppressions.nix context;
   workstation-desktop = context: import ./workstation-desktop.nix context;
-  inference-vm-base = context: import ./inference-vm-base.nix context;
-  inference-vm-nvidia = context: import ./inference-vm-nvidia.nix context;
-  inference1-ollama = context: import ./inference1-ollama.nix context;
+  inference = context: import ./inference-ollama.nix context;
+  inference-ollama = context: import ./inference-ollama.nix context;
   router-router = context: import ./router-router.nix context;
   bootstrap-base = context: import ./bootstrap-base.nix context;
   workstation-niri = context: import ./workstation-niri.nix context;
