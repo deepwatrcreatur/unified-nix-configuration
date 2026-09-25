@@ -30,4 +30,5 @@
   bootstrap-base = context: import ./bootstrap-base.nix context;
   workstation-niri = context: import ./workstation-niri.nix context;
   desktop-noctalia = context: import ./desktop-noctalia.nix context;
+  safe-mode = context: import ./safe-mode.nix context;
 }
