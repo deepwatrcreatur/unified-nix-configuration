@@ -173,6 +173,9 @@
       "nixos-base"
       "home-manager-users"
       "workstation-desktop"
+      "desktop-cosmic"
+      "hardware-printer-phoenix-m477"
+      "btrfs-snapper"
       "safe-mode"
       "rclone-client"
     ];
@@ -189,6 +192,9 @@
       "nixos-base"
       "home-manager-users"
       "workstation-desktop"
+      "desktop-cosmic"
+      "hardware-printer-phoenix-m477"
+      "btrfs-snapper"
       "safe-mode"
       "rclone-client"
     ];

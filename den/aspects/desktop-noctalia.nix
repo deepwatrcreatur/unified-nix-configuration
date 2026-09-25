@@ -211,6 +211,8 @@ in
                 font_weight = 600;
 
                 start = [
+                  "launcher"
+                  "gap"
                   "control-center"
                   "gap"
                   "clock"
@@ -248,6 +250,10 @@ in
 
             # ✦ WIDGETS
             widget = {
+              launcher = {
+                glyph = "apps";
+              };
+
               clock = {
                 format = "{:%H:%M:%S}  󰃭 {:%a %d %b}";
                 tooltip_format = "{:%A, %d %B %Y — %I:%M:%S %p}";

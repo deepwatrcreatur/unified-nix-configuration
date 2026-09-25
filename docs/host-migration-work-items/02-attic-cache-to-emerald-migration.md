@@ -1,6 +1,6 @@
 # 02 Attic Cache To Emerald Migration
 
-Status: `in-progress`
+Status: `done`
 Suggested branch: `feat/emerald-cache-migration`
 Priority: `high`
 Depends on: `01-decouple-hostname-role-checks`

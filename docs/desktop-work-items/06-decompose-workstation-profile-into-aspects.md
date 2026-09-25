@@ -1,6 +1,6 @@
 # 06 Decompose Workstation Profile into Granular Aspects
 
-Status: `ready`
+Status: `done`
 Suggested branch: `feat/aspect-workstation-decomposition`
 Priority: `high`
 

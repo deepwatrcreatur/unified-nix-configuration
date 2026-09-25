@@ -30,6 +30,9 @@ _context:
     };
   };
 
+  # Tesla P40 (Pascal architecture) is supported via NVIDIA 580.xx Legacy drivers
+  hardware.nvidia.package = lib.mkForce config.boot.kernelPackages.nvidiaPackages.legacy_580;
+
   # Disable power management for Tesla P40 stability
   hardware.nvidia.powerManagement.enable = lib.mkDefault false;
 
