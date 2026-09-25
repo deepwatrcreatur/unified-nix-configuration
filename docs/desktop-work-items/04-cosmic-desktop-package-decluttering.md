@@ -1,6 +1,6 @@
 # 04 COSMIC Desktop Package Decluttering
 
-Status: `ready`
+Status: `done`
 Suggested branch: `feat/cosmic-exclude-packages`
 Priority: `medium`
 
