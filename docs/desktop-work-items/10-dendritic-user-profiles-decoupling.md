@@ -1,6 +1,6 @@
 # 10 Dendritic User Profiles Decoupling
 
-Status: `ready`
+Status: `done`
 Suggested branch: `feat/aspect-user-profiles`
 Priority: `medium`
 
