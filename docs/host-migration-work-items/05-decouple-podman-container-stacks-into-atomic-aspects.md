@@ -1,6 +1,6 @@
 # 05 Decouple Podman Container Stacks into Atomic Aspects
 
-Status: `ready`
+Status: `done`
 Suggested branch: `feat/aspect-atomic-containers`
 Priority: `medium`
 

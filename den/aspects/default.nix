@@ -22,7 +22,16 @@
   github-token-client = context: import ./github-token-client.nix context;
   rustdesk-server = context: import ./rustdesk-server.nix context;
   podman-containers = context: import ./podman-containers.nix context;
+  podman-base = context: import ./podman-base.nix context;
   podman-lxc-suppressions = context: import ./podman-lxc-suppressions.nix context;
+  service-plex = context: import ./service-plex.nix context;
+  service-paperless = context: import ./service-paperless.nix context;
+  service-homeassistant = context: import ./service-homeassistant.nix context;
+  service-nightscout = context: import ./service-nightscout.nix context;
+  service-graylog = context: import ./service-graylog.nix context;
+  service-scrypted = context: import ./service-scrypted.nix context;
+  service-netalertx = context: import ./service-netalertx.nix context;
+  service-librelinkup = context: import ./service-librelinkup.nix context;
   workstation-desktop = context: import ./workstation-desktop.nix context;
   inference = context: import ./inference-ollama.nix context;
   inference-ollama = context: import ./inference-ollama.nix context;
