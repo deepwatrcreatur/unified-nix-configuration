@@ -1,6 +1,6 @@
 # 07 Deep-Focus Specialization Aspect
 
-Status: `ready`
+Status: `done`
 Suggested branch: `feat/aspect-deep-focus`
 Priority: `medium`
 
