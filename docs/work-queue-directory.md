@@ -8,20 +8,14 @@ right repository or entry path.
 
 ## Authority Rule
 
-Prefer the queue docs that live inside the target repository.
+In `unified-nix-configuration`, **`beads-rust` (`br`) is the unified issue tracker and task-state authority** (backed by `.beads/issues.jsonl`).
+Work item markdown documents under `docs/*-work-items/` serve as detailed architecture and implementation specifications, linked directly from beads via the `external_ref` field.
 
-This directory is for discoverability and cross-repo navigation.
-It is not meant to replace repo-local queue ownership rules or rankings.
-
-When a target repo has both:
-
-- a `START-HERE.md`
-- and a queue `README.md`
-
-use them as:
-
-- `START-HERE.md` for onboarding and claiming rules
-- `README.md` for the ranked queue or status index
+Use `beads-rust` for all state operations:
+- Query ready tasks: `beads-rust ready --label <domain>` (domains: `desktop`, `host-migration`, `tooling`, `router`)
+- Claim a task: `BR_ACTOR=<actor> beads-rust claim <id>`
+- Close a task: `beads-rust close <id> --reason "<summary>"`
+- Export state: `beads-rust sync --flush-only`
 
 ## Queue Entry Points
 
