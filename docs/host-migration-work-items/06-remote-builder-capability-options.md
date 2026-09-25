@@ -1,6 +1,6 @@
 # 06 Remote Builder Capability Options
 
-Status: `ready`
+Status: `done`
 Suggested branch: `feat/remote-builder-capabilities`
 Priority: `medium`
 

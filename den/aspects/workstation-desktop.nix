@@ -4,10 +4,12 @@
 # Hardware (hardware-configuration.nix + networking.nix) is injected
 # via extraImports in each leaf host's mkHostModule call.
 { ... }:
-{ ... }:
+{ lib, ... }:
 {
   imports = [
     ../../profiles/nixos/workstation.nix
     ../../modules/nixos/specializations/safe-mode.nix
   ];
+
+  myModules.builder.canUseRemoteBuilder = lib.mkDefault true;
 }

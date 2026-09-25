@@ -24,18 +24,15 @@ let
   isContainer = config.boot.isContainer or false;
 
   # Detect if this is the attic-cache server itself (avoid circular dependency).
-  # Uses the explicit option set by den/aspects/attic-cache-core.nix, falling back
-  # to the legacy hostName for backward compatibility during migration.
-  isCacheServer =
-    (config.myModules.caches.isCacheServer or false)
-    || (config.networking.hostName or "" == "attic-cache");
+  # Uses the explicit option set by den/aspects/attic-cache-core.nix.
+  isCacheServer = config.myModules.caches.isCacheServer or false;
   hasNixCiNetrc = builtins.pathExists nixCiNetrcFile;
 
   enableCaches = config.myModules.caches.enable or true;
   enableAttic = enableCaches && (config.myModules.caches.enableAttic or true);
   enableNixCi = enableCaches && (config.myModules.caches.enableNixCi or true) && hasNixCiNetrc;
 
-  canUseRemoteBuilder = remoteBuilder.canUse (config.networking.hostName or "");
+  canUseRemoteBuilder = remoteBuilder.canUse config;
   daemonExperimentalFeatures =
     [
       "nix-command"

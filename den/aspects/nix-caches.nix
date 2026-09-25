@@ -22,6 +22,14 @@
     };
   };
 
+  options.myModules.builder = {
+    canUseRemoteBuilder = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Whether this host can distribute builds to remote builder machines.";
+    };
+  };
+
   config = lib.mkIf config.myModules.caches.enable {
     # Nothing here: behavior is implemented in modules/common/nix-settings.nix
   };

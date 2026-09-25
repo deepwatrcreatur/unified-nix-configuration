@@ -2,8 +2,7 @@
 
 let
   remoteBuilder = import ../../../lib/remote-builder.nix { inherit pkgs; };
-  hostName = config.networking.hostName or "";
-  canUseRemoteBuilder = remoteBuilder.canUse hostName;
+  canUseRemoteBuilder = remoteBuilder.canUse config;
 in
 {
   config = lib.mkIf canUseRemoteBuilder {

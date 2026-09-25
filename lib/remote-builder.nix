@@ -1,11 +1,13 @@
 { pkgs ? null }:
 let
-  # NixOS hosts that can use remote building (via agenix)
+  # Fallback NixOS hostnames for legacy string-based checks
   nixosHosts = [
     "homeserver"
     "router"
     "workstation"
     "phoenix"
+    "sapphire"
+    "ruby"
   ];
 
   # Non-NixOS hosts that can use remote building (Proxmox, Ubuntu)
@@ -34,6 +36,19 @@ in
     else
       "/root/.ssh/nix-remote";
 
-  canUse = hostName: !(builtins.elem hostName cacheHosts) && builtins.elem hostName supportedHosts;
-  canUseNixOS = hostName: builtins.elem hostName nixosHosts;
+  canUse =
+    hostOrConfig:
+    if builtins.isAttrs hostOrConfig then
+      (hostOrConfig.myModules.builder.canUseRemoteBuilder or false)
+      && !(hostOrConfig.myModules.caches.isCacheServer or false)
+    else
+      !(builtins.elem hostOrConfig cacheHosts) && builtins.elem hostOrConfig supportedHosts;
+
+  canUseNixOS =
+    hostOrConfig:
+    if builtins.isAttrs hostOrConfig then
+      (hostOrConfig.myModules.builder.canUseRemoteBuilder or false)
+      && !(hostOrConfig.myModules.caches.isCacheServer or false)
+    else
+      builtins.elem hostOrConfig nixosHosts;
 }
