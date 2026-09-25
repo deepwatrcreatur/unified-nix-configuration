@@ -28,6 +28,7 @@ in
     ];
 
     networking.firewall.allowedTCPPorts = lib.mkIf config.networking.firewall.enable [ 5201 ];
+    networking.firewall.allowedUDPPorts = lib.mkIf config.networking.firewall.enable [ 5201 ];
 
     systemd.services.iperf3 = {
       description = "iPerf3 Server";

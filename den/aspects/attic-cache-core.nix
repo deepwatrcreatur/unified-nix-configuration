@@ -16,8 +16,8 @@ in
 
   myModules.caches.isCacheServer = true;
 
-  # Ensure atticd binary cache port (5001) is automatically opened on any host with this aspect
-  networking.firewall.allowedTCPPorts = [ 5001 ];
+  # Ensure binary cache ports (5001 for atticd, 5000 for nix-serve) are automatically opened
+  networking.firewall.allowedTCPPorts = [ 5000 5001 ];
 
   host.services.iperf3 = {
     enable = true;

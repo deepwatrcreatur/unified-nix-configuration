@@ -14,16 +14,16 @@ Edit `inventory/hosts.yml` to configure your hosts. Hosts are grouped by rebuild
 
 | Group | Rebuild Command | Hosts |
 |-------|-----------------|-------|
-| `nixos` | `nixos-rebuild switch` | router, homeserver, workstation, attic-cache |
-| `nixos_inference` | `nixos-rebuild switch` | inference1, inference2, inference3 |
-| `darwin` | `darwin-rebuild switch` | hackintosh, macminim4 |
-| `proxmox` | `home-manager switch` | pve-lattitude, pve-rog, pve-strix, pve-tomahawk, pve-z170 |
+| `nixos` | `nixos-rebuild switch` | emerald, phoenix, router, router-backup, homeserver, authentik-host, vaglio, rustdesk, podman, workstation |
+| `cache` | `nixos-rebuild switch` | emerald (attic binary cache, remote builder, Niri/Noctalia desktop) |
+| `darwin` | `darwin-rebuild switch` | macminim4 |
+| `proxmox` | `home-manager switch` | pve-elitedesk, pve-lattitude, pve-rog, pve-strix, pve-z170 |
 
 ## Playbooks
 
 ### rebuild-all.yml
 
-Pulls latest changes and rebuilds all hosts.
+Pulls latest changes and rebuilds all active hosts.
 
 ```bash
 # Rebuild everything
@@ -33,7 +33,7 @@ ansible-playbook -i inventory/hosts.yml playbooks/rebuild-all.yml
 ansible-playbook -i inventory/hosts.yml playbooks/rebuild-all.yml --limit nixos
 
 # Limit to specific hosts
-ansible-playbook -i inventory/hosts.yml playbooks/rebuild-all.yml --limit "router,homeserver"
+ansible-playbook -i inventory/hosts.yml playbooks/rebuild-all.yml --limit "emerald,phoenix,router"
 
 # Skip git pull (just rebuild with current state)
 ansible-playbook -i inventory/hosts.yml playbooks/rebuild-all.yml -e skip_git_pull=true
@@ -47,7 +47,7 @@ ansible-playbook -i inventory/hosts.yml playbooks/rebuild-all.yml --check
 
 ### rebuild-cache-first.yml
 
-Rebuilds attic-cache first to ensure the binary cache is updated, then rebuilds all other hosts (3 at a time).
+Rebuilds the binary cache host (`emerald`) first to ensure prebuilt derivations are cached, then rebuilds all other hosts (3 at a time).
 
 ```bash
 ansible-playbook -i inventory/hosts.yml playbooks/rebuild-cache-first.yml
@@ -55,7 +55,7 @@ ansible-playbook -i inventory/hosts.yml playbooks/rebuild-cache-first.yml
 
 ### update-proxmox.yml
 
-Pulls latest changes and runs `home-manager switch` on the 5 Proxmox hosts only.
+Pulls latest changes and runs `home-manager switch` on the 5 Proxmox hosts (`pve-elitedesk`, `pve-lattitude`, `pve-rog`, `pve-strix`, `pve-z170`).
 This is the simplest playbook to point Semaphore at for routine PVE updates.
 
 ```bash
@@ -83,59 +83,30 @@ ansible-playbook -i inventory/hosts.yml playbooks/git-pull-only.yml
 Bootstraps decrypted cache and token files needed for Nix and git auth.
 
 For Proxmox hosts, this now also writes `/nix/var/determinate/netrc` directly so
-`cache.nix-ci.com` and `attic-cache` auth works even if `proxmox-root`
+`cache.nix-ci.com` and `attic-cache` (`emerald`) auth works even if `proxmox-root`
 Home Manager activation is blocked by an unrelated package conflict.
 
 ```bash
 ansible-playbook -i inventory/hosts.yml playbooks/setup-secrets.yml --limit proxmox
 ```
 
-### bootstrap-nixos-router.yml
+### configure-proxmox-zfs.yml
 
-Bootstraps `router` or `router-backup` from a NixOS live ISO using
-`nixos-anywhere`. Handles SSH agent exhaustion and the optional attic-cache
-pre-configuration needed when DNS is unavailable (which it is when you're
-installing the machine that provides DNS).
+Configures ZFS RAM logging on Proxmox hypervisor nodes to eliminate debug write wear on root SSDs.
 
 ```bash
-# Basic install
-ansible-playbook -i inventory/hosts.yml playbooks/bootstrap-nixos-router.yml \
-  -e install_target=10.10.21.82 -e flake_target=router
-
-# With attic-cache by IP (avoids building everything locally, saves ~30 min)
-ansible-playbook -i inventory/hosts.yml playbooks/bootstrap-nixos-router.yml \
-  -e install_target=10.10.21.82 -e flake_target=router -e use_attic_cache=true
+ansible-playbook -i inventory/hosts.yml playbooks/configure-proxmox-zfs.yml
 ```
 
-See `docs/router-nixos-anywhere-lessons.md` for the full lessons-learned
-writeup, including management network access after install.
+---
 
-### bootstrap-nixos-inference.yml
+## Deprecated Playbooks (`playbooks/deprecated/`)
 
-Bootstraps `inference1`, `inference2`, or `inference3` from a NixOS live ISO
-using `nixos-anywhere`. This is the first-install path, not the day-2 rebuild
-path.
+The following playbooks were designed for earlier virtualized architectures and have been archived in [`playbooks/deprecated/`](playbooks/deprecated/README.md):
 
-For Proxmox, use plain `OVMF` on `q35` with the installer ISO first and the
-system disk second. Do not use Secure Boot, pre-enrolled keys, or a persistent
-`efidisk0` for these inference VMs.
-
-It runs from the control machine and updates the repo working tree with:
-
-- refreshed `hardware-configuration.nix`
-- `ssh-keys/agenix-machine-identities/<host>.pub`
-- rekeyed `.age` files when recipients changed
-
-```bash
-# Standard install
-ansible-playbook -i inventory/hosts.yml playbooks/bootstrap-nixos-inference.yml --limit inference1
-
-# With attic-cache by IP (when DNS/router is unavailable)
-ansible-playbook -i inventory/hosts.yml playbooks/bootstrap-nixos-inference.yml \
-  --limit inference1 -e use_attic_cache=true
-```
-
-See `../docs/inference-vm-bootstrap.md` for the full workflow.
+- **`bootstrap-nixos-router.yml`**: Retired because the router is deployed on **baremetal hardware** (Minisforum/Protectli) via the declarative `router-router` aspect (`den/aspects/router-router.nix`) and Disko partitioning (`hosts/nixos/router/disko.nix`) rather than a Proxmox VM with SCSI disks. Bootstrapping is handled via `just install router <target-ip>` and day-2 updates via standard `nixos-rebuild switch --flake .#router` or Ansible `rebuild-all.yml --limit router`.
+- **`create-nixos-vm-with-igpu.yml`**: Retired because workstations (`phoenix`, `emerald`) run NixOS directly on baremetal hardware rather than Proxmox VMs with PCI passthrough.
+- **`bootstrap-nixos-inference.yml`**: Retired because inference workloads are now aspect-driven (`inference-ollama` on baremetal `emerald`), and `inference1..3` Proxmox VMs are no longer active flake targets.
 
 ## Git Handling
 

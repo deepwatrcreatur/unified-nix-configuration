@@ -73,4 +73,7 @@
     21119 # Clipboard
     5443 # Relay
   ];
+  networking.firewall.allowedUDPPorts = [
+    21116 # Heartbeat / ID server NAT traversal
+  ];
 }

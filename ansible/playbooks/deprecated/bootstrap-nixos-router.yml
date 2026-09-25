@@ -1,4 +1,16 @@
 ---
+# =============================================================================
+# DEPRECATED: This playbook was designed for bootstrapping router in a Proxmox VM.
+# The router now runs on baremetal hardware (Minisforum/Protectli) using the
+# dendritic aspect 'router-router' (den/aspects/router-router.nix) and declarative
+# Disko partitioning (hosts/nixos/router/disko.nix) with physical NICs.
+#
+# Replacement:
+#   First-time install:  just install router <target-ip>
+#   Day-2 rebuilds:      nixos-rebuild switch --flake .#router
+#                        (or ansible-playbook -i inventory/hosts.yml playbooks/rebuild-all.yml --limit router)
+# =============================================================================
+#
 # Bootstrap router/router-backup NixOS hosts from a live ISO using nixos-anywhere.
 #
 # Prerequisites:

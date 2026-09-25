@@ -1,4 +1,10 @@
 ---
+# =============================================================================
+# DEPRECATED: This playbook was an experimental tool to provision Proxmox VMs
+# with iGPU passthrough on pve-z170. Workstations (phoenix, emerald) run
+# NixOS on baremetal hardware directly, rendering Proxmox desktop VMs obsolete.
+# =============================================================================
+#
 # Create a VM with iGPU passthrough for testing graphics/display
 #
 # Usage:

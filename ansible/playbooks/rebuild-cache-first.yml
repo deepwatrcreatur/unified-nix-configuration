@@ -1,12 +1,12 @@
 ---
-# Rebuild attic-cache first, then all other hosts
+# Rebuild binary cache host (emerald) first, then all other hosts
 # This ensures the binary cache is up-to-date before other hosts rebuild
 #
 # Usage:
 #   ansible-playbook -i inventory/hosts.yml playbooks/rebuild-cache-first.yml
 
-- name: Update attic-cache first
-  hosts: attic-cache
+- name: Update binary cache host first (emerald)
+  hosts: cache:emerald:attic-cache
   gather_facts: true
 
   vars:
@@ -30,7 +30,7 @@
         msg: "{{ nixos_rebuild.stdout_lines[-20:] }}"
 
 - name: Update all other hosts
-  hosts: all:!attic-cache
+  hosts: all:!cache:!emerald:!attic-cache
   gather_facts: true
   serial: 3  # Rebuild 3 hosts at a time
 

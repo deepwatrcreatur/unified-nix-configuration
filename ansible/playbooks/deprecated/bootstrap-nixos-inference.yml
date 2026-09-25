@@ -1,4 +1,10 @@
 ---
+# =============================================================================
+# DEPRECATED: This playbook was designed for bootstrapping Proxmox inference VMs
+# (inference1..3). Inference has moved to aspect-driven deployment (inference-ollama)
+# on baremetal emerald, and inference1..3 VMs are no longer active flake outputs.
+# =============================================================================
+#
 # Bootstrap NixOS inference VMs from a live ISO using nixos-anywhere.
 # Requirements:
 # - Proxmox VM firmware set to plain OVMF (UEFI) on q35

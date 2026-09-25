@@ -43,4 +43,7 @@ _context:
 
   # Ensure overcommit memory allows large LLM model mappings without aborting
   boot.kernel.sysctl."vm.overcommit_memory" = 1;
+
+  # Open Ollama API port in firewall
+  networking.firewall.allowedTCPPorts = [ 11434 ];
 }
