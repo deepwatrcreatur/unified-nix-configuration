@@ -39,4 +39,7 @@
   deep-focus = context: import ./deep-focus.nix context;
   guest = context: import ./guest.nix context;
   compute-performance = context: import ./compute-performance.nix context;
+  user-developer = context: import ./user-developer.nix context;
+  user-desktop-whitesur = context: import ./user-desktop-whitesur.nix context;
+  user-server = context: import ./user-server.nix context;
 }

@@ -7,7 +7,8 @@ den.mkInventoryHostModule {
   primaryUser = "deepwatrcreatur";
   primaryUserImports = [
     inputs.nix-whitesur-config.homeManagerModules.default
-    ../../../users/deepwatrcreatur/hosts/workstation
+    ../../../users/deepwatrcreatur/aspects/developer.nix
+    ../../../users/deepwatrcreatur/aspects/desktop-whitesur.nix
   ];
   extraImports = [
     ../../../hosts/nixos/workstation/hardware-configuration.nix
