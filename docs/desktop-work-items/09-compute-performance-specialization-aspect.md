@@ -1,6 +1,6 @@
 # 09 Compute-Performance Specialization Aspect
 
-Status: `ready`
+Status: `done`
 Suggested branch: `feat/aspect-compute-performance`
 Priority: `medium`
 
