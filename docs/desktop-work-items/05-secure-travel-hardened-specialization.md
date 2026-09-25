@@ -1,6 +1,6 @@
 # 05 Secure-Travel Hardened Specialization Aspect
 
-Status: `ready`
+Status: `done`
 Suggested branch: `feat/aspect-secure-travel`
 Priority: `low` (dormant on desktops)
 
