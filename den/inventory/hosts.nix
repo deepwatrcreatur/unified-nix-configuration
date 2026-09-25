@@ -123,7 +123,15 @@
       "nix-daemon-user-ssh"
       "home-manager-users"
       "podman-lxc-suppressions"
-      "podman-containers"
+      "podman-base"
+      "service-plex"
+      "service-nightscout"
+      "service-paperless"
+      "service-librelinkup"
+      "service-scrypted"
+      "service-homeassistant"
+      "service-netalertx"
+      "service-graylog"
     ];
   };
 
