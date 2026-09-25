@@ -38,4 +38,5 @@
   btrfs-snapper = context: import ./btrfs-snapper.nix context;
   deep-focus = context: import ./deep-focus.nix context;
   guest = context: import ./guest.nix context;
+  compute-performance = context: import ./compute-performance.nix context;
 }
