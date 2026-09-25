@@ -36,4 +36,5 @@
   desktop-gnome = context: import ./desktop-gnome.nix context;
   hardware-printer-phoenix-m477 = context: import ./hardware-printer-phoenix-m477.nix context;
   btrfs-snapper = context: import ./btrfs-snapper.nix context;
+  deep-focus = context: import ./deep-focus.nix context;
 }
