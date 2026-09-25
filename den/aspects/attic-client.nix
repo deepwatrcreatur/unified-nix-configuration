@@ -12,4 +12,5 @@ in
   };
 
   myModules.attic-client.enable = true;
+  myModules.builder.canUseRemoteBuilder = true;
 }
