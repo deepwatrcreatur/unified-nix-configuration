@@ -1,6 +1,6 @@
 # 08 Ephemeral Guest Specialization Aspect
 
-Status: `ready`
+Status: `done`
 Suggested branch: `feat/aspect-guest`
 Priority: `medium`
 
