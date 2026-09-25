@@ -131,8 +131,15 @@ in
 
             weather = {
               enabled = true;
-              unit = "celsius";
+              unit = "metric";
               effects = true;
+            };
+
+            location = {
+              auto_locate = false;
+              address = "Toronto, ON, Canada";
+              latitude = 43.6532;
+              longitude = -79.3832;
             };
 
             nightlight = {

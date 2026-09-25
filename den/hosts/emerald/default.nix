@@ -28,6 +28,9 @@ den.mkInventoryHostModule {
       # Prevent AMD Raphael iGPU ring timeouts (gfx_0.1.0 timeout) during GPU power state transitions
       boot.kernelParams = [ "amdgpu.gfxoff=0" ];
 
+      time.timeZone = "America/Toronto";
+      i18n.defaultLocale = "en_CA.UTF-8";
+
       boot.loader.systemd-boot.enable = lib.mkDefault true;
       boot.loader.efi.canTouchEfiVariables = lib.mkDefault true;
       programs.nix-ld.enable = true;

@@ -91,7 +91,7 @@ in
   nix.distributedBuilds = true;
   nix.buildMachines = [
     {
-      hostName = "10.10.11.39";
+      hostName = "10.10.11.55";
       system = "x86_64-linux";
       maxJobs = 8;
       speedFactor = 2;
@@ -107,7 +107,7 @@ in
   ];
 
   programs.ssh.extraConfig = ''
-    Host attic-cache 10.10.11.39
+    Host attic-cache emerald 10.10.11.55
       User deepwatrcreatur
       IdentityFile /root/.ssh/nix-remote
       StrictHostKeyChecking accept-new

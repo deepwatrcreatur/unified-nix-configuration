@@ -15,7 +15,8 @@ DOMAIN="$DEFAULT_DOMAIN"
 # Critical hosts from lib/hosts.nix that depend on reserved leases.
 # This stays as a safe fallback if dynamic derivation is unavailable.
 declare -A CRITICAL_HOSTS=(
-  ["attic-cache"]="10.10.11.39"
+  ["attic-cache"]="10.10.11.55"
+  ["emerald"]="10.10.11.55"
   ["authentik-host"]="10.10.11.70"
   ["inference1"]="10.10.11.131"
   ["homeserver"]="10.10.11.69"

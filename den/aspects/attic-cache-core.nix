@@ -16,6 +16,9 @@ in
 
   myModules.caches.isCacheServer = true;
 
+  # Ensure atticd binary cache port (5001) is automatically opened on any host with this aspect
+  networking.firewall.allowedTCPPorts = [ 5001 ];
+
   host.services.iperf3 = {
     enable = true;
     bindProbeAddress = hostsData.hosts.emerald.ip or hostsData.hosts.attic-cache.ip;

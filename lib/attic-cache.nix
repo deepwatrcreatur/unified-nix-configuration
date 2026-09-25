@@ -6,7 +6,7 @@ in rec {
   cacheName = "cache-local";
   binaryCacheUrl = "http://attic-cache:5001/cache-local";
   # Fallback IP for when DNS is down
-  binaryCacheIpUrl = "http://10.10.11.39:5001/cache-local";
+  binaryCacheIpUrl = "http://10.10.11.55:5001/cache-local";
   nixCiUrl = "https://cache.nix-ci.com";
   nixosCacheUrl = "https://cache.nixos.org";
 
@@ -22,7 +22,7 @@ in rec {
     { includeNixCi ? false }:
     [
       "http://attic-cache:5001/cache-local"
-      "http://10.10.11.39:5001/cache-local" # DNS fallback
+      "http://10.10.11.55:5001/cache-local" # DNS fallback
     ]
     ++ (if includeNixCi then [ "https://cache.nix-ci.com" ] else [ ])
     ++ [ "https://cache.nixos.org" ]

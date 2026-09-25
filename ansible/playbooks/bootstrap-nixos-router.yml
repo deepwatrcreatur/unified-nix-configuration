@@ -45,7 +45,7 @@
     bootstrap_machine_identity_pub_path: "{{ repo_root }}/ssh-keys/agenix-machine-identities/{{ flake_target }}.pub"
     # Attic cache options — useful when DNS is unavailable (router not yet running)
     use_attic_cache: "{{ use_attic_cache | default(false) }}"
-    attic_cache_ip: "{{ attic_cache_ip | default('10.10.11.39') }}"
+    attic_cache_ip: "{{ attic_cache_ip | default('10.10.11.55') }}"
     attic_cache_pubkey: "cache-local:GozZz7XFsUZ7xI5o/Q36JA/BFfjzONWOjiqC+zAhp2g="
     attic_token_path: /run/agenix/attic-client-token
 

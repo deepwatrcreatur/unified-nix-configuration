@@ -22,7 +22,7 @@
     # DNS is unavailable because the router is not yet up).  The cache IP and
     # public key are stable homelab constants; the token is read from agenix.
     use_attic_cache: "{{ use_attic_cache | default(false) }}"
-    attic_cache_ip: "{{ attic_cache_ip | default('10.10.11.39') }}"
+    attic_cache_ip: "{{ attic_cache_ip | default('10.10.11.55') }}"
     attic_cache_pubkey: "cache-local:GozZz7XFsUZ7xI5o/Q36JA/BFfjzONWOjiqC+zAhp2g="
     attic_token_path: /run/agenix/attic-client-token
 

@@ -133,7 +133,7 @@ in
   nix.distributedBuilds = lib.mkIf canUseRemoteBuilder true;
   nix.buildMachines = lib.mkIf canUseRemoteBuilder [
     {
-      hostName = "10.10.11.39"; # attic-cache
+      hostName = "10.10.11.55"; # emerald (attic-cache)
       system = "x86_64-linux";
       maxJobs = 8;
       speedFactor = 2;
