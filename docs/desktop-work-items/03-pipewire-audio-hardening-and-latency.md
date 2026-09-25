@@ -1,6 +1,6 @@
 # 03 PipeWire Audio Hardening & Latency Tuning
 
-Status: `ready`
+Status: `done`
 Suggested branch: `feat/pipewire-hardening`
 Priority: `high`
 
