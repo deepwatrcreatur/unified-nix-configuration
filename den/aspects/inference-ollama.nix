@@ -44,6 +44,12 @@ _context:
   };
   users.groups.ollama = { };
 
+  # Recursively enforce ownership and permissions on the full models directory tree
+  # (using 'Z' to recurse into pre-existing subdirectories like models/blobs from container migrations)
+  systemd.tmpfiles.rules = [
+    "Z ${config.tesla-inference.ollama.modelsPath} 0770 ollama ollama -"
+  ];
+
   # Ensure overcommit memory allows large LLM model mappings without aborting
   boot.kernel.sysctl."vm.overcommit_memory" = 1;
 
