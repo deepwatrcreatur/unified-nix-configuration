@@ -1,5 +1,5 @@
 # overlays/cosmic.nix
-# Use COSMIC packages from nixpkgs-unstable (v1.5.0) to eliminate
+# Use COSMIC packages from nixpkgs-unstable (v1.8.0) to eliminate
 # memory leaks and compositor stability issues present in older versions.
 { inputs, commonNixpkgsConfig }:
 

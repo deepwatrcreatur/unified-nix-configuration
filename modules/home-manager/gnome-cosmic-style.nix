@@ -72,6 +72,7 @@
       gtk-theme = lib.mkForce "WhiteSur-dark";
       icon-theme = lib.mkForce "WhiteSur";
       cursor-theme = lib.mkForce "capitaine-cursors";
+      text-scaling-factor = 1.25;
     };
 
     "org/gnome/desktop/wm/preferences" = {
