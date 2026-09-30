@@ -52,8 +52,8 @@ in
           # Base URL for callbacks
           BASE_URL = "https://nightscout.deepwatercreature.com";
 
-          # Auth settings - default role for viewers
-          AUTH_DEFAULT_ROLES = "readable";
+          # Auth settings - default role for viewers (denied enforces token/passphrase auth)
+          AUTH_DEFAULT_ROLES = "denied";
         };
       };
 
