@@ -1,6 +1,6 @@
 # 12 Nightscout Privacy and RBAC Hardening
 
-Status: `in-progress`
+Status: `done`
 Suggested branch: `feat/nightscout-rbac-hardening`
 Priority: `high`
 

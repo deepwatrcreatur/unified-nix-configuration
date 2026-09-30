@@ -8,12 +8,11 @@ This directory tracks modular enhancements to desktop profiles, audio, Btrfs sna
 
 ## Current Ranked Queue
 
-1. [12 Nightscout Privacy and RBAC Hardening](./12-nightscout-privacy-and-rbac-hardening.md) — `ready`
-2. [13 Nightscout Headless Laptop Display Interfaces](./13-nightscout-laptop-display-interfaces.md) — `ready`
-3. [07 Deep-Focus Specialization Aspect](./07-deep-focus-specialization-aspect.md) — `ready`
-4. [08 Ephemeral Guest Specialization Aspect](./08-ephemeral-guest-specialization-aspect.md) — `ready`
-5. [09 Compute-Performance Specialization Aspect](./09-compute-performance-specialization-aspect.md) — `ready`
-6. [10 Dendritic User Profiles Decoupling](./10-dendritic-user-profiles-decoupling.md) — `ready`
+1. [13 Nightscout Headless Laptop Display Interfaces](./13-nightscout-laptop-display-interfaces.md) — `ready`
+2. [07 Deep-Focus Specialization Aspect](./07-deep-focus-specialization-aspect.md) — `ready`
+3. [08 Ephemeral Guest Specialization Aspect](./08-ephemeral-guest-specialization-aspect.md) — `ready`
+4. [09 Compute-Performance Specialization Aspect](./09-compute-performance-specialization-aspect.md) — `ready`
+5. [10 Dendritic User Profiles Decoupling](./10-dendritic-user-profiles-decoupling.md) — `ready`
 
 ## Completed Items
 
@@ -24,3 +23,4 @@ This directory tracks modular enhancements to desktop profiles, audio, Btrfs sna
 - [05 Secure-Travel Hardened Specialization Aspect](./05-secure-travel-hardened-specialization.md) — `done` (dormant on desktops)
 - [06 Decompose Workstation Profile Into Granular Aspects](./06-decompose-workstation-profile-into-aspects.md) — `done`
 - [11 Emerald Niri + Noctalia Workstation Stack](./11-emerald-niri-noctalia-workstation-stack.md) — `done`
+- [12 Nightscout Privacy and RBAC Hardening](./12-nightscout-privacy-and-rbac-hardening.md) — `done`
