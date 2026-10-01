@@ -1,6 +1,6 @@
 # 13 Nightscout Headless Laptop Display Interfaces
 
-Status: `in-progress`
+Status: `done`
 Suggested branch: `feat/nightscout-laptop-display`
 Priority: `medium`
 
