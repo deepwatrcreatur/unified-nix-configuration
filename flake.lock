@@ -1271,6 +1271,29 @@
         "type": "github"
       }
     },
+    "nightscout-tui": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1790688326,
+        "narHash": "sha256-t8u4VKrQwzpNy0SQxT9FKDpjjVQJLlEMUJ9vZxoFRV8=",
+        "owner": "deepwatrcreatur",
+        "repo": "nightscout-tui",
+        "rev": "988131ba61213ff1e3827981d3be5ba2ff3930b4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "deepwatrcreatur",
+        "repo": "nightscout-tui",
+        "type": "github"
+      }
+    },
     "niri": {
       "inputs": {
         "niri-stable": "niri-stable",
@@ -2261,6 +2284,7 @@
         "jj-starship": "jj-starship",
         "llm-agents": "llm-agents",
         "mac-app-util": "mac-app-util",
+        "nightscout-tui": "nightscout-tui",
         "niri": "niri",
         "nix-attic-infra": "nix-attic-infra",
         "nix-authentik": "nix-authentik",
