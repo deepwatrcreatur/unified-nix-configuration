@@ -253,20 +253,23 @@
         inherit inputs;
         repoRoot = ./.;
       };
+      loadedOutputs = flakeLib.loadOutputs ./outputs;
     in
-    (flakeLib.loadOutputs ./outputs)
+    loadedOutputs
     // {
-      homeConfigurations.hm-opts = flakeLib.helpers.mkHomeConfig {
-        targetSystem = "x86_64-linux";
-        hostName = "";
-        userPath = ./modules/home-manager/non-nixos.nix;
-        modules = [
-          {
-            home.username = "hm-opts";
-            home.homeDirectory = "/tmp/hm-opts";
-            home.stateVersion = "26.05";
-          }
-        ];
+      homeConfigurations = (loadedOutputs.homeConfigurations or { }) // {
+        hm-opts = flakeLib.helpers.mkHomeConfig {
+          targetSystem = "x86_64-linux";
+          hostName = "";
+          userPath = ./modules/home-manager/non-nixos.nix;
+          modules = [
+            {
+              home.username = "hm-opts";
+              home.homeDirectory = "/tmp/hm-opts";
+              home.stateVersion = "26.05";
+            }
+          ];
+        };
       };
     };
 }
