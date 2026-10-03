@@ -530,6 +530,12 @@ in
     openFirewall = true;
   };
 
+  # Prevent Traefik from binding :80/:443 which collides with Caddy (primary edge reverse proxy)
+  services.traefik.enable = lib.mkForce false;
+  systemd.services.traefik.enable = false;
+  systemd.services.gerbil.serviceConfig.Upholds = lib.mkForce [ ];
+
+
   services.router-network-security = {
     enable = enableNetworkSecurity;
     interfaces = [ lanDevice ];
