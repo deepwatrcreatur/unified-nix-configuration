@@ -47,5 +47,27 @@
     '';
   };
 
+  # Ensure primary 10G SFP+ interface (MAC 24:8a:07:8d:66:86, IP 10.10.11.92) takes
+  # route precedence over secondary onboard NICs that receive dynamic DHCP leases.
+  systemd.services.networkmanager-primary-metric = {
+    description = "Ensure primary 10G interface has highest route priority (metric 50)";
+    after = [ "NetworkManager.service" ];
+    wants = [ "NetworkManager.service" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig.Type = "oneshot";
+    script = ''
+      for conn in "$(${pkgs.networkmanager}/bin/nmcli -t -f UUID connection show 2>/dev/null)"; do
+        id="$(${pkgs.networkmanager}/bin/nmcli -g connection.id connection show "$conn" 2>/dev/null || true)"
+        if [ "$id" = "Ethernet connection 1" ]; then
+          current_metric="$(${pkgs.networkmanager}/bin/nmcli -g ipv4.route-metric connection show "$conn" 2>/dev/null || true)"
+          if [ "$current_metric" != "50" ]; then
+            ${pkgs.networkmanager}/bin/nmcli connection modify "$conn" ipv4.route-metric 50
+            ${pkgs.networkmanager}/bin/nmcli connection up "$conn" || true
+          fi
+        fi
+      done
+    '';
+  };
+
   services.tailscale.enable = true;
 }
