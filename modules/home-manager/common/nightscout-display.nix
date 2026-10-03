@@ -46,6 +46,7 @@ let
       --no-first-run \
       --check-for-update-interval=31536000 \
       --ozone-platform=wayland \
+      ${optionalString cfg.insecure "--ignore-certificate-errors"} \
       "$TARGET_URL"
   '';
 
@@ -62,7 +63,8 @@ let
     (toString cfg.count)
     "--refresh"
     (toString cfg.refreshInterval)
-  ] ++ lib.optional (cfg.token != null) "--token ${cfg.token}"
+  ] ++ lib.optional cfg.insecure "--insecure"
+    ++ lib.optional (cfg.token != null) "--token ${cfg.token}"
     ++ lib.optional (cfg.tokenFile != null) "--token-file ${cfg.tokenFile}";
 in
 {
@@ -83,6 +85,12 @@ in
       type = types.str;
       default = "https://nightscout.deepwatercreature.com";
       description = "Nightscout base URL.";
+    };
+
+    insecure = mkOption {
+      type = types.bool;
+      default = false;
+      description = "Allow self-signed or invalid SSL certificates (disables TLS verification).";
     };
 
     token = mkOption {

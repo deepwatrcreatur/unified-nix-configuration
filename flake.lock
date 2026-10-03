@@ -1281,11 +1281,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1790688326,
-        "narHash": "sha256-t8u4VKrQwzpNy0SQxT9FKDpjjVQJLlEMUJ9vZxoFRV8=",
+        "lastModified": 1790986504,
+        "narHash": "sha256-rDuRx4wGTY3Bp0hwG0Lfm2R+WGMZbXbvDbnyDPi5WT4=",
         "owner": "deepwatrcreatur",
         "repo": "nightscout-tui",
-        "rev": "988131ba61213ff1e3827981d3be5ba2ff3930b4",
+        "rev": "9ae1a49e17f2784cd5d98ff787740b506de6c495",
         "type": "github"
       },
       "original": {
