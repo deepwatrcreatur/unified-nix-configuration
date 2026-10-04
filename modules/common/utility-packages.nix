@@ -42,6 +42,8 @@
     ++ lib.optionals pkgs.stdenv.isLinux [
       netcat-openbsd
       lightpanda  # Headless browser for AI agents
+      ethtool
+      tcpdump
     ]
     ++ [
       # Nix tools

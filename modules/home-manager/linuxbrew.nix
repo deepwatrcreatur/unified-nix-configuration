@@ -3,17 +3,19 @@
   inputs,
   lib,
   pkgs,
+  osConfig ? null,
   ...
 }:
 
 let
   commonPackages = import ../common-brew-packages.nix;
   isLinux = pkgs.stdenv.hostPlatform.isLinux;
+  systemSetupEnabled = if osConfig != null then (osConfig.programs.linuxbrew.enableSystemSetup or false) else true;
 in
 {
   imports = [ inputs.nix-linuxbrew.homeManagerModules.default ];
 
-  config = lib.mkIf (isLinux && config.home.homeDirectory != null) {
+  config = lib.mkIf (isLinux && config.home.homeDirectory != null && systemSetupEnabled) {
     programs.linuxbrew = {
       enable = lib.mkDefault true;
       taps = lib.mkDefault commonPackages.taps;
