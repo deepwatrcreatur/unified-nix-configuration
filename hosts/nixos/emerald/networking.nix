@@ -16,6 +16,8 @@
         matchConfig = {
           MACAddress = "34:5a:60:01:5e:f8";
         };
+        address = [ "10.10.11.55/16" ];
+        gateway = [ "10.10.10.1" ];
         networkConfig = {
           DHCP = "yes";
           IPv6AcceptRA = true;

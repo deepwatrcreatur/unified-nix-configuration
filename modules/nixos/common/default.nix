@@ -21,6 +21,7 @@
     ../root-ssh-identity.nix  # Stable root SSH identity
     ../deepwatrcreatur-ssh-identity.nix  # Stable deepwatrcreatur SSH identity
     ../../common/secrets-management.nix  # age/agenix/rage/ssh-to-age tools
+    ./hosts.nix  # Declarative fleet-wide /etc/hosts with all aliases
     # ../../activation-scripts
   ];
 
