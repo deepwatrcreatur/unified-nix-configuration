@@ -205,6 +205,7 @@
       "btrfs-snapper"
       "safe-mode"
       "rclone-client"
+      "vpn-unlimited-client"
     ];
   };
 }

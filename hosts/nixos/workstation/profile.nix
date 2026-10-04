@@ -163,6 +163,7 @@
   environment.systemPackages = with pkgs; [
     at-spi2-core
     baobab
+    deluge
     distrobox
     dosfstools
     filezilla
@@ -175,6 +176,7 @@
     rclone-browser
     remmina
     realvnc-vnc-viewer
+    transmission_4-gtk
     usbutils
     vscode.fhs
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
