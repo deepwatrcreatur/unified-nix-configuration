@@ -163,6 +163,7 @@
   environment.systemPackages = with pkgs; [
     at-spi2-core
     baobab
+    bubblewrap
     deluge
     distrobox
     dosfstools
@@ -180,6 +181,7 @@
     transmission_4-gtk
     usbutils
     vscode.fhs
+    inputs.strata.packages.${pkgs.stdenv.hostPlatform.system}.default
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
     xdg-desktop-portal-gtk
     satty

@@ -43,12 +43,14 @@
   xdg.mimeApps = {
     enable = true;
     defaultApplications = {
+      "inode/directory" = [ "io.github.lgse.Strata.desktop" "org.gnome.Nautilus.desktop" ];
       "image/png" = [ "org.gnome.gThumb.desktop" "satty.desktop" ];
       "image/jpeg" = [ "org.gnome.gThumb.desktop" "satty.desktop" ];
       "image/gif" = [ "org.gnome.gThumb.desktop" "satty.desktop" ];
       "image/webp" = [ "org.gnome.gThumb.desktop" "satty.desktop" ];
     };
     associations.added = {
+      "inode/directory" = [ "io.github.lgse.Strata.desktop" "org.gnome.Nautilus.desktop" ];
       "image/png" = [ "org.gnome.gThumb.desktop" "satty.desktop" ];
       "image/jpeg" = [ "org.gnome.gThumb.desktop" "satty.desktop" ];
       "image/gif" = [ "org.gnome.gThumb.desktop" "satty.desktop" ];

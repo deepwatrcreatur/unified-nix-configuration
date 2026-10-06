@@ -2315,6 +2315,7 @@
         "plasma-manager": "plasma-manager",
         "qmd": "qmd",
         "ssh-keys-manager": "ssh-keys-manager",
+        "strata": "strata",
         "tesla-inference-flake": "tesla-inference-flake",
         "worktrunk": "worktrunk",
         "zellij-vivid-rounded": "zellij-vivid-rounded",
@@ -2436,6 +2437,29 @@
       "original": {
         "owner": "deepwatrcreatur",
         "repo": "nix-ssh-keys-manager",
+        "type": "github"
+      }
+    },
+    "strata": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791251323,
+        "narHash": "sha256-tzyu/EMFeGHbiTqTCftiecV90o+Exqddbzg/2n7rlKc=",
+        "owner": "deepwatrcreatur",
+        "repo": "strata",
+        "rev": "705cd020fb087256f694bd40eccbc8b8fef39f71",
+        "type": "github"
+      },
+      "original": {
+        "owner": "deepwatrcreatur",
+        "repo": "strata",
         "type": "github"
       }
     },

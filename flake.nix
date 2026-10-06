@@ -175,6 +175,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    strata = {
+      url = "github:deepwatrcreatur/strata";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+    };
+
     nix-semaphore = {
       url = "github:deepwatrcreatur/nix-semaphore";
       inputs.nixpkgs.follows = "nixpkgs";
