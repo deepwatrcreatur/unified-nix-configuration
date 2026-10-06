@@ -169,6 +169,7 @@
     filezilla
     gnome-disk-utility
     gparted
+    nautilus
     nushell
     nvtopPackages.amd
     parted
