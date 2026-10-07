@@ -131,10 +131,11 @@
       description = "Proxmox node - HP EliteDesk";
     };
 
-    pve-lattitude = {
+    lattitude = {
       ip = "10.10.11.47";
-      sshUser = "root";
-      description = "Proxmox node - lattitude laptop";
+      sshUser = "deepwatrcreatur";
+      aliases = [ "pve-lattitude" ];
+      description = "Latitude laptop - Sway desktop kiosk";
     };
 
     pve-rog = {
