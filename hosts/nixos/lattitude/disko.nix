@@ -7,7 +7,7 @@
   disko.devices = {
     disk.main = {
       type = "disk";
-      device = lib.mkDefault "/dev/disk/by-id/ata-WDC_WD3200LPVX-60V0TT0_WD-WX91AA326676";
+      device = lib.mkDefault "/dev/disk/by-id/ata-Netac_SSD_240GB_AA035347678789978160";
       content = {
         type = "gpt";
         partitions = {
