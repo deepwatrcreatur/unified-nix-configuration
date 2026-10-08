@@ -41,6 +41,8 @@ den.mkInventoryHostModule {
       boot.loader.systemd-boot.enable = lib.mkDefault true;
       boot.loader.efi.canTouchEfiVariables = lib.mkDefault true;
 
+      my.agenix.machineIdentity.enable = true;
+
       system.stateVersion = "26.05";
     })
   ];
