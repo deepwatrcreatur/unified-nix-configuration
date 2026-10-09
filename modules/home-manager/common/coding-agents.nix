@@ -35,6 +35,9 @@ in
       };
     };
 
+    # Ensure ~/.claude exists before rtkHooks tries to write RTK.md
+    home.file.".claude/.keep".text = "";
+
     programs.qmd = {
       enable = lib.mkDefault false;
       package = lib.mkDefault pkgs.qmd;
