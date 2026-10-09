@@ -24,6 +24,19 @@
     markit = inputs.nix-markit.packages.${prev.stdenv.hostPlatform.system}.markit;
   })
 
+  # Strata - fast, keyboard-first file manager for Linux
+  (final: prev: {
+    strata = inputs.strata.packages.${prev.stdenv.hostPlatform.system}.default;
+  })
+
+  # Strata Inference - Qwen3.8-Flash-Next 125B MoE inference engine (Niko1221/Strata)
+  (final: prev: {
+    strata-inference = inputs.nix-strata.packages.${prev.stdenv.hostPlatform.system}.default;
+    strata-inference-p40 = inputs.nix-strata.packages.${prev.stdenv.hostPlatform.system}.strata-inference-p40;
+    strata-engine = inputs.nix-strata.packages.${prev.stdenv.hostPlatform.system}.strata-engine;
+    strata-engine-p40 = inputs.nix-strata.packages.${prev.stdenv.hostPlatform.system}.strata-engine-p40;
+  })
+
   # Tesla inference overlays for GPU optimization
   inputs.tesla-inference-flake.overlays.ollama-official-binaries # Use official binaries to avoid cuda_compat build error
   inputs.tesla-inference-flake.overlays.llama-cpp-tesla

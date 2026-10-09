@@ -35,6 +35,7 @@
   workstation-desktop = context: import ./workstation-desktop.nix context;
   inference = context: import ./inference-ollama.nix context;
   inference-ollama = context: import ./inference-ollama.nix context;
+  inference-strata = context: import ./inference-strata.nix context;
   router-router = context: import ./router-router.nix context;
   bootstrap-base = context: import ./bootstrap-base.nix context;
   workstation-niri = context: import ./workstation-niri.nix context;

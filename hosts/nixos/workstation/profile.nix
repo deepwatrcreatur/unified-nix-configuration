@@ -181,7 +181,7 @@
     transmission_4-gtk
     usbutils
     vscode.fhs
-    inputs.strata.packages.${pkgs.stdenv.hostPlatform.system}.default
+    strata
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
     xdg-desktop-portal-gtk
     satty

@@ -1782,6 +1782,29 @@
         "type": "github"
       }
     },
+    "nix-strata": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791570835,
+        "narHash": "sha256-g18hltXc4OqB1D2gaL6vwTt0xj0r/CX9mCI10e6HSwc=",
+        "owner": "deepwatrcreatur",
+        "repo": "nix-strata",
+        "rev": "fe5d48f622c5a676a77b7b85a1721b497a24eadb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "deepwatrcreatur",
+        "repo": "nix-strata",
+        "type": "github"
+      }
+    },
     "nix-whitesur-config": {
       "inputs": {
         "flake-utils": "flake-utils_12",
@@ -2304,6 +2327,7 @@
         "nix-rtk": "nix-rtk",
         "nix-semaphore": "nix-semaphore",
         "nix-snapd": "nix-snapd",
+        "nix-strata": "nix-strata",
         "nix-whitesur-config": "nix-whitesur-config",
         "nixbit": "nixbit",
         "nixos-cosmic": "nixos-cosmic",

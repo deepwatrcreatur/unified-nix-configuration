@@ -53,6 +53,8 @@ let
           (nixosHomeManagerConfig { inherit hostName isDesktop; })
           inputs.tesla-inference-flake.nixosModules.tesla-inference
           inputs.nix-linuxbrew.nixosModules.default
+          inputs.strata.nixosModules.default
+          inputs.nix-strata.nixosModules.default
         ];
         snapdModules = nixpkgsLib.optionals includeSnapd [
           inputs.nix-snapd.nixosModules.default

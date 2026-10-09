@@ -250,6 +250,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-utils.follows = "flake-utils";
     };
+
+    nix-strata = {
+      url = "github:deepwatrcreatur/nix-strata";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+    };
   };
 
   outputs =

@@ -38,6 +38,10 @@ den.mkInventoryHostModule {
         enableSystemSetup = true;
         owner = "deepwatrcreatur";
       };
+      programs.strata = {
+        enable = true;
+        defaultFileManager = true;
+      };
     })
   ];
 }

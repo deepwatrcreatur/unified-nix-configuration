@@ -39,6 +39,7 @@
       "workstation-niri"
       "desktop-noctalia"
       "inference"
+      "inference-strata"
     ];
   };
 
