@@ -131,13 +131,6 @@
       description = "Proxmox node - HP EliteDesk";
     };
 
-    lattitude = {
-      ip = "10.10.11.47";
-      sshUser = "deepwatrcreatur";
-      aliases = [ "pve-lattitude" ];
-      description = "Latitude laptop - Sway desktop kiosk";
-    };
-
     pve-rog = {
       ip = "10.10.11.53";
       sshUser = "root";
@@ -357,6 +350,16 @@
         scope = "LAN";
       };
       description = "Phoenix workstation";
+    };
+
+    lattitude = {
+      ip = "10.10.11.47";
+      sshUser = "deepwatrcreatur";
+      dhcpReservation = {
+        macAddress = "fc:15:b4:03:06:0a";
+        scope = "LAN";
+      };
+      description = "Latitude laptop - Sway desktop kiosk";
     };
 
     # External/special hosts

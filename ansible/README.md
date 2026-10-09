@@ -14,10 +14,10 @@ Edit `inventory/hosts.yml` to configure your hosts. Hosts are grouped by rebuild
 
 | Group | Rebuild Command | Hosts |
 |-------|-----------------|-------|
-| `nixos` | `nixos-rebuild switch` | emerald, phoenix, router, router-backup, homeserver, authentik-host, vaglio, rustdesk, podman, workstation |
+| `nixos` | `nixos-rebuild switch` | emerald, phoenix, router, router-backup, homeserver, authentik-host, vaglio, rustdesk, podman, workstation, lattitude |
 | `cache` | `nixos-rebuild switch` | emerald (attic binary cache, remote builder, Niri/Noctalia desktop) |
 | `darwin` | `darwin-rebuild switch` | macminim4 |
-| `proxmox` | `home-manager switch` | pve-elitedesk, pve-lattitude, pve-rog, pve-strix, pve-z170 |
+| `proxmox` | `home-manager switch` | pve-elitedesk, pve-rog, pve-strix, pve-z170 |
 
 ## Playbooks
 
