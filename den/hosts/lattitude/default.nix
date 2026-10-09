@@ -42,6 +42,7 @@ den.mkInventoryHostModule {
       boot.loader.efi.canTouchEfiVariables = lib.mkDefault true;
 
       my.agenix.machineIdentity.enable = true;
+      my.root-ssh-identity.enable = lib.mkForce false;
 
       system.stateVersion = "26.05";
     })
