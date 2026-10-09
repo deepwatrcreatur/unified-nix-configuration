@@ -44,6 +44,22 @@ den.mkInventoryHostModule {
       my.agenix.machineIdentity.enable = true;
       my.root-ssh-identity.enable = lib.mkForce false;
 
+      # Kiosk power settings: keep laptop display awake 24/7 without suspend or blanking
+      services.logind = {
+        lidSwitch = "ignore";
+        lidSwitchDocked = "ignore";
+        lidSwitchExternalPower = "ignore";
+        powerKey = "poweroff";
+        settings.Login = {
+          IdleAction = "ignore";
+          IdleActionSec = "0";
+        };
+      };
+      systemd.targets.sleep.enable = false;
+      systemd.targets.suspend.enable = false;
+      systemd.targets.hibernate.enable = false;
+      systemd.targets.hybrid-sleep.enable = false;
+
       system.stateVersion = "26.05";
     })
   ];
