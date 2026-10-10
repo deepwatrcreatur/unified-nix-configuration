@@ -164,12 +164,16 @@
     at-spi2-core
     baobab
     bubblewrap
+    celluloid
     deluge
     distrobox
     dosfstools
+    ffmpeg
+    ffmpegthumbnailer
     filezilla
     gnome-disk-utility
     gparted
+    mpv
     nautilus
     nushell
     nvtopPackages.amd
@@ -180,6 +184,7 @@
     realvnc-vnc-viewer
     transmission_4-gtk
     usbutils
+    vlc
     vscode.fhs
     strata
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default

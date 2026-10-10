@@ -13,7 +13,7 @@ _context:
     enable = true;
     package = pkgs.strata-inference-p40;
     host = "0.0.0.0";
-    port = 8080;
+    port = 8000;
     modelsDir = "/var/lib/strata/models";
     openFirewall = true;
   };

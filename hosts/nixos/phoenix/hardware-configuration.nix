@@ -20,6 +20,17 @@
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
+  fileSystems."/torrents" = {
+    device = "/dev/disk/by-label/torrents";
+    fsType = "btrfs";
+    options = [
+      "defaults"
+      "noatime"
+      "compress=zstd"
+      "nofail"
+    ];
+  };
+
   networking.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
