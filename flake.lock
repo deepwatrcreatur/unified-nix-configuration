@@ -1795,13 +1795,13 @@
         "lastModified": 1791591991,
         "narHash": "sha256-8ZVmeek+yAQAf+t6rVaEiHAaU6nB+nfUt2ReB8O8SkM=",
         "owner": "deepwatrcreatur",
-        "repo": "nix-strata",
+        "repo": "nix-strata-inference",
         "rev": "361bb37b7fcd4ef70d0d36c2be0f6530737c5a2d",
         "type": "github"
       },
       "original": {
         "owner": "deepwatrcreatur",
-        "repo": "nix-strata",
+        "repo": "nix-strata-inference",
         "type": "github"
       }
     },
@@ -2474,16 +2474,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1791251323,
-        "narHash": "sha256-tzyu/EMFeGHbiTqTCftiecV90o+Exqddbzg/2n7rlKc=",
+        "lastModified": 1791593498,
+        "narHash": "sha256-PUs3fvK8ER23SxWpHshoaiF4EsldVQVAHCDKCghNksY=",
         "owner": "deepwatrcreatur",
-        "repo": "strata",
-        "rev": "705cd020fb087256f694bd40eccbc8b8fef39f71",
+        "repo": "nix-strata-filemanager",
+        "rev": "7b3b4fa7d15249ad54c56a0fef8e112ebafb9c6d",
         "type": "github"
       },
       "original": {
         "owner": "deepwatrcreatur",
-        "repo": "strata",
+        "repo": "nix-strata-filemanager",
         "type": "github"
       }
     },

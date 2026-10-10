@@ -176,7 +176,7 @@
     };
 
     strata = {
-      url = "github:deepwatrcreatur/strata";
+      url = "github:deepwatrcreatur/nix-strata-filemanager";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-utils.follows = "flake-utils";
     };
@@ -252,7 +252,7 @@
     };
 
     nix-strata = {
-      url = "github:deepwatrcreatur/nix-strata";
+      url = "github:deepwatrcreatur/nix-strata-inference";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-utils.follows = "flake-utils";
     };
