@@ -18,6 +18,9 @@ _context:
     openFirewall = true;
   };
 
+  # Open Strata API port in firewall
+  networking.firewall.allowedTCPPorts = [ 8000 ];
+
   # Ensure overcommit memory allows large LLM model mappings without aborting
   boot.kernel.sysctl."vm.overcommit_memory" = lib.mkDefault 1;
 }
