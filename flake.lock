@@ -1792,11 +1792,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791596730,
-        "narHash": "sha256-sS3avuO3hO1hm7Utt7zg9PQ4jnIaDAsC1pq91CrEbfE=",
+        "lastModified": 1791712588,
+        "narHash": "sha256-wcjsZrFr9s5RxvNfWyh/a3gIBaW33DqwQNSibQqu/H8=",
         "owner": "deepwatrcreatur",
         "repo": "nix-strata-inference",
-        "rev": "ac4583b59be54ab53831db1e54dc31d83b7fe98d",
+        "rev": "1743b56e4aeb1e0b45d3c0e591e06db7b7e76609",
         "type": "github"
       },
       "original": {
