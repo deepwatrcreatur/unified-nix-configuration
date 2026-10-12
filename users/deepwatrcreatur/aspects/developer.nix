@@ -34,6 +34,7 @@ in
   programs.cmux-tui.enable = true;
   programs.dmux.enable = true;
   programs.herdr.enable = true;
+  programs.frankenterm.enable = true;
   programs.jj.enable = true;
   programs.qmd.enable = true;
   programs.repo-updater.enable = true;

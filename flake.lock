@@ -1484,6 +1484,26 @@
         "type": "github"
       }
     },
+    "nix-frankenterm": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791712866,
+        "narHash": "sha256-m8v5m8NUf0hy+lFQ+ObhOZXZFrjpLXzSLNHUITy3KaM=",
+        "owner": "deepwatrcreatur",
+        "repo": "nix-frankenterm",
+        "rev": "f65fdef97d598099bf030bae7f94d8a2a40edfdc",
+        "type": "github"
+      },
+      "original": {
+        "owner": "deepwatrcreatur",
+        "repo": "nix-frankenterm",
+        "type": "github"
+      }
+    },
     "nix-github-actions": {
       "inputs": {
         "nixpkgs": [
@@ -2314,6 +2334,7 @@
         "nix-cmux-tui": "nix-cmux-tui",
         "nix-darwin": "nix-darwin",
         "nix-deepseek-harness": "nix-deepseek-harness",
+        "nix-frankenterm": "nix-frankenterm",
         "nix-gnome-cosmic-ui": "nix-gnome-cosmic-ui",
         "nix-homebrew": "nix-homebrew",
         "nix-index-database": "nix-index-database",

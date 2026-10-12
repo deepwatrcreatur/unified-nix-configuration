@@ -72,6 +72,12 @@
     herdr = inputs.herdr.packages.${prev.stdenv.hostPlatform.system}.default;
   })
 
+  # frankenterm (ft) - swarm-native terminal platform and agent orchestrator
+  (final: prev: {
+    frankenterm = inputs.nix-frankenterm.packages.${prev.stdenv.hostPlatform.system}.default;
+    ft = inputs.nix-frankenterm.packages.${prev.stdenv.hostPlatform.system}.ft;
+  })
+
   # roundtable - autonomous multi-agent design orchestrator
   (final: prev: {
     roundtable = inputs.agent-roundtable.packages.${prev.stdenv.hostPlatform.system}.default;
