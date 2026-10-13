@@ -27,6 +27,22 @@
   boot.zfs.forceImportRoot = false;
   boot.zfs.forceImportAll = false;
 
+  fileSystems."/big" = {
+    device = "/dev/disk/by-label/big";
+    fsType = "btrfs";
+    options = [
+      "defaults"
+      "noatime"
+      "compress=zstd"
+      "nofail"
+      "x-systemd.automount"
+    ];
+  };
+
+  systemd.tmpfiles.rules = [
+    "d /big 0755 deepwatrcreatur users -"
+  ];
+
   networking.hostId = "49d7f964";
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
