@@ -35,6 +35,7 @@
       "attic-cache-core"
       "attic-cache-build-server"
       "attic-cache-home-manager"
+      "rclone-client"
       "home-manager-users"
       "workstation-niri"
       "desktop-noctalia"

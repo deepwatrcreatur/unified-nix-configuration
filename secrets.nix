@@ -71,6 +71,7 @@ let
 
   # All hosts that should have access to cloud storage via rclone
   rcloneClientHosts = [
+    "emerald"
     "homeserver"
     "phoenix"
     "podman"
