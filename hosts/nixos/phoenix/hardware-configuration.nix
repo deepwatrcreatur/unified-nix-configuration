@@ -20,8 +20,8 @@
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
-  fileSystems."/torrents" = {
-    device = "/dev/disk/by-label/torrents";
+  fileSystems."/scratch" = {
+    device = "/dev/disk/by-label/scratch";
     fsType = "btrfs";
     options = [
       "defaults"
@@ -30,6 +30,10 @@
       "nofail"
     ];
   };
+
+  systemd.tmpfiles.rules = [
+    "L+ /torrents - - - - /scratch"
+  ];
 
   networking.useDHCP = lib.mkDefault true;
 
