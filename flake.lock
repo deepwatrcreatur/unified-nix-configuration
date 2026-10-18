@@ -1587,6 +1587,29 @@
         "type": "github"
       }
     },
+    "nix-iodyne": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1792272653,
+        "narHash": "sha256-xRWy8MTfN4WO9a0rrrfH77yZFPXYP7p3HI2RDiaMo5U=",
+        "owner": "deepwatrcreatur",
+        "repo": "nix-iodyne",
+        "rev": "26d7d9b86781b5f7186e2dba203725296e27ffa1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "deepwatrcreatur",
+        "repo": "nix-iodyne",
+        "type": "github"
+      }
+    },
     "nix-lazyrsync": {
       "inputs": {
         "flake-utils": "flake-utils_10",
@@ -2338,6 +2361,7 @@
         "nix-gnome-cosmic-ui": "nix-gnome-cosmic-ui",
         "nix-homebrew": "nix-homebrew",
         "nix-index-database": "nix-index-database",
+        "nix-iodyne": "nix-iodyne",
         "nix-lazyrsync": "nix-lazyrsync",
         "nix-lightpanda": "nix-lightpanda",
         "nix-linuxbrew": "nix-linuxbrew",

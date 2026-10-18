@@ -187,6 +187,12 @@
       inputs.flake-utils.follows = "flake-utils";
     };
 
+    nix-iodyne = {
+      url = "github:deepwatrcreatur/nix-iodyne";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+    };
+
     nix-semaphore = {
       url = "github:deepwatrcreatur/nix-semaphore";
       inputs.nixpkgs.follows = "nixpkgs";

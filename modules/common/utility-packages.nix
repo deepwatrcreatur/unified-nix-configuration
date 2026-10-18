@@ -21,6 +21,7 @@
       # Linux-only system tools
       pciutils
       iotop
+      iodyne
       strace
       wl-clipboard
     ]

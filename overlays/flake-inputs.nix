@@ -89,6 +89,11 @@
     lazyrsync = inputs.nix-lazyrsync.packages.${prev.stdenv.hostPlatform.system}.default;
   })
 
+  # iodyne - single-host disk IO, latency, topology, and health TUI
+  (final: prev: {
+    iodyne = inputs.nix-iodyne.packages.${prev.stdenv.hostPlatform.system}.default;
+  })
+
   # Keep the upstream beads_rust flake pinned for metadata and future source
   # packaging work. The repo-managed runtime package is defined in
   # overlays/packages.nix from release binaries instead of this upstream build,
