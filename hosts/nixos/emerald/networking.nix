@@ -8,6 +8,13 @@
 
   systemd.network = {
     enable = true;
+    wait-online = {
+      anyInterface = true;
+      ignoredInterfaces = [
+        "enp5s0f0np0"
+        "enp5s0f1np1"
+      ];
+    };
     networks = {
       # 5GbE Realtek onboard interface (MAC 34:5a:60:01:5e:f8)
       # Primary physical network interface on MSI Tomahawk.
