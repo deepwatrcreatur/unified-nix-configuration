@@ -16,6 +16,8 @@ _context:
     enable = true;
     gpu = "P40";
     monitoring.enable = true;
+    # nvidia.NVRM=0 is not a valid nvidia module parameter (NVRM is a printk prefix)
+    optimizations.enableKernelParams = false;
     ollama = {
       enable = true;
       package = pkgs.ollama-official-binaries;
