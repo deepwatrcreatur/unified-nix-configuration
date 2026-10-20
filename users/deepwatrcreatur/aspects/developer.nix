@@ -26,7 +26,7 @@ in
   ];
 
   programs.nh = {
-    flake = unifiedMainWorktree;
+    flake = lib.mkDefault unifiedMainWorktree;
   };
 
   programs.hunk-custom.enable = true;

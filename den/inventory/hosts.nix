@@ -39,6 +39,7 @@
       "home-manager-users"
       "workstation-niri"
       "desktop-noctalia"
+      "hardware-amdgpu-power-saving"
       "inference"
       "inference-strata"
     ];
