@@ -107,19 +107,19 @@
           {
             x86_64-linux = {
               asset = "br-v${version}-linux_musl_amd64.tar.gz";
-              hash = "sha256-3r7Z2y8bPedyfB5OwduX3Rna5dMFhLIo0+VaHKcdmeE=";
+              hash = "sha256-2IipnHHrCCx/oa/k9ASmpw4rbQK43GXb4B+m+I1QCSo=";
             };
             aarch64-linux = {
               asset = "br-v${version}-linux_arm64.tar.gz";
-              hash = "";
+              hash = "sha256-CIE/6M50BjcYaDm5DbhQd5+OgGNQBMdxLIPtWKCfosE=";
             };
             x86_64-darwin = {
               asset = "br-v${version}-darwin_amd64.tar.gz";
-              hash = "";
+              hash = "sha256-B4mv4NogXimn+JTNuOnGJWCVY8/n8U3+5vUo+Rypp0E=";
             };
             aarch64-darwin = {
               asset = "br-v${version}-darwin_arm64.tar.gz";
-              hash = "";
+              hash = "sha256-iU2oB55cTQdMk8wGTbezcIukWP9gh5iJAov7X1fds7A=";
             };
           }
           .${prev.stdenv.hostPlatform.system}

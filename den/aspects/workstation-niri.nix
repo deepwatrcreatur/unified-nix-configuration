@@ -358,6 +358,36 @@ in
               "Mod+J".action.focus-window-down = { };
               "Mod+K".action.focus-window-up = { };
 
+              # Mouse Wheel Window & Column Panning
+              "Mod+WheelScrollDown" = {
+                cooldown-ms = 150;
+                action.focus-column-right = { };
+              };
+              "Mod+WheelScrollUp" = {
+                cooldown-ms = 150;
+                action.focus-column-left = { };
+              };
+              "Mod+Ctrl+WheelScrollDown" = {
+                cooldown-ms = 150;
+                action.move-column-right = { };
+              };
+              "Mod+Ctrl+WheelScrollUp" = {
+                cooldown-ms = 150;
+                action.move-column-left = { };
+              };
+              "Mod+Shift+WheelScrollDown" = {
+                cooldown-ms = 150;
+                action.focus-workspace-down = { };
+              };
+              "Mod+Shift+WheelScrollUp" = {
+                cooldown-ms = 150;
+                action.focus-workspace-up = { };
+              };
+              "Mod+WheelScrollRight".action.focus-column-right = { };
+              "Mod+WheelScrollLeft".action.focus-column-left = { };
+              "Mod+Ctrl+WheelScrollRight".action.move-column-right = { };
+              "Mod+Ctrl+WheelScrollLeft".action.move-column-left = { };
+
               # Column & Window Movement
               "Mod+Ctrl+Left".action.move-column-left = { };
               "Mod+Ctrl+Right".action.move-column-right = { };
