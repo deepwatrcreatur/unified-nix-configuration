@@ -74,8 +74,11 @@ in
             in
             ''
               ${mkdirCommands}
-              ${pkgs.rage}/bin/rage -d -i "${cfg.identityFile}" -o "$tmp_dir/${name}" "${secret.source}"
-              ${installCommands}
+              if ${pkgs.rage}/bin/rage -d -i "${cfg.identityFile}" -o "$tmp_dir/${name}" "${secret.source}" 2>/dev/null; then
+                ${installCommands}
+              else
+                echo "Warning: agenix-user-secrets could not decrypt '${name}' with ${cfg.identityFile} (no matching key)."
+              fi
             ''
           ) cfg.secrets
         )}

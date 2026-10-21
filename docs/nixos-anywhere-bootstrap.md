@@ -105,12 +105,20 @@ git add ssh-keys/agenix-machine-identities/<host>.pub secrets-agenix/
 git commit -m "feat: add <host> machine identity and rekey secrets"
 ```
 
-### 6. User secrets (post-install)
+### 6. User secrets & Workstation Operator Identity (post-install)
 
-System-level secrets (`/run/agenix/`) are handled by the steps above. User
-secrets (`~/.config/sops/`, fnox store) are a separate layer deployed by
-Ansible:
+- **Headless & Server Nodes:** System-level secrets (`/run/agenix/`) are fully handled by the steps above via `/var/lib/agenix/machine-identity`.
+- **Developer Workstations:** Hosts using `developer.nix` (e.g. `emerald`, `phoenix`, `workstation`) decrypt user secrets into `~/.local/share/agenix-user-secrets/` using the operator's personal SSH key at `~/.ssh/id_ed25519`.
 
+On a fresh workstation install:
+1. Seed the operator identity key to `~/.ssh/id_ed25519` (from Dashlane or an existing workstation):
+   ```bash
+   scp -p user@existing-workstation:~/.ssh/id_ed25519 ~/.ssh/id_ed25519
+   chmod 600 ~/.ssh/id_ed25519
+   ```
+2. Re-run `nh os switch ~/flakes-worktrees/main` to automatically decrypt all developer API keys and user credentials.
+
+For hosts using legacy/Proxmox secrets:
 ```bash
 cd ansible
 ansible-playbook playbooks/setup-secrets.yml -l <host>
