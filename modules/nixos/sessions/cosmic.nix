@@ -58,7 +58,6 @@ in
   environment.cosmic.excludePackages = with pkgs; [
     cosmic-term
     cosmic-store
-    cosmic-applibrary
     cosmic-edit
     cosmic-files
     cosmic-player
