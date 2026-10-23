@@ -45,6 +45,8 @@
   desktop-cosmic = context: import ./desktop-cosmic.nix context;
   desktop-gnome = context: import ./desktop-gnome.nix context;
   desktop-sway = context: import ./desktop-sway.nix context;
+  desktop-plasma = context: import ./desktop-plasma.nix context;
+  desktop-kde = context: import ./desktop-plasma.nix context;
   hardware-printer-phoenix-m477 = context: import ./hardware-printer-phoenix-m477.nix context;
   hardware-amdgpu-power-saving = context: import ./hardware-amdgpu-power-saving.nix context;
   btrfs-snapper = context: import ./btrfs-snapper.nix context;
