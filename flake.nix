@@ -268,6 +268,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-utils.follows = "flake-utils";
     };
+
+    leaf = {
+      url = "github:DeepanshuMishraa/leaf";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =

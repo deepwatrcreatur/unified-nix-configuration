@@ -40,6 +40,7 @@
     jq
     just
     killall
+    leaf
     lsd
     markit
     navi

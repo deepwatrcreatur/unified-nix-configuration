@@ -1222,6 +1222,26 @@
         "type": "github"
       }
     },
+    "leaf": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1792650409,
+        "narHash": "sha256-zFY4c2Y021tuui5NL+t/ZUHDKcspX7H16dwp0a8/RQY=",
+        "owner": "DeepanshuMishraa",
+        "repo": "leaf",
+        "rev": "493b73884ad72851c74417a9ca84fadb2b6aa683",
+        "type": "github"
+      },
+      "original": {
+        "owner": "DeepanshuMishraa",
+        "repo": "leaf",
+        "type": "github"
+      }
+    },
     "llm-agents": {
       "inputs": {
         "bun2nix": "bun2nix_2",
@@ -2348,6 +2368,7 @@
         "home-manager": "home-manager_2",
         "hunk": "hunk",
         "jj-starship": "jj-starship",
+        "leaf": "leaf",
         "llm-agents": "llm-agents",
         "mac-app-util": "mac-app-util",
         "nightscout-tui": "nightscout-tui",
