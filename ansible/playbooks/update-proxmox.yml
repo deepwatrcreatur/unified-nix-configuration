@@ -100,7 +100,7 @@
         block: |
           extra-substituters = http://attic-cache:5001/cache-local https://cache.nix-ci.com https://cache.nixos.org
           extra-trusted-substituters = http://attic-cache:5001/cache-local https://cache.nix-ci.com https://cache.nixos.org
-          extra-trusted-public-keys = cache-local:GozZz7XFsUZ7xI5o/Q36JA/BFfjzONWOjiqC+zAhp2g= nix-ci:g3xV5BDTLtIBZr/A00IU1x0EtKKlb7YLgBN2SgYgM6A= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
+          extra-trusted-public-keys = cache-local:pTXNNDRUFiGxQZmx7SAN4Pl82mDrZcbVq7H5nyFXfM8= cache-local:GozZz7XFsUZ7xI5o/Q36JA/BFfjzONWOjiqC+zAhp2g= nix-ci:g3xV5BDTLtIBZr/A00IU1x0EtKKlb7YLgBN2SgYgM6A= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
       register: nix_custom_conf
 
     - name: Restart nix-daemon after writing bootstrap nix.custom.conf

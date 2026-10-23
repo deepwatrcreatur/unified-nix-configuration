@@ -13,7 +13,6 @@ in rec {
   # Public caches that should be available to agents
   secondarySubstituters = [
     "https://cache.numtide.com"
-    "https://cuda-maintainers.cachix.org"
     "https://nix-community.cachix.org/"
     "https://hyprland.cachix.org/"
   ];
