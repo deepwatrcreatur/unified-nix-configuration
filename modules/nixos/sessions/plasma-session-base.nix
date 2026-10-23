@@ -6,12 +6,12 @@
 }:
 let
   plasmaManagerModule =
-    if inputs.plasma-manager ? homeManagerModules
+    if inputs.plasma-manager ? homeModules && inputs.plasma-manager.homeModules ? plasma-manager then
+      inputs.plasma-manager.homeModules.plasma-manager
+    else if inputs.plasma-manager ? homeManagerModules
       && inputs.plasma-manager.homeManagerModules ? plasma-manager
     then
       inputs.plasma-manager.homeManagerModules.plasma-manager
-    else if inputs.plasma-manager ? homeModules && inputs.plasma-manager.homeModules ? plasma-manager then
-      inputs.plasma-manager.homeModules.plasma-manager
     else
       throw "plasma-session-base: plasma-manager flake no longer exposes a plasma-manager home module";
 

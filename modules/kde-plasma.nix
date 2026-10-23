@@ -11,8 +11,16 @@
 
     # Hotkeys configuration
     hotkeys.commands = {
-      "Launch-Krunner" = {
+      "Launch-Vicinae" = {
+        key = "Alt+Space";
+        command = "${pkgs.vicinae}/bin/vicinae toggle";
+      };
+      "Launch-Vicinae-Meta" = {
         key = "Meta+Space";
+        command = "${pkgs.vicinae}/bin/vicinae toggle";
+      };
+      "Launch-Krunner" = {
+        key = "Alt+F2";
         command = "krunner";
       };
       "Show-Desktop-Grid" = {
@@ -21,6 +29,9 @@
       };
     };
   };
+
+  # Enable Vicinae launcher
+  programs.vicinae.enable = true;
 
   # KDE-specific applications
   home.packages = with pkgs; [
