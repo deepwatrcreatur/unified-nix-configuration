@@ -41,6 +41,7 @@
       "hardware-amdgpu-power-saving"
       "inference"
       "inference-strata"
+      "orca"
     ];
   };
 
@@ -208,6 +209,7 @@
       "safe-mode"
       "rclone-client"
       "vpn-unlimited-client"
+      "orca"
     ];
   };
 

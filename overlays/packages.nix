@@ -22,6 +22,12 @@
     t3code = prev.callPackage ../pkgs/t3code.nix { };
   })
 
+  # Orca IDE (Agent Development Environment for coding agents)
+  (final: prev: {
+    orca-ide = prev.callPackage ../pkgs/orca-ide.nix { };
+    orca = final.orca-ide;
+  })
+
   # spinnyfetch (system-info fetcher with spinning 3D logo by canavan-a)
   (final: prev: {
     spinnyfetch = prev.callPackage ../pkgs/spinnyfetch.nix { };

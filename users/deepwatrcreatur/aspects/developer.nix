@@ -31,6 +31,7 @@ in
 
   programs.hunk-custom.enable = true;
   programs.t3code.enable = true;
+  programs.orca-ide.enable = true;
   programs.cmux-tui.enable = true;
   programs.dmux.enable = true;
   programs.herdr.enable = true;

@@ -58,4 +58,6 @@
   user-server = context: import ./user-server.nix context;
   vpn-unlimited = context: import ./vpn-unlimited-client.nix context;
   vpn-unlimited-client = context: import ./vpn-unlimited-client.nix context;
+  orca = context: import ./orca-ide.nix context;
+  orca-ide = context: import ./orca-ide.nix context;
 }
