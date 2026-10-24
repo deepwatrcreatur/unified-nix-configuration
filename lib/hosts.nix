@@ -202,7 +202,7 @@
     # Dedicated Infrastructure Servers (Baremetal)
     emerald = {
       ip = "10.10.11.55";
-      sshUser = "root";
+      sshUser = "deepwatrcreatur";
       dhcpReservation = {
         macAddress = "34:5a:60:01:5e:f8"; # onboard RTL8126 5GbE (enp9s0); Intel SFP+ enp1s0f0 is 90:e2:ba:7f:e0:3c
         scope = "LAN";
