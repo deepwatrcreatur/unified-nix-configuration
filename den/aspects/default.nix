@@ -60,4 +60,5 @@
   vpn-unlimited-client = context: import ./vpn-unlimited-client.nix context;
   orca = context: import ./orca-ide.nix context;
   orca-ide = context: import ./orca-ide.nix context;
+  t3code = context: import ./t3code.nix context;
 }

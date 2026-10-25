@@ -42,6 +42,7 @@
       "inference"
       "inference-strata"
       "orca"
+      "t3code"
     ];
   };
 
@@ -210,6 +211,7 @@
       "rclone-client"
       "vpn-unlimited-client"
       "orca"
+      "t3code"
     ];
   };
 
