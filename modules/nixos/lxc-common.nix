@@ -6,7 +6,6 @@
   lib,
   pkgs,
   modulesPath,
-  inputs,
   ...
 }:
 
@@ -237,7 +236,6 @@ in
     home-manager = mkIf cfg.homeManager.enable {
       useGlobalPkgs = true;
       useUserPackages = true;
-      extraSpecialArgs = { inherit inputs; };
 
       users.root = {
         imports = [
