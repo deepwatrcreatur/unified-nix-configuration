@@ -48,6 +48,8 @@
       "image/jpeg" = [ "org.gnome.gThumb.desktop" "satty.desktop" ];
       "image/gif" = [ "org.gnome.gThumb.desktop" "satty.desktop" ];
       "image/webp" = [ "org.gnome.gThumb.desktop" "satty.desktop" ];
+      "x-scheme-handler/t3code" = [ "t3code.desktop" "t3code-url-handler.desktop" ];
+      "x-scheme-handler/t3code-dev" = [ "t3code.desktop" "t3code-url-handler.desktop" ];
     };
     associations.added = {
       "inode/directory" = [ "io.github.lgse.Strata.desktop" "org.gnome.Nautilus.desktop" ];
@@ -55,6 +57,8 @@
       "image/jpeg" = [ "org.gnome.gThumb.desktop" "satty.desktop" ];
       "image/gif" = [ "org.gnome.gThumb.desktop" "satty.desktop" ];
       "image/webp" = [ "org.gnome.gThumb.desktop" "satty.desktop" ];
+      "x-scheme-handler/t3code" = [ "t3code.desktop" "t3code-url-handler.desktop" ];
+      "x-scheme-handler/t3code-dev" = [ "t3code.desktop" "t3code-url-handler.desktop" ];
     };
   };
 

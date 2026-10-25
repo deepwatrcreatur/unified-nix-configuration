@@ -229,6 +229,10 @@
     pkgs.libGL
   ];
 
+  systemd.tmpfiles.rules = [
+    "f /var/lib/systemd/linger/deepwatrcreatur 0644 root root -"
+  ];
+
   myModules.snap = {
     enable = true;
     classicPackages = [ "icloud-for-linux" ];
