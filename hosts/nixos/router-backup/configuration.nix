@@ -132,8 +132,4 @@ in
   #
   # There is currently no standby WAN device on this VM, so public-ingress
   # failover stays disabled here until a real WAN NIC is attached again.
-
-  home-manager.extraSpecialArgs.hostName = lib.mkForce "router-backup";
-
-
 }

@@ -3,6 +3,7 @@
   config,
   pkgs,
   lib,
+  osConfig ? null,
   hostName ? "",
   ...
 }:
@@ -287,6 +288,8 @@ in
       default =
         if hostName != "" then
           hostName
+        else if osConfig != null && (osConfig.networking.hostName or "") != "" then
+          osConfig.networking.hostName
         else
           "{{`hostname`}}";
       description = "Flake target used by generated just recipes.";

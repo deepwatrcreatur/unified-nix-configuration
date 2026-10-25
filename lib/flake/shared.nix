@@ -16,12 +16,10 @@ let
   systemSpecialArgs = {
     inherit inputs;
     lib = nixpkgsLib;
-    myModules = import (repoRoot + "/modules");
   };
 
   homeManagerModuleArgs = {
     inherit inputs;
-    inherit (inputs) mac-app-util;
   };
 in
 {
