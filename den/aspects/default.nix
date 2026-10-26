@@ -31,6 +31,7 @@
   service-graylog = context: import ./service-graylog.nix context;
   service-scrypted = context: import ./service-scrypted.nix context;
   service-netalertx = context: import ./service-netalertx.nix context;
+  service-gatus = context: import ./service-gatus.nix context;
   service-librelinkup = context: import ./service-librelinkup.nix context;
   workstation-desktop = context: import ./workstation-desktop.nix context;
   inference = context: import ./inference-ollama.nix context;

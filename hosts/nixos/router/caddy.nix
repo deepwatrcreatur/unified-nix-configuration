@@ -88,9 +88,21 @@ in
       # Router dashboard
       "${mkFqdn "dashboard"}" = {
         extraConfig = ''
-          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48
+          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48 127.0.0.1 ::1
           handle @trusted {
             reverse_proxy 127.0.0.1:8888
+          }
+
+          respond "Access restricted to home LAN and Tailnet" 403
+        '';
+      };
+
+      # Fleet health and status dashboard (Gatus)
+      "${mkFqdn "status"}" = {
+        extraConfig = ''
+          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48 127.0.0.1 ::1
+          handle @trusted {
+            reverse_proxy 127.0.0.1:8085
           }
 
           respond "Access restricted to home LAN and Tailnet" 403
@@ -106,7 +118,7 @@ in
 
       "${mkFqdn "homelab"}" = {
         extraConfig = ''
-          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48
+          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48 127.0.0.1 ::1
           handle @trusted {
             reverse_proxy 127.0.0.1:8888
           }
@@ -141,7 +153,7 @@ in
 
       "${mkFqdn "netalertx"}" = {
         extraConfig = ''
-          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48
+          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48 127.0.0.1 ::1
           handle @trusted {
             reverse_proxy ${podmanHost.ip}:20211
           }
@@ -152,7 +164,7 @@ in
 
       "${mkFqdn "graylog"}" = {
         extraConfig = ''
-          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48
+          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48 127.0.0.1 ::1
           handle @trusted {
             reverse_proxy ${podmanHost.ip}:9000
           }
@@ -190,7 +202,7 @@ in
       # Internal-only admin services
       "${mkFqdn "technitium"}" = {
         extraConfig = ''
-          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48
+          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48 127.0.0.1 ::1
           handle @trusted {
             reverse_proxy 127.0.0.1:5380
           }
@@ -200,7 +212,7 @@ in
 
       "${mkFqdn "netdata"}" = {
         extraConfig = ''
-          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48
+          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48 127.0.0.1 ::1
           handle @trusted {
             reverse_proxy 127.0.0.1:19999
           }
@@ -210,7 +222,7 @@ in
 
       "${mkFqdn "prometheus"}" = {
         extraConfig = ''
-          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48
+          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48 127.0.0.1 ::1
           handle @trusted {
             reverse_proxy 127.0.0.1:9090
           }
@@ -220,7 +232,7 @@ in
 
       "${mkFqdn "evebox"}" = {
         extraConfig = ''
-          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48
+          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48 127.0.0.1 ::1
           handle @trusted {
             reverse_proxy 127.0.0.1:5636
           }

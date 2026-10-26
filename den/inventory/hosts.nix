@@ -81,6 +81,7 @@
       "home-manager-users"
       "github-token-client"
       "router-router"
+      "service-gatus"
     ];
   };
 

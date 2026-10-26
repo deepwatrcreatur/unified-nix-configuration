@@ -578,6 +578,7 @@ in
       "grafana"
       "netdata"
       "router-dashboard"
+      "gatus"
       "health-mgmt-ip"
       "health-lan-ip"
       "health-wan-carrier"
@@ -594,6 +595,11 @@ in
           label = "Dashboard";
           url = "https://${mkFqdn "dashboard"}";
           icon = "🧭";
+        }
+        {
+          label = "Fleet Status";
+          url = "https://${mkFqdn "status"}";
+          icon = "🚦";
         }
         {
           label = "Grafana";
