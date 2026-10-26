@@ -578,7 +578,6 @@ in
       "grafana"
       "netdata"
       "router-dashboard"
-      "gatus"
       "health-mgmt-ip"
       "health-lan-ip"
       "health-wan-carrier"

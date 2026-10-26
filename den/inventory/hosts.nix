@@ -66,6 +66,7 @@
       "homeserver-semaphore"
       "homeserver-roundtable"
       "rustdesk-server"
+      "service-gatus"
     ];
   };
 
@@ -81,7 +82,6 @@
       "home-manager-users"
       "github-token-client"
       "router-router"
-      "service-gatus"
     ];
   };
 

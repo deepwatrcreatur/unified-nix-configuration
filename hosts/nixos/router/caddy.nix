@@ -10,6 +10,7 @@ let
   podmanHost = topology.hosts.podman;
   roundtableHost = topology.hosts.vaglio;
   scryptedHost = topology.hosts.scrypted-lxc;
+  homeserverHost = topology.hosts.homeserver;
   mkFqdn = label: "${label}.${topology.domain}";
 
   # Optional secrets library for graceful degradation
@@ -97,12 +98,12 @@ in
         '';
       };
 
-      # Fleet health and status dashboard (Gatus)
+      # Fleet health and status dashboard (Gatus on homeserver)
       "${mkFqdn "status"}" = {
         extraConfig = ''
           @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48 127.0.0.1 ::1
           handle @trusted {
-            reverse_proxy 127.0.0.1:8085
+            reverse_proxy ${homeserverHost.ip}:8085
           }
 
           respond "Access restricted to home LAN and Tailnet" 403
