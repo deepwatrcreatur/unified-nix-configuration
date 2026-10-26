@@ -88,6 +88,7 @@
         "pangolin"
         "netalertx"
         "graylog"
+        "status"
       ];
       # Internal-only admin services (homelab/management only, not public).
       # These become CNAMEs in local DNS and are proxied by local Caddy.
@@ -105,6 +106,7 @@
         "scrypted"
         "nightscout"
         "roundtable"
+        "status"
       ];
       description = "Main router/firewall running NixOS";
     };
