@@ -161,6 +161,7 @@ in {
   "secrets-agenix/bitwarden-data.age".publicKeys = userOnlySecrets;
   "secrets-agenix/rclone-conf.age".publicKeys = rcloneSecrets;
   "secrets-agenix/guacamole-db-password.age".publicKeys = homeserverServiceSecrets;
+  "secrets-agenix/aruba-instant-on-credentials.age".publicKeys = homeserverServiceSecrets;
   "secrets-agenix/proxmox-api-token.age".publicKeys = userOnlySecrets;
 
   # nix-ci.com cache authentication (netrc format)
