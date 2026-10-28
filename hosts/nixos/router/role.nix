@@ -726,6 +726,15 @@ in
     };
   };
 
+  services.prometheus.scrapeConfigs = [
+    {
+      job_name = "aruba-instant-on";
+      static_configs = [{
+        targets = [ "10.10.11.69:9590" ];
+      }];
+    }
+  ];
+
   services.netdata.config.global."bind to" = "0.0.0.0";
 
   # Router hosts already render /etc/resolv.conf declaratively from NixOS
