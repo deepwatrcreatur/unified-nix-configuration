@@ -67,6 +67,7 @@
       "homeserver-roundtable"
       "rustdesk-server"
       "service-gatus"
+      "declarative-runtime"
     ];
   };
 

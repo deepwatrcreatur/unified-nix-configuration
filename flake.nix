@@ -273,6 +273,10 @@
       url = "github:DeepanshuMishraa/leaf";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    declarative-runtime = {
+      url = "github:applicative-systems/declarative-runtime";
+    };
   };
 
   outputs =

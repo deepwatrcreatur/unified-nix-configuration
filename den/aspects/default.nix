@@ -62,4 +62,5 @@
   orca = context: import ./orca-ide.nix context;
   orca-ide = context: import ./orca-ide.nix context;
   t3code = context: import ./t3code.nix context;
+  declarative-runtime = context: import ./declarative-runtime.nix context;
 }
