@@ -16,10 +16,12 @@ in
     ../../modules/nixos/services/aruba-instant-on-exporter.nix
   ];
 
+  age.secrets = secrets.definitions;
+
   services.aruba-instant-on-exporter = {
     enable = true;
     port = 9590;
     openFirewall = true;
-    environmentFile = secrets.path;
+    environmentFile = secrets.path "aruba-instant-on-credentials";
   };
 }
