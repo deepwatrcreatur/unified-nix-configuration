@@ -1,10 +1,8 @@
 import base64
 import hashlib
-import json
 import logging
 import os
 import re
-import sys
 import time
 from prometheus_client import start_http_server, Gauge
 
@@ -34,6 +32,7 @@ AIO_NETWORK_CLIENTS = Gauge('aruba_instant_on_network_clients', 'Client count pe
 
 # Alert Metrics
 AIO_ALERTS_OPEN = Gauge('aruba_instant_on_alerts_open', 'Open alert count', ['site'])
+
 
 class ArubaInstantOnClient:
     def __init__(self, username, password):
@@ -134,6 +133,7 @@ class ArubaInstantOnClient:
             resp = requests.get(url, headers=headers, timeout=20)
         resp.raise_for_status()
         return resp.json()
+
 
 def scrape_cycle(client):
     try:
@@ -245,6 +245,7 @@ def scrape_cycle(client):
         AIO_UP.set(0)
         logger.error(f"Scrape cycle failed: {e}")
 
+
 def main():
     port = int(os.environ.get('AIO_EXPORTER_PORT', 9590))
     interval = int(os.environ.get('AIO_SCRAPE_INTERVAL', 60))
@@ -255,7 +256,10 @@ def main():
     logger.info(f"Aruba Instant On exporter listening on port {port}")
 
     if not username or not password:
-        logger.warning("AIO_USERNAME or AIO_PASSWORD not set. Exporter running in stub mode (exposing aruba_instant_on_up=0).")
+        logger.warning(
+            "AIO_USERNAME or AIO_PASSWORD not set. "
+            "Exporter running in stub mode (exposing aruba_instant_on_up=0)."
+        )
         AIO_UP.set(0)
         while True:
             time.sleep(interval)
@@ -264,6 +268,7 @@ def main():
     while True:
         scrape_cycle(client)
         time.sleep(interval)
+
 
 if __name__ == '__main__':
     main()
