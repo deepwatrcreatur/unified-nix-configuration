@@ -17,6 +17,9 @@ let
       requests
       prometheus-client
     ];
+    flakeIgnore = [
+      "E501"
+    ];
   } (builtins.readFile ./aruba-instant-on/aruba-instant-on-exporter.py);
 
 in
