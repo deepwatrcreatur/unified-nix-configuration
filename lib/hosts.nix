@@ -325,7 +325,11 @@
 
     synology-dsm = {
       ip = "10.10.11.88";
-      sshUser = "root";
+      sshUser = "deepwatrcreatur";
+      aliases = [
+        "dsm"
+        "synology"
+      ];
       dhcpReservation = {
         macAddress = "BC:24:11:53:D5:D0";
         scope = "LAN";
