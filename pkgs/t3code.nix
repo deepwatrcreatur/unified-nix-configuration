@@ -33,7 +33,8 @@ appimageTools.wrapType2 {
 
     cat <<EOF > $out/bin/t3code
 #!/usr/bin/env bash
-if [ "\$ELECTRON_RUN_AS_NODE" = "1" ]; then
+if [ "\$ELECTRON_RUN_AS_NODE" = "1" ] || [[ "\$1" == *.js ]] || [[ "\$1" == *.mjs ]]; then
+  export ELECTRON_RUN_AS_NODE=1
   exec "$out/bin/.t3code-unwrapped" "\$@"
 fi
 

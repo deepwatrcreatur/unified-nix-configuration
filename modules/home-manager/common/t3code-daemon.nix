@@ -87,6 +87,8 @@ in
         Environment = [
           "T3CODE_HOME=${cfg.dataDir}"
           "T3_BOOT_SERVICE_UNIT=t3code.service"
+          "T3CODE_HOST=${cfg.host}"
+          "T3CODE_PORT=${toString cfg.port}"
         ];
         ExecStart = lib.concatStringsSep " " (
           [
