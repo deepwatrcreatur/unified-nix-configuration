@@ -37,6 +37,13 @@ if [ "\$ELECTRON_RUN_AS_NODE" = "1" ]; then
   exec "$out/bin/.t3code-unwrapped" "\$@"
 fi
 
+for arg in "\$@"; do
+  if [[ "\$arg" == *.js ]] || [[ "\$arg" == *.mjs ]]; then
+    export ELECTRON_RUN_AS_NODE=1
+    exec "$out/bin/.t3code-unwrapped" "\$@"
+  fi
+done
+
 has_store=false
 for arg in "\$@"; do
   case "\$arg" in
