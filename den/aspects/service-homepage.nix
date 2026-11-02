@@ -1,6 +1,7 @@
 # den/aspects/service-homepage.nix
 # Central homelab landing page and dashboard (Homepage)
 { ... }:
+{ ... }:
 {
   services.homepage-dashboard = {
     enable = true;

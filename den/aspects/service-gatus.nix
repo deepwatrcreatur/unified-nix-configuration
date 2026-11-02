@@ -1,7 +1,7 @@
 # den/aspects/service-gatus.nix
 # Automated fleet status dashboard aspect (Gatus)
-{ lib, ... }:
 { ... }:
+{ lib, ... }:
 {
   imports = [
     ../../modules/nixos/services/gatus-inventory.nix
