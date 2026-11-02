@@ -121,7 +121,7 @@ in
         extraConfig = ''
           @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48 127.0.0.1 ::1
           handle @trusted {
-            reverse_proxy 127.0.0.1:8888
+            reverse_proxy ${homeserverHost.ip}:8082
           }
 
           respond "Access restricted to home LAN and Tailnet" 403

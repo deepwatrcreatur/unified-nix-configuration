@@ -31,8 +31,6 @@
           MulticastDNS = true;
           DNS = [
             "10.10.10.1"
-            "1.1.1.1"
-            "8.8.8.8"
           ];
           Domains = [ "deepwatercreature.com" ];
         };

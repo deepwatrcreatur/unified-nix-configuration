@@ -719,7 +719,7 @@ in
         { name = "AP25 Ruqayya"; target = "10.10.18.20"; }
         { name = "AP22 Nosheen Living"; target = "10.10.18.21"; }
         { name = "AP11 Nosheen Bedroom"; target = "10.10.18.22"; }
-        { name = "Core Switch"; target = "10.10.18.2"; }
+        { name = "Core Switch"; target = "10.10.18.10"; }
         { name = "WAN Cloudflare DNS"; target = "1.1.1.1"; }
         { name = "WAN Google DNS"; target = "8.8.8.8"; }
       ];

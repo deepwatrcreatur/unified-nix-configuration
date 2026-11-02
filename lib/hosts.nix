@@ -104,7 +104,6 @@
         "authentik"
         "paperless"
         "scrypted"
-        "nightscout"
         "roundtable"
         "status"
       ];

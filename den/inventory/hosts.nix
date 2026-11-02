@@ -68,6 +68,7 @@
       "rustdesk-server"
       "service-gatus"
       "service-aruba-instant-on"
+      "service-homepage"
       "declarative-runtime"
     ];
   };

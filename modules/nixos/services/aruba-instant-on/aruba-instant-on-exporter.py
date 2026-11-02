@@ -135,10 +135,18 @@ class ArubaInstantOnClient:
         return resp.json()
 
 
+def get_elements(resp):
+    if isinstance(resp, list):
+        return resp
+    if isinstance(resp, dict):
+        return resp.get('elements', resp.get('items', []))
+    return []
+
+
 def scrape_cycle(client):
     try:
         sites_resp = client.request("sites/")
-        sites = sites_resp if isinstance(sites_resp, list) else sites_resp.get('items', [])
+        sites = get_elements(sites_resp)
         AIO_SITES_TOTAL.set(len(sites))
 
         # Clear previous gauges before populating fresh data
@@ -156,85 +164,92 @@ def scrape_cycle(client):
             site_id = site.get('id')
             site_name = site.get('name') or site_id or 'default'
 
-            # 1. Device Inventory
+            # 1. Networks & Access Point Inventory
             try:
-                inventory_resp = client.request(f"sites/{site_id}/inventory")
-                devices = inventory_resp if isinstance(inventory_resp, list) else inventory_resp.get('items', [])
-                for dev in devices:
-                    name = dev.get('name') or dev.get('deviceName') or 'Unknown'
-                    model = dev.get('model') or dev.get('deviceType') or 'Unknown'
-                    serial = dev.get('serialNumber') or dev.get('serial') or ''
-                    mac = dev.get('macAddress') or dev.get('mac') or ''
-                    ip = dev.get('ipAddress') or dev.get('ip') or ''
-                    status_str = str(dev.get('status', '')).lower()
-                    is_up = 1 if status_str in ('normal', 'online', 'connected', 'up') or dev.get('connected') is True else 0
-                    clients = int(dev.get('clientCount') or dev.get('connectedClients') or 0)
+                networks_resp = client.request(f"sites/{site_id}/networksSummary")
+                networks = get_elements(networks_resp)
+                for net in networks:
+                    ssid = net.get('name') or net.get('networkName') or 'Unknown'
+                    clients_count = int(net.get('wirelessClientsCount') or net.get('clientCount') or 0)
+                    AIO_NETWORK_CLIENTS.labels(site=site_name, ssid=ssid).set(clients_count)
 
-                    AIO_DEVICE_STATUS.labels(site=site_name, name=name, model=model, serial=serial, mac=mac, ip=ip).set(is_up)
-                    AIO_DEVICE_CLIENTS.labels(site=site_name, name=name, model=model, mac=mac).set(clients)
+                # Discover APs associated with networks
+                seen_dev_ids = set()
+                for net in networks:
+                    for ap_meta in net.get('accessPoints', []):
+                        dev_id = ap_meta.get('deviceId')
+                        if not dev_id or dev_id in seen_dev_ids:
+                            continue
+                        seen_dev_ids.add(dev_id)
+                        try:
+                            dev = client.request(f"sites/{site_id}/inventory/{dev_id}")
+                            name = dev.get('name') or ap_meta.get('deviceName') or 'Unknown'
+                            model = dev.get('model') or ap_meta.get('deviceModel') or 'Unknown'
+                            serial = dev.get('serialNumber') or ''
+                            mac = dev.get('macAddress') or dev_id
+                            ip = dev.get('ipAddress') or ''
+                            status_str = str(dev.get('status', dev.get('operationalState', ''))).lower()
+                            is_up = 1 if status_str in ('normal', 'online', 'connected', 'up') else 0
+                            clients = int(dev.get('wiredClientsCount') or 0)
+
+                            AIO_DEVICE_STATUS.labels(site=site_name, name=name, model=model, serial=serial, mac=mac, ip=ip).set(is_up)
+                            AIO_DEVICE_CLIENTS.labels(site=site_name, name=name, model=model, mac=mac).set(clients)
+                        except Exception as e:
+                            logger.warning(f"Error fetching AP {dev_id} details: {e}")
             except Exception as e:
-                logger.warning(f"Error fetching inventory for site {site_name}: {e}")
+                logger.warning(f"Error fetching networksSummary for site {site_name}: {e}")
 
             # 2. Client Summary
             try:
                 client_resp = client.request(f"sites/{site_id}/clientSummary")
-                clients = client_resp if isinstance(client_resp, list) else client_resp.get('items', [])
+                clients = get_elements(client_resp)
                 AIO_CLIENTS_TOTAL.labels(site=site_name).set(len(clients))
 
                 for c in clients:
-                    c_name = c.get('name') or c.get('clientName') or c.get('hostname') or 'Unknown'
-                    c_mac = c.get('macAddress') or c.get('mac') or ''
-                    c_ip = c.get('ipAddress') or c.get('ip') or ''
-                    ap_name = c.get('connectedDeviceName') or c.get('apName') or c.get('deviceName') or 'Unknown'
-                    ssid = c.get('networkName') or c.get('ssid') or 'Unknown'
-                    band = str(c.get('band') or c.get('frequency') or 'unknown')
+                    c_name = c.get('name') or c.get('hostName') or 'Unknown'
+                    c_mac = c.get('macAddress') or ''
+                    c_ip = c.get('ipAddress') or ''
+                    ap_name = c.get('deviceName') or c.get('connectedDeviceName') or 'Unknown'
+                    ssid = c.get('wirelessNetworkName') or c.get('networkName') or 'Unknown'
+                    band = str(c.get('wirelessBand') or c.get('band') or 'unknown')
 
                     AIO_CLIENT_CONNECTED.labels(
                         site=site_name, name=c_name, mac=c_mac, ip=c_ip,
                         ap=ap_name, ssid=ssid, band=band
                     ).set(1)
 
-                    rssi = c.get('signalStrength') or c.get('rssi')
+                    rssi = c.get('snrInDb') or c.get('signalStrength') or c.get('signalQuality')
                     if rssi is not None:
                         try:
                             AIO_CLIENT_RSSI.labels(
                                 site=site_name, name=c_name, mac=c_mac,
                                 ap=ap_name, ssid=ssid
                             ).set(float(rssi))
-                        except ValueError:
+                        except (ValueError, TypeError):
                             pass
 
-                    tx_rate = c.get('txRate') or c.get('phyTxRate')
+                    tx_rate = c.get('downstreamThroughputInBitsPerSecond') or c.get('txRate')
                     if tx_rate is not None:
                         try:
                             AIO_CLIENT_TX_RATE.labels(site=site_name, name=c_name, mac=c_mac, ap=ap_name).set(float(tx_rate))
-                        except ValueError:
+                        except (ValueError, TypeError):
                             pass
 
-                    rx_rate = c.get('rxRate') or c.get('phyRxRate')
+                    rx_rate = c.get('upstreamThroughputInBitsPerSecond') or c.get('rxRate')
                     if rx_rate is not None:
                         try:
                             AIO_CLIENT_RX_RATE.labels(site=site_name, name=c_name, mac=c_mac, ap=ap_name).set(float(rx_rate))
-                        except ValueError:
+                        except (ValueError, TypeError):
                             pass
             except Exception as e:
                 logger.warning(f"Error fetching clientSummary for site {site_name}: {e}")
 
-            # 3. Networks Summary
-            try:
-                networks_resp = client.request(f"sites/{site_id}/networksSummary")
-                networks = networks_resp if isinstance(networks_resp, list) else networks_resp.get('items', [])
-                for net in networks:
-                    ssid = net.get('name') or net.get('networkName') or 'Unknown'
-                    clients_count = int(net.get('clientCount') or net.get('connectedClients') or 0)
-                    AIO_NETWORK_CLIENTS.labels(site=site_name, ssid=ssid).set(clients_count)
-            except Exception as e:
-                logger.warning(f"Error fetching networksSummary for site {site_name}: {e}")
-
-            # 4. Alerts Summary
+            # 3. Alerts Summary
             try:
                 alerts_resp = client.request(f"sites/{site_id}/alertsSummary")
-                open_alerts = int(alerts_resp.get('openAlerts') or alerts_resp.get('count') or 0)
+                open_alerts = 0
+                if isinstance(alerts_resp, dict):
+                    open_alerts = int(alerts_resp.get('activeMajorAlertsCount', 0)) + int(alerts_resp.get('activeMinorAlertsCount', 0))
                 AIO_ALERTS_OPEN.labels(site=site_name).set(open_alerts)
             except Exception as e:
                 logger.warning(f"Error fetching alertsSummary for site {site_name}: {e}")
