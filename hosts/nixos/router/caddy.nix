@@ -101,12 +101,30 @@ in
       # Fleet health and status dashboard (Gatus on homeserver)
       "${mkFqdn "status"}" = {
         extraConfig = ''
-          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48 127.0.0.1 ::1
-          handle @trusted {
+          @trustedOutpost {
+            remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48 127.0.0.1 ::1
+            path /outpost.goauthentik.io/*
+          }
+          @trustedApp {
+            remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48 127.0.0.1 ::1
+            not path /outpost.goauthentik.io/*
+          }
+
+          handle @trustedOutpost {
+            reverse_proxy ${authentikHost.ip}:9000
+          }
+
+          handle @trustedApp {
+            forward_auth ${authentikHost.ip}:9000 {
+              uri /outpost.goauthentik.io/auth/caddy
+              copy_headers X-Authentik-Username X-Authentik-Groups X-Authentik-Email X-Authentik-Name X-Authentik-Uid X-Authentik-Jwt
+            }
             reverse_proxy ${homeserverHost.ip}:8085
           }
 
-          respond "Access restricted to home LAN and Tailnet" 403
+          handle {
+            respond "Access restricted to home LAN and Tailnet" 403
+          }
         '';
       };
 
@@ -119,12 +137,30 @@ in
 
       "${mkFqdn "homelab"}" = {
         extraConfig = ''
-          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48 127.0.0.1 ::1
-          handle @trusted {
+          @trustedOutpost {
+            remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48 127.0.0.1 ::1
+            path /outpost.goauthentik.io/*
+          }
+          @trustedApp {
+            remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48 127.0.0.1 ::1
+            not path /outpost.goauthentik.io/*
+          }
+
+          handle @trustedOutpost {
+            reverse_proxy ${authentikHost.ip}:9000
+          }
+
+          handle @trustedApp {
+            forward_auth ${authentikHost.ip}:9000 {
+              uri /outpost.goauthentik.io/auth/caddy
+              copy_headers X-Authentik-Username X-Authentik-Groups X-Authentik-Email X-Authentik-Name X-Authentik-Uid X-Authentik-Jwt
+            }
             reverse_proxy ${homeserverHost.ip}:8082
           }
 
-          respond "Access restricted to home LAN and Tailnet" 403
+          handle {
+            respond "Access restricted to home LAN and Tailnet" 403
+          }
         '';
       };
 

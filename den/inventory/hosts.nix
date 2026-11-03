@@ -17,6 +17,7 @@
       "lxc-dhcp-networking"
       "authentik-native"
       "authentik-paperless-oidc"
+      "authentik-proxy-forward-auth"
       "attic-client"
       "nix-daemon-user-ssh"
       "home-manager-users"
