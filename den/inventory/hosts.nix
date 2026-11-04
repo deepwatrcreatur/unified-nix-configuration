@@ -39,6 +39,7 @@
       "rclone-client"
       "home-manager-users"
       "desktop-plasma"
+      "desktop-network-shares"
       "hardware-amdgpu-power-saving"
       "inference"
       "inference-strata"
@@ -191,6 +192,7 @@
       "home-manager-users"
       "workstation-desktop"
       "desktop-cosmic"
+      "desktop-network-shares"
       "hardware-printer-phoenix-m477"
       "btrfs-snapper"
       "safe-mode"
@@ -212,6 +214,7 @@
       "nixos-base"
       "home-manager-users"
       "desktop-sway"
+      "desktop-network-shares"
       "rclone-client"
     ];
   };

@@ -132,12 +132,6 @@
       ${builtins.readFile "${config.systemd.package}/lib/systemd/ssh_config.d/20-systemd-ssh-proxy.conf"}
     '';
   };
-  services.avahi = {
-    enable = lib.mkForce false;
-    nssmdns4 = lib.mkForce false;
-    openFirewall = lib.mkForce false;
-  };
-
   services.logind.settings.Login.HandleLidSwitch = "ignore";
   security.sudo.wheelNeedsPassword = false;
 

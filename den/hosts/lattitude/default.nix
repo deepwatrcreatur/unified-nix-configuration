@@ -32,6 +32,8 @@ den.mkInventoryHostModule {
         inputs.nightscout-tui.packages.${pkgs.stdenv.hostPlatform.system}.default
       ];
 
+      programs.strata.defaultFileManager = true;
+
       # zram swap to mitigate slow 5400 RPM mechanical disk bottlenecks
       zramSwap.enable = true;
 
