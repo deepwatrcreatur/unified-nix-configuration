@@ -27,8 +27,7 @@ den.mkInventoryHostModule {
         epiphany
         qutebrowser
 
-        # Media & Kiosk utilities:
-        mpv
+        # Kiosk utilities:
         inputs.nightscout-tui.packages.${pkgs.stdenv.hostPlatform.system}.default
       ];
 
