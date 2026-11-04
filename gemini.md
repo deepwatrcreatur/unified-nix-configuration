@@ -5,7 +5,7 @@
 ### Multi-Host Configuration Awareness
 - **Always check hostname first**: Start by running `hostname` to identify which host you're working on
 - **Host-specific commands**: Use appropriate commands based on the host type:
-  - **NixOS hosts** (homeserver, workstation, etc.): Use `sudo nixos-rebuild` commands, account for non-FHS compliance
+  - **NixOS hosts** (homeserver, phoenix, etc.): Use `sudo nixos-rebuild` commands, account for non-FHS compliance
   - **Darwin hosts** (macminim4): Use `darwin-rebuild` commands, respect macOS peculiarities
   - **LXC containers**: May require special handling for container-specific rebuilds
 ### Host Detection Examples

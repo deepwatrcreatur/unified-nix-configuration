@@ -16,7 +16,7 @@
   # Disabled heavy dev tools not needed on server:
   # - helix with language servers (pulls in erlang, elixir, etc. for development)
   # - yazelix/yazelix-upstream (full IDE experience not needed)
-  # These are available on development machines: macminim4, workstation, inference-vm
+  # These are available on development machines: macminim4, inference-vm
 
   home.packages = with pkgs; [
     # RustDesk server management

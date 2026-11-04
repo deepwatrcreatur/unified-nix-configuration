@@ -21,7 +21,7 @@ This guide explains how to switch from Cinnamon to GNOME with a macOS-like layou
 
 ### 1. Edit Host Configuration
 
-Edit `hosts/nixos/workstation/default.nix`:
+Edit `den/hosts/phoenix/default.nix`:
 
 ```nix
 # Comment out Cinnamon:
@@ -33,7 +33,7 @@ Edit `hosts/nixos/workstation/default.nix`:
 
 ### 2. Edit User Configuration
 
-Edit `users/deepwatrcreatur/hosts/workstation/default.nix`:
+Edit `users/deepwatrcreatur/aspects/desktop-whitesur.nix`:
 
 ```nix
 imports = [
@@ -59,7 +59,7 @@ imports = [
 ### 3. Rebuild
 
 ```bash
-sudo nixos-rebuild switch --flake .#workstation
+sudo nixos-rebuild switch --flake .#phoenix
 ```
 
 ### 4. Log Out and Select GNOME
@@ -101,7 +101,7 @@ The GNOME setup is fully declarative in `modules/home-manager/gnome-whitesur.nix
 All settings are in `modules/home-manager/gnome-whitesur.nix`. To customize:
 
 1. Edit the file
-2. Rebuild: `sudo nixos-rebuild switch --flake .#workstation`
+2. Rebuild: `sudo nixos-rebuild switch --flake .#phoenix`
 3. Log out and back in
 
 ## Switching Back to Cinnamon

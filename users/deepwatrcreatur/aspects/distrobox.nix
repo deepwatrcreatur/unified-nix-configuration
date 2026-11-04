@@ -1,4 +1,4 @@
-# users/deepwatrcreatur/hosts/workstation/distrobox.nix
+# users/deepwatrcreatur/aspects/distrobox.nix
 {
   config,
   pkgs,

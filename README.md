@@ -62,7 +62,7 @@ nh home switch ~/flakes/unified-nix-configuration#<home-output>
 Examples:
 
 ```bash
-/run/wrappers/bin/sudo nixos-rebuild switch --flake .#workstation
+/run/wrappers/bin/sudo nixos-rebuild switch --flake .#phoenix
 /run/wrappers/bin/sudo nixos-rebuild switch --flake .#router
 home-manager switch --flake .#proxmox-root
 ```

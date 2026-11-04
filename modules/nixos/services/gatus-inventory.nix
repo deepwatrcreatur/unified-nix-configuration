@@ -28,7 +28,7 @@ let
       "Network Equipment"
     else if name == "emerald" then
       "Baremetal Servers"
-    else if lib.elem name [ "workstation" "phoenix" "lattitude" "framework" ] then
+    else if lib.elem name [ "phoenix" "lattitude" "framework" ] then
       "Workstations"
     else if lib.elem name [ "418" "420" ] || lib.hasInfix "printer" (host.description or "") || lib.hasInfix "doorbell" (host.description or "") || lib.hasInfix "hp-m477" name then
       "IoT & Peripherals"

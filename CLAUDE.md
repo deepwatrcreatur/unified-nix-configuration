@@ -306,7 +306,7 @@ ssh 10.10.18 "tmux new-window -t inference-test -n monitoring" # For nvitop/gpu 
 
 # Multi-host sessions
 ssh homeserver "tmux new-session -d -s homeserver-work"
-ssh workstation "tmux new-session -d -s workstation-work"
+ssh phoenix "tmux new-session -d -s phoenix-work"
 
 # Development per worktree
 tmux new-session -d -s main-dev -c ~/nix-main
@@ -316,7 +316,7 @@ tmux new-session -d -s minimal-dev -c ~/nix-minimal
 ### Multi-Host Configuration Awareness
 - **Always check hostname first**: Start by running `hostname` to identify which host you're working on
 - **Host-specific commands**: Use appropriate commands based on the host type:
-  - **NixOS hosts** (homeserver, workstation, etc.): Prefer `/run/wrappers/bin/sudo nixos-rebuild ...`; do not assume plain `sudo` or `/run/current-system/sw/bin/sudo` is usable on NixOS
+  - **NixOS hosts** (homeserver, phoenix, etc.): Prefer `/run/wrappers/bin/sudo nixos-rebuild ...`; do not assume plain `sudo` or `/run/current-system/sw/bin/sudo` is usable on NixOS
   - **Darwin hosts** (macminim4): Use `darwin-rebuild` commands, respect macOS peculiarities
   - **LXC containers**: May require special handling for container-specific rebuilds
 - **Privilege escalation on NixOS**: If `sudo` fails with ownership or setuid errors, retry with `/run/wrappers/bin/sudo`

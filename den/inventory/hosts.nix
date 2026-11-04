@@ -179,25 +179,6 @@
     ];
   };
 
-  workstation = {
-    kind = "nixos";
-    name = "workstation";
-    system = "x86_64-linux";
-    hostPath = ../hosts/workstation;
-    isDesktop = true;
-    mode = "aspect";
-    aspectsList = [
-      "nixos-base"
-      "home-manager-users"
-      "workstation-desktop"
-      "desktop-cosmic"
-      "hardware-printer-phoenix-m477"
-      "btrfs-snapper"
-      "safe-mode"
-      "rclone-client"
-    ];
-  };
-
   phoenix = {
     kind = "nixos";
     name = "phoenix";
