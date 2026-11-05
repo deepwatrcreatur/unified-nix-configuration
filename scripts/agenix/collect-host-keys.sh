@@ -22,7 +22,6 @@ log_error() { echo -e "${RED}[ERROR]${NC} $*"; }
 # Add/remove hosts as needed
 HOSTS=(
   "router"
-  "workstation"
   "homeserver"
   "attic-cache"
   "rustdesk"

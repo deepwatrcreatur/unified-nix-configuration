@@ -21,8 +21,8 @@
     ];
   };
 
-  # Since Avahi is disabled in the workstation profile, define the scanner
-  # explicitly for sane-airscan instead of relying on automatic discovery.
+  # Define the scanner explicitly for sane-airscan so it does not depend on
+  # automatic discovery.
   environment.etc."sane.d/airscan.conf".text = ''
     [devices]
     "HP PageWide Pro 477dn MFP" = http://10.10.11.56:80/eSCL/, eSCL

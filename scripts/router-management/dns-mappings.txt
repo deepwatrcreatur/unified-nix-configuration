@@ -7,6 +7,5 @@ attic-cache 10.10.11.55 A
 emerald 10.10.11.55 A
 tomahawk 10.10.11.55 A
 pve-strix 10.10.11.57 A
-workstation 10.10.11.73 A
 podman 10.10.11.84 A
 scrypted 10.10.10.1 A

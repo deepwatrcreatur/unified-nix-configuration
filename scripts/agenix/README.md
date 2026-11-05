@@ -19,7 +19,6 @@ machine identities for machine-scoped secrets and store their public keys in
 
 **Hosts configured:**
 - router
-- workstation  
 - homeserver
 - attic-cache
 - rustdesk

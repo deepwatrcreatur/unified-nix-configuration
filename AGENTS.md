@@ -41,7 +41,7 @@ To apply the configuration for a specific host, you can use the following comman
 /run/wrappers/bin/sudo nixos-rebuild switch --flake .#<hostname>
 ```
 
-Replace `<hostname>` with the name of the host you want to configure (e.g., `homeserver`, `workstation`).
+Replace `<hostname>` with the name of the host you want to configure (e.g., `homeserver`, `phoenix`).
 
 ```
 ## Agent Instructions
@@ -53,7 +53,7 @@ Replace `<hostname>` with the name of the host you want to configure (e.g., `hom
 ### Multi-Host Configuration Awareness
 - **Always check hostname first**: Start by running `hostname` to identify which host you're working on
 - **Host-specific commands**: Use appropriate commands based on the host type:
-  - **NixOS hosts** (homeserver, workstation, etc.): Prefer `/run/wrappers/bin/sudo nixos-rebuild ...`; do not assume plain `sudo` or `/run/current-system/sw/bin/sudo` is usable on NixOS
+  - **NixOS hosts** (homeserver, phoenix, etc.): Prefer `/run/wrappers/bin/sudo nixos-rebuild ...`; do not assume plain `sudo` or `/run/current-system/sw/bin/sudo` is usable on NixOS
   - **Darwin hosts** (macminim4): Use `darwin-rebuild` commands, respect macOS peculiarities
   - **LXC containers**: May require special handling for container-specific rebuilds
 - **Privilege escalation on NixOS**: If `sudo` fails with ownership or setuid errors, retry with `/run/wrappers/bin/sudo`
@@ -132,9 +132,9 @@ For testing changes across hosts (especially build failures):
 4. **Test platform-specific issues** by reproducing on relevant host type
 
 ### Host Safety Notes
-- **Do not locally switch LXC guest configs on workstation**: `attic-cache` is a Proxmox LXC guest. Running `nixos-rebuild test/switch --flake .#attic-cache` on `workstation` can shut down the desktop session.
+- **Do not locally switch LXC guest configs on a desktop host**: `attic-cache` is a Proxmox LXC guest. Running `nixos-rebuild test/switch --flake .#attic-cache` on a desktop host can shut down the desktop session.
 - **Preferred attic-cache workflow**: `ssh attic-cache`, `cd ~/flakes/unified-nix-configuration`, `git pull`, then run the local rebuild on `attic-cache`.
-- **Alternative attic-cache workflow from workstation**: use a remote target rebuild such as `just remote-test attic-cache` or `sudo nixos-rebuild test --flake .#attic-cache --target-host attic-cache --use-remote-sudo`.
+- **Alternative attic-cache workflow from a desktop host**: use a remote target rebuild such as `just remote-test attic-cache` or `sudo nixos-rebuild test --flake .#attic-cache --target-host attic-cache --use-remote-sudo`.
 
 ### Checkout Strategy
 - Choose the checkout model based on the work:

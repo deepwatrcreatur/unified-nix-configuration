@@ -17,7 +17,6 @@ let
     pve-strix = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAgSeJeuivBkeB92lG8Sup+fQl4AwfRWH3XlCJSMQ3j4";
     rustdesk = "";
     vaglio = "";
-    workstation = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKFAzJUqDpasPy2B+vODDAZOdGJ/7DiZ1wWjbWkM1Bi8 root@workstation";
   };
 
   users = {
@@ -40,7 +39,6 @@ let
     "router"
     "router-backup"
     "vaglio"
-    "workstation"
   ];
 
   phoenixDeepwatrcreaturKey = readPublicKey ./ssh-keys/deepwatrcreatur-phoenix-identity.pub;
@@ -76,7 +74,6 @@ let
     "homeserver"
     "phoenix"
     "podman"
-    "workstation"
     "pve-rog"
     "pve-strix"
     "pve-lattitude"
@@ -113,7 +110,6 @@ let
     "pve-rog"
     "pve-strix"
     "pve-z170"
-    "workstation"
     # TODO: Add hackintosh and macminim4 once their host keys are in the hosts list
   ];
 

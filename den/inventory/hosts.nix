@@ -39,6 +39,8 @@
       "rclone-client"
       "home-manager-users"
       "desktop-plasma"
+      "desktop-network-shares"
+      "desktop-media-players"
       "hardware-amdgpu-power-saving"
       "inference"
       "inference-strata"
@@ -180,25 +182,6 @@
     ];
   };
 
-  workstation = {
-    kind = "nixos";
-    name = "workstation";
-    system = "x86_64-linux";
-    hostPath = ../hosts/workstation;
-    isDesktop = true;
-    mode = "aspect";
-    aspectsList = [
-      "nixos-base"
-      "home-manager-users"
-      "workstation-desktop"
-      "desktop-cosmic"
-      "hardware-printer-phoenix-m477"
-      "btrfs-snapper"
-      "safe-mode"
-      "rclone-client"
-    ];
-  };
-
   phoenix = {
     kind = "nixos";
     name = "phoenix";
@@ -211,6 +194,8 @@
       "home-manager-users"
       "workstation-desktop"
       "desktop-cosmic"
+      "desktop-network-shares"
+      "desktop-media-players"
       "hardware-printer-phoenix-m477"
       "btrfs-snapper"
       "safe-mode"
@@ -233,6 +218,8 @@
       "nixos-base"
       "home-manager-users"
       "desktop-sway"
+      "desktop-network-shares"
+      "desktop-media-players"
       "rclone-client"
       "synology-shares"
     ];

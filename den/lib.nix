@@ -62,7 +62,7 @@ rec {
     };
 
   # Borrowed from vic/den: select a value by hostname at eval time.
-  # Usage: denLib.perHost { workstation = x; phoenix = y; } config.networking.hostName
+  # Usage: denLib.perHost { emerald = x; phoenix = y; } config.networking.hostName
   perHost = hostMap: hostName:
     hostMap.${hostName} or (throw "perHost: no entry for hostname '${hostName}'");
 }

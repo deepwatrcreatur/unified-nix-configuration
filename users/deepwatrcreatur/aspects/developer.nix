@@ -15,7 +15,7 @@ in
   imports = [
     ../default.nix
     ../../../modules/nh.nix
-    ../hosts/workstation/distrobox.nix
+    ./distrobox.nix
     ../../../modules/home-manager/agenix-user-secrets.nix
     ../../../modules/home-manager/ghostty
     ../../../modules/home-manager/git-ssh-signing.nix
