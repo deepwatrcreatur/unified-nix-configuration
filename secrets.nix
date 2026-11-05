@@ -12,6 +12,7 @@ let
     emerald = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBMzmqOZ301fwZJVQI5KZ9+npuFs+3EvwKet4peLZeLv";
     homeserver = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOo9lHhuHiT1rAF3RcFwSMYYtQvoheU4IxVsCRBKlPFI root@nixoslxc";
     pve-lattitude = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOz/qnrymEHn6b057GKCOMCfB9fK28HkWmZ6MnXblVO2";
+    lattitude = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOz/qnrymEHn6b057GKCOMCfB9fK28HkWmZ6MnXblVO2";
     pve-rog = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFkWE8kICYI4rPsw/SWfEjOcBrKRk0DywrYSOFZkdlDX agenix-machine-identity pve-rog";
     pve-strix = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAgSeJeuivBkeB92lG8Sup+fQl4AwfRWH3XlCJSMQ3j4";
     rustdesk = "";
@@ -84,6 +85,16 @@ let
 
   rcloneSecrets =
     operatorUsers ++ builtins.concatLists (map machineRecipients rcloneClientHosts);
+
+  synologySmbHosts = [
+    "emerald"
+    "phoenix"
+    "lattitude"
+    "pve-lattitude"
+  ];
+
+  synologySmbSecrets =
+    operatorUsers ++ builtins.concatLists (map machineRecipients synologySmbHosts);
 
   # All hosts that build from this repo should be able to use the attic cache
   atticClientHosts = [
@@ -160,6 +171,7 @@ in {
   "secrets-agenix/oauth-creds.age".publicKeys = userOnlySecrets;
   "secrets-agenix/bitwarden-data.age".publicKeys = userOnlySecrets;
   "secrets-agenix/rclone-conf.age".publicKeys = rcloneSecrets;
+  "secrets-agenix/synology-smb-credentials.age".publicKeys = synologySmbSecrets;
   "secrets-agenix/guacamole-db-password.age".publicKeys = homeserverServiceSecrets;
   "secrets-agenix/aruba-instant-on-credentials.age".publicKeys = homeserverServiceSecrets;
   "secrets-agenix/proxmox-api-token.age".publicKeys = userOnlySecrets;

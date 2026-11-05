@@ -44,6 +44,7 @@
       "inference-strata"
       "orca"
       "t3code"
+      "synology-shares"
     ];
   };
 
@@ -217,6 +218,7 @@
       "vpn-unlimited-client"
       "orca"
       "t3code"
+      "synology-shares"
     ];
   };
 
@@ -232,6 +234,7 @@
       "home-manager-users"
       "desktop-sway"
       "rclone-client"
+      "synology-shares"
     ];
   };
 }
