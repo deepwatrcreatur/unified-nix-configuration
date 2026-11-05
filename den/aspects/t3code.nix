@@ -1,6 +1,6 @@
 # den/aspects/t3code.nix
 # T3 Code - Agentic AI Coding GUI Harness by Theo Browne (@t3dotgg)
-{ ... }:
+{ primaryUser, ... }:
 { lib, ... }:
 {
   imports = [
@@ -10,5 +10,7 @@
   modules.desktop.apps.t3code = {
     enable = lib.mkDefault true;
     openFirewall = lib.mkDefault true;
+    user = lib.mkDefault primaryUser;
+    tailscaleServe = lib.mkDefault true;
   };
 }
