@@ -69,4 +69,5 @@
   t3code = context: import ./t3code.nix context;
   declarative-runtime = context: import ./declarative-runtime.nix context;
   synology-shares = context: import ./synology-shares.nix context;
+  router-plex-remote-access = context: import ./router-plex-remote-access.nix context;
 }

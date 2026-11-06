@@ -89,6 +89,7 @@
       "home-manager-users"
       "github-token-client"
       "router-router"
+      "router-plex-remote-access"
     ];
   };
 
