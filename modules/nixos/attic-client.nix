@@ -91,6 +91,7 @@ in
                     # Ensure cleanup happens on exit
                     trap 'rm -rf "$temp_dir"' EXIT
 
+                    export XDG_CONFIG_HOME="$temp_dir"
                     mkdir -p "$temp_dir/attic"
                     cat > "$temp_dir/attic/config.toml" <<EOF
           [servers.attic-cache]
@@ -117,7 +118,7 @@ in
                       else
                         echo "Attic: Push failed - checking server connectivity..." >&2
                         # Test server connectivity
-                        if ${pkgs.curl}/bin/curl -s -f --max-time 10 "${cfg.server}/_attic/v1/cache/${cfg.cache}/info" -H "Authorization: Bearer $token" >/dev/null 2>&1; then
+                        if ${pkgs.curl}/bin/curl -s -f --max-time 10 "${cfg.server}/_api/v1/cache-config/${cfg.cache}" -H "Authorization: Bearer $token" >/dev/null 2>&1; then
                           echo "Attic: Server reachable, likely permission issue" >&2
                         else
                           echo "Attic: Server unreachable or auth failed - check network/server status" >&2

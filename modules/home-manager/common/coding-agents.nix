@@ -35,8 +35,13 @@ in
       };
     };
 
-    # Ensure ~/.claude exists before rtkHooks tries to write RTK.md
     home.file.".claude/.keep".text = "";
+
+    # rtkHooks writes RTK.md into ~/.claude and runs before home.file links are
+    # created, so .keep alone cannot create it on a host's first activation.
+    home.activation.ensureClaudeDir = lib.hm.dag.entryBetween [ "rtkHooks" ] [ "writeBoundary" ] ''
+      run mkdir -p "$HOME/.claude"
+    '';
 
     programs.qmd = {
       enable = lib.mkDefault false;
