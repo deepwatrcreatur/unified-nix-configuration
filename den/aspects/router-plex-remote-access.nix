@@ -14,16 +14,20 @@ in
 {
   # Allow forwarded Plex traffic through the firewall from WAN into the LAN
   services.router-firewall.extraWanInRules = ''
-    ip daddr ${plexHost} tcp dport ${toString plexPort} accept comment "Plex Media Server forward from WAN"
+    ip daddr ${plexHost} tcp dport ${toString plexPort} limit rate 30/minute log prefix "PLEX-FWD: "
+    ip daddr ${plexHost} tcp dport ${toString plexPort} counter accept comment "Plex Media Server forward from WAN"
   '';
 
+  # Logging is rate limited in its own rule: this port is open to the internet, and
+  # a limit on the DNAT or accept rule would also limit the traffic.
   # DNAT rule: redirect incoming WAN packets on port 32400 to internal Plex instance
   networking.nftables.tables.plex-remote-access = {
     family = "ip";
     content = ''
       chain prerouting {
         type nat hook prerouting priority dstnat; policy accept;
-        iifname "${wanInterface}" tcp dport ${toString plexPort} dnat to ${plexHost}:${toString plexPort} comment "Plex Media Server DNAT"
+        iifname "${wanInterface}" tcp dport ${toString plexPort} limit rate 30/minute log prefix "PLEX-DNAT: "
+        iifname "${wanInterface}" tcp dport ${toString plexPort} counter dnat to ${plexHost}:${toString plexPort} comment "Plex Media Server DNAT"
       }
     '';
   };
