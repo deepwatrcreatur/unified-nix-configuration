@@ -42,10 +42,8 @@ in
           "discovery.type" = "single-node";
           "DISABLE_SECURITY_PLUGIN" = "true";
           "OPENSEARCH_JAVA_OPTS" = "-Xms512m -Xmx512m";
-          "bootstrap.memory_lock" = "true";
         };
         extraOptions = [
-          "--ulimit=memlock=-1:-1"
           "--ulimit=nofile=65536:65536"
         ];
       };
