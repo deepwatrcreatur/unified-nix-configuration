@@ -69,7 +69,9 @@ in
   services.snapper = {
     snapshotInterval = "hourly";
 
-    configs = {
+    # Containers are not on btrfs, so their snapper jobs can only fail.
+
+    configs = lib.mkIf (!config.boot.isContainer) {
       root = {
         SUBVOLUME = "/";
         FSTYPE = "btrfs";

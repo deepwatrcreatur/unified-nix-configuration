@@ -7,6 +7,9 @@ let
     "phoenix"
     "sapphire"
     "ruby"
+    "authentik-host"
+    "podman"
+    "vaglio"
   ];
 
   # Non-NixOS hosts that can use remote building (Proxmox, Ubuntu)
