@@ -226,12 +226,6 @@
       description = "APT caching proxy";
     };
 
-    rustdesk = {
-      ip = "10.10.11.68";
-      sshUser = "root";
-      description = "RustDesk server";
-    };
-
     homeserver = {
       ip = "10.10.11.69";
       sshUser = "deepwatrcreatur";

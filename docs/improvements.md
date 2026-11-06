@@ -14,7 +14,7 @@ intentionally actionable: each item describes what to do, what the blocker is
 
 ## Deferred
 
-### A. Add machine-identity keys for inference1/2/3, phoenix, rustdesk
+### A. Add machine-identity keys for inference1/2/3, phoenix
 
 **Why it matters:** `machineRecipients` silently returns `[]` for any host that
 has neither a `.pub` file in `ssh-keys/agenix-machine-identities/` nor a
@@ -29,7 +29,7 @@ The `inventory-consistency` check now surfaces these as a non-fatal notice.
 3. Run `nix run github:ryantm/agenix -- -r` to rekey all secrets.
 4. Verify `inventory-consistency` notice disappears.
 
-**Hosts:** inference1, inference2, inference3, phoenix, rustdesk
+**Hosts:** inference1, inference2, inference3, phoenix
 
 ---
 

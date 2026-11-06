@@ -243,7 +243,6 @@ let
   # managed static IP (e.g. set by Proxmox) must be explicitly listed below.
   lxcStaticNetworkingHosts = [
     "podman"   # static IP assigned by Proxmox DHCP reservation
-    "rustdesk" # static IP assigned by Proxmox DHCP reservation
   ];
 
   knownNetworkingAspects = [

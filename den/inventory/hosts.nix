@@ -166,22 +166,6 @@
     ];
   };
 
-  rustdesk = {
-    kind = "nixos";
-    name = "rustdesk";
-    system = "x86_64-linux";
-    hostPath = ../hosts/rustdesk;
-    mode = "aspect";
-    aspectsList = [
-      "nixos-base"
-      "lxc-core"
-      "attic-client"
-      "nix-daemon-user-ssh"
-      "home-manager-users"
-      "rustdesk-server"
-    ];
-  };
-
   phoenix = {
     kind = "nixos";
     name = "phoenix";

@@ -24,7 +24,6 @@ HOSTS=(
   "router"
   "homeserver"
   "attic-cache"
-  "rustdesk"
 )
 
 log_info "Collecting SSH host keys from configured hosts..."
