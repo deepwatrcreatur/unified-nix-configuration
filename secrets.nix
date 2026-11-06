@@ -146,6 +146,7 @@ in {
   "secrets-agenix/attic-jwt-secret.age".publicKeys = atticServiceSecrets;
   "secrets-agenix/nix-remote-builder-key.age".publicKeys = remoteBuilderClientSecrets;
   "secrets-agenix/paperless-db-password.age".publicKeys = podmanServiceSecrets;
+  "secrets-agenix/paperless-secret-key.age".publicKeys = podmanServiceSecrets;
   "secrets-agenix/paperless-authentik-oidc.age".publicKeys = paperlessOidcSecrets;
   "secrets-agenix/nightscout-api-secret.age".publicKeys = podmanServiceSecrets;
   "secrets-agenix/librelinkup-env.age".publicKeys = podmanServiceSecrets;

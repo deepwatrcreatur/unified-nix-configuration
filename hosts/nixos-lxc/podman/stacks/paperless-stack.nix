@@ -23,6 +23,14 @@ in
 
   age.secrets."paperless-authentik-oidc" = paperlessOidc.definition;
 
+  # Env file holding PAPERLESS_SECRET_KEY, which Paperless requires to start.
+  age.secrets."paperless-secret-key" = {
+    file = ../../../../secrets-agenix/paperless-secret-key.age;
+    owner = "root";
+    group = "root";
+    mode = "0400";
+  };
+
   # Declarative container stack - agents can easily convert docker-compose to this format!
   services.containerStacks.paperless = {
     network = "paperless";
@@ -38,6 +46,8 @@ in
     containers = {
       paperless-ngx = {
         image = "ghcr.io/paperless-ngx/paperless-ngx:latest";
+        # Set here rather than in the stack's `secrets`, which reach every container.
+        environmentFiles = [ config.age.secrets."paperless-secret-key".path ];
         volumes = [
           "/var/lib/paperless/data:/usr/src/paperless/data"
           "/var/lib/paperless/consume:/usr/src/paperless/consume"
