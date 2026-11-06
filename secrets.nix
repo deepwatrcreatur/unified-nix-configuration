@@ -11,7 +11,6 @@ let
     attic-cache = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBMzmqOZ301fwZJVQI5KZ9+npuFs+3EvwKet4peLZeLv";
     emerald = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBMzmqOZ301fwZJVQI5KZ9+npuFs+3EvwKet4peLZeLv";
     homeserver = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOo9lHhuHiT1rAF3RcFwSMYYtQvoheU4IxVsCRBKlPFI root@nixoslxc";
-    pve-lattitude = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOz/qnrymEHn6b057GKCOMCfB9fK28HkWmZ6MnXblVO2";
     lattitude = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOz/qnrymEHn6b057GKCOMCfB9fK28HkWmZ6MnXblVO2";
     pve-rog = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFkWE8kICYI4rPsw/SWfEjOcBrKRk0DywrYSOFZkdlDX agenix-machine-identity pve-rog";
     pve-strix = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAgSeJeuivBkeB92lG8Sup+fQl4AwfRWH3XlCJSMQ3j4";
@@ -75,7 +74,7 @@ let
     "podman"
     "pve-rog"
     "pve-strix"
-    "pve-lattitude"
+    "lattitude"
     "pve-z170"
   ];
 
@@ -86,7 +85,6 @@ let
     "emerald"
     "phoenix"
     "lattitude"
-    "pve-lattitude"
   ];
 
   synologySmbSecrets =
@@ -105,7 +103,7 @@ let
     "router"
     "router-backup"
     "vaglio"
-    "pve-lattitude"
+    "lattitude"
     "pve-rog"
     "pve-strix"
     "pve-z170"

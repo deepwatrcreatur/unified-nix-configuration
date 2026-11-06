@@ -1,6 +1,6 @@
 attic-cache: agenix machine identity - attic-cache
 homeserver: agenix machine identity - homeserver
-pve-lattitude: agenix machine identity - pve-lattitude
+lattitude: agenix machine identity - lattitude
 pve-rog: agenix machine identity - pve-rog
 pve-strix: agenix machine identity - pve-strix
 pve-tomahawk: agenix machine identity - pve-tomahawk
