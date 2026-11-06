@@ -88,6 +88,20 @@ in
       69
       4011
     ];
+    extraWanInRules = ''
+      ip daddr 10.10.11.88 tcp dport 32400 accept comment "Plex Media Server forward from WAN"
+    '';
+  };
+
+  # Forward Plex Media Server WAN traffic to Synology DSM VM
+  networking.nftables.tables.port-forward = {
+    family = "ip";
+    content = ''
+      chain prerouting {
+        type nat hook prerouting priority dstnat; policy accept;
+        iifname "enp6s17" tcp dport 32400 dnat to 10.10.11.88:32400 comment "Plex Media Server DNAT"
+      }
+    '';
   };
 
   # Stable NIC identity via systemd .link files.
