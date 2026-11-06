@@ -42,7 +42,7 @@ Summary:
        hosts.gateway
        hosts.homeserver
        hosts.pve-gateway
-       hosts.pve-lattitude
+       hosts.lattitude
        hosts.pve-strix
        hosts.pve-tomahawk
        hosts.workstation

@@ -55,7 +55,7 @@ ansible-playbook -i inventory/hosts.yml playbooks/rebuild-cache-first.yml
 
 ### update-proxmox.yml
 
-Pulls latest changes and runs `home-manager switch` on the 5 Proxmox hosts (`pve-elitedesk`, `pve-lattitude`, `pve-rog`, `pve-strix`, `pve-z170`).
+Pulls latest changes and runs `home-manager switch` on the 4 Proxmox hosts (`pve-elitedesk`, `pve-rog`, `pve-strix`, `pve-z170`).
 This is the simplest playbook to point Semaphore at for routine PVE updates.
 
 ```bash
