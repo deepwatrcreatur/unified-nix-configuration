@@ -51,6 +51,10 @@ in
         volumes = [
           "/var/lib/paperless/data:/usr/src/paperless/data"
           "/var/lib/paperless/consume:/usr/src/paperless/consume"
+          # Without these binds the image's anonymous volumes hold the documents,
+          # and they are deleted whenever the container is recreated.
+          "/var/lib/paperless/media:/usr/src/paperless/media"
+          "/var/lib/paperless/export:/usr/src/paperless/export"
         ];
         environment = {
           PAPERLESS_BIND_ADDR = "0.0.0.0";
@@ -83,6 +87,8 @@ in
     directories = [
       { path = "/var/lib/paperless/consume"; mode = "0777"; }
       { path = "/var/lib/paperless/data"; mode = "0777"; }
+      { path = "/var/lib/paperless/media"; mode = "0777"; }
+      { path = "/var/lib/paperless/export"; mode = "0777"; }
       { path = "/var/lib/paperless/pgdata"; mode = "0777"; }
     ];
 
