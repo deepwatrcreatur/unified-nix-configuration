@@ -21,7 +21,6 @@ machine identities for machine-scoped secrets and store their public keys in
 - router
 - homeserver
 - attic-cache
-- rustdesk
 
 Edit the script to add/remove hosts.
 
