@@ -43,6 +43,9 @@ den.mkInventoryHostModule {
       boot.loader.efi.canTouchEfiVariables = lib.mkDefault true;
 
       my.agenix.machineIdentity.enable = true;
+      # Not a workstation-desktop host, so remote building has to be enabled here.
+      # The slow 5400 RPM disk is another reason to build on emerald.
+      myModules.builder.canUseRemoteBuilder = true;
       my.root-ssh-identity.enable = lib.mkForce false;
 
       # Kiosk power settings: keep laptop display awake 24/7 without suspend or blanking

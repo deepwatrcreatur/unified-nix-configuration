@@ -10,6 +10,7 @@ let
     "authentik-host"
     "podman"
     "vaglio"
+    "lattitude"
   ];
 
   # Non-NixOS hosts that can use remote building (Proxmox, Ubuntu)
