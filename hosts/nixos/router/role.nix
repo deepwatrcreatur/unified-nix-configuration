@@ -780,10 +780,14 @@ in
   # so Proxmox reports the guest agent as missing after boot. Start it
   # explicitly as part of the normal boot target on router-class VMs.
   systemd.services.qemu-guest-agent.wantedBy = [ "multi-user.target" ];
+  # router runs on bare metal and router-backup in a VM. Skip these VM-only units
+  # on bare metal, which has no guest channel and no serial port.
+  systemd.services.qemu-guest-agent.unitConfig.ConditionVirtualization = "vm";
 
   # Proxmox recovery path: keep a serial console available even when SSH or the
   # graphical console path is broken.
   systemd.services."serial-getty@ttyS0".enable = true;
+  systemd.services."serial-getty@ttyS0".unitConfig.ConditionVirtualization = "vm";
   # Legacy utmp bookkeeping is not useful on this appliance-style VM and
   # causes switch-to-configuration to fail noisily on Proxmox.
   systemd.services.systemd-update-utmp.enable = false;
