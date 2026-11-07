@@ -497,13 +497,6 @@ in
 
   services.router-technitium = {
     bootstrapPasswordSecretName = "technitium-admin-password";
-    dhcpReservations = lib.mapAttrs (name: host: {
-      scope = host.dhcpReservation.scope or "LAN";
-      macAddress = host.dhcpReservation.macAddress;
-      ipAddress = host.ip;
-      hostName = name;
-      comments = host.description or "";
-    }) reservableHosts;
   };
 
   services.router-firewall = {
