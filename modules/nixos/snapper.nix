@@ -112,6 +112,12 @@ in
     ]
   );
 
+  # The home config needs this subvolume, and only some disk layouts create it.
+  # Does nothing where it already exists, such as phoenix's dedicated mount.
+  systemd.tmpfiles.rules = lib.mkIf (
+    config.services.snapper.configs != { } && (config.fileSystems."/home".fsType or null) == "btrfs"
+  ) [ "v /home/.snapshots 0750 root root -" ];
+
   # Allow the primary user to work with snapshots.
   users.users.deepwatrcreatur.extraGroups = lib.mkAfter [ "snapper" ];
 }
