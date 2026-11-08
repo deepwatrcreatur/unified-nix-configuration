@@ -55,15 +55,3 @@ Kea DHCP4 is declaratively managed via NixOS on `router`.
 
 - Dynamic IP ranges (`10.10.200.1`–`10.10.222.254`) and static reservations are defined in [`lib/hosts.nix`](../lib/hosts.nix) and built via Flake.
 - Automated pre-start sanitization (`router-kea-ensure-state`) and background lease reclamation protect the memory database against stale `DECLINED` locks and pool exhaustion.
-
-If `router` and `router-backup` are both kept online on the management network,
-Technitium clustering can be used to keep DNS/admin configuration aligned
-between them. In the current consumer boundary, that also means LAN-facing DNS
-service is intentionally treated as a shared capability on both routers rather
-than another `router.failover.activeOwner` surface.
-
-This does not currently extend to DHCP scopes or lease state, so the standby
-router still needs its DHCP scope checked separately in the web UI.
-
-If that changes later, the preferred path is a reliable blank-state bootstrap
-flow, not a best-effort day-2 sync only.
