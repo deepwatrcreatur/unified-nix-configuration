@@ -267,8 +267,9 @@ in
       ha = {
         # DHCP HA is still a client-path regression: the primary can come up in
         # WAITING with local DHCP disabled until the backup peer times out.
-        # The peer values below describe the removed router-backup VM; update
-        # them for the new standby router before enabling HA.
+        # The peer values below describe the removed router-backup VM; replace
+        # them once the router election design settles the peers
+        # (docs/design/router-election/README.md).
         enable = false;
         thisServerName = config.networking.hostName;
         role = if isPrimaryRouter then "primary" else "secondary";

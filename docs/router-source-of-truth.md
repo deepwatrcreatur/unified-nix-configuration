@@ -5,8 +5,9 @@ to edit first and which files are legacy mirrors or wiring glue.
 
 `router` is a `mode = "aspect"` entry in `den/inventory/hosts.nix`. Its output
 flows through `mkInventoryOutputs`. It is the only router host in this repo;
-the former `router-backup` VM spare was removed in favour of a separate
-bare-metal machine.
+the former `router-backup` VM spare was removed. Router function is moving to
+an election between NixOS hosts that carry a routing aspect; see
+[`design/router-election/`](./design/router-election/README.md).
 
 ---
 
@@ -110,24 +111,28 @@ for safe primary reboots.
 
 ## Current Recovery Stage
 
-`router` is the only production router managed by this repo. Standby router
-functionality is planned on a separate bare-metal machine; until that is added,
-there is no failover peer.
+`router` is the only production router managed by this repo, and there is no
+failover peer yet. A new bare-metal NixOS host with routing as one of its
+aspects will join, and an election will decide which host holds router
+function.
 
 For the current primary-router post-reboot checks, use
 [`router-reboot-validation.md`](./router-reboot-validation.md).
 
 ## Deferred Follow-Up
 
-High availability is now an intentional future follow-up, not an active
-deployment goal. Before revisiting it, the next implementation should assume:
+Router election replaces the old fixed primary/standby HA plan. The design
+notes and the lessons carried over from the April 2026 VRRP pair are in
+[`design/router-election/`](./design/router-election/README.md). Until the
+election lands:
 
 1. the current supported production shape is `router` as the only router
-2. any future HA retry must be validated on the standby first, then staged for
-   reboot-based primary testing instead of live `switch` cutovers
+2. any election or failover change must be validated on a non-production
+   candidate first, then staged for reboot-based testing instead of live
+   `switch` cutovers
 3. the HA peer settings in `hosts/nixos/router/role.nix` (`peerAddress`,
    `peerName`, `keaSync.peerAddress`) still describe the removed spare and must
-   be updated for the new standby before HA is enabled
+   be replaced once the election design decides the peers
 
 ## Current `activeOwner` Consumers
 
