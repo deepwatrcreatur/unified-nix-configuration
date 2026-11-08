@@ -139,12 +139,17 @@
     '';
 
     functions = {
-      kilocode = ''
-        # Launch KiloCode with proper terminal settings for Ghostty compatibility
-        set -gx TERM xterm-256color
-        set -gx COLORTERM truecolor
-        command kilocode $argv
-      '';
+      kilocode = {
+        description = "Launch KiloCode with a Ghostty-compatible TERM";
+        # No `wraps` needed: completions for `kilocode` already apply by name.
+        # -lx scopes the TERM override to this invocation instead of
+        # clobbering the interactive shell's TERM for the rest of the session.
+        body = ''
+          set -lx TERM xterm-256color
+          set -lx COLORTERM truecolor
+          command kilocode $argv
+        '';
+      };
     };
   };
 }
