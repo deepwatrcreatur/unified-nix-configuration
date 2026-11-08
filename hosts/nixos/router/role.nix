@@ -267,6 +267,9 @@ in
       ha = {
         # DHCP HA is still a client-path regression: the primary can come up in
         # WAITING with local DHCP disabled until the backup peer times out.
+        # The peer values below describe the removed router-backup VM; replace
+        # them once the router election design settles the peers
+        # (docs/design/router-election/README.md).
         enable = false;
         thisServerName = config.networking.hostName;
         role = if isPrimaryRouter then "primary" else "secondary";
@@ -659,22 +662,10 @@ in
           icon = "🖥️";
         }
         {
-          label = "Backup SSH";
-          kind = "copy";
-          copyText = "ssh router-backup";
-          icon = "🛟";
-        }
-        {
           label = "Router Mgmt";
           kind = "copy";
           copyText = topology.routerHost.sshHostname;
           icon = "🔧";
-        }
-        {
-          label = "Backup Mgmt";
-          kind = "copy";
-          copyText = topology.backupHost.sshHostname;
-          icon = "🧰";
         }
         {
           label = "Tech Logs";
@@ -780,8 +771,8 @@ in
   # so Proxmox reports the guest agent as missing after boot. Start it
   # explicitly as part of the normal boot target on router-class VMs.
   systemd.services.qemu-guest-agent.wantedBy = [ "multi-user.target" ];
-  # router runs on bare metal and router-backup in a VM. Skip these VM-only units
-  # on bare metal, which has no guest channel and no serial port.
+  # router runs on bare metal. Skip these VM-only units there, since it has no
+  # guest channel and no serial port.
   systemd.services.qemu-guest-agent.unitConfig.ConditionVirtualization = "vm";
 
   # Proxmox recovery path: keep a serial console available even when SSH or the
@@ -831,9 +822,6 @@ in
   programs.fish.enable = true;
 
   security.sudo.wheelNeedsPassword = false;
-
-  # Emergency recovery: Auto-login root on the serial console ONLY for the backup router.
-  services.getty.autologinUser = lib.mkIf (config.networking.hostName == "router-backup") "root";
 
   environment.systemPackages = with pkgs; [ tmux ];
 

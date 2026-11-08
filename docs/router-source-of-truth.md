@@ -3,8 +3,11 @@
 This document maps where each router concern lives so agents know which file
 to edit first and which files are legacy mirrors or wiring glue.
 
-Both `router` and `router-backup` are `mode = "aspect"` entries in
-`den/inventory/hosts.nix`. Their outputs flow through `mkInventoryOutputs`.
+`router` is a `mode = "aspect"` entry in `den/inventory/hosts.nix`. Its output
+flows through `mkInventoryOutputs`. It is the only router host in this repo;
+the former `router-backup` VM spare was removed. Router function is moving to
+an election between NixOS hosts that carry a routing aspect; see
+[`design/router-election/`](./design/router-election/README.md).
 
 ---
 
@@ -49,26 +52,6 @@ den/inventory/hosts.nix          ← entry point; declares aspects and hostPath
                       └─ hosts/nixos/router/dns-zone.nix  (inline import)
 ```
 
-### router-backup
-
-```
-den/inventory/hosts.nix          ← entry point
-  └─ den/hosts/router-backup/    ← hostPath
-       └─ default.nix            ← mkInventoryHostModule wiring
-            ├─ den aspects (same aspectsList as router)
-            │    └─ router-router  ← same den/aspects/router-router.nix
-            ├─ primaryUserImports
-            │    └─ users/deepwatrcreatur/hosts/router-backup/default.nix
-            └─ extraImports  (legacy host-local files)
-                 ├─ hosts/nixos/router-backup/hardware-configuration.nix
-                 ├─ hosts/nixos/router/service-capability.nix
-                 ├─ hosts/nixos/router/caddy.nix  (shared; wrapper inlined into den leaf)
-                 └─ hosts/nixos/router-backup/configuration.nix
-                      ├─ inputs.disko.nixosModules.disko
-                      ├─ hosts/nixos/router-backup/disko.nix
-                      └─ hosts/nixos/router/role.nix  (backup-specific args)
-```
-
 ---
 
 ## Per-concern source of truth
@@ -76,21 +59,19 @@ den/inventory/hosts.nix          ← entry point
 | Concern | Active file | Notes |
 |---------|-------------|-------|
 | Hardware config (router) | `hosts/nixos/router/hardware-configuration.nix` | Generated; never edit manually |
-| Hardware config (backup) | `hosts/nixos/router-backup/hardware-configuration.nix` | Generated; never edit manually |
-| Hostname | `hosts/nixos/router/networking.nix` and `den/hosts/router-backup/default.nix` | Primary hostname lives in `router/networking.nix`; backup hostname is forced in its den leaf |
-| Shared DNS/NTP capability | `hosts/nixos/router/service-capability.nix` | Shared router service capability imported by both hosts |
+| Hostname | `hosts/nixos/router/networking.nix` | |
+| Shared DNS/NTP capability | `hosts/nixos/router/service-capability.nix` | Shared router service capability |
 | NAT policy | `hosts/nixos/router/service-capability.nix` | `networking.nat.enable = false`; nftables handles NAT in role.nix |
 | Disk layout (router) | `hosts/nixos/router/disko.nix` | Hardware-adjacent; keep separate |
-| Disk layout (backup) | `hosts/nixos/router-backup/disko.nix` | Imported by `configuration.nix`; hardware-adjacent, keep separate |
-| Caddy / ingress | `hosts/nixos/router/caddy.nix` | Both hosts share this file directly. Public ingress is currently pinned to the primary because WAN HA is disabled on both nodes until `router-backup` regains a real WAN NIC and that path is revalidated |
+| Caddy / ingress | `hosts/nixos/router/caddy.nix` | Public ingress is served by `router`; WAN HA is disabled |
 | Router role (networking, firewall, DNS, observability, VPN) | `den/aspects/router-router.nix` + upstream `nix-router-optimized` modules | The den aspect selects which upstream modules to import |
-| Host-specific role args (WAN/LAN devices, IPs, Grafana paths) | `hosts/nixos/router/configuration.nix` and `hosts/nixos/router-backup/configuration.nix` | Each calls `role.nix` as a function with per-host arguments |
-| Runtime LAN service ownership | `hosts/nixos/router/role.nix` via `enableHa` and `ownLanServices` | The current production shape is non-HA: `router` owns DDNS, DHCP, UPnP, and IPv6 RA directly, while `router-backup` keeps those services disabled |
-| WAN failover participation | `hosts/nixos/router/configuration.nix` and `hosts/nixos/router-backup/configuration.nix` via `enableWanHa` | Both nodes currently disable WAN HA. WAN stays locally managed on `router` until the backup has a real standby WAN interface again |
-| NIC stable names | `hosts/nixos/router/configuration.nix` (MAC-based) and `hosts/nixos/router-backup/configuration.nix` (PCI path-based) | Separate rules because the two machines use different matching strategies |
+| Host-specific role args (WAN/LAN devices, IPs, Grafana paths) | `hosts/nixos/router/configuration.nix` | Calls `role.nix` as a function with per-host arguments |
+| Runtime LAN service ownership | `hosts/nixos/router/role.nix` via `enableHa` and `ownLanServices` | The current production shape is non-HA: `router` owns DDNS, DHCP, UPnP, and IPv6 RA directly |
+| WAN failover participation | `hosts/nixos/router/configuration.nix` via `enableWanHa` | Disabled; WAN is locally managed on `router` |
+| NIC stable names | `hosts/nixos/router/configuration.nix` (MAC-based) | |
 | DNS zone data (static hosts, aliases) | `hosts/nixos/router/dns-zone.nix` | Inline-imported by `configuration.nix`; edit here to manage DNS records |
 | ulogd flow logging | `hosts/nixos/router/role.nix` (via nix-router-optimized) | Uses LOGEMU plugin (base `pkgs.ulogd`); JSON plugin requires overlay — not active by default |
-| User overlay | `users/deepwatrcreatur/hosts/router/` and `users/deepwatrcreatur/hosts/router-backup/default.nix` | Applied via `primaryUserImports` in each den leaf |
+| User overlay | `users/deepwatrcreatur/hosts/router/` | Applied via `primaryUserImports` in the den leaf |
 
 ---
 
@@ -105,10 +86,9 @@ den/inventory/hosts.nix          ← entry point
 - **Caddy virtualHosts, ACME, DDNS**: `hosts/nixos/router/caddy.nix`.
 - **DNS zone records**: `hosts/nixos/router/dns-zone.nix`.
 - **Per-host role parameters** (device names, IPs, Grafana paths):
-  `hosts/nixos/router*/configuration.nix` for the relevant host.
+  `hosts/nixos/router/configuration.nix`.
 - **New shared router behaviour**: add a den aspect under `den/aspects/` and reference
-  it in both `router` and `router-backup` `aspectsList` entries in
-  `den/inventory/hosts.nix`.
+  it in the `router` `aspectsList` entry in `den/inventory/hosts.nix`.
 
 ## Current Consumer Shape
 
@@ -117,16 +97,7 @@ The currently validated consumer shape is intentionally simpler than active HA:
 - **Primary-owned today**
   - LAN gateway identity and client-path services on `router`
   - DDNS, DHCP, UPnP, and IPv6 RA, all owned directly by `router`
-  - public WAN ownership and public ingress, because WAN HA is disabled on both
-    nodes until `router-backup` has a real WAN NIC and that failover path is
-    revalidated
-- **Cold/manual spare today**
-  - `router-backup` keeps the management plane, observability, and standby
-    tooling available
-  - `router-backup` keeps DDNS, DHCP, UPnP, and IPv6 RA disabled so it does not
-    race the production router during boot or recovery
-- **Shared on both nodes**
-  - `services.router-ntp.enable = true` so Chrony stays available on the backup
+  - public WAN ownership and public ingress (WAN HA is disabled)
 - **Temporarily disabled in the current simplified mode**
   - `services.router-network-security`
   - Suricata / EveBox
@@ -140,35 +111,34 @@ for safe primary reboots.
 
 ## Current Recovery Stage
 
-The safest current interpretation of this pair is:
-
-1. `router` is the only active production router.
-2. `router-backup` is a cold/manual spare and test target, not an automatic
-   failover peer.
-3. WAN/public-ingress failover should be re-enabled only after the backup has a
-   real WAN NIC again and the whole promotion path is revalidated separately.
+`router` is the only production router managed by this repo, and there is no
+failover peer yet. A new bare-metal NixOS host with routing as one of its
+aspects will join, and an election will decide which host holds router
+function.
 
 For the current primary-router post-reboot checks, use
 [`router-reboot-validation.md`](./router-reboot-validation.md).
 
 ## Deferred Follow-Up
 
-High availability is now an intentional future follow-up, not an active
-deployment goal. Before revisiting it, the next implementation should assume:
+Router election replaces the old fixed primary/standby HA plan. The design
+notes and the lessons carried over from the April 2026 VRRP pair are in
+[`design/router-election/`](./design/router-election/README.md). Until the
+election lands:
 
-1. the current supported production shape is `router` as the only active
-   router plus `router-backup` as a cold/manual spare
-2. any future HA retry must be validated on the backup first, then staged for
-   reboot-based primary testing instead of live `switch` cutovers
-3. WAN/public-ingress failover should remain out of scope until the backup has
-   real standby WAN hardware again
+1. the current supported production shape is `router` as the only router
+2. any election or failover change must be validated on a non-production
+   candidate first, then staged for reboot-based testing instead of live
+   `switch` cutovers
+3. the HA peer settings in `hosts/nixos/router/role.nix` (`peerAddress`,
+   `peerName`, `keaSync.peerAddress`) still describe the removed spare and must
+   be replaced once the election design decides the peers
 
 ## Current `activeOwner` Consumers
 
 `router.failover.activeOwner` is now a legacy static hint, not the live
 ownership switch for DDNS, DHCP, UPnP, or IPv6 RA. In the current production
-shape those services are simply enabled on `router` and disabled on
-`router-backup`.
+shape those services are simply enabled on `router`.
 
 If future consumer code still uses `activeOwner`, that should be treated as an
 explicit compatibility choice rather than the default HA mechanism.
@@ -182,7 +152,7 @@ The next consumer-side HA follow-up is tracked as
 
 ## Legacy files still active (migration status)
 
-All `extraImports` in both den leaves are legacy files not yet represented as den
+All `extraImports` in the den leaf are legacy files not yet represented as den
 aspects. The table below summarises migration readiness.
 
 | File | Reason still separate | Migration candidate? |
@@ -192,7 +162,3 @@ aspects. The table below summarises migration readiness.
 | `hosts/nixos/router/caddy.nix` | 194 lines; large host-local file | No urgent need; keep separate |
 | `hosts/nixos/router/disko.nix` | Disk layout; hardware-adjacent | No — keep separate always |
 | `hosts/nixos/router/configuration.nix` | Wires `role.nix` with host-specific args; needs den aspect function-call pattern | Yes — long-term goal once role.nix API stabilises |
-| `hosts/nixos/router-backup/hardware-configuration.nix` | Generated hardware config | No |
-| `hosts/nixos/router-backup/networking.nix` | Thin wrapper: imports `router/networking.nix` and overrides hostname | Yes — trivial to inline into den leaf |
-| `hosts/nixos/router-backup/caddy.nix` | Single line re-export of `router/caddy.nix` | Yes — can inline the import into den leaf |
-| `hosts/nixos/router-backup/configuration.nix` | Wires `role.nix` with backup args | Yes — same migration path as `router/configuration.nix` |

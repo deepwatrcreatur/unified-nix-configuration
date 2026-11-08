@@ -110,13 +110,6 @@
       description = "Main router/firewall running NixOS";
     };
 
-    router-backup = {
-      sshHostname = "192.168.100.99";
-      sshUser = "deepwatrcreatur";
-      includeDns = false;
-      description = "Emergency failover router with a dedicated management interface";
-    };
-
     router-bootstrap = {
       ip = null;
       sshUser = "deepwatrcreatur";

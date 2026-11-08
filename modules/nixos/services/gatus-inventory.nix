@@ -22,7 +22,7 @@ let
   classifyHost = name: host:
     if lib.hasPrefix "pve-" name then
       "Hypervisors (Proxmox)"
-    else if name == "router" || name == "router-backup" then
+    else if name == "router" then
       "Core Routing & Firewalls"
     else if name == "sw-main" || lib.hasPrefix "ap-" name || lib.hasInfix "airport" name then
       "Network Equipment"

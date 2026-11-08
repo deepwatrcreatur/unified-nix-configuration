@@ -2,7 +2,6 @@
 let
   hostsData = import ../../../lib/hosts.nix;
   routerHost = hostsData.hosts.router;
-  backupHost = hostsData.hosts.router-backup;
 in
 {
   options.router.topology = lib.mkOption {
@@ -24,13 +23,12 @@ in
     domain = hostsData.domain;
     hosts = hostsData.hosts;
     routerHost = routerHost;
-    backupHost = backupHost;
     networks = hostsData.networks;
   };
 
   config.router.failover.activeOwner = lib.mkDefault (config.networking.hostName == "router");
 
-  # Shared defaults for router and router-backup.
+  # Shared router defaults.
   config.services.router-homelab = {
     enable = lib.mkDefault true;
     netdataAllowConnectionsFrom = lib.mkDefault "${hostsData.networks.lan.cidr} ${hostsData.networks.management.cidr}";

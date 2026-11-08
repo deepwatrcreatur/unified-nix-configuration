@@ -52,34 +52,29 @@ outputs should be treated as `den/inventory`, not `inventory/legacy`.
 
 ## Router source-of-truth map
 
-For the `router` and `router-backup` hosts, the current ownership is:
+For the `router` host, the current ownership is:
 
 - **den leaves (active)**
   - `den/hosts/router/default.nix`
-  - `den/hosts/router-backup/default.nix`
 
 - **Hardware (active, legacy host-local)**
   - `hosts/nixos/router/hardware-configuration.nix`
-  - `hosts/nixos/router-backup/hardware-configuration.nix`
 
 - **Networking (active, shared role logic)**
   - `hosts/nixos/router/networking.nix` (shared router role and DNS topology)
-  - `den/hosts/router-backup/default.nix` (inlines hostname override and imports shared logic directly)
 
 - **Caddy / ingress and DNS**
   - Primary HTTPS ingress: `hosts/nixos/router/caddy.nix` (Caddy and public-facing routes)
-  - Router-backup DNS and NAT toggle: `hosts/nixos/router-backup/caddy.nix` (enables `services.router-dns-service`, keeps NAT disabled)
 
 - **Shared router role**
-  - `hosts/nixos/router/role.nix` (imported by `hosts/nixos/router/configuration.nix` and `hosts/nixos/router-backup/configuration.nix`)
+  - `hosts/nixos/router/role.nix` (imported by `hosts/nixos/router/configuration.nix`)
 
 - **User host overlays**
   - `users/deepwatrcreatur/hosts/router/default.nix`
-  - `users/deepwatrcreatur/hosts/router-backup/default.nix`
 
 - **den inventory and aspects**
-  - `den/inventory/hosts.nix` entries for `router` / `router-backup`
-  - aspects referenced from those inventory entries and user host overlays.
+  - `den/inventory/hosts.nix` entry for `router`
+  - aspects referenced from that inventory entry and the user host overlay.
 
 Guidance for new changes:
 

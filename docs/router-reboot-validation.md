@@ -4,8 +4,7 @@ Use this runbook after a planned `router` reboot.
 
 This is intentionally scoped to the **current production shape**:
 
-- `router` is the only active production router
-- `router-backup` is a cold/manual spare
+- `router` is the only production router (no standby is configured yet)
 - HA, VRRP, and WAN failover are deferred future work
 
 The goal is simple:

@@ -56,8 +56,8 @@ recovery plane**. It is intentionally independent of WAN and LAN state.
 
 - SSH and all diagnostic services bind to `0.0.0.0`; they are reachable on
   management even when WAN is absent or the LAN cable is unplugged.
-- `192.168.100.100` (router) and `192.168.100.99` (router-backup) are derived
-  from `lib/hosts.nix` — no raw literals in host config files.
+- `192.168.100.100` (router) is derived from `lib/hosts.nix` — no raw
+  literals in host config files.
 - Grafana, Prometheus, Netdata, Caddy, and the router dashboard all bind to
   all interfaces.
 - fail2ban exempts `192.168.100.0/24` from bans so authentication testing
@@ -126,7 +126,7 @@ If `qm terminal` is not preferred, use the Web UI:
 
 ## Router Standby / Dev Mode
 
-Both `router` and `router-backup` are designed to boot into a debuggable state
+`router` is designed to boot into a debuggable state
 even with all production cables unplugged.
 
 **What this means in practice:**
@@ -139,19 +139,8 @@ even with all production cables unplugged.
 - Monitoring services (Prometheus, Grafana, Netdata) come up in a
   degraded-but-functional state once the LAN address exists, even if no LAN
   traffic flows.
-- The serial console (`ttyS0` at 115200 baud) is always enabled as a recovery
-  path when SSH or the graphical console path is broken.
-
-**When swapping to the backup router:**
-
-1. Unplug WAN and LAN cables from the production router.
-2. Plug them into the backup router.
-   Current interface names differ by host:
-   - `router`: WAN `enp6s17`, LAN `enp6s16`
-   - `router-backup`: WAN `ens27`, LAN `ens19`
-3. Both routers share the same production LAN identity (`10.10.10.1`), so no
-   DNS or DHCP reconfiguration is needed on clients.
-4. Use the management IP to reach the new active router after cutover.
+- The serial console (`ttyS0` at 115200 baud) is enabled only when the router
+  runs as a VM; the current bare-metal router has no serial port.
 
 **If monitoring looks broken after unplugging cables:**
 
