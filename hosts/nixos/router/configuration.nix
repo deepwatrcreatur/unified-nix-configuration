@@ -7,7 +7,6 @@
 let
   topology = config.router.topology;
   routerHost = topology.routerHost;
-  backupHost = topology.backupHost;
   domain = topology.domain;
   lanNetwork = topology.networks.lan;
   managementNetwork = topology.networks.management;
@@ -27,7 +26,7 @@ in
       enableHa = false;
       ownLanServices = true;
       enableNetworkSecurity = false;
-      # Keep WAN locally managed until router-backup regains a real WAN NIC.
+      # Keep WAN locally managed until a standby router with a real WAN NIC exists.
       # The current router-ha WAN hooks restart systemd-networkd on promotion,
       # which is too disruptive on the live primary.
       enableWanHa = false;
