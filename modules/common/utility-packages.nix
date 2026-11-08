@@ -45,6 +45,9 @@
       lightpanda  # Headless browser for AI agents
       ethtool
       tcpdump
+      # iputils no longer ships ping6; resolve `ping` via PATH so NixOS's
+      # capability wrapper (/run/wrappers/bin/ping) is used. macOS has /sbin/ping6.
+      (writeShellScriptBin "ping6" ''exec ping -6 "$@"'')
     ]
     ++ [
       # Nix tools
