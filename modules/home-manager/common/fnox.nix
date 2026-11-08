@@ -101,8 +101,7 @@ in
               "bw-fnox"
               "factory-droid-fnox"
               "proxmox-backup-client-fnox"
-              # repo-managed opencode-zai wraps pkgs.llm-agents.opencode instead
-              # of the fnox-flake's own pinned version, keeping the overlay version active
+              # OpenCode runs directly, without the upstream Z.ai wrapper.
               "opencode-zai"
             ]
           );

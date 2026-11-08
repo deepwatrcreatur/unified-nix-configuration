@@ -80,16 +80,6 @@
     };
   })
 
-  # Wrapped OpenCode CLI with fnox-backed Z_AI_API_KEY lookup.
-  # Uses pkgs.llm-agents.opencode (the repo-managed version) instead of the
-  # fnox-flake's own bundled opencode, which lags behind the overlay version.
-  (final: prev: {
-    opencode-zai = final.callPackage ../pkgs/opencode-zai.nix {
-      opencode = final.llm-agents.opencode;
-      fnox = final.fnox;
-    };
-  })
-
   # repo_updater (ru) — parallelized multi-repo sync and review CLI
   (final: prev: {
     repo-updater = prev.callPackage ../pkgs/repo-updater.nix { };
