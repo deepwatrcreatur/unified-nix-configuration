@@ -4,12 +4,12 @@
 let
   cfg = config.programs.agent-guards;
   jq = lib.getExe pkgs.jq;
-  guardPackage = pkgs.writeShellApplication {
-    name = "agent-guard";
-    runtimeInputs = [ pkgs.jq ];
-    text = builtins.readFile ../../../scripts/check-destructive.sh;
-  };
-  guardCommand = "${lib.getExe guardPackage} --json";
+  # Policy and tests: scripts/agent-guard.py, tests/agent-guard-test.py
+  # (run by the agent-guard-policy flake check).
+  guardPackage = pkgs.writeScriptBin "agent-guard" (
+    "#!${lib.getExe pkgs.python3}\n" + builtins.readFile ../../../scripts/agent-guard.py
+  );
+  guardCommand = "${guardPackage}/bin/agent-guard";
 
   claudeEnabled =
     config.programs.rtk-hooks.enable
@@ -67,7 +67,7 @@ in
                 if .matcher == "Bash" then
                   .hooks = (
                     [{"type":"command","command":$command}] +
-                    [(.hooks // [])[] | select(.command != $command)]
+                    [(.hooks // [])[] | select((.command // "") | test("/bin/agent-guard( |$)") | not)]
                   )
                 else
                   .
@@ -95,7 +95,7 @@ in
                 if .matcher == "run_shell_command" then
                   .hooks = (
                     [{"type":"command","command":$command}] +
-                    [(.hooks // [])[] | select(.command != $command)]
+                    [(.hooks // [])[] | select((.command // "") | test("/bin/agent-guard( |$)") | not)]
                   )
                 else
                   .

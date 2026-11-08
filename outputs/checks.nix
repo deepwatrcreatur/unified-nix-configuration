@@ -368,6 +368,9 @@ let
 in
 {
   checks.x86_64-linux.inventory-consistency = checkBody;
+  checks.x86_64-linux.agent-guard-policy = pkgs.runCommand "agent-guard-policy" { nativeBuildInputs = [ pkgs.python3 ]; } ''
+    python3 -I ${../tests/agent-guard-test.py} ${../scripts/agent-guard.py} | tee $out
+  '';
   checks.x86_64-linux.module-loading-eval = pkgs.writeText "module-loading-eval.txt" (
     if moduleLoadingEval == [ ] then "module-loading-eval=ok\n" else builtins.throw "module-loading-eval failed"
   );
