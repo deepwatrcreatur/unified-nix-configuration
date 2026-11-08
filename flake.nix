@@ -157,7 +157,7 @@
     };
 
     # herdr - terminal-native agent multiplexer, pinned to an upstream release tag.
-    herdr.url = "github:ogulcancelik/herdr/v0.6.2";
+    herdr.url = "github:herdrdev/herdr/v0.9.5";
 
     # frankenterm - swarm-native terminal platform and agent orchestrator
     nix-frankenterm = {
