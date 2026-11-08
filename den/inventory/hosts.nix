@@ -189,6 +189,7 @@
       "orca"
       "t3code"
       "synology-shares"
+      "desktop-niri-specialisation"
     ];
   };
 
