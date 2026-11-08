@@ -35,7 +35,6 @@ let
     "phoenix"
     "podman"
     "router"
-    "router-backup"
     "vaglio"
   ];
 
@@ -57,7 +56,7 @@ let
 
   userOnlySecrets = operatorUsers;
 
-  routerServiceSecrets = operatorUsers ++ machineRecipients "router" ++ machineRecipients "router-backup";
+  routerServiceSecrets = operatorUsers ++ machineRecipients "router";
   homeserverServiceSecrets = operatorUsers ++ machineRecipients "homeserver";
   authentikHostServiceSecrets = operatorUsers ++ machineRecipients "authentik-host";
 
@@ -101,7 +100,6 @@ let
     "phoenix"
     "podman"
     "router"
-    "router-backup"
     "vaglio"
     "lattitude"
     "pve-rog"

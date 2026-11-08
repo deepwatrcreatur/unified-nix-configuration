@@ -20,6 +20,4 @@ let
 in
 {
   inherit inventoryHostNames hostNamesExpectedInLib missingInventoryHosts;
-  routerBackupInLib = builtins.hasAttr "router-backup" libHosts;
-  routerBackupInInventory = builtins.hasAttr "router-backup" inventoryHosts;
 }
