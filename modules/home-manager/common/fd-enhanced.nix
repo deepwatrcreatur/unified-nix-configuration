@@ -195,27 +195,39 @@ in
 
       # Fish shell functions
       programs.fish.functions = mkIf cfg.enableShellIntegration {
-        fde_edit = ''
-          set file (fd --type file | fzf --preview 'bat --style=numbers --color=always {}' --preview-window=right:60%:wrap)
-          if test -n "$file"
-            $EDITOR "$file"
-          end
-        '';
+        fde_edit = {
+          description = "Pick a file with fd + fzf and open it in the editor";
+          body = ''
+            set file (fd --type file | fzf --preview 'bat --style=numbers --color=always {}' --preview-window=right:60%:wrap)
+            if test -n "$file"
+              $EDITOR "$file"
+            end
+          '';
+        };
 
-        fdc_cd = ''
-          set dir (fd --type directory | fzf --preview 'tree -C {} | head -200')
-          if test -n "$dir"
-            cd "$dir"
-          end
-        '';
+        fdc_cd = {
+          description = "Pick a directory with fd + fzf and cd into it";
+          body = ''
+            set dir (fd --type directory | fzf --preview 'tree -C {} | head -200')
+            if test -n "$dir"
+              cd "$dir"
+            end
+          '';
+        };
 
-        fdlarge = ''
-          fd --type file --exec ls -lah {} \; | sort -k5 -hr | head -20
-        '';
+        fdlarge = {
+          description = "List the 20 largest files under the current directory";
+          body = ''
+            fd --type file --exec ls -lah {} \; | sort -k5 -hr | head -20
+          '';
+        };
 
-        fddup = ''
-          fd --type file --exec basename {} \; | sort | uniq -d
-        '';
+        fddup = {
+          description = "List duplicate file names under the current directory";
+          body = ''
+            fd --type file --exec basename {} \; | sort | uniq -d
+          '';
+        };
       };
 
       # Nushell custom commands (equivalent to functions)
