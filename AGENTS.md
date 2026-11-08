@@ -188,6 +188,32 @@ For detailed managed authentication paths (including `gemini-cli`), see `docs/to
 - For secret creation/rotation, pair `agenix-edit` with the local `age`/`rage`
   tools already installed via the same module.
 
+#### Destructive command guard (`agent-guard`)
+
+Home Manager installs `agent-guard` as a Claude Code `PreToolUse` hook on
+`Bash` (and as a Gemini CLI `BeforeTool` hook when that integration is
+enabled). It parses each shell command, including `ssh host '...'`,
+`bash -c`, `sudo`, `xargs` and `pct exec` wrappers, and:
+
+- **asks for confirmation** before commands that destroy data or rewrite shared
+  history: recursive `rm` outside `/tmp` and build artifacts, `find -delete`,
+  force or deleting `git push`, `git reset --hard`, `git clean -f`,
+  `git branch -D`, `git stash drop/clear`, disk tools (`mkfs`, `dd of=/dev/…`,
+  `wipefs`, `sgdisk --zap-all`), `zfs`/`zpool destroy`, btrfs subvolume
+  deletes, `qm`/`pct destroy`, container volume or system prunes,
+  `kubectl delete`, `gh repo delete`, `gh api -X DELETE`, SQL
+  `DROP`/`TRUNCATE`/unbounded `DELETE`, and `nix-collect-garbage -d`;
+- **refuses** recursive deletes of `/`, `$HOME` and system directories such as
+  `/nix` and `/etc`.
+
+Gemini CLI has no confirmation path here, so it blocks instead of asking.
+Codex is not covered. To check a command by hand, run
+`agent-guard check '<command>'`. To turn the guard off for one agent session,
+start the agent with `AGENT_GUARD_SKIP=1`. To disable it for a host, set
+`programs.agent-guards.enable = false`. The policy lives in
+`scripts/agent-guard.py`, and its cases are in `tests/agent-guard-test.py`
+(the `agent-guard-policy` flake check).
+
 **Recent additions**
 - Added `ast-grep` (`sg`) to the common tool set.
 - Added `cass-session-search` for CASS-style search across local agent
