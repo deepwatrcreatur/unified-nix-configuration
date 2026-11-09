@@ -163,7 +163,7 @@
       "nixos-base"
       "home-manager-users"
       "workstation-desktop"
-      "desktop-cosmic"
+      "desktop-niri-cosmic-fallback"
       "desktop-network-shares"
       "desktop-media-players"
       "hardware-printer-phoenix-m477"
@@ -174,7 +174,6 @@
       "orca"
       "t3code"
       "synology-shares"
-      "desktop-niri-specialisation"
     ];
   };
 

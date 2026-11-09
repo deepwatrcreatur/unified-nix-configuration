@@ -44,7 +44,7 @@
   bootstrap-base = context: import ./bootstrap-base.nix context;
   workstation-niri = context: import ./workstation-niri.nix context;
   desktop-noctalia = context: import ./desktop-noctalia.nix context;
-  desktop-niri-specialisation = context: import ./desktop-niri-specialisation.nix context;
+  desktop-niri-cosmic-fallback = context: import ./desktop-niri-cosmic-fallback.nix context;
   safe-mode = context: import ./safe-mode.nix context;
   secure-travel = context: import ./secure-travel.nix context;
   desktop-cosmic = context: import ./desktop-cosmic.nix context;
