@@ -31,6 +31,17 @@
     ];
   };
 
+  fileSystems."/data" = {
+    device = "/dev/disk/by-label/data";
+    fsType = "btrfs";
+    options = [
+      "defaults"
+      "noatime"
+      "compress=zstd"
+      "nofail"
+    ];
+  };
+
   systemd.tmpfiles.rules = [
     "L+ /torrents - - - - /scratch"
   ];
