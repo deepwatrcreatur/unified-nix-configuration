@@ -8,6 +8,7 @@ den.mkInventoryHostModule {
   primaryUserImports = [
     ../../../users/deepwatrcreatur/hosts/emerald
     ../../../users/deepwatrcreatur/aspects/developer.nix
+    { programs.herdr.desktopApp.enable = true; }
   ];
   extraImports = [
     inputs.disko.nixosModules.disko
