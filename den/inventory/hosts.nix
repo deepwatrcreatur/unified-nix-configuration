@@ -171,6 +171,7 @@
       "safe-mode"
       "rclone-client"
       "vpn-unlimited-client"
+      "mega-vpn-client"
       "orca"
       "t3code"
       "synology-shares"
