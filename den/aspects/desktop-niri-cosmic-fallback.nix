@@ -38,7 +38,6 @@ let
     exec ${pkgs.tuigreet}/bin/tuigreet \
       --time \
       --remember \
-      --remember-user \
       --cmd ${lib.escapeShellArg (toString niriSessionCommand)}
   '';
 
