@@ -158,12 +158,13 @@ in
             cursor = {
               hide-after-inactive-ms = 3000;
               hide-when-typing = true;
-              size = 24;
+              size = 56;
             };
 
             environment = {
               XDG_CURRENT_DESKTOP = "niri";
               XDG_SESSION_DESKTOP = "niri";
+              XCURSOR_SIZE = "56";
             };
 
             gestures.hot-corners.enable = false;
