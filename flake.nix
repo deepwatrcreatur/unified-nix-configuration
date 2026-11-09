@@ -33,6 +33,11 @@
     # LLM/AI coding agents - comprehensive package set from numtide
     llm-agents.url = "github:numtide/llm-agents.nix";
 
+    # Separate llm-agents pin used only for herdr-app, built with llm-agents' own
+    # nixpkgs (prebuilt on cache.numtide.com). Newer llm-agents needs a newer
+    # nixpkgs than the shared overlay above can use.
+    llm-agents-herdr-app.url = "github:numtide/llm-agents.nix";
+
     # RTK hook integration for AI coding agents
     nix-rtk = {
       url = "github:deepwatrcreatur/nix-rtk";

@@ -70,6 +70,8 @@
   # herdr - terminal-native agent multiplexer from its upstream flake.
   (final: prev: {
     herdr = inputs.herdr.packages.${prev.stdenv.hostPlatform.system}.default;
+    # herdr desktop app (GPUI); bundles its own herdr-core backend.
+    herdr-app = inputs.llm-agents-herdr-app.packages.${prev.stdenv.hostPlatform.system}.herdr-app;
   })
 
   # frankenterm (ft) - swarm-native terminal platform and agent orchestrator
