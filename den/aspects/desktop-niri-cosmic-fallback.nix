@@ -117,7 +117,19 @@ in
       binds = {
         "Mod+Return".action = lib.mkForce { spawn = [ "ghostty" ]; };
         "Mod+E".action = lib.mkForce { spawn = [ "ghostty" ]; };
+        # Vicinae alongside Noctalia's launcher (Mod+Space); same key as on
+        # the Plasma hosts.
+        "Alt+Space".action.spawn = [
+          "${pkgs.vicinae}/bin/vicinae"
+          "toggle"
+        ];
       };
+    };
+
+    # `vicinae toggle` needs the server running.
+    programs.vicinae = {
+      enable = true;
+      systemd.enable = true;
     };
 
     programs.noctalia.settings = {
