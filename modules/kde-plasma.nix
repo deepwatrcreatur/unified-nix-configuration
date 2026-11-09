@@ -30,8 +30,12 @@
     };
   };
 
-  # Enable Vicinae launcher
-  programs.vicinae.enable = true;
+  # Enable Vicinae launcher. The hotkeys above run `vicinae toggle`, which
+  # needs the server running, so start it with the graphical session.
+  programs.vicinae = {
+    enable = true;
+    systemd.enable = true;
+  };
 
   # KDE-specific applications
   home.packages = with pkgs; [
