@@ -9,6 +9,7 @@ den.mkInventoryHostModule {
     inputs.nix-whitesur-config.homeManagerModules.default
     ../../../users/deepwatrcreatur/aspects/developer.nix
     ../../../users/deepwatrcreatur/aspects/desktop-whitesur.nix
+    { programs.herdr.desktopApp.enable = true; }
   ];
   extraImports = [
     inputs.disko.nixosModules.disko
