@@ -23,6 +23,9 @@ let
     kdePackages.dolphin
     kdePackages.konsole
     dconf-editor
+    # kinfocenter's network/ip.sh pipes through bare `aha`; nixpkgs only
+    # patches the store path into the firmware page, not the network page.
+    aha
   ];
 
   plasmaFonts = with pkgs; [
