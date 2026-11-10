@@ -32,12 +32,13 @@ wrappers, shell defaults, and related repo operations.
 
 ## Current Ranked Queue
 
-1. [39 Herdr State Layout And Btrfs Subvolume Follow-Up](./39-herdr-state-layout-and-btrfs-subvolume-followup.md) — `ready`
+*(Queue is currently clear; ready for next triage intake)*
 
 ## Recently Completed
 
-1. [38 Herdr Packaging And Workstation Landing](./38-herdr-packaging-and-workstation-landing.md) — `done`
-2. [37 Git SSH Signing Doctor and Troubleshooting Notes](./37-git-ssh-signing-doctor-and-docs.md) — `done`
+1. [39 Herdr State Layout And Btrfs Subvolume Follow-Up](./39-herdr-state-layout-and-btrfs-subvolume-followup.md) — `done`
+2. [38 Herdr Packaging And Workstation Landing](./38-herdr-packaging-and-workstation-landing.md) — `done`
+3. [37 Git SSH Signing Doctor and Troubleshooting Notes](./37-git-ssh-signing-doctor-and-docs.md) — `done`
 2. [36 SSH Agent Identity Loading Hardening](./36-ssh-agent-identity-loading-hardening.md) — `done`
 3. [33 JJ-Backed Forgejo Spike](./33-jj-backed-forgejo-spike.md) — `done`
 4. [32 Public Repo Stress Analysis Demo](./32-public-repo-stress-analysis-demo.md) — `done`
