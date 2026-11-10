@@ -1,8 +1,19 @@
 # 39 Herdr State Layout And Btrfs Subvolume Follow-Up
 
-Status: `ready`
+Status: `done`
 Suggested branch: `design/herdr-state-layout`
 Priority: `medium`
+
+## Outcome Notes
+
+- Documented architecture and state model in [`docs/herdr-state-and-worktree-model.md`](../herdr-state-and-worktree-model.md), covering:
+  - Directory hierarchies (`~/flakes/` bare repos vs `~/flakes-worktrees/` linked worktrees vs `~/agent-workspaces/` ephemeral subvolumes).
+  - Btrfs subvolume isolation from `/home` Snapper timeline snapshots.
+  - Linked worktrees vs Btrfs subvolume decision matrix.
+  - Guard and preflight rules preventing agent corruption in bare checkouts.
+- Added `herdr-preflight` CLI utility in `modules/home-manager/common/herdr.nix` to validate checkout state before agent mutation.
+- Verified clean evaluation on `emerald` and `phoenix`.
+
 
 ## Goal
 
