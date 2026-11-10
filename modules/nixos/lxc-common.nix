@@ -185,9 +185,12 @@ in
     networking.defaultGateway = mkIf (cfg.networking.staticIP != null) cfg.networking.gateway;
     networking.nameservers = mkIf (cfg.networking.staticIP != null) cfg.networking.nameservers;
 
+    # Login shell is bash; interactive sessions exec fish (see ../fish-interactive-bash-login.nix)
+    custom.fishInteractiveShell.users =
+      [ cfg.users.primaryUser ] ++ lib.optional cfg.users.root.enableFishShell "root";
+
     # Root user
     users.users.root = {
-      shell = mkIf cfg.users.root.enableFishShell pkgs.fish;
       hashedPasswordFile = config.age.secrets.user-password-root.path;
     };
 
@@ -195,7 +198,6 @@ in
     users.users.${cfg.users.primaryUser} = {
       isNormalUser = true;
       extraGroups = cfg.users.extraGroups;
-      shell = pkgs.fish;
       hashedPasswordFile = config.age.secrets.user-password-deepwatrcreatur.path;
     };
 

@@ -809,11 +809,13 @@ in
     ];
   };
 
+  # Login shell is bash; interactive sessions exec fish (see modules/nixos/fish-interactive-bash-login.nix)
+  custom.fishInteractiveShell.users = [ "deepwatrcreatur" ];
+
   users.users.deepwatrcreatur = {
     isNormalUser = true;
     hashedPasswordFile = config.age.secrets.user-password-deepwatrcreatur.path;
     extraGroups = [ "wheel" ];
-    shell = pkgs.fish;
     openssh.authorizedKeys.keys = operatorKeys;
   };
 

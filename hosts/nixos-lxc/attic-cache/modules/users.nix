@@ -10,7 +10,8 @@ let
   deepwatrcreaturPhoenixKey = lib.strings.trim (builtins.readFile ../../../../ssh-keys/deepwatrcreatur-phoenix-identity.pub);
 in
 {
-  users.users.root.shell = pkgs.fish;
+  # Login shell is bash; interactive sessions exec fish (see modules/nixos/fish-interactive-bash-login.nix)
+  custom.fishInteractiveShell.users = [ "root" "deepwatrcreatur" ];
   users.users.root.openssh.authorizedKeys.keys = [
     deepwatrcreaturStableKey
     deepwatrcreaturPhoenixKey
@@ -23,7 +24,6 @@ in
     home = "/home/deepwatrcreatur";
     description = "Deep Water Creature";
     extraGroups = [ "wheel" "networkmanager" ];
-    shell = pkgs.fish;
     openssh.authorizedKeys.keys = [
       deepwatrcreaturStableKey
       deepwatrcreaturPhoenixKey

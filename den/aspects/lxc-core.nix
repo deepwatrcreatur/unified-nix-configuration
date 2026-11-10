@@ -47,12 +47,12 @@
     }
   ];
 
-  users.users.root.shell = pkgs.fish;
+  # Login shell is bash; interactive sessions exec fish (see modules/nixos/fish-interactive-bash-login.nix)
+  custom.fishInteractiveShell.users = [ "root" primaryUser ];
 
   users.users.${primaryUser} = {
     isNormalUser = true;
     inherit extraGroups;
-    shell = pkgs.fish;
   };
 
   services.ssh-keys-manager.username = primaryUser;

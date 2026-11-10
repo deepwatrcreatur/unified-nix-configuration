@@ -38,6 +38,9 @@ in
     ]
   );
 
+  # Login shell is bash; interactive sessions exec fish (see modules/nixos/fish-interactive-bash-login.nix)
+  custom.fishInteractiveShell.users = [ "deepwatrcreatur" ];
+
   users.users.deepwatrcreatur = {
     isNormalUser = true;
     description = "Anwer Khan";
@@ -47,7 +50,6 @@ in
       "snapper"
       "wheel"
     ];
-    shell = pkgs.fish;
     hashedPasswordFile = config.age.secrets.user-password-deepwatrcreatur.path;
     openssh.authorizedKeys.keys = [ deepwatrcreaturStableKey ];
   };

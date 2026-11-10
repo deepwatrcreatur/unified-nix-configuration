@@ -135,6 +135,9 @@
   services.logind.settings.Login.HandleLidSwitch = "ignore";
   security.sudo.wheelNeedsPassword = false;
 
+  # Login shell is bash; interactive sessions exec fish (see modules/nixos/fish-interactive-bash-login.nix)
+  custom.fishInteractiveShell.users = [ "deepwatrcreatur" ];
+
   users.users.deepwatrcreatur = {
     isNormalUser = true;
     extraGroups = [
@@ -144,7 +147,6 @@
       "video"
       "render"
     ];
-    shell = pkgs.fish;
   };
 
   services.ssh-keys-manager.username = "deepwatrcreatur";
