@@ -1,8 +1,17 @@
 # 38 Herdr Packaging And Workstation Landing
 
-Status: `ready`
+Status: `done`
 Suggested branch: `feat/herdr-packaging`
 Priority: `high`
+
+## Outcome Notes
+
+Landed across PR #235 and PR #237:
+- Inputs: Pinned `github:herdrdev/herdr/v0.9.5` and `github:numtide/llm-agents.nix` for `herdr-app`.
+- Packages: Plumbed `pkgs.herdr` and `pkgs.herdr-app` in `overlays/flake-inputs.nix`.
+- Module: Created `modules/home-manager/common/herdr.nix` with `programs.herdr.enable` and `programs.herdr.desktopApp.enable`.
+- Hosts: Enabled on developer aspect and explicitly enabled desktop app on `emerald` and `phoenix`.
+
 
 ## Goal
 

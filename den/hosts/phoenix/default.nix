@@ -18,8 +18,6 @@ den.mkInventoryHostModule {
     ../../../hosts/nixos/phoenix/disko.nix
     ../../../hosts/nixos/phoenix/hardware-configuration.nix
     ../../../hosts/nixos/phoenix/networking.nix
-    ../../../modules/nixos/fish-interactive-bash-login.nix
-    { custom.fishInteractiveShell.users = [ "deepwatrcreatur" ]; }
 
     {
       services.omarchy-screen-mirroring.enable = true;

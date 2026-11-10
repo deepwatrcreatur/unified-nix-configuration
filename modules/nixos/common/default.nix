@@ -22,6 +22,7 @@
     ../deepwatrcreatur-ssh-identity.nix  # Stable deepwatrcreatur SSH identity
     ../../common/secrets-management.nix  # age/agenix/rage/ssh-to-age tools
     ./hosts.nix  # Declarative fleet-wide /etc/hosts with all aliases
+    ../fish-interactive-bash-login.nix  # bash login shell, fish for interactive sessions
     # ../../activation-scripts
   ];
 

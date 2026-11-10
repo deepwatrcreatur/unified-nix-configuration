@@ -76,6 +76,7 @@ in
       users.users.${userName}.shell = lib.mkForce pkgs.bashInteractive;
       users.users.root.shell = lib.mkForce pkgs.bashInteractive;
       users.defaultUserShell = lib.mkForce pkgs.bashInteractive;
+      custom.fishInteractiveShell.users = lib.mkForce [ ];
 
       environment.variables = {
         EDITOR = lib.mkForce "nano";
