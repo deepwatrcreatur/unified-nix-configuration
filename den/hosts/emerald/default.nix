@@ -17,6 +17,8 @@ den.mkInventoryHostModule {
     ../../../hosts/nixos/emerald/disko.nix
     ../../../hosts/nixos/emerald/hardware-configuration.nix
     ../../../hosts/nixos/emerald/networking.nix
+    ../../../modules/nixos/fish-interactive-bash-login.nix
+    { custom.fishInteractiveShell.users = [ "deepwatrcreatur" ]; }
     ({ pkgs, lib, ... }: {
       services.omarchy-screen-mirroring.enable = true;
       services.omarchy-iphone-mirror.enable = true;
