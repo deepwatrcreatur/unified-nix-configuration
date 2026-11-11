@@ -181,3 +181,16 @@ index 73836b7..f116440 100644
  }
  
  void KonveyorEffect::postPaintScreen()
+diff --git a/data/default-config.kdl b/data/default-config.kdl
+index 8933b49..2df2c1c 100644
+--- a/data/default-config.kdl
++++ b/data/default-config.kdl
+@@ -10,7 +10,7 @@
+ 
+ layout {
+     fixed-workspace-count 0
+-    horizontal-desktops false
++    horizontal-desktops true
+     gaps 16
+     center-focused-column "never"
+

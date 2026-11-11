@@ -10,6 +10,7 @@
     enable = true;
 
     configFile."kwinrc"."Plugins"."konveyor_effectEnabled" = true;
+    configFile."kwinrc"."Desktops"."Rows" = 1;
 
     # Hotkeys configuration
     hotkeys.commands = {
@@ -45,6 +46,9 @@
     konveyor
     birdtray # System tray notification for Thunderbird
   ];
+
+  # Declarative Konveyor configuration (dynamic workspaces in 1 horizontal row)
+  xdg.configFile."konveyor/config.kdl".source = ./konveyor/config.kdl;
 
   # Autostart birdtray for Thunderbird notifications
   systemd.user.services.birdtray = {
