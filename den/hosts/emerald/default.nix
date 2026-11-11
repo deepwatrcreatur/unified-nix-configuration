@@ -11,6 +11,9 @@ den.mkInventoryHostModule {
     { programs.herdr.desktopApp.enable = true; }
   ];
   extraImports = [
+    # Start the user manager at boot so herdr-core (programs.herdr.core.autostart)
+    # is up for the mobile app before any login.
+    { users.users.deepwatrcreatur.linger = true; }
     inputs.disko.nixosModules.disko
     inputs.nix-omarchy-screen-mirroring.nixosModules.default
     inputs.nix-omarchy-iphone-mirror.nixosModules.default

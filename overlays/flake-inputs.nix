@@ -72,6 +72,9 @@
     herdr = inputs.herdr.packages.${prev.stdenv.hostPlatform.system}.default;
     # herdr desktop app (GPUI); bundles its own herdr-core backend.
     herdr-app = inputs.llm-agents-herdr-app.packages.${prev.stdenv.hostPlatform.system}.herdr-app;
+    # herdr-core (`hc`): the terminal runtime herdr-app and the herdr mobile apps
+    # talk to (mobile clients run `hc connect` over SSH; herdr TUI is not supported).
+    herdr-core = inputs.llm-agents-herdr-app.packages.${prev.stdenv.hostPlatform.system}.herdr-core;
   })
 
   # frankenterm (ft) - swarm-native terminal platform and agent orchestrator

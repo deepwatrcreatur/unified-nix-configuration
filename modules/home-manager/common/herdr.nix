@@ -38,10 +38,47 @@ in
   options.programs.herdr = {
     enable = lib.mkEnableOption "herdr - a terminal-native agent multiplexer";
     desktopApp.enable = lib.mkEnableOption "the herdr desktop app (herdr-app)";
+    core.enable = lib.mkOption {
+      type = lib.types.bool;
+      default = cfg.desktopApp.enable;
+      defaultText = lib.literalExpression "config.programs.herdr.desktopApp.enable";
+      description = ''
+        Install herdr-core (`hc`), the runtime behind herdr-app. The herdr
+        iPhone/iPad/Android apps connect to it over SSH (`hc connect`); they do
+        not work with the herdr TUI.
+      '';
+    };
+    core.autostart = lib.mkOption {
+      type = lib.types.bool;
+      default = cfg.core.enable;
+      defaultText = lib.literalExpression "config.programs.herdr.core.enable";
+      description = ''
+        Start herdr-core when the systemd user manager starts. Pair with
+        `users.users.<name>.linger = true` on NixOS so that happens at boot,
+        making kept terminals come back without waiting for a client.
+      '';
+    };
   };
 
   config = lib.mkMerge [
     (lib.mkIf cfg.enable { home.packages = [ pkgs.herdr herdrPreflight ]; })
     (lib.mkIf cfg.desktopApp.enable { home.packages = [ pkgs.herdr-app ]; })
+    (lib.mkIf cfg.core.enable { home.packages = [ pkgs.herdr-core ]; })
+    (lib.mkIf (cfg.core.enable && cfg.core.autostart) {
+      # `hc server start` launches the core as its own transient user unit
+      # (systemd-run) and returns, so this unit is a oneshot trigger.
+      systemd.user.services.herdr-core = {
+        Unit = {
+          Description = "Start herdr-core (hc)";
+          After = [ "basic.target" ];
+        };
+        Service = {
+          Type = "oneshot";
+          RemainAfterExit = true;
+          ExecStart = "${pkgs.herdr-core}/bin/hc server start";
+        };
+        Install.WantedBy = [ "default.target" ];
+      };
+    })
   ];
 }
