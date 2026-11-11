@@ -1,0 +1,399 @@
+// Konveyor configuration.
+// Changes apply as soon as the file is saved.
+// Keyboard shortcuts that KDE already provides (Alt+F4, Meta+L, screenshots, Meta+V, Meta+W, ...) are left untouched.
+
+input {
+    // focus-follows-mouse
+    // warp-mouse-to-focus
+    // workspace-auto-back-and-forth
+}
+
+layout {
+    fixed-workspace-count 0
+    horizontal-desktops true
+    gaps 16
+    center-focused-column "never"
+
+    // Where a new window's column opens: "left" or "right" of the focused
+    // column. A column pinned with column-position sends it to the other side.
+    new-column-position "right"
+
+    // Stretch a column to the full width while it is the only one on its
+    // workspace; it goes back to its own width once another column opens.
+    // Apps that can't be resized keep their own size.
+    always-expand-single-column true
+
+    preset-column-widths { proportion 0.25; proportion 0.5; proportion 0.75; proportion 1.0; }
+
+    default-column-width { proportion 0.5; }
+    remember-window-sizes false
+    remember-window-positions false
+
+    // When an app already has a window on the workspace, open the new one
+    // next to it: "beside" gives it its own column right of the app's
+    // columns, "stack" adds it as a row under them, "off" opens it beside
+    // the focused column. Window rules can choose per app.
+    group-app-windows "beside"
+    max-rows-per-column 3
+
+    // "column" gives every new window its own column. "stack" adds it as a
+    // row to the focused column until that column holds max-rows-per-column
+    // windows, then opens a new column. Monitor profiles and window rules can
+    // choose differently.
+    new-window-placement "column"
+
+    // Float every window an app opens while it already has one open.
+    // Off globally; window rules turn it on per app (Steam below).
+    float-child-windows false
+
+    focus-ring {
+        width 2
+        // "accent" follows the KDE accent color.
+        active-color "accent"
+        // A border style defined further down replaces the color for that state.
+        // Remove every inactive line for no ring on unfocused windows.
+        active-style "Default-Style"
+        inactive-style "Default-Style-Inactive"
+        urgent-style "Default-Attention-Style"
+    }
+
+    border {
+        off
+        width 4
+        active-color "accent"
+        inactive-color "#505050"
+        urgent-color "#9b0000"
+    }
+
+    // Play a border style when something happens. Events: focus, unfocus, click,
+    // scroll, keypress, urgent, beat and view (Konveyor's own scrolling). The
+    // value is any border-style name, or "none". reach is "self", "neighbors"
+    // or "all". mode "once" plays it once; "while" plays as long as the event
+    // keeps happening, the default for scroll and view.
+    // event-effects { on "unfocus" "Focus-Fade" reach="self"; on "view" "Scroll-Flare" reach="all" mode="while"; }
+
+    struts {
+    }
+}
+
+gestures {
+    // KDE screen edges already open the overview, so the hot corner is off here.
+    hot-corners {
+        off
+    }
+
+    // "move-window" drags a tiled window by its title bar to a new position in the row, "scroll-view" scrolls the columns instead.
+    titlebar-drag "move-window"
+
+    // Dragging a tiled window's edge resizes its column or row. Set it to false
+    // to change the layout only through shortcuts and presets. Floating windows
+    // can always be resized.
+    resize-tiled-windows true
+
+    // Multi-finger touchpad gestures. 3-finger swipes move the row, 4-finger
+    // swipes push the focused window into the next column or to another
+    // workspace, and a 4-finger pinch opens KDE's Overview. The finger counts
+    // used here replace the matching KDE gestures. A quick 3-finger tap cycles
+    // the focused column's width like Mod+R and a 4-finger tap opens or closes
+    // the Kontrol Panel; while the 3-finger tap is mapped it replaces the
+    // touchpad's 3-finger middle click.
+    touchpad {
+        swipe-fingers 3
+        pinch-fingers 4
+        natural-swipe
+        horizontal-swipe "scroll-view"
+        vertical-swipe "switch-workspace"
+        pinch "toggle-overview"
+        window-swipe-fingers 4
+        window-horizontal-swipe "consume-or-expel"
+        window-vertical-swipe "move-window"
+        three-finger-tap "cycle-width"
+        four-finger-tap "kontrol-panel"
+        five-finger-tap "off"
+    }
+
+    // Touchscreen gestures. One finger still taps, scrolls and drags title bars;
+    // holding a title bar before dragging lifts the window to move it. Taps work
+    // like the touchpad's but act on the column under your fingers.
+    touchscreen {
+        swipe-fingers 3
+        pinch-fingers 4
+        natural-swipe
+        horizontal-swipe "scroll-view"
+        vertical-swipe "switch-workspace"
+        pinch "toggle-overview"
+        window-swipe-fingers 4
+        window-horizontal-swipe "consume-or-expel"
+        window-vertical-swipe "move-window"
+        long-press-to-move
+        long-press-ms 500
+        three-finger-tap "cycle-width"
+        four-finger-tap "kontrol-panel"
+        five-finger-tap "off"
+    }
+}
+
+animations {
+    // Draw animated border styles still, without moving parts.
+    // reduce-motion
+}
+
+// Animated border styles: a stack of layers drawn bottom to top. Point focus-ring
+// or border at one with active-style, inactive-style or urgent-style. Layer kinds
+// and more examples are in docs/configuration.md.
+border-style "Default-Style" {
+    layer "elastic" { colors "accent" "#ffffff"; width 8; blend "add"; count 1; drive "color-mix" "scroll.speed" amount=0.5 curve="square" smooth=0.1; thickness 5; }
+    layer "bass-thump" { colors "accent"; width 3; blend "add"; baseline 0; }
+    layer "gradient" { colors "accent"; speed 0; }
+    layer "glow" { blend "add"; colors "accent"; opacity 0.7; speed 1; width 18; }
+    layer "particles" { colors "accent"; blend "add"; direction "up"; width 20; }
+    layer "shimmer" { colors "#ffffff" "accent"; width 6; blend "add"; }
+    layer "waveform" { colors "#2fffb0" "#2f7bff"; width 14; blend "add"; }
+    layer "particles" { blend "add"; count 129; fire-on "audio.beat"; colors "accent"; }
+    layer "ripple" { colors "accent"; opacity 0.8; blend "add"; speed 1; fire-on "focus"; }
+    layer "particles" { blend "add"; colors "#ffffff" "accent"; fire-on "scroll.step"; drive "direction" "scroll.direction" amount=0.5 curve="linear" smooth=0.1; count 80; rate 106; }
+    layer "particles" { blend "add"; colors "#ffffff" "accent"; fire-on "click" "keypress"; count 104; rate 176; }
+}
+
+border-style "Default-Style-Inactive" {
+    layer "shimmer" { width 6; blend "add"; colors "#141414" "#ffffff"; }
+    layer "bass-thump" { width 3; blend "add"; baseline 0; colors "#ffffff"; }
+    layer "waveform" { width 14; blend "add"; colors "#141414" "#ffffff"; }
+    layer "particles" { blend "add"; count 129; fire-on "audio.beat"; colors "#ffffff" "#141414"; }
+}
+
+border-style "Default-Attention-Style" {
+    layer "gradient" { angle 90; colors "#ff5a1f" "#ffb347"; speed 0.5; }
+    layer "particles" { blend "add"; colors "#ffd27a" "#ff5a1f"; count 64; direction "up"; lifetime 1.4; rate 40; size 2.5; speed 0.8; width 25; }
+    layer "pulse" { colors "#ff1f1f" "#ff8a1f"; speed 1.5; }
+}
+
+// Screens taller than they are wide: every column fills the width and holds
+// two windows stacked, so Mod+Left/Right flips between full-width pages and
+// Mod+Up/Down moves between the two rows.
+monitor-profile "portrait" {
+    match aspect-ratio-below=1.0
+    layout {
+        default-column-width { proportion 1.0; }
+        preset-column-widths { proportion 0.5; proportion 1.0; }
+        new-window-placement "stack"
+        max-rows-per-column 2
+    }
+}
+
+monitor-profile "ultrawide" {
+    match aspect-ratio-above=2.0
+    layout {
+        preset-column-widths { proportion 0.25; proportion 0.5; proportion 0.75; proportion 1.0; }
+    }
+}
+
+// Window rules can target a monitor profile, e.g. a browser that fills a
+// normal monitor but takes half of an ultrawide:
+// window-rule {
+//     match app-id=r#"^google-chrome$"# monitor-profile="ultrawide"
+//     default-column-width { proportion 0.5; }
+// }
+
+window-rule {
+    geometry-corner-radius 12
+    clip-to-geometry true
+}
+
+// An empty default-column-width lets WezTerm open at the width it asks for.
+window-rule {
+    match app-id=r#"^org\.wezfurlong\.wezterm$"#
+    default-column-width {}
+}
+
+window-rule {
+    match app-id=r#"firefox$"# title="^Picture-in-Picture$"
+    open-floating true
+}
+
+window-rule {
+    match app-id=r#"^org\.kde\.konsole$"#
+    group-app-windows "stack"
+}
+
+// Steam opens its friends list, chats and game properties as separate
+// windows. Its main window tiles and the rest float above the row.
+window-rule {
+    match app-id=r#"^steam$"#
+    float-child-windows true
+}
+
+window-rule {
+    match app-id=r#"^steam$"# title="^Steam$"
+    open-floating false
+}
+
+window-rule {
+    match app-id=r#"^org\.kde\.plasma\.emojier$"#
+    open-floating true
+}
+
+// `manage false` leaves a window to KWin instead of tiling it. Steam opens its
+// menus, notification toasts and loading placeholders as ordinary windows.
+window-rule {
+    match app-id=r#"^steam$"# title=r#"^(SteamWebhelper|about:blank.*|.+ Menu|.+ Supernav|notificationtoasts_.*|Special Offers)$"#
+    manage false
+}
+
+binds {
+    Mod+K hotkey-overlay-title="Show Shortcut Cheatsheet" { show-hotkey-overlay; }
+    Mod+Grave hotkey-overlay-title="Toggle Monitor Overlay" { spawn "PATH=\"$HOME/.local/bin:$PATH\" monitor-overlay" "toggle"; }
+
+    // KDE already gives you an overview: Meta+W for the current desktop and
+    // Meta+G for every desktop at once, both with a search field, so no
+    // overview bind is shipped here.
+    Mod+Return { spawn "konsole"; }
+    Mod+Q { close-window; }
+
+    // Up and down move through the windows of a column and continue into the
+    // workspace above or below once the end of the column is reached.
+    Mod+Left  { focus-column-left; }
+    Mod+Down  { focus-window-or-workspace-down; }
+    Mod+Up    { focus-window-or-workspace-up; }
+    Mod+Right { focus-column-right; }
+    Mod+H     { focus-column-left; }
+    Mod+J     { focus-window-or-workspace-down; }
+
+    Mod+Ctrl+Left  { move-column-left; }
+    Mod+Ctrl+Down  { move-window-down-or-to-workspace-down; }
+    Mod+Ctrl+Up    { move-window-up-or-to-workspace-up; }
+    Mod+Ctrl+Right { move-column-right; }
+    Mod+Ctrl+H     { move-column-left; }
+    Mod+Ctrl+J     { move-window-down-or-to-workspace-down; }
+    Mod+Ctrl+K     { move-window-up-or-to-workspace-up; }
+    Mod+Ctrl+L     { move-column-right; }
+
+    Mod+Home { focus-column-first; }
+    Mod+End  { focus-column-last; }
+    Mod+Ctrl+Home { move-column-to-first; }
+    Mod+Ctrl+End  { move-column-to-last; }
+
+    Mod+Shift+Left  { focus-monitor-left; }
+    Mod+Shift+Down  { focus-monitor-down; }
+    Mod+Shift+Up    { focus-monitor-up; }
+    Mod+Shift+Right { focus-monitor-right; }
+    Mod+Shift+H     { focus-monitor-left; }
+    Mod+Shift+J     { focus-monitor-down; }
+    Mod+Shift+K     { focus-monitor-up; }
+    Mod+Shift+L     { focus-monitor-right; }
+
+    Mod+Shift+Ctrl+Left  { move-column-to-monitor-left; }
+    Mod+Shift+Ctrl+Down  { move-column-to-monitor-down; }
+    Mod+Shift+Ctrl+Up    { move-column-to-monitor-up; }
+    Mod+Shift+Ctrl+Right { move-column-to-monitor-right; }
+    Mod+Shift+Ctrl+H     { move-column-to-monitor-left; }
+    Mod+Shift+Ctrl+J     { move-column-to-monitor-down; }
+    Mod+Shift+Ctrl+K     { move-column-to-monitor-up; }
+    Mod+Shift+Ctrl+L     { move-column-to-monitor-right; }
+
+    Mod+Page_Down      { focus-workspace-down; }
+    Mod+Page_Up        { focus-workspace-up; }
+    Mod+Ctrl+Page_Down { move-column-to-workspace-down; }
+    Mod+Ctrl+Page_Up   { move-column-to-workspace-up; }
+    Mod+Ctrl+U         { move-column-to-workspace-down; }
+    Mod+Ctrl+I         { move-column-to-workspace-up; }
+
+    Mod+Shift+Page_Down { move-workspace-down; }
+    Mod+Shift+Page_Up   { move-workspace-up; }
+    Mod+Shift+U         { move-workspace-down; }
+    Mod+Shift+I         { move-workspace-up; }
+
+    // KWin's own wheel shortcuts come first: Mod+Ctrl with the vertical wheel
+    // zooms and Mod+Alt with it switches desktops, so those stay unbound here.
+    Mod+WheelScrollDown           cooldown-ms=150 { focus-workspace-down; }
+    Mod+WheelScrollUp             cooldown-ms=150 { focus-workspace-up; }
+    Mod+Ctrl+Alt+WheelScrollDown  cooldown-ms=150 { move-column-to-workspace-down; }
+    Mod+Ctrl+Alt+WheelScrollUp    cooldown-ms=150 { move-column-to-workspace-up; }
+
+    Mod+WheelScrollRight      { focus-column-right; }
+    Mod+WheelScrollLeft       { focus-column-left; }
+    Mod+Ctrl+WheelScrollRight { move-column-right; }
+    Mod+Ctrl+WheelScrollLeft  { move-column-left; }
+
+    Mod+Shift+WheelScrollDown      { focus-column-right; }
+    Mod+Shift+WheelScrollUp        { focus-column-left; }
+    Mod+Ctrl+Shift+WheelScrollDown { move-column-right; }
+    Mod+Ctrl+Shift+WheelScrollUp   { move-column-left; }
+
+    Mod+1 { focus-workspace 1; }
+    Mod+2 { focus-workspace 2; }
+    Mod+3 { focus-workspace 3; }
+    Mod+4 { focus-workspace 4; }
+    Mod+5 { focus-workspace 5; }
+    Mod+6 { focus-workspace 6; }
+    Mod+7 { focus-workspace 7; }
+    Mod+8 { focus-workspace 8; }
+    Mod+9 { focus-workspace 9; }
+    Mod+Ctrl+1 { move-column-to-workspace 1; }
+    Mod+Ctrl+2 { move-column-to-workspace 2; }
+    Mod+Ctrl+3 { move-column-to-workspace 3; }
+    Mod+Ctrl+4 { move-column-to-workspace 4; }
+    Mod+Ctrl+5 { move-column-to-workspace 5; }
+    Mod+Ctrl+6 { move-column-to-workspace 6; }
+    Mod+Ctrl+7 { move-column-to-workspace 7; }
+    Mod+Ctrl+8 { move-column-to-workspace 8; }
+    Mod+Ctrl+9 { move-column-to-workspace 9; }
+    Super+Alt+1 { focus-taskbar-item 1; }
+    Super+Alt+2 { focus-taskbar-item 2; }
+    Super+Alt+3 { focus-taskbar-item 3; }
+    Super+Alt+4 { focus-taskbar-item 4; }
+    Super+Alt+5 { focus-taskbar-item 5; }
+    Super+Alt+6 { focus-taskbar-item 6; }
+    Super+Alt+7 { focus-taskbar-item 7; }
+    Super+Alt+8 { focus-taskbar-item 8; }
+    Super+Alt+9 { focus-taskbar-item 9; }
+    Super+Alt+0 { focus-taskbar-item 10; }
+
+    Mod+BracketLeft  { consume-or-expel-window-left; }
+    Mod+BracketRight { consume-or-expel-window-right; }
+    Mod+Comma  { consume-window-into-column; }
+    Mod+Period { expel-window-from-column; }
+
+    Mod+R { switch-preset-column-width; }
+    Mod+Shift+R { switch-preset-column-width-back; }
+    Mod+Ctrl+Shift+R { switch-preset-window-height; }
+    Mod+Ctrl+R { reset-window-height; }
+    Mod+F { fullscreen-window; }
+    Mod+Shift+F { fullscreen-window; }
+    Mod+Ctrl+F { expand-column-to-available-width; }
+
+    Mod+C { center-column; }
+    Mod+Ctrl+C { center-visible-columns; }
+
+    Mod+Minus { set-column-width "-10%"; }
+    Mod+Equal { set-column-width "+10%"; }
+    Mod+Shift+Minus { set-window-height "-10%"; }
+    Mod+Shift+Equal { set-window-height "+10%"; }
+
+    Mod+Space       { toggle-window-floating; }
+    Mod+Shift+Space { switch-focus-between-floating-and-tiling; }
+
+    Mod+Shift+W { toggle-column-tabbed-display; }
+
+}
+
+// Konveyor extension: hide Plasma desktop widgets while a window is visible on
+// the active workspace of that monitor. Needs a desktop containment that reads
+// the hideDesktopWidgets key; without one this does nothing.
+hide-desktop-widgets
+
+// Konveyor extension: how far a sound must rise above its recent average to count
+// as a beat for effects that react to a window's audio, from 1 to 4. Lower fires
+// more often.
+audio-beat-threshold 1.4
+
+// Konveyor extension: stretch Plasma panels to the full screen width while a
+// window on that monitor is maximized to the edges, and put them back after.
+// The panel's previous width mode is kept in the panel's own settings, so a
+// panel you change in the meantime is left the way you set it.
+fill-panels-on-maximize
+
+// Konveyor extension: uncomment to stop windows from being minimized. This
+// adds a KWin window rule that forces minimize off, which also hides the
+// minimize button on KDE title bars. The rule is removed when Konveyor is disabled.
+// disable-minimize
