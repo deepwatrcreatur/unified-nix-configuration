@@ -1,0 +1,183 @@
+diff --git a/src/effect/CMakeLists.txt b/src/effect/CMakeLists.txt
+index b3240be..bf08b95 100644
+--- a/src/effect/CMakeLists.txt
++++ b/src/effect/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-find_package(KWin 6.7 REQUIRED COMPONENTS kwineffects)
++find_package(KWin 6.6 REQUIRED COMPONENTS kwineffects)
+ find_package(KDecoration3 REQUIRED)
+ find_package(KF6 REQUIRED COMPONENTS CoreAddons GlobalAccel Config ColorScheme Notifications I18n)
+ find_package(XCB REQUIRED COMPONENTS XCB ICCCM)
+diff --git a/src/effect/decorations/styledborders.cpp b/src/effect/decorations/styledborders.cpp
+index a56dc72..0878f8c 100644
+--- a/src/effect/decorations/styledborders.cpp
++++ b/src/effect/decorations/styledborders.cpp
+@@ -12,6 +12,7 @@
+ 
+ #include <algorithm>
+ #include <cmath>
++#include <QRegion>
+ 
+ namespace Konveyor
+ {
+@@ -42,15 +43,15 @@ void stepMotion(Render::LayerMotion &motion, const Config::BorderLayer &layer, c
+     }
+ }
+ 
+-KWin::RegionF ringRegion(QSizeF size, double outer, double inner)
++KWin::Region ringRegion(QSizeF size, double outer, double inner)
+ {
+-    const double w = size.width() + 2 * outer;
+-    const double h = size.height() + 2 * outer;
+-    const double band = outer + inner;
+-    KWin::RegionF region(KWin::RectF(0, 0, w, band));
+-    region = region.united(KWin::RectF(0, h - band, w, band));
+-    region = region.united(KWin::RectF(0, 0, band, h));
+-    return region.united(KWin::RectF(w - band, 0, band, h));
++    const int w = static_cast<int>(std::ceil(size.width() + 2 * outer));
++    const int h = static_cast<int>(std::ceil(size.height() + 2 * outer));
++    const int band = static_cast<int>(std::ceil(outer + inner));
++    KWin::Region region(0, 0, w, band);
++    region = region.united(KWin::Rect(0, h - band, w, band));
++    region = region.united(KWin::Rect(0, 0, band, h));
++    return region.united(KWin::Rect(w - band, 0, band, h));
+ }
+ 
+ }
+diff --git a/src/effect/kwin/desktopsync.cpp b/src/effect/kwin/desktopsync.cpp
+index 42e1a84..47a08f0 100644
+--- a/src/effect/kwin/desktopsync.cpp
++++ b/src/effect/kwin/desktopsync.cpp
+@@ -74,7 +74,7 @@ DesktopSync::~DesktopSync()
+         }
+     }
+     restoreDesktops();
+-    manager()->setPerOutputVirtualDesktops(m_previousPerOutput);
++    // manager()->setPerOutputVirtualDesktops(m_previousPerOutput);
+     manager()->setRows(m_previousRows);
+ }
+ 
+@@ -101,15 +101,15 @@ void DesktopSync::restoreDesktops()
+ 
+ void DesktopSync::start()
+ {
+-    m_previousPerOutput = manager()->isPerOutputVirtualDesktops();
++    // m_previousPerOutput = manager()->isPerOutputVirtualDesktops();
+     m_previousRows = manager()->rows();
+     for (const KWin::VirtualDesktop *desktop : manager()->desktops()) {
+         m_previousDesktops.append({desktop->id(), desktop->name()});
+     }
+-    manager()->setPerOutputVirtualDesktops(true);
+-    connect(KWin::workspace(), &KWin::Workspace::currentDesktopChanged, this,
+-        [this](KWin::VirtualDesktop *previous, KWin::VirtualDesktop *current, KWin::LogicalOutput *output) {
+-            onCurrentDesktopChanged(previous, current, output);
++    // manager()->setPerOutputVirtualDesktops(true);
++    connect(manager(), &KWin::VirtualDesktopManager::currentChanged, this,
++        [this](KWin::VirtualDesktop *previous, KWin::VirtualDesktop *current) {
++            onCurrentDesktopChanged(previous, current, KWin::workspace()->activeOutput());
+         });
+     connect(&m_windows, &WindowRegistry::windowAdded, this,
+         [this](Layout::WindowId id, KWin::Window *window) { watchWindowDesktops(window, id); });
+@@ -175,8 +175,8 @@ void DesktopSync::applyCurrentDesktops(const QList<Layout::WorkspaceState> &work
+         }
+         KWin::LogicalOutput *output = m_outputs.outputNamed(workspace.output);
+         KWin::VirtualDesktop *desktop = desktopAt(workspace.index);
+-        if (output && desktop && manager()->currentDesktop(output) != desktop) {
+-            manager()->setCurrent(desktop, output);
++        if (desktop && manager()->currentDesktop() != desktop) {
++            manager()->setCurrent(desktop);
+         }
+     }
+ }
+diff --git a/src/effect/kwin/minimizerule.cpp b/src/effect/kwin/minimizerule.cpp
+index 8e6ec3f..9fe11a2 100644
+--- a/src/effect/kwin/minimizerule.cpp
++++ b/src/effect/kwin/minimizerule.cpp
+@@ -16,7 +16,7 @@ namespace
+ 
+ constexpr QLatin1StringView ruleId("konveyor-no-minimize");
+ constexpr int forceRule = 2;
+-constexpr bool orderedRules = PROJECT_VERSION_MAJOR > 6 || PROJECT_VERSION_MINOR >= 8;
++constexpr bool orderedRules = false;
+ constexpr QLatin1StringView legacyListKey("rules");
+ constexpr QLatin1StringView listKey(orderedRules ? "Order" : "rules");
+ 
+diff --git a/src/effect/kwin/outputregistry.cpp b/src/effect/kwin/outputregistry.cpp
+index ed602ce..1ef9954 100644
+--- a/src/effect/kwin/outputregistry.cpp
++++ b/src/effect/kwin/outputregistry.cpp
+@@ -5,6 +5,7 @@
+ #include <inputpanelv1window.h>
+ #include <main.h>
+ #include <workspace.h>
++#include <virtualdesktops.h>
+ 
+ #include <QTimer>
+ 
+@@ -23,8 +24,8 @@ void OutputRegistry::start()
+     connect(KWin::workspace(), &KWin::Workspace::outputsChanged, this, queue);
+     connect(KWin::workspace(), &KWin::Workspace::geometryChanged, this, queue);
+     connect(KWin::workspace(), &KWin::Workspace::aboutToRearrange, this, queue);
+-    connect(KWin::workspace(), &KWin::Workspace::activeOutputChanged, this, [this](KWin::LogicalOutput *output) {
+-        if (output) {
++    connect(KWin::workspace(), &KWin::Workspace::outputsChanged, this, [this] {
++        if (KWin::LogicalOutput *output = KWin::workspace()->activeOutput()) {
+             Q_EMIT activeOutputChanged(output->name());
+         }
+     });
+@@ -38,7 +39,7 @@ Layout::OutputInfo OutputRegistry::infoOf(KWin::LogicalOutput *output)
+     info.name = output->name();
+     info.makeModelSerial = QStringList {output->manufacturer(), output->model(), output->serialNumber()}.join(QLatin1Char(' ')).trimmed();
+     info.geometry = output->geometryF();
+-    info.workArea = KWin::workspace()->clientArea(KWin::MaximizeArea, output);
++    info.workArea = KWin::workspace()->clientArea(KWin::MaximizeArea, output, KWin::VirtualDesktopManager::self()->currentDesktop());
+     if (const std::optional<QRectF> keyboard = keyboardAreaOn(output)) {
+         info.workArea.setBottom(std::min(info.workArea.bottom(), keyboard->top()));
+     }
+diff --git a/src/effect/plugin/konveyoreffect.h b/src/effect/plugin/konveyoreffect.h
+index 6f25f49..39dbfad 100644
+--- a/src/effect/plugin/konveyoreffect.h
++++ b/src/effect/plugin/konveyoreffect.h
+@@ -45,9 +45,9 @@ public:
+ 
+     bool isActive() const override;
+     bool borderActivated(KWin::ElectricBorder border) override;
+-    void prePaintScreen(KWin::ScreenPrePaintData &data) override;
++    void prePaintScreen(KWin::ScreenPrePaintData &data, std::chrono::milliseconds presentTime) override;
+     void postPaintScreen() override;
+-    void prePaintWindow(KWin::RenderView *view, KWin::EffectWindow *w, KWin::WindowPrePaintData &data) override;
++    void prePaintWindow(KWin::RenderView *view, KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds presentTime) override;
+     PaintWindowResult paintWindow(const KWin::RenderTarget &renderTarget, const KWin::RenderViewport &viewport, KWin::EffectWindow *w,
+         int mask, const KWin::Region &deviceRegion, KWin::WindowPaintData &data) override;
+     bool blocksDirectScanout() const override;
+diff --git a/src/effect/plugin/konveyoreffectpaint.cpp b/src/effect/plugin/konveyoreffectpaint.cpp
+index 73836b7..f116440 100644
+--- a/src/effect/plugin/konveyoreffectpaint.cpp
++++ b/src/effect/plugin/konveyoreffectpaint.cpp
+@@ -8,12 +8,12 @@
+ namespace Konveyor
+ {
+ 
+-void KonveyorEffect::prePaintWindow(KWin::RenderView *view, KWin::EffectWindow *w, KWin::WindowPrePaintData &data)
++void KonveyorEffect::prePaintWindow(KWin::RenderView *view, KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds presentTime)
+ {
+     if (spillHome(w->window()) || isDragged(w->window())) {
+         data.setTranslucent();
+     }
+-    KWin::Effect::prePaintWindow(view, w, data);
++    KWin::Effect::prePaintWindow(view, w, data, presentTime);
+ }
+ 
+ PaintWindowResult KonveyorEffect::paintWindow(const KWin::RenderTarget &renderTarget, const KWin::RenderViewport &viewport,
+@@ -35,9 +35,9 @@ PaintWindowResult KonveyorEffect::paintWindow(const KWin::RenderTarget &renderTa
+     return KWin::Effect::paintWindow(renderTarget, viewport, w, mask, clipped, data);
+ }
+ 
+-void KonveyorEffect::prePaintScreen(KWin::ScreenPrePaintData &data)
++void KonveyorEffect::prePaintScreen(KWin::ScreenPrePaintData &data, std::chrono::milliseconds presentTime)
+ {
+-    KWin::Effect::prePaintScreen(data);
++    KWin::Effect::prePaintScreen(data, presentTime);
+ }
+ 
+ void KonveyorEffect::postPaintScreen()

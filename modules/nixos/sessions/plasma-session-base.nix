@@ -26,6 +26,7 @@ let
     # kinfocenter's network/ip.sh pipes through bare `aha`; nixpkgs only
     # patches the store path into the firmware page, not the network page.
     aha
+    konveyor
   ];
 
   plasmaFonts = with pkgs; [

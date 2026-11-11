@@ -9,6 +9,8 @@
   programs.plasma = {
     enable = true;
 
+    configFile."kwinrc"."Plugins"."konveyor_effectEnabled" = true;
+
     # Hotkeys configuration
     hotkeys.commands = {
       "Launch-Vicinae" = {
@@ -40,7 +42,7 @@
   # KDE-specific applications
   home.packages = with pkgs; [
     kdePackages.krunner
-    kdePackages.krohnkite
+    konveyor
     birdtray # System tray notification for Thunderbird
   ];
 

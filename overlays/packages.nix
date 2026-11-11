@@ -185,5 +185,13 @@
   (final: prev: {
     omasnap = prev.callPackage ../pkgs/omasnap.nix { };
   })
+
+  # konveyor — scrolling column-based tiling manager for KDE Plasma 6 (Wayland)
+  (final: prev: {
+    konveyor = prev.kdePackages.callPackage ../pkgs/konveyor.nix {
+      inherit (prev) libxcb;
+      xcbutilwm = prev.libxcb-wm or prev.xorg.xcbutilwm;
+    };
+  })
 ]
 
