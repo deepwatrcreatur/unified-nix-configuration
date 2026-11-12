@@ -24,6 +24,7 @@
   ];
 
   programs.hunk-custom.enable = true;
+  programs.worktrunk.enable = true;
 
   programs.qmd.enable = true;
 

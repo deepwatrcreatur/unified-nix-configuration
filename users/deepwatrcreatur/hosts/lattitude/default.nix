@@ -29,6 +29,7 @@
 
   programs.bash.enable = true;
   programs.home-manager.enable = true;
+  programs.worktrunk.enable = true;
 
   home.stateVersion = "26.05";
 }
