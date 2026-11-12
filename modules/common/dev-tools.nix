@@ -8,7 +8,6 @@
   environment.systemPackages = with pkgs; [
     broot
     git
-    worktrunk
 
     ripgrep
     fd
