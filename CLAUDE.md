@@ -218,26 +218,20 @@ For comprehensive Nix agent workflows and advanced patterns, see the [Nix Agent 
 - **Default shell is Fish**: Use Fish shell syntax for all commands to ensure compatibility with coding agents
 - **Avoid Nushell**: While Nushell is configured, Fish is set as default to prevent agent compatibility issues
 
-### Git Worktrees for This Project
-This project uses git worktrees for parallel development of different configuration approaches:
+### Git Worktrees and Worktrunk (`wt`)
+This repository standardizes on **`wt` (worktrunk)** for Git worktree management when doing parallel implementation work or working across isolated branches.
 
-#### Current Worktree Setup (inference1 VM example)
-```bash
-# Navigate to any worktree from home directory
-~/nix-main/          # Stable configuration (main branch)
-~/nix-cuda/          # GPU/CUDA development (ollama-cuda-working)
-~/nix-minimal/       # Lightweight testing (inference-minimal-rebuild)
+#### Preferred Workflow
+- **List active worktrees**: `wt list`
+- **Create & switch to new branch**: `wt switch -c feat/my-change`
+- **Switch to an existing branch**: `wt switch feat/my-change`
+- **Clean up a finished worktree**: `wt remove`
+- **Spawn an agent directly in a new worktree**: `wt switch -c -x claude feat/my-change`
 
-# Switch between configurations easily
-cd ~/nix-cuda && sudo nixos-rebuild test --flake .#inference1
-cd ~/nix-main && sudo nixos-rebuild test --flake .#inference1
-```
-
-#### Benefits for This Project
-- **Parallel testing**: Test CUDA vs CPU configurations simultaneously
-- **Safe experimentation**: Keep stable config while testing GPU acceleration
-- **Configuration comparison**: Easily diff different approaches
-- **No context switching**: Each worktree maintains its own working state
+#### When to Use Worktrees vs Shared Checkout
+- **Use separate worktrees (`wt`)**: when multiple agents are active in parallel, when each work stream should produce its own branch or PR, or when you need isolated rollback boundaries.
+- **Use shared checkout**: for one-agent, sequential, exploratory, or documentation tasks.
+- For detailed guides, see [`agent-guides/checkout-strategies.md`](./agent-guides/checkout-strategies.md) and [`agent-guides/worktrunk.md`](./agent-guides/worktrunk.md).
 
 ### tmux Session Management for Remote Work
 When working with remote hosts or running long-duration operations, use tmux to maintain persistent sessions:
