@@ -11,6 +11,7 @@ let
   roundtableHost = topology.hosts.vaglio;
   scryptedHost = topology.hosts.scrypted-lxc;
   homeserverHost = topology.hosts.homeserver;
+  synologyHost = topology.hosts.synology-dsm;
   mkFqdn = label: "${label}.${topology.domain}";
 
   # Optional secrets library for graceful degradation
@@ -272,6 +273,21 @@ in
           @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48 127.0.0.1 ::1
           handle @trusted {
             reverse_proxy 127.0.0.1:5636
+          }
+          respond "Access restricted to home LAN and Tailnet" 403
+        '';
+      };
+
+      # Synology DSM NAS web interface
+      "${mkFqdn "synology"}" = {
+        extraConfig = ''
+          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48 127.0.0.1 ::1
+          handle @trusted {
+            reverse_proxy https://${synologyHost.ip}:5001 {
+              transport http {
+                tls_insecure_skip_verify
+              }
+            }
           }
           respond "Access restricted to home LAN and Tailnet" 403
         '';

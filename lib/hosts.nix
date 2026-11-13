@@ -97,6 +97,7 @@
         netdata = 19999;
         prometheus = 9090;
         evebox = 5636;
+        synology = 5001;
       };
       ddnsServices = [
         "@"
@@ -314,7 +315,6 @@
       sshUser = "deepwatrcreatur";
       aliases = [
         "dsm"
-        "synology"
       ];
       dhcpReservation = {
         macAddress = "BC:24:11:53:D5:D0";
