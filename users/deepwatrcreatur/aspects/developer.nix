@@ -44,6 +44,10 @@ in
   programs.beads.enableBv = false;
   programs.worktrunk.enable = true;
 
+  home.packages = [
+    pkgs.tuios # terminal window manager (tiling/floating terminals, workspaces)
+  ];
+
   programs.rtk-hooks.integrations = {
     claude.enable = true;
     codex.enable = true;
