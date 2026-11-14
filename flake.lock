@@ -1864,11 +1864,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1794661197,
-        "narHash": "sha256-sesCf6VzOXtoJ2KByjuIP4w2OEXOH6Jlj/lZTE52i8c=",
+        "lastModified": 1794695139,
+        "narHash": "sha256-NAevHyAUqIm3eyWKodYP1ADpeUUDIUn6YRBgBIVXaOc=",
         "owner": "deepwatrcreatur",
         "repo": "nix-router-optimized",
-        "rev": "e9fa031632b8dd71a235c3857a86b2c41db77b11",
+        "rev": "d22af51dfc2b38cd371018281924043919a40b00",
         "type": "github"
       },
       "original": {
