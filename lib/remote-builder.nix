@@ -18,7 +18,6 @@ let
   nonNixosHosts = [
     "pve-rog"
     "pve-strix"
-    "pve-z170"
   ];
 
   # Hosts that act as the binary cache and build server (must not use remote building)

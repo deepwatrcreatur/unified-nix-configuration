@@ -17,7 +17,7 @@ Edit `inventory/hosts.yml` to configure your hosts. Hosts are grouped by rebuild
 | `nixos` | `nixos-rebuild switch` | emerald, phoenix, router, homeserver, authentik-host, vaglio, podman, lattitude |
 | `cache` | `nixos-rebuild switch` | emerald (attic binary cache, remote builder, Niri/Noctalia desktop) |
 | `darwin` | `darwin-rebuild switch` | macminim4 |
-| `proxmox` | `home-manager switch` | pve-elitedesk, pve-rog, pve-strix, pve-z170 |
+| `proxmox` | `home-manager switch` | pve-elitedesk, pve-rog, pve-strix |
 
 ## Playbooks
 
@@ -55,7 +55,7 @@ ansible-playbook -i inventory/hosts.yml playbooks/rebuild-cache-first.yml
 
 ### update-proxmox.yml
 
-Pulls latest changes and runs `home-manager switch` on the 4 Proxmox hosts (`pve-elitedesk`, `pve-rog`, `pve-strix`, `pve-z170`).
+Pulls latest changes and runs `home-manager switch` on the 3 Proxmox hosts (`pve-elitedesk`, `pve-rog`, `pve-strix`).
 This is the simplest playbook to point Semaphore at for routine PVE updates.
 
 ```bash
@@ -63,7 +63,7 @@ This is the simplest playbook to point Semaphore at for routine PVE updates.
 ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml
 
 # Update just one or two Proxmox hosts
-ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml --limit pve-z170
+ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml --limit pve-strix
 ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml --limit "pve-rog,pve-strix"
 
 # Skip git pull and only re-run Home Manager

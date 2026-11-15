@@ -139,12 +139,6 @@
     };
 
 
-    pve-z170 = {
-      ip = "10.10.11.59";
-      sshUser = "root";
-      description = "Proxmox node - ASRock Z170 ITX/AC";
-    };
-
     # Networking Equipment
     sw-main = {
       ip = "10.10.18.10";

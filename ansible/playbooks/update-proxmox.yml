@@ -5,14 +5,14 @@
 #   ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml
 #
 # Limit to specific Proxmox hosts:
-#   ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml --limit pve-z170
+#   ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml --limit pve-strix
 #   ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml --limit "pve-rog,pve-strix"
 #
 # Skip git pull (just run Home Manager):
 #   ansible-playbook -i inventory/hosts.yml playbooks/update-proxmox.yml -e skip_git_pull=true
 #
 # Bootstrap notes (first run on a new host):
-#   - The repo on pve-z170 may be on a feature branch; use skip_git_pull=true if git pull
+#   - The repo on a Proxmox host may be on a feature branch; use skip_git_pull=true if git pull
 #     fails due to branch divergence (the repo is already up to date).
 #   - 'age' installed standalone during bootstrap conflicts with home-manager-path.
 #     This playbook removes it automatically before running home-manager.

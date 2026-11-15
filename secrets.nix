@@ -74,7 +74,6 @@ let
     "pve-rog"
     "pve-strix"
     "lattitude"
-    "pve-z170"
   ];
 
   rcloneSecrets =
@@ -104,7 +103,6 @@ let
     "lattitude"
     "pve-rog"
     "pve-strix"
-    "pve-z170"
     # TODO: Add hackintosh and macminim4 once their host keys are in the hosts list
   ];
 
