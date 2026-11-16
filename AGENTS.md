@@ -44,7 +44,8 @@ if it lands in a common module.
 - The interactive shell is Fish almost everywhere. Write automation in Bash:
   use `ssh-bash <host> -- ...` (or `ssh host "bash -c '...'"`) for remote
   commands. Avoid Nushell for automation.
-- Long-running remote work: tmux, see [`agent-guides/tmux.md`](agent-guides/tmux.md).
+- Long-running work: herdr on developer hosts, tmux on servers without it; see
+  [`agent-guides/persistent-sessions.md`](agent-guides/persistent-sessions.md).
 
 ## Secrets
 

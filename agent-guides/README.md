@@ -7,6 +7,6 @@ This folder contains extra workflow notes intended for coding agents.
 - `checkout-strategies.md`: when to use a shared checkout versus a dedicated
   worktree
 - `worktrunk.md`: how to use `wt` (worktrunk) for parallel worktrees
-- `tmux.md`: persistent sessions for remote and long-running work
+- `persistent-sessions.md`: herdr on developer hosts, tmux fallback on servers
 - `tooling.md`: installed tools, Claude Code auth, the `agent-guard` hook, web browsing
 - `ast-grep.md`: how to use `sg` (ast-grep) for structural code search and refactoring
