@@ -54,7 +54,6 @@ in {
       aliases = {
         # "www" = "router";
         # "mail" = "router";
-        "scrypted" = "router";
       };
     };
   };

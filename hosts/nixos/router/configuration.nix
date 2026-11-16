@@ -25,7 +25,9 @@ in
       # hardware and a simpler promotion story.
       enableHa = false;
       ownLanServices = true;
-      enableNetworkSecurity = false;
+      # Passive Suricata IDS (af-packet on the LAN) + EveBox UI. Not in the
+      # forwarding path, so it cannot block routing if it fails.
+      enableNetworkSecurity = true;
       # Keep WAN locally managed until a standby router with a real WAN NIC exists.
       # The current router-ha WAN hooks restart systemd-networkd on promotion,
       # which is too disruptive on the live primary.

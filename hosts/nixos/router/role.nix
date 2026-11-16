@@ -53,10 +53,6 @@ let
       group = "router-dashboard";
       mode = "0440";
     };
-    technitium-api-key = {
-      file = ../../../secrets-agenix/technitium-api-key.age;
-      mode = "0444";
-    };
     technitium-admin-password = {
       file = ../../../secrets-agenix/technitium-admin-password.age;
       mode = "0400";
@@ -502,6 +498,11 @@ in
     bootstrapPasswordSecretName = "technitium-admin-password";
   };
 
+  # The Technitium automation token is minted and kept valid by
+  # technitium-bootstrap-api-token from the admin password; there is no
+  # separately managed API key secret.
+  services.router-dns-service.technitium.apiKeySecretName = null;
+
   services.router-firewall = {
     enable = true;
     trustedTcpPorts = [
@@ -908,9 +909,13 @@ in
       description = "Configure Technitium RFC2136 dynamic update support for Kea DDNS";
       after = [
         "technitium-dns-server.service"
+        "technitium-bootstrap-api-token.service"
         "agenix.service"
       ];
-      wants = [ "technitium-dns-server.service" ];
+      wants = [
+        "technitium-dns-server.service"
+        "technitium-bootstrap-api-token.service"
+      ];
       wantedBy = [ "multi-user.target" ];
       serviceConfig = {
         Type = "oneshot";
@@ -918,7 +923,7 @@ in
       };
       script =
         let
-          apiKeyFile = secrets.path "technitium-api-key";
+          apiKeyFile = "/var/lib/private/technitium-dns-server/nix-router-api-token";
           tsigKeyFile = secrets.path "kea-ddns-tsig-key";
           fwdZone = topology.domain;
           revZone = "10.10.in-addr.arpa";
@@ -934,36 +939,41 @@ in
             ${pkgs.coreutils}/bin/sleep 2
           done
 
-          TOKEN="$(${pkgs.coreutils}/bin/cat "${apiKeyFile}")"
+          TOKEN="$(${pkgs.coreutils}/bin/tr -d '\r\n' < "${apiKeyFile}")"
           SECRET="$(${pkgs.coreutils}/bin/tr -d '\n' < "${tsigKeyFile}")"
 
+          # Technitium reports API errors (including invalid-token) with
+          # HTTP 200, so check the JSON status rather than relying on curl -f.
+          technitium_post() {
+            local response status
+            response="$(${pkgs.curl}/bin/curl -fsS -X POST \
+              -H "Content-Type: application/x-www-form-urlencoded" \
+              --data-urlencode "token=$TOKEN" "$@")"
+            status="$(printf '%s' "$response" | ${pkgs.jq}/bin/jq -r '.status // empty' 2>/dev/null || true)"
+            if [ "$status" != "ok" ]; then
+              echo "Technitium API call failed (status: ''${status:-unknown}): $response" >&2
+              return 1
+            fi
+          }
+
           echo "Registering TSIG key kea-ddns in Technitium..."
-          ${pkgs.curl}/bin/curl -fsS -X POST \
-            -H "Content-Type: application/x-www-form-urlencoded" \
-            --data-urlencode "token=$TOKEN" \
+          technitium_post \
             --data-urlencode "tsigKeys=kea-ddns|$SECRET|hmac-sha256" \
-            "http://127.0.0.1:5380/api/settings/set" \
-            >/dev/null
+            "http://127.0.0.1:5380/api/settings/set"
 
           echo "Enabling RFC2136 updates for forward zone ${fwdZone}..."
-          ${pkgs.curl}/bin/curl -fsS -X POST \
-            -H "Content-Type: application/x-www-form-urlencoded" \
-            --data-urlencode "token=$TOKEN" \
+          technitium_post \
             --data-urlencode "zone=${fwdZone}" \
             --data-urlencode "update=AllowOnlySpecifiedNetworkAddresses" \
             --data-urlencode "updateNetworkACL=127.0.0.1" \
-            "http://127.0.0.1:5380/api/zones/options/set" \
-            >/dev/null
+            "http://127.0.0.1:5380/api/zones/options/set"
 
           echo "Enabling RFC2136 updates for reverse zone ${revZone}..."
-          ${pkgs.curl}/bin/curl -fsS -X POST \
-            -H "Content-Type: application/x-www-form-urlencoded" \
-            --data-urlencode "token=$TOKEN" \
+          technitium_post \
             --data-urlencode "zone=${revZone}" \
             --data-urlencode "update=AllowOnlySpecifiedNetworkAddresses" \
             --data-urlencode "updateNetworkACL=127.0.0.1" \
-            "http://127.0.0.1:5380/api/zones/options/set" \
-            >/dev/null
+            "http://127.0.0.1:5380/api/zones/options/set"
 
           echo "Technitium RFC2136 configuration applied"
         '';

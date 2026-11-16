@@ -98,12 +98,14 @@ The currently validated consumer shape is intentionally simpler than active HA:
   - LAN gateway identity and client-path services on `router`
   - DDNS, DHCP, UPnP, and IPv6 RA, all owned directly by `router`
   - public WAN ownership and public ingress (WAN HA is disabled)
-- **Temporarily disabled in the current simplified mode**
-  - `services.router-network-security`
-  - Suricata / EveBox
-  - These are intentionally out of the active boot path while the primary
-    reboot path is being stabilized. Reintroduce them later as a separate,
-    reboot-tested slice rather than bundling them with router ownership work.
+- **Network security sensors**
+  - `services.router-network-security` with Suricata in passive af-packet
+    mode on the LAN interface, plus the EveBox UI at
+    `https://evebox.<domain>` (LAN/Tailnet only). Re-enabled 2026-11-16 on the
+    bare-metal router; the old separate EveBox VM was not recreated because
+    Suricata has to run where the traffic is.
+  - These units are not in the forwarding path; if they fail, routing, DNS
+    and DHCP keep working.
 
 This is the working reference shape today. VRRP/Keepalived is no longer part of
 the live production path, because the current HA hooks are still too disruptive

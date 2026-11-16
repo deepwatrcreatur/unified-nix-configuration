@@ -55,8 +55,8 @@ Expected state in the current simplified mode:
 - `kea-dhcp4-server`: `active`
 - `kea-dhcp-ddns-server`: `active`
 - `keepalived`: `inactive`
-- `suricata`: `inactive`
-- `router-evebox`: `inactive`
+- `suricata`: `active` (passive IDS on the LAN interface; a failure here does not affect routing)
+- `router-evebox`: `active`
 
 Confirm interface and route state:
 
