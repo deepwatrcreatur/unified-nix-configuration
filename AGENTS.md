@@ -1,256 +1,122 @@
-# Unified Nix Configuration Repository
+# Unified Nix Configuration: notes for coding agents
 
-This repository contains a unified Nix configuration for managing multiple systems, including NixOS, macOS, and Linux distributions. It uses Nix Flakes to ensure reproducible builds and deployments.
+One flake that configures every machine: NixOS hosts (including the router
+and homeserver), Proxmox LXC guests, macOS via nix-darwin, and Home Manager
+users. Secrets use agenix.
 
-## Overview
+New to the repo? Read [`agent-guides/START-HERE.md`](agent-guides/START-HERE.md),
+then [`den/README.md`](den/README.md).
 
-The primary goal of this repository is to provide a single source of truth for system and user configurations across various machines. This includes:
+## Layout
 
--   System-level settings (e.g., networking, services)
--   User-specific configurations (e.g., shell environment, applications)
--   Secret management primarily using `agenix` (with a small SOPS compatibility layer for legacy user secrets).
+- `den/inventory/`: the source of truth for exported hosts and homes
+  (`hosts.nix`, `darwin.nix`, `homes.nix`, `bootstrap.nix`).
+- `den/hosts/<host>/`: thin host leaves that compose aspects and add
+  hardware or networking. `mode = "legacy"` hosts are still backed by
+  `hosts/`.
+- `den/aspects/`: reusable bundles (`lxc-core`, `attic-client`, ...).
+- `modules/common/` (all hosts), `modules/nixos/`, `modules/nix-darwin/`
+  (auto-imported only on Darwin), `modules/home-manager/`; `profiles/` for
+  opinionated shared bundles.
+- `users/<user>/` with per-host overrides in `users/<user>/hosts/<host>/`.
+- `secrets-agenix/` with recipients in `secrets.nix`.
+- `outputs/`: flake outputs (`den.nix`, `checks.nix`, ...);
+  `lib/flake/helpers.nix`: system builders.
 
-## Technologies
+Put platform-specific settings in the platform directory, not behind
+conditionals in `modules/common/`. A Darwin-only option such as
+`nix.settings.max-open-files` breaks NixOS evaluation (`unknown setting`)
+if it lands in a common module.
 
--   **Nix:** A powerful package manager and system configuration tool.
--   **NixOS:** A Linux distribution built on top of the Nix package manager.
--   **home-manager:** A tool to manage user-level dotfiles and packages.
--   **Nix Flakes:** A new feature in Nix that improves reproducibility and composability.
--   **agenix:** Primary tool for managing secrets; SOPS-nix remains only as a compatibility layer in a few Home Manager modules.
+## Hosts and shells
 
-## Directory Structure
+- Run `hostname` first; you may be on emerald, homeserver or another host.
+- NixOS: use `/run/wrappers/bin/sudo`, not plain `sudo` or
+  `/run/current-system/sw/bin/sudo`.
+  `/run/wrappers/bin/sudo nixos-rebuild switch --flake .#<host>`.
+  Darwin: `darwin-rebuild switch --flake .#<host>`.
+- Remote: `nixos-rebuild switch --flake .#<host> --target-host <host> --sudo`.
+  Router specifics: [`docs/router-source-of-truth.md`](docs/router-source-of-truth.md).
+- **Never rebuild `attic-cache` locally.** It is a Proxmox LXC guest; a local
+  `nixos-rebuild test/switch --flake .#attic-cache` can kill the desktop
+  session. SSH in, `git pull` in `~/flakes/unified-nix-configuration` and
+  rebuild there, or use `--target-host attic-cache --sudo`.
+- The interactive shell is Fish almost everywhere. Write automation in Bash:
+  use `ssh-bash <host> -- ...` (or `ssh host "bash -c '...'"`) for remote
+  commands. Avoid Nushell for automation.
+- Long-running remote work: tmux, see [`agent-guides/tmux.md`](agent-guides/tmux.md).
 
--   `hosts/`: Contains the main configuration for each individual host. Each host has a dedicated directory with its specific NixOS or home-manager configuration.
-  - Organized by platform: `nixos/`, `macminim4/` (darwin), `nixos-lxc/`, `infisical/`
-  - Each host imports platform-specific modules automatically
--   `modules/`: Contains reusable Nix modules that are shared across different hosts. This includes common packages, system settings, and user configurations.
-  - `common/`: Cross-platform modules imported by all hosts
-  - `nix-darwin/`: macOS-specific modules (auto-imported only by Darwin hosts)
-  - `nixos/`: Linux-specific modules (auto-imported only by NixOS hosts)
-  - `home-manager/`: User environment modules
--   `users/`: Contains user-specific configurations, such as dotfiles, packages, and services.
-  - Organized by username with host-specific overrides in `users/{username}/hosts/{hostname}/`
--   `secrets-agenix/`: Contains system secrets encrypted with `agenix`.
--   `outputs/`: Host output definitions using helper functions from flake.nix
+## Secrets
 
-## Getting Started
+- Edit or create with `agenix-edit secrets-agenix/<name>.age` (runs
+  `ryantm/agenix` against `secrets.nix`). Do not use `agenix-cli`; its config
+  format is different. Do not add `agenix` to `home.packages` to edit secrets.
+- New secret: add it to `secrets.nix` with its `publicKeys`, create it with
+  `agenix-edit`, reference it via `config.age.secrets.<name>.path`.
+- Without `agenix-edit`: get recipients with
+  `nix eval --impure --expr '(import ./secrets.nix)."secrets-agenix/<name>.age".publicKeys'`
+  and encrypt with `age -r ... -o secrets-agenix/<name>.age`.
+- SOPS-nix remains only as a small compatibility layer in a few Home Manager
+  modules.
 
-To apply the configuration for a specific host, you can use the following command from the root of the repository:
+## Validating
 
-```bash
-/run/wrappers/bin/sudo nixos-rebuild switch --flake .#<hostname>
-```
+- Build or test before committing, and read all output: warnings, failed
+  activation scripts and silent package failures count. "Build succeeded" is
+  not "the fix works"; check the thing you meant to fix.
+- Quick eval of a host:
+  `nix eval .#nixosConfigurations.<host>.config.networking.hostName`.
+- Flake checks: `module-loading-eval`, `inventory-consistency`,
+  `agent-guard-policy` (`nix build .#checks.x86_64-linux.<name>`).
+- Before every commit, check for conflict markers: `git diff --cached --check`
+  (reports "leftover conflict marker"). For the whole tree:
+  `grep -rnE '^(<<<<<<<|=======|>>>>>>>)( |$)' modules/ hosts/ users/ lib/ den/ --include='*.nix'`.
+  The unanchored grep also matches `# =====` comment rulers.
+- HTTP 401 from a binary cache is usually harmless: Nix falls back to public
+  caches when a token is missing.
 
-Replace `<hostname>` with the name of the host you want to configure (e.g., `homeserver`, `phoenix`).
+## Git
 
-```
-## Agent Instructions
-### Shell Environment
-- **Default interactive shell is Fish**: Treat Fish as the human-facing default on most hosts, but do not assume it is the safest automation surface.
-- **Prefer Bash for automation snippets**: When generating local one-shot scripts, heredocs, or `-lc` command strings, prefer `bash` syntax rather than Fish syntax.
-- **Prefer `ssh-bash` for remote commands**: Most hosts default to Fish remotely too, so agent-driven SSH commands should use `ssh-bash <host> -- ...` (or pipe stdin into `ssh-bash <host>`) when the command relies on POSIX/Bash behavior.
-- **Avoid Nushell for agent automation**: Nushell remains a useful interactive shell, but it is an even less compatible target for generic agent-generated shell snippets.
-### Multi-Host Configuration Awareness
-- **Always check hostname first**: Start by running `hostname` to identify which host you're working on
-- **Host-specific commands**: Use appropriate commands based on the host type:
-  - **NixOS hosts** (homeserver, phoenix, etc.): Prefer `/run/wrappers/bin/sudo nixos-rebuild ...`; do not assume plain `sudo` or `/run/current-system/sw/bin/sudo` is usable on NixOS
-  - **Darwin hosts** (macminim4): Use `darwin-rebuild` commands, respect macOS peculiarities
-  - **LXC containers**: May require special handling for container-specific rebuilds
-- **Privilege escalation on NixOS**: If `sudo` fails with ownership or setuid errors, retry with `/run/wrappers/bin/sudo`
-### Host Detection Examples
-```bash
-# Check which host you're on
-hostname
-# Then use appropriate rebuild commands:
-# For NixOS: /run/wrappers/bin/sudo nixos-rebuild switch --flake .#hostname
-# For Darwin: darwin-rebuild switch --flake .#hostname
-```
+- Pull before pushing changes that affect remote hosts. Keep commits narrowly
+  scoped (secrets refactor separate from desktop tweaks).
+- Commits are SSH-signed by default. If signing prompts or fails in an agent
+  session, run `./scripts/git-ssh-doctor.sh` before assuming SSH is broken;
+  fall back to `git commit --no-gpg-sign` only when signing is unavailable.
+- Shared checkout for sequential or read-only work; `wt` (worktrunk) worktrees
+  for parallel agents or PR-sized work:
+  [`agent-guides/checkout-strategies.md`](agent-guides/checkout-strategies.md),
+  [`agent-guides/worktrunk.md`](agent-guides/worktrunk.md).
 
-### tmux Session Management for Remote Work
-When working with remote hosts or running long-duration operations, use tmux to maintain persistent sessions:
+## Agent tooling
 
-#### Basic tmux Usage
-```bash
-# Create a named session for your work
-ssh host "tmux new-session -d -s inference-test"
+Tools, Claude Code auth, the `agent-guard` destructive-command hook, and web
+browsing: [`agent-guides/tooling.md`](agent-guides/tooling.md). The guard
+asks before destructive commands (`rm -r`, force pushes, disk tools,
+`qm`/`pct destroy`, ...); check one with `agent-guard check '<command>'`.
 
-# Attach to session (interactive)
-ssh -t host "tmux attach-session -t inference-test"
+<!-- nix-agent-guides:core BEGIN (v2). Synced from deepwatrcreatur/nix-agent-guides templates/agents-core.md by scripts/sync-agents-core.sh. Edit it there, not here. -->
+## Shared conventions
 
-# Send commands to session without attaching
-ssh host "tmux send-keys -t inference-test 'cd /path/to/work' Enter"
-ssh host "tmux send-keys -t inference-test 'ollama serve' Enter"
+Canonical, newest version:
+https://raw.githubusercontent.com/deepwatrcreatur/nix-agent-guides/main/CONVENTIONS.md
+If you can fetch it, read it before larger changes; where it differs from the
+summary below, it is newer. This repo's own instructions above take
+precedence over both.
 
-# Check if session exists
-ssh host "tmux list-sessions | grep inference-test"
+Summary (offline fallback):
 
-# Kill session when done
-ssh host "tmux kill-session -t inference-test"
-```
-
-#### Multiple Windows in tmux
-```bash
-# Create windows for different tasks
-ssh host "tmux new-window -t inference-test -n 'server'"
-ssh host "tmux new-window -t inference-test -n 'testing'"
-
-# Send commands to specific windows
-ssh host "tmux send-keys -t inference-test:server 'ollama serve' Enter"
-ssh host "tmux send-keys -t inference-test:testing 'ollama list' Enter"
-
-# List windows in session
-ssh host "tmux list-windows -t inference-test"
-```
-
-#### Background Process Management
-```bash
-# Start background processes that persist across SSH disconnections
-ssh host "tmux send-keys -t session-name 'nohup command > output.log 2>&1 &' Enter"
-
-# Monitor background processes
-ssh host "tmux send-keys -t session-name 'ps aux | grep process-name' Enter"
-
-# Check process logs
-ssh host "tmux send-keys -t session-name 'tail -f output.log' Enter"
-```
-
-#### Best Practices for Agents
-- **Always use named sessions**: Makes it easier to reconnect and manage multiple concurrent tasks
-- **Create task-specific sessions**: e.g., "inference-test", "build-debug", "service-monitor"
-- **Use multiple windows**: Separate concerns like server processes, testing, and monitoring
-- **Check session existence**: Before creating, verify if session already exists to avoid conflicts
-- **Clean up**: Kill sessions when work is complete to avoid resource accumulation
-
-### Remote Testing Workflow
-For testing changes across hosts (especially build failures):
-1. **Check hostname** on local machine first
-2. **SSH to remote host** if needed:
-   ```bash
-   ssh user@hostname "rebuild command"
-   ```
-3. **Use tmux sessions** for maintaining persistent remote sessions (see tmux section above)
-4. **Test platform-specific issues** by reproducing on relevant host type
-
-### Host Safety Notes
-- **Do not locally switch LXC guest configs on a desktop host**: `attic-cache` is a Proxmox LXC guest. Running `nixos-rebuild test/switch --flake .#attic-cache` on a desktop host can shut down the desktop session.
-- **Preferred attic-cache workflow**: `ssh attic-cache`, `cd ~/flakes/unified-nix-configuration`, `git pull`, then run the local rebuild on `attic-cache`.
-- **Alternative attic-cache workflow from a desktop host**: use a remote target rebuild such as `just remote-test attic-cache` or `sudo nixos-rebuild test --flake .#attic-cache --target-host attic-cache --use-remote-sudo`.
-
-### Checkout Strategy
-- Choose the checkout model based on the work:
-  - shared checkout is fine for one-agent, sequential, or mostly read-only work
-  - prefer `wt` (worktrunk) over raw `git worktree` when multiple agents are
-    working in parallel or when the work should land as isolated PRs
-- Decision guide: see `agent-guides/checkout-strategies.md`.
-- Worktree quickstart:
-  - `wt list`
-  - `wt switch -c feat/my-change`
-  - `wt switch feat/my-change`
-  - `wt remove`
-- More detail: see `agent-guides/worktrunk.md`.
-
-### Agent Tooling
-These are installed across hosts (or intended to be):
-
-For detailed managed authentication paths (including `gemini-cli`), see `docs/tooling-managed-auth.md`.
-
-- `rg` (ripgrep): fast text search
-- `fd`: fast file search
-- `sg` (ast-grep): AST-aware search/replace
-- `jq`: JSON processing
-- `just`: command runner for repo tasks
-- `nh`, `nom` (nix-output-monitor), `nvd`, `nix-tree`: Nix debugging/inspection
-- `opencode`, `claude-code`, `gemini-cli`, `droid`: agent CLIs (host-dependent)
-
-#### Claude Code authentication
-
-- Preferred command: `claude-code` (aliased to a `claude-code-fnox` wrapper when
-  available).
-- Auth is via `ANTHROPIC_API_KEY`, normally sourced by `fnox` from
-  `~/.local/share/agenix-user-secrets/anthropic-api-key` or
-  `/run/agenix/anthropic-api-key`.
-- Operators should provision that secret via agenix-user-secrets; agents should
-  not export long-lived Anthropic keys manually in shells.
-- For debugging against the raw CLI, bypass the alias with `command claude-code`
-  in a shell.
-
-#### Agenix secret editing
-
-- Preferred command: `agenix-edit secrets-agenix/<name>.age`
-- Do **not** assume the raw `agenix` command is installed for the
-  `deepwatrcreatur` user.
-- Do **not** add `agenix` to `home.packages` just to edit secrets unless the
-  repo is explicitly migrating workflows.
-- This repo intentionally standardizes on the system-provided `agenix-edit`
-  wrapper from `modules/common/secrets-management.nix`, which runs
-  `nix run github:ryantm/agenix -- -e ...` against the repo's `secrets.nix`
-  recipient model.
-- For secret creation/rotation, pair `agenix-edit` with the local `age`/`rage`
-  tools already installed via the same module.
-
-#### Destructive command guard (`agent-guard`)
-
-Home Manager installs `agent-guard` as a Claude Code `PreToolUse` hook on
-`Bash` (and as a Gemini CLI `BeforeTool` hook when that integration is
-enabled). It parses each shell command, including `ssh host '...'`,
-`bash -c`, `sudo`, `xargs` and `pct exec` wrappers, and:
-
-- **asks for confirmation** before commands that destroy data or rewrite shared
-  history: recursive `rm` outside `/tmp` and build artifacts, `find -delete`,
-  force or deleting `git push`, `git reset --hard`, `git clean -f`,
-  `git branch -D`, `git stash drop/clear`, disk tools (`mkfs`, `dd of=/dev/…`,
-  `wipefs`, `sgdisk --zap-all`), `zfs`/`zpool destroy`, btrfs subvolume
-  deletes, `qm`/`pct destroy`, container volume or system prunes,
-  `kubectl delete`, `gh repo delete`, `gh api -X DELETE`, SQL
-  `DROP`/`TRUNCATE`/unbounded `DELETE`, and `nix-collect-garbage -d`;
-- **refuses** recursive deletes of `/`, `$HOME` and system directories such as
-  `/nix` and `/etc`.
-
-Gemini CLI has no confirmation path here, so it blocks instead of asking.
-Codex is not covered. To check a command by hand, run
-`agent-guard check '<command>'`. To turn the guard off for one agent session,
-start the agent with `AGENT_GUARD_SKIP=1`. To disable it for a host, set
-`programs.agent-guards.enable = false`. The policy lives in
-`scripts/agent-guard.py`, and its cases are in `tests/agent-guard-test.py`
-(the `agent-guard-policy` flake check).
-
-**Recent additions**
-- Added `ast-grep` (`sg`) to the common tool set.
-- Added `cass-session-search` for CASS-style search across local agent
-  sessions; see `docs/cass-session-search.md` for usage and privacy notes.
-- Added `cm-procedural-memory.md` as a lightweight cross-agent procedural
-  memory layer; see that doc for when and how to capture reusable
-  procedures.
-- Agent Mail is **not** currently adopted for this repo; see
-  `docs/agent-mail-workflow-fit.md` for the evaluation and decision.
-- Beads task-graph wiring is now partially in place; see
-  `docs/beads-migration-plan.md` and
-  `docs/tooling-work-items/18-beads-task-graph-integration.md` for details.
-  Use the repo-managed `beads-rust` command for the Rust CLI; `br` may refer to
-  the Homebrew viewer on some hosts.
-
-### Git Workflow
-Before pushing changes that affect remote hosts:
-1. **Check local files exist** with `git status`
-2. **Pull remote changes first** with `git pull` to avoid conflicts
-3. **Test locally** (rebuild/switch) before committing when possible
-4. **Split commits into logical parts**: keep commits narrowly scoped (e.g., "secrets refactor" separate from "GNOME tweaks")
-5. **Commit with the normal SSH-signing flow**:
-   ```bash
-   git commit -m "feat: ..."
-   ```
-   If SSH signing is temporarily broken in a specific checkout, treat that as a
-   local config or agent issue first. Only fall back to:
-   ```bash
-   git commit --no-gpg-sign -m "feat: ..."
-   ```
-   when you have confirmed the signing path itself is unavailable and the work
-   should not be blocked on fixing it first.
-   For diagnosis, run:
-   ```bash
-   ./scripts/git-ssh-doctor.sh
-   ```
-   Do not assume GitHub SSH transport failure, empty `ssh-agent`, and SSH
-   signing misconfiguration are the same problem.
-5. **Then push** with `git push`
-```
+- **Comments explain why, not what.** Mark them `# WHY:`, `# GOTCHA:`,
+  `# INVARIANT:`, `# SECURITY:`, `# UPSTREAM:` or `# TODO(#issue):`. One to
+  three lines above the code they protect; longer reasoning goes in `docs/`
+  with a pointer (`# WHY: docs/x.md#heading`). Never narrate the next line.
+- **Before editing a file**, read its tags:
+  `rg -n '# (WHY|GOTCHA|INVARIANT|SECURITY|UPSTREAM|TODO)' <file>`.
+  Fix or delete any tag your change makes untrue.
+- **Exported Nix functions** get RFC 145 doc comments (`/** ... */`).
+- **Validate before committing:** the narrowest `nix build` first, then
+  `nix flake check`; read all output. Run `bash -n`/`shellcheck` on shell
+  generated from Nix. Exit code 0 is not proof the change worked.
+- **Same change, same PR:** behaviour changes come with docs and a check.
+- **Never commit secrets**, and do not deploy to or change live hosts unless
+  asked.
+<!-- nix-agent-guides:core END -->

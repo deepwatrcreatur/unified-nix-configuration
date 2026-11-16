@@ -57,8 +57,8 @@ When you need more context, these are usually the next best reads:
   [`docs/tooling-work-items/README.md`](../docs/tooling-work-items/README.md)
 - agent workflow notes:
   [`agent-guides/README.md`](./README.md)
-- repo-wide Claude-oriented notes:
-  [`CLAUDE.md`](../CLAUDE.md)
+- repo-wide agent instructions (CLAUDE.md imports this):
+  [`AGENTS.md`](../AGENTS.md)
 
 ## Default Expectations
 
