@@ -140,7 +140,8 @@ primary must not compete with it on the LAN or WAN. `elitedesk`'s
 
 Router hosts hold no outbound SSH keys: no user `~/.ssh/id_ed25519`, and
 `role.nix` turns off `my.root-ssh-identity` (keep them out of
-`rootSshKeyHosts` in `secrets.nix`). A compromised router then cannot log
+`rootSshKeyHosts` in `secrets.nix` and `nixosHosts` in
+`lib/remote-builder.nix`, whose key logs into emerald). A compromised router then cannot log
 into anything. To reach other hosts, SSH to the router from a workstation
 (agent forwarding is on) rather than from its console.
 

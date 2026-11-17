@@ -1,10 +1,11 @@
 { pkgs ? null }:
 let
   # Fallback NixOS hostnames for legacy string-based checks
+  # SECURITY: router-class hosts (router, elitedesk) are deliberately absent:
+  # the builder key logs into emerald, and routers hold no outbound SSH keys.
+  # They are deployed from a workstation with --target-host, so never build.
   nixosHosts = [
     "homeserver"
-    "router"
-    "elitedesk"
     "phoenix"
     "sapphire"
     "ruby"
