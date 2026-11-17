@@ -909,6 +909,9 @@ in
     # for both the forward zone and the reverse zone.
     technitium-enable-rfc2136 = {
       description = "Configure Technitium RFC2136 dynamic update support for Kea DDNS";
+      # WHY: only the node running Kea DDNS needs it; on a standby the zone
+      # does not exist (static-host sync is off) and the unit fails.
+      enable = ownLanServices;
       after = [
         "technitium-dns-server.service"
         "technitium-bootstrap-api-token.service"

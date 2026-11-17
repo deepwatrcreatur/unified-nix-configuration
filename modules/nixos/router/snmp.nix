@@ -51,11 +51,17 @@ in
 
     systemd.services.snmpd = {
       description = "Simple Network Management Protocol (SNMP) daemon";
+      # GOTCHA: snmpd binds the listen addresses, so it must start after they
+      # exist. With only network.target, a fresh boot of elitedesk exhausted
+      # its restarts before eno1 had 192.168.100.98.
       after = [
-        "network.target"
+        "network-online.target"
         "agenix.service"
       ];
-      wants = [ "agenix.service" ];
+      wants = [
+        "network-online.target"
+        "agenix.service"
+      ];
       wantedBy = [ "multi-user.target" ];
       preStart = ''
         set -euo pipefail
@@ -84,6 +90,7 @@ in
         RuntimeDirectory = "snmpd";
         ExecStart = "${lib.getExe' pkgs.net-snmp "snmpd"} -f -Lo -c /run/snmpd/snmpd.conf";
         Restart = "on-failure";
+        RestartSec = "5s";
       };
     };
 
