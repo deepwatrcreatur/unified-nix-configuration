@@ -1,5 +1,8 @@
 # Adding a Host to Stable Agenix Machine Identities
 
+For the whole new-host checklist (hardware, inventory files, install), see
+[`adding-a-nixos-host.md`](./adding-a-nixos-host.md).
+
 This repo now supports dedicated machine identities for agenix so machine-scoped
 secrets do not depend on SSH host key churn.
 

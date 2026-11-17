@@ -111,6 +111,9 @@ in
     forceBlockListUpdateOnActivation = lib.mkForce false;
   };
 
+  # Logs partition is XFS on this host (see disko.nix); router's is ext4.
+  services.router-log-storage.fsType = "xfs";
+
   fileSystems."/srv/pxe" = {
     device = "/dev/disk/by-partlabel/disk-pxe-images-images";
     fsType = "ext4";

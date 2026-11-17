@@ -100,7 +100,7 @@ route), SSH directly to the management IP:
 
 ```bash
 ssh deepwatrcreatur@192.168.100.100  # Primary Router
-ssh deepwatrcreatur@192.168.100.99   # Backup Router
+ssh deepwatrcreatur@192.168.100.98   # elitedesk (standby router host)
 ```
 
 ### 2. Proxmox Serial Console (`qm terminal`)

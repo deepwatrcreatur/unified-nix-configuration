@@ -98,7 +98,8 @@ B. Connect the I226-V LAN port to the LAN switch. The router comes up at
 `10.10.10.1`. `ssh deepwatrcreatur@10.10.10.1` works from any LAN host
 (same L2 segment, no routing needed).
 
-For the backup router, the management IP is `192.168.100.99`.
+The removed router-backup VM used `192.168.100.99`; the current standby router
+host, `elitedesk`, uses `192.168.100.98`.
 
 **Note:** Option B also starts the router's DHCP/DNS services (Technitium),
 which may conflict with opnsense. Only do this when ready to cut over.

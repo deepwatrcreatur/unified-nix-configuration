@@ -37,6 +37,8 @@ if it lands in a common module.
   Darwin: `darwin-rebuild switch --flake .#<host>`.
 - Remote: `nixos-rebuild switch --flake .#<host> --target-host <host> --sudo`.
   Router specifics: [`docs/router-source-of-truth.md`](docs/router-source-of-truth.md).
+- New machine: [`docs/adding-a-nixos-host.md`](docs/adding-a-nixos-host.md)
+  (inspect hardware, files to touch, identity and rekey, install).
 - **Never rebuild `attic-cache` locally.** It is a Proxmox LXC guest; a local
   `nixos-rebuild test/switch --flake .#attic-cache` can kill the desktop
   session. SSH in, `git pull` in `~/flakes/unified-nix-configuration` and

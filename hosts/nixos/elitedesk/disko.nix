@@ -64,7 +64,11 @@
             size = "250G";
             content = {
               type = "filesystem";
-              format = "ext4";
+              # WHY: XFS for many concurrent appenders (Prometheus TSDB,
+              # Grafana, Technitium and Suricata logs) on a spinning disk, and
+              # journal replay instead of fsck after power loss. Must match
+              # services.router-log-storage.fsType in configuration.nix.
+              format = "xfs";
               # No mountpoint: router-log-storage mounts it by label.
             };
           };
