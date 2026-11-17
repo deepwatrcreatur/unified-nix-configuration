@@ -128,12 +128,6 @@
     };
 
     # Proxmox Hypervisors
-    pve-elitedesk = {
-      ip = "10.10.11.44";
-      sshUser = "root";
-      description = "Proxmox node - HP EliteDesk";
-    };
-
     pve-rog = {
       ip = "10.10.11.53";
       sshUser = "root";

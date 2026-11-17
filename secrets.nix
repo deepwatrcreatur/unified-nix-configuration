@@ -24,10 +24,11 @@ let
     root = stableRootKey;
   };
 
-  # All NixOS hosts that should receive the root SSH key
+  # All NixOS hosts that should receive the root SSH key.
+  # SECURITY: router-class hosts (router, elitedesk) are deliberately absent;
+  # see my.root-ssh-identity in hosts/nixos/router/role.nix.
   rootSshKeyHosts = [
     "authentik-host"
-    "elitedesk"
     "emerald"
     "homeserver"
     "inference1"
@@ -35,7 +36,6 @@ let
     "inference3"
     "phoenix"
     "podman"
-    "router"
     "vaglio"
   ];
 

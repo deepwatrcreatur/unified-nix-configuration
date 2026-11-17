@@ -62,6 +62,7 @@ grep -r . /etc/modprobe.d/             # driver options the old OS needed
 | `lib/remote-builder.nix` | `nixosHosts`, if it should use the remote builder |
 | `modules/nixos/services/gatus-inventory.nix` | grouping, if the name is not classified already |
 | `docs/agenix-machine-identity-inventory.md`, `docs/agenix-machine-identity-dashlane.txt` | identity records |
+| `ssh-keys/<host>-host-ed25519.pub` | SSH host key, after install (step 7) |
 
 Host names must match between `lib/hosts.nix` and `den/inventory/hosts.nix`;
 the `inventory-consistency` check enforces it.
@@ -109,6 +110,20 @@ SSH_AUTH_SOCK="" just install <host> <current-ip> "" "" true
 installer), so a Proxmox node does not need a live ISO. After reboot the host
 comes up on the addresses in its config, not the old one.
 
+## 7. Record the SSH host key
+
+Every host's `~/.ssh/known_hosts_managed` is generated from
+`ssh-keys/<name>-host-<type>.pub`, matched to `lib/hosts.nix` by name. A host
+without a file there makes every other machine prompt for its key on first
+connect.
+
+- The file name must be exactly `<name>-host-ed25519.pub`; other spellings
+  are silently skipped.
+- Take the key from a trusted path, not `ssh-keyscan`: read
+  `/etc/ssh/ssh_host_ed25519_key.pub` over a session whose key you already
+  verified, or via `pct exec` from the Proxmox node for an LXC.
+- When a host is retired or reinstalled, delete or replace its file.
+
 ## Router hosts
 
 A host that imports `hosts/nixos/router/role.nix` while `router` is still
@@ -122,6 +137,12 @@ primary must not compete with it on the LAN or WAN. `elitedesk`'s
 - Tailscale, iVentoy and the mDNS reflector off.
 - Technitium keeps running, without DHCP scopes, reservations or NTP pushes.
 - `managementDevice` passed to `role.nix` when it is not `ens18`.
+
+Router hosts hold no outbound SSH keys: no user `~/.ssh/id_ed25519`, and
+`role.nix` turns off `my.root-ssh-identity` (keep them out of
+`rootSshKeyHosts` in `secrets.nix`). A compromised router then cannot log
+into anything. To reach other hosts, SSH to the router from a workstation
+(agent forwarding is on) rather than from its console.
 
 Promotion to primary reverses these and is a separate change; see
 [`design/router-election/README.md`](./design/router-election/README.md).

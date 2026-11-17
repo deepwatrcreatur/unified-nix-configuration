@@ -17,7 +17,7 @@ Edit `inventory/hosts.yml` to configure your hosts. Hosts are grouped by rebuild
 | `nixos` | `nixos-rebuild switch` | emerald, phoenix, router, homeserver, authentik-host, vaglio, podman, lattitude |
 | `cache` | `nixos-rebuild switch` | emerald (attic binary cache, remote builder, Niri/Noctalia desktop) |
 | `darwin` | `darwin-rebuild switch` | macminim4 |
-| `proxmox` | `home-manager switch` | pve-elitedesk, pve-rog, pve-strix |
+| `proxmox` | `home-manager switch` | pve-rog, pve-strix |
 
 ## Playbooks
 
@@ -55,7 +55,7 @@ ansible-playbook -i inventory/hosts.yml playbooks/rebuild-cache-first.yml
 
 ### update-proxmox.yml
 
-Pulls latest changes and runs `home-manager switch` on the 3 Proxmox hosts (`pve-elitedesk`, `pve-rog`, `pve-strix`).
+Pulls latest changes and runs `home-manager switch` on the Proxmox hosts (`pve-rog`, `pve-strix`).
 This is the simplest playbook to point Semaphore at for routine PVE updates.
 
 ```bash

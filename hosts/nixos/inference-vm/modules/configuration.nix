@@ -15,7 +15,6 @@
     ../../../../modules/nixos/common/agenix-machine-identity.nix
     ../../../../modules/nixos/inference-vm-nix-overrides.nix
     ../../../../modules/nixos/root-ssh-identity.nix
-    ../../../../modules/nixos/deepwatrcreatur-ssh-identity.nix
     ../../../../modules/nixos/snapper.nix
     ../../../../modules/nixos/determinate-netrc-dir.nix
     # inputs.nix-attic-infra.nixosModules.attic-client  # Disabled - requires sops-nix
@@ -28,7 +27,6 @@
   my.agenix.machineIdentity.enable = true;
 
   my.root-ssh-identity.enable = true;
-  my.deepwatrcreatur-ssh-identity.enable = true;
 
   # Nixpkgs configuration — GPU-specific flags live in inference-vm-nvidia.nix
   nixpkgs.config.allowUnfree = true;

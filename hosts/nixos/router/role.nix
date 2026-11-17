@@ -800,6 +800,11 @@ in
     openssh.authorizedKeys.keys = operatorKeys;
   };
 
+  # SECURITY: routers face the internet and hold no outbound SSH keys, so a
+  # compromise here cannot log into other hosts. Hop out with agent forwarding.
+  # docs/adding-a-nixos-host.md#router-hosts
+  my.root-ssh-identity.enable = lib.mkForce false;
+
   services.fail2ban = {
     enable = true;
     maxretry = 5;
