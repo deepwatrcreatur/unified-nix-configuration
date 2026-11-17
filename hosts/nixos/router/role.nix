@@ -2,6 +2,9 @@
   sshTarget,
   wanDevice,
   lanDevice,
+  # WHY: router names its management NIC ens18 (pinned by MAC); bare-metal
+  # router hosts such as elitedesk use the onboard NIC name instead.
+  managementDevice ? "ens18",
   lanIpv4Address,
   managementIpv4Address,
   grafanaDomain,
@@ -29,7 +32,6 @@ let
   getAttrByPath = lib.attrsets.attrByPath;
   lanListenAddress = builtins.head (lib.splitString "/" lanIpv4Address);
   managementListenAddress = builtins.head (lib.splitString "/" managementIpv4Address);
-  managementDevice = "ens18";
   operatorStableSshKey = lib.strings.trim (
     builtins.readFile ../../../ssh-keys/deepwatrcreatur-stable-identity.pub
   );

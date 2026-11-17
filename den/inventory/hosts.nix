@@ -93,6 +93,21 @@
     ];
   };
 
+  elitedesk = {
+    kind = "nixos";
+    name = "elitedesk";
+    system = "x86_64-linux";
+    hostPath = ../hosts/elitedesk;
+    isDesktop = false;
+    mode = "aspect";
+    aspectsList = [
+      "nixos-base"
+      "home-manager-users"
+      "github-token-client"
+      "router-router"
+    ];
+  };
+
   router-bootstrap = {
     kind = "nixos";
     name = "router-bootstrap";

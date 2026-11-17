@@ -27,6 +27,7 @@ let
   # All NixOS hosts that should receive the root SSH key
   rootSshKeyHosts = [
     "authentik-host"
+    "elitedesk"
     "emerald"
     "homeserver"
     "inference1"
@@ -56,7 +57,8 @@ let
 
   userOnlySecrets = operatorUsers;
 
-  routerServiceSecrets = operatorUsers ++ machineRecipients "router";
+  # elitedesk is the incoming bare-metal router (standby until it takes over).
+  routerServiceSecrets = operatorUsers ++ machineRecipients "router" ++ machineRecipients "elitedesk";
   homeserverServiceSecrets = operatorUsers ++ machineRecipients "homeserver";
   authentikHostServiceSecrets = operatorUsers ++ machineRecipients "authentik-host";
 
@@ -91,6 +93,7 @@ let
   # All hosts that build from this repo should be able to use the attic cache
   atticClientHosts = [
     "authentik-host"
+    "elitedesk"
     "emerald"
     "homeserver"
     "inference1"

@@ -7,6 +7,7 @@ with mode `0400` and owner `root:root`.
 | Machine | Dashlane item | Runtime path | Public key file | Public key |
 | --- | --- | --- | --- | --- |
 | attic-cache | `agenix machine identity - attic-cache` | `/var/lib/agenix/machine-identity` | `ssh-keys/agenix-machine-identities/attic-cache.pub` | `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPT88sva3mAHz0ftQNHztNGOixadYzEHE+ZXoM7U+tbg agenix-machine-identity attic-cache` |
+| elitedesk | `agenix machine identity - elitedesk` | `/var/lib/agenix/machine-identity` | `ssh-keys/agenix-machine-identities/elitedesk.pub` | `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICtjZv0RpHlYWPmMABtCPldGUGzOO7gRiOSL2QvJR+IE agenix-machine-identity elitedesk` |
 | homeserver | `agenix machine identity - homeserver` | `/var/lib/agenix/machine-identity` | `ssh-keys/agenix-machine-identities/homeserver.pub` | `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA1xgUz+rOhRweUPDB0+9MZbG1vJnr9cTFT/uuLVtsGy agenix-machine-identity homeserver` |
 | lattitude | `agenix machine identity - lattitude` | `/var/lib/agenix/machine-identity` | `ssh-keys/agenix-machine-identities/lattitude.pub` | `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIILmDRTki5P8aLmYvX7aILAIEat++RUqphsM+IADWmNM agenix-machine-identity lattitude` |
 | pve-rog | `agenix machine identity - pve-rog` | `/var/lib/agenix/machine-identity` | `ssh-keys/agenix-machine-identities/pve-rog.pub` | `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFkWE8kICYI4rPsw/SWfEjOcBrKRk0DywrYSOFZkdlDX agenix-machine-identity pve-rog` |

@@ -74,7 +74,7 @@ in
     enable = lib.mkDefault true;
     allowInterfaces =
       let
-        mgmt = "ens18";
+        mgmt = config.services.router-networking.routedInterfaces.management.device or "ens18";
         lanDevice = config.services.router-networking.routedInterfaces.lan.device;
       in
       [

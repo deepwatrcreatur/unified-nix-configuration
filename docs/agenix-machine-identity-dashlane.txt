@@ -1,4 +1,5 @@
 attic-cache: agenix machine identity - attic-cache
+elitedesk: agenix machine identity - elitedesk
 homeserver: agenix machine identity - homeserver
 lattitude: agenix machine identity - lattitude
 pve-rog: agenix machine identity - pve-rog

@@ -111,6 +111,14 @@
       description = "Main router/firewall running NixOS";
     };
 
+    elitedesk = {
+      sshHostname = "192.168.100.98";
+      sshUser = "deepwatrcreatur";
+      # Standby router: no production LAN IP advertised in DNS until promotion.
+      includeDns = false;
+      description = "Bare-metal router host (HP EliteDesk), standby to router";
+    };
+
     router-bootstrap = {
       ip = null;
       sshUser = "deepwatrcreatur";

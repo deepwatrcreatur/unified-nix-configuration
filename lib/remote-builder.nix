@@ -4,6 +4,7 @@ let
   nixosHosts = [
     "homeserver"
     "router"
+    "elitedesk"
     "phoenix"
     "sapphire"
     "ruby"
