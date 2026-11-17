@@ -101,7 +101,8 @@ commit.
 Deal with existing VMs and data first; see step 1. Then:
 
 ```sh
-SSH_AUTH_SOCK="" just install <host> <current-ip> accept_new=true
+# arguments are positional: host target hw disk accept_new
+SSH_AUTH_SOCK="" just install <host> <current-ip> "" "" true
 ```
 
 `nixos-anywhere` can install from a running Linux system (it kexecs into an

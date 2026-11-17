@@ -74,25 +74,38 @@ is interrupted, run `just clean-identity <host>` to remove it manually.
 
 #### Optional parameters
 
-| Parameter | Purpose | Example |
-|---|---|---|
-| `hw=` | Auto-generate `hardware-configuration.nix` via `nixos-generate-config` | `hw=hosts/nixos/myhost/hardware-configuration.nix` |
-| `disk=` | disko disk device (label is always `main`) | `disk=/dev/disk/by-id/scsi-0QEMU_...` |
-| `accept_new=true` | Trust-on-first-use SSH host key verification (see note below) | `accept_new=true` |
-| `dir=` | Path to this repo (defaults to `$PWD`) | `dir=/home/user/flakes/unified-nix-configuration` |
+`just` passes recipe arguments **by position**, in this order:
+`just install <host> <target> [hw] [disk] [accept_new] [dir]`. Pass `""` to
+skip one. `name=value` does not work: `just install h 1.2.3.4 accept_new=true`
+sets `hw` to the string `accept_new=true` and the recipe stops with
+"hw path not found".
+
+| Position | Parameter | Purpose | Example |
+|---|---|---|---|
+| 3 | `hw` | Auto-generate `hardware-configuration.nix` via `nixos-generate-config` | `hosts/nixos/myhost/hardware-configuration.nix` |
+| 4 | `disk` | disko disk device (label is always `main`) | `/dev/disk/by-id/scsi-0QEMU_...` |
+| 5 | `accept_new` | `true` for trust-on-first-use SSH host key verification (see note below) | `true` |
+| 6 | `dir` | Path to this repo (defaults to `$PWD`) | `/home/user/flakes/unified-nix-configuration` |
 
 > **SSH host key verification**: by default `just install` uses strict host key
 > checking. Since the installer generates a fresh host key you haven't seen
 > before, you have two options:
 > - Pre-verify: `ssh-keyscan <target> >> ~/.ssh/known_hosts` before running install
-> - TOFU opt-in: pass `accept_new=true` — convenient but skips verification
+> - TOFU opt-in: pass `true` as the fifth argument; convenient but skips verification
 
 Full example for an inference VM:
 
 ```bash
-just install inference4 10.10.11.134 accept_new=true \
-    hw=hosts/nixos/inference-vm/hosts/inference4/hardware-configuration.nix \
-    disk=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi0
+just install inference4 10.10.11.134 \
+    hosts/nixos/inference-vm/hosts/inference4/hardware-configuration.nix \
+    /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi0 \
+    true
+```
+
+TOFU only, no hardware generation or disk override:
+
+```bash
+SSH_AUTH_SOCK="" just install <host> <target-ip> "" "" true
 ```
 
 ### 5. Commit
