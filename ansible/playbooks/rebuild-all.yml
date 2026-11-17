@@ -127,7 +127,7 @@
       block:
         - name: Run home-manager switch
           command:
-            cmd: "home-manager switch --flake .#{{ home_manager_target }}"
+            cmd: "home-manager switch -b backup --flake .#{{ home_manager_target }}"
             chdir: "{{ flake_repo_path_override | default(flake_repo_path) }}"
           register: hm_rebuild
           changed_when: true

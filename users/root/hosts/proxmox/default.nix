@@ -36,6 +36,7 @@ in
 
   home.packages = with pkgs; [
     proxmenux
+    rsync
   ];
   # Determinate Nix manages `/etc/nix/nix.conf`; we only add user extras.
   services.nix-user-config = {

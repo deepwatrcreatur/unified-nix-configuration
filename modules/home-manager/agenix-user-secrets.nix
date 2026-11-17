@@ -82,6 +82,9 @@ in
             ''
           ) cfg.secrets
         )}
+
+        rm -rf "$tmp_dir"
+        trap - EXIT
       fi
     '';
   };

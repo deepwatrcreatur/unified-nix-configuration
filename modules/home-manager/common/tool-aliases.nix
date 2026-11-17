@@ -4,9 +4,13 @@
   config,
   lib,
   pkgs,
+  options ? { },
+  osConfig ? null,
   ...
 }:
 let
+  isNixOS = (options ? osConfig) && (osConfig != null);
+
   # Tool and utility aliases
   toolAliases = {
     # Bat (cat replacement)
@@ -23,12 +27,13 @@ let
     sshb = "ssh-bash";
     ssh-copy-id-dynamic = "ssh-copy-id -t .ssh/authorized_keys_dynamic";
 
-    # System tools
-    rsync = "/run/current-system/sw/bin/rsync";
-    sudo = "/run/wrappers/bin/sudo";  # Use wrapped sudo with correct setuid permissions
-
     # Atuin (shell history)
     asr = "atuin script run";
+  };
+
+  # NixOS-specific aliases
+  nixosAliases = lib.optionalAttrs isNixOS {
+    sudo = "/run/wrappers/bin/sudo"; # Use wrapped sudo with correct setuid permissions
   };
 
   # Darwin-specific aliases
@@ -62,7 +67,7 @@ in
 
     aliases = lib.mkOption {
       type = lib.types.attrsOf lib.types.str;
-      default = toolAliases // wrappedToolAliases // darwinAliases;
+      default = toolAliases // wrappedToolAliases // darwinAliases // nixosAliases;
       description = "Set of shell aliases for tools and utilities";
     };
   };
