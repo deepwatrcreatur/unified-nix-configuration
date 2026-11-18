@@ -7,6 +7,11 @@ users. Secrets use agenix.
 New to the repo? Read [`agent-guides/START-HERE.md`](agent-guides/START-HERE.md),
 then [`den/README.md`](den/README.md).
 
+Successor in progress:
+[nix-clan-homelab](https://github.com/deepwatrcreatur/nix-clan-homelab)
+(Clan + den). This repo stays authoritative for each host until that host's
+migration bead there is closed; do not start migrating hosts from here.
+
 ## Layout
 
 - `den/inventory/`: the source of truth for exported hosts and homes
