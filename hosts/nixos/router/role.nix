@@ -70,6 +70,10 @@ let
     tailscale-auth-key = {
       file = ../../../secrets-agenix/tailscale-auth-key.age;
     };
+    technitium-zone-transfer-tsig = {
+      file = ../../../secrets-agenix/technitium-zone-transfer-tsig.age;
+      mode = "0400";
+    };
   };
 
   topology = config.router.topology;
@@ -498,6 +502,29 @@ in
 
   services.router-technitium = {
     bootstrapPasswordSecretName = "technitium-admin-password";
+    # WHY: only the node running Kea DDNS needs it; on a standby the zone
+    # does not exist (static-host sync is off) and the unit fails.
+    rfc2136 = lib.mkIf ownLanServices {
+      enable = true;
+      tsigKeyFile = secrets.path "kea-ddns-tsig-key";
+      tsigKeyName = "kea-ddns";
+      zones = [
+        { name = topology.domain; }
+        { name = "10.10.in-addr.arpa"; }
+      ];
+    };
+    # WHY: the Kea-filled zones exist only in this node's runtime state; the
+    # clan standby (elitedesk, 10.10.10.4) keeps TSIG-transferred copies.
+    zoneReplication = lib.mkIf ownLanServices {
+      tsigKeyFile = secrets.path "technitium-zone-transfer-tsig";
+      primary = {
+        zones = [
+          { name = topology.domain; }
+          { name = "10.10.in-addr.arpa"; }
+        ];
+        secondaries = [ "10.10.10.4" ];
+      };
+    };
   };
 
   # The Technitium automation token is minted and kept valid by
@@ -907,86 +934,6 @@ in
         RestartSec = "15s";
       };
       wantedBy = [ "multi-user.target" ];
-    };
-
-    # Configure Technitium to accept RFC2136 dynamic DNS updates from Kea D2.
-    # Registers the TSIG key and enables per-zone dynamic update permissions
-    # for both the forward zone and the reverse zone.
-    technitium-enable-rfc2136 = {
-      description = "Configure Technitium RFC2136 dynamic update support for Kea DDNS";
-      # WHY: only the node running Kea DDNS needs it; on a standby the zone
-      # does not exist (static-host sync is off) and the unit fails.
-      enable = ownLanServices;
-      after = [
-        "technitium-dns-server.service"
-        "technitium-bootstrap-api-token.service"
-        "agenix.service"
-      ];
-      wants = [
-        "technitium-dns-server.service"
-        "technitium-bootstrap-api-token.service"
-      ];
-      wantedBy = [ "multi-user.target" ];
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
-      };
-      script =
-        let
-          apiKeyFile = "/var/lib/private/technitium-dns-server/nix-router-api-token";
-          tsigKeyFile = secrets.path "kea-ddns-tsig-key";
-          fwdZone = topology.domain;
-          revZone = "10.10.in-addr.arpa";
-        in
-        ''
-          set -euo pipefail
-
-          for i in {1..30}; do
-            if ${pkgs.curl}/bin/curl -fsS http://127.0.0.1:5380/api/dns/status >/dev/null 2>&1; then
-              break
-            fi
-            echo "Waiting for Technitium DNS Server to start..."
-            ${pkgs.coreutils}/bin/sleep 2
-          done
-
-          TOKEN="$(${pkgs.coreutils}/bin/tr -d '\r\n' < "${apiKeyFile}")"
-          SECRET="$(${pkgs.coreutils}/bin/tr -d '\n' < "${tsigKeyFile}")"
-
-          # Technitium reports API errors (including invalid-token) with
-          # HTTP 200, so check the JSON status rather than relying on curl -f.
-          technitium_post() {
-            local response status
-            response="$(${pkgs.curl}/bin/curl -fsS -X POST \
-              -H "Content-Type: application/x-www-form-urlencoded" \
-              --data-urlencode "token=$TOKEN" "$@")"
-            status="$(printf '%s' "$response" | ${pkgs.jq}/bin/jq -r '.status // empty' 2>/dev/null || true)"
-            if [ "$status" != "ok" ]; then
-              echo "Technitium API call failed (status: ''${status:-unknown}): $response" >&2
-              return 1
-            fi
-          }
-
-          echo "Registering TSIG key kea-ddns in Technitium..."
-          technitium_post \
-            --data-urlencode "tsigKeys=kea-ddns|$SECRET|hmac-sha256" \
-            "http://127.0.0.1:5380/api/settings/set"
-
-          echo "Enabling RFC2136 updates for forward zone ${fwdZone}..."
-          technitium_post \
-            --data-urlencode "zone=${fwdZone}" \
-            --data-urlencode "update=AllowOnlySpecifiedNetworkAddresses" \
-            --data-urlencode "updateNetworkACL=127.0.0.1" \
-            "http://127.0.0.1:5380/api/zones/options/set"
-
-          echo "Enabling RFC2136 updates for reverse zone ${revZone}..."
-          technitium_post \
-            --data-urlencode "zone=${revZone}" \
-            --data-urlencode "update=AllowOnlySpecifiedNetworkAddresses" \
-            --data-urlencode "updateNetworkACL=127.0.0.1" \
-            "http://127.0.0.1:5380/api/zones/options/set"
-
-          echo "Technitium RFC2136 configuration applied"
-        '';
     };
   };
 
