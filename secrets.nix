@@ -135,6 +135,8 @@ in {
   "secrets-agenix/technitium-admin-password.age".publicKeys = routerServiceSecrets;
   "secrets-agenix/snmp-community.age".publicKeys = routerServiceSecrets;
   "secrets-agenix/kea-ddns-tsig-key.age".publicKeys = routerServiceSecrets;
+  "secrets-agenix/router-healthchecks-ping-url.age".publicKeys = routerServiceSecrets;
+  "secrets-agenix/router-ntfy-url.age".publicKeys = routerServiceSecrets;
   "secrets-agenix/technitium-zone-transfer-tsig.age".publicKeys = routerServiceSecrets;
   "secrets-agenix/tailscale-auth-key.age".publicKeys = routerServiceSecrets;
   "secrets-agenix/authentik-env.age".publicKeys = authentikHostServiceSecrets;
