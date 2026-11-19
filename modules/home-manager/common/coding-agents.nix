@@ -77,6 +77,9 @@ in
       ++ lib.optionals (pkgs.llm-agents ? antigravity-cli) [ antigravity-cli ]
       ++ lib.optionals (pkgs.llm-agents ? ccusage-amp) [ ccusage-amp ]
       ++ lib.optionals (pkgs.llm-agents ? ccusage-codex) [ ccusage-codex ]
-      ++ lib.optionals (pkgs.llm-agents ? ccusage-opencode) [ ccusage-opencode ];
+      ++ lib.optionals (pkgs.llm-agents ? ccusage-opencode) [ ccusage-opencode ]
+      # WHY: Codex's Linux sandbox expects bwrap on PATH; without it Codex warns
+      # and falls back to its bundled copy.
+      ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [ pkgs.bubblewrap ];
   };
 }
