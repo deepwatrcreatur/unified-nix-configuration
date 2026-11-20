@@ -52,8 +52,7 @@ in {
 
       # Additional CNAME aliases (for hosts not in hosts.nix)
       aliases = {
-        # "www" = "router";
-        # "mail" = "router";
+        "nix-router" = "deepwatrcreatur.github.io";
       };
     };
   };
