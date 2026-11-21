@@ -78,6 +78,32 @@ Typical signs from `git log --show-signature`:
 This is about the commit being inspected and the local verification context. It
 does not automatically imply an SSH transport problem or an empty `ssh-agent`.
 
+## Which Key GitHub Must Have
+
+On emerald and phoenix, one key does both jobs:
+
+- `programs.ssh` pins `github.com` to `~/.ssh/id_ed25519` with
+  `IdentitiesOnly yes` (`modules/home-manager/ssh-agent.nix`), so ssh offers
+  only that key to GitHub, even if the agent holds others.
+- git signs with `~/.ssh/id_ed25519.pub` (`user.signingkey`).
+
+That key is `ssh-keys/deepwatrcreatur-phoenix-identity.pub`
+(`SHA256:6DrmIDTuA8ev7n/D+VOdD/jtknzJMlm9yOYQBJ/QNOg`). It must be on the GitHub
+account twice: once as an **authentication** key and once as a **signing** key.
+
+- If it is missing as an authentication key, push fails with
+  `Permission denied (publickey)`.
+- If it is missing as a signing key, commits still verify locally, but GitHub
+  shows them as "Unverified" (`commit.verification.reason` is `unknown_key`).
+
+This happened on 2026-11-21, when the key was removed from GitHub and only a
+retired-host key was left. Check with `curl -s https://github.com/<user>.keys`,
+which lists authentication keys only, or with this doctor.
+
+HTTPS is not a fallback: the git config rewrites `https://github.com/` to SSH.
+For a one-off HTTPS push with the `gh` token, use the
+`https://<user>@github.com/...` URL form, which the rewrite does not match.
+
 ## Workstation Notes
 
 On the `workstation` path in this repo:
