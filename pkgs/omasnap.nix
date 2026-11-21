@@ -35,10 +35,13 @@ stdenv.mkDerivation (finalAttrs: {
     substituteInPlace CMakeLists.txt \
       --replace-fail "/usr/share/wayland-protocols" \
         "${wayland-protocols}/share/wayland-protocols"
-    if [ -f tests/transform-smoke.cpp ]; then
-      substituteInPlace tests/transform-smoke.cpp \
-        --replace-fail "/usr/bin/env bash" "${coreutils}/bin/env bash" || true
-    fi
+    # WHY: the smoke tests write fake helper scripts (e.g. wl-paste in
+    # clipboard-smoke) with a `#!/usr/bin/env bash` shebang; /usr/bin/env does
+    # not exist in the build sandbox, so exec fails with ENOENT and the check
+    # exits 88. Patch every test that embeds it.
+    for f in $(grep -rl "/usr/bin/env bash" tests); do
+      substituteInPlace "$f" --replace-fail "/usr/bin/env bash" "${bash}/bin/bash"
+    done
   '';
 
   nativeBuildInputs = [
@@ -107,6 +110,10 @@ EOF
   doCheck = true;
   checkPhase = ''
     runHook preCheck
+    # WHY: Qt and fontconfig want a writable HOME and a private runtime dir.
+    export HOME="$TMPDIR/home" XDG_RUNTIME_DIR="$TMPDIR/xdg-runtime"
+    mkdir -p "$HOME" "$XDG_RUNTIME_DIR"
+    chmod 700 "$XDG_RUNTIME_DIR"
     QT_QPA_PLATFORM=offscreen ./omasnap-smoke "$TMPDIR/omasnap-smoke"
     runHook postCheck
   '';
