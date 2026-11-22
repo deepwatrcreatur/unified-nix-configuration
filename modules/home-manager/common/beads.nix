@@ -8,6 +8,7 @@
 # Usage after `home-manager switch`:
 #   beads-rust init        — initialise .beads/ in a repo
 #   beads-rust ready --json — list unblocked tasks as JSON
+#   beads-q ready --json   — same, against the repo's shared `beads` branch
 #   bv                  — open interactive terminal UI
 #   bv --robot-triage --labels tooling --json   — agent-friendly priority list
 {
@@ -39,7 +40,10 @@ in
 
   config = lib.mkIf cfg.enable {
     home.packages =
-      lib.optional cfg.enableBr pkgs.beads-rust-cli
+      lib.optionals cfg.enableBr [
+        pkgs.beads-rust-cli
+        pkgs.beads-queue
+      ]
       ++ lib.optional cfg.enableBv pkgs.beads-viewer;
   };
 }

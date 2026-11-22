@@ -104,47 +104,32 @@ asks before destructive commands (`rm -r`, force pushes, disk tools,
 
 ## Work queue (beads)
 
-The queue is `.beads/` (beads_rust). On these hosts the CLI is `beads-rust`
-(`br` can be a different Homebrew tool). Reasoning, upstream practice and the
-planned shared queue branch:
-[nix-agent-guides `guides/beads.md`](https://github.com/deepwatrcreatur/nix-agent-guides/blob/main/guides/beads.md).
-
-The shared queue is the copy on `main`. A topic branch's `git pull` does not
-bring it in, so start from `origin/main`:
+The queue lives on the **`beads-queue` branch** (only `.beads/`), not on `main`.
+Use `beads-q`, which wraps `beads-rust` (`br` can be a different Homebrew
+tool) and works from any worktree of this repo:
 
 ```sh
-git fetch origin && git rebase origin/main && beads-rust sync --import-only
-beads-rust ready --json                               # unblocked work
-beads-rust update <id> --claim --actor <you>          # claim
-beads-rust close <id> --reason "<what was done, PR link>" --actor <you>
-beads-rust sync --flush-only && git add -- .beads/issues.jsonl   # before every commit
+beads-q ready --json                                  # unblocked work
+beads-q show <id>                                     # description and acceptance
+beads-q update <id> --claim --actor <you>             # claim (pushed at once)
+beads-q comments add <id> "<note>" --actor <you>
+beads-q close <id> --reason "<what was done, PR link>" --actor <you>
 ```
 
-- **A claim is local until it reaches `main`.** `--claim` checks only this
-  clone's database (`CLAIM_CONFLICT` means someone else's claim already
-  arrived). Before claiming, check `beads-rust list --status in_progress` and
-  open PRs; then land the claim on its own in a small commit or PR right away.
-  Until the shared queue branch exists, two machines can still claim the same
-  bead in that window.
-- Close a bead in the PR that does the work; the closure lands when the PR
-  merges. Reopen it if the PR is abandoned.
-- Stage only `.beads/issues.jsonl`. Other files in `.beads/` (database, merge
-  snapshots, history backups) are local.
-- **Never hand-edit a conflicted `.beads/issues.jsonl`.** beads-rust 0.1.45
-  skips records whose `updated_at` is not newer, and the next export writes the
-  old version back. Take `main`'s file, rebuild the local cache, and redo your
-  own bead commands:
+Each call fetches `beads-queue`, resets this machine's queue worktree
+(`~/flakes-worktrees/<repo>/beads`) to the remote tip, rebuilds the local
+cache and runs the command. Write commands are committed and pushed straight
+away; if another agent pushed first, `beads-q` retries on the new tip, so a
+claim someone else already holds fails with `CLAIM_CONFLICT` (exit 4): pick
+other work. Agents on emerald and phoenix therefore see one queue.
 
-  ```sh
-  git checkout origin/main -- .beads/issues.jsonl
-  rm -f .beads/beads.db .beads/beads.db-wal .beads/beads.db-shm
-  beads-rust sync --import-only
-  # re-run your claim/create/comment commands, then flush and stage as above
-  ```
-
-  `beads-rust sync --merge` is only for a clean git merge where the database
-  also changed; it refuses files with conflict markers.
+- Claim before starting. Close a bead after its PR merges, citing the PR.
+- Feature branches and PRs never touch `.beads/`; there is none on `main`.
+- Don't edit files in the queue worktree by hand or run `git` there; every
+  `beads-q` call resets it.
 - Never share `.beads/` through Syncthing, `/storage` or another network mount.
+- Reasoning and upstream practice:
+  [nix-agent-guides `guides/beads.md`](https://github.com/deepwatrcreatur/nix-agent-guides/blob/main/guides/beads.md).
 - This repo is being retired in favour of
   [nix-clan-homelab](https://github.com/deepwatrcreatur/nix-clan-homelab).
   Track migration work there (`nch-*` beads), not here; when you fix something
