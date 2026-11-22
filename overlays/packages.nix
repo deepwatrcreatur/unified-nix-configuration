@@ -167,6 +167,21 @@
     };
   })
 
+  # beads-q — run beads-rust against a repo's shared `beads` queue branch.
+  # WHY: guides/beads.md in nix-agent-guides (one queue across agents and hosts).
+  (final: prev: {
+    beads-queue = prev.writeShellApplication {
+      name = "beads-q";
+      runtimeInputs = [
+        final.beads-rust-cli
+        prev.git
+        prev.util-linux
+        prev.coreutils
+      ];
+      text = builtins.readFile ../pkgs/beads-queue.sh;
+    };
+  })
+
   # mem0ai — semantic long-term memory layer for AI agents
   (final: prev: {
     mem0ai = prev.callPackage ../pkgs/mem0ai.nix {
