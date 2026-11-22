@@ -93,22 +93,38 @@ case "$1" in
     ;;
 esac
 
+# WHY: a rejected push discards that attempt's mutation, so its output (for
+# example a created id from `create --json`) must never reach the caller.
+# Buffer each attempt and replay only the one that landed, or the failure.
+out=$(mktemp)
+err=$(mktemp)
+trap 'rm -f "$out" "$err"' EXIT
+replay() {
+  cat "$out"
+  cat "$err" >&2
+}
+
 attempt=1
 while :; do
   sync_from_remote
   set +e
-  beads-rust "$@"
+  beads-rust "$@" >"$out" 2>"$err"
   status=$?
   set -e
-  [ "$status" -eq 0 ] || exit "$status"
+  if [ "$status" -ne 0 ]; then
+    replay
+    exit "$status"
+  fi
 
   beads-rust sync --flush-only >/dev/null
   if git -C "$qdir" diff --quiet -- .beads/issues.jsonl; then
+    replay
     exit 0
   fi
   git -C "$qdir" add -- .beads/issues.jsonl
   git -C "$qdir" commit -q -m "beads: $(printf '%s ' "$@" | cut -c1-200)"
   if git -C "$qdir" push -q "$remote" "HEAD:refs/heads/$branch" 2>/dev/null; then
+    replay
     exit 0
   fi
   if [ "$attempt" -ge "$retries" ]; then
