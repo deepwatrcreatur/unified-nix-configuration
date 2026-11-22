@@ -32,6 +32,9 @@ let
   getAttrByPath = lib.attrsets.attrByPath;
   lanListenAddress = builtins.head (lib.splitString "/" lanIpv4Address);
   managementListenAddress = builtins.head (lib.splitString "/" managementIpv4Address);
+  # Clan standby router (elitedesk) on the LAN; it is managed by
+  # nix-clan-homelab, not this flake.
+  standbyLanAddress = "10.10.10.4";
   operatorStableSshKey = lib.strings.trim (
     builtins.readFile ../../../ssh-keys/deepwatrcreatur-stable-identity.pub
   );
@@ -522,7 +525,7 @@ in
           { name = topology.domain; }
           { name = "10.10.in-addr.arpa"; }
         ];
-        secondaries = [ "10.10.10.4" ];
+        secondaries = [ standbyLanAddress ];
       };
     };
   };
@@ -609,8 +612,11 @@ in
       "health-wan-carrier"
       "health-wan-ip"
       "ulogd"
-      "vector"
-    ] ++ lib.optionals enableNetworkSecurity [
+    ]
+    # WHY: router-observability runs Vector only with JSON ulogd output;
+    # listing it unconditionally showed "vector: missing" on the dashboard.
+    ++ lib.optional config.services.vector.enable "vector"
+    ++ lib.optionals enableNetworkSecurity [
       "suricata"
       "router-evebox"
     ];
@@ -684,6 +690,13 @@ in
           label = "Netdata LAN";
           url = "http://${lanListenAddress}:19999/";
           icon = "📊";
+        }
+        {
+          # The standby's own Grafana (Router Hardware: NIC ASIC and SFP
+          # temperatures); this router's board needs router.monitoring.hardwareSensors.
+          label = "Standby Hardware";
+          url = "http://${standbyLanAddress}:3001/d/router-hardware";
+          icon = "🌡️";
         }
         {
           label = "Router SSH";
