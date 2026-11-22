@@ -98,6 +98,8 @@
         prometheus = 9090;
         evebox = 5636;
         synology = 5001;
+        # Standby router's (elitedesk) Grafana, proxied so its login is TLS.
+        standby-grafana = 3001;
       };
       ddnsServices = [
         "@"

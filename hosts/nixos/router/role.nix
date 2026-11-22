@@ -695,7 +695,7 @@ in
           # The standby's own Grafana (Router Hardware: NIC ASIC and SFP
           # temperatures); this router's board needs router.monitoring.hardwareSensors.
           label = "Standby Hardware";
-          url = "http://${standbyLanAddress}:3001/d/router-hardware";
+          url = "https://${mkFqdn "standby-grafana"}/d/router-hardware";
           icon = "🌡️";
         }
         {

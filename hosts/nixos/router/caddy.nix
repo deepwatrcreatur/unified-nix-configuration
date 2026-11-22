@@ -278,6 +278,18 @@ in
         '';
       };
 
+      # Standby router's Grafana (elitedesk, Router Hardware board). WHY: the
+      # proxy gives its login TLS; plain http://10.10.10.4:3001 would not.
+      "${mkFqdn "standby-grafana"}" = {
+        extraConfig = ''
+          @trusted remote_ip ${lanNetwork.cidr} 100.64.0.0/10 fd7a:115c:a1e0::/48 127.0.0.1 ::1
+          handle @trusted {
+            reverse_proxy 10.10.10.4:3001
+          }
+          respond "Access restricted to home LAN and Tailnet" 403
+        '';
+      };
+
       # Synology DSM NAS web interface
       "${mkFqdn "synology"}" = {
         extraConfig = ''
