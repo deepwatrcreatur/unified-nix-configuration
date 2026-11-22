@@ -11,27 +11,6 @@ let
     && ((host.sshHostname or null) != null || (host.hostname or null) != null || (host.ip or null) != null)
   ) hostsData.hosts;
 
-  expandedSshHosts =
-    lib.foldl'
-      (acc: name:
-        let
-          host = sshHosts.${name};
-          entries =
-            [ { entryName = name; } ]
-            ++ map (alias: { entryName = alias; }) (host.aliases or [ ]);
-        in
-        acc
-        // builtins.listToAttrs (
-          map
-            (entry: {
-              name = entry.entryName;
-              value = host // { canonicalName = name; };
-            })
-            entries
-        ))
-      { }
-      (builtins.attrNames sshHosts);
-
   hostSummary = lib.concatStringsSep "\n" (
     lib.mapAttrsToList (name: host:
       let
@@ -44,11 +23,15 @@ let
   );
 
   # Generate SSH host blocks from hosts using upstream OpenSSH directive names.
+  # WHY: one block per machine, with its aliases as extra Host patterns. One
+  # block per alias made host pickers such as sshs list a machine once per
+  # name (emerald showed up as attic-cache, cache, nix-cache and tomahawk).
   sshSettings =
     lib.mapAttrs (name: host: {
+      header = "Host ${lib.concatStringsSep " " ([ name ] ++ (host.aliases or [ ]))}";
       HostName = host.sshHostname or host.hostname or host.ip;
       User = host.sshUser or "deepwatrcreatur";
-    }) expandedSshHosts
+    }) sshHosts
     // {
       "*" = {
         UserKnownHostsFile = "~/.ssh/known_hosts_dynamic ~/.ssh/known_hosts_managed";
