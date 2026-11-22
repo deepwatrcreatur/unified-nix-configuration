@@ -24,15 +24,22 @@ in
     systemd.network.networks."10-router-wan-primary".linkConfig.ActivationPolicy = override "always-down";
 
     services.router-networking.routedInterfaces.lan.ipv4Address = override "${standbyLanAddress}/16";
-    systemd.network.networks."20-router-lan" = {
+    # GOTCHA: networkd applies the first matching file, and role.nix keeps the
+    # LAN's L3 config on the parent file, not on 20-router-lan; override there.
+    systemd.network.networks."08-router-parent-enp6s16" = {
+      address = override [ "${standbyLanAddress}/16" ];
+      gateway = [ gateway ];
       networkConfig = {
         # GOTCHA: stopping sd-radv sends a final RA with lifetime 0, so
         # clients drop this router as their IPv6 default route at once.
         IPv6SendRA = override false;
         DHCPPrefixDelegation = override false;
       };
-      gateway = [ gateway ];
     };
+
+    # GOTCHA: disabling Kea removes its group, but the agenix TSIG secret
+    # (role.nix) still sets group = "kea"; keep the group so activation works.
+    users.groups.kea = { };
 
     # Single-active LAN services move to elitedesk.
     services.router-kea.enable = override false;
