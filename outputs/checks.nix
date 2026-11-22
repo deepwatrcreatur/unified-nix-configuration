@@ -365,8 +365,32 @@ let
         )}
         ${missingKeyNotice}
       '';
+
+  # INVARIANT: the router's standby specialisation hands every single-active
+  # LAN service and 10.10.10.1 to elitedesk, and keeps the WAN down
+  # (docs/router-source-of-truth.md#manual-failover-specialisations).
+  routerStandby =
+    let
+      base = inputs.self.nixosConfigurations.router.config;
+      sb = base.specialisation.standby.configuration;
+      nets = sb.systemd.network.networks;
+      failures = builtins.filter (f: !f.ok) [
+        { ok = nets."10-router-wan-primary".linkConfig.ActivationPolicy == "always-down"; msg = "standby WAN must be always-down"; }
+        { ok = sb.services.router-networking.routedInterfaces.lan.ipv4Address == "10.10.10.2/16"; msg = "standby LAN address must be 10.10.10.2/16"; }
+        { ok = !(nets."20-router-lan".networkConfig.IPv6SendRA or false) && !(nets."20-router-lan".networkConfig.DHCPPrefixDelegation or false); msg = "standby must not send RAs or delegate prefixes"; }
+        { ok = !sb.services.kea.dhcp4.enable && !sb.services.kea.dhcp-ddns.enable; msg = "standby must not run Kea"; }
+        { ok = !sb.services.inadyn.enable && !sb.services.miniupnpd.enable; msg = "standby must not run DDNS or UPnP"; }
+        { ok = !(builtins.elem "10.10.10.1" sb.services.router-snmp.listenAddresses); msg = "standby snmpd must not bind 10.10.10.1"; }
+        { ok = base.services.kea.dhcp4.enable && base.services.router-networking.routedInterfaces.lan.ipv4Address == "10.10.10.1/16"; msg = "the default router configuration must stay primary"; }
+      ];
+    in
+    if failures != [ ] then
+      builtins.throw ("router-standby-specialisation: " + builtins.concatStringsSep "; " (map (f: f.msg) failures))
+    else
+      pkgs.writeText "router-standby-specialisation.txt" "router-standby-specialisation=ok\n";
 in
 {
+  checks.x86_64-linux.router-standby-specialisation = routerStandby;
   checks.x86_64-linux.inventory-consistency = checkBody;
   checks.x86_64-linux.agent-guard-policy = pkgs.runCommand "agent-guard-policy" { nativeBuildInputs = [ pkgs.python3 ]; } ''
     python3 -I ${../tests/agent-guard-test.py} ${../scripts/agent-guard.py} | tee $out

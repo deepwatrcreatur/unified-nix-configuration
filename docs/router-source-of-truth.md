@@ -121,6 +121,18 @@ function.
 For the current primary-router post-reboot checks, use
 [`router-reboot-validation.md`](./router-reboot-validation.md).
 
+## Manual failover specialisations
+
+Until VRRP runs, failover is manual. `router` carries a `standby`
+specialisation (`hosts/nixos/router/standby-specialisation.nix`) and
+elitedesk, in nix-clan-homelab, a matching `primary` one. Standby keeps the
+WAN down, moves the router's LAN address to `10.10.10.2/16` and stops Kea, DDNS,
+UPnP, mDNS and router advertisements. Activate it with `switch-to-configuration
+test`, so a reboot always returns the router to primary. The procedure, its
+order and the abort steps live in nix-clan-homelab's
+[`docs/router-failover.md`](https://github.com/deepwatrcreatur/nix-clan-homelab/blob/main/docs/router-failover.md).
+The `router-standby-specialisation` flake check guards it.
+
 ## Deferred Follow-Up
 
 Router election replaces the old fixed primary/standby HA plan. The design

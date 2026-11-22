@@ -42,6 +42,7 @@ in
       prometheusStateDir = "router-prometheus";
       prometheusBindMountPath = "/var/log/router/prometheus";
     })
+    ./standby-specialisation.nix
   ];
 
   fileSystems."/srv/pxe" = {
