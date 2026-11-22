@@ -1,7 +1,21 @@
 # den/aspects/service-homepage.nix
 # Central homelab landing page and dashboard (Homepage)
 { ... }:
-{ ... }:
+{ lib, ... }:
+let
+  # WHY: the Networking section is generated from the inventory, so a device
+  # appears here once it has a managementUrl in lib/hosts.nix.
+  inventory = (import ../../lib/hosts.nix).hosts;
+  networkDevices = lib.filterAttrs (_: host: (host.managementUrl or null) != null) inventory;
+  networkingServices = lib.mapAttrsToList (name: host: {
+    ${host.description or name} = {
+      icon = "mdi-switch";
+      href = host.managementUrl;
+      description = name;
+      ping = host.ip;
+    };
+  }) networkDevices;
+in
 {
   services.homepage-dashboard = {
     enable = true;
@@ -26,6 +40,10 @@
         "Hypervisors & Storage" = {
           style = "row";
           columns = 3;
+        };
+        "Networking" = {
+          style = "row";
+          columns = 4;
         };
       };
     };
@@ -144,6 +162,7 @@
           }
         ];
       }
+      { "Networking" = networkingServices; }
     ];
   };
 }
