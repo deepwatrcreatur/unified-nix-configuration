@@ -102,6 +102,56 @@ browsing: [`agent-guides/tooling.md`](agent-guides/tooling.md). The guard
 asks before destructive commands (`rm -r`, force pushes, disk tools,
 `qm`/`pct destroy`, ...); check one with `agent-guard check '<command>'`.
 
+## Work queue (beads)
+
+The queue is `.beads/` (beads_rust). On these hosts the CLI is `beads-rust`
+(`br` can be a different Homebrew tool). Reasoning, upstream practice and the
+planned shared queue branch:
+[nix-agent-guides `guides/beads.md`](https://github.com/deepwatrcreatur/nix-agent-guides/blob/main/guides/beads.md).
+
+The shared queue is the copy on `main`. A topic branch's `git pull` does not
+bring it in, so start from `origin/main`:
+
+```sh
+git fetch origin && git rebase origin/main && beads-rust sync --import-only
+beads-rust ready --json                               # unblocked work
+beads-rust update <id> --claim --actor <you>          # claim
+beads-rust close <id> --reason "<what was done, PR link>" --actor <you>
+beads-rust sync --flush-only && git add -- .beads/issues.jsonl   # before every commit
+```
+
+- **A claim is local until it reaches `main`.** `--claim` checks only this
+  clone's database (`CLAIM_CONFLICT` means someone else's claim already
+  arrived). Before claiming, check `beads-rust list --status in_progress` and
+  open PRs; then land the claim on its own in a small commit or PR right away.
+  Until the shared queue branch exists, two machines can still claim the same
+  bead in that window.
+- Close a bead in the PR that does the work; the closure lands when the PR
+  merges. Reopen it if the PR is abandoned.
+- Stage only `.beads/issues.jsonl`. Other files in `.beads/` (database, merge
+  snapshots, history backups) are local.
+- **Never hand-edit a conflicted `.beads/issues.jsonl`.** beads-rust 0.1.45
+  skips records whose `updated_at` is not newer, and the next export writes the
+  old version back. Take `main`'s file, rebuild the local cache, and redo your
+  own bead commands:
+
+  ```sh
+  git checkout origin/main -- .beads/issues.jsonl
+  rm -f .beads/beads.db .beads/beads.db-wal .beads/beads.db-shm
+  beads-rust sync --import-only
+  # re-run your claim/create/comment commands, then flush and stage as above
+  ```
+
+  `beads-rust sync --merge` is only for a clean git merge where the database
+  also changed; it refuses files with conflict markers.
+- Never share `.beads/` through Syncthing, `/storage` or another network mount.
+- This repo is being retired in favour of
+  [nix-clan-homelab](https://github.com/deepwatrcreatur/nix-clan-homelab).
+  Track migration work there (`nch-*` beads), not here; when you fix something
+  here, add or update the matching clan bead. This queue's remaining open beads
+  are host-migration items: check the clan epic `nch-sny` and ask the operator
+  before picking one up.
+
 <!-- nix-agent-guides:core BEGIN (v3). Synced from deepwatrcreatur/nix-agent-guides templates/agents-core.md by scripts/sync-agents-core.sh. Edit it there, not here. -->
 ## Shared conventions
 
