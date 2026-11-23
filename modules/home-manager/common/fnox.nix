@@ -3,28 +3,9 @@
   lib,
   pkgs,
   inputs,
-  osConfig ? null,
-  hostName ? "",
   ...
 }:
 let
-  # WHY: each host's fnox store is seeded from that host's own sources, so it
-  # only needs that host's user SSH key as recipient and identity. The old
-  # shared SOPS age key was absent on emerald, so nothing decrypted there
-  # (nix-clan-homelab nch-a67.2).
-  fnoxHost =
-    if hostName != "" then
-      hostName
-    else if osConfig != null then
-      osConfig.networking.hostName or ""
-    else
-      "";
-  hostSshKeyFile = ../../../ssh-keys + "/${config.home.username}@${fnoxHost}-ed25519.pub";
-  hasHostSshKey = fnoxHost != "" && builtins.pathExists hostSshKeyFile;
-  # fnox's age provider takes "ssh-ed25519 AAAA..." recipients; drop the comment.
-  hostSshRecipient = lib.concatStringsSep " " (
-    lib.take 2 (lib.splitString " " (lib.removeSuffix "\n" (builtins.readFile hostSshKeyFile)))
-  );
   fnoxLib =
     if inputs ? fnox then
       import (inputs.fnox + "/lib/default.nix") { inherit lib pkgs; }
@@ -99,22 +80,12 @@ in
 
     (lib.mkIf config.programs.fnox.enable {
       programs.fnox = {
-        recipients =
-          if hasHostSshKey then
-            [ hostSshRecipient ]
-          else
-            # TODO(nch-a67.2): hosts without ssh-keys/<user>@<host>-ed25519.pub
-            # still use the legacy shared SOPS keys.
-            [
-              "age17mn5lnlh2mgttp950wc7a2nl9kphewa4jj8e0uhlv3svx68a54vqyngcyr"
-              "age1awqed0la6x3rr39et8fjruw42mf8v2sqct78mcjzx5d226gcx9nqrjdmjz"
-            ];
-        ageKeyFile = lib.mkIf hasHostSshKey "${config.home.homeDirectory}/.ssh/id_ed25519";
-
-        # Seed through a writable copy of config.toml in a repo-managed
-        # activation step below; the upstream activation writes after
-        # linkGeneration and would otherwise hit the immutable store symlink.
-        seedSecretSources = lib.mkForce { };
+        # WHY: each account's own SSH key is its fnox identity; activation
+        # derives the recipient from the key itself, so they always match. The
+        # old shared SOPS age key was absent on emerald and nothing decrypted
+        # (nix-clan-homelab nch-a67.2).
+        sshIdentity.enable = true;
+        inherit seedSecretSources;
 
         # This repo provides its own gh/bw/droid/pbs wrappers that expose the
         # canonical command names in addition to `*-fnox`. Drop fnox's
@@ -133,85 +104,6 @@ in
           );
       };
 
-      home.activation.fnoxSeedSecretsWritable = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-        target="${config.xdg.configHome}/${config.programs.fnox.configRelativePath}"
-        tmp_config="$(mktemp)"
-        cleanup() {
-          rm -f "$tmp_config"
-        }
-        trap cleanup EXIT
-
-        mkdir -p "$(dirname "$target")"
-
-        if [ -L "$target" ] || [ -f "$target" ]; then
-          cat "$target" > "$tmp_config"
-        else
-          touch "$tmp_config"
-        fi
-
-        rm -f "$target"
-        install -m 600 "$tmp_config" "$target"
-
-        FNOX_BIN="${config.programs.fnox.package}/bin/fnox"
-        export FNOX_AGE_KEY_FILE="${config.programs.fnox.ageKeyFile}"
-        export FNOX_CONFIG="$target"
-
-        if [ ! -x "$FNOX_BIN" ]; then
-          echo "Warning: fnox binary not found at $FNOX_BIN; skipping fnox secret seeding" >&2
-          exit 0
-        fi
-
-        seed_secret() {
-          name="$1"
-          file="$2"
-
-          if [ -z "$file" ] || [ ! -f "$file" ]; then
-            return 2
-          fi
-
-          if [ ! -r "$file" ]; then
-            echo "Warning: fnox seed source '$file' for '$name' is not readable; trying next source" >&2
-            return 2
-          fi
-
-          value="$(cat "$file" 2>/dev/null || true)"
-          if [ -z "$value" ]; then
-            return 2
-          fi
-
-          # WHY: the seed source is authoritative. Skipping secrets that already
-          # existed left rotated tokens stale in the store (GITHUB_TOKEN got
-          # HTTP 401 from `fnox get` on 2026-11-22, nch-a67.2).
-          current="$("$FNOX_BIN" -c "$FNOX_CONFIG" get "$name" 2>/dev/null || true)"
-          if [ -n "$current" ] && [ "$current" = "$value" ]; then
-            return 0
-          fi
-
-          set_output=""
-          # SECURITY: the value goes in on stdin, not argv, so it never shows
-          # up in ps output.
-          if ! set_output=$(printf '%s' "$value" | "$FNOX_BIN" -c "$FNOX_CONFIG" set "$name" 2>&1); then
-            echo "Error: failed to seed fnox secret '$name' from '$file'" >&2
-            echo "$set_output" >&2
-            exit 1
-          fi
-        }
-
-        ${lib.concatStringsSep "\n" (lib.mapAttrsToList (name: sources: ''
-          for source in ${lib.concatMapStringsSep " " (source: "\"${source}\"") sources}; do
-            if [ -f "$source" ]; then
-              if seed_secret ${lib.escapeShellArg name} "$source"; then
-                break
-              else
-                status=$?
-                if [ "$status" -eq 1 ]; then
-                  exit 1
-                fi
-              fi
-            fi
-          done
-        '') seedSecretSources)}
-      '';
     })
   ]);
 }
