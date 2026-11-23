@@ -375,11 +375,23 @@ let
   # (docs/router-source-of-truth.md#manual-failover-specialisations).
   routerStandby =
     let
+      inherit (pkgs) lib;
       base = inputs.self.nixosConfigurations.router.config;
       sb = base.specialisation.standby.configuration;
       nets = sb.systemd.network.networks;
       # The parent file matches first and carries the LAN's L3 config.
       lanNet = nets."08-router-parent-enp6s16";
+      # GOTCHA: a timer defined without a trigger is rejected by systemd
+      # ("bad unit file setting") and makes switch-to-configuration exit 4.
+      untriggered =
+        cfg:
+        builtins.attrNames (
+          lib.filterAttrs (
+            _: t:
+            t.enable
+            && !(lib.any (k: lib.hasPrefix "On" k) (builtins.attrNames t.timerConfig))
+          ) cfg.systemd.timers
+        );
       failures = builtins.filter (f: !f.ok) [
         { ok = nets."10-router-wan-primary".linkConfig.ActivationPolicy == "always-down"; msg = "standby WAN must be always-down"; }
         { ok = sb.services.router-networking.routedInterfaces.lan.ipv4Address == "10.10.10.2/16"; msg = "standby LAN address must be 10.10.10.2/16"; }
@@ -388,6 +400,8 @@ let
         { ok = sb.users.groups ? kea; msg = "standby must keep the kea group for the agenix TSIG secret"; }
         { ok = !sb.services.kea.dhcp4.enable && !sb.services.kea.dhcp-ddns.enable; msg = "standby must not run Kea"; }
         { ok = !sb.services.inadyn.enable && !sb.services.miniupnpd.enable; msg = "standby must not run DDNS or UPnP"; }
+        { ok = untriggered sb == [ ]; msg = "standby timers without a trigger: ${builtins.concatStringsSep ", " (untriggered sb)}"; }
+        { ok = untriggered base == [ ]; msg = "primary timers without a trigger: ${builtins.concatStringsSep ", " (untriggered base)}"; }
         { ok = !(builtins.elem "10.10.10.1" sb.services.router-snmp.listenAddresses); msg = "standby snmpd must not bind 10.10.10.1"; }
         { ok = base.services.kea.dhcp4.enable && base.systemd.network.networks."08-router-parent-enp6s16".address == [ "10.10.10.1/16" ]; msg = "the default router configuration must stay primary"; }
       ];
