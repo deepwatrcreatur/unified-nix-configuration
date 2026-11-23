@@ -383,16 +383,6 @@
       description = "Phoenix workstation";
     };
 
-    lattitude = {
-      ip = "10.10.11.47";
-      sshUser = "deepwatrcreatur";
-      dhcpReservation = {
-        macAddress = "fc:15:b4:03:06:0a";
-        scope = "LAN";
-      };
-      description = "Latitude laptop - Sway desktop kiosk";
-    };
-
     # External/special hosts
     infisical = {
       ip = null;  # Uses DNS name
