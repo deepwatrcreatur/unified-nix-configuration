@@ -389,7 +389,7 @@ let
           lib.filterAttrs (
             _: t:
             t.enable
-            && !(lib.any (k: lib.hasPrefix "On" k) (builtins.attrNames t.timerConfig))
+            && !(lib.any (k: lib.hasPrefix "On" k && !builtins.elem t.timerConfig.${k} [ "" [ ] null ]) (builtins.attrNames t.timerConfig))
           ) cfg.systemd.timers
         );
       failures = builtins.filter (f: !f.ok) [
