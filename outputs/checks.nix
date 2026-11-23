@@ -405,7 +405,7 @@ let
         { ok = untriggered sb == [ ]; msg = "standby timers without a trigger: ${builtins.concatStringsSep ", " (untriggered sb)}"; }
         { ok = untriggered base == [ ]; msg = "primary timers without a trigger: ${builtins.concatStringsSep ", " (untriggered base)}"; }
         { ok = builtins.elem "systemd-networkd.service" base.systemd.services.router-failover-boot-guard.before; msg = "the demoted-boot guard must run before networkd"; }
-        { ok = base.systemd.services.kea-dhcp4-server.unitConfig.ConditionPathExists or null == "!/var/lib/router-failover/demoted"; msg = "Kea must not start on a demoted boot"; }
+        { ok = base.systemd.services.kea-dhcp4-server.unitConfig.ConditionPathExists or null == "!/run/router-failover/demoted" && builtins.elem "kea-dhcp4-server.service" base.systemd.services.router-failover-boot-guard.before; msg = "Kea must wait for the guard and not start on a demoted boot"; }
         { ok = lib.hasInfix "touch /var/lib/router-failover/demoted" (scriptText sb.system.activationScripts.routerFailoverRole); msg = "standby activation must set the demoted marker"; }
         { ok = lib.hasInfix "switch|test)" (scriptText base.system.activationScripts.routerFailoverRole); msg = "only a switch or test to primary may clear the demoted marker"; }
         { ok = !sb.systemd.services.router-failover-resume-standby.enable; msg = "standby must not re-run its own activation"; }

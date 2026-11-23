@@ -142,20 +142,26 @@ Since nch-sny.36.2:
 - Activating `standby` writes `/var/lib/router-failover/demoted`. Only a
   deliberate `switch` or `test` to the primary configuration removes it;
   activation at boot does not (it runs without `NIXOS_ACTION`).
-- `router-failover-boot-guard.service` runs before networkd. If the marker
-  exists, or another host answers ARP for `10.10.10.1`, it copies the standby
-  specialisation's networkd files into `/run/systemd/network` (which override
-  `/etc` by name), so the WAN stays down and the LAN comes up as `10.10.10.2`.
+- `router-failover-boot-guard.service` runs before networkd and the
+  single-active services. It treats the boot as demoted when the marker
+  exists, or when elitedesk's LAN MAC (`ec:0d:9a:49:a8:1e`) answers ARP for
+  `10.10.10.1`; a reply from any other device is ignored, and an ARP-detected
+  demotion lasts only for that boot. On a demoted boot it writes
+  `/run/router-failover/demoted` and re-points the per-file links in
+  `/etc/systemd/network` at the standby specialisation's files (networkd
+  gives `/etc` priority over `/run`, so runtime copies would not win). The
+  WAN stays down and the LAN comes up as `10.10.10.2`. Every activation
+  re-links `/etc` to the running configuration, so nothing persists wrongly.
 - Kea, the DDNS updater, UPnP and Avahi carry
-  `ConditionPathExists=!/var/lib/router-failover/demoted`, so they do not start
+  `ConditionPathExists=!/run/router-failover/demoted`, so they do not start
   on a demoted boot.
 - After boot, `router-failover-resume-standby.service` activates the standby
   specialisation in full.
 
 To return the router to primary, run
 `sudo /run/current-system/bin/switch-to-configuration test` (or a normal
-rebuild). That clears the marker, removes the `/run` overrides and reloads
-networkd. If the marker is ever left behind by mistake, the next reboot comes
+rebuild). That clears both markers, restores the primary network files and
+reloads networkd. If the marker is ever left behind by mistake, the next reboot comes
 up as standby; remove it with
 `sudo rm /var/lib/router-failover/demoted` before rebooting.
 
