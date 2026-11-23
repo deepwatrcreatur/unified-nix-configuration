@@ -385,6 +385,8 @@
       description = "Phoenix workstation";
     };
 
+    # Keep the operational address and DHCP lease while Lattitude remains online;
+    # NixOS build composition has moved to nix-clan-homelab.
     lattitude = {
       ip = "10.10.11.47";
       sshUser = "deepwatrcreatur";
@@ -392,7 +394,7 @@
         macAddress = "fc:15:b4:03:06:0a";
         scope = "LAN";
       };
-      description = "Latitude laptop - Sway desktop kiosk";
+      description = "Latitude laptop - Sway desktop kiosk (migrated)";
     };
 
     # External/special hosts

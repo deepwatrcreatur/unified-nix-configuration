@@ -59,6 +59,7 @@ let
       (names libHosts);
 
   allowedInfraOnlyHosts = [
+    "lattitude"
     "418"
     "420"
     "atiyas-airport-extreme"

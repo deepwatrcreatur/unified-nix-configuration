@@ -193,21 +193,4 @@
     ];
   };
 
-  lattitude = {
-    kind = "nixos";
-    name = "lattitude";
-    system = "x86_64-linux";
-    hostPath = ../hosts/lattitude;
-    isDesktop = true;
-    mode = "aspect";
-    aspectsList = [
-      "nixos-base"
-      "home-manager-users"
-      "desktop-sway"
-      "desktop-network-shares"
-      "desktop-media-players"
-      "rclone-client"
-      "synology-shares"
-    ];
-  };
 }

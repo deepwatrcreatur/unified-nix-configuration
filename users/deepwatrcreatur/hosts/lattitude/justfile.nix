@@ -1,3 +1,0 @@
-{
-  my.just.flakeTarget = "lattitude";
-}
