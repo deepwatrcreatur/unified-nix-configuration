@@ -97,3 +97,28 @@ For critical repos you can also:
   - You fully control size limits, retention, and upload policies.
 
 This combination gives you fast remote cache hits (nix-ci + Attic) while ensuring large CUDA/Ollama builds succeed and are cached under your control.
+
+## 5. NixCI safe worker on Emerald
+
+`hosts/nixos/emerald/nix-ci-worker.nix` configures the upstream NixCI **safe**
+worker module, pinned in `flake.nix`. It runs one build slot inside an
+auto-wiped QEMU guest, denies access to the home LAN, and gives the guest
+its worker authentication key through systemd credentials. The worker
+private key is age-encrypted in `secrets-agenix/nix-ci-worker-key.age`; its
+plaintext is loaded at runtime through systemd credentials and never enters
+the Nix store or VM image. The user's NixCI cache token is not forwarded into
+build jobs.
+
+The worker name is `emerald-worker-1`. The NixCI owner must register this
+public key and name before the worker can connect:
+
+```text
+80eb30f9203502efc3427c3228fe241516bec6f046820ec33454be1091cd5cac
+```
+
+The public-key file remains at `~/nix-ci-keys/worker.key.pub`. Key generation
+follows the [NixCI worker key-generation instructions](https://nix-ci.com/documentation/self-hosting/worker-keygen).
+
+This repository change prepares and builds the candidate configuration only.
+Emerald's live system configuration remains for the separately coordinated
+activation.

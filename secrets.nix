@@ -174,6 +174,10 @@ in {
   # nix-ci.com cache authentication (netrc format)
   "secrets-agenix/nix-ci-netrc.age".publicKeys = nixCiCacheSecrets;
 
+  # The safe worker's private key is only available to its host and operators.
+  "secrets-agenix/nix-ci-worker-key.age".publicKeys =
+    operatorUsers ++ machineRecipients "emerald";
+
   # Stable root SSH key - deployed to /root/.ssh/id_ed25519 via agenix
   "secrets-agenix/root-ssh-key.age".publicKeys =
     operatorUsers ++ builtins.concatLists (map machineRecipients rootSshKeyHosts);

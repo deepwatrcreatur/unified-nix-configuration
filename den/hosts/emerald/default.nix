@@ -20,6 +20,7 @@ den.mkInventoryHostModule {
     ../../../hosts/nixos/emerald/disko.nix
     ../../../hosts/nixos/emerald/hardware-configuration.nix
     ../../../hosts/nixos/emerald/networking.nix
+    ../../../hosts/nixos/emerald/nix-ci-worker.nix
     ({ pkgs, lib, ... }: {
       services.omarchy-screen-mirroring.enable = true;
       services.omarchy-iphone-mirror.enable = true;

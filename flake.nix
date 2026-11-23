@@ -16,6 +16,12 @@
     agenix.url = "github:ryantm/agenix";
     agenix.inputs.nixpkgs.follows = "nixpkgs";
 
+    # Safe NixCI worker module, pinned to the invited upstream repository.
+    nix-ci = {
+      url = "git+ssh://git@github.com/NorfairKing/nix-ci?rev=6bcbe5a5bdc7b8afc16ef486f107330cae0b5fad";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
 
