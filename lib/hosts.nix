@@ -143,7 +143,11 @@
     };
 
 
-    # Networking Equipment
+    # Networking Equipment (10.10.18.0/24)
+    # Switches use .10-.19, access points .20-.29. Names follow
+    # sw-<manufacturer>-<model>. `managementUrl` puts a device on the
+    # homepage's Networking section; it uses the IP, not a DNS name, so the
+    # link still works when DNS does not.
     sw-main = {
       ip = "10.10.18.10";
       includeSsh = false;
@@ -151,7 +155,54 @@
         macAddress = "1c:2a:a3:1e:c3:51";
         scope = "LAN";
       };
-      description = "Core Switch";
+      # TODO(nch-sny.22): Shenzhen HongRui (HRUI) by OUI, 10G with 2x SFP+ and
+      # 4x RJ45; model number unknown. Its static management address is not
+      # 10.10.18.10 and is not yet known (seen only via LLDP, port TE2), so
+      # it has no managementUrl until found; rename to sw-hrui-<model> then.
+      description = "Core switch (HRUI 10G, 2x SFP+ / 4x RJ45; model unknown)";
+    };
+
+    sw-cisco-sg300-52p = {
+      ip = "10.10.18.11";
+      includeSsh = false;
+      dhcpReservation = {
+        macAddress = "00:08:32:53:9f:4e";
+        scope = "LAN";
+      };
+      managementUrl = "http://10.10.18.11";
+      description = "Cisco SG300-52P (52-port PoE, managed)";
+    };
+
+    sw-dell-n1124t-on = {
+      ip = "10.10.18.12";
+      includeSsh = false;
+      dhcpReservation = {
+        macAddress = "14:18:77:15:97:e8";
+        scope = "LAN";
+      };
+      managementUrl = "http://10.10.18.12";
+      description = "Dell N1124T-ON (24-port, managed)";
+    };
+
+    sw-hp-2910al-48g-poe = {
+      ip = "10.10.18.13";
+      includeSsh = false;
+      dhcpReservation = {
+        macAddress = "f0:92:1c:cc:57:00";
+        scope = "LAN";
+      };
+      managementUrl = "http://10.10.18.13";
+      description = "HP 2910al-48G-PoE (J9148A)";
+    };
+
+    # GOTCHA: static address on the device, so no DHCP reservation; move it to
+    # DHCP and 10.10.18.14 from its own web UI, then add the reservation.
+    sw-dell-powerconnect = {
+      ip = "10.10.10.9";
+      includeSsh = false;
+      managementUrl = "http://10.10.10.9";
+      # TODO(nch-sny.22): model hidden before login (GoAhead web UI).
+      description = "Dell PowerConnect (model unknown, static IP)";
     };
 
     ap-ruqayya = {

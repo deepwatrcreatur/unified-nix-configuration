@@ -69,6 +69,10 @@ let
     "homeassistant"
     "infisical"
     "scrypted-lxc"
+    "sw-cisco-sg300-52p"
+    "sw-dell-n1124t-on"
+    "sw-dell-powerconnect"
+    "sw-hp-2910al-48g-poe"
     "sw-main"
     "synology-dsm"
   ];
