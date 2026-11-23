@@ -377,6 +377,7 @@ let
   routerStandby =
     let
       inherit (pkgs) lib;
+      scriptText = a: if builtins.isString a then a else a.text;
       base = inputs.self.nixosConfigurations.router.config;
       sb = base.specialisation.standby.configuration;
       nets = sb.systemd.network.networks;
@@ -403,6 +404,11 @@ let
         { ok = !sb.services.inadyn.enable && !sb.services.miniupnpd.enable; msg = "standby must not run DDNS or UPnP"; }
         { ok = untriggered sb == [ ]; msg = "standby timers without a trigger: ${builtins.concatStringsSep ", " (untriggered sb)}"; }
         { ok = untriggered base == [ ]; msg = "primary timers without a trigger: ${builtins.concatStringsSep ", " (untriggered base)}"; }
+        { ok = builtins.elem "systemd-networkd.service" base.systemd.services.router-failover-boot-guard.before; msg = "the demoted-boot guard must run before networkd"; }
+        { ok = base.systemd.services.kea-dhcp4-server.unitConfig.ConditionPathExists or null == "!/var/lib/router-failover/demoted"; msg = "Kea must not start on a demoted boot"; }
+        { ok = lib.hasInfix "touch /var/lib/router-failover/demoted" (scriptText sb.system.activationScripts.routerFailoverRole); msg = "standby activation must set the demoted marker"; }
+        { ok = lib.hasInfix "switch|test)" (scriptText base.system.activationScripts.routerFailoverRole); msg = "only a switch or test to primary may clear the demoted marker"; }
+        { ok = !sb.systemd.services.router-failover-resume-standby.enable; msg = "standby must not re-run its own activation"; }
         { ok = !(builtins.elem "10.10.10.1" sb.services.router-snmp.listenAddresses); msg = "standby snmpd must not bind 10.10.10.1"; }
         { ok = base.services.kea.dhcp4.enable && base.systemd.network.networks."08-router-parent-enp6s16".address == [ "10.10.10.1/16" ]; msg = "the default router configuration must stay primary"; }
       ];

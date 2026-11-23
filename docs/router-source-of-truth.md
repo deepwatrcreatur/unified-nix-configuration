@@ -128,10 +128,36 @@ specialisation (`hosts/nixos/router/standby-specialisation.nix`) and
 elitedesk, in nix-clan-homelab, a matching `primary` one. Standby keeps the
 WAN down, moves the router's LAN address to `10.10.10.2/16` and stops Kea, DDNS,
 UPnP, mDNS and router advertisements. Activate it with `switch-to-configuration
-test`, so a reboot always returns the router to primary. The procedure, its
+test`. The procedure, its
 order and the abort steps live in nix-clan-homelab's
 [`docs/router-failover.md`](https://github.com/deepwatrcreatur/nix-clan-homelab/blob/main/docs/router-failover.md).
 The `router-standby-specialisation` flake check guards it.
+
+### A reboot of a demoted router stays demoted
+
+In rehearsal 1 the demoted router was reset, booted its normal primary
+configuration, and took `10.10.10.1` and the WAN while elitedesk held them.
+Since nch-sny.36.2:
+
+- Activating `standby` writes `/var/lib/router-failover/demoted`. Only a
+  deliberate `switch` or `test` to the primary configuration removes it;
+  activation at boot does not (it runs without `NIXOS_ACTION`).
+- `router-failover-boot-guard.service` runs before networkd. If the marker
+  exists, or another host answers ARP for `10.10.10.1`, it copies the standby
+  specialisation's networkd files into `/run/systemd/network` (which override
+  `/etc` by name), so the WAN stays down and the LAN comes up as `10.10.10.2`.
+- Kea, the DDNS updater, UPnP and Avahi carry
+  `ConditionPathExists=!/var/lib/router-failover/demoted`, so they do not start
+  on a demoted boot.
+- After boot, `router-failover-resume-standby.service` activates the standby
+  specialisation in full.
+
+To return the router to primary, run
+`sudo /run/current-system/bin/switch-to-configuration test` (or a normal
+rebuild). That clears the marker, removes the `/run` overrides and reloads
+networkd. If the marker is ever left behind by mistake, the next reboot comes
+up as standby; remove it with
+`sudo rm /var/lib/router-failover/demoted` before rebooting.
 
 ## Deferred Follow-Up
 
