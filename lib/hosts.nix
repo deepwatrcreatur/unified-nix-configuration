@@ -195,14 +195,16 @@
       description = "HP 2910al-48G-PoE (J9148A)";
     };
 
-    # GOTCHA: static address on the device, so no DHCP reservation; move it to
-    # DHCP and 10.10.18.14 from its own web UI, then add the reservation.
     sw-dell-powerconnect = {
-      ip = "10.10.10.9";
+      ip = "10.10.18.14";
       includeSsh = false;
-      managementUrl = "http://10.10.10.9";
+      dhcpReservation = {
+        macAddress = "d0:67:e5:ba:fb:68";
+        scope = "LAN";
+      };
+      managementUrl = "http://10.10.18.14";
       # TODO(nch-sny.22): model hidden before login (GoAhead web UI).
-      description = "Dell PowerConnect (model unknown, static IP)";
+      description = "Dell PowerConnect (model unknown)";
     };
 
     ap-ruqayya = {
