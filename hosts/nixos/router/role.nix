@@ -334,7 +334,10 @@ in
     after = [ "router-ha-initial-role-state.service" ];
     requires = [ "router-ha-initial-role-state.service" ];
   };
-  systemd.services.inadyn = lib.mkIf enableHa {
+  # GOTCHA: gate on inadyn itself, not only enableHa. Defining any attribute
+  # here creates the unit; the standby specialisation disables router-ddns, and
+  # a bare inadyn.timer has no trigger, so switch-to-configuration exits 4.
+  systemd.services.inadyn = lib.mkIf (enableHa && config.services.inadyn.enable) {
     after = [ "router-ha-initial-role-state.service" ];
     requires = [ "router-ha-initial-role-state.service" ];
     wantedBy = lib.mkForce [ ];
@@ -342,7 +345,9 @@ in
       masterExecCondition
     ];
   };
-  systemd.timers.inadyn.wantedBy = lib.mkIf enableHa (lib.mkForce [ ]);
+  systemd.timers.inadyn = lib.mkIf (enableHa && config.services.inadyn.enable) {
+    wantedBy = lib.mkForce [ ];
+  };
   systemd.services.miniupnpd = lib.mkIf enableHa {
     after = [ "router-ha-initial-role-state.service" ];
     requires = [ "router-ha-initial-role-state.service" ];
