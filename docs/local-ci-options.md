@@ -101,7 +101,7 @@ This combination gives you fast remote cache hits (nix-ci + Attic) while ensurin
 ## 5. NixCI safe worker on Emerald
 
 `hosts/nixos/emerald/nix-ci-worker.nix` configures the upstream NixCI **safe**
-worker module, pinned in `flake.nix`. It runs one build slot inside an
+worker module, pinned in `nix-ci-worker/flake.nix`. It runs one build slot inside an
 auto-wiped QEMU guest, denies access to the home LAN, and gives the guest
 its worker authentication key through systemd credentials. The worker
 private key is age-encrypted in `secrets-agenix/nix-ci-worker-key.age`; its
@@ -122,3 +122,14 @@ follows the [NixCI worker key-generation instructions](https://nix-ci.com/docume
 This repository change prepares and builds the candidate configuration only.
 Emerald's live system configuration remains for the separately coordinated
 activation.
+
+The private NixCI repository is intentionally an input only to the nested
+worker flake. Ordinary Unified flake checks do not need GitHub SSH access to
+that repository. To evaluate/build the worker-enabled candidate, from the
+repository root run:
+
+```sh
+nix build --no-link ./nix-ci-worker#nixosConfigurations.emerald.config.system.build.toplevel
+```
+
+The base `.#nixosConfigurations.emerald` output omits the worker.

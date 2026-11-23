@@ -50,7 +50,7 @@
       # Restart the worker if its encrypted key changes, without putting the
       # plaintext credential in a derivation.
       extraRestartTriggers = [
-        (builtins.hashString "sha256" (builtins.readFile ../../../secrets-agenix/nix-ci-worker-key.age))
+        (builtins.hashFile "sha256" ../../../secrets-agenix/nix-ci-worker-key.age)
       ];
     };
   };
