@@ -118,7 +118,7 @@
       sshUser = "deepwatrcreatur";
       # Standby router: no production LAN IP advertised in DNS until promotion.
       includeDns = false;
-      description = "Bare-metal router host (HP EliteDesk), standby to router";
+      description = "Bare-metal primary router (HP EliteDesk); replaced router on 2026-11-24";
     };
 
     router-bootstrap = {
