@@ -155,10 +155,8 @@
         macAddress = "1c:2a:a3:1e:c3:51";
         scope = "LAN";
       };
-      # HRUI (Shenzhen HongRui) LG510S-4T2XS, from SNMP sysDescr on
-      # 2026-11-24 after the switch moved to DHCP. It keeps the name sw-main
-      # because gatus, checks and the cutover script use it. SNMP v2c
-      # (IF-MIB) is on; routers scrape it (nix-clan-homelab).
+      # WHY: not renamed to sw-hrui-<model>; gatus, checks and the cutover
+      # script use sw-main. Model from SNMP sysDescr (2026-11-24).
       managementUrl = "http://10.10.18.10";
       description = "Core switch (HRUI LG510S-4T2XS, 4x 10G RJ45 / 2x SFP+)";
     };
