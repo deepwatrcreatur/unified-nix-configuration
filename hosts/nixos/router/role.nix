@@ -122,6 +122,26 @@ let
     _name: host: (host.dhcpReservation or null) != null && (host.ip or null) != null
   ) topology.hosts;
   poolRangeKeys = map (pool: "${pool.start}-${pool.end}") config.services.router-kea.dhcp4.poolRanges;
+  # GOTCHA: a probe that fails its first check fails the switch that
+  # started it. Returning to primary starts the WAN probes (standby
+  # disables them) before the WAN link is up, and the switch exited 4
+  # (rehearsal 4). Allow 60 s for the condition to appear first.
+  healthProbe = name: description: check: {
+    inherit description;
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = pkgs.writeShellScript name ''
+        PATH=${lib.makeBinPath [ pkgs.coreutils pkgs.gnugrep pkgs.iproute2 ]}
+        check() { ${check}; }
+        for _ in $(seq 1 12); do check && break; sleep 5; done
+        while true; do check || exit 1; sleep 15; done
+      '';
+      Restart = "always";
+      RestartMode = "direct";
+      RestartSec = "15s";
+    };
+    wantedBy = [ "multi-user.target" ];
+  };
 in
 {
   imports = [
@@ -909,50 +929,14 @@ in
   # but we do not want a transient network restart during activation to poison
   # the whole system switch result.
   systemd.services = {
-    health-mgmt-ip = {
-      description = "Health Check: Management IP Present";
-      serviceConfig = {
-        Type = "simple";
-        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ${pkgs.iproute2}/bin/ip -4 addr show dev ${managementDevice} | ${pkgs.gnugrep}/bin/grep -q \"inet \" || exit 1; ${pkgs.coreutils}/bin/sleep 15; done'";
-        Restart = "always";
-        RestartMode = "direct";
-        RestartSec = "15s";
-      };
-      wantedBy = [ "multi-user.target" ];
-    };
-    health-lan-ip = {
-      description = "Health Check: Production LAN IP Present";
-      serviceConfig = {
-        Type = "simple";
-        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ${pkgs.iproute2}/bin/ip -4 addr show dev ${lanDevice} | ${pkgs.gnugrep}/bin/grep -q \"inet \" || exit 1; ${pkgs.coreutils}/bin/sleep 15; done'";
-        Restart = "always";
-        RestartMode = "direct";
-        RestartSec = "15s";
-      };
-      wantedBy = [ "multi-user.target" ];
-    };
-    health-wan-carrier = {
-      description = "Health Check: WAN Carrier Active";
-      serviceConfig = {
-        Type = "simple";
-        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ${pkgs.iproute2}/bin/ip -o link show dev ${wanDevice} | ${pkgs.gnugrep}/bin/grep -q \"LOWER_UP\" || exit 1; ${pkgs.coreutils}/bin/sleep 15; done'";
-        Restart = "always";
-        RestartMode = "direct";
-        RestartSec = "15s";
-      };
-      wantedBy = [ "multi-user.target" ];
-    };
-    health-wan-ip = {
-      description = "Health Check: WAN IP Present";
-      serviceConfig = {
-        Type = "simple";
-        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ${pkgs.iproute2}/bin/ip -4 addr show dev ${wanDevice} | ${pkgs.gnugrep}/bin/grep -q \"inet \" || exit 1; ${pkgs.coreutils}/bin/sleep 15; done'";
-        Restart = "always";
-        RestartMode = "direct";
-        RestartSec = "15s";
-      };
-      wantedBy = [ "multi-user.target" ];
-    };
+    health-mgmt-ip = healthProbe "health-mgmt-ip" "Health Check: Management IP Present"
+      "ip -4 addr show dev ${managementDevice} | grep -q 'inet '";
+    health-lan-ip = healthProbe "health-lan-ip" "Health Check: Production LAN IP Present"
+      "ip -4 addr show dev ${lanDevice} | grep -q 'inet '";
+    health-wan-carrier = healthProbe "health-wan-carrier" "Health Check: WAN Carrier Active"
+      "ip -o link show dev ${wanDevice} | grep -q LOWER_UP";
+    health-wan-ip = healthProbe "health-wan-ip" "Health Check: WAN IP Present"
+      "ip -4 addr show dev ${wanDevice} | grep -q 'inet '";
   };
 
   # The upstream router-networking module currently emits both:
