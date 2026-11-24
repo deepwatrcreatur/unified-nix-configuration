@@ -118,7 +118,7 @@
       sshUser = "deepwatrcreatur";
       # Standby router: no production LAN IP advertised in DNS until promotion.
       includeDns = false;
-      description = "Bare-metal router host (HP EliteDesk), standby to router";
+      description = "Bare-metal primary router (HP EliteDesk); replaced router on 2026-11-24";
     };
 
     router-bootstrap = {
@@ -155,11 +155,10 @@
         macAddress = "1c:2a:a3:1e:c3:51";
         scope = "LAN";
       };
-      # TODO(nch-sny.22): Shenzhen HongRui (HRUI) by OUI, 10G with 2x SFP+ and
-      # 4x RJ45; model number unknown. Its static management address is not
-      # 10.10.18.10 and is not yet known (seen only via LLDP, port TE2), so
-      # it has no managementUrl until found; rename to sw-hrui-<model> then.
-      description = "Core switch (HRUI 10G, 2x SFP+ / 4x RJ45; model unknown)";
+      # WHY: not renamed to sw-hrui-<model>; gatus, checks and the cutover
+      # script use sw-main. Model from SNMP sysDescr (2026-11-24).
+      managementUrl = "http://10.10.18.10";
+      description = "Core switch (HRUI LG510S-4T2XS, 4x 10G RJ45 / 2x SFP+)";
     };
 
     sw-cisco-sg300-52p = {
