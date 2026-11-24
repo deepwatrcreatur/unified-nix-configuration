@@ -381,8 +381,12 @@ let
       base = inputs.self.nixosConfigurations.router.config;
       sb = base.specialisation.standby.configuration;
       nets = sb.systemd.network.networks;
-      # The parent file matches first and carries the LAN's L3 config.
-      lanNet = nets."08-router-parent-enp6s16";
+      # GOTCHA: networkd applies the first file (by name) whose [Match]
+      # names the device; a file without [Match] (role.nix's 08-router-parent)
+      # is ignored. Check the file that actually applies (rehearsal 2).
+      lanFiles = cfg: lib.sort (a: b: a < b) (builtins.attrNames (lib.filterAttrs (_: n: (n.matchConfig.Name or null) == "enp6s16") cfg.systemd.network.networks));
+      effLan = cfg: cfg.systemd.network.networks.${builtins.head (lanFiles cfg)};
+      lanNet = effLan sb;
       # GOTCHA: a timer defined without a trigger is rejected by systemd
       # ("bad unit file setting") and makes switch-to-configuration exit 4.
       untriggered =
@@ -410,7 +414,10 @@ let
         { ok = lib.hasInfix "switch|test)" (scriptText base.system.activationScripts.routerFailoverRole); msg = "only a switch or test to primary may clear the demoted marker"; }
         { ok = !sb.systemd.services.router-failover-resume-standby.enable; msg = "standby must not re-run its own activation"; }
         { ok = !(builtins.elem "10.10.10.1" sb.services.router-snmp.listenAddresses); msg = "standby snmpd must not bind 10.10.10.1"; }
-        { ok = base.services.kea.dhcp4.enable && base.systemd.network.networks."08-router-parent-enp6s16".address == [ "10.10.10.1/16" ]; msg = "the default router configuration must stay primary"; }
+        { ok = lanFiles sb == lanFiles base && lanFiles base != [ ]; msg = "primary and standby must apply the same LAN network file"; }
+        { ok = !sb.systemd.services.health-wan-carrier.enable && !sb.systemd.services.health-wan-ip.enable; msg = "standby must not run WAN health probes (they fail by design and fail activation)"; }
+        { ok = !base.systemd.services.router-failover-boot-guard.restartIfChanged; msg = "a role switch must not re-run the demoted-boot guard"; }
+        { ok = base.services.kea.dhcp4.enable && (effLan base).address == [ "10.10.10.1/16" ] && (effLan base).networkConfig.IPv6SendRA or false; msg = "the default router configuration must stay primary"; }
       ];
     in
     if failures != [ ] then

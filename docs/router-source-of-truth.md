@@ -152,6 +152,10 @@ Since nch-sny.36.2:
   gives `/etc` priority over `/run`, so runtime copies would not win). The
   WAN stays down and the LAN comes up as `10.10.10.2`. Every activation
   re-links `/etc` to the running configuration, so nothing persists wrongly.
+  The guard acts only while the system boots (`systemctl is-system-running`
+  reads `initializing` or `starting`) and a switch never restarts it: in
+  rehearsal 3 a live switch to standby re-ran it, it found the fresh marker,
+  failed, and the switch exited 4.
 - Kea, the DDNS updater, UPnP and Avahi carry
   `ConditionPathExists=!/run/router-failover/demoted`, so they do not start
   on a demoted boot.
@@ -163,7 +167,22 @@ To return the router to primary, run
 rebuild). That clears both markers, restores the primary network files and
 reloads networkd. If the marker is ever left behind by mistake, the next reboot comes
 up as standby; remove it with
-`sudo rm /var/lib/router-failover/demoted` before rebooting.
+`sudo rm /var/lib/router-failover/demoted` before rebooting. Booting an older
+generation from the boot menu ignores the marker but leaves it in place, so
+remove it before the next reboot into the current one.
+
+### Which file configures the LAN
+
+networkd applies the first `.network` file, by name, whose `[Match]` names
+the device. On the router that is `20-router-lan` (from
+`services.router-networking.routedInterfaces.lan`). role.nix's
+`08-router-parent-enp6s16` has no `[Match]` section and is ignored, so
+settings belong on `routedInterfaces.lan` or `20-router-lan`. In rehearsal 2
+the standby's RA, prefix-delegation and gateway overrides sat on the ignored
+file: the demoted router kept advertising itself as the IPv6 gateway (83 s
+IPv6 outage for clients) and had no default route of its own. The
+`router-standby-specialisation` check now finds the file that actually
+applies.
 
 ## Deferred Follow-Up
 
