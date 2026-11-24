@@ -167,9 +167,10 @@ To return the router to primary, run
 rebuild). That clears both markers, restores the primary network files and
 reloads networkd. If the marker is ever left behind by mistake, the next reboot comes
 up as standby; remove it with
-`sudo rm /var/lib/router-failover/demoted` before rebooting. Booting an older
-generation from the boot menu ignores the marker but leaves it in place, so
-remove it before the next reboot into the current one.
+`sudo rm /var/lib/router-failover/demoted` before rebooting. Booting a generation
+from before the boot guard (unified #261) from the boot menu ignores the
+marker but leaves it in place, so remove it before the next reboot into a
+current one. Generations with the guard honour the marker.
 
 ### Which file configures the LAN
 
