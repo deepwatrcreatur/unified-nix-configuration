@@ -32,7 +32,15 @@ let
 
   bootGuard = pkgs.writeShellScript "router-failover-boot-guard" ''
     set -u
-    PATH=${lib.makeBinPath [ pkgs.coreutils pkgs.gnugrep pkgs.iproute2 pkgs.iputils ]}
+    PATH=${lib.makeBinPath [ pkgs.coreutils pkgs.gnugrep pkgs.iproute2 pkgs.iputils config.systemd.package ]}
+    # INVARIANT: acts only while the system boots. A live switch to standby
+    # writes the marker first; acting then re-pointed links at an older
+    # booted system's files and failed the switch (rehearsal 3).
+    state="$(systemctl is-system-running 2>/dev/null || true)"
+    case "$state" in
+      initializing|starting) ;;
+      *) exit 0 ;;
+    esac
     standby=/run/booted-system/specialisation/standby/etc/systemd/network
     reason=""
     if [ -e ${demotedMarker} ]; then
@@ -106,6 +114,8 @@ in
             "shutdown.target"
           ] ++ map (u: "${u.name}.service") gatedUnits;
           conflicts = [ "shutdown.target" ];
+          # WHY: a role switch must not re-run the guard (see INVARIANT above).
+          restartIfChanged = false;
           wantedBy = [
             "systemd-networkd.service"
             "multi-user.target"
@@ -168,19 +178,27 @@ in
     # elitedesk brings its WAN up with this router's MAC and DUID.
     systemd.network.networks."10-router-wan-primary".linkConfig.ActivationPolicy = override "always-down";
 
-    services.router-networking.routedInterfaces.lan.ipv4Address = override "${standbyLanAddress}/16";
-    # GOTCHA: networkd applies the first matching file, and role.nix keeps the
-    # LAN's L3 config on the parent file, not on 20-router-lan; override there.
-    systemd.network.networks."08-router-parent-enp6s16" = {
-      address = override [ "${standbyLanAddress}/16" ];
-      gateway = [ gateway ];
-      networkConfig = {
-        # GOTCHA: stopping sd-radv sends a final RA with lifetime 0, so
-        # clients drop this router as their IPv6 default route at once.
-        IPv6SendRA = override false;
-        DHCPPrefixDelegation = override false;
-      };
+    # GOTCHA: 20-router-lan (from routedInterfaces.lan) is the file networkd
+    # applies to the LAN. role.nix's 08-router-parent file has no [Match]
+    # section and is ignored, so overrides there had no effect (rehearsal 2:
+    # the demoted router kept advertising itself and had no default route).
+    services.router-networking.routedInterfaces.lan = {
+      ipv4Address = override "${standbyLanAddress}/16";
+      # WHY: stopping sd-radv sends a final RA with lifetime 0, so clients
+      # drop this router as their IPv6 default route at once.
+      ipv6SendRA = override false;
+      dhcpPrefixDelegation = override false;
     };
+    # WHY: Tailscale and other outbound traffic leave through elitedesk.
+    systemd.network.networks."20-router-lan".gateway = [ gateway ];
+    # SECURITY: defensive; if the parent file ever gains a [Match], it must
+    # not put the gateway address on the demoted router.
+    systemd.network.networks."08-router-parent-enp6s16".address = override [ "${standbyLanAddress}/16" ];
+
+    # WHY: the WAN is down by design; these probes would restart-loop and
+    # fail every standby activation.
+    systemd.services.health-wan-carrier.enable = override false;
+    systemd.services.health-wan-ip.enable = override false;
 
     # GOTCHA: disabling Kea removes its group, but the agenix TSIG secret
     # (role.nix) still sets group = "kea"; keep the group so activation works.
