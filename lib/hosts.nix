@@ -155,11 +155,12 @@
         macAddress = "1c:2a:a3:1e:c3:51";
         scope = "LAN";
       };
-      # TODO(nch-sny.22): Shenzhen HongRui (HRUI) by OUI, 10G with 2x SFP+ and
-      # 4x RJ45; model number unknown. Its static management address is not
-      # 10.10.18.10 and is not yet known (seen only via LLDP, port TE2), so
-      # it has no managementUrl until found; rename to sw-hrui-<model> then.
-      description = "Core switch (HRUI 10G, 2x SFP+ / 4x RJ45; model unknown)";
+      # HRUI (Shenzhen HongRui) LG510S-4T2XS, from SNMP sysDescr on
+      # 2026-11-24 after the switch moved to DHCP. It keeps the name sw-main
+      # because gatus, checks and the cutover script use it. SNMP v2c
+      # (IF-MIB) is on; routers scrape it (nix-clan-homelab).
+      managementUrl = "http://10.10.18.10";
+      description = "Core switch (HRUI LG510S-4T2XS, 4x 10G RJ45 / 2x SFP+)";
     };
 
     sw-cisco-sg300-52p = {
