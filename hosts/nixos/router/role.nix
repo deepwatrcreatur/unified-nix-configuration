@@ -125,15 +125,19 @@ let
   # GOTCHA: a probe that fails its first check fails the switch that
   # started it. Returning to primary starts the WAN probes (standby
   # disables them) before the WAN link is up, and the switch exited 4
-  # (rehearsal 4). Allow 60 s for the condition to appear first.
+  # (rehearsal 4). Allow 60 s for the condition to appear first, but only on
+  # a deliberate start: NRestarts is 0 then and counts automatic restarts,
+  # so a sustained outage still shows as a restart loop.
   healthProbe = name: description: check: {
     inherit description;
     serviceConfig = {
       Type = "simple";
       ExecStart = pkgs.writeShellScript name ''
-        PATH=${lib.makeBinPath [ pkgs.coreutils pkgs.gnugrep pkgs.iproute2 ]}
+        PATH=${lib.makeBinPath [ pkgs.coreutils pkgs.gnugrep pkgs.iproute2 config.systemd.package ]}
         check() { ${check}; }
-        for _ in $(seq 1 12); do check && break; sleep 5; done
+        if [ "$(systemctl show -p NRestarts --value ${name}.service)" = 0 ]; then
+          for _ in $(seq 1 12); do check && break; sleep 5; done
+        fi
         while true; do check || exit 1; sleep 15; done
       '';
       Restart = "always";
