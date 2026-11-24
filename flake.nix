@@ -295,6 +295,8 @@
     in
     loadedOutputs
     // {
+      # Keep the private worker dependency out of ordinary flake evaluation.
+      # The nested nix-ci-worker flake calls this only when explicitly selected.
       homeConfigurations = (loadedOutputs.homeConfigurations or { }) // {
         hm-opts = flakeLib.helpers.mkHomeConfig {
           targetSystem = "x86_64-linux";
@@ -308,6 +310,17 @@
             }
           ];
         };
+      };
+
+      lib = {
+        withNixCiWorker = nixCiInput:
+          loadedOutputs.nixosConfigurations.emerald.extendModules {
+            specialArgs = {
+              inputs = inputs // { nix-ci = nixCiInput; };
+              lib = inputs.nixpkgs.lib;
+            };
+            modules = [ ./hosts/nixos/emerald/nix-ci-worker.nix ];
+          };
       };
     };
 }
