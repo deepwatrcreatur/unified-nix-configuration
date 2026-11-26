@@ -14,7 +14,7 @@
 #
 # Usage: beads-q [-C <dir in repo>] <beads-rust args...>
 # Env:   BEADS_Q_BRANCH (beads-queue), BEADS_Q_REMOTE (origin), BEADS_Q_DIR,
-#        BEADS_Q_RETRIES (5)
+#        BEADS_Q_RETRIES (5), BEADS_Q_FETCH_RETRIES (5)
 # Docs:  https://github.com/deepwatrcreatur/nix-agent-guides/blob/main/guides/beads.md
 set -euo pipefail
 
@@ -38,7 +38,7 @@ runs the command. Write commands are committed and pushed; a rejected push is
 retried on the new tip, so a duplicate claim fails with CLAIM_CONFLICT.
 
 Env: BEADS_Q_BRANCH (beads-queue), BEADS_Q_REMOTE (origin), BEADS_Q_DIR,
-     BEADS_Q_RETRIES (5)
+     BEADS_Q_RETRIES (5), BEADS_Q_FETCH_RETRIES (5)
 USAGE
   exit 0
 fi
@@ -46,6 +46,7 @@ fi
 branch=${BEADS_Q_BRANCH:-beads-queue}
 remote=${BEADS_Q_REMOTE:-origin}
 retries=${BEADS_Q_RETRIES:-5}
+fetch_retries=${BEADS_Q_FETCH_RETRIES:-5}
 
 common=$(git -C "$repo_dir" rev-parse --path-format=absolute --git-common-dir)
 # WHY: bare repos (~/flakes/<repo>) have no .git component; normal clones do.
@@ -62,8 +63,21 @@ export BEADS_DIR=$qdir/.beads
 exec 9>"$common/beads-q.lock"
 flock 9
 
+# GOTCHA: a fetch that lists refs while another push renames the branch's
+# loose ref into place can miss it ("couldn't find remote ref"); seen once in
+# 2,400 contended calls in nix-clan-homelab's race test (nch-a9a.9). Retry
+# briefly; a branch that is really gone still fails after the last attempt.
 fetch() {
-  git -C "$common" fetch -q "$remote" "+refs/heads/$branch:refs/remotes/$remote/$branch"
+  local attempt=1
+  until git -C "$common" fetch -q "$remote" "+refs/heads/$branch:refs/remotes/$remote/$branch"; do
+    if [ "$attempt" -ge "$fetch_retries" ]; then
+      echo "beads-q: fetching $remote/$branch failed $attempt times; giving up" >&2
+      return 1
+    fi
+    echo "beads-q: fetching $remote/$branch failed; retrying ($attempt/$fetch_retries)" >&2
+    sleep "0.$((attempt * 2))"
+    attempt=$((attempt + 1))
+  done
 }
 
 sync_from_remote() {

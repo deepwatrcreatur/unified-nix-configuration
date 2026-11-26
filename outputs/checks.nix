@@ -428,6 +428,35 @@ in
 {
   checks.x86_64-linux.router-standby-specialisation = routerStandby;
   checks.x86_64-linux.inventory-consistency = checkBody;
+  # beads-q survives a fetch that briefly misses the queue branch (the race
+  # seen in nix-clan-homelab nch-a9a.9) and still fails when it is really gone.
+  checks.x86_64-linux.beads-queue-fetch-retry =
+    pkgs.runCommand "beads-queue-fetch-retry" { nativeBuildInputs = [ pkgs.beads-queue pkgs.git ]; } ''
+      export HOME=$TMPDIR/home GIT_AUTHOR_NAME=t GIT_AUTHOR_EMAIL=t@t GIT_COMMITTER_NAME=t GIT_COMMITTER_EMAIL=t@t
+      mkdir -p "$HOME"
+      git init -q --bare remote.git
+      git clone -q remote.git seed 2>/dev/null && cd seed
+      git checkout -q --orphan beads-queue && mkdir .beads
+      printf 'issue_prefix: tst\n' > .beads/config.yaml
+      printf '%s\n' '{"id":"tst-a","title":"a","status":"open","priority":2,"issue_type":"task","created_at":"2026-11-26T00:00:00Z","updated_at":"2026-11-26T00:00:00Z"}' > .beads/issues.jsonl
+      git add .beads && git commit -q -m seed && git push -q origin beads-queue
+      cd .. && git clone -q remote.git src 2>/dev/null && git -C src commit -q --allow-empty -m code
+
+      # The branch vanishes for a moment, as during a concurrent ref update.
+      mv remote.git/refs/heads/beads-queue ref.saved
+      ( sleep 0.5; mv ref.saved remote.git/refs/heads/beads-queue ) &
+      beads-q -C src ready --json > out 2> err
+      wait
+      grep -q tst-a out
+      grep -q 'retrying (1/' err
+
+      # Really gone: fails with a clear message instead of hanging.
+      git -C remote.git update-ref -d refs/heads/beads-queue
+      if beads-q -C src ready --json 2> err2; then echo "expected failure" >&2; exit 1; fi
+      grep -q 'failed 5 times; giving up' err2
+      touch $out
+    '';
+
   checks.x86_64-linux.agent-guard-policy = pkgs.runCommand "agent-guard-policy" { nativeBuildInputs = [ pkgs.python3 ]; } ''
     python3 -I ${../tests/agent-guard-test.py} ${../scripts/agent-guard.py} | tee $out
   '';
