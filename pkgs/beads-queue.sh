@@ -47,6 +47,13 @@ branch=${BEADS_Q_BRANCH:-beads-queue}
 remote=${BEADS_Q_REMOTE:-origin}
 retries=${BEADS_Q_RETRIES:-5}
 fetch_retries=${BEADS_Q_FETCH_RETRIES:-5}
+# GOTCHA: a non-numeric value makes `[ -ge ]` fail without ending a retry
+# loop, which would then spin forever holding the repo lock.
+for value in "$retries" "$fetch_retries"; do
+  case $value in
+    '' | *[!0-9]* | 0*) echo "beads-q: retry counts must be positive integers, got '$value'" >&2; exit 2 ;;
+  esac
+done
 
 common=$(git -C "$repo_dir" rev-parse --path-format=absolute --git-common-dir)
 # WHY: bare repos (~/flakes/<repo>) have no .git component; normal clones do.
@@ -75,7 +82,8 @@ fetch() {
       return 1
     fi
     echo "beads-q: fetching $remote/$branch failed; retrying ($attempt/$fetch_retries)" >&2
-    sleep "0.$((attempt * 2))"
+    # 0.2 s more per attempt: 0.2, 0.4, ... 1.0, 1.2 for counts above 5.
+    sleep "$((attempt * 2 / 10)).$((attempt * 2 % 10))"
     attempt=$((attempt + 1))
   done
 }

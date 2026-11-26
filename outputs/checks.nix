@@ -442,13 +442,23 @@ in
       git add .beads && git commit -q -m seed && git push -q origin beads-queue
       cd .. && git clone -q remote.git src 2>/dev/null && git -C src commit -q --allow-empty -m code
 
-      # The branch vanishes for a moment, as during a concurrent ref update.
+      # The branch vanishes, as during a concurrent ref update, and comes back
+      # only after beads-q has seen a failed fetch (not on a timer, which a
+      # slow builder could outrun).
       mv remote.git/refs/heads/beads-queue ref.saved
-      ( sleep 0.5; mv ref.saved remote.git/refs/heads/beads-queue ) &
-      beads-q -C src ready --json > out 2> err
+      touch err
+      (
+        for _ in $(seq 1 600); do grep -q 'retrying (1/' err && break; sleep 0.05; done
+        mv ref.saved remote.git/refs/heads/beads-queue
+      ) &
+      BEADS_Q_FETCH_RETRIES=20 beads-q -C src ready --json > out 2> err
       wait
       grep -q tst-a out
       grep -q 'retrying (1/' err
+
+      # A non-numeric retry count is refused instead of looping forever.
+      if BEADS_Q_FETCH_RETRIES=abc beads-q -C src ready --json 2> err3; then echo "expected failure" >&2; exit 1; fi
+      grep -q 'must be positive integers' err3
 
       # Really gone: fails with a clear message instead of hanging.
       git -C remote.git update-ref -d refs/heads/beads-queue
