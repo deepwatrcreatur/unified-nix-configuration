@@ -73,7 +73,9 @@ sync_from_remote() {
     git -C "$common" worktree add -q --detach "$qdir" "$remote/$branch"
   fi
   git -C "$qdir" reset -q --hard "$remote/$branch"
-  rm -f "$BEADS_DIR"/beads.db "$BEADS_DIR"/beads.db-wal "$BEADS_DIR"/beads.db-shm
+  # WHY: beads-rust 0.7 keeps sidecars (beads.db-wal-cert, -fsqlite-ns-*,
+  # .fsqlite-migration-state) next to the database; drop them with it.
+  rm -f "$BEADS_DIR"/beads.db "$BEADS_DIR"/beads.db-* "$BEADS_DIR"/beads.db.*
   beads-rust sync --import-only >/dev/null
 }
 

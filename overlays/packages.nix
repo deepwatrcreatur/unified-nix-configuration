@@ -98,24 +98,24 @@
   (final: prev: {
     beads-rust =
       let
-        version = "0.1.45";
+        version = "0.7.6";
         target =
           {
             x86_64-linux = {
-              asset = "br-v${version}-linux_musl_amd64.tar.gz";
-              hash = "sha256-2IipnHHrCCx/oa/k9ASmpw4rbQK43GXb4B+m+I1QCSo=";
+              asset = "br-${version}-linux_musl_amd64.tar.gz";
+              hash = "sha256-KLifjyZUCkyeYkKzyfyTvN2J9OwLnJeSiVAoxT9b8r0=";
             };
             aarch64-linux = {
-              asset = "br-v${version}-linux_arm64.tar.gz";
-              hash = "sha256-CIE/6M50BjcYaDm5DbhQd5+OgGNQBMdxLIPtWKCfosE=";
+              asset = "br-${version}-linux_arm64.tar.gz";
+              hash = "sha256-IsJ8A3zrlmPS1TLHl0uB0sDvvNxImV2/9GWJobMbL6s=";
             };
             x86_64-darwin = {
-              asset = "br-v${version}-darwin_amd64.tar.gz";
-              hash = "sha256-B4mv4NogXimn+JTNuOnGJWCVY8/n8U3+5vUo+Rypp0E=";
+              asset = "br-${version}-darwin_amd64.tar.gz";
+              hash = "sha256-dzKlv6lU9Vm/CCKtoHHzJBa4pG4yrTOBnAfVlCspxG4=";
             };
             aarch64-darwin = {
-              asset = "br-v${version}-darwin_arm64.tar.gz";
-              hash = "sha256-iU2oB55cTQdMk8wGTbezcIukWP9gh5iJAov7X1fds7A=";
+              asset = "br-${version}-darwin_arm64.tar.gz";
+              hash = "sha256-0BpO9mqlzUAVL8ZIG3je97bf79VtobJt0chLOGA95vY=";
             };
           }
           .${prev.stdenv.hostPlatform.system}
