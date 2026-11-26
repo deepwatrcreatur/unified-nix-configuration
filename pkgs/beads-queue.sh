@@ -14,7 +14,7 @@
 #
 # Usage: beads-q [-C <dir in repo>] <beads-rust args...>
 # Env:   BEADS_Q_BRANCH (beads-queue), BEADS_Q_REMOTE (origin), BEADS_Q_DIR,
-#        BEADS_Q_RETRIES (5)
+#        BEADS_Q_RETRIES (5), BEADS_Q_FETCH_RETRIES (5)
 # Docs:  https://github.com/deepwatrcreatur/nix-agent-guides/blob/main/guides/beads.md
 set -euo pipefail
 
@@ -38,7 +38,7 @@ runs the command. Write commands are committed and pushed; a rejected push is
 retried on the new tip, so a duplicate claim fails with CLAIM_CONFLICT.
 
 Env: BEADS_Q_BRANCH (beads-queue), BEADS_Q_REMOTE (origin), BEADS_Q_DIR,
-     BEADS_Q_RETRIES (5)
+     BEADS_Q_RETRIES (5), BEADS_Q_FETCH_RETRIES (5)
 USAGE
   exit 0
 fi
@@ -46,6 +46,14 @@ fi
 branch=${BEADS_Q_BRANCH:-beads-queue}
 remote=${BEADS_Q_REMOTE:-origin}
 retries=${BEADS_Q_RETRIES:-5}
+fetch_retries=${BEADS_Q_FETCH_RETRIES:-5}
+# GOTCHA: a non-numeric value makes `[ -ge ]` fail without ending a retry
+# loop, which would then spin forever holding the repo lock.
+for value in "$retries" "$fetch_retries"; do
+  case $value in
+    '' | *[!0-9]* | 0*) echo "beads-q: retry counts must be positive integers, got '$value'" >&2; exit 2 ;;
+  esac
+done
 
 common=$(git -C "$repo_dir" rev-parse --path-format=absolute --git-common-dir)
 # WHY: bare repos (~/flakes/<repo>) have no .git component; normal clones do.
@@ -62,8 +70,22 @@ export BEADS_DIR=$qdir/.beads
 exec 9>"$common/beads-q.lock"
 flock 9
 
+# GOTCHA: a fetch that lists refs while another push renames the branch's
+# loose ref into place can miss it ("couldn't find remote ref"); seen once in
+# 2,400 contended calls in nix-clan-homelab's race test (nch-a9a.9). Retry
+# briefly; a branch that is really gone still fails after the last attempt.
 fetch() {
-  git -C "$common" fetch -q "$remote" "+refs/heads/$branch:refs/remotes/$remote/$branch"
+  local attempt=1
+  until git -C "$common" fetch -q "$remote" "+refs/heads/$branch:refs/remotes/$remote/$branch"; do
+    if [ "$attempt" -ge "$fetch_retries" ]; then
+      echo "beads-q: fetching $remote/$branch failed $attempt times; giving up" >&2
+      return 1
+    fi
+    echo "beads-q: fetching $remote/$branch failed; retrying ($attempt/$fetch_retries)" >&2
+    # 0.2 s more per attempt: 0.2, 0.4, ... 1.0, 1.2 for counts above 5.
+    sleep "$((attempt * 2 / 10)).$((attempt * 2 % 10))"
+    attempt=$((attempt + 1))
+  done
 }
 
 sync_from_remote() {
