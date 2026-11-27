@@ -54,18 +54,24 @@ long time.
 **Fix:** Pass the attic-cache IP directly via `NIX_CONFIG` before invoking
 nixos-anywhere:
 ```bash
-TOKEN=$(sudo cat /run/agenix/attic-client-token)
-cat > /tmp/attic-bootstrap-netrc <<EOF
-machine 10.10.11.39
-  password $TOKEN
-EOF
+set -euo pipefail
+netrc=$(mktemp)
+trap 'rm -f -- "$netrc"' EXIT
+{
+  printf 'machine 10.10.11.39\n  password '
+  sudo cat /run/agenix/attic-client-token | tr -d '\r\n'
+  printf '\n'
+} > "$netrc"
 
 NIX_CONFIG="
 extra-substituters = http://10.10.11.39:5001/cache-local
 extra-trusted-public-keys = cache-local:GozZz7XFsUZ7xI5o/Q36JA/BFfjzONWOjiqC+zAhp2g=
-netrc-file = /tmp/attic-bootstrap-netrc
+netrc-file = $netrc
 " SSH_AUTH_SOCK="" just install router <ip> "" "" true
 ```
+
+The token flows through stdin into a mode-`0600` temporary netrc file; it is
+not printed or passed as a command argument.
 
 The `bootstrap-nixos-router.yml` Ansible playbook wraps this with
 `-e use_attic_cache=true`. The `bootstrap-nixos-inference.yml` playbook has
