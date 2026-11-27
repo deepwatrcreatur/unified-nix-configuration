@@ -135,7 +135,9 @@ in
         };
 
         # Read GitHub token from file and append to nix.conf
-        home.activation.nixConfigToken = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        # INVARIANT: githubTokenPath = null disables the token entirely,
+        # including the fnox lookup.
+        home.activation.nixConfigToken = lib.mkIf (cfg.githubTokenPath != null) (lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           nix_conf="$HOME/.config/nix/nix.conf"
           token_path="${tokenPath}"
 
@@ -150,7 +152,7 @@ in
               mv "$nix_conf.tmp" "$nix_conf"
               echo "Configured GitHub access token in $nix_conf"
             fi
-        '';
+        '');
       }
 
       # Create or refresh Determinate Nix's managed netrc file.
