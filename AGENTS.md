@@ -137,7 +137,7 @@ other work. Agents on emerald and phoenix therefore see one queue.
   are host-migration items: check the clan epic `nch-sny` and ask the operator
   before picking one up.
 
-<!-- nix-agent-guides:core BEGIN (v3). Synced from deepwatrcreatur/nix-agent-guides templates/agents-core.md by scripts/sync-agents-core.sh. Edit it there, not here. -->
+<!-- nix-agent-guides:core BEGIN (v4). Synced from deepwatrcreatur/nix-agent-guides templates/agents-core.md by scripts/sync-agents-core.sh. Edit it there, not here. -->
 ## Shared conventions
 
 Fuller, newest version (reference only):
@@ -162,6 +162,9 @@ Summary (offline fallback):
   output. Run `bash -n`/`shellcheck` on shell
   generated from Nix. Exit code 0 is not proof the change worked.
 - **Same change, same PR:** behaviour changes come with docs and a check.
-- **Never commit secrets**, and do not deploy to or change live hosts unless
-  asked.
+- **Secrets:** never commit, print or `cat` one, and never export one into a
+  long-lived shell. Run a command that needs one through its fnox wrapper
+  (`gh-fnox`, ...) or `fnox exec -- <cmd>`, keeping the value out of argv.
+  Details: `guides/secrets.md` in nix-agent-guides.
+- **Do not deploy to or change live hosts** unless asked.
 <!-- nix-agent-guides:core END -->

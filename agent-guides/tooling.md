@@ -25,6 +25,9 @@ Agent Mail is not adopted: [docs/agent-mail-workflow-fit.md](../docs/agent-mail-
   agenix-user-secrets; agents should not export long-lived keys by hand.
 - To bypass the alias for debugging: `command claude-code`.
 - Other tools: [docs/tooling-managed-auth.md](../docs/tooling-managed-auth.md).
+- Rules for any command that needs a secret (wrappers, `fnox exec`, never
+  `export` or `cat` a token, examples for gh, git push, curl and nix):
+  [nix-agent-guides guides/secrets.md](https://github.com/deepwatrcreatur/nix-agent-guides/blob/main/guides/secrets.md).
 
 ## Destructive command guard (`agent-guard`)
 
