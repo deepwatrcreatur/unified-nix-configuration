@@ -32,6 +32,6 @@ den.mkInventoryHostModule {
     ../../../hosts/nixos/router/configuration.nix
   ];
 } // {
-  # SECURITY: Routers do not receive the private NixCI cache credential.
+  # SECURITY: Keep NixCI disabled and its credential undeclared on router hosts.
   myModules.caches.enableNixCi = false;
 }

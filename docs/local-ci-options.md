@@ -31,6 +31,12 @@ use the public NixOS cache, the local Attic cache, and the other configured
 public substituters. This avoids repeated unauthenticated requests to
 `cache.nix-ci.com` without changing cache access on other hosts.
 
+The source policy also excludes these hosts from future agenix recipient
+generation and prevents the common NixOS module from materializing the netrc.
+The existing encrypted file still includes its previous recipients until the
+operator re-encrypts it with `agenix-edit`; no secret value is changed by this
+configuration update.
+
 You can also check:
 
 ```bash
