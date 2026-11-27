@@ -457,26 +457,30 @@ in
       expect() { [ "$1" = "$2" ] || { echo "FAIL: $3"; exit 1; }; }
 
       export STUB_MODE=age
-      expect "$(nuc_secret github GITHUB_TOKEN good-file 2>err)" "$gh" "fnox 'age' is ignored, file used"
-      grep -q 'does not look like a github token' err
+      expect "$(nuc_secret github GITHUB_TOKEN missing 2>err)" "" "fnox 'age' is never written"
+      grep -q 'does not look like a valid github secret' err
       grep -q -- '-c /cfg/config.toml --if-missing error get GITHUB_TOKEN' "$STUB_LOG"
-
-      expect "$(nuc_secret github GITHUB_TOKEN bad-file 2>err)" "" "age plus a junk file writes nothing"
-      grep -q 'does not hold a valid github token' err
-      if grep -q 'decrypt' err; then echo "FAIL: file contents leaked to stderr"; exit 1; fi
+      expect "$(nuc_secret token ATTIC_CLIENT_JWT_TOKEN "" 2>/dev/null)" "" "'age' rejected for any kind"
 
       export STUB_MODE=good STUB_VALUE=$other
-      expect "$(nuc_secret github GITHUB_TOKEN good-file)" "$other" "valid fnox value wins"
-      expect "$(GITHUB_TOKEN=$gh; export GITHUB_TOKEN; nuc_secret github GITHUB_TOKEN good-file)" "$other" "ambient GITHUB_TOKEN not passed to fnox"
+      expect "$(nuc_secret github GITHUB_TOKEN good-file)" "$gh" "rotated file wins over the value fnox kept"
+      expect "$(nuc_secret github GITHUB_TOKEN bad-file 2>err)" "$other" "junk file falls back to fnox"
+      grep -q 'does not hold a valid github secret' err
+      if grep -q 'decrypt' err; then echo "FAIL: file contents leaked to stderr"; exit 1; fi
+      expect "$(nuc_secret github GITHUB_TOKEN missing)" "$other" "no file: fnox value"
+      expect "$(GITHUB_TOKEN=$gh; export GITHUB_TOKEN; nuc_secret github GITHUB_TOKEN missing)" "$other" "ambient GITHUB_TOKEN not passed to fnox"
 
       export STUB_MODE=fail
-      expect "$(nuc_secret github GITHUB_TOKEN good-file)" "$gh" "fnox failure falls back to file"
-      expect "$(nuc_secret github GITHUB_TOKEN missing-file)" "" "nothing available"
+      expect "$(nuc_secret github GITHUB_TOKEN missing)" "" "nothing available"
+      export STUB_MODE=age
+      expect "$(nuc_secret github GITHUB_TOKEN bad-file 2>/dev/null)" "" "junk file plus 'age' writes nothing"
 
       export STUB_MODE=good STUB_VALUE=$jwt
       expect "$(nuc_secret token ATTIC_CLIENT_JWT_TOKEN "")" "$jwt" "netrc token accepted"
-      export STUB_VALUE=short
-      expect "$(nuc_secret token ATTIC_CLIENT_JWT_TOKEN "" 2>/dev/null)" "" "short value rejected"
+      export STUB_VALUE=short1
+      expect "$(nuc_secret token SOME_PASSWORD "")" "short1" "short netrc password accepted"
+      export STUB_VALUE=short1
+      expect "$(nuc_secret github GITHUB_TOKEN "" 2>/dev/null)" "" "short value rejected as a GitHub token"
 
       : > "$STUB_LOG"
       NUC_FNOX=""
