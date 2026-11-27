@@ -25,6 +25,12 @@ nix show-config | grep cache.nix-ci.com
 
 If you see `https://cache.nix-ci.com` in `substituters`, nix-ci is enabled. If not, either the aspect is disabled for that host or credentials are missing.
 
+The router and `elitedesk` intentionally do not advertise this private
+substituter because they do not receive a NixCI credential. They continue to
+use the public NixOS cache, the local Attic cache, and the other configured
+public substituters. This avoids repeated unauthenticated requests to
+`cache.nix-ci.com` without changing cache access on other hosts.
+
 You can also check:
 
 ```bash

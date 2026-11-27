@@ -31,4 +31,7 @@ den.mkInventoryHostModule {
     # Future work: split into a den aspect once the role.nix API stabilises.
     ../../../hosts/nixos/router/configuration.nix
   ];
+} // {
+  # SECURITY: Routers do not receive the private NixCI cache credential.
+  myModules.caches.enableNixCi = false;
 }
