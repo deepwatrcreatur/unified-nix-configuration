@@ -430,6 +430,61 @@ in
   checks.x86_64-linux.inventory-consistency = checkBody;
   # beads-q survives a fetch that briefly misses the queue branch (the race
   # seen in nix-clan-homelab nch-a9a.9) and still fails when it is really gone.
+  # nch-a67.7: nix-user-config never writes a placeholder or junk token.
+  checks.x86_64-linux.nix-user-config-secret =
+    let
+      fnoxStub = pkgs.writeShellScript "fnox" ''
+        printf '%s\n' "$*" >> "$STUB_LOG"
+        if [ -n "''${GITHUB_TOKEN:-}" ]; then echo "ambient-$GITHUB_TOKEN"; exit 0; fi
+        case "$STUB_MODE" in
+          age) echo age ;;
+          good) echo "$STUB_VALUE" ;;
+          fail) echo "decrypt error" >&2; exit 1 ;;
+        esac
+      '';
+    in
+    pkgs.runCommand "nix-user-config-secret" { } ''
+      set -euo pipefail
+      export STUB_LOG=$PWD/log
+      : > "$STUB_LOG"
+      gh="ghp_$(printf 'x%.0s' $(seq 36))"
+      other="ghp_$(printf 'y%.0s' $(seq 36))"
+      jwt="$(printf 'a%.0s' $(seq 40)).$(printf 'b%.0s' $(seq 20))"
+      printf '%s\n' "$gh" > good-file
+      printf 'Error: failed to decrypt\ncheck your key\n' > bad-file
+      NUC_FNOX=${fnoxStub} NUC_FNOX_CONFIG=/cfg/config.toml NUC_FNOX_AGE_KEY_FILE=/id
+      source ${../modules/home-manager/common/nix-user-config-secret.sh}
+      expect() { [ "$1" = "$2" ] || { echo "FAIL: $3"; exit 1; }; }
+
+      export STUB_MODE=age
+      expect "$(nuc_secret github GITHUB_TOKEN good-file 2>err)" "$gh" "fnox 'age' is ignored, file used"
+      grep -q 'does not look like a github token' err
+      grep -q -- '-c /cfg/config.toml --if-missing error get GITHUB_TOKEN' "$STUB_LOG"
+
+      expect "$(nuc_secret github GITHUB_TOKEN bad-file 2>err)" "" "age plus a junk file writes nothing"
+      grep -q 'does not hold a valid github token' err
+      if grep -q 'decrypt' err; then echo "FAIL: file contents leaked to stderr"; exit 1; fi
+
+      export STUB_MODE=good STUB_VALUE=$other
+      expect "$(nuc_secret github GITHUB_TOKEN good-file)" "$other" "valid fnox value wins"
+      expect "$(GITHUB_TOKEN=$gh; export GITHUB_TOKEN; nuc_secret github GITHUB_TOKEN good-file)" "$other" "ambient GITHUB_TOKEN not passed to fnox"
+
+      export STUB_MODE=fail
+      expect "$(nuc_secret github GITHUB_TOKEN good-file)" "$gh" "fnox failure falls back to file"
+      expect "$(nuc_secret github GITHUB_TOKEN missing-file)" "" "nothing available"
+
+      export STUB_MODE=good STUB_VALUE=$jwt
+      expect "$(nuc_secret token ATTIC_CLIENT_JWT_TOKEN "")" "$jwt" "netrc token accepted"
+      export STUB_VALUE=short
+      expect "$(nuc_secret token ATTIC_CLIENT_JWT_TOKEN "" 2>/dev/null)" "" "short value rejected"
+
+      : > "$STUB_LOG"
+      NUC_FNOX=""
+      expect "$(nuc_secret github GITHUB_TOKEN good-file)" "$gh" "fnox off: file only"
+      [ ! -s "$STUB_LOG" ] || { echo "FAIL: fnox called while off"; exit 1; }
+      touch $out
+    '';
+
   checks.x86_64-linux.beads-queue-fetch-retry =
     pkgs.runCommand "beads-queue-fetch-retry" { nativeBuildInputs = [ pkgs.beads-queue pkgs.git ]; } ''
       export HOME=$TMPDIR/home GIT_AUTHOR_NAME=t GIT_AUTHOR_EMAIL=t@t GIT_COMMITTER_NAME=t GIT_COMMITTER_EMAIL=t@t
