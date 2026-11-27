@@ -10,6 +10,16 @@ let
   cfg = config.services.nix-user-config;
   cacheTrust = import ../../../lib/cache-trust.nix;
   atticCache = import ../../../lib/attic-cache.nix;
+  # WHY: fnox only through programs.fnox, with its config and identity (which
+  # may be the SSH key), not a hardcoded ~/.config/sops/age/keys.txt.
+  fnoxCfg = config.programs.fnox or { };
+  fnoxEnabled = (fnoxCfg.enable or false) && (fnoxCfg.package or null) != null;
+  secretPrelude = ''
+    NUC_FNOX=${if fnoxEnabled then lib.escapeShellArg "${fnoxCfg.package}/bin/fnox" else "''"}
+    NUC_FNOX_CONFIG=${lib.escapeShellArg (if fnoxEnabled then "${config.xdg.configHome}/${fnoxCfg.configRelativePath}" else "")}
+    NUC_FNOX_AGE_KEY_FILE=${lib.escapeShellArg (if fnoxEnabled then fnoxCfg.ageKeyFile else "")}
+    source ${./nix-user-config-secret.sh}
+  '';
   tokenPath = if cfg.githubTokenPath == null then "" else cfg.githubTokenPath;
   legacyNetrcEntries =
     lib.optional (cfg.netrcMachine != null) {
@@ -125,20 +135,14 @@ in
         };
 
         # Read GitHub token from file and append to nix.conf
-        home.activation.nixConfigToken = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        # INVARIANT: githubTokenPath = null disables the token entirely,
+        # including the fnox lookup.
+        home.activation.nixConfigToken = lib.mkIf (cfg.githubTokenPath != null) (lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           nix_conf="$HOME/.config/nix/nix.conf"
           token_path="${tokenPath}"
 
-          token=""
-          # Try fnox if available
-          if command -v fnox &> /dev/null && [ -f "$HOME/.config/sops/age/keys.txt" ]; then
-            export FNOX_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
-            token=$(fnox get GITHUB_TOKEN 2>/dev/null || echo "")
-          fi
-
-          if [[ -z "$token" && -f "$token_path" ]]; then
-            token=$(cat "$token_path")
-          fi
+          ${secretPrelude}
+          token="$(nuc_secret github GITHUB_TOKEN "$token_path")"
 
           if [[ -n "$token" ]]; then
               # Remove any existing access-tokens line and append new one
@@ -148,7 +152,7 @@ in
               mv "$nix_conf.tmp" "$nix_conf"
               echo "Configured GitHub access token in $nix_conf"
             fi
-        '';
+        '');
       }
 
       # Create or refresh Determinate Nix's managed netrc file.
@@ -174,21 +178,11 @@ in
             ' "$netrc_file" > "$tmp_existing"
           fi
 
+          ${secretPrelude}
           {
             echo "$managed_begin"
             ${lib.concatMapStringsSep "\n" (entry: ''
-              password=""
-              ${lib.optionalString (entry.fnoxSecretName != null) ''
-                if command -v fnox &> /dev/null && [ -f "$HOME/.config/sops/age/keys.txt" ]; then
-                  export FNOX_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
-                  password=$(fnox get ${lib.escapeShellArg entry.fnoxSecretName} 2>/dev/null || echo "")
-                fi
-              ''}
-              ${lib.optionalString (entry.passwordPath != null) ''
-                if [[ -z "$password" && -f ${lib.escapeShellArg entry.passwordPath} ]]; then
-                  password=$(cat ${lib.escapeShellArg entry.passwordPath} 2>/dev/null || echo "")
-                fi
-              ''}
+              password="$(nuc_secret token ${lib.escapeShellArg (if entry.fnoxSecretName == null then "" else entry.fnoxSecretName)} ${lib.escapeShellArg (if entry.passwordPath == null then "" else entry.passwordPath)})"
 
               if [[ -n "$password" ]]; then
                 echo "machine ${entry.machine}"
