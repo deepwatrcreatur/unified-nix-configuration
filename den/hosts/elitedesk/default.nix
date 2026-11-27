@@ -25,6 +25,8 @@ let
 in
 {
   inherit (base) imports;
+  # SECURITY: Keep NixCI disabled and its credential undeclared on router hosts.
+  myModules.caches.enableNixCi = false;
   networking.hostName = lib.mkForce "elitedesk";
   networking.domain = lib.mkDefault (import ../../../lib/hosts.nix).domain;
 }

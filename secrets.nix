@@ -111,9 +111,11 @@ let
 
   atticClientSecrets = operatorUsers ++ builtins.concatLists (map machineRecipients atticClientHosts);
 
-  # Hosts that use the nix-ci.com paid cache service
-  # Using same list as atticClientHosts - all NixOS hosts benefit from shared cache
-  nixCiCacheHosts = atticClientHosts;
+  # SECURITY: Router-class hosts do not receive the private NixCI cache
+  # credential; they retain access to Attic and public substituters.
+  nixCiCacheHosts = builtins.filter (
+    host: !(builtins.elem host [ "router" "elitedesk" ])
+  ) atticClientHosts;
 
   nixCiCacheSecrets = operatorUsers ++ builtins.concatLists (map machineRecipients nixCiCacheHosts);
 

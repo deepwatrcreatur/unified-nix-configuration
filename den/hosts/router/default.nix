@@ -31,4 +31,7 @@ den.mkInventoryHostModule {
     # Future work: split into a den aspect once the role.nix API stabilises.
     ../../../hosts/nixos/router/configuration.nix
   ];
+} // {
+  # SECURITY: Keep NixCI disabled and its credential undeclared on router hosts.
+  myModules.caches.enableNixCi = false;
 }

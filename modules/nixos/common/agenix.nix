@@ -18,9 +18,11 @@ in
     "/etc/ssh/ssh_host_ed25519_key"
   ];
 
-  # nix-ci.com cache authentication
-  # Secret only defined when the age file exists (allows merging before creating secret)
-  age.secrets."nix-ci-netrc" = lib.mkIf (builtins.pathExists nixCiNetrcFile) {
+  # SECURITY: Do not materialize the private cache credential on hosts that have
+  # disabled NixCI cache access, even while the shared encrypted file exists.
+  age.secrets."nix-ci-netrc" = lib.mkIf (
+    builtins.pathExists nixCiNetrcFile && (config.myModules.caches.enableNixCi or true)
+  ) {
     file = nixCiNetrcFile;
     path = "/run/secrets/nix-ci-netrc";
     owner = "root";
