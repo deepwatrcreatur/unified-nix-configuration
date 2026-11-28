@@ -41,7 +41,9 @@ in
         let
           helpers = config.programs.git.settings.credential."https://github.com".helper or [ ];
         in
-        builtins.elem "" helpers && lib.any (lib.hasSuffix "/bin/git-credential-fnox") helpers;
+        builtins.elem "" helpers
+        && lib.any (lib.hasSuffix "/bin/git-credential-fnox") helpers
+        && !(builtins.hasAttr "credential \"https://github.com\"" config.programs.git.settings);
       message = "developer homes must use git-credential-fnox for GitHub HTTPS";
     }
   ];
