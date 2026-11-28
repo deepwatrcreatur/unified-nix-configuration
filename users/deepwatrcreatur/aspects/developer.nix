@@ -29,6 +29,23 @@ in
     flake = lib.mkDefault unifiedMainWorktree;
   };
 
+  # WHY: this aspect seeds GITHUB_TOKEN from workstation credentials, so Git's
+  # HTTPS helper can use fnox instead of a token-file or gh credential helper.
+  programs.fnox.gitCredentialHelper.enable = lib.mkDefault true;
+
+  assertions = [
+    {
+      # INVARIANT: Home Manager's final Git config must clear earlier helpers
+      # and invoke fnox for GitHub HTTPS on developer workstations.
+      assertion =
+        let
+          helpers = config.programs.git.settings.credential."https://github.com".helper or [ ];
+        in
+        builtins.elem "" helpers && lib.any (lib.hasSuffix "/bin/git-credential-fnox") helpers;
+      message = "developer homes must use git-credential-fnox for GitHub HTTPS";
+    }
+  ];
+
   programs.hunk-custom.enable = true;
   programs.t3code.enable = true;
   services.t3code.enable = true;

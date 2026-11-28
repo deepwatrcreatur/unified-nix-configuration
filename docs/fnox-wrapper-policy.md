@@ -50,6 +50,19 @@ Prefer `writeShellApplication` with specific `runtimeInputs` to ensure the wrapp
 | `pbs` | `proxmox-backup-client-fnox` | `PBS_PASSWORD`, `PBS_REPOSITORY` |
 | `droid` | `factory-droid-fnox` | `FACTORY_API_KEY` |
 
+GitHub HTTPS pushes use the `git-credential-fnox` helper from Home Manager's
+`programs.fnox.gitCredentialHelper` option. The developer aspect enables it
+only on homes that seed `GITHUB_TOKEN`; Git obtains the credential from fnox
+without reading a token file. For commands that disable global Git config,
+invoke it explicitly:
+
+```sh
+git -c credential.helper= -c credential.helper=fnox push
+```
+
+The helper clears earlier configured helpers for GitHub HTTPS, so only enable
+it on a home where fnox can decrypt `GITHUB_TOKEN`.
+
 ## Policy Enforcement
 
 - Future agents adding new wrappers must update this policy document.
