@@ -222,7 +222,6 @@ in
       ${nushellAliases}
     '';
 
-
     home.packages =
       with pkgs;
       [
@@ -247,10 +246,14 @@ in
         core.pager = lib.mkDefault "delta";
         interactive.diffFilter = lib.mkDefault "delta --color-only";
 
-        # GitHub credential helpers
-        "credential \"https://github.com\"".helper = "!gh auth git-credential";
+        # WHY: fnox installs its own structured helper and reset; keeping this
+        # legacy section would let Git fall back to a token-file reader.
+        "credential \"https://github.com\"" =
+          lib.mkIf (!(config.programs.fnox.gitCredentialHelper.enable or false))
+            {
+              helper = "!gh auth git-credential";
+            };
         "credential \"https://gist.github.com\"".helper = "!gh auth git-credential";
-
 
         # Delta settings
         delta.navigate = true;
